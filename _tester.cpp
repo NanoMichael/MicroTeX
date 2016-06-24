@@ -74,13 +74,13 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
 	wndClass.hCursor        = LoadCursor(NULL, IDC_ARROW);
 	wndClass.hbrBackground  = (HBRUSH)GetStockObject(WHITE_BRUSH);
 	wndClass.lpszMenuName   = NULL;
-	wndClass.lpszClassName  = TEXT("GettingStarted");
+	wndClass.lpszClassName  = TEXT("LaTeX");
 
 	RegisterClass(&wndClass);
 
 	hWnd = CreateWindow(
-	           TEXT("GettingStarted"),   // window class name
-	           TEXT("Getting Started"),  // window caption
+	           TEXT("LaTeX"),   // window class name
+	           TEXT("LaTeX"),  // window caption
 	           WS_OVERLAPPEDWINDOW,      // window style
 	           0,                        // initial x position
 	           0,                        // initial y position

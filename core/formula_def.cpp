@@ -136,5 +136,6 @@ map<wstring, wstring> TeXFormula::_predefinedTeXFormulasAsString = {
 	{ L"lvert", L"\\vert" },
 	{ L"rvert", L"\\vert" },
 	{ L"Droid", L"\\Huge{\\droid}\\normalsize" },
-	{ L"droidTeX", L"\\Droid\\large{\\dT\\dE\\dX}\\normalsize" }
+	{ L"droidTeX", L"\\Droid\\large{\\dT\\dE\\dX}\\normalsize" },
+	{ L"TeX", L"\\large{\\dT\\dE\\dX}\\normalsize" }
 };
