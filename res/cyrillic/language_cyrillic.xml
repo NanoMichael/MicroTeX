@@ -1,0 +1,27 @@
+<?xml version='1.0'?>
+<!--
+  language_cyrillic.xml
+-->
+
+<TeXFont>
+
+<SymbolMappings>
+  <Mapping include="cyrillic.map.xml" />
+</SymbolMappings>
+
+<FontDescriptions>
+  <Metrics include="wnr10.xml" />
+  <Metrics include="wnti10.xml" />
+  <Metrics include="wntt10.xml" />
+  <Metrics include="wnss10.xml" />
+  <Metrics include="wnssi10.xml" />
+  <Metrics include="wnssbx10.xml" />
+  <Metrics include="wnbx10.xml" />
+  <Metrics include="wnbxti10.xml" />
+</FontDescriptions>
+
+<TeXSymbols include="symbols_cyrillic.xml" />
+
+<FormulaSettings include="mappings_cyrillic.xml" />
+
+</TeXFont>

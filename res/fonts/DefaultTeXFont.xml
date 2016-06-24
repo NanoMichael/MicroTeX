@@ -1,0 +1,117 @@
+<?xml version='1.0'?>
+<!--
+  DefaultTeXFont.xml
+-->
+
+<TeXFont>
+
+<!-- general parameters used in the TeX algorithms, specific for the computer modern font family -->
+
+	<Parameters num1="0.676508" num2="0.393732" num3="0.443731" denom1="0.685951" denom2="0.344841" 
+	sup1="0.412892" sup2="0.362892" sup3="0.288889" sub1="0.15" sub2="0.247217" supdrop="0.386108" 
+	subdrop="0.05" axisheight="0.25" defaultrulethickness="0.039999" bigopspacing1="0.111112" 
+	bigopspacing2="0.166667" bigopspacing3="0.2" bigopspacing4="0.6" bigopspacing5="0.1" />
+	
+<!-- general settings -->
+
+	<GeneralSettings mufontid="cmsy10" spacefontid="cmr10" scriptfactor="0.7" scriptscriptfactor="0.5" />
+
+<!-- the mappings for the text styles defined in "FormulaSettings.xml" -->
+
+	<TextStyleMappings>
+		<TextStyleMapping name="mathnormal">
+			<MapRange code="numbers" fontId="cmr10" start="48"/>
+			<MapRange code="capitals" fontId="cmmi10" start="65"/>
+			<MapRange code="small" fontId="cmmi10" start="97"/>
+			<MapRange code="unicode" fontId="cmmi10" start="0"/>
+		</TextStyleMapping>
+
+		<TextStyleMapping name="mathfrak">
+			<MapRange code="numbers" fontId="eufm10" start="48"/>
+			<MapRange code="capitals" fontId="eufm10" start="65"/>
+			<MapRange code="small" fontId="eufm10" start="97"/>	
+		</TextStyleMapping>
+
+		<TextStyleMapping name="mathcal">
+			<MapRange code="capitals" fontId="cmsy10" start="65"/>		
+		</TextStyleMapping>
+
+		<TextStyleMapping name="mathbb">
+			<MapRange code="capitals" fontId="msbm10" start="65"/>		
+		</TextStyleMapping>
+
+		<TextStyleMapping name="mathscr">
+			<MapRange code="capitals" fontId="rsfs10" start="65"/>		
+		</TextStyleMapping>
+
+		<TextStyleMapping name="mathds">
+			<MapRange code="capitals" fontId="dsrom10" start="65"/>
+		</TextStyleMapping>
+
+		<TextStyleMapping name="oldstylenums">
+			<MapRange code="numbers" fontId="cmmi10" start="48"/>
+		</TextStyleMapping>
+
+	</TextStyleMappings>
+
+<!-- the default text style mappings, used when no text style is specified or when a specific mapping 
+for a text style is not defined (e.g. "numbers" and "small" in "mathcal") -->
+
+	<DefaultTextStyleMapping>
+		<MapStyle code="numbers" textStyle="mathnormal"/>
+		<MapStyle code="capitals" textStyle="mathnormal"/>
+		<MapStyle code="small" textStyle="mathnormal"/>
+		<MapStyle code="unicode" textStyle="mathnormal"/>
+	</DefaultTextStyleMapping>
+
+<!-- the mappings for the symbols defined in "TeXSymbols.xml" -->
+
+<SymbolMappings>
+  <Mapping include="base/base.map.xml" />
+  <Mapping include="base/amssymb.map.xml" />
+  <Mapping include="base/amsfonts.map.xml" />
+  <Mapping include="maths/stmaryrd.map.xml" />
+  <Mapping include="maths/special.map.xml" />
+</SymbolMappings>
+
+<!-- font descriptions -->
+
+<FontDescriptions>
+  <Metrics include="maths/msbm10.xml" />
+  <Metrics include="base/cmex10.xml" />
+  <Metrics include="base/cmmi10.xml" />
+  <Metrics include="base/cmmib10.xml" />
+  <Metrics include="base/moustache.xml" />
+  <Metrics include="base/cmmi10_unchanged.xml" />
+  <Metrics include="base/cmmib10_unchanged.xml" />
+  <Metrics include="maths/stmary10.xml" />
+  <Metrics include="maths/cmsy10.xml" />
+  <Metrics include="maths/msam10.xml" />
+  <Metrics include="maths/cmbsy10.xml" />
+  <Metrics include="maths/optional/dsrom10.xml" /> 
+  <Metrics include="maths/rsfs10.xml" />
+  <Metrics include="euler/eufm10.xml" />  
+  <Metrics include="euler/eufb10.xml" />
+  <Metrics include="latin/optional/cmti10.xml" />
+  <Metrics include="latin/optional/cmti10_unchanged.xml" />
+  <Metrics include="latin/optional/cmbxti10.xml" />
+  <Metrics include="latin/cmr10.xml" />
+  <Metrics include="latin/optional/cmss10.xml" />
+  <Metrics include="latin/optional/cmssi10.xml" />
+  <Metrics include="latin/optional/cmtt10.xml" />
+  <Metrics include="latin/optional/cmbx10.xml" />
+  <Metrics include="latin/optional/cmssbx10.xml" />
+  <Metrics include="maths/special.xml" />
+  <Metrics include="latin/r10.xml" />
+  <Metrics include="latin/r10_unchanged.xml" />
+  <Metrics include="latin/ss10.xml" />
+  <Metrics include="latin/si10.xml" />
+  <Metrics include="latin/i10.xml" />
+  <Metrics include="latin/bx10.xml" />
+  <Metrics include="latin/bi10.xml" />
+  <Metrics include="latin/sbi10.xml" />
+  <Metrics include="latin/sb10.xml" />
+  <Metrics include="latin/tt10.xml" />
+</FontDescriptions>
+
+</TeXFont>

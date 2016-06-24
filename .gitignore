@@ -1,0 +1,9 @@
+#ignore obj
+obj/
+#ignore bin
+bin/
+*.cbp
+*.depend
+*.layout
+/CppCheckResults.xml
+.DS_Store

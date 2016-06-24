@@ -1,0 +1,27 @@
+<?xml version='1.0'?>
+<!--
+  language_greek.xml
+-->
+
+<TeXFont>
+
+<SymbolMappings>
+  <Mapping include="greek.map.xml" />
+</SymbolMappings>
+
+<FontDescriptions>
+  <Metrics include="fcmbipg.xml" />
+  <Metrics include="fcmbpg.xml" />
+  <Metrics include="fcmripg.xml" />
+  <Metrics include="fcmrpg.xml" />
+  <Metrics include="fcsbpg.xml" />
+  <Metrics include="fcsropg.xml" />
+  <Metrics include="fcsrpg.xml" />
+  <Metrics include="fctrpg.xml" />
+</FontDescriptions>
+
+<TeXSymbols include="symbols_greek.xml" />
+
+<FormulaSettings include="mappings_greek.xml" />
+
+</TeXFont>

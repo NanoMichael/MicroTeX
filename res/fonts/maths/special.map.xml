@@ -1,0 +1,14 @@
+<?xml version='1.0'?>
+<SymbolMappings>
+  <SymbolMapping name="euro" ch="69" fontId="special" />
+  <SymbolMapping name="texteuro" ch="101" fontId="special" />
+  <SymbolMapping name="textmu" ch="109" fontId="special" />
+  <SymbolMapping name="droid" ch="65" fontId="special" />
+  <SymbolMapping name="dT" ch="66" fontId="special"/>
+  <SymbolMapping name="dE" ch="67" fontId="special" />
+  <SymbolMapping name="dX" ch="68" fontId="special" />
+  <SymbolMapping name="parallelogram" ch="70" fontId="special" />
+  <SymbolMapping name="varparallel" ch="197" fontId="cmsy10" />
+  <SymbolMapping name="nvarparallel" ch="198" fontId="cmsy10" />
+  <SymbolMapping name="varparalleleq" ch="199" fontId="cmsy10" />
+</SymbolMappings>

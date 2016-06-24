@@ -1,0 +1,323 @@
+<?xml version='1.0'?>
+<SymbolMappings>
+  <!-- miscellaneous symbols -->
+
+  <SymbolMapping name="comma" ch="59" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="ldotp" ch="58" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="cdotp" ch="162" fontId="cmsy10"/>
+  <SymbolMapping name="normaldot" ch="58" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="textnormaldot" ch="58" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="slash" ch="61" fontId="cmmi10_unchanged"/>
+
+  <SymbolMapping name="guillemotleft" ch="33" fontId="i10"/>
+  <SymbolMapping name="guillemotright" ch="36" fontId="i10"/>
+  <SymbolMapping name="guilsinglleft" ch="34" fontId="i10"/>
+  <SymbolMapping name="guilsinglright" ch="35" fontId="i10"/>
+  <SymbolMapping name="og" ch="33" fontId="i10"/>
+  <SymbolMapping name="fg" ch="36" fontId="i10"/>
+  <SymbolMapping name="textperthousand" ch="37" fontId="r10"/>
+  <SymbolMapping name="textpertenthousand" ch="38" fontId="r10"/>
+  <SymbolMapping name="textdbend" ch="126" fontId="r10_unchanged"/>
+  <SymbolMapping name="dbend" ch="127" fontId="r10_unchanged"/>
+
+  <!-- this symbol is not defined in "TeXSymbols.xml", because it's not meant to be used as a symbol.
+       Use "surd" instead. -->
+  <SymbolMapping name="sqrt" ch="112" fontId="cmsy10"/>
+  <SymbolMapping name="textfractionsolidus" ch="47" fontId="cmr10"/>
+  <SymbolMapping name="textminus" ch="45" fontId="cmr10"/>
+  <SymbolMapping name="textendash" ch="123" fontId="cmr10"/>
+  <SymbolMapping name="textemdash" ch="124" fontId="cmr10"/>
+  <SymbolMapping name="semicolon" ch="59" fontId="cmr10"/>
+  <SymbolMapping name="faculty" ch="33" fontId="cmr10"/>
+  <SymbolMapping name="question" ch="63" fontId="cmr10"/>
+  <SymbolMapping name="questiondown" ch="62" fontId="cmr10"/>
+  <SymbolMapping name="mathsharp" ch="35" fontId="cmr10"/>
+  <SymbolMapping name="textdollar" ch="36" fontId="cmr10"/>
+  <SymbolMapping name="textpercent" ch="37" fontId="cmr10"/>
+  <SymbolMapping name="textampersand" ch="38" fontId="cmr10"/>
+  <SymbolMapping name="matharobase" ch="64" fontId="cmr10"/>
+  <SymbolMapping name="textapos" ch="39" fontId="cmr10"/>
+  <SymbolMapping name="mathlapos" ch="96" fontId="cmr10"/>
+  <SymbolMapping name="mathsterling" ch="36" fontId="cmti10_unchanged"/>
+
+  <SymbolMapping name="oe" ch="190" fontId="cmti10"/>
+  <SymbolMapping name="ae" ch="189" fontId="cmti10"/>
+  <SymbolMapping name="OE" ch="193" fontId="cmti10"/>
+  <SymbolMapping name="AE" ch="192" fontId="cmti10"/>
+  <SymbolMapping name="ss" ch="188" fontId="cmti10"/>
+  <SymbolMapping name="o" ch="191" fontId="cmti10"/>
+  <SymbolMapping name="O" ch="194" fontId="cmti10"/>
+  <SymbolMapping name="tie" ch="196" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="i" ch="179" fontId="cmti10"/>
+  <SymbolMapping name="j" ch="180" fontId="cmti10"/>
+  <SymbolMapping name="mathcedilla" ch="187" fontId="cmti10"/>
+  <SymbolMapping name="lq" ch="96" fontId="cmti10"/>
+  <SymbolMapping name="rq" ch="39" fontId="cmti10"/>
+
+  <!-- math accents -->
+  <SymbolMapping name="acute" ch="182" fontId="cmr10"/>
+  <SymbolMapping name="grave" ch="181" fontId="cmr10"/>
+  <SymbolMapping name="ddot" ch="196" fontId="cmr10"/>
+  <SymbolMapping name="doubleacute" ch="125" fontId="cmr10"/>
+  <SymbolMapping name="tilde" ch="126" fontId="cmr10"/>
+  <SymbolMapping name="mathring" ch="186" fontId="cmr10"/>
+  <SymbolMapping name="bmathring" ch="186" fontId="cmr10"/>
+  <SymbolMapping name="bar" ch="185" fontId="cmr10"/>
+  <SymbolMapping name="breve" ch="184" fontId="cmr10"/>
+  <SymbolMapping name="check" ch="183" fontId="cmr10"/>
+  <SymbolMapping name="hat" ch="94" fontId="cmr10"/>
+  <SymbolMapping name="ogonek" ch="197" fontId="cmr10"/>
+  <SymbolMapping name="polishlcross" ch="195" fontId="cmr10"/>
+  <SymbolMapping name="vec" ch="126" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="dot" ch="95" fontId="cmr10"/>
+  <SymbolMapping name="widehat" ch="98" fontId="cmex10"/>
+  <SymbolMapping name="widetilde" ch="101" fontId="cmex10"/>
+
+  <!-- delimiters that can change size -->
+
+  <SymbolMapping name="lbrace" ch="102" fontId="cmsy10"/>
+  <SymbolMapping name="rbrace" ch="103" fontId="cmsy10"/>
+  <SymbolMapping name="lbrack" ch="40" fontId="cmr10"/>
+  <SymbolMapping name="rbrack" ch="41" fontId="cmr10"/>
+  <SymbolMapping name="rsqbrack" ch="93" fontId="cmr10"/>
+  <SymbolMapping name="lsqbrack" ch="91" fontId="cmr10"/>
+  <SymbolMapping name="langle" ch="104" fontId="cmsy10"/>
+  <SymbolMapping name="rangle" ch="105" fontId="cmsy10"/>
+  <SymbolMapping name="lfloor" ch="98" fontId="cmsy10"/>
+  <SymbolMapping name="rfloor" ch="99" fontId="cmsy10"/>
+  <SymbolMapping name="lceil" ch="100" fontId="cmsy10"/>
+  <SymbolMapping name="rceil" ch="101" fontId="cmsy10"/>
+  <SymbolMapping name="uparrow" ch="34" fontId="cmsy10"/>
+  <SymbolMapping name="Uparrow" ch="42" fontId="cmsy10"/>
+  <SymbolMapping name="downarrow" ch="35" fontId="cmsy10"/>
+  <SymbolMapping name="Downarrow" ch="43" fontId="cmsy10"/>
+  <SymbolMapping name="updownarrow" ch="108" fontId="cmsy10"/>
+  <SymbolMapping name="Updownarrow" ch="109" fontId="cmsy10"/>
+  <SymbolMapping name="vert" ch="106" fontId="cmsy10"/>
+  <SymbolMapping name="Vert" ch="107" fontId="cmsy10"/>
+  <SymbolMapping name="slashdel" ch="47" fontId="cmr10"/>
+  <SymbolMapping name="lgroup" ch="58" fontId="cmex10"/>
+  <SymbolMapping name="rgroup" ch="59" fontId="cmex10"/>
+  <SymbolMapping name="bracevert" ch="62" fontId="cmex10"/>
+  <SymbolMapping name="lmoustache" ch="64" fontId="moustache"/>
+  <SymbolMapping name="rmoustache" ch="65" fontId="moustache"/>
+
+  <!-- lowercase Greek letters -->
+
+  <SymbolMapping name="alpha" ch="174" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="beta" ch="175" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="gamma" ch="176" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="delta" ch="177" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="epsilon" ch="178" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="varepsilon" ch="34" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="zeta" ch="179" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="eta" ch="180" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="theta" ch="181" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="vartheta" ch="35" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="iota" ch="182" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="kappa" ch="183" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="lambda" ch="184" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="mu" ch="185" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="nu" ch="186" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="xi" ch="187" fontId="cmmi10_unchanged"/>
+
+  <!-- omicron = letter 'o' -->
+  <SymbolMapping name="omicron" ch="111" fontId="cmmi10_unchanged"/>
+
+  <SymbolMapping name="pi" ch="188" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="varpi" ch="36" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="rho" ch="189" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="varrho" ch="37" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="sigma" ch="190" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="varsigma" ch="38" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="tau" ch="191" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="upsilon" ch="192" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="phi" ch="193" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="varphi" ch="39" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="chi" ch="194" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="psi" ch="195" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="omega" ch="33" fontId="cmmi10_unchanged"/>
+
+  <!-- uppercase Greek letters -->
+
+  <SymbolMapping name="Gamma" ch="161" fontId="cmr10"/>
+  <SymbolMapping name="Delta" ch="162" fontId="cmr10"/>
+  <SymbolMapping name="Theta" ch="163" fontId="cmr10"/>
+  <SymbolMapping name="Lambda" ch="164" fontId="cmr10"/>
+  <SymbolMapping name="Xi" ch="165" fontId="cmr10"/>
+  <SymbolMapping name="Pi" ch="166" fontId="cmr10"/>
+  <SymbolMapping name="Sigma" ch="167" fontId="cmr10"/>
+  <SymbolMapping name="Upsilon" ch="168" fontId="cmr10"/>
+  <SymbolMapping name="Phi" ch="169" fontId="cmr10"/>
+  <SymbolMapping name="Psi" ch="170" fontId="cmr10"/>
+  <SymbolMapping name="Omega" ch="171" fontId="cmr10"/>
+  <SymbolMapping name="varGamma" ch="161" fontId="cmmi10"/>
+  <SymbolMapping name="varDelta" ch="162" fontId="cmmi10"/>
+  <SymbolMapping name="varTheta" ch="163" fontId="cmmi10"/>
+  <SymbolMapping name="varLambda" ch="164" fontId="cmmi10"/>
+  <SymbolMapping name="varXi" ch="165" fontId="cmmi10"/>
+  <SymbolMapping name="varPi" ch="166" fontId="cmmi10"/>
+  <SymbolMapping name="varSigma" ch="167" fontId="cmmi10"/>
+  <SymbolMapping name="varUpsilon" ch="168" fontId="cmmi10"/>
+  <SymbolMapping name="varPhi" ch="169" fontId="cmmi10"/>
+  <SymbolMapping name="varPsi" ch="170" fontId="cmmi10"/>
+  <SymbolMapping name="varOmega" ch="171" fontId="cmmi10"/>
+
+  <!-- miscellaneous symbols of type "ord" -->
+
+  <SymbolMapping name="aleph" ch="64" fontId="cmsy10"/>
+  <SymbolMapping name="imath" ch="123" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="jmath" ch="124" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="ell" ch="96" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="wp" ch="125" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="Re" ch="60" fontId="cmsy10"/>
+  <SymbolMapping name="Im" ch="61" fontId="cmsy10"/>
+  <SymbolMapping name="partial" ch="64" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="infty" ch="49" fontId="cmsy10"/>
+  <SymbolMapping name="prime" ch="48" fontId="cmsy10"/>
+  <SymbolMapping name="emptyset" ch="59" fontId="cmsy10"/>
+  <SymbolMapping name="nabla" ch="114" fontId="cmsy10"/>
+  <SymbolMapping name="surdsign" ch="112" fontId="cmsy10"/>
+  <SymbolMapping name="top" ch="62" fontId="cmsy10"/>
+  <SymbolMapping name="bot" ch="63" fontId="cmsy10"/>
+  <SymbolMapping name="|" ch="107" fontId="cmsy10"/>
+  <SymbolMapping name="triangle" ch="52" fontId="cmsy10"/>
+  <SymbolMapping name="backslash" ch="110" fontId="cmsy10"/>
+  <SymbolMapping name="forall" ch="56" fontId="cmsy10"/>
+  <SymbolMapping name="exists" ch="57" fontId="cmsy10"/>
+  <SymbolMapping name="neg" ch="58" fontId="cmsy10"/>
+  <SymbolMapping name="lnot" ch="58" fontId="cmsy10"/>
+  <SymbolMapping name="flat" ch="91" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="natural" ch="92" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="sharp" ch="93" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="S" ch="120" fontId="cmsy10"/>
+  <SymbolMapping name="P" ch="123" fontId="cmsy10"/>
+  <SymbolMapping name="clubsuit" ch="124" fontId="cmsy10"/>
+  <SymbolMapping name="diamondsuit" ch="125" fontId="cmsy10"/>
+  <SymbolMapping name="heartsuit" ch="126" fontId="cmsy10"/>
+  <SymbolMapping name="spadesuit" ch="196" fontId="cmsy10"/>
+  <SymbolMapping name="lacc" ch="102" fontId="cmsy10"/>
+  <SymbolMapping name="racc" ch="103" fontId="cmsy10"/>
+  <SymbolMapping name="Relbar" ch="61" fontId="cmr10"/>
+  <SymbolMapping name="lhook" ch="44" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="rhook" ch="45" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="mapstochar" ch="55" fontId="cmsy10"/>
+  <!-- "large" operators -->
+
+  <SymbolMapping name="bigcap" ch="84" fontId="cmex10"/>
+  <SymbolMapping name="bigcup" ch="83" fontId="cmex10"/>
+  <SymbolMapping name="bigodot" ch="74" fontId="cmex10"/>
+  <SymbolMapping name="bigoplus" ch ="76" fontId="cmex10"/>
+  <SymbolMapping name="bigotimes" ch="78" fontId="cmex10"/>
+  <SymbolMapping name="bigsqcup" ch="70" fontId="cmex10"/>
+  <SymbolMapping name="biguplus" ch="85" fontId="cmex10"/>
+  <SymbolMapping name="bigvee" ch="87" fontId="cmex10"/>
+  <SymbolMapping name="bigwedge" ch="86" fontId="cmex10"/>
+  <SymbolMapping name="coprod" ch="96" fontId="cmex10"/>
+  <SymbolMapping name="int" ch="82" fontId="cmex10"/>
+  <SymbolMapping name="oint" ch="72" fontId="cmex10"/>
+  <SymbolMapping name="sum" ch="80" fontId="cmex10"/>
+  <SymbolMapping name="prod" ch="81" fontId="cmex10"/>
+  <SymbolMapping name="smallint" ch="115" fontId="cmsy10"/>
+
+  <!-- binary operations -->
+
+  <SymbolMapping name="minus" ch="161" fontId="cmsy10"/>
+  <SymbolMapping name="plus" ch="43" fontId="cmr10"/>
+  <SymbolMapping name="pm" ch="167" fontId="cmsy10"/>
+  <SymbolMapping name="mp" ch="168" fontId="cmsy10"/>
+  <SymbolMapping name="setminus" ch="110" fontId="cmsy10"/>
+  <SymbolMapping name="cdot" ch="162" fontId="cmsy10"/>
+  <SymbolMapping name="times" ch="163" fontId="cmsy10"/>
+  <SymbolMapping name="ast" ch="164" fontId="cmsy10"/>
+  <SymbolMapping name="star" ch="63" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="diamond" ch="166" fontId="cmsy10"/>
+  <SymbolMapping name="circ" ch="177" fontId="cmsy10"/>
+  <SymbolMapping name="bullet" ch="178" fontId="cmsy10"/>
+  <SymbolMapping name="div" ch="165" fontId="cmsy10"/>
+  <SymbolMapping name="cap" ch="92" fontId="cmsy10"/>
+  <SymbolMapping name="cup" ch="91" fontId="cmsy10"/>
+  <SymbolMapping name="uplus" ch="93" fontId="cmsy10"/>
+  <SymbolMapping name="sqcap" ch="117" fontId="cmsy10"/>
+  <SymbolMapping name="sqcup" ch="116" fontId="cmsy10"/>
+  <SymbolMapping name="triangleleft" ch="47" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="triangleright" ch="46" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="wr" ch="111" fontId="cmsy10"/>
+  <SymbolMapping name="bigcirc" ch="176" fontId="cmsy10"/>
+  <!--SymbolMapping name="bigtriangleup" ch="52" fontId="cmsy10"/>
+      <SymbolMapping name="bigtriangledown" ch="53" fontId="cmsy10"/-->
+  <SymbolMapping name="vee" ch="95" fontId="cmsy10"/>
+  <SymbolMapping name="lor" ch="95" fontId="cmsy10"/>
+  <SymbolMapping name="wedge" ch="94" fontId="cmsy10"/>
+  <SymbolMapping name="land" ch="94" fontId="cmsy10"/>
+  <SymbolMapping name="oplus" ch="169" fontId="cmsy10"/>
+  <SymbolMapping name="ominus" ch="170" fontId="cmsy10"/>
+  <SymbolMapping name="otimes" ch="171" fontId="cmsy10"/>
+  <SymbolMapping name="oslash" ch="174" fontId="cmsy10"/>
+  <SymbolMapping name="odot" ch="175" fontId="cmsy10"/>
+  <SymbolMapping name="dagger" ch="121" fontId="cmsy10"/>
+  <SymbolMapping name="ddagger" ch="122" fontId="cmsy10"/>
+  <SymbolMapping name="amalg" ch="113" fontId="cmsy10"/>
+
+  <!-- relations -->
+
+  <SymbolMapping name="equals" ch="61" fontId="cmr10"/>
+  <SymbolMapping name="gt" ch="62" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="lt" ch="60" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="leq" ch="183" fontId="cmsy10"/>
+  <SymbolMapping name="le" ch="183" fontId="cmsy10"/>
+  <SymbolMapping name="prec" ch="193" fontId="cmsy10"/>
+  <SymbolMapping name="preceq" ch="185" fontId="cmsy10"/>
+  <SymbolMapping name="ll" ch="191" fontId="cmsy10"/>
+  <SymbolMapping name="subset" ch="189" fontId="cmsy10"/>
+  <SymbolMapping name="subseteq" ch="181" fontId="cmsy10"/>
+  <SymbolMapping name="sqsubseteq" ch="118" fontId="cmsy10"/>
+  <SymbolMapping name="in" ch="50" fontId="cmsy10"/>
+  <SymbolMapping name="vdash" ch="96" fontId="cmsy10"/>
+  <SymbolMapping name="smile" ch="94" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="frown" ch="95" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="geq" ch="184" fontId="cmsy10"/>
+  <SymbolMapping name="ge" ch="184" fontId="cmsy10"/>
+  <SymbolMapping name="succ" ch="194" fontId="cmsy10"/>
+  <SymbolMapping name="succeq" ch="186" fontId="cmsy10"/>
+  <SymbolMapping name="gg" ch="192" fontId="cmsy10"/>
+  <SymbolMapping name="supset" ch="190" fontId="cmsy10"/>
+  <SymbolMapping name="supseteq" ch="182" fontId="cmsy10"/>
+  <SymbolMapping name="sqsupseteq" ch="119" fontId="cmsy10"/>
+  <SymbolMapping name="ni" ch="51" fontId="cmsy10"/>
+  <SymbolMapping name="owns" ch="51" fontId="cmsy10"/>
+  <SymbolMapping name="dashv" ch="97" fontId="cmsy10"/>
+  <SymbolMapping name="mid" ch="106" fontId="cmsy10"/>
+  <SymbolMapping name="parallel" ch="107" fontId="cmsy10"/>
+  <SymbolMapping name="equiv" ch="180" fontId="cmsy10"/>
+  <SymbolMapping name="sim" ch="187" fontId="cmsy10"/>
+  <SymbolMapping name="simeq" ch="39" fontId="cmsy10"/>
+  <SymbolMapping name="asymp" ch="179" fontId="cmsy10"/>
+  <SymbolMapping name="approx" ch="188" fontId="cmsy10"/>
+  <SymbolMapping name="propto" ch="47" fontId="cmsy10"/>
+  <SymbolMapping name="perp" ch="63" fontId="cmsy10"/>
+
+  <!-- special relation symbol with "width=0" (to overlap other relational symbols) -->
+  <SymbolMapping name="not" ch="54" fontId="cmsy10"/>
+
+  <!-- arrows = pointing relations -->
+
+  <SymbolMapping name="colon" ch="58" fontId="cmr10"/>
+  <SymbolMapping name="nearrow" ch="37" fontId="cmsy10"/>
+  <SymbolMapping name="searrow" ch="38" fontId="cmsy10"/>
+  <SymbolMapping name="swarrow" ch="46" fontId="cmsy10"/>
+  <SymbolMapping name="nwarrow" ch="45" fontId="cmsy10"/>
+  <SymbolMapping name="leftarrow" ch="195" fontId="cmsy10"/>
+  <SymbolMapping name="gets" ch="195" fontId="cmsy10"/>
+  <SymbolMapping name="Leftarrow" ch="40" fontId="cmsy10"/>
+  <SymbolMapping name="rightarrow" ch="33" fontId="cmsy10"/>
+  <SymbolMapping name="to" ch="33" fontId="cmsy10"/>
+  <SymbolMapping name="Rightarrow" ch="41" fontId="cmsy10"/>
+  <SymbolMapping name="leftrightarrow" ch="36" fontId="cmsy10"/>
+  <SymbolMapping name="Leftrightarrow" ch="44" fontId="cmsy10"/>
+  <SymbolMapping name="leftharpoonup" ch="40" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="leftharpoondown" ch="41" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="rightharpoonup" ch="42" fontId="cmmi10_unchanged"/>
+  <SymbolMapping name="rightharpoondown" ch="43" fontId="cmmi10_unchanged"/>
+
+</SymbolMappings>
