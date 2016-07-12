@@ -3,7 +3,7 @@
 /**
  * !IMPORTANT undefine MEM_CHECK before release
  */
-#undef MEM_CHECK
+// #undef MEM_CHECK
 
 #ifndef MEM_CHECK
 #define DUMP_MEM_STATUS() ;

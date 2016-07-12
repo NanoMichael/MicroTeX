@@ -30,7 +30,7 @@ using namespace std;
 /**
  * !IMPORTANT undefine __DEBUG before release
  */
-#undef __DEBUG
+// #undef __DEBUG
 
 // flag for graphics debug
 #define __GA_DEBUG
@@ -38,7 +38,7 @@ using namespace std;
 /**
  * !IMPORTANT undefine __GA_DEBUG before release
  */
-#undef __GA_DEBUG
+// #undef __GA_DEBUG
 
 #define __DBG(format, ...) \
 {\
