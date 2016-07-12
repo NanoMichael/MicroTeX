@@ -126,6 +126,9 @@
    <Char code="101" width="0.553609" height="0.444445" >
       <Kern code="196" val="0.063889"/>
    </Char>
+   <Char code="111" width="0.584719" height="0.444445" >
+      <Kern code="196" val="0.063889"/>
+   </Char>
    <Char code="123" width="0.393518" height="0.444445" >
       <Kern code="196" val="0.031944"/>
    </Char>
