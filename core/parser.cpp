@@ -41,37 +41,42 @@ const wchar_t TeXParser::SUPER_SCRIPT = '^';
 const wchar_t TeXParser::PRIME = '\'';
 const wchar_t TeXParser::BACKPRIME = 0x2035;
 const wchar_t TeXParser::DEGRE = 0x00B0;
-const wchar_t TeXParser::SUPZERO = 0x2070;
-const wchar_t TeXParser::SUPONE = 0x00B9;
-const wchar_t TeXParser::SUPTWO = 0x00B2;
-const wchar_t TeXParser::SUPTHREE = 0x00B3;
-const wchar_t TeXParser::SUPFOUR = 0x2074;
-const wchar_t TeXParser::SUPFIVE = 0x2075;
-const wchar_t TeXParser::SUPSIX = 0x2076;
-const wchar_t TeXParser::SUPSEVEN = 0x2077;
-const wchar_t TeXParser::SUPEIGHT = 0x2078;
-const wchar_t TeXParser::SUPNINE = 0x2079;
-const wchar_t TeXParser::SUPPLUS = 0x207A;
-const wchar_t TeXParser::SUPMINUS = 0x207B;
-const wchar_t TeXParser::SUPEQUAL = 0x207C;
-const wchar_t TeXParser::SUPLPAR = 0x207D;
-const wchar_t TeXParser::SUPRPAR = 0x207E;
-const wchar_t TeXParser::SUPN = 0x207F;
-const wchar_t TeXParser::SUBZERO = 0x2080;
-const wchar_t TeXParser::SUBONE = 0x2081;
-const wchar_t TeXParser::SUBTWO = 0x2082;
-const wchar_t TeXParser::SUBTHREE = 0x2083;
-const wchar_t TeXParser::SUBFOUR = 0x2084;
-const wchar_t TeXParser::SUBFIVE = 0x2085;
-const wchar_t TeXParser::SUBSIX = 0x2086;
-const wchar_t TeXParser::SUBSEVEN = 0x2087;
-const wchar_t TeXParser::SUBEIGHT = 0x2088;
-const wchar_t TeXParser::SUBNINE = 0x2089;
-const wchar_t TeXParser::SUBPLUS = 0x208A;
-const wchar_t TeXParser::SUBMINUS = 0x208B;
-const wchar_t TeXParser::SUBEQUAL = 0x208C;
-const wchar_t TeXParser::SUBLPAR = 0x208D;
-const wchar_t TeXParser::SUBRPAR = 0x208E;
+
+const map<wchar_t, char> TeXParser::SUP_SCRIPT_MAP = {
+	{ 0x2070, '0'},
+	{ 0x00B9, '1'},
+	{ 0x00B2, '2'},
+	{ 0x00B3, '3'},
+	{ 0x2074, '4'},
+	{ 0x2075, '5'},
+	{ 0x2076, '6'},
+	{ 0x2077, '7'},
+	{ 0x2078, '8'},
+	{ 0x2079, '9'},
+	{ 0x207A, '+'},
+	{ 0x207B, '-'},
+	{ 0x207C, '='},
+	{ 0x207D, '('},
+	{ 0x207E, ')'},
+	{ 0x207F, 'n'}
+};
+const map<wchar_t, char> TeXParser::SUB_SCRIPT_MAP = {
+	{ 0x2080, '0'},
+	{ 0x2081, '1'},
+	{ 0x2082, '2'},
+	{ 0x2083, '3'},
+	{ 0x2084, '4'},
+	{ 0x2085, '5'},
+	{ 0x2086, '6'},
+	{ 0x2087, '7'},
+	{ 0x2088, '8'},
+	{ 0x2089, '9'},
+	{ 0x208A, '+'},
+	{ 0x208B, '-'},
+	{ 0x208C, '='},
+	{ 0x208D, '('},
+	{ 0x208E, ')'},
+};
 
 const set<wstring> TeXParser::_unparsedContents = {
 	L"dynamic",
@@ -724,6 +729,27 @@ pair<int, float> TeXParser::getLength() throw(ex_parse) {
 	return SpaceAtom::getLength(_parseString.substr(spos, _pos - spos - 1));
 }
 
+bool TeXParser::replaceScript() {
+    wchar_t ch = _parseString[_pos];
+    auto it = SUP_SCRIPT_MAP.find(ch);
+    if (it != SUP_SCRIPT_MAP.end()) {
+        wstring sup = wstring(L"\\mathcumsup{").append(1, (wchar_t)(it->second)).append(L"}");
+        _parseString.replace(_pos, 1, sup);
+        _len = _parseString.length();
+        _pos += sup.size();
+        return true;
+    }
+    it = SUB_SCRIPT_MAP.find(ch);
+    if (it != SUB_SCRIPT_MAP.end()) {
+        wstring sub = wstring(L"\\mathcumsub{").append(1, (wchar_t)(it->second)).append(L"}");
+        _parseString.replace(_pos, 1, sub);
+        _len = _parseString.length();
+        _pos += sub.size();
+        return true;
+    }
+    return false;
+}
+
 void TeXParser::firstpass() throw(ex_parse) {
 	if (_len == 0)
 		return;
@@ -734,6 +760,10 @@ void TeXParser::firstpass() throw(ex_parse) {
 	vector<wstring> args;
 	MacroInfo* mac;
 	while (_pos < _len) {
+        if (replaceScript()) {
+            continue;
+        }
+
 		ch = _parseString[_pos];
 		switch (ch) {
 		case ESCAPE: {
@@ -819,192 +849,6 @@ void TeXParser::firstpass() throw(ex_parse) {
 		break;
 		case DEGRE: {
 			_parseString.replace(_pos, 1, L"^\\circ");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUPTWO: {
-			_parseString.replace(_pos, 1, L"\\mathcumsup{2}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUPTHREE: {
-			_parseString.replace(_pos, 1, L"\\mathcumsup{3}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUPONE: {
-			_parseString.replace(_pos, 1, L"\\mathcumsup{1}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUPZERO: {
-			_parseString.replace(_pos, 1, L"\\mathcumsup{0}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUPFOUR: {
-			_parseString.replace(_pos, 1, L"\\mathcumsup{4}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUPFIVE: {
-			_parseString.replace(_pos, 1, L"\\mathcumsup{5}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUPSIX: {
-			_parseString.replace(_pos, 1, L"\\mathcumsup{6}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUPSEVEN: {
-			_parseString.replace(_pos, 1, L"\\mathcumsup{7}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUPEIGHT: {
-			_parseString.replace(_pos, 1, L"\\mathcumsup{8}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUPNINE: {
-			_parseString.replace(_pos, 1, L"\\mathcumsup{9}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUPPLUS: {
-			_parseString.replace(_pos, 1, L"\\mathcumsup{+}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUPMINUS: {
-			_parseString.replace(_pos, 1, L"\\mathcumsup{-}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUPEQUAL: {
-			_parseString.replace(_pos, 1, L"\\mathcumsup{=}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUPLPAR: {
-			_parseString.replace(_pos, 1, L"\\mathcumsup{(}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUPRPAR: {
-			_parseString.replace(_pos, 1, L"\\mathcumsup{)}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUPN: {
-			_parseString.replace(_pos, 1, L"\\mathcumsup{n}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUBTWO: {
-			_parseString.replace(_pos, 1, L"\\mathcumsub{2}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUBTHREE: {
-			_parseString.replace(_pos, 1, L"\\mathcumsub{3}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUBONE: {
-			_parseString.replace(_pos, 1, L"\\mathcumsub{1}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUBZERO: {
-			_parseString.replace(_pos, 1, L"\\mathcumsub{0}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUBFOUR: {
-			_parseString.replace(_pos, 1, L"\\mathcumsub{4}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUBFIVE: {
-			_parseString.replace(_pos, 1, L"\\mathcumsub{5}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUBSIX: {
-			_parseString.replace(_pos, 1, L"\\mathcumsub{6}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUBSEVEN: {
-			_parseString.replace(_pos, 1, L"\\mathcumsub{7}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUBEIGHT: {
-			_parseString.replace(_pos, 1, L"\\mathcumsub{8}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUBNINE: {
-			_parseString.replace(_pos, 1, L"\\mathcumsub{9}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUBPLUS: {
-			_parseString.replace(_pos, 1, L"\\mathcumsub{+}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUBMINUS: {
-			_parseString.replace(_pos, 1, L"\\mathcumsub{-}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUBEQUAL: {
-			_parseString.replace(_pos, 1, L"\\mathcumsub{=}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUBLPAR: {
-			_parseString.replace(_pos, 1, L"\\mathcumsub{(}");
-			_len = _parseString.length();
-			_pos++;
-		}
-		break;
-		case SUBRPAR: {
-			_parseString.replace(_pos, 1, L"\\mathcumsub{)}");
 			_len = _parseString.length();
 			_pos++;
 		}

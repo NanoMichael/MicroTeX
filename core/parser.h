@@ -62,42 +62,10 @@ private:
 	static const wchar_t BACKPRIME;
 	static const wchar_t DEGRE;
 	/**
-	 * super script
+	 * script to formula map
 	 */
-	static const wchar_t SUPZERO;
-	static const wchar_t SUPONE;
-	static const wchar_t SUPTWO;
-	static const wchar_t SUPTHREE;
-	static const wchar_t SUPFOUR;
-	static const wchar_t SUPFIVE;
-	static const wchar_t SUPSIX;
-	static const wchar_t SUPSEVEN;
-	static const wchar_t SUPEIGHT;
-	static const wchar_t SUPNINE;
-	static const wchar_t SUPPLUS;
-	static const wchar_t SUPMINUS;
-	static const wchar_t SUPEQUAL;
-	static const wchar_t SUPLPAR;
-	static const wchar_t SUPRPAR;
-	static const wchar_t SUPN;
-	/**
-	 * sub script
-	 */
-	static const wchar_t SUBZERO;
-	static const wchar_t SUBONE;
-	static const wchar_t SUBTWO;
-	static const wchar_t SUBTHREE;
-	static const wchar_t SUBFOUR;
-	static const wchar_t SUBFIVE;
-	static const wchar_t SUBSIX;
-	static const wchar_t SUBSEVEN;
-	static const wchar_t SUBEIGHT;
-	static const wchar_t SUBNINE;
-	static const wchar_t SUBPLUS;
-	static const wchar_t SUBMINUS;
-	static const wchar_t SUBEQUAL;
-	static const wchar_t SUBLPAR;
-	static const wchar_t SUBRPAR;
+    static const map<wchar_t, char> SUP_SCRIPT_MAP;
+    static const map<wchar_t, char> SUB_SCRIPT_MAP;
 
 	static const set<wstring> _unparsedContents;
 
@@ -125,6 +93,8 @@ private:
 	 * arguments in the parse string).
 	 */
 	shared_ptr<Atom> processCommands(const wstring& cmd) throw(ex_parse);
+
+	bool replaceScript();
 
 	void skipWhiteSpace();
 
