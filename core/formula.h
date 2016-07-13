@@ -94,6 +94,8 @@ public:
 	 * Creates a new TeXFormula by parsing the given string (using a primitive
 	 * TeX parser).
 	 *
+	 * @param tp
+	 *      the given TeXParser
 	 * @param s
 	 * 		the string to be parsed
 	 * @throw ex_parse
@@ -204,12 +206,12 @@ public:
 	 * influence on the glue that will be inserted before and after this
 	 * TeXFormula.
 	 *
-	 * @param leftType
-	 * 		atom type constant (from {@link TeXConstants})
-	 * @param rightType
-	 *      atom type constant (from TeXConstants)
+	 * @param left
+	 * 		atom type constant @see TeXConstants
+	 * @param right
+	 *      atom type constant @see TeXConstants
 	 * @return the modified TeXFormula
-	 * @throw InvalidAtomTypeException
+	 * @throw ex_invalid_atom_type
 	 *      if the given integer value does not represent a valid atom
 	 *      type
 	 */

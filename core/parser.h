@@ -178,6 +178,8 @@ public:
 	 * 		if true certains exceptions are not thrown
 	 * @param latex
 	 *      the string to be parsed
+	 * @param formula
+	 *      the formula to hold the atoms
 	 * @param firstpass
 	 *      a boolean to indicate if the parser must replace the
 	 *      user-defined macros by their content
@@ -198,6 +200,8 @@ public:
 	 *
 	 * @param latex
 	 *      the string to be parsed
+	 * @param formula
+	 *      the formula to hold the atoms
 	 * @param firstpass
 	 *      a boolean to indicate if the parser must replace the
 	 *      user-defined macros by their content
@@ -346,10 +350,10 @@ public:
 	/**
 	 * Get the contents between two delimiters
 	 *
-	 * @param openclose
+	 * @param openClose
 	 * 		the opening and closing character (such $)
 	 * @return the enclosed contents
-	 * @throw ParseException
+	 * @throw ex_parse
 	 *      if the contents are badly enclosed
 	 */
 	wstring getDollarGroup(wchar_t openClose) throw(ex_parse);
@@ -362,13 +366,13 @@ public:
 	 * @param close
 	 *      the closing character
 	 * @return the enclosed contents
-	 * @throw ParseException
+	 * @throw ex_parse
 	 *      if the contents are badly enclosed
 	 */
 	wstring getGroup(wchar_t open, wchar_t close) throw(ex_parse);
 
 	/**
-	 * Get the contents between two strings as in \begin{foo}... \end{foo}
+	 * Get the contents between two strings as in \\begin{foo}... \\end{foo}
 	 *
 	 * @param open
 	 * 		the opening string
