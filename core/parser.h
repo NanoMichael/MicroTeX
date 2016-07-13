@@ -64,8 +64,8 @@ private:
 	/**
 	 * script to formula map
 	 */
-    static const map<wchar_t, char> SUP_SCRIPT_MAP;
-    static const map<wchar_t, char> SUB_SCRIPT_MAP;
+	static const map<wchar_t, char> SUP_SCRIPT_MAP;
+	static const map<wchar_t, char> SUB_SCRIPT_MAP;
 
 	static const set<wstring> _unparsedContents;
 
