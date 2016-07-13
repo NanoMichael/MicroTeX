@@ -7,4 +7,5 @@ bin/
 *.layout
 /CppCheckResults.xml
 .DS_Store
-html/
+docs/
+doxyfile
