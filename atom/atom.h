@@ -29,12 +29,12 @@ class TeXEnvironment;
  * (defined by it's dimensions).
  * @par
  * Subclasses must implement the abstract
- * @link #draw(Graphics2D, float, float) @endlink method (that paints the box). <b>
+ * Box#draw(Graphics2D, float, float) method (that paints the box). <b>
  * This implementation must start with calling the method
- * @link #startDraw(Graphics2D, float, float) @endlink and end with calling the method
- * @link #endDraw(Graphics2D)} @endlink to set and restore the color's that must be used
+ * Box#startDraw(Graphics2D, float, float) and end with calling the method
+ * Box#endDraw(Graphics2D)} to set and restore the color's that must be used
  * for painting the box and to draw the background!</b> They must also implement
- * the abstract @link #getLastFontId() @endlink method (the last font that will be used
+ * the abstract Box#getLastFontId() method (the last font that will be used
  * when this box will be painted).
  */
 class Box {
@@ -109,6 +109,9 @@ protected:
 		g2.setColor(_prevColor);
 	}
 
+    /**
+     * Initialize box with default
+     */
 	void init() {
 		_foreground = trans;
 		_background = trans;
@@ -168,10 +171,16 @@ public:
 	 */
 	vector<shared_ptr<Box>> _children;
 
+    /**
+     * Create a new box with default
+     */
 	Box() {
 		init();
 	}
 
+    /**
+     * Create a new box with foreground and background
+     */
 	Box(color fg, color bg) {
 		init();
 		_background = bg;
@@ -200,6 +209,9 @@ public:
 		_children.insert(_children.begin() + pos, b);
 	}
 
+    /**
+     * Transform the width of box to negative
+     */
 	inline void negWidth() {
 		_width = -_width;
 	}
@@ -230,13 +242,13 @@ public:
 /**
  * An abstract superclass for all logical mathematical constructions that can be
  * a part of a TeXFormula. All subclasses must implement the abstract
- * @link #createBox(TeXEnvironment) @endlink method that transforms this logical unit
+ * Atom#createBox(TeXEnvironment) method that transforms this logical unit
  * into a concrete box (that can be painted). They also must define their type,
  * used for determining what glue to use between adjacent atoms in a
- * "row construction". That can be one single type by asigning one of the type
- * constants to the @link #type @endlink field. But they can also be defined as having
+ * "row construction". That can be one single type by assigning one of the type
+ * constants to the #_type field. But they can also be defined as having
  * two types: a "left type" and a "right type". This can be done by implementing
- * the methods @link #getLeftType() @endlink and @link #getRightType() @endlink . The left type
+ * the methods Atom#getLeftType() and Atom#getRightType(). The left type
  * will then be used for determining the glue between this atom and the previous
  * one (in a row, if any) and the right type for the glue between this atom and
  * the following one (in a row, if any).
@@ -246,10 +258,16 @@ class Atom {
 
 public:
 	/**
-	 * The type of the atom (default value: ordinary atom)
+	 * The type of the atom (default value: ordinary atom) @see TeXConstants
 	 */
 	int _type;
+	/**
+	 * The limits type of the atom (default value: normal) @see TeXConstants
+	 */
 	int _typelimits;
+	/**
+	 * The alignment type of the atom (default value: none) @see TeXConstants
+	 */
 	int _alignment;
 
 	Atom() :

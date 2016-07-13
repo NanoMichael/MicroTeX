@@ -919,7 +919,7 @@ public:
 	 *
 	 * @param base
 	 * 		base atom
-	 * @param accentName
+	 * @param name
 	 *      name of the accent symbol to be put over the base atom
 	 * @throw ex_invalid_symbol_type
 	 *      if the symbol is not defined as an accent ('acc')
