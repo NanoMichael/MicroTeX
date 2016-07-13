@@ -10,4 +10,4 @@
 
 # Documentation
 
-You could find all classes from [here](doxygen/html/classes.html).
+Coming soon...
