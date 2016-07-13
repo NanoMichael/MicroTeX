@@ -730,24 +730,24 @@ pair<int, float> TeXParser::getLength() throw(ex_parse) {
 }
 
 bool TeXParser::replaceScript() {
-    wchar_t ch = _parseString[_pos];
-    auto it = SUP_SCRIPT_MAP.find(ch);
-    if (it != SUP_SCRIPT_MAP.end()) {
-        wstring sup = wstring(L"\\mathcumsup{").append(1, (wchar_t)(it->second)).append(L"}");
-        _parseString.replace(_pos, 1, sup);
-        _len = _parseString.length();
-        _pos += sup.size();
-        return true;
-    }
-    it = SUB_SCRIPT_MAP.find(ch);
-    if (it != SUB_SCRIPT_MAP.end()) {
-        wstring sub = wstring(L"\\mathcumsub{").append(1, (wchar_t)(it->second)).append(L"}");
-        _parseString.replace(_pos, 1, sub);
-        _len = _parseString.length();
-        _pos += sub.size();
-        return true;
-    }
-    return false;
+	wchar_t ch = _parseString[_pos];
+	auto it = SUP_SCRIPT_MAP.find(ch);
+	if (it != SUP_SCRIPT_MAP.end()) {
+		wstring sup = wstring(L"\\mathcumsup{").append(1, (wchar_t)(it->second)).append(L"}");
+		_parseString.replace(_pos, 1, sup);
+		_len = _parseString.length();
+		_pos += sup.size();
+		return true;
+	}
+	it = SUB_SCRIPT_MAP.find(ch);
+	if (it != SUB_SCRIPT_MAP.end()) {
+		wstring sub = wstring(L"\\mathcumsub{").append(1, (wchar_t)(it->second)).append(L"}");
+		_parseString.replace(_pos, 1, sub);
+		_len = _parseString.length();
+		_pos += sub.size();
+		return true;
+	}
+	return false;
 }
 
 void TeXParser::firstpass() throw(ex_parse) {
@@ -760,9 +760,8 @@ void TeXParser::firstpass() throw(ex_parse) {
 	vector<wstring> args;
 	MacroInfo* mac;
 	while (_pos < _len) {
-        if (replaceScript()) {
-            continue;
-        }
+		if (replaceScript())
+			continue;
 
 		ch = _parseString[_pos];
 		switch (ch) {
