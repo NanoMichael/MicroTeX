@@ -379,7 +379,7 @@ public:
 	 * @param close
 	 *      the closing string
 	 * @return the enclosed contents
-	 * @throw ParseException
+	 * @throw ex_parse
 	 *      if the contents are badly enclosed
 	 */
 	wstring getGroup(const wstring& open, const wstring& close) throw(ex_parse);
@@ -388,7 +388,7 @@ public:
 	 * Get the argument of a command in his atomic format
 	 *
 	 * @return the corresponding atom
-	 * @throw ParseException
+	 * @throw ex_parse
 	 * 		if the argument is incorrect
 	 */
 	shared_ptr<Atom> getArgument() throw(ex_parse);
@@ -404,7 +404,7 @@ public:
 	 * @param c
 	 * 		the character to be converted
 	 * @return the corresponding atom
-	 * @throw ParseException
+	 * @throw ex_parse
 	 *      if the character is unknown
 	 */
 	shared_ptr<Atom> convertCharacter(wchar_t c, bool oneChar) throw(ex_parse);
