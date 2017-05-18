@@ -60,6 +60,7 @@ private:
 	bool _trueValues, _isMaxWidth;
 	color _fg;
 public:
+	// TODO declaration conflict with port/port.h
 	enum TeXFontStyle {
 		SERIF = 0,
 		SANSSERIF = 1,
