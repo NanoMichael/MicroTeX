@@ -9,3 +9,4 @@ bin/
 .DS_Store
 docs/
 doxyfile
+build/
