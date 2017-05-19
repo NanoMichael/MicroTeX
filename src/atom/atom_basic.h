@@ -3,7 +3,7 @@
 
 #include "atom/atom.h"
 #include "atom/box.h"
-#include "port/port.h"
+#include "graphic/graphic.h"
 #include "common.h"
 
 #include <map>
@@ -510,7 +510,7 @@ public:
  */
 class BreakMarkAtom : public Atom {
 public:
-	shared_ptr<Box> createBox(_out_ TeXEnvironment& env);
+	shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 /**

@@ -14,6 +14,11 @@ string RES_BASE = "res";
 TeXFormula* LaTeX::_formula = nullptr;
 TeXRenderBuilder* LaTeX::_builder = nullptr;
 
+void LaTeX::init(const string& res_root_path) {
+	RES_BASE = res_root_path;
+	LaTeX::init();
+}
+
 void LaTeX::init() {
 	if (_formula != nullptr)
 		return;
@@ -45,16 +50,17 @@ void LaTeX::release() {
 
 TeXRender* LaTeX::parse(const wstring& latex, int width, float textSize, float interlineSpacing, color fg) {
 	bool lined = true;
-	if (startswith(latex, L"$$") || startswith(latex, L"\\["))
+	if (startswith(latex, L"$$") || startswith(latex, L"\\[")) {
 		lined = false;
+	}
 	int align = lined ? ALIGN_LEFT : ALIGN_CENTER;
 	_formula->setLaTeX(latex);
 	TeXRender* render = _builder->setStyle(STYLE_DISPLAY)
-	                    .setSize(textSize)
-	                    .setWidth(UNIT_PIXEL, width, align)
-	                    .setIsMaxWidth(lined)
-	                    .setInterlineSpacing(UNIT_PIXEL, interlineSpacing)
-	                    .setForeground(fg)
-	                    .build(*_formula);
+		.setSize(textSize)
+		.setWidth(UNIT_PIXEL, width, align)
+		.setIsMaxWidth(lined)
+		.setInterlineSpacing(UNIT_PIXEL, interlineSpacing)
+		.setForeground(fg)
+		.build(*_formula);
 	return render;
 }

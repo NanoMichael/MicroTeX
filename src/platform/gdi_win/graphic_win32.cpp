@@ -1,7 +1,6 @@
 #ifdef _WIN32
 
-#include "port/port.h"
-#include "common.h"
+#include "platform/graphic_win32.h"
 
 #include <sstream>
 

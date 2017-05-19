@@ -3,7 +3,7 @@
 #include "core/core.h"
 #include "atom/box.h"
 #include "fonts/fonts.h"
-#include "port/port.h"
+#include "graphic/graphic.h"
 
 #include <sstream>
 
@@ -78,24 +78,27 @@ shared_ptr<Box> CumulativeScriptsAtom::createBox(_out_ TeXEnvironment& env) {
 }
 
 shared_ptr<Box> TextRenderingAtom::createBox(_out_ TeXEnvironment& env) {
-	if (_infos == nullptr)
+	if (_infos == nullptr) {
 		return shared_ptr<Box>(new TextRenderingBox(_str, _type, DefaultTeXFont::getSizeFactor(env.getStyle())));
+	}
 	DefaultTeXFont* tf = (DefaultTeXFont*)(env.getTeXFont().get());
 	int type = tf->_isIt ? ITALIC : PLAIN;
 	type = type | (tf->_isBold ? BOLD : 0);
 	bool kerning = tf->_isRoman;
-	Font font;
+	shared_ptr<Font> font;
 	const FontInfos& infos = *_infos;
 	if (tf->_isSs) {
-		if (infos._sansserif.empty())
-			font = Font(infos._serif, PLAIN, 10);
-		else
-			font = Font(infos._sansserif, PLAIN, 10);
+		if (infos._sansserif.empty()) {
+			font = Font::_create(infos._serif, PLAIN, 10);
+		} else {
+			font = Font::_create(infos._sansserif, PLAIN, 10);
+		}
 	} else {
-		if (infos._serif.empty())
-			font = Font(infos._sansserif, PLAIN, 10);
-		else
-			font = Font(infos._serif, PLAIN, 10);
+		if (infos._serif.empty()) {
+			font = Font::_create(infos._sansserif, PLAIN, 10);
+		} else {
+			font = Font::_create(infos._serif, PLAIN, 10);
+		}
 	}
 	return shared_ptr<Box>(new TextRenderingBox(_str, type, DefaultTeXFont::getSizeFactor(env.getStyle()), font, kerning));
 }

@@ -1,7 +1,7 @@
 #ifndef RENDER_H_INCLUDED
 #define RENDER_H_INCLUDED
 
-#include "port/port.h"
+#include "graphic/graphic.h"
 
 using namespace std;
 using namespace tex;
@@ -60,7 +60,7 @@ private:
 	bool _trueValues, _isMaxWidth;
 	color _fg;
 public:
-	// TODO declaration conflict with port/port.h
+	// TODO declaration conflict with graphic/graphic.h
 	enum TeXFontStyle {
 		SERIF = 0,
 		SANSSERIF = 1,

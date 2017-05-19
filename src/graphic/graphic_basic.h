@@ -1,5 +1,5 @@
-#ifndef PORT_BASIC_H_INCLUDED
-#define PORT_BASIC_H_INCLUDED
+#ifndef GRAPHIC_BASIC_H_INCLUDED
+#define GRAPHIC_BASIC_H_INCLUDED
 
 #include "common.h"
 #include <string>
