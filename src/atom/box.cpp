@@ -1,6 +1,6 @@
 #include "atom/box.h"
 #include "fonts/fonts.h"
-#include "port/port.h"
+#include "graphic/graphic.h"
 #include "core/core.h"
 #include "atom/atom_basic.h"
 #include "common.h"
@@ -759,27 +759,27 @@ int CharBox::getLastFontId() {
 	return _cf->_fontId;
 }
 
-Font* TextRenderingBox::_font = nullptr;
+shared_ptr<Font> TextRenderingBox::_font = nullptr;
 
 void TextRenderingBox::_init_() {
-	_font = new Font("Serif", PLAIN, 10);
+	_font = Font::_create("Serif", PLAIN, 10);
 }
 
 void TextRenderingBox::_free_() {
-	if (_font != nullptr)
-		delete _font;
+	// For memory check purpose
+	// to check if has memory leak
+	_font = nullptr;
 }
 
 void TextRenderingBox::setFont(const string& name) {
-	if (_font != nullptr)
-		delete _font;
-	_font = new Font(name, PLAIN, 10);
+	_font = Font::_create(name, PLAIN, 10);
 }
 
-void TextRenderingBox::init(const wstring& str, int type, float size, const Font& f, bool kerning) {
+void TextRenderingBox::init(const wstring& str, int type, float size, const shared_ptr<Font>& f, bool kerning) {
 	_size = size;
-	_layout = TextLayout(str, f.deriveFont(type));
-	Rect rect = _layout.getBounds();
+	_layout = TextLayout::create(str, f->deriveFont(type));
+	Rect rect;
+	_layout->getBounds(rect);
 	_height = -rect.y * size / 10;
 	_depth = rect.h * size / 10 - _height;
 	_width = (rect.w + rect.x + 0.4f) * size / 10;
@@ -789,7 +789,7 @@ void TextRenderingBox::draw(Graphics2D& g2, float x, float y) {
 	drawDebug(g2, x, y);
 	g2.translate(x, y);
 	g2.scale(0.1f * _size, 0.1f * _size);
-	_layout.draw(g2, 0, 0);
+	_layout->draw(g2, 0, 0);
 	g2.scale(10 / _size, 10 / _size);
 	g2.translate(-x, -y);
 }

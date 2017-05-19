@@ -446,21 +446,20 @@ public:
  */
 class TextRenderingBox : public Box {
 private:
-	static Font* _font;
-	// text layout
-	TextLayout _layout;
+	static shared_ptr<Font> _font;
+	shared_ptr<TextLayout> _layout;
 	float _size;
 
-	void init(const wstring& str, int type, float size, const Font& f, bool kerning);
+	void init(const wstring& str, int type, float size, const shared_ptr<Font>& f, bool kerning);
 public:
 	TextRenderingBox() = delete;
 
-	TextRenderingBox(const wstring& str, int type, float size, const Font& f, bool kerning) {
+	TextRenderingBox(const wstring& str, int type, float size, const shared_ptr<Font>& f, bool kerning) {
 		init(str, type, size, f, kerning);
 	}
 
 	TextRenderingBox(const wstring& str, int type, float size) {
-		init(str, type, size, *_font, true);
+		init(str, type, size, shared_ptr<Font>(_font), true);
 	}
 
 	void draw(Graphics2D& g2, float x, float y) override;

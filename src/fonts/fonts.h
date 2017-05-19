@@ -2,7 +2,7 @@
 #define FONTS_H_INCLUDED
 
 #include "core/formula.h"
-#include "port/port.h"
+#include "graphic/graphic.h"
 #include "xml/tinyxml2.h"
 #include "fonts/alphabet.h"
 #include "common.h"
@@ -20,7 +20,7 @@ using namespace tinyxml2;
 namespace tex {
 	class FontInfo;
 }
-ostream& operator<<(ostream& os, const tex::FontInfo& info);
+ostream& operator<<(ostream& os, const FontInfo& info);
 
 namespace tex {
 
@@ -994,19 +994,18 @@ private:
 	/*******************************************************************
 	 *                          child  parsers                         *
 	 *******************************************************************/
-	static void parse_extension(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(tex::ex_xml_parse);
-	static void parse_kern(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(tex::ex_xml_parse);
-	static void parse_lig(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(tex::ex_xml_parse);
-	static void parse_larger(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(tex::ex_xml_parse);
+	static void parse_extension(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(ex_xml_parse);
+	static void parse_kern(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(ex_xml_parse);
+	static void parse_lig(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(ex_xml_parse);
+	static void parse_larger(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(ex_xml_parse);
 
-	void parseStyleMappings(_out_ map<string, vector<CharFont*>>& styles) throw(tex::ex_res_parse);
+	void parseStyleMappings(_out_ map<string, vector<CharFont*>>& styles) throw(ex_res_parse);
 
-	static void processCharElement(const XMLElement* e, _out_ FontInfo& info) throw(tex::ex_res_parse);
+	static void processCharElement(const XMLElement* e, _out_ FontInfo& info) throw(ex_res_parse);
 
 	/*************************check values*******************************/
 
-	inline static bool exists(const char* attr, const XMLElement* e)
-	throw() {
+	inline static bool exists(const char* attr, const XMLElement* e) throw() {
 		const XMLAttribute* value = e->FindAttribute(attr);
 		return (value != nullptr);
 	}
@@ -1018,38 +1017,34 @@ private:
 		val.assign(value);
 	}
 
-	inline static string getAttrValueAndCheckIfNotNull(const char* attr, const XMLElement* e)
-	throw(tex::ex_xml_parse) {
+	inline static string getAttrValueAndCheckIfNotNull(const char* attr, const XMLElement* e) throw(ex_xml_parse) {
 		// find if attr is exists
 		const char* value = e->Attribute(attr);
 		if (value == nullptr || strlen(value) == 0)
-			throw tex::ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping");
+			throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping");
 		return value;
 	}
 
-	inline static float getFloatAndCheck(const char* attr, const XMLElement* e)
-	throw(tex::ex_xml_parse) {
+	inline static float getFloatAndCheck(const char* attr, const XMLElement* e) throw(ex_xml_parse) {
 		// get value
 		float v = 0;
 		int err = e->QueryFloatAttribute(attr, &v);
 		// no attribute mapped by attr
 		if (err != XML_NO_ERROR)
-			throw tex::ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
+			throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
 		return v;
 	}
 
-	inline static int getIntAndCheck(const char* attr, const XMLElement* e)
-	throw(tex::ex_xml_parse) {
+	inline static int getIntAndCheck(const char* attr, const XMLElement* e) throw(ex_xml_parse) {
 		// get value
 		int v = 0;
 		int err = e->QueryIntAttribute(attr, &v);
 		if (err != XML_NO_ERROR)
-			throw tex::ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
+			throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
 		return v;
 	}
 
-	inline static int getOptionalInt(const char* attr, const XMLElement* e, const int def)
-	throw(tex::ex_xml_parse) {
+	inline static int getOptionalInt(const char* attr, const XMLElement* e, const int def) throw(ex_xml_parse) {
 		// check exists
 		if (!exists(attr, e))
 			return def;
@@ -1057,12 +1052,11 @@ private:
 		int v = 0;
 		int err = e->QueryAttribute(attr, &v);
 		if (err != XML_NO_ERROR)
-			throw tex::ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
+			throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
 		return v;
 	}
 
-	inline static float getOptionalFloat(const char* attr, const XMLElement* e, const float def)
-	throw(tex::ex_xml_parse) {
+	inline static float getOptionalFloat(const char* attr, const XMLElement* e, const float def) throw(ex_xml_parse) {
 		// check exists
 		if (!exists(attr, e))
 			return def;
@@ -1070,14 +1064,14 @@ private:
 		float v = 0;
 		int err = e->QueryFloatAttribute(attr, &v);
 		if (err != XML_NO_ERROR)
-			throw tex::ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
+			throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
 		return v;
 	}
 
 	void init(const string& file) throw(ex_xml_parse) {
 		int err = _doc.LoadFile(file.c_str());
 		if (err != XML_NO_ERROR)
-			throw tex::ex_xml_parse(file + " not found");
+			throw ex_xml_parse(file + " not found");
 		_root = _doc.RootElement();
 #ifdef __DEBUG
 		__DBG("root name:%s\n", _root->Name());
@@ -1085,13 +1079,13 @@ private:
 	}
 
 public:
-	DefaultTeXFontParser() throw(tex::ex_res_parse) :
+	DefaultTeXFontParser() throw(ex_res_parse) :
 		_doc(true, COLLAPSE_WHITESPACE) {
 		string file = RES_BASE + "/" + RESOURCE_NAME;
 		init(file);
 	}
 
-	DefaultTeXFontParser(const string& file) throw(tex::ex_xml_parse) :
+	DefaultTeXFontParser(const string& file) throw(ex_xml_parse) :
 		_doc(true, COLLAPSE_WHITESPACE) {
 		init(file);
 	}
@@ -1101,23 +1095,24 @@ public:
 		init(file);
 	}
 
-	void parseExtraPath() throw(tex::ex_res_parse);
+	void parseExtraPath() throw(ex_res_parse);
 
-	void parseFontDescriptions(_out_ vector<FontInfo*>& fin, const string& file) throw(tex::ex_res_parse);
+	void parseFontDescriptions(_out_ vector<FontInfo*>& fin, const string& file) throw(ex_res_parse);
 
-	void parseFontDescriptions(_out_ vector<FontInfo*>& fin) throw(tex::ex_res_parse);
+	void parseFontDescriptions(_out_ vector<FontInfo*>& fin) throw(ex_res_parse);
 
-	void parseSymbolMappings(_out_ map<string, CharFont*>& res) throw(tex::ex_res_parse);
+	void parseSymbolMappings(_out_ map<string, CharFont*>& res) throw(ex_res_parse);
 
-	string* parseDefaultTextStyleMappins() throw(tex::ex_res_parse);
+	string* parseDefaultTextStyleMappins() throw(ex_res_parse);
 
-	void parseParameters(_out_ map<string, float>& res) throw(tex::ex_res_parse);
+	void parseParameters(_out_ map<string, float>& res) throw(ex_res_parse);
 
 	void parseGeneralSettings(_out_ map<string, float>& res) throw(ex_res_parse);
 
 	map<string, vector<CharFont*>> parseTextStyleMappings();
 
-	static Font createFont(const string& name);
+	// TODO useless function
+	// static Font createFont(const string& name);
 
 	~DefaultTeXFontParser() {
 #ifdef __DEBUG
