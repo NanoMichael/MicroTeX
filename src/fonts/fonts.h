@@ -17,10 +17,6 @@ using namespace std;
 using namespace tex;
 using namespace tinyxml2;
 
-namespace tex {
-	class FontInfo;
-}
-ostream& operator<<(ostream& os, const FontInfo& info);
 
 namespace tex {
 
@@ -84,6 +80,10 @@ public:
 
 	CharFont(wchar_t ch, int f, int bf) :
 		_c(ch), _fontId(f), _boldFontId(bf) {}
+
+#ifdef __DEBUG
+	friend ostream& operator<<(ostream& os, const CharFont& info);
+#endif
 };
 
 /**
@@ -456,7 +456,9 @@ public:
 
 	~FontInfo();
 
-	friend ostream& ::operator<<(ostream& os, const FontInfo& info);
+#ifdef __DEBUG
+	friend ostream& operator<<(ostream& os, const FontInfo& info);
+#endif
 };
 
 /**

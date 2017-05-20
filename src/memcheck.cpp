@@ -1,3 +1,7 @@
+#include "config.h"
+
+#ifdef __MEM_CHECK
+
 #include "memcheck.h"
 
 #include <cstdio>
@@ -5,7 +9,6 @@
 #include <cassert>
 #include <cstring>
 
-#ifdef MEM_CHECK
 #undef new
 
 using namespace std;
@@ -61,7 +64,7 @@ struct Sentinel {
 			for (size_t i = 0; i < nptrs; ++i) {
 				int space = OUT_FILE_LEN / 2 + strlen(memMap[i].file) / 2;
 				int rest = OUT_FILE_LEN - space;
-				__mem_log("\t| %p | %6d  |%*s%*s| %-4ld | \n", memMap[i].ptr, memMap[i].sz, space, memMap[i].file, rest, " ", memMap[i].line);
+				__mem_log("\t| %p | %6zu  |%*s%*s| %-4ld | \n", memMap[i].ptr, memMap[i].sz, space, memMap[i].file, rest, " ", memMap[i].line);
 				__mem_log("\t----------------------------------------------------------------------\n");
 			}
 		} else
@@ -84,7 +87,7 @@ void print_mem(const char* file, long line) {
 	__mem_log("\t---------------------------------------------------------------------\n");
 	int space = OUT_FILE_LEN / 2 + strlen(file) / 2;
 	int rest = OUT_FILE_LEN - space;
-	__mem_log("\t|%8u |%8u |%*s%*s| %-4ld |\n", nptrs, sz, space, file, rest, " ", line);
+	__mem_log("\t|%8zu |%8zu |%*s%*s| %-4ld |\n", nptrs, sz, space, file, rest, " ", line);
 	__mem_log("\t---------------------------------------------------------------------\n");
 }
 
@@ -103,7 +106,7 @@ void* operator new(size_t siz, const char* file, long line) {
 		++nptrs;
 	}
 	if (traceFlag) {
-		__mem_log("Allocated %u bytes at address %p ", siz, p);
+		__mem_log("Allocated %zu bytes at address %p ", siz, p);
 		__mem_log("(file: %s, line: %ld)\n", file, line);
 	}
 	return p;
@@ -131,4 +134,4 @@ void operator delete[](void* p) {
 	operator delete(p);
 }
 
-#endif
+#endif // __MEM_CHECK

@@ -277,7 +277,7 @@ void SymbolAtom::_init_() {
 }
 
 #ifdef __DEBUG
-ostream& operator<<(ostream& os, const SymbolAtom& s) {
+ostream& tex::operator<<(ostream& os, const SymbolAtom& s) {
 	os << "SymbolAtom { " << "name:" << s._name << ", delimiter:" << s._delimiter << " }";
 	return os;
 }

@@ -1,19 +1,17 @@
-#define MEM_CHECK
-
-/**
- * !IMPORTANT undefine MEM_CHECK before release
- */
-#undef MEM_CHECK
-
-#ifndef MEM_CHECK
-#define DUMP_MEM_STATUS() ;
-#define MEMCHECK_H_INCLUDED
-#endif // MEM_CHECK
-
 #ifndef MEMCHECK_H_INCLUDED
 #define MEMCHECK_H_INCLUDED
 
-#include <cstddef>  // for size_t
+#include "config.h"
+
+#ifndef __MEM_CHECK
+#define DUMP_MEM_STATUS() ;
+#define MEM_ON() ;
+#define MEM_OFF() ;
+#define TRACE_ON() ;
+#define TRACE_OFF() ;
+#else
+
+#include <cstddef>
 
 // Hijack the new operator (both scalar and array versions)
 void* operator new(std::size_t, const char*, long);
@@ -31,4 +29,5 @@ extern bool activeFlag;
 void print_mem(const char*, long);
 #define DUMP_MEM_STATUS() print_mem(__FILE__, __LINE__)
 
+#endif // __MEM_CHECK
 #endif // MEMCHECK_H_INCLUDED

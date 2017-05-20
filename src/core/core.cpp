@@ -370,7 +370,7 @@ int*** GlueSettingParser::createGlueTable() throw(ex_res_parse) {
 /************************************* Glue implementation ****************************/
 
 #ifdef __DEBUG
-ostream& operator<<(ostream& out, const Glue& glue) {
+ostream& tex::operator<<(ostream& out, const Glue& glue) {
 	out << "glue: { space: " << glue._space << ", stretch: " << glue._stretch << ", shrink: ";
 	out << glue._shrink << ", name: " << glue._name << " }";
 	return out;

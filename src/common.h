@@ -1,6 +1,8 @@
 #ifndef COMMON_H_INCLUDED
 #define COMMON_H_INCLUDED
 
+#include "config.h"
+
 #ifdef __GNUC__
 #include <cxxabi.h>
 #endif // __GNUC__
@@ -18,27 +20,10 @@
 #include <climits>
 #include <cstdio>
 #include <cstdlib>
-#include <iostream>
 #include <cmath>
 #include <cerrno>
 
 using namespace std;
-
-// for debug
-#define __DEBUG
-
-/**
- * !IMPORTANT undefine __DEBUG before release
- */
-#undef __DEBUG
-
-// flag for graphics debug
-#define __GA_DEBUG
-
-/**
- * !IMPORTANT undefine __GA_DEBUG before release
- */
-#undef __GA_DEBUG
 
 #define __DBG(format, ...) \
 {\
@@ -56,8 +41,6 @@ using namespace std;
 #define _out_
 // in parameter
 #define _in_
-
-using namespace std;
 
 /**
  * The root directory of the resources included (defined in latex.cpp)
@@ -169,13 +152,16 @@ inline wstring& tolower(_out_ wstring& src) {
 }
 
 /**
- * ignore left whitespace in a string
+ * ignore left side whitespace in a string
  */
 inline string& ltrim(string& s) {
 	s.erase(s.begin(), find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace))));
 	return s;
 }
 
+/**
+ * ignore right side whitespace in a string
+ */
 inline string& rtrim(string& s) {
 	s.erase(find_if(s.rbegin(), s.rend(), not1(ptr_fun<int, int>(isspace))).base(), s.end());
 	return s;
@@ -185,6 +171,9 @@ inline string& trim(string& s) {
 	return ltrim(rtrim(s));
 }
 
+/**
+ * split string with specified delimeter
+ */
 inline void split(const string& str, char del, _out_ vector<string>& res) {
 	stringstream ss(str);
 	string tok;
@@ -282,7 +271,7 @@ public:
 };
 
 /**
- * convert UTF encoded wide string to UTF-8 encoded string
+ * convert unicode wide string to UTF-8 encoded string
  */
 inline string& wide2utf8(const wchar_t* in, _out_ string& out) {
 	unsigned int codepoint = 0;
@@ -322,7 +311,7 @@ inline string wide2utf8(const wchar_t* in) {
 }
 
 /**
- * convert an UTF-8 encoded char sequence to wide string,
+ * convert an UTF-8 encoded char sequence to wide unicode string,
  * the encoding of input char sequence must be known as UTF-8
  */
 inline wstring& utf82wide(const char* in, _out_ wstring& out) {
