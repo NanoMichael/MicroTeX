@@ -1,4 +1,4 @@
-#ifdef linux
+#ifdef __linux__
 
 #ifndef GRAPHIC_GTKMM_H_INCLUDED
 #define GRAPHIC_GTKMM_H_INCLUDED

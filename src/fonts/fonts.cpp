@@ -124,9 +124,9 @@ const int DefaultTeXFont::BOT = 3;
 
 bool DefaultTeXFont::_magnificationEnable = true;
 
-/******************************************** for debug **********************************************/
 
-ostream& operator<<(ostream& os, const FontInfo& info) {
+#ifdef __DEBUG
+ostream& tex::operator<<(ostream& os, const FontInfo& info) {
 	// base information
 	os << "font id: " << info._fontId;
 	os << ", path: " << info._path << endl;
@@ -137,17 +137,19 @@ ostream& operator<<(ostream& os, const FontInfo& info) {
 	os << "\ttt id: " << info._ttId << ", it id: " << info._itId << endl;
 
 	os << "ligatures:" << endl;
-	for (auto x : info._lig)
+	for (auto x : info._lig) {
 		os << "\t[" << x.first._left << ", " << x.first._right << "] = " << x.second << endl;
+	}
 
 	return os;
 }
 
-ostream& operator<<(ostream& os, const CharFont& font) {
+ostream& tex::operator<<(ostream& os, const CharFont& font) {
 	os << "character: " << font._c << ", font id: " << font._fontId << ", bold id: "
 	   << font._boldFontId;
 	return os;
 }
+#endif
 
 /*******************************************************************************************************
  *                              DefaultTeXFontParser implementation                                    *
@@ -344,9 +346,11 @@ void DefaultTeXFontParser::parseFontDescriptions(_out_ vector<FontInfo*>& fi) th
 	const XMLElement* des = _root->FirstChildElement("FontDescriptions");
 	if (des == nullptr)
 		return;
+
 #ifdef __DEBUG
 	__DBG("FontDescriptions, tag name:%s <should be FontDescriptions>\n", des->Name());
 #endif // __DEBUG
+
 	const XMLElement* met = des->FirstChildElement("Metrics");
 	while (met != nullptr) {
 		const string include = getAttrValueAndCheckIfNotNull("include", met);
@@ -357,9 +361,11 @@ void DefaultTeXFontParser::parseFontDescriptions(_out_ vector<FontInfo*>& fi) th
 			path = _base + "/" + include;
 		}
 		parseFontDescriptions(fi, path);
+
 #ifdef __DEBUG
 		__DBG("Metrics file path, path:%s\n", path.c_str());
 #endif // __DEBUG
+
 		met = met->NextSiblingElement("Metrics");
 	}
 	parseStyleMappings(_parsedTextStyles);
@@ -395,16 +401,19 @@ void DefaultTeXFontParser::parseFontDescriptions(_out_ vector<FontInfo*>& fi, co
 		throw ex_xml_parse("Cannot find file " + file + "!");
 	// get root
 	const XMLElement* font = doc.RootElement();
+
 #ifdef __DEBUG
 	__DBG("Font root element, tag name:%s <should be Font>\n", font->Name());
 #endif
+
 	// get required string attribute
 	const string fontName = getAttrValueAndCheckIfNotNull("name", font);
 	const string fontId = getAttrValueAndCheckIfNotNull("id", font);
-	if (tex::indexOf(_fontId, fontId) < 0)
+	if (tex::indexOf(_fontId, fontId) < 0) {
 		_fontId.push_back(fontId);
-	else
+	} else {
 		throw tex::ex_font_loaded("Font " + fontId + " is already loaded!");
+	}
 	// get required real attributes
 	const float space = getFloatAndCheck("space", font);
 	const float xHeight = getFloatAndCheck("xHeight", font);
@@ -451,9 +460,11 @@ void DefaultTeXFontParser::parseFontDescriptions(_out_ vector<FontInfo*>& fi, co
 		info->setSkewChar((wchar_t) skewChar);
 	// process all "Char"-elements
 	const XMLElement* e = font->FirstChildElement("Char");
+
 #ifdef __DEBUG
 	__DBG("parse Char, tag name: %s <should be Char>\n", e->Name());
 #endif // __DEBUG
+
 	while (e != nullptr) {
 		processCharElement(e, *info);
 		e = e->NextSiblingElement("Char");
@@ -475,9 +486,11 @@ void DefaultTeXFontParser::parseSymbolMappings(_out_ map<string, CharFont*>& res
 	const XMLElement* mapping = _root->FirstChildElement("SymbolMappings");
 	if (mapping == nullptr)
 		throw ex_xml_parse(RESOURCE_NAME, "SymbolMappings");
+
 #ifdef __DEBUG
 	__DBG("parse SymbolMappings, tag name:%s <should be SymbolMappings>\n", mapping->Name());
 #endif // __DEBUG
+
 	// iterate all mappings
 	mapping = mapping->FirstChildElement("Mapping");
 	XMLDocument doc(true, COLLAPSE_WHITESPACE);
@@ -489,16 +502,20 @@ void DefaultTeXFontParser::parseSymbolMappings(_out_ map<string, CharFont*>& res
 		} else {
 			path = _base + "/" + include;
 		}
+
 #ifdef __DEBUG
 		__DBG("symbol map path: %s \n", path.c_str());
 #endif
+
 		int err = doc.LoadFile(path.c_str());
 		if (err != XML_NO_ERROR)
 			throw ex_xml_parse("cannot find the file '" + path + "'!");
 		const XMLElement* symbol = doc.RootElement()->FirstChildElement("SymbolMapping");
+
 #ifdef __DEBUG
 		__DBG("parse symbol, tag name:%s <should be SymbolMapping>\n", symbol->Name());
 #endif // __DEBUG
+
 		while (symbol != nullptr) {
 			/**
 			 * @code
@@ -537,9 +554,11 @@ string* DefaultTeXFontParser::parseDefaultTextStyleMappins() throw(tex::ex_res_p
 	const XMLElement* mappings = _root->FirstChildElement("DefaultTextStyleMapping");
 	if (mappings == nullptr)
 		return res;
+
 #ifdef __DEBUG
 	__DBG("tag name:%s <should be DefaultTextStyleMapping>\n", mappings->Name());
 #endif
+
 	// iterate all mappings
 	const XMLElement* mapping = mappings->FirstChildElement("MapStyle");
 	while (mapping != nullptr) {
@@ -663,8 +682,9 @@ void DefaultTeXFont::addAlphabet(AlphabetRegistration* reg) {
 
 void DefaultTeXFont::registerAlphabet(AlphabetRegistration* reg) {
 	const vector<UnicodeBlock>& blocks = reg->getUnicodeBlock();
-	for (size_t i = 0; i < blocks.size(); i++)
+	for (size_t i = 0; i < blocks.size(); i++) {
 		_registeredAlphabets[blocks[i]] = reg;
+	}
 }
 
 inline shared_ptr<TeXFont> DefaultTeXFont::copy() {
@@ -717,13 +737,17 @@ Char DefaultTeXFont::getChar(const CharFont& c, int style) {
 	CharFont cf = c;
 	float fsize = getSizeFactor(style);
 	int id = _isBold ? cf._boldFontId : cf._fontId;
+
 #ifdef __DEBUG
 	__DBG("\n{[wchar_t: %d] [font_id: %d]\n", cf._c, id);
 #endif // __DEBUG
+
 	FontInfo* info = _fontInfo[id];
+
 #ifdef __DEBUG
 	__log << " [path: " << info->getPath() << "]}\n";
 #endif // __DEBUG
+
 	if (_isBold && cf._fontId == cf._boldFontId) {
 		id = info->getBoldId();
 		info = _fontInfo[id];
@@ -924,10 +948,13 @@ void DefaultTeXFont::_free_() {
 				delete i;
 		}
 	}
-	for (auto f : _symbolMappings)
+	for (auto f : _symbolMappings){
 		delete f.second;
-	for (auto f : _fontInfo)
+	}
+	for (auto f : _fontInfo){
 		delete f;
-	for (auto i : _registeredAlphabets)
+	}
+	for (auto i : _registeredAlphabets) {
 		delete i.second;
+	}
 }

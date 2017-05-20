@@ -13,17 +13,10 @@
 using namespace std;
 using namespace tex;
 
-// forward declare
 namespace tex {
 
 class CharFont;
 class TeXFont;
-
-#ifdef __DEBUG
-class SymbolAtom;
-ostream& operator<<(ostream& os, const SymbolAtom& s);
-#endif // __DEBUG
-
 class FontInfos;
 class TeXFormula;
 class Dummy;
@@ -462,7 +455,7 @@ public:
 	static void _init_();
 
 #ifdef __DEBUG
-	friend ostream& ::operator<<(ostream& os, const SymbolAtom& s);
+	friend ostream& operator<<(ostream& os, const SymbolAtom& s);
 #endif // __DEBUG
 };
 

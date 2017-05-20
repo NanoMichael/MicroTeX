@@ -8,14 +8,10 @@
 #include <cstring>
 
 using namespace std;
-using namespace tinyxml2;
 using namespace tex;
+using namespace tinyxml2;
 
 namespace tex {
-#ifdef __DEBUG
-class Glue;
-ostream& operator<<(ostream& out, const tex::Glue& glue);
-#endif // __DEBUG
 
 // forward declare
 class Box;
@@ -272,7 +268,7 @@ public:
 	static void _free_();
 
 #ifdef __DEBUG
-	friend ostream& ::operator<<(ostream& out, const Glue& glue);
+	friend ostream& operator<<(ostream& out, const Glue& glue);
 #endif // __DEBUG
 };
 
