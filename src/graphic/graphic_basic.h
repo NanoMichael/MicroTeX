@@ -32,12 +32,36 @@ static const color YELLOW  = yellow;
 static const color CYAN    = cyan;
 static const color MAGENTA = magenta;
 
+inline color argb(int a, int r, int g, int b) {
+	return (a << 24) | (r << 16) | (g << 8) | b;
+}
+
 inline color rgb(int r, int g, int b) {
-	return (0xff << 24) | (r << 16) | (g << 8) | b;
+	return argb(0xff, r, g, b);
+}
+
+inline color argb(float a, float r, float g, float b) {
+	return argb((int)(a * 255), (int)(r * 255), (int)(g * 255), (int)(b * 255));
 }
 
 inline color rgb(float r, float g, float b) {
-	return rgb((int)(r * 255), (int)(g * 255), (int)(b * 255));
+	return argb(1.f, r, g, b);
+}
+
+inline int color_a(color c) {
+	return c >> 24;
+}
+
+inline int color_r(color c) {
+	return c >> 16 & 0x00ff;
+}
+
+inline int color_g(color c) {
+	return c >> 8 & 0x0000ff;
+}
+
+inline int color_b(color c) {
+	return c & 0x000000ff;
 }
 
 inline bool istrans(color c) {

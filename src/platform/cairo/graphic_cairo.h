@@ -1,13 +1,15 @@
 #ifdef __linux__
 
-#ifndef GRAPHIC_GTKMM_H_INCLUDED
-#define GRAPHIC_GTKMM_H_INCLUDED
+#ifndef GRAPHIC_CAIRO_H_INCLUDED
+#define GRAPHIC_CAIRO_H_INCLUDED
 
-#include <cariomm/context.h>
+#include <cairomm/context.h>
+
+#include "graphic/graphic.h"
 
 namespace tex {
 
-class Font_cario : public Font {
+class Font_cairo : public Font {
 public:
 	virtual float getSize() const override;
 
@@ -16,20 +18,23 @@ public:
 	virtual bool operator==(const Font& f) const override;
 
 	virtual bool operator!=(const Font& f) const override;
-}
+};
 
-class TextLayout_cario : public TextLayout {
+class TextLayout_cairo : public TextLayout {
 public:
 	virtual void getBounds(_out_ Rect& r) override;
 
 	virtual void draw(Graphics2D& g2, float x, float y) override;
-}
+};
 
-class Graphics2D_cario : public Graphics2D {
+class Graphics2D_cairo : public Graphics2D {
 private:
 	Cairo::RefPtr<Cairo::Context> _context;
+	color _color;
+	Stroke _stroke;
+	const Font* _font;
 public:
-	Graphics2D_cario(Cairo::RefPtr<Cairo::Context> context);
+	Graphics2D_cairo(Cairo::RefPtr<Cairo::Context>& context);
 
 	virtual void setColor(color c) override;
 
@@ -69,7 +74,7 @@ public:
 
 	virtual float py() const override;
 
-	virtual void drawChar(wchat_t c, float x, float y) override;
+	virtual void drawChar(wchar_t c, float x, float y) override;
 
 	virtual void drawText(const wstring& c, float x, float y) override;
 
@@ -82,10 +87,9 @@ public:
 	virtual void drawRoundRect(float x, float y, float w, float h, float rx, float ry) override;
 
 	virtual void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
-}
+};
 
 }
 
 #endif // GRAPHIC_GTKMM_H_INCLUDED
-
 #endif // linux
