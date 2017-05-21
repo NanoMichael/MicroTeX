@@ -12,7 +12,6 @@ using namespace std;
 
 namespace tex {
 
-// forward declare
 class TeXParser;
 
 class Macro {

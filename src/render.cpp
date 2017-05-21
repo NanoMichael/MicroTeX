@@ -84,10 +84,11 @@ void TeXRender::setHeight(int h, int align) {
 void TeXRender::draw(_out_ Graphics2D& g2, int x, int y) {
 	color old = g2.getColor();
 	g2.scale(_size, _size);
-	if (!istrans(_fg))
+	if (!istrans(_fg)) {
 		g2.setColor(_fg);
-	else
+	} else {
 		g2.setColor(_defaultcolor);
+	}
 
 	// draw formula box
 	_box->draw(g2, (x + _insets.left) / _size, (y + _insets.top) / _size + _box->_height);
