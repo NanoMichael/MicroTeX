@@ -28,7 +28,8 @@ public:
 	 * Derive font from current font with specified style
 	 *
 	 * @param style
-	 * 		Required style
+	 * 		Required style, specified in enum TypefaceStyle,
+	 * 		we use int type to represents style
 	 */
 	virtual shared_ptr<Font> deriveFont(int style) const = 0;
 
@@ -228,7 +229,7 @@ public:
 	virtual float ty() const = 0;
 
 	/**
-	 * @return the degree (in angle) amount rotated of current graphics context
+	 * @return the degree (in radian) amount rotated of current graphics context
 	 */
 	virtual float r() const = 0;
 

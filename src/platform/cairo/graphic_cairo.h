@@ -4,13 +4,32 @@
 #define GRAPHIC_CAIRO_H_INCLUDED
 
 #include <cairomm/context.h>
+#include <pangomm/fontdescription.h>
 
 #include "graphic/graphic.h"
+
+using namespace std;
 
 namespace tex {
 
 class Font_cairo : public Font {
+private:
+	Pango::Style _slant;
+	Pango::Weight _weight;
+	double _size;
+	string _family;
+
+	void convertStyle(int style);
+
+	void loadFont(const string& file);
+
+	Font_cairo();
+
 public:
+	Font_cairo(const string& name, int style, float size);
+
+	Font_cairo(const string& file, float size);
+
 	virtual float getSize() const override;
 
 	virtual shared_ptr<Font> deriveFont(int style) const override;
@@ -27,14 +46,20 @@ public:
 	virtual void draw(Graphics2D& g2, float x, float y) override;
 };
 
+enum AffineTransformIndex {SX, SY, TX, TY, R, PX, PY};
+
 class Graphics2D_cairo : public Graphics2D {
+
 private:
 	Cairo::RefPtr<Cairo::Context> _context;
 	color _color;
 	Stroke _stroke;
 	const Font* _font;
+	float _t[7];
+
+	void roundRect(float x, float y, float w, float h, float rx, float ry);
 public:
-	Graphics2D_cairo(Cairo::RefPtr<Cairo::Context>& context);
+	Graphics2D_cairo(const Cairo::RefPtr<Cairo::Context>& context);
 
 	virtual void setColor(color c) override;
 
