@@ -55,8 +55,8 @@ public:
 
 class TeXRenderBuilder {
 private:
-	int _style, _type, _widthUnit, _align, _interlineUnit;
-	float _size, _textWidth, _interlineSpacing;
+	int _style, _type, _widthUnit, _align, _lineSpaceUnit;
+	float _size, _textWidth, _lineSpace;
 	bool _trueValues, _isMaxWidth;
 	color _fg;
 public:
@@ -71,8 +71,8 @@ public:
 	};
 
 	TeXRenderBuilder() :
-		_style(-1), _type(-1), _widthUnit(-1), _align(-1), _interlineUnit(-1),
-		_size(0), _textWidth(0), _interlineSpacing(0),
+		_style(-1), _type(-1), _widthUnit(-1), _align(-1), _lineSpaceUnit(-1),
+		_size(0), _textWidth(0), _lineSpace(0),
 		_trueValues(false), _isMaxWidth(false), _fg(black) {
 	}
 
@@ -115,22 +115,25 @@ public:
 		if (i) {
 			// Currently isMaxWidth==true does not work with
 			// ALIGN_CENTER or ALIGN_RIGHT (see HorizontalBox ctor)
+			//
 			// The case (1) we don't support by setting align := ALIGN_LEFT
 			// here is this:
-			// \text{hello world\\hello} with align=ALIGN_CENTER (but forced
-			// to ALIGN_LEFT) and isMaxWidth==true results in:
-			// [hello world]
-			// [hello ]
+			// 		\text{hello world\\hello} with align=ALIGN_CENTER (but forced
+			// 		to ALIGN_LEFT) and isMaxWidth==true results in:
+			// 		[hello world]
+			// 		[hello ]
 			// and NOT:
-			// [hello world]
-			// [ hello ]
+			// 		[hello world]
+			// 		[ hello ]
+			//
 			// However, this case (2) is currently not supported anyway
 			// (ALIGN_CENTER with isMaxWidth==false):
-			// [ hello world ]
-			// [ hello ]
+			// 		[ hello world ]
+			// 		[ hello ]
 			// and NOT:
-			// [ hello world ]
-			// [ hello ]
+			// 		[ hello world ]
+			// 		[ hello ]
+			//
 			// => until (2) is solved, we stick with the hack to set align
 			// := ALIGN_LEFT!
 			_align = ALIGN_LEFT;
@@ -139,11 +142,11 @@ public:
 		return *this;
 	}
 
-	inline TeXRenderBuilder& setInterlineSpacing(int iu, float spacing) {
+	inline TeXRenderBuilder& setLineSpace(int unit, float space) {
 		if (_widthUnit == -1)
-			throw ex_invalid_state("cannot set inter-line spacing without having specified a width!");
-		_interlineSpacing = spacing;
-		_interlineUnit = iu;
+			throw ex_invalid_state("cannot set line space without having specified a width!");
+		_lineSpace = space;
+		_lineSpaceUnit = unit;
 		return *this;
 	}
 

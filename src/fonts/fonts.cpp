@@ -954,7 +954,14 @@ void DefaultTeXFont::_free_() {
 	for (auto f : _fontInfo){
 		delete f;
 	}
+	// _registeredAlphabets :=> map<UnicodeBlock, AlphabetRegistration>
+	// multi => one
+	vector<AlphabetRegistration*> cleaned;
 	for (auto i : _registeredAlphabets) {
-		delete i.second;
+		if (i.second != nullptr && indexOf(cleaned, i.second) < 0) {
+			delete i.second;
+			cleaned.push_back(i.second);
+		}
+		i.second = nullptr;
 	}
 }

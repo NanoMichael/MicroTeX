@@ -3,10 +3,11 @@
 #ifndef GRAPHIC_CAIRO_H_INCLUDED
 #define GRAPHIC_CAIRO_H_INCLUDED
 
+#include "graphic/graphic.h"
+
 #include <cairomm/context.h>
 #include <pangomm/fontdescription.h>
-
-#include "graphic/graphic.h"
+#include <pangomm/layout.h>
 
 using namespace std;
 
@@ -14,6 +15,8 @@ namespace tex {
 
 class Font_cairo : public Font {
 private:
+	static map<string, string> _file_name_map;
+
 	Pango::Style _slant;
 	Pango::Weight _weight;
 	double _size;
@@ -30,6 +33,12 @@ public:
 
 	Font_cairo(const string& file, float size);
 
+	string getFamily() const;
+
+	Pango::Style getSlant() const;
+
+	Pango::Weight getWeight() const;
+
 	virtual float getSize() const override;
 
 	virtual shared_ptr<Font> deriveFont(int style) const override;
@@ -40,7 +49,14 @@ public:
 };
 
 class TextLayout_cairo : public TextLayout {
+
+private:
+	static Cairo::RefPtr<Cairo::Context> _img_context;
+	Glib::RefPtr<Pango::Layout> _layout;
+
 public:
+	TextLayout_cairo(const wstring& src, const shared_ptr<Font_cairo>& font);
+
 	virtual void getBounds(_out_ Rect& r) override;
 
 	virtual void draw(Graphics2D& g2, float x, float y) override;
@@ -51,15 +67,20 @@ enum AffineTransformIndex {SX, SY, TX, TY, R, PX, PY};
 class Graphics2D_cairo : public Graphics2D {
 
 private:
+	static Font_cairo _default_font;
+
 	Cairo::RefPtr<Cairo::Context> _context;
+	Glib::RefPtr<Pango::Layout> _layout;
 	color _color;
 	Stroke _stroke;
-	const Font* _font;
+	const Font_cairo* _font;
 	float _t[7];
 
 	void roundRect(float x, float y, float w, float h, float rx, float ry);
 public:
 	Graphics2D_cairo(const Cairo::RefPtr<Cairo::Context>& context);
+
+	const Cairo::RefPtr<Cairo::Context>& getCairoContext() const;
 
 	virtual void setColor(color c) override;
 
@@ -101,7 +122,7 @@ public:
 
 	virtual void drawChar(wchar_t c, float x, float y) override;
 
-	virtual void drawText(const wstring& c, float x, float y) override;
+	virtual void drawText(const wstring& t, float x, float y) override;
 
 	virtual void drawLine(float x, float y1, float x2, float y2) override;
 
