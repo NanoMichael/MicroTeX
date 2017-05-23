@@ -16,6 +16,14 @@ else()
 endif()
 
 
+#debug
+
+if(CMAKE_COMPILER_IS_GNUCC)
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
+	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
+endif()
+
+
 # include gtkmm module
 
 find_package(PkgConfig)
@@ -26,4 +34,4 @@ include_directories(${GTKMM_INCLUDE_DIRS} "src")
 file(GLOB_RECURSE SRC "src/*.cpp")
 
 add_executable(LaTeX ${SRC})
-target_link_libraries(LaTeX ${GTKMM_LIBRARIES})
+target_link_libraries(LaTeX ${GTKMM_LIBRARIES} fontconfig)

@@ -283,6 +283,11 @@ ostream& tex::operator<<(ostream& os, const SymbolAtom& s) {
 }
 #endif // __DEBUG
 
+void SymbolAtom::_free_() {
+	// For check memory
+	_symbols.~map();
+}
+
 SymbolAtom::SymbolAtom(const string& name, int type, bool del) : _unicode(0) {
 	_name = name;
 	_type = type;

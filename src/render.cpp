@@ -13,12 +13,14 @@ float TeXRender::_magFactor = 0;
 
 TeXRender::TeXRender(const shared_ptr<Box> b, float s, bool trueValues) {
 	_box = b;
-	if (_defaultSize != -1)
+	if (_defaultSize != -1) {
 		_size = _defaultSize;
-	if (_magFactor != 0)
+	}
+	if (_magFactor != 0) {
 		_size = s * abs(_magFactor);
-	else
+	} else {
 		_size = s;
+	}
 	if (!trueValues) {
 		_insets.top += (int) (0.18f * s);
 		_insets.bottom += (int) (0.18f * s);
@@ -121,29 +123,35 @@ TeXRender* TeXRenderBuilder::build(TeXFormula& f) {
 
 TeXRender* TeXRenderBuilder::build(const shared_ptr<Atom>& fc) {
 	shared_ptr<Atom> f = fc;
-	if (f == nullptr)
+	if (f == nullptr) {
 		f = shared_ptr<Atom>(new EmptyAtom());
-	if (_style == -1)
-		throw ex_invalid_state("a style is required, use function setStyle");
-	if (_size == -1)
-		throw ex_invalid_state("a size is required, use function setSize");
+	}
+	if (_style == -1) {
+		throw ex_invalid_state("a style is required, call function setStyle before build");
+	}
+	if (_size == -1) {
+		throw ex_invalid_state("a size is required, call function setSize before build");
+	}
+
 	DefaultTeXFont* font = (_type == -1) ? new DefaultTeXFont(_size) : createFont(_size, _type);
 	shared_ptr<TeXFont> tf(font);
 	TeXEnvironment* te = nullptr;
-	if (_widthUnit != -1 && _textWidth != 0)
+	if (_widthUnit != -1 && _textWidth != 0) {
 		te = new TeXEnvironment(_style, tf, _widthUnit, _textWidth);
-	else
+	} else {
 		te = new TeXEnvironment(_style, tf);
+	}
 
-	if (_interlineUnit != -1)
-		te->setInterline(_interlineUnit, _interlineSpacing);
+	if (_lineSpaceUnit != -1) {
+		te->setInterline(_lineSpaceUnit, _lineSpace);
+	}
 
 	auto box = f->createBox(*te);
 	TeXRender* ti = nullptr;
 	if (_widthUnit != -1 && _textWidth != 0) {
 		HorizontalBox* hb = nullptr;
-		if (_interlineUnit != -1 && _interlineSpacing != 0) {
-			float il = _interlineSpacing * SpaceAtom::getFactor(_interlineUnit, *te);
+		if (_lineSpaceUnit != -1 && _lineSpace != 0) {
+			float il = _lineSpace * SpaceAtom::getFactor(_lineSpaceUnit, *te);
 			auto b = FormulaBreaker::split(box, te->getTextWidth(), il);
 			hb = new HorizontalBox(b, _isMaxWidth ? b->_width : te->getTextWidth(), _align);
 		} else {
@@ -153,8 +161,9 @@ TeXRender* TeXRenderBuilder::build(const shared_ptr<Atom>& fc) {
 	} else {
 		ti = new TeXRender(box, _size, _trueValues);
 	}
-	if (!istrans(_fg))
+	if (!istrans(_fg)) {
 		ti->setForeground(_fg);
+	}
 	ti->_iscolored = te->_isColored;
 
 	delete te;

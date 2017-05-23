@@ -34,10 +34,10 @@ public:
 	static void init();
 
 	/**
-	 * Parse LaTeX formatted string to TeXRender
+	 * Parse TeX formatted string to TeXRender
 	 *
-	 * @param latex
-	 * 		LaTeX formatted string
+	 * @param tex
+	 * 		TeX formatted string
 	 * @param width
 	 * 		Context width
 	 * @param textSize
@@ -47,7 +47,7 @@ public:
 	 * @param fg
 	 * 		Foreground color
 	 */
-	static TeXRender* parse(const wstring& latex, int width, float textSize, float lineSpace, color fg);
+	static TeXRender* parse(const wstring& tex, int width, float textSize, float lineSpace, color fg);
 
 	/**
 	 * Release the LaTeX context

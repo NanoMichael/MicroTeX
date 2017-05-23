@@ -275,7 +275,7 @@ public:
  */
 inline string& wide2utf8(const wchar_t* in, _out_ string& out) {
 	unsigned int codepoint = 0;
-	for (; *in != 0;  ++in) {
+	for (; *in != 0; ++in) {
 		if (*in >= 0xd800 && *in <= 0xdbff)
 			codepoint = ((*in - 0xd800) << 10) + 0x10000;
 		else {

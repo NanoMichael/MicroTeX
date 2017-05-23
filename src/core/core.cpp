@@ -482,8 +482,9 @@ void TeXSymbolParser::readSymbols(_out_ map<string, shared_ptr<SymbolAtom>>& res
 		e->QueryBoolAttribute("del", &isDelimiter);
 		// check if type is valid
 		auto it = _typeMappings.find(type);
-		if (it == _typeMappings.end())
+		if (it == _typeMappings.end()) {
 			throw ex_xml_parse(RESOURCE_NAME, "Symbol", "type", "has an unknown value '" + type + "'!");
+		}
 		res[name] = shared_ptr<SymbolAtom>(new SymbolAtom(name, it->second, isDelimiter));
 		e = e->NextSiblingElement("Symbol");
 	}

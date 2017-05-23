@@ -36,59 +36,64 @@ size_t nptrs = 0;
 
 // Searches the map for an address
 int findPtr(void* p) {
-	for (size_t i = 0; i < nptrs; ++i)
-		if (memMap[i].ptr == p)
+	for (size_t i = 0; i < nptrs; ++i) {
+		if (memMap[i].ptr == p) {
 			return i;
+		}
+	}
 	return -1;
 }
 
 void delPtr(void* p) {
 	int pos = findPtr(p);
-	assert(p >= 0);
+	assert(pos >= 0);
 	// Remove pointer from map
-	for (size_t i = pos; i < nptrs-1; ++i)
+	for (size_t i = pos; i < nptrs-1; ++i) {
 		memMap[i] = memMap[i+1];
+	}
 	--nptrs;
 }
 
-const int OUT_FILE_LEN = 40;
+const int OUT_FILE_LEN = 50;
 
 // Dummy type for static destructor
 struct Sentinel {
 	~Sentinel() {
 		if (nptrs > 0) {
 			__mem_log("Leaked memory at:\n");
-			__mem_log("\t----------------------------------------------------------------------\n");
-			__mem_log("\t| Address  |   Size  |%22s%18s| Line |\n", "File", " ");
-			__mem_log("\t----------------------------------------------------------------------\n");
+			__mem_log("\t--------------------------------------------------------------------------------\n");
+			__mem_log("\t| Address   |   Size  |%27s%23s| Line |\n", "File", " ");
+			__mem_log("\t--------------------------------------------------------------------------------\n");
 			for (size_t i = 0; i < nptrs; ++i) {
 				int space = OUT_FILE_LEN / 2 + strlen(memMap[i].file) / 2;
 				int rest = OUT_FILE_LEN - space;
 				__mem_log("\t| %p | %6zu  |%*s%*s| %-4ld | \n", memMap[i].ptr, memMap[i].sz, space, memMap[i].file, rest, " ", memMap[i].line);
-				__mem_log("\t----------------------------------------------------------------------\n");
+				__mem_log("\t--------------------------------------------------------------------------------\n");
 			}
-		} else
+		} else {
 			__mem_log("No user memory leaks!\n");
+		}
 	}
 };
 
 // Static dummy object
-Sentinel s;
+const static Sentinel s;
 
 } // End anonymous namespace
 
 void print_mem(const char* file, long line) {
 	size_t sz = 0;
-	for (size_t i = 0; i < nptrs; i++)
+	for (size_t i = 0; i < nptrs; i++) {
 		sz += memMap[i].sz;
+	}
 	__mem_log("Current memory status:\n");
-	__mem_log("\t---------------------------------------------------------------------\n");
-	__mem_log("\t| objects |   size  |%22s%18s| Line |\n", "File", " ");
-	__mem_log("\t---------------------------------------------------------------------\n");
+	__mem_log("\t-------------------------------------------------------------------------------\n");
+	__mem_log("\t| objects |   size  |%27s%23s| Line |\n", "File", " ");
+	__mem_log("\t-------------------------------------------------------------------------------\n");
 	int space = OUT_FILE_LEN / 2 + strlen(file) / 2;
 	int rest = OUT_FILE_LEN - space;
 	__mem_log("\t|%8zu |%8zu |%*s%*s| %-4ld |\n", nptrs, sz, space, file, rest, " ", line);
-	__mem_log("\t---------------------------------------------------------------------\n");
+	__mem_log("\t-------------------------------------------------------------------------------\n");
 }
 
 // Overload scalar new

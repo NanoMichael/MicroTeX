@@ -41,6 +41,7 @@ void LaTeX::release() {
 	MacroInfo::_free_();
 	NewCommandMacro::_free_();
 	TextRenderingBox::_free_();
+	SymbolAtom::_free_();
 
 	if (_formula != nullptr)
 		delete _formula;
@@ -48,7 +49,7 @@ void LaTeX::release() {
 		delete _builder;
 }
 
-TeXRender* LaTeX::parse(const wstring& latex, int width, float textSize, float interlineSpacing, color fg) {
+TeXRender* LaTeX::parse(const wstring& latex, int width, float textSize, float lineSpace, color fg) {
 	bool lined = true;
 	if (startswith(latex, L"$$") || startswith(latex, L"\\[")) {
 		lined = false;
@@ -59,7 +60,7 @@ TeXRender* LaTeX::parse(const wstring& latex, int width, float textSize, float i
 		.setSize(textSize)
 		.setWidth(UNIT_PIXEL, width, align)
 		.setIsMaxWidth(lined)
-		.setInterlineSpacing(UNIT_PIXEL, interlineSpacing)
+		.setLineSpace(UNIT_PIXEL, lineSpace)
 		.setForeground(fg)
 		.build(*_formula);
 	return render;

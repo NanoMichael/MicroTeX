@@ -383,7 +383,7 @@ shared_ptr<Atom> definecolor_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
 		valueof(args[3], f);
 		c = rgb(f, f, f);
 	} else if (args[2] == L"rgb") {
-		strtokenizer stok(cs, ";,");
+		strtokenizer stok(cs, ":,");
 		if (stok.count_tokens() != 3)
 			throw ex_parse("the color definition must have three components!");
 		float r, g, b;
