@@ -8,8 +8,6 @@
 #include "fonts/fonts.h"
 #include "common.h"
 
-#include "memcheck.h"
-
 using namespace std;
 using namespace tex;
 

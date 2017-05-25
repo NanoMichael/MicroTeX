@@ -4,8 +4,6 @@
 #include "core/macro.h"
 #include "latex.h"
 
-#include "memcheck.h"
-
 using namespace std;
 using namespace tex;
 
@@ -16,10 +14,6 @@ TeXRenderBuilder* LaTeX::_builder = nullptr;
 
 void LaTeX::init(const string& res_root_path) {
 	RES_BASE = res_root_path;
-	LaTeX::init();
-}
-
-void LaTeX::init() {
 	if (_formula != nullptr)
 		return;
 	NewCommandMacro::_init_();
@@ -28,7 +22,6 @@ void LaTeX::init() {
 	Glue::_init_();
 	TeXFormula::_init_();
 	TextRenderingBox::_init_();
-	DUMP_MEM_STATUS();
 
 	_formula = new TeXFormula();
 	_builder = new TeXRenderBuilder();
@@ -41,7 +34,6 @@ void LaTeX::release() {
 	MacroInfo::_free_();
 	NewCommandMacro::_free_();
 	TextRenderingBox::_free_();
-	SymbolAtom::_free_();
 
 	if (_formula != nullptr)
 		delete _formula;

@@ -5,8 +5,6 @@
 
 #include <cmath>
 
-#include "memcheck.h"
-
 using namespace tex;
 using namespace tinyxml2;
 
@@ -64,33 +62,41 @@ void FontInfo::setNextLarger(wchar_t c, wchar_t larger, int fontLarger) {
 }
 
 const Font* FontInfo::getFont() {
-	if (_font == nullptr)
+	if (_font == nullptr) {
 		_font = Font::create(_path, TeXFormula::PIXELS_PER_POINT);
+	}
 	return _font;
 }
 
 FontInfo::~FontInfo() {
 	// delete metrics
 	for (int i = 0; i < _char_count; i++) {
-		if (_metrics[i] != nullptr)
+		if (_metrics[i] != nullptr) {
 			delete[] _metrics[i];
+		}
 		_metrics[i] = nullptr;
 	}
 	delete[] _metrics;
 	// delete extensions
 	for (int i = 0; i < _char_count; i++) {
-		if (_extensions[i] != nullptr)
+		if (_extensions[i] != nullptr) {
 			delete[] _extensions[i];
+		}
 		_extensions[i] = nullptr;
 	}
 	delete[] _extensions;
 	// delete next-larger
 	for (int i = 0; i < _char_count; i++) {
-		if (_nextLarger[i] != nullptr)
-			delete[] _nextLarger[i];
+		if (_nextLarger[i] != nullptr) {
+			delete _nextLarger[i];
+		}
 		_nextLarger[i] = nullptr;
 	}
 	delete[] _nextLarger;
+	// delete font
+	if (_font != nullptr) {
+		delete _font;
+	}
 }
 
 const int TeXFont::NO_FONT = -1;

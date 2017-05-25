@@ -4,8 +4,6 @@
 
 #include <string>
 
-#include "memcheck.h"
-
 using namespace std;
 using namespace tex;
 

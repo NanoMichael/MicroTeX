@@ -7,8 +7,6 @@
 
 #include <utility>
 
-#include "memcheck.h"
-
 using namespace std;
 using namespace tex;
 
