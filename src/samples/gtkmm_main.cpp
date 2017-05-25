@@ -58,8 +58,9 @@ int main(int argc, char* argv[]) {
 	win.add(area);
 	area.show();
 
-	area.setLaTeX(L"\\debug\\text{What a beautiful day 简体中文}", 1024, 60, 60 / 3.f, 0xff000000);
-	// area.setLaTeX(L"\\debug\\Delta=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}", 720, 60, 60 / 3.f, 0xff000000);
+	// area.setLaTeX(L"\\undebug\\text{What a beautiful day 简体中文}", 1024, 60, 60 / 3.f, 0xff000000);
+	area.setLaTeX(L"\\debug\\Delta=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}", 720, 60, 60 / 3.f, 0xff000000);
+	// area.setLaTeX(L"\\debug\\ovalbox{\\text{A framed box with}}", 720, 60, 60 / 3.f, 0xff000000);
 
 	int result = app->run(win);
 

@@ -472,6 +472,10 @@ int OverUnderBox::getLastFontId() {
 	return _base->getLastFontId();
 }
 
+vector<shared_ptr<Box>> OverUnderBox::getChildren() const {
+	return vector<shared_ptr<Box>>() = {_base, _del, _script};
+}
+
 /*********************************** scale box implementation ***************************/
 
 void ScaleBox::init(const shared_ptr<Box>& b, float sx, float sy) {
@@ -502,6 +506,10 @@ int ScaleBox::getLastFontId() {
 	return _box->getLastFontId();
 }
 
+vector<shared_ptr<Box>> ScaleBox::getChildren() const {
+	return vector<shared_ptr<Box>>() = {_box};
+}
+
 /*********************************** reflect box implementation ***************************/
 
 ReflectBox::ReflectBox(const shared_ptr<Box>& b) {
@@ -523,6 +531,10 @@ void ReflectBox::draw(Graphics2D& g2, float x, float y) {
 
 int ReflectBox::getLastFontId() {
 	return _box->getLastFontId();
+}
+
+vector<shared_ptr<Box>> ReflectBox::getChildren() const {
+	return vector<shared_ptr<Box>>() = {_box};
 }
 
 /*********************************** rotate box implementation ***************************/
@@ -652,6 +664,10 @@ int RotateBox::getLastFontId() {
 	return _box->getLastFontId();
 }
 
+vector<shared_ptr<Box>> RotateBox::getChildren() const {
+	return vector<shared_ptr<Box>>() = {_box};
+}
+
 /*********************************** framed box implementation ***************************/
 
 void FramedBox::init(const shared_ptr<Box>& box, float thickness, float space) {
@@ -691,6 +707,10 @@ void FramedBox::draw(Graphics2D& g2, float x, float y) {
 
 int FramedBox::getLastFontId() {
 	return _box->getLastFontId();
+}
+
+vector<shared_ptr<Box>> FramedBox::getChildren() const {
+	return vector<shared_ptr<Box>>() = {_box};
 }
 
 void OvalBox::draw(Graphics2D& g2, float x, float y) {
@@ -757,7 +777,7 @@ int CharBox::getLastFontId() {
 	return _cf->_fontId;
 }
 
-shared_ptr<Font> TextRenderingBox::_font = nullptr;
+shared_ptr<Font> TextRenderingBox::_font(nullptr);
 
 void TextRenderingBox::_init_() {
 	_font = Font::_create("Serif", PLAIN, 10);
@@ -813,6 +833,10 @@ int WrapperBox::getLastFontId() {
 	return _base->getLastFontId();
 }
 
+vector<shared_ptr<Box>> WrapperBox::getChildren() const {
+	return vector<shared_ptr<Box>>() = {_base};
+}
+
 void ShiftBox::draw(Graphics2D& g2, float x, float y) {
 	drawDebug(g2, x, y);
 	_base->draw(g2, x, y + _sf);
@@ -820,4 +844,8 @@ void ShiftBox::draw(Graphics2D& g2, float x, float y) {
 
 int ShiftBox::getLastFontId() {
 	return _base->getLastFontId();
+}
+
+vector<shared_ptr<Box>> ShiftBox::getChildren() const {
+	return vector<shared_ptr<Box>>() = {_base};
 }

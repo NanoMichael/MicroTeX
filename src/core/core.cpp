@@ -31,7 +31,8 @@ void print_box(const shared_ptr<Box>& b, int dep, vector<bool>& lines) {
 		}
 	}
 
-	const size_t c = b->_children.size();
+	vector<shared_ptr<Box>> children = b->getChildren();
+	const size_t c = children.size();
 	const string& str = demangle_name(typeid(*(b)).name());
 	string name = str.substr(str.find_last_of("::") + 1);
 	if (c > 0) {
@@ -42,7 +43,7 @@ void print_box(const shared_ptr<Box>& b, int dep, vector<bool>& lines) {
 
 	for (size_t i = 0; i < c; i++) {
 		lines[dep] = i == c - 1;
-		print_box(b->_children[i], dep + 1, lines);
+		print_box(children[i], dep + 1, lines);
 	}
 }
 
@@ -54,7 +55,7 @@ void tex::print_box(const shared_ptr<Box>& b) {
 
 shared_ptr<Box> FormulaBreaker::split(const shared_ptr<Box>& b, float width, float interline) {
 #ifdef __GA_DEBUG
-	__print("BEFORE BREAK\n");
+	__print("BEFORE SPLIT\n");
 	print_box(b);
 #endif // __GA_DEBUG
 
@@ -67,7 +68,7 @@ shared_ptr<Box> FormulaBreaker::split(const shared_ptr<Box>& b, float width, flo
 	}
 
 #ifdef __GA_DEBUG
-	__print("AFTER BREAK\n");
+	__print("AFTER SPLIT\n");
 	print_box(box);
 #endif // __GA_DEBUG
 

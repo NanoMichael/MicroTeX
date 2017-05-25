@@ -528,8 +528,9 @@ shared_ptr<Box> RowAtom::createBox(_out_ TeXEnvironment& env) {
 		if (markAdded || (ca != nullptr && isdigit(ca->getCharacter()))) {
 			hbox->addBreakPosition(hbox->_children.size());
 		}*/
-		if (_canBreak)
+		if (_canBreak) {
 			hbox->addBreakPosition(hbox->_children.size());
+		}
 		hbox->add(b);
 
 		// set last used font id (for next atom)
