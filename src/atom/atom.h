@@ -235,6 +235,13 @@ public:
 	 */
 	virtual int getLastFontId() = 0;
 
+	/**
+	 * Get child boxes of this box, modify the list returned by this function
+	 * will not effect this box's children
+	 */
+	virtual vector<shared_ptr<Box>> getChildren() const {
+		return _children;
+	}
 };
 
 /**

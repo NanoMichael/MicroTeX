@@ -13,7 +13,6 @@ using namespace tinyxml2;
 
 namespace tex {
 
-// forward declare
 class Box;
 
 void print_box(const shared_ptr<Box>& box);

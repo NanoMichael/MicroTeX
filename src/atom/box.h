@@ -159,6 +159,7 @@ private:
 	float _kern;
 	// whether the delimiter should be drawn over (<->under) the base box
 	bool _over;
+
 public:
 	OverUnderBox() = delete;
 
@@ -182,6 +183,8 @@ public:
 	void draw(Graphics2D& g2, float x, float y) override;
 
 	int getLastFontId() override;
+
+	vector<shared_ptr<Box>> getChildren() const override;
 };
 
 /**
@@ -236,6 +239,8 @@ public:
 	void draw(Graphics2D& g2, float x, float y) override;
 
 	int getLastFontId() override;
+
+	vector<shared_ptr<Box>> getChildren() const override;
 };
 
 /**
@@ -253,6 +258,8 @@ public:
 	void draw(Graphics2D& g2, float x, float y) override;
 
 	int getLastFontId() override;
+
+	vector<shared_ptr<Box>> getChildren() const override;
 };
 
 /**
@@ -297,6 +304,8 @@ public:
 
 	int getLastFontId() override;
 
+	vector<shared_ptr<Box>> getChildren() const override;
+
 	static int getOrigin(string option);
 };
 
@@ -332,6 +341,8 @@ public:
 	virtual void draw(Graphics2D& g2, float x, float y) override;
 
 	int getLastFontId() override;
+
+	vector<shared_ptr<Box>> getChildren() const override;
 };
 
 /**
@@ -495,10 +506,11 @@ public:
 		_height = rowheight;
 		_depth = rowdepth;
 		_width = width;
-		if (align == ALIGN_RIGHT)
+		if (align == ALIGN_RIGHT) {
 			_l = width - _base->_width;
-		else if (align == ALIGN_CENTER)
+		} else if (align == ALIGN_CENTER) {
 			_l = (width - _base->_width) / 2.f;
+		}
 	}
 
 	void setInsets(float l, float t, float r, float b);
@@ -506,6 +518,8 @@ public:
 	void draw(Graphics2D& g2, float x, float y) override;
 
 	int getLastFontId() override;
+
+	vector<shared_ptr<Box>> getChildren() const override;
 };
 
 /**
@@ -525,6 +539,8 @@ public:
 	void draw(Graphics2D& g2, float x, float y) override;
 
 	int getLastFontId() override;
+
+	vector<shared_ptr<Box>> getChildren() const override;
 };
 
 }
