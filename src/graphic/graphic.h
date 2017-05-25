@@ -244,7 +244,7 @@ public:
 	virtual float py() const = 0;
 
 	/**
-	 * Draw character
+	 * Draw character, assume the drawing is baseline aligned
 	 * 
 	 * @param c
 	 * 		Specified character
@@ -256,7 +256,7 @@ public:
 	virtual void drawChar(wchar_t c, float x, float y) = 0;
 
 	/**
-	 * Draw text
+	 * Draw text, assume the drawing is baseline aligned
 	 * 
 	 * @param c
 	 * 		Specified text

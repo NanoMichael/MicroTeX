@@ -1,4 +1,6 @@
-#ifdef __linux__
+#include "config.h"
+
+#if defined(__linux__) && !defined(__MEM_CHECK)
 
 #include "platform/cairo/graphic_cairo.h"
 #include "latex.h"
@@ -56,7 +58,8 @@ int main(int argc, char* argv[]) {
 	win.add(area);
 	area.show();
 
-	area.setLaTeX(L"\\text{What a beautiful day}", 720, 20, 20 / 3.f, 0xff000000);
+	area.setLaTeX(L"\\debug\\text{What a beautiful day 简体中文}", 1024, 60, 60 / 3.f, 0xff000000);
+	// area.setLaTeX(L"\\debug\\Delta=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}", 720, 60, 60 / 3.f, 0xff000000);
 
 	int result = app->run(win);
 

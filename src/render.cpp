@@ -3,8 +3,6 @@
 #include "atom/atom.h"
 #include "core/core.h"
 
-#include "memcheck.h"
-
 using namespace tex;
 
 const color TeXRender::_defaultcolor = black;

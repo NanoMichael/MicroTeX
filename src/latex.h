@@ -24,14 +24,9 @@ public:
 	 * Initialize TeX context with specified root path of resources
 	 *
 	 * @param res_root_path
-	 * 		Root path of resources
+	 * 		Root path of resources, default is 'res'
 	 */
-	static void init(const string& res_root_path);
-
-	/**
-	 * Initialize TeX context
-	 */
-	static void init();
+	static void init(const string& res_root_path = "res");
 
 	/**
 	 * Parse TeX formatted string to TeXRender

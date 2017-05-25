@@ -454,8 +454,6 @@ public:
 
 	static void _init_();
 
-	static void _free_();
-
 #ifdef __DEBUG
 	friend ostream& operator<<(ostream& os, const SymbolAtom& s);
 #endif // __DEBUG

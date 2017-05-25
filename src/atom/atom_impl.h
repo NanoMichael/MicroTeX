@@ -9,8 +9,6 @@
 #include "graphic/graphic.h"
 #include "common.h"
 
-#include "memcheck.h"
-
 using namespace std;
 using namespace tex;
 

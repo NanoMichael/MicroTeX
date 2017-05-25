@@ -1,4 +1,6 @@
-#ifdef __linux__
+#include "config.h"
+
+#if defined(__linux__) && !defined(__MEM_CHECK)
 
 #ifndef GRAPHIC_CAIRO_H_INCLUDED
 #define GRAPHIC_CAIRO_H_INCLUDED
@@ -26,10 +28,8 @@ private:
 
 	void loadFont(const string& file);
 
-	Font_cairo();
-
 public:
-	Font_cairo(const string& name, int style, float size);
+	Font_cairo(const string& family = "", int style = PLAIN, float size = 1.f);
 
 	Font_cairo(const string& file, float size);
 
@@ -52,7 +52,8 @@ class TextLayout_cairo : public TextLayout {
 
 private:
 	static Cairo::RefPtr<Cairo::Context> _img_context;
-	Glib::RefPtr<Pango::Layout> _layout;
+	static Glib::RefPtr<Pango::Layout> _layout;
+	float _ascent;
 
 public:
 	TextLayout_cairo(const wstring& src, const shared_ptr<Font_cairo>& font);
@@ -71,9 +72,12 @@ private:
 
 	Cairo::RefPtr<Cairo::Context> _context;
 	Glib::RefPtr<Pango::Layout> _layout;
+
 	color _color;
 	Stroke _stroke;
 	const Font_cairo* _font;
+
+	float _ascent;
 	float _t[7];
 
 	void roundRect(float x, float y, float w, float h, float rx, float ry);
@@ -138,4 +142,4 @@ public:
 }
 
 #endif // GRAPHIC_GTKMM_H_INCLUDED
-#endif // linux
+#endif // __linux && __MEM_CHECK

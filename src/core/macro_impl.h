@@ -11,8 +11,6 @@
 #include "atom/atom_impl.h"
 #include "common.h"
 
-#include "memcheck.h"
-
 using namespace std;
 using namespace tex;
 

@@ -1,26 +1,24 @@
-#ifdef __linux__
+#include "config.h"
+
+#if defined(__linux__) && !defined(__MEM_CHECK)
 
 #include "platform/cairo/graphic_cairo.h"
 
 #include <fontconfig/fontconfig.h>
+#include <iostream>
 
 using namespace tex;
 using namespace std;
 
 map<string, string> Font_cairo::_file_name_map;
 
-Font_cairo::Font_cairo() :
-	_slant(Pango::STYLE_NORMAL), _weight(Pango::WEIGHT_NORMAL),
-	_size(1.), _family("") {}
-
-Font_cairo::Font_cairo(const string& name, int style, float size) :
-	_family(name), _size((double) size) {
+Font_cairo::Font_cairo(const string& family, int style, float size) :
+	_family(family), _size((double) size) {
 	convertStyle(style);
 }
 
 Font_cairo::Font_cairo(const string& file, float size) :
-	_slant(Pango::STYLE_NORMAL), _weight(Pango::WEIGHT_NORMAL), 
-	_size((double) size) {
+	Font_cairo("", PLAIN, size) {
 	loadFont(file);
 }
 
@@ -46,14 +44,28 @@ void Font_cairo::convertStyle(int style) {
 void Font_cairo::loadFont(const string& file) {
 	auto it = _file_name_map.find(file);
 	if (it != _file_name_map.end()) {
+		// already loaded
+		_family = _file_name_map[file];
 #ifdef __DEBUG
 		__log << file << " already loaded, skip\n";
 #endif
 		return;
 	}
-	// load font to fontconfig
 	const FcChar8* f = (const FcChar8*) file.c_str();
-	FcBool status = FcConfigAppFontAddFile(FcConfigGetCurrent(), f);
+
+	// get font family from file first
+	int count;
+	FcChar8* family = NULL;
+	FcBlanks* blanks = FcConfigGetBlanks(NULL);
+	FcPattern* p = FcFreeTypeQuery(f, 0, blanks, &count);
+	FcPatternGetString(p, FC_FAMILY, 0, &family);
+#ifdef __DEBUG
+	__log << "font count: " << count << "\n";
+	FcPatternPrint(p);
+#endif
+
+	// load font to fontconfig
+	FcBool status = FcConfigAppFontAddFile(NULL, f);
 	if (status) {
 #ifdef __DEBUG
 		__log << "load " << file << " successfully\n";
@@ -63,23 +75,12 @@ void Font_cairo::loadFont(const string& file) {
 		__log << "load " << file << " failed\n";
 #endif
 	}
-	// why get font name is so fucking diffcult?
-	// FIXIT
-	// Temporarily use this method, get the font file name from
-	// path, the file name is the font name, we use "/" as file
-	// separator here
-	size_t lastFileSepIdx = file.find_last_of("/");
-	if (lastFileSepIdx == string::npos) {
-		lastFileSepIdx = 0;
-	}
-	size_t lastDotIdx = file.find_last_of(".");
-	if (lastDotIdx == string::npos) {
-		lastDotIdx = file.length();
-	}
-	size_t len = lastDotIdx - lastFileSepIdx - 1;
-	string name = file.substr(lastFileSepIdx + 1, len);
 
-	_family = name;
+	_family = (const char*) family;
+	_file_name_map[file] = _family;
+
+	// release
+	FcPatternDestroy(p);
 }
 
 string Font_cairo::getFamily() const {
@@ -127,11 +128,13 @@ shared_ptr<Font> Font::_create(const string& name, int style, float size) {
 /******************************************************************************/
 
 Cairo::RefPtr<Cairo::Context> TextLayout_cairo::_img_context;
+Glib::RefPtr<Pango::Layout> TextLayout_cairo::_layout;
 
 TextLayout_cairo::TextLayout_cairo(const wstring& src, const shared_ptr<Font_cairo>& f) {
 	if (!_img_context) {
 		auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 1, 1);
 		_img_context = Cairo::Context::create(surface);
+		_layout = Pango::Layout::create(_img_context);
 	}
 
 	Pango::FontDescription fd;
@@ -143,22 +146,24 @@ TextLayout_cairo::TextLayout_cairo(const wstring& src, const shared_ptr<Font_cai
 	_layout = Pango::Layout::create(_img_context);
 	_layout->set_text(wide2utf8(src.c_str()));
 	_layout->set_font_description(fd);
+
+	_ascent = (float) (_layout->get_baseline() / Pango::SCALE);
 }
 
 void TextLayout_cairo::getBounds(_out_ Rect& r) {
 	int w, h;
 	_layout->get_pixel_size(w, h);
 	r.x = 0;
-	r.y = 0;
+	r.y = -_ascent;
 	r.w = (float) w;
 	r.h = (float) h;
 }
 
 void TextLayout_cairo::draw(Graphics2D& g2, float x, float y) {
-	g2.translate(x, y);
+	g2.translate(x, y - _ascent);
 	Graphics2D_cairo& g = static_cast<Graphics2D_cairo&>(g2);
 	_layout->show_in_cairo_context(g.getCairoContext());
-	g2.translate(-x, -y);
+	g2.translate(-x, -y + _ascent);
 }
 
 shared_ptr<TextLayout> TextLayout::create(const wstring& src, const shared_ptr<Font>& font) {
@@ -168,13 +173,16 @@ shared_ptr<TextLayout> TextLayout::create(const wstring& src, const shared_ptr<F
 
 /******************************************************************************/
 
-Font_cairo Graphics2D_cairo::_default_font = Font_cairo("SansSerif", PLAIN, 20.f);
+Font_cairo Graphics2D_cairo::_default_font("SansSerif", PLAIN, 20.f);
 
-Graphics2D_cairo::Graphics2D_cairo(const Cairo::RefPtr<Cairo::Context>& context) :
-	_context(context), _font(&_default_font) {
+Graphics2D_cairo::Graphics2D_cairo(const Cairo::RefPtr<Cairo::Context>& context) : _context(context) {
 	_layout = Pango::Layout::create(_context);
 	memset(_t, 0, sizeof(float) * 7);
 	_t[SX] = _t[SY] = 1.f;
+
+	setColor(BLACK);
+	setStroke(Stroke());
+	setFont(&_default_font);
 }
 
 const Cairo::RefPtr<Cairo::Context>& Graphics2D_cairo::getCairoContext() const {
@@ -246,6 +254,15 @@ const Font* Graphics2D_cairo::getFont() const {
 
 void Graphics2D_cairo::setFont(const Font* font) {
 	_font = static_cast<const Font_cairo*>(font);
+	Pango::FontDescription f;
+	f.set_family(_font->getFamily());
+	f.set_style(_font->getSlant());
+	f.set_weight(_font->getWeight());
+	f.set_absolute_size(_font->getSize() * Pango::SCALE);
+
+	_layout->set_font_description(f);
+
+	_ascent = (float) (_layout->get_baseline() / Pango::SCALE);
 }
 
 void Graphics2D_cairo::translate(float dx, float dy) {
@@ -314,17 +331,10 @@ void Graphics2D_cairo::drawChar(wchar_t c, float x, float y) {
 }
 
 void Graphics2D_cairo::drawText(const wstring& t, float x, float y) {
-	Pango::FontDescription f;
-	f.set_family(_font->getFamily());
-	f.set_style(_font->getSlant());
-	f.set_weight(_font->getWeight());
-	f.set_absolute_size(_font->getSize() * Pango::SCALE);
-
 	string str = wide2utf8(t.c_str());
 	_layout->set_text(str);
-	_layout->set_font_description(f);
 
-	_context->move_to(x, y);
+	_context->move_to(x, y - _ascent);
 	_layout->show_in_cairo_context(_context);
 }
 

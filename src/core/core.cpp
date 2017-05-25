@@ -3,29 +3,52 @@
 #include "atom/box.h"
 #include "common.h"
 
-#include "memcheck.h"
-
 using namespace std;
 using namespace tex;
 
-void print_box(const shared_ptr<Box>& b, int dep) {
-	for (int i = 0; i < dep; i++) {
-		__print("|");
-		if (i != dep - 1)
-			__print(" ");
-		else
-			__print("-");
+#define ANSI_COLOR_CYAN "\x1b[36m"
+#define ANSI_COLOR_RESET "\x1b[0m"
+
+void print_box(const shared_ptr<Box>& b, int dep, vector<bool>& lines) {
+	__print("%-4d", dep);
+	if (lines.size() < dep + 1) {
+		lines.resize(dep + 1, false);
 	}
+
+	for (int i = 0; i < dep - 1; i++) {
+		if (lines[i]) {
+			__print("    ");
+		} else {
+			__print(" │  ");
+		}
+	}
+
+	if (dep > 0) {
+		if (lines[dep - 1]) {
+			__print(" └──");
+		} else {
+			__print(" ├──");
+		}
+	}
+
+	const size_t c = b->_children.size();
 	const string& str = demangle_name(typeid(*(b)).name());
 	string name = str.substr(str.find_last_of("::") + 1);
-	__print("%s\n", name.c_str());
-	const size_t c = b->_children.size();
-	for (size_t i = 0; i < c; i++)
-		print_box(b->_children[i], dep + 1);
+	if (c > 0) {
+		__print(ANSI_COLOR_CYAN " %s\n" ANSI_COLOR_RESET, name.c_str());
+	} else {
+		__print(" %s\n", name.c_str());
+	}
+
+	for (size_t i = 0; i < c; i++) {
+		lines[dep] = i == c - 1;
+		print_box(b->_children[i], dep + 1, lines);
+	}
 }
 
 void tex::print_box(const shared_ptr<Box>& b) {
-	::print_box(b, 0);
+	vector<bool> lines;
+	::print_box(b, 0, lines);
 	__print("\n");
 }
 
@@ -34,16 +57,20 @@ shared_ptr<Box> FormulaBreaker::split(const shared_ptr<Box>& b, float width, flo
 	__print("BEFORE BREAK\n");
 	print_box(b);
 #endif // __GA_DEBUG
+
 	HorizontalBox* h = dynamic_cast<HorizontalBox*>(b.get());
 	shared_ptr<Box> box;
-	if (h != nullptr)
+	if (h != nullptr) {
 		box = split(dynamic_pointer_cast<HorizontalBox>(b), width, interline);
-	else
+	} else {
 		box = b;
+	}
+
 #ifdef __GA_DEBUG
 	__print("AFTER BREAK\n");
 	print_box(box);
 #endif // __GA_DEBUG
+
 	return box;
 }
 

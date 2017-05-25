@@ -1,8 +1,6 @@
 #include "graphic/graphic.h"
 #include "core/macro_impl.h"
 
-#include "memcheck.h"
-
 using namespace tex;
 using namespace std;
 

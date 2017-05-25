@@ -9,8 +9,6 @@
 #include <gdiplus.h>
 #include <tchar.h>
 
-#include "memcheck.h"
-
 #define ID_SETTER 256
 #define ID_CANVAS 512
 #define ID_EDITBOX 1024

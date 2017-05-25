@@ -40,8 +40,8 @@ protected:
 	color _prevColor;
 
 	/**
-	 * Stores the old color setting, draws the background of the box (if not
-	 * null) and sets the foreground color (if not null).
+	 * Stores the old color setting, draws the background of the box (if any)
+	 * and sets the foreground color (if any).
 	 *
 	 * @param g2
 	 *            the graphics (2D) context
@@ -66,8 +66,9 @@ protected:
 	}
 
 	void drawDebug(Graphics2D& g2, float x, float y, bool showDepth = true) {
-		if (!DEBUG)
+		if (!DEBUG) {
 			return;
+		}
 		const Stroke& st = g2.getStroke();
 		Stroke s(abs(1.f / g2.sx()), CAP_BUTT, JOIN_MITER);
 		g2.setStroke(s);
@@ -75,7 +76,9 @@ protected:
 			x += _width;
 			_width = -_width;
 		}
+		// draw box outline
 		g2.drawRect(x, y - _height, _width, _height + _depth);
+		// draw depth
 		if (showDepth) {
 			color c = g2.getColor();
 			g2.setColor(RED);
