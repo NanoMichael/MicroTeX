@@ -56,7 +56,7 @@ private:
 	shared_ptr<TeXFont> _tf;
 	// last used font
 	int _lastFontId;
-
+	// Environment width
 	float _textWidth;
 
 	string _textStyle;

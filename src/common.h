@@ -70,8 +70,9 @@ inline string demangle_name(const char* name) {
 	char* res = abi::__cxa_demangle(name, 0, 0, &status);
 	const char* const real_name = status == 0 ? res : name;
 	string res_str(real_name);
-	if (res != nullptr)
+	if (res != nullptr) {
 		free(res);
+	}
 	return res_str;
 }
 #else
