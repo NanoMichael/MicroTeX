@@ -5,7 +5,6 @@
 #include "platform/cairo/graphic_cairo.h"
 
 #include <fontconfig/fontconfig.h>
-#include <iostream>
 
 using namespace tex;
 using namespace std;

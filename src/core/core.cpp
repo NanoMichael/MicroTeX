@@ -76,8 +76,9 @@ shared_ptr<Box> FormulaBreaker::split(const shared_ptr<Box>& b, float width, flo
 }
 
 shared_ptr<Box> FormulaBreaker::split(const shared_ptr<HorizontalBox>& hb, float width, float interline) {
-	if (width == 0 || hb->_width <= width)
+	if (width == 0 || hb->_width <= width) {
 		return hb;
+	}
 
 	VerticalBox* vbox = new VerticalBox();
 	shared_ptr<HorizontalBox> first(nullptr);
