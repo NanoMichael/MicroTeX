@@ -9,46 +9,46 @@ const color TeXRender::_defaultcolor = black;
 float TeXRender::_defaultSize = -1;
 float TeXRender::_magFactor = 0;
 
-TeXRender::TeXRender(const shared_ptr<Box> b, float s, bool trueValues) {
+TeXRender::TeXRender(const shared_ptr<Box> b, float textSize, bool trueValues) {
 	_box = b;
 	if (_defaultSize != -1) {
-		_size = _defaultSize;
+		_textSize = _defaultSize;
 	}
 	if (_magFactor != 0) {
-		_size = s * abs(_magFactor);
+		_textSize = textSize * abs(_magFactor);
 	} else {
-		_size = s;
+		_textSize = textSize;
 	}
 	if (!trueValues) {
-		_insets.top += (int) (0.18f * s);
-		_insets.bottom += (int) (0.18f * s);
-		_insets.left += (int) (0.18f * s);
-		_insets.right += (int) (0.18f * s);
+		_insets.top += (int) (0.18f * textSize);
+		_insets.bottom += (int) (0.18f * textSize);
+		_insets.left += (int) (0.18f * textSize);
+		_insets.right += (int) (0.18f * textSize);
 	}
 }
 
-float TeXRender::getSize() const {
-	return _size;
+float TeXRender::getTextSize() const {
+	return _textSize;
 }
 
 int TeXRender::getHeight() const {
-	return (int) (_box->_height * _size + 0.99f + _insets.top + _box->_depth * _size + 0.99f + _insets.bottom);
+	return (int) (_box->_height * _textSize + 0.99f + _insets.top + _box->_depth * _textSize + 0.99f + _insets.bottom);
 }
 
 int TeXRender::getDepth() const {
-	return (int) (_box->_depth * _size + 0.99f + _insets.bottom);
+	return (int) (_box->_depth * _textSize + 0.99f + _insets.bottom);
 }
 
 int TeXRender::getWidth() const {
-	return (int) (_box->_width * _size + 0.99f + _insets.left + _insets.right);
+	return (int) (_box->_width * _textSize + 0.99f + _insets.left + _insets.right);
 }
 
 float TeXRender::getBaseline() const {
-	return ((_box->_height * _size + 0.99f + _insets.top) / ((_box->_height + _box->_depth) * _size + 0.99f + _insets.top + _insets.bottom));
+	return ((_box->_height * _textSize + 0.99f + _insets.top) / ((_box->_height + _box->_depth) * _textSize + 0.99f + _insets.top + _insets.bottom));
 }
 
-void TeXRender::setSize(float s) {
-	_size = s;
+void TeXRender::setTextSize(float textSize) {
+	_textSize = textSize;
 }
 
 void TeXRender::setForeground(color fg) {
@@ -62,28 +62,34 @@ Insets TeXRender::getInsets() {
 void TeXRender::setInsets(const Insets& insets, bool trueval) {
 	_insets = insets;
 	if (!trueval) {
-		_insets.top += (int) (0.18f * _size);
-		_insets.bottom += (int) (0.18f * _size);
-		_insets.left += (int) (0.18f * _size);
-		_insets.right += (int) (0.18f * _size);
+		_insets.top += (int) (0.18f * _textSize);
+		_insets.bottom += (int) (0.18f * _textSize);
+		_insets.left += (int) (0.18f * _textSize);
+		_insets.right += (int) (0.18f * _textSize);
 	}
 }
 
 void TeXRender::setWidth(int w, int align) {
 	float diff = w - getWidth();
-	if (diff > 0)
+	// FIXME
+	// only care if new width larger than old
+	if (diff > 0) {
 		_box = shared_ptr<Box>(new HorizontalBox(_box, (float)w, align));
+	}
 }
 
 void TeXRender::setHeight(int h, int align) {
 	float diff = h - getHeight();
-	if (diff > 0)
+	// FIXME
+	// only care if new height larger than old
+	if (diff > 0) {
 		_box = shared_ptr<Box>(new VerticalBox(_box, diff, align));
+	}
 }
 
 void TeXRender::draw(_out_ Graphics2D& g2, int x, int y) {
 	color old = g2.getColor();
-	g2.scale(_size, _size);
+	g2.scale(_textSize, _textSize);
 	if (!istrans(_fg)) {
 		g2.setColor(_fg);
 	} else {
@@ -91,7 +97,7 @@ void TeXRender::draw(_out_ Graphics2D& g2, int x, int y) {
 	}
 
 	// draw formula box
-	_box->draw(g2, (x + _insets.left) / _size, (y + _insets.top) / _size + _box->_height);
+	_box->draw(g2, (x + _insets.left) / _textSize, (y + _insets.top) / _textSize + _box->_height);
 
 	// restore
 	g2.reset();
@@ -127,11 +133,11 @@ TeXRender* TeXRenderBuilder::build(const shared_ptr<Atom>& fc) {
 	if (_style == -1) {
 		throw ex_invalid_state("a style is required, call function setStyle before build");
 	}
-	if (_size == -1) {
+	if (_textSize == -1) {
 		throw ex_invalid_state("a size is required, call function setSize before build");
 	}
 
-	DefaultTeXFont* font = (_type == -1) ? new DefaultTeXFont(_size) : createFont(_size, _type);
+	DefaultTeXFont* font = (_type == -1) ? new DefaultTeXFont(_textSize) : createFont(_textSize, _type);
 	shared_ptr<TeXFont> tf(font);
 	TeXEnvironment* te = nullptr;
 	if (_widthUnit != -1 && _textWidth != 0) {
@@ -155,9 +161,9 @@ TeXRender* TeXRenderBuilder::build(const shared_ptr<Atom>& fc) {
 		} else {
 			hb = new HorizontalBox(box, _isMaxWidth ? box->_width : te->getTextWidth(), _align);
 		}
-		ti = new TeXRender(shared_ptr<Box>(hb), _size, _trueValues);
+		ti = new TeXRender(shared_ptr<Box>(hb), _textSize, _trueValues);
 	} else {
-		ti = new TeXRender(box, _size, _trueValues);
+		ti = new TeXRender(box, _textSize, _trueValues);
 	}
 	if (!istrans(_fg)) {
 		ti->setForeground(_fg);

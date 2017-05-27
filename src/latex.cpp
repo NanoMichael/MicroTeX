@@ -49,7 +49,7 @@ TeXRender* LaTeX::parse(const wstring& latex, int width, float textSize, float l
 	int align = lined ? ALIGN_LEFT : ALIGN_CENTER;
 	_formula->setLaTeX(latex);
 	TeXRender* render = _builder->setStyle(STYLE_DISPLAY)
-		.setSize(textSize)
+		.setTextSize(textSize)
 		.setWidth(UNIT_PIXEL, width, align)
 		.setIsMaxWidth(lined)
 		.setLineSpace(UNIT_PIXEL, lineSpace)

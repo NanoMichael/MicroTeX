@@ -18,7 +18,7 @@ private:
 	static const color _defaultcolor;
 
 	shared_ptr<Box> _box;
-	float _size;
+	float _textSize;
 	color _fg;
 	Insets _insets;
 public:
@@ -26,9 +26,9 @@ public:
 	static float _magFactor;
 	bool _iscolored;
 
-	TeXRender(const shared_ptr<Box> b, float s, bool trueValues = false);
+	TeXRender(const shared_ptr<Box> b, float textSize, bool trueValues = false);
 
-	float getSize() const;
+	float getTextSize() const;
 
 	int getHeight() const;
 
@@ -38,7 +38,7 @@ public:
 
 	float getBaseline() const;
 
-	void setSize(float s);
+	void setTextSize(float textSize);
 
 	void setForeground(color fg);
 
@@ -56,7 +56,7 @@ public:
 class TeXRenderBuilder {
 private:
 	int _style, _type, _widthUnit, _align, _lineSpaceUnit;
-	float _size, _textWidth, _lineSpace;
+	float _textSize, _textWidth, _lineSpace;
 	bool _trueValues, _isMaxWidth;
 	color _fg;
 public:
@@ -72,7 +72,7 @@ public:
 
 	TeXRenderBuilder() :
 		_style(-1), _type(-1), _widthUnit(-1), _align(-1), _lineSpaceUnit(-1),
-		_size(0), _textWidth(0), _lineSpace(0),
+		_textSize(0), _textWidth(0), _lineSpace(0),
 		_trueValues(false), _isMaxWidth(false), _fg(black) {
 	}
 
@@ -81,8 +81,8 @@ public:
 		return *this;
 	}
 
-	inline TeXRenderBuilder& setSize(float s) {
-		_size = s;
+	inline TeXRenderBuilder& setTextSize(float textSize) {
+		_textSize = textSize;
 		return *this;
 	}
 
@@ -143,8 +143,9 @@ public:
 	}
 
 	inline TeXRenderBuilder& setLineSpace(int unit, float space) {
-		if (_widthUnit == -1)
+		if (_widthUnit == -1) {
 			throw ex_invalid_state("cannot set line space without having specified a width!");
+		}
 		_lineSpace = space;
 		_lineSpaceUnit = unit;
 		return *this;
