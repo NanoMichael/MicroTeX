@@ -129,7 +129,7 @@ public:
 		_drawing_scroller.add(_tex);
 
 		_tex_tv.set_buffer(Gtk::TextBuffer::create());
-		_tex_tv.override_font(Pango::FontDescription("Monospace 13"));
+		_tex_tv.override_font(Pango::FontDescription("Monospace 12"));
 		_tex_tv.signal_key_press_event().connect(sigc::mem_fun(*this, &MainWindow::on_text_key_press), false);
 		_tex_tv.set_border_width(5);
 
