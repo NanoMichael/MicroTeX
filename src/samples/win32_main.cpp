@@ -1,8 +1,12 @@
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MEM_CHECK)
 
 #include "latex.h"
+#include "samples.h"
+#include "platform/gdi_win/graphic_win32.h"
 
 #include <iostream>
+#include <cstdlib>
+#include <time.h>
 
 #include <windows.h>
 #include <objidl.h>
@@ -12,7 +16,11 @@
 #define ID_SETTER 256
 #define ID_CANVAS 512
 #define ID_EDITBOX 1024
-#define ID_BUTTON 2048
+#define ID_BUTTON_SIZE 2048
+#define ID_BUTTON_RANDOM 4096
+
+#define BUTTON_WIDTH 140
+#define BUTTON_HEIGHT 35
 #define EDITOR_WIDTH 480
 
 using namespace std;
@@ -21,9 +29,9 @@ using namespace Gdiplus;
 
 TeXRender* _render = nullptr;
 int _size = 26;
-color _color = 0xff101010;
+color _color = 0xff424242;
 
-HWND hEditor, hBtn, hCanvas, hSetter;
+HWND hEditor, hBtnSize, hBtnRandom, hCanvas, hEditSize;
 WNDPROC editorProc, setterProc;
 
 void RegisterCanvas();
@@ -33,6 +41,8 @@ void CreateCtrl(HINSTANCE, HWND);
 void ResizeCtrl(HWND);
 
 void HandleOK();
+
+void HandleRandom();
 
 void HandleSize();
 
@@ -75,8 +85,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
 	RegisterClass(&wndClass);
 
 	hWnd = CreateWindow(
-	           TEXT("LaTeX"),   // window class name
-	           TEXT("LaTeX"),  // window caption
+	           TEXT("LaTeX"),            // window class name
+	           TEXT("LaTeX"),            // window caption
 	           WS_OVERLAPPEDWINDOW,      // window style
 	           0,                        // initial x position
 	           0,                        // initial y position
@@ -108,8 +118,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 		PostQuitMessage(0);
 		return 0;
 	case WM_COMMAND:
-		if (wParam == ID_BUTTON)
+		if (wParam == ID_BUTTON_SIZE) {
 			HandleSize();
+		} else if (wParam == ID_BUTTON_RANDOM) {
+			HandleRandom();
+		}
 		return 0;
 	case WM_SIZE:
 		ResizeCtrl(hWnd);
@@ -122,19 +135,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 void init() {
 	LaTeX::init();
 	_render = LaTeX::parse(L"\\text{What a beautiful day}", 720, _size, _size / 3.f, _color);
-	DUMP_MEM_STATUS();
+}
+
+void HandleRandom() {
+	srand(time(NULL));
+	int idx = rand() % tex::SAMPLES_COUNT;
+	if (_render != nullptr) {
+		delete _render;
+	}
+	RECT r;
+	GetClientRect(hCanvas, &r);
+	_render = LaTeX::parse(wstring(tex::SAMPLES[idx]), r.right - r.left, _size, _size / 3.f, _color);
+	InvalidateRect(hCanvas, NULL, TRUE);
+	UpdateWindow(hCanvas);
 }
 
 void HandleOK() {
 	int len = GetWindowTextLengthW(hEditor);
 	wchar_t* txt = new wchar_t[len + 10];
 	GetWindowTextW(hEditor, txt, len + 10);
-	if (_render != nullptr)
+	if (_render != nullptr) {
 		delete _render;
+	}
 	RECT r;
 	GetClientRect(hCanvas, &r);
 	_render = LaTeX::parse(wstring(txt), r.right - r.left, _size, _size / 3.f, _color);
-	DUMP_MEM_STATUS();
 	InvalidateRect(hCanvas, NULL, TRUE);
 	UpdateWindow(hCanvas);
 	delete[] txt;
@@ -143,14 +168,14 @@ void HandleOK() {
 void HandleSize() {
 	if (_render == nullptr)
 		return;
-	int len = GetWindowTextLength(hSetter);
+	int len = GetWindowTextLength(hEditSize);
 	if (len == 0)
 		return;
 	char* txt = new char[len + 10];
-	GetWindowText(hSetter, txt, len + 10);
+	GetWindowText(hEditSize, txt, len + 10);
 	string x = txt;
 	valueof(x, _size);
-	_render->setSize(_size);
+	_render->setTextSize(_size);
 	InvalidateRect(hCanvas, NULL, TRUE);
 	UpdateWindow(hCanvas);
 	delete[] txt;
@@ -161,71 +186,72 @@ void RenderFormula(HWND hwnd, HDC hdc) {
 	RECT r;
 	GetClientRect(hwnd, &r);
 	Graphics g(hdc);
-	Graphics2D g2(&g);
+	Graphics2D_win32 g2(&g);
 	g2.drawRect(r.left, r.top, r.right - r.left - 1, r.bottom - r.top - 1);
+	// draw formula
 	if (_render != nullptr) {
 		_render->draw(g2, 10, 10);
 	}
 }
 
 void CreateCtrl(HINSTANCE hInst, HWND hwnd) {
-	const int margin = 10;
-	int w = EDITOR_WIDTH, h = 35;
+	// create first, relayout through message WM_SIZE
+	int l = 0, t = 0, w = 10, h = 10;
 	// edit-box
-	RECT r;
-	GetClientRect(hwnd, &r);
-	int l = r.right - w - margin, t = r.top + margin;
-	h = r.bottom - t - h - 2 * margin;
 	hEditor = CreateWindowEx(
-	              WS_EX_TOPMOST,
-	              "edit", NULL,
-	              WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL,
-	              l, t, w, h,
-	              hwnd,
-	              (HMENU) ID_EDITBOX,
-	              hInst, NULL);
+				WS_EX_TOPMOST,
+				"edit", NULL,
+				WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL,
+				l, t, w, h,
+				hwnd,
+				(HMENU) ID_EDITBOX,
+				hInst, NULL);
 	HFONT hf = CreateFont(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "Consolas");
 	SendMessage(hEditor, WM_SETFONT, (WPARAM) hf, 0);
 	SetFocus(hEditor);
-	editorProc = (WNDPROC) SetWindowLong(hEditor, GWL_WNDPROC, (LONG) EditorProc);
-	// setter
-	w = EDITOR_WIDTH - 70 - margin, h = 35, t = r.bottom - h - margin;
-	hSetter = CreateWindowEx(
-	              WS_EX_TOPMOST,
-	              "edit", NULL,
-	              WS_CHILD | WS_VISIBLE | WS_BORDER | ES_CENTER | ES_NUMBER,
-	              l, t, w, h,
-	              hwnd,
-	              (HMENU) ID_SETTER,
-	              hInst, NULL);
-	SendMessage(hSetter, WM_SETFONT, (WPARAM) hf, 0);
-	setterProc = (WNDPROC) SetWindowLong(hSetter, GWL_WNDPROC, (LONG) SetterProc);
-	// button
-	w = 70;
-	l = r.right - w - margin;
-	hBtn = CreateWindowEx(
-	           WS_EX_TOPMOST,
-	           "Button", NULL,
-	           WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-	           l, t, w, h,
-	           hwnd,
-	           (HMENU) ID_BUTTON,
-	           hInst,
-	           NULL);
-	SendMessage(hBtn, WM_SETFONT, (WPARAM) hf, 0);
-	SendMessage(hBtn, WM_SETTEXT, (WPARAM) NULL, (LPARAM) ("OK"));
+	editorProc = (WNDPROC) SetWindowLongPtr(hEditor, GWLP_WNDPROC, (LONG_PTR) EditorProc);
+	// size setter
+	hEditSize = CreateWindowEx(
+				WS_EX_TOPMOST,
+				"edit", NULL,
+				WS_CHILD | WS_VISIBLE | WS_BORDER | ES_CENTER | ES_NUMBER,
+				l, t, w, h,
+				hwnd,
+				(HMENU) ID_SETTER,
+				hInst, NULL);
+	SendMessage(hEditSize, WM_SETFONT, (WPARAM) hf, 0);
+	setterProc = (WNDPROC) SetWindowLongPtr(hEditSize, GWLP_WNDPROC, (LONG_PTR) SetterProc);
+	// button size
+	hBtnSize = CreateWindowEx(
+				WS_EX_TOPMOST,
+				"Button", NULL,
+				WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+				l, t, w, h,
+				hwnd,
+				(HMENU) ID_BUTTON_SIZE,
+				hInst, NULL);
+	SendMessage(hBtnSize, WM_SETFONT, (WPARAM) hf, 0);
+	SendMessage(hBtnSize, WM_SETTEXT, (WPARAM) NULL, (LPARAM) ("Set Text Size"));
+	// button random
+	hBtnRandom = CreateWindowEx(
+				WS_EX_TOPMOST,
+				"Button", NULL,
+				WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+				l, t, w, h,
+				hwnd,
+				(HMENU) ID_BUTTON_RANDOM,
+				hInst, NULL);
+	SendMessage(hBtnRandom, WM_SETFONT, (WPARAM) hf, 0);
+	SendMessage(hBtnRandom, WM_SETTEXT, (WPARAM) NULL, (LPARAM) ("Random Example"));
 	// canvas
-	l = r.left + margin, t = r.top + margin;
-	w = r.right - EDITOR_WIDTH - 2 * margin - l, h = r.bottom - t - margin;
 	hCanvas = CreateWindowEx(
-	              WS_EX_TOPMOST,
-	              "canvas", NULL,
-	              WS_CHILD | WS_VISIBLE,
-	              l, t, w, h,
-	              hwnd,
-	              (HMENU) ID_CANVAS,
-	              hInst,
-	              NULL);
+				WS_EX_TOPMOST,
+				"canvas", NULL,
+				WS_CHILD | WS_VISIBLE,
+				l, t, w, h,
+				hwnd,
+				(HMENU) ID_CANVAS,
+				hInst, NULL);
 }
 
 void ResizeCtrl(HWND hwnd) {
@@ -233,17 +259,21 @@ void ResizeCtrl(HWND hwnd) {
 	GetClientRect(hwnd, &r);
 	const int margin = 10;
 	// editor
-	int w = EDITOR_WIDTH, h = 35;
+	int w = EDITOR_WIDTH, h = BUTTON_HEIGHT;
 	int l = r.right - w - margin, t = r.top + margin;
 	h = r.bottom - t - h - 2 * margin;
 	MoveWindow(hEditor, l, t, w, h, TRUE);
 	// setter
-	w = EDITOR_WIDTH - 70 - margin, h = 35, t = r.bottom - h - margin;
-	MoveWindow(hSetter, l, t, w, h, TRUE);
-	// button
-	w = 70;
+	w = EDITOR_WIDTH - BUTTON_WIDTH * 2 - margin * 2, h = BUTTON_HEIGHT, t = r.bottom - h - margin;
+	MoveWindow(hEditSize, l, t, w, h, TRUE);
+	// button size
+	w = BUTTON_WIDTH;
+	l = r.right - w * 2 - margin * 2;
+	MoveWindow(hBtnSize, l, t, w, h, TRUE);
+	// button random
+	w = BUTTON_WIDTH;
 	l = r.right - w - margin;
-	MoveWindow(hBtn, l, t, w, h, TRUE);
+	MoveWindow(hBtnRandom, l, t, w, h, TRUE);
 	// canvas
 	l = r.left + margin, t = r.top + margin;
 	w = r.right - EDITOR_WIDTH - 2 * margin - l, h = r.bottom - t - margin;

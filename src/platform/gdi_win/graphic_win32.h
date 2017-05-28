@@ -1,16 +1,12 @@
-#ifdef _WIN32
+#include "config.h"
+
+#if defined(_WIN32) && !defined(__MEM_CHECK)
 
 #include "graphic/graphic.h"
 #include "common.h"
 
-#include <sstream>
-
-#include <windows.h>
-#include <gdiplush.h>
-
 using namespace std;
 using namespace tex;
-
 
 namespace Gdiplus {
 
@@ -27,17 +23,22 @@ class Bitmap;
 
 namespace tex {
 
-class Font_win32 {
+class Font_win32 : public Font {
 private:
 	static const Gdiplus::FontFamily* _serif;
 	static const Gdiplus::FontFamily* _sansserif;
 
 	float _size;
 
+	Font_win32();
 public:
 	int _style;
 	shared_ptr<Gdiplus::Font> _typeface;
 	const Gdiplus::FontFamily* _family;
+
+	Font_win32(const string& name, int style, float size);
+
+	Font_win32(const string& file, float size);
 
 	virtual float getSize() const override;
 
@@ -50,11 +51,11 @@ public:
 	virtual ~Font_win32();
 
 	static int convertStyle(int style);
-}
+};
 
-class TextLayout_win32 {
+class TextLayout_win32 : public TextLayout {
 private:
-	Font_win32 _font;
+	shared_ptr<Font_win32> _font;
 	wstring _txt;
 
 public:
@@ -62,16 +63,33 @@ public:
 	static Gdiplus::Graphics* _g;
 	static Gdiplus::Bitmap* _img;
 
+	TextLayout_win32(const wstring& src, const shared_ptr<Font_win32>& font);
+
 	virtual void getBounds(_out_ Rect& bounds) override;
 
 	virtual void draw(Graphics2D& g2, float x, float y) override;
+};
 
-	virtual ~TextLayout_win32();
-}
+enum AffineTransformIndex {SX, SY, TX, TY, R, PX, PY};
 
-class Graphics2D_win32 {
+class Graphics2D_win32 : public Graphics2D {
+private:
+	static const Gdiplus::StringFormat* _format;
+	static const Font* _defaultFont;
+
+	float* _t;
+	color _color;
+	const Font* _font;
+	Stroke _stroke;
+	Gdiplus::Graphics* _g;
+	Gdiplus::Pen* _pen;
+	Gdiplus::SolidBrush* _brush;
 
 public:
+	Graphics2D_win32(Gdiplus::Graphics* g);
+
+	~Graphics2D_win32();
+
 	virtual void setColor(color c) override;
 
 	virtual color getColor() const override;
@@ -120,10 +138,10 @@ public:
 
 	virtual void fillRect(float x, float y, float w, float h) override;
 
-	virtual void drawRoundRect(float x, float y, float w, float h) override;
+	virtual void drawRoundRect(float x, float y, float w, float h, float rx, float ry) override;
 
-	virtual void fillRoundRect(float x, float y, float w, float h) override;
-}
+	virtual void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
+};
 
 }
 

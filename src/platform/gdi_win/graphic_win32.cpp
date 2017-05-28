@@ -1,6 +1,8 @@
-#ifdef _WIN32
+#include "config.h"
 
-#include "platform/graphic_win32.h"
+#if defined(_WIN32) && !defined(__MEM_CHECK)
+
+#include "platform/gdi_win/graphic_win32.h"
 
 #include <sstream>
 
@@ -10,9 +12,9 @@
 using namespace std;
 using namespace tex;
 
-/**************** font *************/
+/****************************************************************************************/
 
-int Font::convertStyle(int style) {
+int Font_win32::convertStyle(int style) {
 	int s;
 	switch (style) {
 	case PLAIN:
@@ -34,28 +36,30 @@ int Font::convertStyle(int style) {
 	return s;
 }
 
-const Gdiplus::FontFamily* Font::_serif;
-const Gdiplus::FontFamily* Font::_sansserif;
+const Gdiplus::FontFamily* Font_win32::_serif;
+const Gdiplus::FontFamily* Font_win32::_sansserif;
 
-Font::~Font() {
-	if (_family == _serif || _family == _sansserif)
+Font_win32::~Font_win32() {
+	if (_family == _serif || _family == _sansserif) {
 		return;
+	}
 	delete _family;
 }
 
-Font::Font() : _size(0) {}
+Font_win32::Font_win32() : _size(0) {}
 
-Font::Font(const string& name, int style, float size) : _size(size) {
+Font_win32::Font_win32(const string& name, int style, float size) : _size(size) {
 	if (_serif == nullptr) {
 		_serif = Gdiplus::FontFamily::GenericSerif();
 		_sansserif = Gdiplus::FontFamily::GenericSansSerif();
 	}
 	const Gdiplus::FontFamily* f = nullptr;
 	if (name == "Serif" || name == "SansSerif") {
-		if (name == "Serif")
+		if (name == "Serif") {
 			f = _serif;
-		else
+		} else {
 			f = _sansserif;
+		}
 	} else {
 		wstring wname = utf82wide(name.c_str());
 		f = new Gdiplus::FontFamily(wname.c_str());
@@ -70,81 +74,128 @@ Font::Font(const string& name, int style, float size) : _size(size) {
 	_typeface = shared_ptr<Gdiplus::Font>(tf);
 }
 
-float Font::getSize() const {
-	return _size;
-}
-
-Font Font::deriveFont(int style) const {
-	if (style == _style)
-		return *this;
-	int s = convertStyle(style);
-	if (!_family->IsStyleAvailable(s))
-		throw ex_invalid_state("specified font style not available!");
-	Font f;
-	f._family = _family;
-	f._style = s;
-	f._size = _size;
-	Gdiplus::Font* ff = new Gdiplus::Font(&(*_family), _size, s, Gdiplus::UnitPixel);
-	f._typeface = shared_ptr<Gdiplus::Font>(ff);
-	return f;
-}
-
-bool Font::operator==(const Font& f) const {
-	return _typeface.get() == f._typeface.get();
-}
-
-bool Font::operator!=(const Font& f) const {
-	return !(*this == f);
-}
-
-Font* Font::create(const string& file, float s) {
+Font_win32::Font_win32(const string& file, float size) {
+	// add font to font collection
+	// some like fontconfig
 	Gdiplus::PrivateFontCollection c;
 	wstring wfile = utf82wide(file.c_str());
 	c.AddFontFile(wfile.c_str());
 	Gdiplus::FontFamily* ff = new Gdiplus::FontFamily();
 	int num = 0;
 	c.GetFamilies(1, ff, &num);
-	if (num <= 0)
+	if (num <= 0) {
 		throw ex_invalid_state("cannot load font file " + file);
+	}
 	// search order :
 	// regular -> bold -> italic -> bold-italic
-	Font* font = new Font();
-	font->_size = s;
-	font->_family = ff;
+	_size = size;
+	_family = ff;
 	Gdiplus::Font* f = nullptr;
 	if (ff->IsStyleAvailable(Gdiplus::FontStyleRegular)) {
-		f = new Gdiplus::Font(ff, s, Gdiplus::FontStyleRegular, Gdiplus::UnitPixel);
-		font->_style = Gdiplus::FontStyleRegular;
+		f = new Gdiplus::Font(ff, size, Gdiplus::FontStyleRegular, Gdiplus::UnitPixel);
+		_style = Gdiplus::FontStyleRegular;
 	} else if (ff->IsStyleAvailable(Gdiplus::FontStyleBold)) {
-		f = new Gdiplus::Font(ff, s, Gdiplus::FontStyleBold, Gdiplus::UnitPixel);
-		font->_style = Gdiplus::FontStyleBold;
+		f = new Gdiplus::Font(ff, size, Gdiplus::FontStyleBold, Gdiplus::UnitPixel);
+		_style = Gdiplus::FontStyleBold;
 	} else if (ff->IsStyleAvailable(Gdiplus::FontStyleItalic)) {
-		f = new Gdiplus::Font(ff, s, Gdiplus::FontStyleItalic, Gdiplus::UnitPixel);
-		font->_style = Gdiplus::FontStyleItalic;
+		f = new Gdiplus::Font(ff, size, Gdiplus::FontStyleItalic, Gdiplus::UnitPixel);
+		_style = Gdiplus::FontStyleItalic;
 	} else if (ff->IsStyleAvailable(Gdiplus::FontStyleBoldItalic)) {
-		f = new Gdiplus::Font(ff, s, Gdiplus::FontStyleBoldItalic, Gdiplus::UnitPixel);
-		font->_style = Gdiplus::FontStyleBoldItalic;
+		f = new Gdiplus::Font(ff, size, Gdiplus::FontStyleBoldItalic, Gdiplus::UnitPixel);
+		_style = Gdiplus::FontStyleBoldItalic;
 	} else {
-		delete font;
 		throw ex_invalid_state("no available font in file " + file);
 	}
-	font->_typeface = shared_ptr<Gdiplus::Font>(f);
-	return font;
+	_typeface = shared_ptr<Gdiplus::Font>(f);
 }
 
-/****************************************************
- *               Graphics2D implementation          *
- ****************************************************/
+float Font_win32::getSize() const {
+	return _size;
+}
 
-const Gdiplus::StringFormat* Graphics2D::_format = nullptr;
-const Font*  Graphics2D::_defaultFont = nullptr;
+shared_ptr<Font> Font_win32::deriveFont(int style) const {
+	int s = convertStyle(style);
+	if (!_family->IsStyleAvailable(s)) {
+		throw ex_invalid_state("specified font style not available!");
+	}
+	Font_win32* f = new Font_win32();
+	f->_family = _family;
+	f->_style = s;
+	f->_size = _size;
+	Gdiplus::Font* ff = new Gdiplus::Font(&(*_family), _size, s, Gdiplus::UnitPixel);
+	f->_typeface = shared_ptr<Gdiplus::Font>(ff);
+	return shared_ptr<Font>(f);
+}
 
-Graphics2D::Graphics2D(Gdiplus::Graphics* g) {
-	if (_format == nullptr)
+bool Font_win32::operator==(const Font& ft) const {
+	const Font_win32& f = static_cast<const Font_win32&>(ft);
+	return _typeface.get() == f._typeface.get() && _size == f._size;
+}
+
+bool Font_win32::operator!=(const Font& f) const {
+	return !(*this == f);
+}
+
+Font* Font::create(const string& file, float s) {
+	return new Font_win32(file, s);
+}
+
+shared_ptr<Font> Font::_create(const string& name, int style, float size) {
+	return shared_ptr<Font>(new Font_win32(name, style, size));
+}
+
+/******************************************************************************************/
+
+Gdiplus::Graphics* TextLayout_win32::_g = nullptr;
+Gdiplus::Bitmap* TextLayout_win32::_img = nullptr;
+const Gdiplus::StringFormat* TextLayout_win32::_format = nullptr;
+
+TextLayout_win32::TextLayout_win32(const wstring& src, const shared_ptr<Font_win32>& font) :
+	_txt(src), _font(font) {
+	if (_img == nullptr) {
+		_img = new Gdiplus::Bitmap(1, 1, PixelFormat32bppARGB);
+		_g = Gdiplus::Graphics::FromImage(_img);
 		_format = Gdiplus::StringFormat::GenericTypographic();
-	if (_defaultFont == nullptr)
-		_defaultFont = new Font("Arial", PLAIN, 72.f);
-	_t = new float[9]();
+	}
+}
+
+void TextLayout_win32::getBounds(_out_ Rect& r) {
+	int em = _font->_family->GetEmHeight(_font->_style);
+	int ascent = _font->_family->GetCellAscent(_font->_style);
+	float ap = _font->getSize() * ascent / em;
+	Gdiplus::RectF r1;
+	_g->MeasureString(_txt.c_str(), wcslen(_txt.c_str()), &(*_font->_typeface), Gdiplus::PointF(0, 0), _format, &r1);
+	r.x = 0;
+	r.y = -ap;
+	r.w = r1.Width;
+	r.h = r1.Height;
+}
+
+void TextLayout_win32::draw(Graphics2D& g2, float x, float y) {
+	const Font* prev = g2.getFont();
+	g2.setFont(_font.get());
+	g2.drawText(_txt, x, y);
+	g2.setFont(prev);
+}
+
+shared_ptr<TextLayout> TextLayout::create(const wstring& src, const shared_ptr<Font>& font) {
+	shared_ptr<Font_win32> f = static_pointer_cast<Font_win32>(font);
+	return shared_ptr<TextLayout>(new TextLayout_win32(src, f));
+}
+
+/******************************************************************************************/
+
+const Gdiplus::StringFormat* Graphics2D_win32::_format = nullptr;
+const Font*  Graphics2D_win32::_defaultFont = nullptr;
+
+Graphics2D_win32::Graphics2D_win32(Gdiplus::Graphics* g) {
+	if (_format == nullptr) {
+		_format = Gdiplus::StringFormat::GenericTypographic();
+	}
+	if (_defaultFont == nullptr) {
+		_defaultFont = new Font_win32("Arial", PLAIN, 72.f);
+	}
+	_t = new float[7]();
 	_t[SX] = _t[SY] = 1;
 	_color = black;
 	_font = _defaultFont;
@@ -156,23 +207,23 @@ Graphics2D::Graphics2D(Gdiplus::Graphics* g) {
 	_brush = new Gdiplus::SolidBrush(Gdiplus::Color(_color));
 }
 
-Graphics2D::~Graphics2D() {
+Graphics2D_win32::~Graphics2D_win32() {
 	delete _t;
 	delete _pen;
 	delete _brush;
 }
 
-void Graphics2D::setColor(color color) {
+void Graphics2D_win32::setColor(color color) {
 	_color = color;
 	_pen->SetColor(Gdiplus::Color(color));
 	_brush->SetColor(Gdiplus::Color(color));
 }
 
-color Graphics2D::getColor() const {
+color Graphics2D_win32::getColor() const {
 	return _color;
 }
 
-void Graphics2D::setStroke(const Stroke& s) {
+void Graphics2D_win32::setStroke(const Stroke& s) {
 	_stroke = s;
 	_pen->SetWidth(s.lineWidth);
 	Gdiplus::LineCap c;
@@ -204,166 +255,122 @@ void Graphics2D::setStroke(const Stroke& s) {
 	_pen->SetMiterLimit(s.miterLimit);
 }
 
-const Stroke& Graphics2D::getStroke() const {
+const Stroke& Graphics2D_win32::getStroke() const {
 	return _stroke;
 }
 
-void Graphics2D::setStrokeWidth(float w) {
+void Graphics2D_win32::setStrokeWidth(float w) {
 	_stroke.lineWidth = w;
 	_pen->SetWidth(w);
 }
 
-const Font* Graphics2D::getFont() const {
+const Font* Graphics2D_win32::getFont() const {
 	return _font;
 }
 
-void Graphics2D::setFont(const Font* font) {
+void Graphics2D_win32::setFont(const Font* font) {
 	_font = font;
 }
 
-void Graphics2D::translate(float dx, float dy) {
+void Graphics2D_win32::translate(float dx, float dy) {
 	_t[TX] += _t[SX] * dx;
 	_t[TY] += _t[SY] * dy;
 	_g->TranslateTransform(dx, dy);
 }
 
-void Graphics2D::scale(float sx, float sy) {
+void Graphics2D_win32::scale(float sx, float sy) {
 	_t[SX] *= sx;
 	_t[SY] *= sy;
 	_g->ScaleTransform(sx, sy);
 }
 
-void Graphics2D::rotate(float angle) {
-	float r = (float) (angle / PI * 180);
-	_t[R] += r;
-	_g->RotateTransform(r);
+void Graphics2D_win32::rotate(float angle) {
+	_t[R] += angle;
+	_g->RotateTransform(angle / PI * 180);
 }
 
-void Graphics2D::rotate(float angle, float px, float py) {
-	float r = (float) (angle / PI * 180);
-	_t[R] += r;
+void Graphics2D_win32::rotate(float angle, float px, float py) {
+	_t[R] += angle;
 	_t[PX] = px * _t[SX] + _t[TX];
 	_t[PY] = py * _t[SY] + _t[TY];
 	_g->TranslateTransform(px, py);
-	_g->RotateTransform(r);
+	_g->RotateTransform(angle / PI * 180);
 	_g->TranslateTransform(-px, -py);
 }
 
-void Graphics2D::reset() {
+void Graphics2D_win32::reset() {
 	_g->ResetTransform();
 	memset(_t, 0, sizeof(float) * 9);
 	_t[SX] = _t[SY] = 1;
 }
 
-float Graphics2D::sx() const {
+float Graphics2D_win32::sx() const {
 	return _t[SX];
 }
 
-float Graphics2D::sy() const {
+float Graphics2D_win32::sy() const {
 	return _t[SY];
 }
 
-float Graphics2D::tx() const {
+float Graphics2D_win32::tx() const {
 	return _t[TX];
 }
 
-float Graphics2D::ty() const {
+float Graphics2D_win32::ty() const {
 	return _t[TY];
 }
 
-float Graphics2D::r() const {
+float Graphics2D_win32::r() const {
 	return _t[R];
 }
 
-float Graphics2D::px() const {
+float Graphics2D_win32::px() const {
 	return _t[PX];
 }
 
-float Graphics2D::py() const {
+float Graphics2D_win32::py() const {
 	return _t[PY];
 }
 
-void Graphics2D::drawChar(wchar_t c, float x, float y) {
+void Graphics2D_win32::drawChar(wchar_t c, float x, float y) {
 	wchar_t str[] { c, L'\0' };
 	drawText(str, x, y);
 }
 
-void Graphics2D::drawText(const wstring& c, float x, float y) {
+void Graphics2D_win32::drawText(const wstring& c, float x, float y) {
 	const wchar_t* str = c.c_str();
-	int em = _font->_family->GetEmHeight(_font->_style);
-	int ascent = _font->_family->GetCellAscent(_font->_style);
-	float ap = _font->getSize() * ascent / em;
+	const Font_win32* f = (const Font_win32*) _font;
+	int em = f->_family->GetEmHeight(f->_style);
+	int ascent = f->_family->GetCellAscent(f->_style);
+	float ap = f->getSize() * ascent / em;
 	int len = wcslen(str);
 	Gdiplus::RectF r1, r2;
-	_g->MeasureString(str, len, &(*_font->_typeface), Gdiplus::PointF(0, 0), &r1);
-	_g->MeasureString(str, len, &(*_font->_typeface), Gdiplus::PointF(0, 0), _format, &r2);
+	_g->MeasureString(str, len, &(*f->_typeface), Gdiplus::PointF(0, 0), &r1);
+	_g->MeasureString(str, len, &(*f->_typeface), Gdiplus::PointF(0, 0), _format, &r2);
 	float off = (r1.Width - r2.Width) / 2.f;
-	_g->DrawString(str, len, &(*_font->_typeface), Gdiplus::PointF(x - off, y - ap), _brush);
+	_g->DrawString(str, len, &(*f->_typeface), Gdiplus::PointF(x - off, y - ap), _brush);
 }
 
-void Graphics2D::drawLine(float x1, float y1, float x2, float y2) {
+void Graphics2D_win32::drawLine(float x1, float y1, float x2, float y2) {
 	_g->DrawLine(_pen, x1, y1, x2, y2);
 }
 
-void Graphics2D::drawRect(float x, float y, float w, float h) {
+void Graphics2D_win32::drawRect(float x, float y, float w, float h) {
 	_g->DrawRectangle(_pen, x, y, w, h);
 }
 
-void Graphics2D::fillRect(float x, float y, float w, float h) {
+void Graphics2D_win32::fillRect(float x, float y, float w, float h) {
 	_g->FillRectangle(_brush, x, y, w, h);
 }
 
-void Graphics2D::drawRoundRect(float x, float y, float w, float h, float rx, float ry) {
+void Graphics2D_win32::drawRoundRect(float x, float y, float w, float h, float rx, float ry) {
 	// not supported
 	drawRect(x, y, w, h);
 }
 
-void Graphics2D::fillRoundRect(float x, float y, float w, float h, float rx, float ry) {
+void Graphics2D_win32::fillRoundRect(float x, float y, float w, float h, float rx, float ry) {
 	// not supported
 	fillRect(x, y, w, h);
-}
-
-Gdiplus::Graphics* TextLayout::_g = nullptr;
-Gdiplus::Bitmap* TextLayout::_img = nullptr;
-const Gdiplus::StringFormat* TextLayout::_format = nullptr;
-
-TextLayout::~TextLayout() {}
-
-TextLayout::TextLayout() {
-	if (_img == nullptr) {
-		_img = new Gdiplus::Bitmap(1, 1, PixelFormat32bppARGB);
-		_g = Gdiplus::Graphics::FromImage(_img);
-		_format = Gdiplus::StringFormat::GenericTypographic();
-	}
-}
-
-TextLayout::TextLayout(const wstring& src, const Font& font) : _txt(src), _font(font) {
-	if (_img == nullptr) {
-		_img = new Gdiplus::Bitmap(1, 1, PixelFormat32bppARGB);
-		_g = Gdiplus::Graphics::FromImage(_img);
-		_format = Gdiplus::StringFormat::GenericTypographic();
-	}
-}
-
-Rect TextLayout::getBounds() {
-	int em = _font._family->GetEmHeight(_font._style);
-	int ascent = _font._family->GetCellAscent(_font._style);
-	float ap = _font.getSize() * ascent / em;
-	Gdiplus::RectF r1;
-	_g->MeasureString(_txt.c_str(), wcslen(_txt.c_str()), &(*_font._typeface), Gdiplus::PointF(0, 0), _format, &r1);
-	Rect r;
-	r.x = 0;
-	r.y = -ap;
-	r.w = r1.Width;
-	r.h = r1.Height;
-	return r;
-}
-
-void TextLayout::draw(Graphics2D& g2, float x, float y) {
-	const Font* prev = g2.getFont();
-	g2.setFont(&_font);
-	g2.drawText(_txt, x, y);
-	g2.setFont(prev);
 }
 
 #endif

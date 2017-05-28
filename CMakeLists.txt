@@ -15,23 +15,30 @@ else()
 	message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no c++11 support. Please use a different one that supports c++11.")
 endif()
 
+# source file
 
-#debug
+file(GLOB_RECURSE SRC "src/*.cpp")
 
-if(CMAKE_COMPILER_IS_GNUCC)
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
-	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")
+
+# check operating system
+
+if(WIN32)
+	message(STATUS "We are work on windows")
+	include_directories("src")
+	set(LINK_LIBS gdiplus)
+elseif(LINUX)
+	message(STATUS "We are work on linux")
+	# include gtkmm module
+	find_package(PkgConfig)
+	pkg_check_modules(GTKMM gtkmm-3.0)
+	link_directories(${GTKMM_LIBRARY_DIRS})
+	include_directories(${GTKMM_INCLUDE_DIRS} "src")
+	set(LINK_LIBS ${GTKMM_LIBRARIES} fontconfig)
+else()
+	message(STATUS "We are work on a unknow platform")
+	# other platforms...
 endif()
 
 
-# include gtkmm module
-
-find_package(PkgConfig)
-pkg_check_modules(GTKMM gtkmm-3.0)
-link_directories(${GTKMM_LIBRARY_DIRS})
-
-include_directories(${GTKMM_INCLUDE_DIRS} "src")
-file(GLOB_RECURSE SRC "src/*.cpp")
-
 add_executable(LaTeX ${SRC})
-target_link_libraries(LaTeX ${GTKMM_LIBRARIES} fontconfig)
+target_link_libraries(LaTeX ${LINK_LIBS})
