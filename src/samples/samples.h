@@ -1,7 +1,7 @@
 
 namespace tex {
 
-const int SAMPLES_COUNT = 8;
+const int SAMPLES_COUNT = 9;
 
 wstring SAMPLES[] {
 	L"\\begin{array}{lr}\n"
@@ -156,7 +156,10 @@ wstring SAMPLES[] {
 	L"	\\hline\n"
 	L"	\\multicolumn{4}{|c|}{\\text{Table Foot}}\\\\\n"
 	L"	\\hline\n"
-	L"\\end{array}\n"
+	L"\\end{array}\n",
+
+	L"\\rlap{\\overbrace{\\phantom{1 + a + b + \\cdots + z}}^{\\text{total + 1}}}\n"
+	L"1 + \\underbrace{a + b + \\cdots + z}_{\\text{total}}\n"
 };
 
 }
