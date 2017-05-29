@@ -26,7 +26,7 @@ if(WIN32)
 	message(STATUS "We are work on windows")
 	include_directories("src")
 	set(LINK_LIBS gdiplus)
-elseif(LINUX)
+elseif(UNIX AND NOT APPLE)
 	message(STATUS "We are work on linux")
 	# include gtkmm module
 	find_package(PkgConfig)

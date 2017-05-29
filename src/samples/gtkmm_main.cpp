@@ -10,7 +10,6 @@
 #include <gtkmm/box.h>
 #include <gtkmm/paned.h>
 #include <gtkmm/textview.h>
-#include <gtkmm/entry.h>
 #include <gtkmm/button.h>
 #include <gtkmm/spinbutton.h>
 #include <gtkmm/adjustment.h>
@@ -18,9 +17,9 @@
 #include <gtkmm/window.h>
 #include <gtkmm/drawingarea.h>
 #include <gdkmm/rgba.h>
+#include <pangomm/tabarray.h>
 
 #include <iostream>
-#include <cstdlib>
 
 using namespace tex;
 
@@ -118,9 +117,13 @@ protected:
 	Gtk::ScrolledWindow _text_scroller, _drawing_scroller;
 	Gtk::Box _side_box, _bottom_box;
 	Gtk::Paned _main_box;
+
+	Pango::TabArray _tab;
+
+	int _previous_sample;
 public:
 	MainWindow() : _size_change_info("change text size: "), _random("Random Example"), _rendering("Rendering"), 
-		_side_box(Gtk::ORIENTATION_VERTICAL) {
+		_side_box(Gtk::ORIENTATION_VERTICAL), _previous_sample(0), _tab() {
 		set_border_width(10);
 		set_size_request(1220, 960);
 
@@ -128,6 +131,7 @@ public:
 		_drawing_scroller.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 		_drawing_scroller.add(_tex);
 
+		_tex_tv.set_tabs(_tab);
 		_tex_tv.set_buffer(Gtk::TextBuffer::create());
 		_tex_tv.override_font(Pango::FontDescription("Monospace 12"));
 		_tex_tv.signal_key_press_event().connect(sigc::mem_fun(*this, &MainWindow::on_text_key_press), false);
@@ -166,12 +170,12 @@ public:
 
 protected:
 	void on_random_clicked() {
-		srand(time(NULL));
-		int idx = rand() % tex::SAMPLES_COUNT;
+		int idx = (_previous_sample + 1) % tex::SAMPLES_COUNT;
 		string x;
 		wide2utf8(tex::SAMPLES[idx].c_str(), x);
 		_tex_tv.get_buffer()->set_text(x);
 		_tex.setLaTeX(tex::SAMPLES[idx]);
+		_previous_sample = idx;
 	}
 
 	void on_rendering_clicked() {
