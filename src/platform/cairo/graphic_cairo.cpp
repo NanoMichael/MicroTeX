@@ -6,38 +6,19 @@
 
 #include <fontconfig/fontconfig.h>
 
+#include <iostream>
+
 using namespace tex;
 using namespace std;
 
 map<string, string> Font_cairo::_file_name_map;
 
 Font_cairo::Font_cairo(const string& family, int style, float size) :
-	_family(family), _size((double) size) {
-	convertStyle(style);
-}
+	_family(family), _style(style), _size((double) size) {}
 
 Font_cairo::Font_cairo(const string& file, float size) :
 	Font_cairo("", PLAIN, size) {
 	loadFont(file);
-}
-
-void Font_cairo::convertStyle(int style) {
-	_slant = Pango::STYLE_NORMAL;
-	_weight = Pango::WEIGHT_NORMAL;
-	switch(style) {
-	case BOLD:
-		_weight = Pango::WEIGHT_BOLD;
-		break;
-	case ITALIC:
-		_slant = Pango::STYLE_ITALIC;
-		break;
-	case BOLDITALIC:
-		_weight = Pango::WEIGHT_BOLD;
-		_slant = Pango::STYLE_ITALIC;
-		break;
-	default:
-		break;
-	}
 }
 
 void Font_cairo::loadFont(const string& file) {
@@ -86,12 +67,8 @@ string Font_cairo::getFamily() const {
 	return _family;
 }
 
-Pango::Style Font_cairo::getSlant() const {
-	return _slant;
-}
-
-Pango::Weight Font_cairo::getWeight() const {
-	return _weight;
+int Font_cairo::getStyle() const {
+	return _style;
 }
 
 float Font_cairo::getSize() const {
@@ -99,17 +76,12 @@ float Font_cairo::getSize() const {
 }
 
 shared_ptr<Font> Font_cairo::deriveFont(int style) const {
-	Font_cairo* f = new Font_cairo();
-	f->_family = _family;
-	f->_size = _size;
-	f->convertStyle(style);
-	return shared_ptr<Font>(f);
+	return shared_ptr<Font>(new Font_cairo(_family, style, _size));
 }
 
 bool Font_cairo::operator==(const Font& ft) const {
 	const Font_cairo& f = static_cast<const Font_cairo&>(ft);
-	return _slant == f._slant && _weight == f._weight
-		&& _size == f._size && _family == f._family;
+	return _size == f._size && _style == f._style && _family == f._family;
 }
 
 bool Font_cairo::operator!=(const Font& f) const {
@@ -124,7 +96,7 @@ shared_ptr<Font> Font::_create(const string& name, int style, float size) {
 	return shared_ptr<Font>(new Font_cairo(name, style, size));
 }
 
-/******************************************************************************/
+/*****************************************************************************************/
 
 Cairo::RefPtr<Cairo::Context> TextLayout_cairo::_img_context;
 Glib::RefPtr<Pango::Layout> TextLayout_cairo::_layout;
@@ -138,11 +110,23 @@ TextLayout_cairo::TextLayout_cairo(const wstring& src, const shared_ptr<Font_cai
 
 	Pango::FontDescription fd;
 	fd.set_family(f->getFamily());
-	fd.set_style(f->getSlant());
-	fd.set_weight(f->getWeight());
 	fd.set_absolute_size(f->getSize() * Pango::SCALE);
+	fd.set_style(Pango::STYLE_NORMAL);
+	fd.set_weight(Pango::WEIGHT_NORMAL);
 
-	_layout = Pango::Layout::create(_img_context);
+	switch (f->getStyle()) {
+	case BOLD:
+		fd.set_weight(Pango::WEIGHT_BOLD);
+		break;
+	case ITALIC:
+		fd.set_style(Pango::STYLE_ITALIC);
+		break;
+	case BOLDITALIC:
+		fd.set_style(Pango::STYLE_ITALIC);
+		fd.set_weight(Pango::WEIGHT_BOLD);
+		break;
+	}
+
 	_layout->set_text(wide2utf8(src.c_str()));
 	_layout->set_font_description(fd);
 
@@ -170,12 +154,11 @@ shared_ptr<TextLayout> TextLayout::create(const wstring& src, const shared_ptr<F
 	return shared_ptr<TextLayout>(new TextLayout_cairo(src, f));
 }
 
-/******************************************************************************/
+/******************************************************************************************/
 
 Font_cairo Graphics2D_cairo::_default_font("SansSerif", PLAIN, 20.f);
 
 Graphics2D_cairo::Graphics2D_cairo(const Cairo::RefPtr<Cairo::Context>& context) : _context(context) {
-	_layout = Pango::Layout::create(_context);
 	memset(_t, 0, sizeof(float) * 7);
 	_t[SX] = _t[SY] = 1.f;
 
@@ -253,15 +236,6 @@ const Font* Graphics2D_cairo::getFont() const {
 
 void Graphics2D_cairo::setFont(const Font* font) {
 	_font = static_cast<const Font_cairo*>(font);
-	Pango::FontDescription f;
-	f.set_family(_font->getFamily());
-	f.set_style(_font->getSlant());
-	f.set_weight(_font->getWeight());
-	f.set_absolute_size(_font->getSize() * Pango::SCALE);
-
-	_layout->set_font_description(f);
-
-	_ascent = (float) (_layout->get_baseline() / Pango::SCALE);
 }
 
 void Graphics2D_cairo::translate(float dx, float dy) {
@@ -330,11 +304,24 @@ void Graphics2D_cairo::drawChar(wchar_t c, float x, float y) {
 }
 
 void Graphics2D_cairo::drawText(const wstring& t, float x, float y) {
-	string str = wide2utf8(t.c_str());
-	_layout->set_text(str);
-
-	_context->move_to(x, y - _ascent);
-	_layout->show_in_cairo_context(_context);
+	Cairo::FontSlant slant = Cairo::FONT_SLANT_NORMAL;
+	Cairo::FontWeight weight = Cairo::FONT_WEIGHT_NORMAL;
+	switch (_font->getStyle()) {
+	case BOLD:
+		weight = Cairo::FONT_WEIGHT_BOLD;
+		break;
+	case ITALIC:
+		slant = Cairo::FONT_SLANT_ITALIC;
+		break;
+	case BOLDITALIC:
+		slant = Cairo::FONT_SLANT_ITALIC;
+		weight = Cairo::FONT_WEIGHT_BOLD;
+		break;
+	}
+	_context->select_font_face(_font->getFamily(), slant, weight);
+	_context->set_font_size(_font->getSize());
+	_context->move_to(x, y);
+	_context->show_text(wide2utf8(t.c_str()));
 }
 
 void Graphics2D_cairo::drawLine(float x1, float y1, float x2, float y2) {

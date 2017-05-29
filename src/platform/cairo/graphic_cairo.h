@@ -19,12 +19,9 @@ class Font_cairo : public Font {
 private:
 	static map<string, string> _file_name_map;
 
-	Pango::Style _slant;
-	Pango::Weight _weight;
+	int _style;
 	double _size;
 	string _family;
-
-	void convertStyle(int style);
 
 	void loadFont(const string& file);
 
@@ -35,9 +32,7 @@ public:
 
 	string getFamily() const;
 
-	Pango::Style getSlant() const;
-
-	Pango::Weight getWeight() const;
+	int getStyle() const;
 
 	virtual float getSize() const override;
 
@@ -47,6 +42,8 @@ public:
 
 	virtual bool operator!=(const Font& f) const override;
 };
+
+/********************************************************************************/
 
 class TextLayout_cairo : public TextLayout {
 
@@ -63,6 +60,8 @@ public:
 	virtual void draw(Graphics2D& g2, float x, float y) override;
 };
 
+/********************************************************************************/
+
 enum AffineTransformIndex {SX, SY, TX, TY, R, PX, PY};
 
 class Graphics2D_cairo : public Graphics2D {
@@ -71,13 +70,9 @@ private:
 	static Font_cairo _default_font;
 
 	Cairo::RefPtr<Cairo::Context> _context;
-	Glib::RefPtr<Pango::Layout> _layout;
-
 	color _color;
 	Stroke _stroke;
 	const Font_cairo* _font;
-
-	float _ascent;
 	float _t[7];
 
 	void roundRect(float x, float y, float w, float h, float rx, float ry);
@@ -142,4 +137,4 @@ public:
 }
 
 #endif // GRAPHIC_GTKMM_H_INCLUDED
-#endif // __linux && __MEM_CHECK
+#endif // __linux && !__MEM_CHECK

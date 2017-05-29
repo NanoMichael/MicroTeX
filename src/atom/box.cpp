@@ -322,13 +322,16 @@ HorizontalRule::HorizontalRule(float thickness, float width, float s, color c, b
 }
 
 void HorizontalRule::draw(Graphics2D& g2, float x, float y) {
-	color old = g2.getColor();
-	if (!istrans(_color))
+	color oldColor = g2.getColor();
+	if (!istrans(_color)) {
 		g2.setColor(_color);
-	g2.setStrokeWidth(_height);
+	}
+	const Stroke& oldStroke = g2.getStroke();
+	g2.setStroke(Stroke(_height, CAP_BUTT, JOIN_BEVEL));
 	y = y - _height / 2.f - _speShift;
 	g2.drawLine(x, y, x + _width, y);
-	g2.setColor(old);
+	g2.setStroke(oldStroke);
+	g2.setColor(oldColor);
 }
 
 int HorizontalRule::getLastFontId() {
