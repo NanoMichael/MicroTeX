@@ -19,8 +19,6 @@
 #include <gdkmm/rgba.h>
 #include <pangomm/tabarray.h>
 
-#include <iostream>
-
 using namespace tex;
 
 class TeXDrawingArea : public Gtk::DrawingArea {
@@ -112,7 +110,7 @@ protected:
 	TeXDrawingArea _tex;
 
 	Gtk::Label _size_change_info;
-	Gtk::Button _random, _rendering;
+	Gtk::Button _next, _rendering;
 
 	Gtk::ScrolledWindow _text_scroller, _drawing_scroller;
 	Gtk::Box _side_box, _bottom_box;
@@ -122,15 +120,16 @@ protected:
 
 	int _previous_sample;
 public:
-	MainWindow() : _size_change_info("change text size: "), _random("Random Example"), _rendering("Rendering"), 
-		_side_box(Gtk::ORIENTATION_VERTICAL), _previous_sample(0), _tab() {
+	MainWindow() : _size_change_info("change text size: "), _next("Next Example"), _rendering("Rendering"), 
+		_side_box(Gtk::ORIENTATION_VERTICAL), _previous_sample(0), _tab(1, true) {
 		set_border_width(10);
-		set_size_request(1220, 960);
+		set_size_request(1220, 640);
 
 		_drawing_scroller.set_size_request(720);
 		_drawing_scroller.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 		_drawing_scroller.add(_tex);
 
+		_tab.set_tab(0, Pango::TAB_LEFT, 20);
 		_tex_tv.set_tabs(_tab);
 		_tex_tv.set_buffer(Gtk::TextBuffer::create());
 		_tex_tv.override_font(Pango::FontDescription("Monospace 12"));
@@ -144,13 +143,13 @@ public:
 		Glib::RefPtr<Gtk::Adjustment> adj = Gtk::Adjustment::create(_tex.getTextSize(), 1, 300);
 		adj->signal_value_changed().connect(sigc::mem_fun(*this, &MainWindow::on_text_size_changed));
 		_size_spin.set_adjustment(adj);
-		_random.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_random_clicked));
+		_next.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_next_clicked));
 		_rendering.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_rendering_clicked));
 
 		_bottom_box.set_spacing(10);
 		_bottom_box.pack_start(_size_change_info, Gtk::PACK_SHRINK);
 		_bottom_box.pack_start(_size_spin);
-		_bottom_box.pack_start(_random, Gtk::PACK_SHRINK);
+		_bottom_box.pack_start(_next, Gtk::PACK_SHRINK);
 		_bottom_box.pack_start(_rendering, Gtk::PACK_SHRINK);
 
 		_side_box.set_spacing(5);
@@ -169,7 +168,7 @@ public:
 	~MainWindow() {}
 
 protected:
-	void on_random_clicked() {
+	void on_next_clicked() {
 		int idx = (_previous_sample + 1) % tex::SAMPLES_COUNT;
 		string x;
 		wide2utf8(tex::SAMPLES[idx].c_str(), x);

@@ -1,7 +1,7 @@
 
 namespace tex {
 
-const int SAMPLES_COUNT = 7;
+const int SAMPLES_COUNT = 8;
 
 wstring SAMPLES[] {
 	L"\\begin{array}{lr}\n"
@@ -98,7 +98,8 @@ wstring SAMPLES[] {
 	L"\\end{array}\n",
 
 	L"\\begin{array}{|c|c|c|c|}\n"
-	L"	\\multicolumn{4}{c}{\\shadowbox{\\text{\\Huge An image from the \\LaTeX 3 project}}}\\cr\n"
+	L"	\\hline\n"
+	L"	\\multicolumn{4}{|c|}{\\shadowbox{\\text{\\Huge An image from the \\LaTeX 3 project}}}\\cr\n"
 	L"	\\hline\n"
 	L"	\\text{Left}\\includegraphics{lion.png}\\text{Right} & \\text{Left}\n"
 	L"		\\includegraphics[width=3cm,interpolation=bicubic]{lion.png}\\text{Right} & \n"
@@ -136,7 +137,26 @@ wstring SAMPLES[] {
 	L"^_`abcdefghijklmnopqrstuvwxyz{|}~\u007F\u0080\u0081\u0082\u0083\u0084\u0085\u0086\n"
 	L"\u0087\u0088\u0089\u008A\u008B\u008C\u008D\u008E\u008F\u0090\u0091\u0092\u0093\u0094\n"
 	L"\u0095\u0096\u0097\u0098\u0099\u009A\u009B\u009C\u009D\u009E\u009F ¡¢£¤¥¦§¨©ª«¬\u00AD\n"
-	L"®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ}\n"
+	L"®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ}\n",
+
+	L"\\newcolumntype{s}{>{\\color{#1234B6}}c}\n"
+	L"\\begin{array}{|c|c|c|s|}\n"
+	L"	\\hline\n"
+	L"	\\rowcolor{Tan}\\multicolumn{4}{|c|}{\\textcolor{white}{\\bold{\\text{Table Head}}}}\\\\\n"
+	L"	\\hline\n"
+	L"	\\text{Matrix}&\\multicolumn{2}{|c|}{\\text{Multicolumns}}&\\text{Font size commands}\\\\\n"
+	L"	\\hline\n"
+	L"	\\begin{pmatrix}\n"
+	L"		\\alpha_{11}&\\cdots&\\alpha_{1n}\\\\\n"
+	L"		\\hdotsfor{3}\\\\\n"
+	L"		\\alpha_{n1}&\\cdots&\\alpha_{nn}\n"
+	L"	\\end{pmatrix}\n"
+	L"	&\\large \\text{Left}&\\cellcolor{#00bde5}\\small \\textcolor{white}{\\text{\\bold{Right}}}\n"
+	L"	&\\small \\text{small Small}\\\\\n"
+	L"	\\hline\n"
+	L"	\\multicolumn{4}{|c|}{\\text{Table Foot}}\\\\\n"
+	L"	\\hline\n"
+	L"\\end{array}\n"
 };
 
 }
