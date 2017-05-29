@@ -6,7 +6,8 @@
 using namespace std;
 using namespace tex;
 
-#define ANSI_COLOR_CYAN "\x1b[36m"
+#define ANSI_COLOR_CYAN  "\x1b[36m"
+#define ANSI_COLOR_RED   "\x1b[31m"
 #define ANSI_COLOR_RESET "\x1b[0m"
 
 void print_box(const shared_ptr<Box>& b, int dep, vector<bool>& lines) {
@@ -29,6 +30,11 @@ void print_box(const shared_ptr<Box>& b, int dep, vector<bool>& lines) {
 		} else {
 			__print(" ├──");
 		}
+	}
+
+	if (b == nullptr) {
+		__print(ANSI_COLOR_RED " NULL\n" ANSI_COLOR_RESET);
+		return;
 	}
 
 	vector<shared_ptr<Box>> children = b->getChildren();
