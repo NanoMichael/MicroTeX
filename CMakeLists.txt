@@ -28,12 +28,15 @@ if(WIN32)
 	set(LINK_LIBS gdiplus)
 elseif(UNIX AND NOT APPLE)
 	message(STATUS "We are work on linux")
-	# include gtkmm module
 	find_package(PkgConfig)
+	# include gtkmm module
 	pkg_check_modules(GTKMM gtkmm-3.0)
-	link_directories(${GTKMM_LIBRARY_DIRS})
-	include_directories(${GTKMM_INCLUDE_DIRS} "src")
-	set(LINK_LIBS ${GTKMM_LIBRARIES} fontconfig)
+	# include gtksourceview
+	pkg_check_modules(GSVMM gtksourceviewmm-3.0)
+	# inlcudes and libraries
+	link_directories(${GTKMM_LIBRARY_DIRS} ${GSVMM_LIBRARY_DIRS})
+	include_directories(${GTKMM_INCLUDE_DIRS} ${GSVMM_INCLUDE_DIRS} "src")
+	set(LINK_LIBS ${GTKMM_LIBRARIES} ${GSVMM_LIBRARIES} fontconfig)
 else()
 	message(STATUS "We are work on a unknow platform")
 	# other platforms...

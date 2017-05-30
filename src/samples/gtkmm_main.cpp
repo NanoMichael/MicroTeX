@@ -9,15 +9,18 @@
 #include <gtkmm/application.h>
 #include <gtkmm/box.h>
 #include <gtkmm/paned.h>
-#include <gtkmm/textview.h>
 #include <gtkmm/button.h>
 #include <gtkmm/spinbutton.h>
 #include <gtkmm/adjustment.h>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/window.h>
 #include <gtkmm/drawingarea.h>
+#include <gtkmm/filechooserdialog.h>
 #include <gdkmm/rgba.h>
-#include <pangomm/tabarray.h>
+
+#include <gtksourceviewmm/init.h>
+#include <gtksourceviewmm/view.h>
+#include <gtksourceviewmm/languagemanager.h>
 
 using namespace tex;
 
@@ -87,6 +90,26 @@ public:
 		checkInvalidate();
 	}
 
+	bool isRenderDisplayed() {
+		return _render != nullptr;
+	}
+
+	int getRenderWidth() {
+		return _render == nullptr ? 0 : _render->getWidth() + _padding * 2;
+	}
+
+	int getRenderHeight() {
+		return _render == nullptr ? 0 : _render->getHeight() + _padding * 2;
+	}
+
+	void drawInContext(const Cairo::RefPtr<Cairo::Context>& cr) {
+		if (_render == nullptr) {
+			return;
+		}
+		Graphics2D_cairo g2(cr);
+		_render->draw(g2, _padding, _padding);
+	}
+
 	virtual ~TeXDrawingArea() {
 		if (_render != nullptr) {
 			delete _render;
@@ -105,23 +128,25 @@ protected:
 
 class MainWindow : public Gtk::Window {
 protected:
-	Gtk::TextView _tex_tv;
+	Gsv::View _tex_editor;
 	Gtk::SpinButton _size_spin;
 	TeXDrawingArea _tex;
 
 	Gtk::Label _size_change_info;
-	Gtk::Button _next, _rendering;
+	Gtk::Button _next, _rendering, _save;
 
 	Gtk::ScrolledWindow _text_scroller, _drawing_scroller;
 	Gtk::Box _side_box, _bottom_box;
 	Gtk::Paned _main_box;
 
-	Pango::TabArray _tab;
-
 	int _previous_sample;
 public:
 	MainWindow() : _size_change_info("change text size: "), _next("Next Example"), _rendering("Rendering"), 
-		_side_box(Gtk::ORIENTATION_VERTICAL), _previous_sample(0), _tab(1, true) {
+		_save("Save As SVG"), _side_box(Gtk::ORIENTATION_VERTICAL), _previous_sample(0) {
+
+		// init before use
+		Gsv::init();
+
 		set_border_width(10);
 		set_size_request(1220, 640);
 
@@ -129,28 +154,35 @@ public:
 		_drawing_scroller.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 		_drawing_scroller.add(_tex);
 
-		_tab.set_tab(0, Pango::TAB_LEFT, 20);
-		_tex_tv.set_tabs(_tab);
-		_tex_tv.set_buffer(Gtk::TextBuffer::create());
-		_tex_tv.override_font(Pango::FontDescription("Monospace 12"));
-		_tex_tv.signal_key_press_event().connect(sigc::mem_fun(*this, &MainWindow::on_text_key_press), false);
-		_tex_tv.set_border_width(5);
+		auto lang = Gsv::LanguageManager::get_default()->get_language("latex");
+		auto buffer = Gsv::Buffer::create(lang);
+		buffer->set_highlight_syntax(true);
+		_tex_editor.set_source_buffer(buffer);
+		_tex_editor.set_show_line_numbers(true);
+		_tex_editor.set_highlight_current_line(true);
+		_tex_editor.set_tab_width(4);
+		_tex_editor.override_font(Pango::FontDescription("Monospace 12"));
+		_tex_editor.signal_key_press_event().connect(sigc::mem_fun(*this, &MainWindow::on_text_key_press), false);
+		_tex_editor.set_border_width(5);
 
 		_text_scroller.set_size_request(480);
 		_text_scroller.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-		_text_scroller.add(_tex_tv);
+		_text_scroller.add(_tex_editor);
 
 		Glib::RefPtr<Gtk::Adjustment> adj = Gtk::Adjustment::create(_tex.getTextSize(), 1, 300);
 		adj->signal_value_changed().connect(sigc::mem_fun(*this, &MainWindow::on_text_size_changed));
 		_size_spin.set_adjustment(adj);
 		_next.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_next_clicked));
 		_rendering.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_rendering_clicked));
+		_save.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_save_clicked));
+		_save.set_sensitive(_tex.isRenderDisplayed());
 
 		_bottom_box.set_spacing(10);
 		_bottom_box.pack_start(_size_change_info, Gtk::PACK_SHRINK);
 		_bottom_box.pack_start(_size_spin);
 		_bottom_box.pack_start(_next, Gtk::PACK_SHRINK);
 		_bottom_box.pack_start(_rendering, Gtk::PACK_SHRINK);
+		_bottom_box.pack_start(_save, Gtk::PACK_SHRINK);
 
 		_side_box.set_spacing(5);
 		_side_box.set_size_request(480);
@@ -158,7 +190,7 @@ public:
 		_side_box.pack_start(_bottom_box, Gtk::PACK_SHRINK);
 
 		_main_box.pack1(_drawing_scroller, true, false);
-		_main_box.pack2(_side_box, false, false);
+		_main_box.pack2(_side_box, true, false);
 
 		add(_main_box);
 
@@ -172,15 +204,30 @@ protected:
 		int idx = (_previous_sample + 1) % tex::SAMPLES_COUNT;
 		string x;
 		wide2utf8(tex::SAMPLES[idx].c_str(), x);
-		_tex_tv.get_buffer()->set_text(x);
+		_tex_editor.get_buffer()->set_text(x);
 		_tex.setLaTeX(tex::SAMPLES[idx]);
 		_previous_sample = idx;
+		_save.set_sensitive(_tex.isRenderDisplayed());
+	}
+
+	void on_save_clicked() {
+		Gtk::FileChooserDialog dialog(*this, "Save As SVG", Gtk::FILE_CHOOSER_ACTION_SAVE);
+		dialog.add_button("Cancel", Gtk::RESPONSE_CANCEL);
+		dialog.add_button("Confirm", Gtk::RESPONSE_OK);
+		int result = dialog.run();
+		if (result == Gtk::RESPONSE_OK) {
+			auto file = dialog.get_filename();
+			auto surface = Cairo::SvgSurface::create(file, _tex.getRenderWidth(), _tex.getRenderHeight());
+			auto context = Cairo::Context::create(surface);
+			_tex.drawInContext(context);
+		}
 	}
 
 	void on_rendering_clicked() {
 		wstring x;
-		utf82wide(_tex_tv.get_buffer()->get_text().c_str(), x);
+		utf82wide(_tex_editor.get_buffer()->get_text().c_str(), x);
 		_tex.setLaTeX(x);
+		_save.set_sensitive(_tex.isRenderDisplayed());
 	}
 
 	void on_text_size_changed() {
