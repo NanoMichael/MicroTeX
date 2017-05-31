@@ -175,8 +175,8 @@ shared_ptr<Box> XLeftRightArrowFactory::create(bool left, _out_ TeXEnvironment& 
 	hb->add(ScaleAtom(MINUS, sf, 1).createBox(env));
 
 	if (left) {
-		hb->add(SpaceAtom(UNIT_MU, -3.5f, 0, 0).createBox(env));
-		hb->add(arr);
+		hb->add(0, SpaceAtom(UNIT_MU, -3.5f, 0, 0).createBox(env));
+		hb->add(0, arr);
 	} else {
 		hb->add(SpaceAtom(UNIT_MU, -2.f * sf - 2.f, 0, 0).createBox(env));
 		hb->add(arr);
