@@ -56,7 +56,7 @@ shared_ptr<Box> DelimiterFactory::create(const string& symbol, _out_ TeXEnvironm
 		}*/
 		return shared_ptr<Box>(new CharBox(c));
 	} else if (tf.isExtensionChar(c)) {
-		// construct tall enough vertical box
+		// construct vertical box
 		VerticalBox* vBox = new VerticalBox();
 		Extension* ext = tf.getExtension(c, style);
 
@@ -476,7 +476,7 @@ int OverUnderBox::getLastFontId() {
 }
 
 vector<shared_ptr<Box>> OverUnderBox::getChildren() const {
-	return vector<shared_ptr<Box>>() = {_base, _del, _script};
+	return {_base, _del, _script};
 }
 
 /*********************************** scale box implementation ***************************/
@@ -510,7 +510,7 @@ int ScaleBox::getLastFontId() {
 }
 
 vector<shared_ptr<Box>> ScaleBox::getChildren() const {
-	return vector<shared_ptr<Box>>() = {_box};
+	return {_box};
 }
 
 /*********************************** reflect box implementation ***************************/
@@ -537,7 +537,7 @@ int ReflectBox::getLastFontId() {
 }
 
 vector<shared_ptr<Box>> ReflectBox::getChildren() const {
-	return vector<shared_ptr<Box>>() = {_box};
+	return {_box};
 }
 
 /*********************************** rotate box implementation ***************************/
@@ -657,7 +657,7 @@ int RotateBox::getOrigin(string option) {
 void RotateBox::draw(Graphics2D& g2, float x, float y) {
 	drawDebug(g2, x, y);
 	y -= _shiftY;
-	x += _shiftY - _xmin;
+	x += _shiftX - _xmin;
 	g2.rotate(-_angle, x, y);
 	_box->draw(g2, x, y);
 	g2.rotate(_angle, x, y);
@@ -668,7 +668,7 @@ int RotateBox::getLastFontId() {
 }
 
 vector<shared_ptr<Box>> RotateBox::getChildren() const {
-	return vector<shared_ptr<Box>>() = {_box};
+	return {_box};
 }
 
 /*********************************** framed box implementation ***************************/
@@ -713,7 +713,7 @@ int FramedBox::getLastFontId() {
 }
 
 vector<shared_ptr<Box>> FramedBox::getChildren() const {
-	return vector<shared_ptr<Box>>() = {_box};
+	return {_box};
 }
 
 void OvalBox::draw(Graphics2D& g2, float x, float y) {
@@ -837,7 +837,7 @@ int WrapperBox::getLastFontId() {
 }
 
 vector<shared_ptr<Box>> WrapperBox::getChildren() const {
-	return vector<shared_ptr<Box>>() = {_base};
+	return {_base};
 }
 
 void ShiftBox::draw(Graphics2D& g2, float x, float y) {
@@ -850,5 +850,5 @@ int ShiftBox::getLastFontId() {
 }
 
 vector<shared_ptr<Box>> ShiftBox::getChildren() const {
-	return vector<shared_ptr<Box>>() = {_base};
+	return {_base};
 }

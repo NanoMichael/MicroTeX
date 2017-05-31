@@ -266,7 +266,30 @@ public:
  * enumeration representing rotation origin
  */
 enum Rotation {
-	BL, BC, BR, TL, TC, TR, BBL, BBR, BBC, CL, CC, CR
+	// Bottom Left
+	BL,
+	// Bottom Center
+	BC,
+	// Bottom Right
+	BR,
+	// Top Left
+	TL,
+	// Top Center
+	TC,
+	// Top Right
+	TR,
+	// Bottom Bottom Left
+	BBL,
+	// Bottom Bottom Right
+	BBR,
+	// Bottom Bottom Center
+	BBC,
+	// Center Left
+	CL,
+	// Center Center
+	CC,
+	// Center Right
+	CR
 };
 
 /**
