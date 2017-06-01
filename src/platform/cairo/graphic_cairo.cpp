@@ -140,9 +140,11 @@ void TextLayout_cairo::getBounds(_out_ Rect& r) {
 	r.y = -_ascent;
 	r.w = (float) w;
 	r.h = (float) h;
+	std::cout << "ascent: " << _ascent << "\n";
 }
 
 void TextLayout_cairo::draw(Graphics2D& g2, float x, float y) {
+	// g2.drawLine(x, y - _ascent, x + 100, y - _ascent);
 	g2.translate(x, y - _ascent);
 	Graphics2D_cairo& g = static_cast<Graphics2D_cairo&>(g2);
 	_layout->show_in_cairo_context(g.getCairoContext());
@@ -159,9 +161,7 @@ shared_ptr<TextLayout> TextLayout::create(const wstring& src, const shared_ptr<F
 Font_cairo Graphics2D_cairo::_default_font("SansSerif", PLAIN, 20.f);
 
 Graphics2D_cairo::Graphics2D_cairo(const Cairo::RefPtr<Cairo::Context>& context) : _context(context) {
-	memset(_t, 0, sizeof(float) * 7);
-	_t[SX] = _t[SY] = 1.f;
-
+	_sx = _sy = 1.f;
 	setColor(BLACK);
 	setStroke(Stroke());
 	setFont(&_default_font);
@@ -239,26 +239,20 @@ void Graphics2D_cairo::setFont(const Font* font) {
 }
 
 void Graphics2D_cairo::translate(float dx, float dy) {
-	_t[TX] += _t[SX] * dx;
-	_t[TY] += _t[SY] * dy;
 	_context->translate((double) dx, (double) dy);
 }
 
 void Graphics2D_cairo::scale(float sx, float sy) {
-	_t[SX] *= sx;
-	_t[SY] *= sy;
+	_sx *= sx;
+	_sy *= sy;
 	_context->scale((double) sx, (double) sy);
 }
 
 void Graphics2D_cairo::rotate(float angle) {
-	_t[R] += angle;
 	_context->rotate(angle);
 }
 
 void Graphics2D_cairo::rotate(float angle, float px, float py) {
-	_t[R] += angle;
-	_t[PX] = px * _t[SX] + _t[TX];
-	_t[PY] = py * _t[SY] + _t[TY];
 	_context->translate((double) px, (double) py);
 	_context->rotate(angle);
 	_context->translate((double) -px, (double) -py);
@@ -266,36 +260,15 @@ void Graphics2D_cairo::rotate(float angle, float px, float py) {
 
 void Graphics2D_cairo::reset() {
 	_context->set_identity_matrix();
-	memset(_t, 0, sizeof(float) * 7);
-	_t[SX] = _t[SY] = 1.f;
+	_sx = _sy = 1.f;
 }
 
 float Graphics2D_cairo::sx() const {
-	return _t[SX];
+	return _sx;
 }
 
 float Graphics2D_cairo::sy() const {
-	return _t[SY];
-}
-
-float Graphics2D_cairo::tx() const {
-	return _t[TX];
-}
-
-float Graphics2D_cairo::ty() const {
-	return _t[TY];
-}
-
-float Graphics2D_cairo::r() const {
-	return _t[R];
-}
-
-float Graphics2D_cairo::px() const {
-	return _t[PX];
-}
-
-float Graphics2D_cairo::py() const {
-	return _t[PY];
+	return _sy;
 }
 
 void Graphics2D_cairo::drawChar(wchar_t c, float x, float y) {

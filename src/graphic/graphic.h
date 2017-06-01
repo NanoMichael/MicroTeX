@@ -74,7 +74,7 @@ class TextLayout {
 public:
 
 	/**
-	 * Get the layout bounds
+	 * Get the layout bounds with current text and font
 	 *
 	 * @param bounds
 	 * 		Rectangle to retrieve bounds
@@ -89,7 +89,7 @@ public:
 	 * @param x
 	 * 		The x coordinate
 	 * @param y
-	 * 		The y coordinate
+	 * 		The y coordinate, is basline aligned
 	 */
 	virtual void draw(Graphics2D& g2, float x, float y) = 0;
 
@@ -209,39 +209,18 @@ public:
 	virtual void reset() = 0;
 
 	/**
-	 * @return the scaling in x-direction
+	 * Get the scale of current context in x-direction
+	 *
+	 * @return the scale in x-direction
 	 */
 	virtual float sx() const = 0;
 
 	/**
-	 * @return the scaling in y-direction
+	 * Get the scale of current context in y-direction
+	 *
+	 * @return the scale in y-direction
 	 */
 	virtual float sy() const = 0;
-
-	/**
-	 * @return the translation in x-direction
-	 */
-	virtual float tx() const = 0;
-
-	/**
-	 * @return the translation in y-direction
-	 */
-	virtual float ty() const = 0;
-
-	/**
-	 * @return the degree (in radian) amount rotated of current graphics context
-	 */
-	virtual float r() const = 0;
-
-	/**
-	 * @return the pivot of rotation in x-direction
-	 */
-	virtual float px() const = 0;
-
-	/**
-	 * @return the pivot of rotation in y-direction
-	 */
-	virtual float py() const = 0;
 
 	/**
 	 * Draw character, assume the drawing is baseline aligned
@@ -251,7 +230,7 @@ public:
 	 * @param x
 	 * 		x coordinate
 	 * @param y
-	 * 		y coordinate
+	 * 		y coordinate, is baseline aligned
 	 */
 	virtual void drawChar(wchar_t c, float x, float y) = 0;
 
@@ -263,7 +242,7 @@ public:
 	 * @param x
 	 * 		x coordinate
 	 * @param y
-	 * 		y coordinate
+	 * 		y coordinate, is baseline aligned
 	 */
 	virtual void drawText(const wstring& c, float x, float y) = 0;
 

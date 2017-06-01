@@ -195,8 +195,7 @@ Graphics2D_win32::Graphics2D_win32(Gdiplus::Graphics* g) {
 	if (_defaultFont == nullptr) {
 		_defaultFont = new Font_win32("Arial", PLAIN, 72.f);
 	}
-	_t = new float[7]();
-	_t[SX] = _t[SY] = 1;
+	_sx = _sy = 1.f;
 	_color = black;
 	_font = _defaultFont;
 	_g = g;
@@ -208,7 +207,6 @@ Graphics2D_win32::Graphics2D_win32(Gdiplus::Graphics* g) {
 }
 
 Graphics2D_win32::~Graphics2D_win32() {
-	delete _t;
 	delete _pen;
 	delete _brush;
 }
@@ -273,26 +271,20 @@ void Graphics2D_win32::setFont(const Font* font) {
 }
 
 void Graphics2D_win32::translate(float dx, float dy) {
-	_t[TX] += _t[SX] * dx;
-	_t[TY] += _t[SY] * dy;
 	_g->TranslateTransform(dx, dy);
 }
 
 void Graphics2D_win32::scale(float sx, float sy) {
-	_t[SX] *= sx;
-	_t[SY] *= sy;
+	_sx *= sx;
+	_sy *= sy;
 	_g->ScaleTransform(sx, sy);
 }
 
 void Graphics2D_win32::rotate(float angle) {
-	_t[R] += angle;
 	_g->RotateTransform(angle / PI * 180);
 }
 
 void Graphics2D_win32::rotate(float angle, float px, float py) {
-	_t[R] += angle;
-	_t[PX] = px * _t[SX] + _t[TX];
-	_t[PY] = py * _t[SY] + _t[TY];
 	_g->TranslateTransform(px, py);
 	_g->RotateTransform(angle / PI * 180);
 	_g->TranslateTransform(-px, -py);
@@ -300,36 +292,15 @@ void Graphics2D_win32::rotate(float angle, float px, float py) {
 
 void Graphics2D_win32::reset() {
 	_g->ResetTransform();
-	memset(_t, 0, sizeof(float) * 9);
-	_t[SX] = _t[SY] = 1;
+	_sx = _sy = 1.f;
 }
 
 float Graphics2D_win32::sx() const {
-	return _t[SX];
+	return _sx;
 }
 
 float Graphics2D_win32::sy() const {
-	return _t[SY];
-}
-
-float Graphics2D_win32::tx() const {
-	return _t[TX];
-}
-
-float Graphics2D_win32::ty() const {
-	return _t[TY];
-}
-
-float Graphics2D_win32::r() const {
-	return _t[R];
-}
-
-float Graphics2D_win32::px() const {
-	return _t[PX];
-}
-
-float Graphics2D_win32::py() const {
-	return _t[PY];
+	return _sy;
 }
 
 void Graphics2D_win32::drawChar(wchar_t c, float x, float y) {

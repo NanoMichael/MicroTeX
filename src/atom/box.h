@@ -7,7 +7,6 @@
 
 using namespace tex;
 
-// forward declare
 namespace tex {
 
 class Char;
