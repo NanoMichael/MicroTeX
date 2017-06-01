@@ -53,6 +53,8 @@ public:
 	static int convertStyle(int style);
 };
 
+/***************************************************************************************/
+
 class TextLayout_win32 : public TextLayout {
 private:
 	shared_ptr<Font_win32> _font;
@@ -70,20 +72,21 @@ public:
 	virtual void draw(Graphics2D& g2, float x, float y) override;
 };
 
-enum AffineTransformIndex {SX, SY, TX, TY, R, PX, PY};
+/**************************************************************************************/
 
 class Graphics2D_win32 : public Graphics2D {
 private:
 	static const Gdiplus::StringFormat* _format;
 	static const Font* _defaultFont;
 
-	float* _t;
 	color _color;
 	const Font* _font;
 	Stroke _stroke;
 	Gdiplus::Graphics* _g;
 	Gdiplus::Pen* _pen;
 	Gdiplus::SolidBrush* _brush;
+
+	float _sx, _sy;
 
 public:
 	Graphics2D_win32(Gdiplus::Graphics* g);
@@ -117,16 +120,6 @@ public:
 	virtual float sx() const override;
 
 	virtual float sy() const override;
-
-	virtual float tx() const override;
-
-	virtual float ty() const override;
-
-	virtual float r() const override;
-
-	virtual float px() const override;
-
-	virtual float py() const override;
 
 	virtual void drawChar(wchar_t c, float x, float y) override;
 

@@ -98,7 +98,7 @@ protected:
 	}
 
 	/**
-	 * Restores the previous color setting.
+	 * Restores the previous graphic context setting.
 	 *
 	 * @param g2
 	 *            the graphics (2D) context

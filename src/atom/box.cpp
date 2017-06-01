@@ -81,8 +81,9 @@ shared_ptr<Box> DelimiterFactory::create(const string& symbol, _out_ TeXEnvironm
 		while (vBox->_height + vBox->_depth <= minHeight) {
 			if (ext->hasTop() && ext->hasBottom()) {
 				vBox->add(1, rep);
-				if (ext->hasMiddle())
+				if (ext->hasMiddle()) {
 					vBox->add(vBox->getSize() - 1, rep);
+				}
 			} else if (ext->hasBottom()) {
 				vBox->add(0, rep);
 			} else {

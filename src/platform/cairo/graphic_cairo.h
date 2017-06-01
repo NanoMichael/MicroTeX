@@ -62,8 +62,6 @@ public:
 
 /********************************************************************************/
 
-enum AffineTransformIndex {SX, SY, TX, TY, R, PX, PY};
-
 class Graphics2D_cairo : public Graphics2D {
 
 private:
@@ -73,7 +71,7 @@ private:
 	color _color;
 	Stroke _stroke;
 	const Font_cairo* _font;
-	float _t[7];
+	float _sx, _sy;
 
 	void roundRect(float x, float y, float w, float h, float rx, float ry);
 public:
@@ -108,16 +106,6 @@ public:
 	virtual float sx() const override;
 
 	virtual float sy() const override;
-
-	virtual float tx() const override;
-
-	virtual float ty() const override;
-
-	virtual float r() const override;
-
-	virtual float px() const override;
-
-	virtual float py() const override;
 
 	virtual void drawChar(wchar_t c, float x, float y) override;
 
