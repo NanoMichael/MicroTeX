@@ -6,8 +6,6 @@
 
 #include <fontconfig/fontconfig.h>
 
-#include <iostream>
-
 using namespace tex;
 using namespace std;
 
@@ -140,11 +138,17 @@ void TextLayout_cairo::getBounds(_out_ Rect& r) {
 	r.y = -_ascent;
 	r.w = (float) w;
 	r.h = (float) h;
-	std::cout << "ascent: " << _ascent << "\n";
 }
 
 void TextLayout_cairo::draw(Graphics2D& g2, float x, float y) {
-	// g2.drawLine(x, y - _ascent, x + 100, y - _ascent);
+	// FIXME
+	// draw line, I don't know why the layout is show in wrong position
+	// when line was not drawn
+	color old = g2.getColor();
+	g2.setColor(0x00000000);
+	g2.drawLine(x, y, x + 1, y);
+	// draw layout
+	g2.setColor(old);
 	g2.translate(x, y - _ascent);
 	Graphics2D_cairo& g = static_cast<Graphics2D_cairo&>(g2);
 	_layout->show_in_cairo_context(g.getCairoContext());
