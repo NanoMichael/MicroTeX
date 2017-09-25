@@ -23,11 +23,11 @@ file(GLOB_RECURSE SRC "src/*.cpp")
 # check operating system
 
 if(WIN32)
-	message(STATUS "We are work on windows")
+	message(STATUS "We are working on Windows")
 	include_directories("src")
 	set(LINK_LIBS gdiplus)
 elseif(UNIX AND NOT APPLE)
-	message(STATUS "We are work on linux")
+	message(STATUS "We are working on Linux")
 	find_package(PkgConfig)
 	# include gtkmm module
 	pkg_check_modules(GTKMM gtkmm-3.0)
@@ -38,7 +38,7 @@ elseif(UNIX AND NOT APPLE)
 	include_directories(${GTKMM_INCLUDE_DIRS} ${GSVMM_INCLUDE_DIRS} "src")
 	set(LINK_LIBS ${GTKMM_LIBRARIES} ${GSVMM_LIBRARIES} fontconfig)
 else()
-	message(STATUS "We are work on a unknow platform")
+	message(STATUS "We are working on a unknow platform")
 	# other platforms...
 endif()
 
