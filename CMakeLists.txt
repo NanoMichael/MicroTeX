@@ -15,6 +15,10 @@ else()
 	message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no c++11 support. Please use a different one that supports c++11.")
 endif()
 
+# copy res dir
+
+file(COPY res DESTINATION .)
+
 # source file
 
 file(GLOB_RECURSE SRC "src/*.cpp")
