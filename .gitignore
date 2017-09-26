@@ -10,3 +10,5 @@ bin/
 docs/
 doxyfile
 build/
+src/doc
+src/Doxyfile
