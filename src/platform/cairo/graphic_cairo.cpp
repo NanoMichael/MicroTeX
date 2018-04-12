@@ -97,14 +97,14 @@ shared_ptr<Font> Font::_create(const string& name, int style, float size) {
 /*****************************************************************************************/
 
 Cairo::RefPtr<Cairo::Context> TextLayout_cairo::_img_context;
-Glib::RefPtr<Pango::Layout> TextLayout_cairo::_layout;
 
 TextLayout_cairo::TextLayout_cairo(const wstring& src, const shared_ptr<Font_cairo>& f) {
 	if (!_img_context) {
 		auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 1, 1);
 		_img_context = Cairo::Context::create(surface);
-		_layout = Pango::Layout::create(_img_context);
 	}
+
+	_layout = Pango::Layout::create(_img_context);
 
 	Pango::FontDescription fd;
 	fd.set_family(f->getFamily());
@@ -142,7 +142,7 @@ void TextLayout_cairo::getBounds(_out_ Rect& r) {
 
 void TextLayout_cairo::draw(Graphics2D& g2, float x, float y) {
 	// FIXME
-	// draw line, I don't know why the layout is show in wrong position
+	// draw line, I don't know why the layout is shown in wrong position
 	// when line was not drawn
 	color old = g2.getColor();
 	g2.setColor(0x00000000);

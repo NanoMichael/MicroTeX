@@ -49,7 +49,7 @@ class TextLayout_cairo : public TextLayout {
 
 private:
 	static Cairo::RefPtr<Cairo::Context> _img_context;
-	static Glib::RefPtr<Pango::Layout> _layout;
+	Glib::RefPtr<Pango::Layout> _layout;
 	float _ascent;
 
 public:
