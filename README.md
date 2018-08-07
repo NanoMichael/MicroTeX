@@ -1,5 +1,7 @@
 # cLaTeXMath
 
+`cLaTexMath` IS AN FORK OF THE AWSOME PROJECT [jlatexmath](https://github.com/opencollab/jlatexmath). PLEASE CHECKOUT THIS PROJECT.
+
 `cLaTeXMath` 是一个跨平台实时渲染的 `LaTeX` 渲染引擎，它可以被嵌入到各个平台（Android, iOS, Windows, Mac OS 等）的应用中。下面两张图展示了它运行在 Windows 和 Ubuntu 系统中的效果。
 
 ![example_windows](readme/example_windows.PNG)
@@ -159,3 +161,5 @@ void drawFormula() {
 [看这里](https://nanomichael.github.io/cLaTeXMath/)
 
 # License
+
+This software is under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html). This project contains serveral fonts that is under different liscense, you can find a copy of those licenses in res/fonts/licences.
