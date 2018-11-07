@@ -66,18 +66,18 @@ static const float PREC = 0.0000001f;
  */
 #ifdef __GNUC__
 inline string demangle_name(const char* name) {
-	int status = -4;
-	char* res = abi::__cxa_demangle(name, 0, 0, &status);
-	const char* const real_name = status == 0 ? res : name;
-	string res_str(real_name);
-	if (res != nullptr) {
-		free(res);
-	}
-	return res_str;
+    int status = -4;
+    char* res = abi::__cxa_demangle(name, 0, 0, &status);
+    const char* const real_name = status == 0 ? res : name;
+    string res_str(real_name);
+    if (res != nullptr) {
+        free(res);
+    }
+    return res_str;
 }
 #else
 inline string demangle_name(const char* name) {
-	return name;
+    return name;
 }
 #endif // __GNUC__
 
@@ -87,9 +87,9 @@ inline string demangle_name(const char* name) {
  */
 template<class T>
 inline int indexOf(const vector<T>& v, const T& x) {
-	auto it = find(v.begin(), v.end(), x);
-	int i = std::distance(v.begin(), it);
-	return (i >= v.size() ? -1 : i);
+    auto it = find(v.begin(), v.end(), x);
+    int i = std::distance(v.begin(), it);
+    return (i >= v.size() ? -1 : i);
 }
 
 /**
@@ -97,9 +97,9 @@ inline int indexOf(const vector<T>& v, const T& x) {
  */
 template<class T>
 inline string tostring(T val) {
-	ostringstream os;
-	os << val;
-	return os.str();
+    ostringstream os;
+    os << val;
+    return os.str();
 }
 
 /**
@@ -107,95 +107,95 @@ inline string tostring(T val) {
  */
 template<class T>
 inline wstring towstring(T val) {
-	wostringstream os;
-	os << val;
-	return os.str();
+    wostringstream os;
+    os << val;
+    return os.str();
 }
 
 template<class T>
 inline void valueof(const string& s, T& val) {
-	stringstream ss;
-	ss << s;
-	ss >> val;
+    stringstream ss;
+    ss << s;
+    ss >> val;
 }
 
 template<class T>
 inline void valueof(const wstring& s, T& val) {
-	wstringstream ss;
-	ss << s;
-	ss >> val;
+    wstringstream ss;
+    ss << s;
+    ss >> val;
 }
 
 inline bool str2int(const string& str, int& res, int radix) {
-	char* endptr = nullptr;
-	errno = 0;
+    char* endptr = nullptr;
+    errno = 0;
 
-	const long val = strtol(str.c_str(), &endptr, radix);
+    const long val = strtol(str.c_str(), &endptr, radix);
 
-	if ((val == LONG_MAX || val == LONG_MIN) && errno == ERANGE)
-		return false;
+    if ((val == LONG_MAX || val == LONG_MIN) && errno == ERANGE)
+        return false;
 
-	res = static_cast<int>(val);
-	return endptr == str.c_str() + str.size();
+    res = static_cast<int>(val);
+    return endptr == str.c_str() + str.size();
 }
 
 /**
  * transform a string to lowercase
  */
 inline string& tolower(_out_ string& src) {
-	transform(src.begin(), src.end(), src.begin(), ::tolower);
-	return src;
+    transform(src.begin(), src.end(), src.begin(), ::tolower);
+    return src;
 }
 
 inline wstring& tolower(_out_ wstring& src) {
-	transform(src.begin(), src.end(), src.begin(), ::tolower);
-	return src;
+    transform(src.begin(), src.end(), src.begin(), ::tolower);
+    return src;
 }
 
 /**
  * ignore left side whitespace in a string
  */
 inline string& ltrim(string& s) {
-	s.erase(s.begin(), find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace))));
-	return s;
+    s.erase(s.begin(), find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace))));
+    return s;
 }
 
 /**
  * ignore right side whitespace in a string
  */
 inline string& rtrim(string& s) {
-	s.erase(find_if(s.rbegin(), s.rend(), not1(ptr_fun<int, int>(isspace))).base(), s.end());
-	return s;
+    s.erase(find_if(s.rbegin(), s.rend(), not1(ptr_fun<int, int>(isspace))).base(), s.end());
+    return s;
 }
 
 inline string& trim(string& s) {
-	return ltrim(rtrim(s));
+    return ltrim(rtrim(s));
 }
 
 /**
  * split string with specified delimeter
  */
 inline void split(const string& str, char del, _out_ vector<string>& res) {
-	stringstream ss(str);
-	string tok;
-	while(getline(ss, tok, del))
-		res.push_back(tok);
+    stringstream ss(str);
+    string tok;
+    while(getline(ss, tok, del))
+        res.push_back(tok);
 }
 
 inline bool startswith(const string& str, const string& cmp) {
-	return str.find(cmp) == 0;
+    return str.find(cmp) == 0;
 }
 
 inline bool endswith(const string& str, const string& cmp) {
-	return str.rfind(cmp) == (str.length() - cmp.length());
+    return str.rfind(cmp) == (str.length() - cmp.length());
 }
 
 inline bool startswith(const wstring& str, const wstring& cmp) {
-	return str.find(cmp) == 0;
+    return str.find(cmp) == 0;
 }
 
 inline bool endswith(const wstring& str, const wstring& cmp) {
-	return str.rfind(cmp) == (str.length() - cmp.length());
+    return str.rfind(cmp) == (str.length() - cmp.length());
 }
 
 /**
@@ -203,112 +203,112 @@ inline bool endswith(const wstring& str, const wstring& cmp) {
  */
 class strtokenizer {
 private:
-	string _str;
-	string _del;
-	bool _ret;
-	int _pos;
+    string _str;
+    string _del;
+    bool _ret;
+    int _pos;
 public:
-	strtokenizer(const string& str) {
-		_str = str;
-		_del = " \t\n\r\f";
-		_ret = false;
-		_pos = 0;
-	}
+    strtokenizer(const string& str) {
+        _str = str;
+        _del = " \t\n\r\f";
+        _ret = false;
+        _pos = 0;
+    }
 
-	strtokenizer(const string& str, const string& del, bool ret = false) {
-		_str = str;
-		_del = del;
-		_ret = ret;
-		_pos = 0;
-	}
+    strtokenizer(const string& str, const string& del, bool ret = false) {
+        _str = str;
+        _del = del;
+        _ret = ret;
+        _pos = 0;
+    }
 
-	int count_tokens() {
-		int c = 0;
-		bool in = false;
-		for (int i = _pos, len = _str.length(); i < len; i++) {
-			if (_del.find(_str[i]) != string::npos) {
-				if (_ret)
-					c++;
-				if (in) {
-					c++;
-					in = false;
-				}
-			} else {
-				in = true;
-			}
-		}
-		if (in)
-			c++;
-		return c;
-	}
+    int count_tokens() {
+        int c = 0;
+        bool in = false;
+        for (int i = _pos, len = _str.length(); i < len; i++) {
+            if (_del.find(_str[i]) != string::npos) {
+                if (_ret)
+                    c++;
+                if (in) {
+                    c++;
+                    in = false;
+                }
+            } else {
+                in = true;
+            }
+        }
+        if (in)
+            c++;
+        return c;
+    }
 
-	string next_token() {
-		int i = _pos;
-		int len = _str.length();
+    string next_token() {
+        int i = _pos;
+        int len = _str.length();
 
-		if (i < len) {
-			if (_ret) {
-				if (_del.find(_str[_pos]) != string::npos)
-					return string({_str[_pos++]});
-				for (_pos++; _pos < len; _pos++)
-					if (_del.find(_str[_pos]) != string::npos)
-						return _str.substr(i, _pos - i);
-				return _str.substr(i);
-			}
+        if (i < len) {
+            if (_ret) {
+                if (_del.find(_str[_pos]) != string::npos)
+                    return string({_str[_pos++]});
+                for (_pos++; _pos < len; _pos++)
+                    if (_del.find(_str[_pos]) != string::npos)
+                        return _str.substr(i, _pos - i);
+                return _str.substr(i);
+            }
 
-			while (i < len && _del.find(_str[i]) != string::npos)
-				i++;
+            while (i < len && _del.find(_str[i]) != string::npos)
+                i++;
 
-			_pos = i;
-			if (i < len) {
-				for (_pos++; _pos < len; _pos++)
-					if (_del.find(_str[_pos]) != string::npos)
-						return _str.substr(i, _pos - i);
-				return _str.substr(i);
-			}
-		}
-		return "";
-	}
+            _pos = i;
+            if (i < len) {
+                for (_pos++; _pos < len; _pos++)
+                    if (_del.find(_str[_pos]) != string::npos)
+                        return _str.substr(i, _pos - i);
+                return _str.substr(i);
+            }
+        }
+        return "";
+    }
 };
 
 /**
  * convert unicode wide string to UTF-8 encoded string
  */
 inline string& wide2utf8(const wchar_t* in, _out_ string& out) {
-	unsigned int codepoint = 0;
-	for (; *in != 0; ++in) {
-		if (*in >= 0xd800 && *in <= 0xdbff)
-			codepoint = ((*in - 0xd800) << 10) + 0x10000;
-		else {
-			if (*in >= 0xdc00 && *in <= 0xdfff)
-				codepoint |= *in - 0xdc00;
-			else
-				codepoint = *in;
+    unsigned int codepoint = 0;
+    for (; *in != 0; ++in) {
+        if (*in >= 0xd800 && *in <= 0xdbff)
+            codepoint = ((*in - 0xd800) << 10) + 0x10000;
+        else {
+            if (*in >= 0xdc00 && *in <= 0xdfff)
+                codepoint |= *in - 0xdc00;
+            else
+                codepoint = *in;
 
-			if (codepoint <= 0x7f)
-				out.append(1, static_cast<char>(codepoint));
-			else if (codepoint <= 0x7ff) {
-				out.append(1, static_cast<char>(0xc0 | ((codepoint >> 6) & 0x1f)));
-				out.append(1, static_cast<char>(0x80 | (codepoint & 0x3f)));
-			} else if (codepoint <= 0xffff) {
-				out.append(1, static_cast<char>(0xe0 | ((codepoint >> 12) & 0x0f)));
-				out.append(1, static_cast<char>(0x80 | ((codepoint >> 6) & 0x3f)));
-				out.append(1, static_cast<char>(0x80 | (codepoint & 0x3f)));
-			} else {
-				out.append(1, static_cast<char>(0xf0 | ((codepoint >> 18) & 0x07)));
-				out.append(1, static_cast<char>(0x80 | ((codepoint >> 12) & 0x3f)));
-				out.append(1, static_cast<char>(0x80 | ((codepoint >> 6) & 0x3f)));
-				out.append(1, static_cast<char>(0x80 | (codepoint & 0x3f)));
-			}
-			codepoint = 0;
-		}
-	}
-	return out;
+            if (codepoint <= 0x7f)
+                out.append(1, static_cast<char>(codepoint));
+            else if (codepoint <= 0x7ff) {
+                out.append(1, static_cast<char>(0xc0 | ((codepoint >> 6) & 0x1f)));
+                out.append(1, static_cast<char>(0x80 | (codepoint & 0x3f)));
+            } else if (codepoint <= 0xffff) {
+                out.append(1, static_cast<char>(0xe0 | ((codepoint >> 12) & 0x0f)));
+                out.append(1, static_cast<char>(0x80 | ((codepoint >> 6) & 0x3f)));
+                out.append(1, static_cast<char>(0x80 | (codepoint & 0x3f)));
+            } else {
+                out.append(1, static_cast<char>(0xf0 | ((codepoint >> 18) & 0x07)));
+                out.append(1, static_cast<char>(0x80 | ((codepoint >> 12) & 0x3f)));
+                out.append(1, static_cast<char>(0x80 | ((codepoint >> 6) & 0x3f)));
+                out.append(1, static_cast<char>(0x80 | (codepoint & 0x3f)));
+            }
+            codepoint = 0;
+        }
+    }
+    return out;
 }
 
 inline string wide2utf8(const wchar_t* in) {
-	string out;
-	return wide2utf8(in, out);
+    string out;
+    return wide2utf8(in, out);
 }
 
 /**
@@ -316,36 +316,36 @@ inline string wide2utf8(const wchar_t* in) {
  * the encoding of input char sequence must be known as UTF-8
  */
 inline wstring& utf82wide(const char* in, _out_ wstring& out) {
-	if (in == nullptr)
-		return out;
-	unsigned int codepoint;
-	while (*in != 0) {
-		unsigned char ch = static_cast<unsigned char>(*in);
-		if (ch <= 0x7f)
-			codepoint = ch;
-		else if (ch <= 0xbf)
-			codepoint = (codepoint << 6) | (ch & 0x3f);
-		else if (ch <= 0xdf)
-			codepoint = ch & 0x1f;
-		else if (ch <= 0xef)
-			codepoint = ch & 0x0f;
-		else
-			codepoint = ch & 0x07;
-		++in;
-		if (((*in & 0xc0) != 0x80) && (codepoint <= 0x10ffff)) {
-			if (codepoint > 0xffff) {
-				out.append(1, static_cast<wchar_t>(0xd800 + (codepoint >> 10)));
-				out.append(1, static_cast<wchar_t>(0xdc00 + (codepoint & 0x03ff)));
-			} else if (codepoint < 0xd800 || codepoint >= 0xe000)
-				out.append(1, static_cast<wchar_t>(codepoint));
-		}
-	}
-	return out;
+    if (in == nullptr)
+        return out;
+    unsigned int codepoint;
+    while (*in != 0) {
+        unsigned char ch = static_cast<unsigned char>(*in);
+        if (ch <= 0x7f)
+            codepoint = ch;
+        else if (ch <= 0xbf)
+            codepoint = (codepoint << 6) | (ch & 0x3f);
+        else if (ch <= 0xdf)
+            codepoint = ch & 0x1f;
+        else if (ch <= 0xef)
+            codepoint = ch & 0x0f;
+        else
+            codepoint = ch & 0x07;
+        ++in;
+        if (((*in & 0xc0) != 0x80) && (codepoint <= 0x10ffff)) {
+            if (codepoint > 0xffff) {
+                out.append(1, static_cast<wchar_t>(0xd800 + (codepoint >> 10)));
+                out.append(1, static_cast<wchar_t>(0xdc00 + (codepoint & 0x03ff)));
+            } else if (codepoint < 0xd800 || codepoint >= 0xe000)
+                out.append(1, static_cast<wchar_t>(codepoint));
+        }
+    }
+    return out;
 }
 
 inline wstring utf82wide(const char* in) {
-	wstring out;
-	return utf82wide(in, out);
+    wstring out;
+    return utf82wide(in, out);
 }
 
 /**
@@ -353,64 +353,64 @@ inline wstring utf82wide(const char* in) {
  * and dollar signs escaped
  */
 inline string& quotereplace(const string& src, _out_ string& out) {
-	for (size_t i = 0; i < src.length(); i++) {
-		char c = src[i];
-		if (c == '\\' || c == '$')
-			out.append(1, '\\');
-		out.append(1, c);
-	}
-	return out;
+    for (size_t i = 0; i < src.length(); i++) {
+        char c = src[i];
+        if (c == '\\' || c == '$')
+            out.append(1, '\\');
+        out.append(1, c);
+    }
+    return out;
 }
 
 inline wstring& quotereplace(const wstring& src, _out_ wstring& out) {
-	for (size_t i = 0; i < src.length(); i++) {
-		wchar_t c = src[i];
-		if (c == L'\\' || c == L'$')
-			out.append(1, L'\\');
-		out.append(1, c);
-	}
-	return out;
+    for (size_t i = 0; i < src.length(); i++) {
+        wchar_t c = src[i];
+        if (c == L'\\' || c == L'$')
+            out.append(1, L'\\');
+        out.append(1, c);
+    }
+    return out;
 }
 
 /**
  * replace string with specified string in the first
  */
 inline string& replacefirst(_out_ string& src, const string& from, const string& to) {
-	size_t start = src.find(from);
-	if (start == string::npos)
-		return src;
-	src.replace(start, from.length(), to);
-	return src;
+    size_t start = src.find(from);
+    if (start == string::npos)
+        return src;
+    src.replace(start, from.length(), to);
+    return src;
 }
 
 inline string& replaceall(_out_ string& src, const string& from, const string& to) {
-	if (from.empty())
-		return src;
-	size_t start = 0;
-	while ((start = src.find(from, start)) != string::npos) {
-		src.replace(start, from.length(), to);
-		start += to.length();
-	}
-	return src;
+    if (from.empty())
+        return src;
+    size_t start = 0;
+    while ((start = src.find(from, start)) != string::npos) {
+        src.replace(start, from.length(), to);
+        start += to.length();
+    }
+    return src;
 }
 
 inline wstring& replacefirst(_out_ wstring& src, const wstring& from, const wstring& to) {
-	size_t start = src.find(from);
-	if (start == wstring::npos)
-		return src;
-	src.replace(start, from.length(), to);
-	return src;
+    size_t start = src.find(from);
+    if (start == wstring::npos)
+        return src;
+    src.replace(start, from.length(), to);
+    return src;
 }
 
 inline wstring& replaceall(_out_ wstring& src, const wstring& from, const wstring& to) {
-	if (from.empty())
-		return src;
-	size_t start = 0;
-	while ((start = src.find(from, start)) != wstring::npos) {
-		src.replace(start, from.length(), to);
-		start += to.length();
-	}
-	return src;
+    if (from.empty())
+        return src;
+    size_t start = 0;
+    while ((start = src.find(from, start)) != wstring::npos) {
+        src.replace(start, from.length(), to);
+        start += to.length();
+    }
+    return src;
 }
 
 /*****************************************************
@@ -423,18 +423,18 @@ inline wstring& replaceall(_out_ wstring& src, const wstring& from, const wstrin
 class ex_tex : public exception {
 
 private:
-	const string _msg;
+    const string _msg;
 
 public:
-	explicit ex_tex(const string& msg) :
-		_msg(msg) {}
+    explicit ex_tex(const string& msg) :
+        _msg(msg) {}
 
-	explicit ex_tex(const string& msg, const exception& cause) :
-		_msg(msg + "\n caused by: " + cause.what()) {}
+    explicit ex_tex(const string& msg, const exception& cause) :
+        _msg(msg + "\n caused by: " + cause.what()) {}
 
-	const char* what() const throw() override {
-		return _msg.c_str();
-	}
+    const char* what() const throw() override {
+        return _msg.c_str();
+    }
 
 };
 
@@ -445,11 +445,11 @@ public:
 class ex_res_parse : public ex_tex {
 
 public:
-	explicit ex_res_parse(const string& msg) :
-		ex_tex(msg) {}
+    explicit ex_res_parse(const string& msg) :
+        ex_tex(msg) {}
 
-	explicit ex_res_parse(const string& msg, const exception& cause) :
-		ex_tex(msg, cause) {}
+    explicit ex_res_parse(const string& msg, const exception& cause) :
+        ex_tex(msg, cause) {}
 
 };
 
@@ -459,44 +459,44 @@ public:
 class ex_xml_parse : public ex_res_parse {
 
 public:
-	/**
-	 * attribute problem
-	 */
-	explicit ex_xml_parse(const string& resName,
-	                      const string& elName,
-	                      const string& attrName,
-	                      const string& msg) :
-		ex_res_parse(resName + ": invalid <" + elName
-		             + ">-element found: attribute '" + attrName
-		             + "' " + msg) {}
+    /**
+     * attribute problem
+     */
+    explicit ex_xml_parse(const string& resName,
+                          const string& elName,
+                          const string& attrName,
+                          const string& msg) :
+        ex_res_parse(resName + ": invalid <" + elName
+                     + ">-element found: attribute '" + attrName
+                     + "' " + msg) {}
 
-	/**
-	 * attribute problem
-	 */
-	explicit ex_xml_parse(const string& resName,
-	                      const string& elName,
-	                      const string& attrName,
-	                      const string& msg,
-	                      const exception& cause) :
-		ex_res_parse(resName + ": invalid <" + elName
-		             + ">-element found: attribute '" + attrName
-		             + "' " + msg,
-		             cause) {}
-	/**
-	 * other exceptions
-	 */
-	explicit ex_xml_parse(const string& resName, const exception& e) :
-		ex_res_parse(resName, e) {}
+    /**
+     * attribute problem
+     */
+    explicit ex_xml_parse(const string& resName,
+                          const string& elName,
+                          const string& attrName,
+                          const string& msg,
+                          const exception& cause) :
+        ex_res_parse(resName + ": invalid <" + elName
+                     + ">-element found: attribute '" + attrName
+                     + "' " + msg,
+                     cause) {}
+    /**
+     * other exceptions
+     */
+    explicit ex_xml_parse(const string& resName, const exception& e) :
+        ex_res_parse(resName, e) {}
 
-	/**
-	 * required element missing
-	 */
-	explicit ex_xml_parse(const string& resName, const string& elName) :
-		ex_res_parse(resName + ": the required <" + elName
-		             + ">-elment not found!") {}
+    /**
+     * required element missing
+     */
+    explicit ex_xml_parse(const string& resName, const string& elName) :
+        ex_res_parse(resName + ": the required <" + elName
+                     + ">-elment not found!") {}
 
-	explicit ex_xml_parse(const string& msg) :
-		ex_res_parse(msg) {}
+    explicit ex_xml_parse(const string& msg) :
+        ex_res_parse(msg) {}
 
 };
 
@@ -506,8 +506,8 @@ public:
 class ex_alphabet_registration : public ex_tex {
 
 public:
-	explicit ex_alphabet_registration(const string& msg) :
-		ex_tex(msg) {}
+    explicit ex_alphabet_registration(const string& msg) :
+        ex_tex(msg) {}
 };
 
 /**
@@ -515,20 +515,20 @@ public:
  */
 class ex_delimiter_mapping_not_found : public ex_tex {
 public:
-	explicit ex_delimiter_mapping_not_found(const char& delimiter) :
-		ex_tex("No mapping found for the character '" + string({delimiter}) + "'!") {}
+    explicit ex_delimiter_mapping_not_found(const char& delimiter) :
+        ex_tex("No mapping found for the character '" + string({delimiter}) + "'!") {}
 };
 
 class ex_empty_formula : public ex_tex {
 public:
-	explicit ex_empty_formula() :
-		ex_tex("Illegal operation with an empty formula!") {}
+    explicit ex_empty_formula() :
+        ex_tex("Illegal operation with an empty formula!") {}
 };
 
 class ex_font_loaded : public ex_tex {
 public:
-	explicit ex_font_loaded(const string& msg) :
-		ex_tex(msg) {}
+    explicit ex_font_loaded(const string& msg) :
+        ex_tex(msg) {}
 };
 
 /**
@@ -536,8 +536,8 @@ public:
  */
 class ex_formula_not_found : public ex_tex {
 public:
-	explicit ex_formula_not_found(const string& name) :
-		ex_tex("There's no predefined formula with the name '" + name) {}
+    explicit ex_formula_not_found(const string& name) :
+        ex_tex("There's no predefined formula with the name '" + name) {}
 };
 
 /**
@@ -545,8 +545,8 @@ public:
  */
 class ex_invalid_atom_type : public ex_tex {
 public:
-	explicit ex_invalid_atom_type(const string& msg) :
-		ex_tex(msg) {}
+    explicit ex_invalid_atom_type(const string& msg) :
+        ex_tex(msg) {}
 };
 
 /**
@@ -554,13 +554,13 @@ public:
  */
 class ex_invalid_delimiter : public ex_tex {
 public:
-	explicit ex_invalid_delimiter(const string& symbolName) :
-		ex_tex("The symbol with the name '" + symbolName +
-		       "' is not defined as a delimiter") {}
+    explicit ex_invalid_delimiter(const string& symbolName) :
+        ex_tex("The symbol with the name '" + symbolName +
+               "' is not defined as a delimiter") {}
 
-	explicit ex_invalid_delimiter(const char& ch, const string& symbolName) :
-		ex_tex("The character '" + string({ch}) + "' is not mapped to a symbol with the name '" +
-	symbolName + "', but that symbol is not defined as a delimiter.") {}
+    explicit ex_invalid_delimiter(const char& ch, const string& symbolName) :
+        ex_tex("The character '" + string({ch}) + "' is not mapped to a symbol with the name '" +
+    symbolName + "', but that symbol is not defined as a delimiter.") {}
 };
 
 /**
@@ -568,8 +568,8 @@ public:
  */
 class ex_invalid_delimiter_type : public ex_tex {
 public:
-	explicit ex_invalid_delimiter_type() :
-		ex_tex("The delimiter type was not valid!") {}
+    explicit ex_invalid_delimiter_type() :
+        ex_tex("The delimiter type was not valid!") {}
 };
 
 /**
@@ -577,8 +577,8 @@ public:
  */
 class ex_invalid_matrix : public ex_tex {
 public:
-	explicit ex_invalid_matrix(const string& msg) :
-		ex_tex(msg) {}
+    explicit ex_invalid_matrix(const string& msg) :
+        ex_tex(msg) {}
 };
 
 /**
@@ -586,8 +586,8 @@ public:
  */
 class ex_invalid_symbol_type : public ex_tex {
 public:
-	explicit ex_invalid_symbol_type(const string& msg) :
-		ex_tex(msg) {}
+    explicit ex_invalid_symbol_type(const string& msg) :
+        ex_tex(msg) {}
 };
 
 /**
@@ -595,8 +595,8 @@ public:
  */
 class ex_invalid_formula : public ex_tex {
 public:
-	explicit ex_invalid_formula(const string& msg) :
-		ex_tex(msg) {}
+    explicit ex_invalid_formula(const string& msg) :
+        ex_tex(msg) {}
 };
 
 /**
@@ -604,8 +604,8 @@ public:
  */
 class ex_invalid_unit : public ex_tex {
 public:
-	explicit ex_invalid_unit() :
-		ex_tex("The unit was not valid! use the unit defined in 'TeXConstants'.") {}
+    explicit ex_invalid_unit() :
+        ex_tex("The unit was not valid! use the unit defined in 'TeXConstants'.") {}
 };
 
 /**
@@ -613,11 +613,11 @@ public:
  */
 class ex_parse : public ex_tex {
 public:
-	explicit ex_parse(const string& msg, const exception& cause) :
-		ex_tex(msg, cause) {}
+    explicit ex_parse(const string& msg, const exception& cause) :
+        ex_tex(msg, cause) {}
 
-	explicit ex_parse(const string& msg) :
-		ex_tex(msg) {}
+    explicit ex_parse(const string& msg) :
+        ex_tex(msg) {}
 };
 
 /**
@@ -625,8 +625,8 @@ public:
  */
 class ex_symbol_mapping_not_found : public ex_tex {
 public:
-	explicit ex_symbol_mapping_not_found(const string& symbolName) :
-		ex_tex("No mapping found for the symbol '" + symbolName + "'!") {}
+    explicit ex_symbol_mapping_not_found(const string& symbolName) :
+        ex_tex("No mapping found for the symbol '" + symbolName + "'!") {}
 };
 
 /**
@@ -634,8 +634,8 @@ public:
  */
 class ex_symbol_not_found : public ex_tex {
 public:
-	explicit ex_symbol_not_found(const string& name) :
-		ex_tex("There's no symbol with the name '" + name + "' defined.") {}
+    explicit ex_symbol_not_found(const string& name) :
+        ex_tex("There's no symbol with the name '" + name + "' defined.") {}
 };
 
 /**
@@ -643,14 +643,14 @@ public:
  */
 class ex_text_style_mapping_not_found : public ex_tex {
 public:
-	explicit ex_text_style_mapping_not_found(const string& name) :
-		ex_tex("No mapping found for the text style '" + name + "'!") {}
+    explicit ex_text_style_mapping_not_found(const string& name) :
+        ex_tex("No mapping found for the text style '" + name + "'!") {}
 };
 
 class ex_invalid_state : public ex_tex {
 public:
-	explicit ex_invalid_state(const string& e) :
-		ex_tex(e) {}
+    explicit ex_invalid_state(const string& e) :
+        ex_tex(e) {}
 };
 
 /*************************************************************
@@ -659,172 +659,172 @@ public:
 
 enum TeXConstants {
 
-	/************ alignment constants ***************/
-	/**
-	 * extra space will be added to the right of the formula
-	 */
-	ALIGN_LEFT = 0,
-	/**
-	 * extra space will be added to the left of the formula
-	 */
-	ALIGN_RIGHT, // =1
-	/**
-	 * the formula will be centered in the middle. this constant
-	 * can be used for both horizontal and vertical alignment
-	 */
-	ALIGN_CENTER, // =2
-	/**
-	 * extra space will be added under the formula
-	 */
-	ALIGN_TOP, // =3
-	/**
-	 * extra space will be added above the formula
-	 */
-	ALIGN_BOTTOM, // =4
-	/**
-	 * none
-	 */
-	ALIGN_NONE, // =5
+    /************ alignment constants ***************/
+    /**
+     * extra space will be added to the right of the formula
+     */
+    ALIGN_LEFT = 0,
+    /**
+     * extra space will be added to the left of the formula
+     */
+    ALIGN_RIGHT, // =1
+    /**
+     * the formula will be centered in the middle. this constant
+     * can be used for both horizontal and vertical alignment
+     */
+    ALIGN_CENTER, // =2
+    /**
+     * extra space will be added under the formula
+     */
+    ALIGN_TOP, // =3
+    /**
+     * extra space will be added above the formula
+     */
+    ALIGN_BOTTOM, // =4
+    /**
+     * none
+     */
+    ALIGN_NONE, // =5
 
-	THINMUSKIP = 1,
-	MEDMUSKIP = 2,
-	THICKMUSKIP = 3,
-	NEGTHINMUSKIP = -1,
-	NEGMEDMUSKIP = -2,
-	NEGTHICKMUSKP = -3,
+    THINMUSKIP = 1,
+    MEDMUSKIP = 2,
+    THICKMUSKIP = 3,
+    NEGTHINMUSKIP = -1,
+    NEGMEDMUSKIP = -2,
+    NEGTHICKMUSKP = -3,
 
-	QUAD = 3,
+    QUAD = 3,
 
-	SCRIPT_NORMAL = 0,
-	SCRIPT_NOLIMITS,
-	SCRIPT_LIMITS,
+    SCRIPT_NORMAL = 0,
+    SCRIPT_NOLIMITS,
+    SCRIPT_LIMITS,
 
-	/*********** symbol type constants ***********/
-	/**
-	 * ordinary symbol, e.g. "slash"
-	 */
-	TYPE_ORDINARY = 0,
-	/**
-	 * big operator, e.g. "sum"
-	 */
-	TYPE_BIG_OPERATOR, // =1
-	/**
-	 * binary operator, e.g. "plus"
-	 */
-	TYPE_BINARY_OPERATOR, // =2
-	/**
-	 * relation, e.g. "equals"
-	 */
-	TYPE_RELATION, // =3
-	/**
-	 * opening symbol, e.g. "lbrace"
-	 */
-	TYPE_OPENING, // =4
-	/**
-	 * closing symbol, e.g. "rbrace"
-	 */
-	TYPE_CLOSING, // =5
-	/**
-	 * punctuation symbol, e.g. "comma"
-	 */
-	TYPE_PUNCTUATION, // =6
-	/**
-	 * atom type: inner atom (NOT FOR SYMBOLS)
-	 */
-	TYPE_INNER, // =7
-	/**
-	 * accent, e.g. "hat"
-	 */
-	TYPE_ACCENT = 10,
-	TYPE_INTERTEXT, // =11
-	TYPE_MULTICOLUMN, // =12
-	TYPE_HLINE, // =13
-	TYPE_MULTIROW, // =14
+    /*********** symbol type constants ***********/
+    /**
+     * ordinary symbol, e.g. "slash"
+     */
+    TYPE_ORDINARY = 0,
+    /**
+     * big operator, e.g. "sum"
+     */
+    TYPE_BIG_OPERATOR, // =1
+    /**
+     * binary operator, e.g. "plus"
+     */
+    TYPE_BINARY_OPERATOR, // =2
+    /**
+     * relation, e.g. "equals"
+     */
+    TYPE_RELATION, // =3
+    /**
+     * opening symbol, e.g. "lbrace"
+     */
+    TYPE_OPENING, // =4
+    /**
+     * closing symbol, e.g. "rbrace"
+     */
+    TYPE_CLOSING, // =5
+    /**
+     * punctuation symbol, e.g. "comma"
+     */
+    TYPE_PUNCTUATION, // =6
+    /**
+     * atom type: inner atom (NOT FOR SYMBOLS)
+     */
+    TYPE_INNER, // =7
+    /**
+     * accent, e.g. "hat"
+     */
+    TYPE_ACCENT = 10,
+    TYPE_INTERTEXT, // =11
+    TYPE_MULTICOLUMN, // =12
+    TYPE_HLINE, // =13
+    TYPE_MULTIROW, // =14
 
-	/****** over and under dilimiter type constants ******/
-	DELIM_BRACE = 0,
-	DELIM_SQUARE_BRACKET,
-	DELIM_BRACKET,
-	DELIM_LEFT_ARROW,
-	DELIM_RIGHT_ARROW,
-	DELIM_LEFT_RIGHT_ARROW,
-	DELIM_DOUBLE_LEFT_ARROW,
-	DELIM_DOUBLE_RIGHT_ARROW,
-	DELIM_DOUBLE_LEFT_RIGHT_ARROW,
-	DELIM_SIGNLE_LINE,
-	DELIM_DOUBLE_LINE,
+    /****** over and under dilimiter type constants ******/
+    DELIM_BRACE = 0,
+    DELIM_SQUARE_BRACKET,
+    DELIM_BRACKET,
+    DELIM_LEFT_ARROW,
+    DELIM_RIGHT_ARROW,
+    DELIM_LEFT_RIGHT_ARROW,
+    DELIM_DOUBLE_LEFT_ARROW,
+    DELIM_DOUBLE_RIGHT_ARROW,
+    DELIM_DOUBLE_LEFT_RIGHT_ARROW,
+    DELIM_SIGNLE_LINE,
+    DELIM_DOUBLE_LINE,
 
-	/************ TeX style constants ************/
-	/**
-	 * display style
-	 * @par
-	 * The larger versions of big operators are used and limits are placed under
-	 * and over these operators (default). Symbols are rendered in the largest
-	 * size.
-	 */
-	STYLE_DISPLAY = 0,
-	/**
-	 * text style
-	 * @par
-	 * The small versions of big operator are used and limits are attached to
-	 * these operators as scripts (default). The same size as in the display
-	 * style is used to render symbols.
-	 */
-	STYLE_TEXT = 2,
-	/**
-	 * script style
-	 * @par
-	 * The same as the the text style, but symbols are rendered in a smaller size.
-	 */
-	STYLE_SCRIPT = 4,
-	/**
-	 * script_script style
-	 * @par
-	 * The same as the script style, but symbols are rendered in a smaller size.
-	 */
-	STYLE_SCRIPT_SCRIPT = 6,
+    /************ TeX style constants ************/
+    /**
+     * display style
+     * @par
+     * The larger versions of big operators are used and limits are placed under
+     * and over these operators (default). Symbols are rendered in the largest
+     * size.
+     */
+    STYLE_DISPLAY = 0,
+    /**
+     * text style
+     * @par
+     * The small versions of big operator are used and limits are attached to
+     * these operators as scripts (default). The same size as in the display
+     * style is used to render symbols.
+     */
+    STYLE_TEXT = 2,
+    /**
+     * script style
+     * @par
+     * The same as the the text style, but symbols are rendered in a smaller size.
+     */
+    STYLE_SCRIPT = 4,
+    /**
+     * script_script style
+     * @par
+     * The same as the script style, but symbols are rendered in a smaller size.
+     */
+    STYLE_SCRIPT_SCRIPT = 6,
 
-	/*********** TeX unit constants ************/
-	/**
-	 * 1 em = the width of the capital 'M' in the current font
-	 */
-	UNIT_EM = 0,
-	/**
-	 * 1 ex = the height of the character 'x' in the current font
-	 */
-	UNIT_EX,
-	UNIT_PIXEL,
-	/**
-	 * postscript point
-	 */
-	UNIT_POINT,
-	/**
-	 * 1 pica = 12 point
-	 */
-	UNIT_PICA,
-	/**
-	 * 1 mu = 1/18 em (em taken from the "mufont")
-	 */
-	UNIT_MU,
-	/**
-	 * 1 cm = 28.346456693 point
-	 */
-	UNIT_CM,
-	/**
-	 * 1 mm = 2.8346456693 point
-	 */
-	UNIT_MM,
-	/**
-	 * 1 in = 72 point
-	 */
-	UNIT_IN,
-	/**
-	 * 1 sp = 65536 point
-	 */
-	UNIT_SP,
-	UNIT_PT,
-	UNIT_DD,
-	UNIT_CC
+    /*********** TeX unit constants ************/
+    /**
+     * 1 em = the width of the capital 'M' in the current font
+     */
+    UNIT_EM = 0,
+    /**
+     * 1 ex = the height of the character 'x' in the current font
+     */
+    UNIT_EX,
+    UNIT_PIXEL,
+    /**
+     * postscript point
+     */
+    UNIT_POINT,
+    /**
+     * 1 pica = 12 point
+     */
+    UNIT_PICA,
+    /**
+     * 1 mu = 1/18 em (em taken from the "mufont")
+     */
+    UNIT_MU,
+    /**
+     * 1 cm = 28.346456693 point
+     */
+    UNIT_CM,
+    /**
+     * 1 mm = 2.8346456693 point
+     */
+    UNIT_MM,
+    /**
+     * 1 in = 72 point
+     */
+    UNIT_IN,
+    /**
+     * 1 sp = 65536 point
+     */
+    UNIT_SP,
+    UNIT_PT,
+    UNIT_DD,
+    UNIT_CC
 };
 
 }
