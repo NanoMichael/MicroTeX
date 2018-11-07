@@ -34,214 +34,214 @@ class TeXEnvironment;
  */
 class Box {
 protected:
-	/**
-	 * the color previously used
-	 */
-	color _prevColor;
+    /**
+     * the color previously used
+     */
+    color _prevColor;
 
-	/**
-	 * Stores the old color setting, draws the background of the box (if any)
-	 * and sets the foreground color (if any).
-	 *
-	 * @param g2
-	 *            the graphics (2D) context
-	 * @param x
-	 *            the x-coordinate
-	 * @param y
-	 *            the y-coordinate
-	 */
-	void startDraw(Graphics2D& g2, float x, float y) {
-		// old color
-		_prevColor = g2.getColor();
-		if (!istrans(_background)) {
-			g2.setColor(_background);
-			g2.fillRect(x, y - _height, _width, _height + _depth);
-		}
-		if (!istrans(_foreground)) {
-			g2.setColor(_foreground);
-		} else {
-			g2.setColor(_prevColor);
-		}
-		drawDebug(g2, x, y);
-	}
+    /**
+     * Stores the old color setting, draws the background of the box (if any)
+     * and sets the foreground color (if any).
+     *
+     * @param g2
+     *            the graphics (2D) context
+     * @param x
+     *            the x-coordinate
+     * @param y
+     *            the y-coordinate
+     */
+    void startDraw(Graphics2D& g2, float x, float y) {
+        // old color
+        _prevColor = g2.getColor();
+        if (!istrans(_background)) {
+            g2.setColor(_background);
+            g2.fillRect(x, y - _height, _width, _height + _depth);
+        }
+        if (!istrans(_foreground)) {
+            g2.setColor(_foreground);
+        } else {
+            g2.setColor(_prevColor);
+        }
+        drawDebug(g2, x, y);
+    }
 
-	void drawDebug(Graphics2D& g2, float x, float y, bool showDepth = true) {
-		if (!DEBUG) {
-			return;
-		}
-		const Stroke& st = g2.getStroke();
-		Stroke s(abs(1.f / g2.sx()), CAP_BUTT, JOIN_MITER);
-		g2.setStroke(s);
-		if (_width < 0) {
-			x += _width;
-			_width = -_width;
-		}
-		// draw box outline
-		g2.drawRect(x, y - _height, _width, _height + _depth);
-		// draw depth
-		if (showDepth) {
-			color c = g2.getColor();
-			g2.setColor(RED);
-			if (_depth > 0) {
-				g2.fillRect(x, y, _width, _depth);
-				g2.setColor(c);
-				g2.drawRect(x, y, _width, _depth);
-			} else if (_depth < 0) {
-				g2.fillRect(x, y + _depth, _width, -_depth);
-				g2.setColor(c);
-				g2.drawRect(x, y + _depth, _width, -_depth);
-			} else {
-				g2.setColor(c);
-			}
-		}
-		g2.setStroke(st);
-	}
+    void drawDebug(Graphics2D& g2, float x, float y, bool showDepth = true) {
+        if (!DEBUG) {
+            return;
+        }
+        const Stroke& st = g2.getStroke();
+        Stroke s(abs(1.f / g2.sx()), CAP_BUTT, JOIN_MITER);
+        g2.setStroke(s);
+        if (_width < 0) {
+            x += _width;
+            _width = -_width;
+        }
+        // draw box outline
+        g2.drawRect(x, y - _height, _width, _height + _depth);
+        // draw depth
+        if (showDepth) {
+            color c = g2.getColor();
+            g2.setColor(RED);
+            if (_depth > 0) {
+                g2.fillRect(x, y, _width, _depth);
+                g2.setColor(c);
+                g2.drawRect(x, y, _width, _depth);
+            } else if (_depth < 0) {
+                g2.fillRect(x, y + _depth, _width, -_depth);
+                g2.setColor(c);
+                g2.drawRect(x, y + _depth, _width, -_depth);
+            } else {
+                g2.setColor(c);
+            }
+        }
+        g2.setStroke(st);
+    }
 
-	/**
-	 * Restores the previous graphic context setting.
-	 *
-	 * @param g2
-	 *            the graphics (2D) context
-	 */
-	void endDraw(Graphics2D& g2) {
-		g2.setColor(_prevColor);
-	}
+    /**
+     * Restores the previous graphic context setting.
+     *
+     * @param g2
+     *            the graphics (2D) context
+     */
+    void endDraw(Graphics2D& g2) {
+        g2.setColor(_prevColor);
+    }
 
     /**
      * Initialize box with default
      */
-	void init() {
-		_foreground = trans;
-		_background = trans;
-		_prevColor = trans;
-		_width = _height = _depth = _shift = 0;
-		_type = -1;
-	}
+    void init() {
+        _foreground = trans;
+        _background = trans;
+        _prevColor = trans;
+        _width = _height = _depth = _shift = 0;
+        _type = -1;
+    }
 
 public:
-	static bool DEBUG;
+    static bool DEBUG;
 
-	/**
-	 * The foreground color of the whole box. Child boxes can override this
-	 * color. If it's null and it has a parent box, the foreground color of the
-	 * parent will be used. If it has no parent, the foreground color of the
-	 * component on which it will be painted, will be used.
-	 */
-	color _foreground;
+    /**
+     * The foreground color of the whole box. Child boxes can override this
+     * color. If it's null and it has a parent box, the foreground color of the
+     * parent will be used. If it has no parent, the foreground color of the
+     * component on which it will be painted, will be used.
+     */
+    color _foreground;
 
-	/**
-	 * The background color of the whole box. Child boxes can paint a background
-	 * on top of this background. If it's null, no background will be painted.
-	 */
-	color _background;
+    /**
+     * The background color of the whole box. Child boxes can paint a background
+     * on top of this background. If it's null, no background will be painted.
+     */
+    color _background;
 
-	/**
-	 * The width of this box, i.e. the value that will be used for further
-	 * calculations.
-	 */
-	float _width;
+    /**
+     * The width of this box, i.e. the value that will be used for further
+     * calculations.
+     */
+    float _width;
 
-	/**
-	 * The height of this box, i.e. the value that will be used for further
-	 * calculations.
-	 */
-	float _height;
+    /**
+     * The height of this box, i.e. the value that will be used for further
+     * calculations.
+     */
+    float _height;
 
-	/**
-	 * The depth of this box, i.e. the value that will be used for further
-	 * calculations.
-	 */
-	float _depth;
+    /**
+     * The depth of this box, i.e. the value that will be used for further
+     * calculations.
+     */
+    float _depth;
 
-	/**
-	* The shift amount: the meaning depends on the particular kind of box (up,
-	* down, left, right)
-	*/
-	float _shift;
+    /**
+    * The shift amount: the meaning depends on the particular kind of box (up,
+    * down, left, right)
+    */
+    float _shift;
 
-	/**
-	 * the box type (default = -1, no type)
-	 */
-	int _type;
+    /**
+     * the box type (default = -1, no type)
+     */
+    int _type;
 
-	/**
-	 * children of this box
-	 */
-	vector<shared_ptr<Box>> _children;
+    /**
+     * children of this box
+     */
+    vector<shared_ptr<Box>> _children;
 
     /**
      * Create a new box with default
      */
-	Box() {
-		init();
-	}
+    Box() {
+        init();
+    }
 
     /**
      * Create a new box with foreground and background
      */
-	Box(color fg, color bg) {
-		init();
-		_background = bg;
-		_foreground = fg;
-	}
+    Box(color fg, color bg) {
+        init();
+        _background = bg;
+        _foreground = fg;
+    }
 
-	/**
-	 * Inserts the given box at the end of the list of child boxes.
-	 *
-	 * @param b
-	 * 		the box to be inserted
-	 */
-	virtual void add(const shared_ptr<Box>& b) {
-		_children.push_back(b);
-	}
+    /**
+     * Inserts the given box at the end of the list of child boxes.
+     *
+     * @param b
+     *      the box to be inserted
+     */
+    virtual void add(const shared_ptr<Box>& b) {
+        _children.push_back(b);
+    }
 
-	/**
-	 * Inserts the given box at the given position in the list of child boxes.
-	 *
-	 * @param pos
-	 * 		the position at which to insert the given box
-	 * @param b
-	 * 		the box to be inserted
-	 */
-	virtual void add(int pos, const shared_ptr<Box>& b) {
-		_children.insert(_children.begin() + pos, b);
-	}
+    /**
+     * Inserts the given box at the given position in the list of child boxes.
+     *
+     * @param pos
+     *      the position at which to insert the given box
+     * @param b
+     *      the box to be inserted
+     */
+    virtual void add(int pos, const shared_ptr<Box>& b) {
+        _children.insert(_children.begin() + pos, b);
+    }
 
     /**
      * Transform the width of box to negative
      */
-	inline void negWidth() {
-		_width = -_width;
-	}
+    inline void negWidth() {
+        _width = -_width;
+    }
 
-	/**
-	 * Paints this box at the given coordinates using the given graphics
-	 * context.
-	 *
-	 * @param g2
-	 *		the graphics (2D) context to use for painting
-	 * @param x
-	 *      the x-coordinate
-	 * @param y
-	 *      the y-coordinate
-	 */
-	virtual void draw(Graphics2D& g2, float x, float y) = 0;
+    /**
+     * Paints this box at the given coordinates using the given graphics
+     * context.
+     *
+     * @param g2
+     *      the graphics (2D) context to use for painting
+     * @param x
+     *      the x-coordinate
+     * @param y
+     *      the y-coordinate
+     */
+    virtual void draw(Graphics2D& g2, float x, float y) = 0;
 
-	/**
-	 * Get the id of the font that will be used the last when this box will be
-	 * painted.
-	 *
-	 * @return the id of the last font that will be used.
-	 */
-	virtual int getLastFontId() = 0;
+    /**
+     * Get the id of the font that will be used the last when this box will be
+     * painted.
+     *
+     * @return the id of the last font that will be used.
+     */
+    virtual int getLastFontId() = 0;
 
-	/**
-	 * Get child boxes of this box, modify the list returned by this function
-	 * will not effect this box's children
-	 */
-	virtual vector<shared_ptr<Box>> getChildren() const {
-		return _children;
-	}
+    /**
+     * Get child boxes of this box, modify the list returned by this function
+     * will not effect this box's children
+     */
+    virtual vector<shared_ptr<Box>> getChildren() const {
+        return _children;
+    }
 };
 
 /**
@@ -262,60 +262,60 @@ public:
 class Atom {
 
 public:
-	/**
-	 * The type of the atom (default value: ordinary atom) @see TeXConstants
-	 */
-	int _type;
-	/**
-	 * The limits type of the atom (default value: normal) @see TeXConstants
-	 */
-	int _typelimits;
-	/**
-	 * The alignment type of the atom (default value: none) @see TeXConstants
-	 */
-	int _alignment;
+    /**
+     * The type of the atom (default value: ordinary atom) @see TeXConstants
+     */
+    int _type;
+    /**
+     * The limits type of the atom (default value: normal) @see TeXConstants
+     */
+    int _typelimits;
+    /**
+     * The alignment type of the atom (default value: none) @see TeXConstants
+     */
+    int _alignment;
 
-	Atom() :
-		_type(TYPE_ORDINARY),
-		_typelimits(SCRIPT_NOLIMITS),
-		_alignment(-1) {
-	}
+    Atom() :
+        _type(TYPE_ORDINARY),
+        _typelimits(SCRIPT_NOLIMITS),
+        _alignment(-1) {
+    }
 
-	/**
-	 * Get the type of the leftermost child atom. Most atoms have no child
-	 * atoms, so the "left type" and the "right type" are the same: the atom's
-	 * type. This also is the default implementation. But Some atoms are
-	 * composed of child atoms put one after another in a horizontal row. These
-	 * atoms must override this method.
-	 *
-	 * @return the type of the leftermost child atom
-	 */
-	virtual int getLeftType() const {
-		return _type;
-	}
+    /**
+     * Get the type of the leftermost child atom. Most atoms have no child
+     * atoms, so the "left type" and the "right type" are the same: the atom's
+     * type. This also is the default implementation. But Some atoms are
+     * composed of child atoms put one after another in a horizontal row. These
+     * atoms must override this method.
+     *
+     * @return the type of the leftermost child atom
+     */
+    virtual int getLeftType() const {
+        return _type;
+    }
 
-	/**
-	 * Get the type of the rightermost child atom. Most atoms have no child
-	 * atoms, so the "left type" and the "right type" are the same: the atom's
-	 * type. This also is the default implementation. But Some atoms are
-	 * composed of child atoms put one after another in a horizontal row. These
-	 * atoms must override this method.
-	 *
-	 * @return the type of the rightermost child atom
-	 */
-	virtual int getRightType() const {
-		return _type;
-	}
+    /**
+     * Get the type of the rightermost child atom. Most atoms have no child
+     * atoms, so the "left type" and the "right type" are the same: the atom's
+     * type. This also is the default implementation. But Some atoms are
+     * composed of child atoms put one after another in a horizontal row. These
+     * atoms must override this method.
+     *
+     * @return the type of the rightermost child atom
+     */
+    virtual int getRightType() const {
+        return _type;
+    }
 
-	/**
-	 * Convert this atom into a {@link Box}, using properties set by "parent"
-	 * atoms, like the TeX style, the last used font, color settings, ...
-	 *
-	 * @param env
-	 * 		the current environment settings
-	 * @return the resulting box.
-	 */
-	virtual shared_ptr<Box> createBox(_out_ TeXEnvironment& env) = 0;
+    /**
+     * Convert this atom into a {@link Box}, using properties set by "parent"
+     * atoms, like the TeX style, the last used font, color settings, ...
+     *
+     * @param env
+     *      the current environment settings
+     * @return the resulting box.
+     */
+    virtual shared_ptr<Box> createBox(_out_ TeXEnvironment& env) = 0;
 };
 
 }
