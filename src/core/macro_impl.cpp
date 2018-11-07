@@ -41,10 +41,8 @@ shared_ptr<Atom> rule_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) th
 
 shared_ptr<Atom> cfrac_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
     int al = ALIGN_CENTER;
-    if (args[3] == L"r")
-        al = ALIGN_RIGHT;
-    else if (args[3] == L"l")
-        al = ALIGN_LEFT;
+    if (args[3] == L"r") al = ALIGN_RIGHT;
+    else if (args[3] == L"l") al = ALIGN_LEFT;
     TeXFormula num(tp, args[1], false);
     TeXFormula denom(tp, args[2], false);
     if (num._root == nullptr || denom._root == nullptr)
@@ -92,13 +90,11 @@ shared_ptr<Atom> genfrac_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args)
 
     TeXFormula left(tp, args[1], false);
     SymbolAtom* lr = dynamic_cast<SymbolAtom*>(left._root.get());
-    if (lr != nullptr)
-        L = dynamic_pointer_cast<SymbolAtom>(left._root);
+    if (lr != nullptr) L = dynamic_pointer_cast<SymbolAtom>(left._root);
 
     TeXFormula right(tp, args[2], false);
     SymbolAtom* rr = dynamic_cast<SymbolAtom*>(right._root.get());
-    if (rr != nullptr)
-        R = dynamic_pointer_cast<SymbolAtom>(right._root);
+    if (rr != nullptr) R = dynamic_pointer_cast<SymbolAtom>(right._root);
 
     bool rule = true;
     pair<int, float> ths = SpaceAtom::getLength(args[3]);
@@ -108,8 +104,7 @@ shared_ptr<Atom> genfrac_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args)
     }
 
     int style = 0;
-    if (!args[4].empty())
-        valueof(args[4], style);
+    if (!args[4].empty()) valueof(args[4], style);
 
     TeXFormula num(tp, args[5], false);
     TeXFormula den(tp, args[6], false);
@@ -131,19 +126,18 @@ shared_ptr<Atom> overwithdelims_macro(_out_ TeXParser& tp, _out_ vector<wstring>
 
     auto left = TeXFormula(tp, args[1], false)._root;
     BigDelimiterAtom* a = dynamic_cast<BigDelimiterAtom*>(left.get());
-    if (a != nullptr)
-        left = a->_delim;
+    if (a != nullptr) left = a->_delim;
 
     auto right = TeXFormula(tp, args[2], false)._root;
     a = dynamic_cast<BigDelimiterAtom*>(right.get());
-    if (a != nullptr)
-        right = a->_delim;
+    if (a != nullptr) right = a->_delim;
 
     SymbolAtom* sl = dynamic_cast<SymbolAtom*>(left.get());
     SymbolAtom* sr = dynamic_cast<SymbolAtom*>(right.get());
     if (sl != nullptr && sr != nullptr) {
         shared_ptr<FractionAtom> f(new FractionAtom(num, den, true));
-        return shared_ptr<Atom>(new FencedAtom(f, dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
+        return shared_ptr<Atom>(new FencedAtom(f,
+            dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
     }
 
     RowAtom* ra = new RowAtom();
@@ -162,19 +156,18 @@ shared_ptr<Atom> atopwithdelims_macro(_out_ TeXParser& tp, _out_ vector<wstring>
 
     auto left = TeXFormula(tp, args[1], false)._root;
     BigDelimiterAtom* big = dynamic_cast<BigDelimiterAtom*>(left.get());
-    if (big != nullptr)
-        left = big->_delim;
+    if (big != nullptr) left = big->_delim;
 
     auto right = TeXFormula(tp, args[2], false)._root;
     big = dynamic_cast<BigDelimiterAtom*>(right.get());
-    if (big != nullptr)
-        right = big->_delim;
+    if (big != nullptr) right = big->_delim;
 
     SymbolAtom* sl = dynamic_cast<SymbolAtom*>(left.get());
     SymbolAtom* sr = dynamic_cast<SymbolAtom*>(right.get());
     if (sl != nullptr && sr != nullptr) {
         shared_ptr<Atom> f(new FractionAtom(num, den, false));
-        return shared_ptr<Atom>(new FencedAtom(f, dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
+        return shared_ptr<Atom>(new FencedAtom(f,
+            dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
     }
 
     RowAtom* ra = new RowAtom();
@@ -193,19 +186,18 @@ shared_ptr<Atom> abovewithdelims_macro(_out_ TeXParser& tp, _out_ vector<wstring
 
     auto left = TeXFormula(tp, args[1], false)._root;
     BigDelimiterAtom* big = dynamic_cast<BigDelimiterAtom*>(left.get());
-    if (big != nullptr)
-        left = big->_delim;
+    if (big != nullptr) left = big->_delim;
 
     auto right = TeXFormula(tp, args[2], false)._root;
     big = dynamic_cast<BigDelimiterAtom*>(right.get());
-    if (big != nullptr)
-        right = big->_delim;
+    if (big != nullptr) right = big->_delim;
 
     SymbolAtom* sl = dynamic_cast<SymbolAtom*>(left.get());
     SymbolAtom* sr = dynamic_cast<SymbolAtom*>(right.get());
     if (sl != nullptr && sr != nullptr) {
         shared_ptr<Atom> f(new FractionAtom(num, den, dim.first, dim.second));
-        return shared_ptr<Atom>(new FencedAtom(f, dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
+        return shared_ptr<Atom>(new FencedAtom(f,
+            dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
     }
 
     RowAtom* ra = new RowAtom();
@@ -217,14 +209,10 @@ shared_ptr<Atom> abovewithdelims_macro(_out_ TeXParser& tp, _out_ vector<wstring
 
 shared_ptr<Atom> textstyle_macros(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
     wstring style(args[0]);
-    if (style == L"frak")
-        style = L"mathfrak";
-    else if (style == L"Bbb")
-        style = L"mathbb";
-    else if (style == L"bold")
-        return shared_ptr<Atom>(new BoldAtom(TeXFormula(tp, args[1], false)._root));
-    else if (style == L"cal")
-        style = L"mathcal";
+    if (style == L"frak") style = L"mathfrak";
+    else if (style == L"Bbb") style = L"mathbb";
+    else if (style == L"bold") return shared_ptr<Atom>(new BoldAtom(TeXFormula(tp, args[1], false)._root));
+    else if (style == L"cal") style = L"mathcal";
 
     FontInfos* info = nullptr;
     auto it = TeXFormula::_externalFontMap.find(UnicodeBlock::BASIC_LATIN);
@@ -294,19 +282,21 @@ shared_ptr<Atom> left_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) th
 
     auto left = TeXFormula(tp, args[1], false)._root;
     BigDelimiterAtom* big = dynamic_cast<BigDelimiterAtom*>(left.get());
-    if (big != nullptr)
-        left = big->_delim;
+    if (big != nullptr) left = big->_delim;
 
     auto right = tp.getArgument();
     big = dynamic_cast<BigDelimiterAtom*>(right.get());
-    if (big != nullptr)
-        right = big->_delim;
+    if (big != nullptr) right = big->_delim;
 
     SymbolAtom* sl = dynamic_cast<SymbolAtom*>(left.get());
     SymbolAtom* sr = dynamic_cast<SymbolAtom*>(right.get());
     if (sl != nullptr && sr != nullptr) {
         TeXFormula tf(tp, grep, false);
-        return shared_ptr<Atom>(new FencedAtom(tf._root, dynamic_pointer_cast<SymbolAtom>(left), tf._middle, dynamic_pointer_cast<SymbolAtom>(right)));
+        return shared_ptr<Atom>(new FencedAtom(
+            tf._root,
+            dynamic_pointer_cast<SymbolAtom>(left),
+            tf._middle,
+            dynamic_pointer_cast<SymbolAtom>(right)));
     }
 
     RowAtom* ra = new RowAtom();
@@ -318,8 +308,7 @@ shared_ptr<Atom> left_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) th
 }
 
 shared_ptr<Atom> intertext_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    if (!tp.isArrayMode())
-        throw ex_parse("Bad environment for \\intertext command!");
+    if (!tp.isArrayMode()) throw ex_parse("Bad environment for \\intertext command!");
 
     wstring str(args[1]);
     replaceall(str, L"^{\\prime}", L"\'");
@@ -336,16 +325,15 @@ shared_ptr<Atom> intertext_macro(_out_ TeXParser& tp, _out_ vector<wstring>& arg
 shared_ptr<Atom> newcommand_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
     wstring newcom(args[1]);
     int nbArgs = 0;
-    if (!tp.isValidName(newcom))
-        throw ex_parse("invalid name for the command '" + wide2utf8(newcom.c_str()));
+    if (!tp.isValidName(newcom)) throw ex_parse("Invalid name for the command '" + wide2utf8(newcom.c_str()));
 
-    if (!args[3].empty())
-        valueof(args[3], nbArgs);
+    if (!args[3].empty()) valueof(args[3], nbArgs);
 
-    if (args[4].empty())
+    if (args[4].empty()) {
         NewCommandMacro::addNewCommand(newcom.substr(1), args[2], nbArgs);
-    else
+    } else {
         NewCommandMacro::addNewCommand(newcom.substr(1), args[2], nbArgs, args[4]);
+    }
 
     return shared_ptr<Atom>(nullptr);
 }
@@ -356,8 +344,7 @@ shared_ptr<Atom> renewcommand_macro(_out_ TeXParser& tp, _out_ vector<wstring>& 
     if (!tp.isValidName(newcmd))
         throw ex_parse("Invalid name for the command: " + wide2utf8(newcmd.c_str()));
 
-    if (!args[3].empty())
-        valueof(args[3], nbargs);
+    if (!args[3].empty()) valueof(args[3], nbargs);
 
     NewCommandMacro::addRenewCommand(newcmd.substr(1), args[2], nbargs);
 
@@ -369,7 +356,11 @@ shared_ptr<Atom> raisebox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args
     pair<int, float> h = SpaceAtom::getLength(args[3]);
     pair<int, float> d = SpaceAtom::getLength(args[4]);
 
-    return shared_ptr<Atom>(new RaiseAtom(TeXFormula(tp, args[2])._root, r.first, r.second, h.first, h.second, d.first, d.second));
+    return shared_ptr<Atom>(new RaiseAtom(
+        TeXFormula(tp, args[2])._root,
+        r.first, r.second,
+        h.first, h.second,
+        d.first, d.second));
 }
 
 shared_ptr<Atom> definecolor_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
@@ -383,7 +374,7 @@ shared_ptr<Atom> definecolor_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
     } else if (args[2] == L"rgb") {
         strtokenizer stok(cs, ":,");
         if (stok.count_tokens() != 3)
-            throw ex_parse("the color definition must have three components!");
+            throw ex_parse("The color definition must have three components!");
         float r, g, b;
         string R = stok.next_token(), G = stok.next_token(), B = stok.next_token();
         valueof(trim(R), r);
@@ -393,7 +384,7 @@ shared_ptr<Atom> definecolor_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
     } else if (args[2] == L"cmyk") {
         strtokenizer stok(cs, ":,");
         if (stok.count_tokens() != 4)
-            throw ex_parse("the color definition must have four components!");
+            throw ex_parse("The color definition must have four components!");
         float cmyk[4];
         for (int i = 0; i < 4; i++) {
             string X = stok.next_token();
@@ -401,8 +392,9 @@ shared_ptr<Atom> definecolor_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
         }
         float k = 1 - cmyk[3];
         c = rgb(k * (1 - cmyk[0]), k * (1 - cmyk[1]), k * (1 - cmyk[2]));
-    } else
-        throw ex_parse("color model is incorrect!");
+    } else {
+        throw ex_parse("Color model is incorrect!");
+    }
 
     ColorAtom::_colors[wide2utf8(args[1].c_str())] = c;
     return shared_ptr<Atom>(nullptr);
@@ -410,26 +402,16 @@ shared_ptr<Atom> definecolor_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
 
 shared_ptr<Atom> size_macros(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
     float f = 1;
-    if (args[0] == L"tiny")
-        f = 0.5f;
-    else if (args[0] == L"scriptsize")
-        f = 0.7f;
-    else if (args[0] == L"footnotesize")
-        f = 0.8f;
-    else if (args[0] == L"small")
-        f = 0.9f;
-    else if (args[0] == L"normalsize")
-        f = 1.f;
-    else if (args[0] == L"large")
-        f = 1.2f;
-    else if (args[0] == L"Large")
-        f = 1.4f;
-    else if (args[0] == L"LARGE")
-        f = 1.8f;
-    else if (args[0] == L"huge")
-        f = 2.f;
-    else if (args[0] == L"Huge")
-        f = 2.5f;
+    if (args[0] == L"tiny") f = 0.5f;
+    else if (args[0] == L"scriptsize") f = 0.7f;
+    else if (args[0] == L"footnotesize") f = 0.8f;
+    else if (args[0] == L"small") f = 0.9f;
+    else if (args[0] == L"normalsize") f = 1.f;
+    else if (args[0] == L"large") f = 1.2f;
+    else if (args[0] == L"Large") f = 1.4f;
+    else if (args[0] == L"LARGE") f = 1.8f;
+    else if (args[0] == L"huge") f = 2.f;
+    else if (args[0] == L"Huge") f = 2.5f;
 
     auto a = TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root;
     return shared_ptr<Atom>(new MonoScaleAtom(a, f));
@@ -462,27 +444,16 @@ shared_ptr<Atom> romannumeral_macro(_out_ TeXParser& tp, _out_ vector<wstring>& 
 
 shared_ptr<Atom> muskip_macros(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
     int type = 0;
-    if (args[0] == L",") {
-        type = THINMUSKIP;
-    } else if (args[0] == L":") {
-        type = MEDMUSKIP;
-    } else if (args[0] == L";") {
-        type = THICKMUSKIP;
-    } else if (args[0] == L"thinspace") {
-        type = THINMUSKIP;
-    } else if (args[0] == L"medspace") {
-        type = MEDMUSKIP;
-    } else if (args[0] == L"thickspace") {
-        type = THICKMUSKIP;
-    } else if (args[0] == L"!") {
-        type = NEGTHINMUSKIP;
-    } else if (args[0] == L"negthinspace") {
-        type = NEGTHINMUSKIP;
-    } else if (args[0] == L"negmedspace") {
-        type = NEGMEDMUSKIP;
-    } else if (args[0] == L"negthickspace") {
-        type = NEGTHICKMUSKP;
-    }
+    if (args[0] == L",") type = THINMUSKIP;
+    else if (args[0] == L":") type = MEDMUSKIP;
+    else if (args[0] == L";") type = THICKMUSKIP;
+    else if (args[0] == L"thinspace") type = THINMUSKIP;
+    else if (args[0] == L"medspace") type = MEDMUSKIP;
+    else if (args[0] == L"thickspace") type = THICKMUSKIP;
+    else if (args[0] == L"!") type = NEGTHINMUSKIP;
+    else if (args[0] == L"negthinspace") type = NEGTHINMUSKIP;
+    else if (args[0] == L"negmedspace") type = NEGMEDMUSKIP;
+    else if (args[0] == L"negthickspace") type = NEGTHICKMUSKP;
 
     return shared_ptr<Atom>(new SpaceAtom(type));
 }
@@ -519,4 +490,4 @@ shared_ptr<Atom> xml_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) thr
     return TeXFormula(tp, str)._root;
 }
 
-}
+} // namespace tex

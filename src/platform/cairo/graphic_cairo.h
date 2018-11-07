@@ -124,5 +124,5 @@ public:
 
 }
 
-#endif // GRAPHIC_GTKMM_H_INCLUDED
+#endif // GRAPHIC_CAIRO_H_INCLUDED
 #endif // __linux && !__MEM_CHECK

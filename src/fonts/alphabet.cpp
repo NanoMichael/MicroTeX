@@ -22,8 +22,7 @@ bool UnicodeBlock::in(wchar_t c) const {
     // if this block is UNKNOWN, check others first
     if (*this == UNKNOWN) {
         for (auto b : _defined)
-            if (b->in(c))
-                return false;
+            if (b->in(c)) return false;
         return true;
     }
     return (c >= _start && c <= _end);
@@ -47,8 +46,7 @@ void UnicodeBlock::define(wchar_t codePointStart, wchar_t codePointEnd) {
 
 const UnicodeBlock& UnicodeBlock::of(wchar_t c) {
     for (auto x : _defined) {
-        if (x->in(c))
-            return *x;
+        if (x->in(c)) return *x;
     }
     return UNKNOWN;
 }

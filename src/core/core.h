@@ -90,7 +90,9 @@ private:
         setInterline(UNIT_EX, 1.f);
     }
 
-    TeXEnvironment(int style, float scaleFactor, const shared_ptr<TeXFont>& tf, color bg, color c, const string& textstyle, bool smallCap) {
+    TeXEnvironment(
+        int style, float scaleFactor, const shared_ptr<TeXFont>& tf,
+        color bg, color c, const string& textstyle, bool smallCap) {
         init();
         _style = style;
         _scaleFactor = scaleFactor;
@@ -219,7 +221,7 @@ public:
 };
 
 /**
- * represents glue by its 3 components. Contains the "glue rules"
+ * Represents glue by its 3 components. Contains the "glue rules"
  */
 class Glue {
 private:
@@ -286,8 +288,7 @@ private:
     inline static string getAttr(const char* attr, const XMLElement* e) throw(ex_res_parse) {
         // find if attr is exists
         const char* value = e->Attribute(attr);
-        if (value == nullptr || strlen(value) == 0)
-            throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping");
+        if (value == nullptr || strlen(value) == 0) throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping");
         return value;
     }
 public:
@@ -321,7 +322,7 @@ public:
 };
 
 /**
- * parses predefined TeXFormulas form a xml-file
+ * Parses predefined TeXFormulas form a xml-file
  */
 class TeXFormulaSettingParser {
 private:
@@ -330,9 +331,15 @@ private:
 
     static int getUtf(const XMLElement* e, const char* attr) throw(ex_res_parse);
 
-    static void add2map(const XMLElement* mapping, _out_ map<int, string>& tableMath, _out_ map<int, string>& tableTxt) throw(ex_res_parse);
+    static void add2map(
+        const XMLElement* mapping,
+        _out_ map<int, string>& tableMath,
+        _out_ map<int, string>& tableTxt) throw(ex_res_parse);
 
-    static void addFormula2map(const XMLElement* mapping, _out_ map<int, string>& tableMath, _out_ map<int, string>& tableTxt) throw(ex_res_parse);
+    static void addFormula2map(
+        const XMLElement* mapping,
+        _out_ map<int, string>& tableMath,
+        _out_ map<int, string>& tableTxt) throw(ex_res_parse);
 public:
     static const string RESOURCE_NAME;
 
@@ -340,11 +347,15 @@ public:
 
     TeXFormulaSettingParser(const string& file) throw(ex_res_parse);
 
-    void parseSymbol2Formula(_out_ map<int, string>& mappings, _out_ map<int, string>& textMappings) throw(ex_res_parse);
+    void parseSymbol2Formula(
+        _out_ map<int, string>& mappings,
+        _out_ map<int, string>& textMappings) throw(ex_res_parse);
 
-    void parseSymbol(_out_ map<int, string>& mappings, _out_ map<int, string>& textMappings) throw(ex_res_parse);
+    void parseSymbol(
+        _out_ map<int, string>& mappings,
+        _out_ map<int, string>& textMappings) throw(ex_res_parse);
 };
 
-}
+} // namespace tex
 
 #endif // CORE_H_INCLUDED

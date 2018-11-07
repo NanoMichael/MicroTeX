@@ -10,4 +10,7 @@
 // flag for memcheck
 // #define __MEM_CHECK
 
+// flag for compile samples
+#define __USE_SAMPLES
+
 #endif // CONFIG_H_INCLUDED

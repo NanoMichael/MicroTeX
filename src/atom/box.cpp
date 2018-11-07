@@ -15,16 +15,14 @@ bool Box::DEBUG = false;
 /*********************************** factory implementation ********************************/
 
 shared_ptr<Box> DelimiterFactory::create(_in_ SymbolAtom& symbol, _out_ TeXEnvironment& env, int size) {
-    if (size > 4)
-        return symbol.createBox(env);
+    if (size > 4) return symbol.createBox(env);
 
     TeXFont& tf = *(env.getTeXFont());
     int style = env.getStyle();
     Char c = tf.getChar(symbol.getName(), style);
     int i = 0;
 
-    for (int i = 1; i <= size && tf.hasNextLarger(c); i++)
-        c = tf.getNextLarger(c, style);
+    for (int i = 1; i <= size && tf.hasNextLarger(c); i++) c = tf.getNextLarger(c, style);
 
     if (i <= size && !tf.hasNextLarger(c)) {
         CharBox A(tf.getChar(L'A', "mathnormal", style));
@@ -214,8 +212,9 @@ HorizontalBox::HorizontalBox(const shared_ptr<Box>& b, float w, int aligment) {
         shared_ptr<Box> s(new StrutBox(rest, 0, 0, 0));
         add(s);
         add(b);
-    } else
+    } else {
         add(b);
+    }
 }
 
 HorizontalBox::HorizontalBox(const shared_ptr<Box>& b) {
@@ -422,7 +421,10 @@ OverBar::OverBar(const shared_ptr<Box>& b, float kern, float thickness) : Vertic
 
 /*********************************** over-under box implementation ***************************/
 
-OverUnderBox::OverUnderBox(const shared_ptr<Box>& b, const shared_ptr<Box>& d, const shared_ptr<Box>& script, float kern, bool over) {
+OverUnderBox::OverUnderBox(
+    const shared_ptr<Box>& b,
+    const shared_ptr<Box>& d,
+    const shared_ptr<Box>& script, float kern, bool over) {
     _base = b;
     _del = d;
     _script = script;
@@ -454,8 +456,7 @@ void OverUnderBox::draw(Graphics2D& g2, float x, float y) {
         g2.rotate(-PI / 2);
         g2.translate(-tx, -ty);
         // draw superscript
-        if (_script != nullptr)
-            _script->draw(g2, x, yVar - _kern - _script->_depth);
+        if (_script != nullptr) _script->draw(g2, x, yVar - _kern - _script->_depth);
         return;
     }
     yVar = y + _base->_depth;
@@ -468,8 +469,7 @@ void OverUnderBox::draw(Graphics2D& g2, float x, float y) {
     g2.translate(-tx, -ty);
     yVar += _del->_width;
     // draw subscript
-    if (_script != nullptr)
-        _script->draw(g2, x, yVar + _kern + _script->_height);
+    if (_script != nullptr) _script->draw(g2, x, yVar + _kern + _script->_height);
 }
 
 int OverUnderBox::getLastFontId() {
@@ -623,35 +623,21 @@ Point RotateBox::calculateShift(const Box& b, int option) {
 }
 
 int RotateBox::getOrigin(string option) {
-    if (option.empty())
-        return BBL;
-    if (option.size() == 1)
-        option += "c";
+    if (option.empty()) return BBL;
+    if (option.size() == 1) option += "c";
 
-    if (option == "bl" || option == "lb")
-        return BL;
-    if (option == "bc" || option == "cb")
-        return BC;
-    if (option == "br" || option == "rb")
-        return BR;
-    if (option == "cl" || option == "lc")
-        return CL;
-    if (option == "cc")
-        return CC;
-    if (option == "cr" || option == "rc")
-        return CR;
-    if (option == "tl" || option == "lt")
-        return TL;
-    if (option == "tc" || option == "ct")
-        return TC;
-    if (option == "tr" || option == "rt")
-        return TR;
-    if (option == "Bl" || option == "lB")
-        return BBL;
-    if (option == "Bc" || option == "cB")
-        return BBC;
-    if (option == "Br" || option == "rB")
-        return BBR;
+    if (option == "bl" || option == "lb") return BL;
+    if (option == "bc" || option == "cb") return BC;
+    if (option == "br" || option == "rb") return BR;
+    if (option == "cl" || option == "lc") return CL;
+    if (option == "cc") return CC;
+    if (option == "cr" || option == "rc") return CR;
+    if (option == "tl" || option == "lt") return TL;
+    if (option == "tc" || option == "ct") return TC;
+    if (option == "tr" || option == "rt") return TR;
+    if (option == "Bl" || option == "lB") return BBL;
+    if (option == "Bc" || option == "cB") return BBC;
+    if (option == "Br" || option == "rB") return BBR;
     return BBL;
 }
 

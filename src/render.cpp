@@ -44,7 +44,8 @@ int TeXRender::getWidth() const {
 }
 
 float TeXRender::getBaseline() const {
-    return ((_box->_height * _textSize + 0.99f + _insets.top) / ((_box->_height + _box->_depth) * _textSize + 0.99f + _insets.top + _insets.bottom));
+    return ((_box->_height * _textSize + 0.99f + _insets.top) /
+        ((_box->_height + _box->_depth) * _textSize + 0.99f + _insets.top + _insets.bottom));
 }
 
 void TeXRender::setTextSize(float textSize) {
@@ -106,18 +107,12 @@ void TeXRender::draw(_out_ Graphics2D& g2, int x, int y) {
 
 DefaultTeXFont* TeXRenderBuilder::createFont(float s, int type) {
     DefaultTeXFont* tf = new DefaultTeXFont(s);
-    if (type == 0)
-        tf->setSs(false);
-    if ((type & ROMAN) != 0)
-        tf->setRoman(true);
-    if ((type & TYPEWRITER) != 0)
-        tf->setTt(true);
-    if ((type & SANSSERIF) != 0)
-        tf->setSs(true);
-    if ((type & ITALIC) != 0)
-        tf->setIt(true);
-    if ((type & BOLD) != 0)
-        tf->setBold(true);
+    if (type == 0) tf->setSs(false);
+    if ((type & ROMAN) != 0) tf->setRoman(true);
+    if ((type & TYPEWRITER) != 0) tf->setTt(true);
+    if ((type & SANSSERIF) != 0) tf->setSs(true);
+    if ((type & ITALIC) != 0) tf->setIt(true);
+    if ((type & BOLD) != 0) tf->setBold(true);
     return tf;
 }
 
@@ -131,10 +126,10 @@ TeXRender* TeXRenderBuilder::build(const shared_ptr<Atom>& fc) {
         f = shared_ptr<Atom>(new EmptyAtom());
     }
     if (_style == -1) {
-        throw ex_invalid_state("a style is required, call function setStyle before build");
+        throw ex_invalid_state("A style is required, call function setStyle before build");
     }
     if (_textSize == -1) {
-        throw ex_invalid_state("a size is required, call function setSize before build");
+        throw ex_invalid_state("A size is required, call function setSize before build");
     }
 
     DefaultTeXFont* font = (_type == -1) ? new DefaultTeXFont(_textSize) : createFont(_textSize, _type);

@@ -1,3 +1,9 @@
+#include "config.h"
+
+#ifdef __USE_SAMPLES
+
+#ifndef SAMPLES_H_INCLUDED
+#define SAMPLES_H_INCLUDED
 
 namespace tex {
 
@@ -162,4 +168,7 @@ wstring SAMPLES[] {
     L"1 + \\underbrace{a + b + \\cdots + z}_{\\text{total}}\n"
 };
 
-}
+} // namespace tex
+
+#endif // SAMPLES_H_INCLUDED
+#endif // __USE_SAMPLES

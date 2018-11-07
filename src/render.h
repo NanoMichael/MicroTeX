@@ -111,7 +111,7 @@ public:
 
     inline TeXRenderBuilder& setIsMaxWidth(bool i) {
         if (_widthUnit == -1)
-            throw ex_invalid_state("cannot set 'isMaxWidth' without having specified a width!");
+            throw ex_invalid_state("Cannot set 'isMaxWidth' without having specified a width!");
         if (i) {
             // Currently isMaxWidth==true does not work with
             // ALIGN_CENTER or ALIGN_RIGHT (see HorizontalBox ctor)

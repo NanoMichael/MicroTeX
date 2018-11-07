@@ -3,11 +3,11 @@
 
 #include "atom/atom.h"
 #include "atom/box.h"
-#include "core/core.h"
-#include "fonts/fonts.h"
-#include "core/formula.h"
-#include "graphic/graphic.h"
 #include "common.h"
+#include "core/core.h"
+#include "core/formula.h"
+#include "fonts/fonts.h"
+#include "graphic/graphic.h"
 
 using namespace std;
 using namespace tex;
@@ -52,6 +52,7 @@ public:
 class CellColorAtom : public CellSpecifier {
 private:
     color _color;
+
 public:
     CellColorAtom() = delete;
 
@@ -68,6 +69,7 @@ public:
 class CellForegroundAtom : public CellSpecifier {
 private:
     color _color;
+
 public:
     CellForegroundAtom() = delete;
 
@@ -84,13 +86,13 @@ public:
 class MultiRowAtom : public Atom {
 private:
     shared_ptr<Atom> _rows;
+
 public:
     int _i, _j, _n;
 
     MultiRowAtom() = delete;
 
-    MultiRowAtom(int n, const wstring& option, const shared_ptr<Atom> rows) :
-        _i(0), _j(0), _rows(rows) {
+    MultiRowAtom(int n, const wstring& option, const shared_ptr<Atom> rows) : _i(0), _j(0), _rows(rows) {
         _n = n == 0 ? 1 : n;
     }
 
@@ -139,11 +141,22 @@ private:
 
     void parsePositions(wstring opt, _out_ vector<int>& lpos);
 
-    shared_ptr<Box> generateMulticolumn(_out_ TeXEnvironment& env, const shared_ptr<Box>& b, const float* hsep, const float* rowW, int i, int j);
+    shared_ptr<Box> generateMulticolumn(
+        _out_ TeXEnvironment& env,
+        const shared_ptr<Box>& b,
+        const float* hsep,
+        const float* rowW,
+        int i, int j);
 
-    void recalculateLine(const int row, shared_ptr<Box>** boxarr, vector<shared_ptr<Atom>>& rows, float* height, float* depth, float drt, float vspace);
+    void recalculateLine(
+        const int row,
+        shared_ptr<Box>** boxarr,
+        vector<shared_ptr<Atom>>& rows,
+        float* height, float* depth,
+        float drt, float vspace);
 
     float* getColumnSep(_out_ TeXEnvironment& env, float width);
+
 public:
     static color LINE_COLOR;
 
@@ -172,6 +185,7 @@ public:
 class VlineAtom : public Atom {
 private:
     int _n;
+
 public:
     float _height, _shift;
 
@@ -223,6 +237,7 @@ private:
     shared_ptr<ArrayOfAtoms> _column;
     int _ttype;
     bool _ispartial;
+
 public:
     MultlineAtom() = delete;
 
@@ -247,13 +262,13 @@ public:
 class BigDelimiterAtom : public Atom {
 private:
     int _size;
+
 public:
     shared_ptr<SymbolAtom> _delim;
 
     BigDelimiterAtom() = delete;
 
-    BigDelimiterAtom(const shared_ptr<SymbolAtom>& delim, int s) :
-        _delim(delim), _size(s) {
+    BigDelimiterAtom(const shared_ptr<SymbolAtom>& delim, int s) : _delim(delim), _size(s) {
     }
 
     shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override {
@@ -272,15 +287,13 @@ public:
  * an atom representing a bold atom
  */
 class BoldAtom : public Atom {
-
 private:
     shared_ptr<Atom> _base;
 
 public:
     BoldAtom() = delete;
 
-    BoldAtom(const shared_ptr<Atom>& base) :
-        _base(base) {
+    BoldAtom(const shared_ptr<Atom>& base) : _base(base) {
     }
 
     shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override {
@@ -299,6 +312,7 @@ public:
 class CedillAtom : public Atom {
 private:
     shared_ptr<Atom> _base;
+
 public:
     CedillAtom() = delete;
 
@@ -364,6 +378,7 @@ class FBoxAtom : public Atom {
 protected:
     shared_ptr<Atom> _base;
     color _bg, _line;
+
 public:
     static const float INTERSPACE;
 
@@ -427,7 +442,7 @@ public:
 };
 
 /**
- * an atom representing a base atom surrounded with delimiters that change their
+ * An atom representing a base atom surrounded with delimiters that change their
  * size according to the height of the base
  */
 class FencedAtom : public Atom {
@@ -444,12 +459,17 @@ private:
     void init(const shared_ptr<Atom>& b, const shared_ptr<SymbolAtom>& l, const shared_ptr<SymbolAtom>& r);
 
     static void center(_out_ Box& b, float axis);
+
 public:
     FencedAtom(const shared_ptr<Atom>& b, const shared_ptr<SymbolAtom>& l, const shared_ptr<SymbolAtom>& r) {
         init(b, l, r);
     }
 
-    FencedAtom(const shared_ptr<Atom>& b, const shared_ptr<SymbolAtom>& l, const list<shared_ptr<MiddleAtom>>& m, const shared_ptr<SymbolAtom>& r) {
+    FencedAtom(
+        const shared_ptr<Atom>& b,
+        const shared_ptr<SymbolAtom>& l,
+        const list<shared_ptr<MiddleAtom>>& m,
+        const shared_ptr<SymbolAtom>& r) {
         init(b, l, r);
         _middle = m;
     }
@@ -491,7 +511,11 @@ private:
         return ALIGN_CENTER;
     }
 
-    void init(const shared_ptr<Atom>& num, const shared_ptr<Atom>& den, bool nodef, int unit, float t) throw(ex_invalid_unit);
+    void init(
+        const shared_ptr<Atom>& num,
+        const shared_ptr<Atom>& den,
+        bool nodef, int unit, float t) throw(ex_invalid_unit);
+
 public:
     FractionAtom() = delete;
 
@@ -503,17 +527,23 @@ public:
         init(num, den, !rule, UNIT_PIXEL, 0.f);
     }
 
-    FractionAtom(const shared_ptr<Atom>& num, const shared_ptr<Atom>& den, bool nodef, int unit, float t) throw(ex_invalid_unit) {
+    FractionAtom(
+        const shared_ptr<Atom>& num, const shared_ptr<Atom>& den,
+        bool nodef, int unit, float t) throw(ex_invalid_unit) {
         init(num, den, nodef, unit, t);
     }
 
-    FractionAtom(const shared_ptr<Atom>& num, const shared_ptr<Atom>& den, bool rule, int numAlign, int denomAlign) {
+    FractionAtom(
+        const shared_ptr<Atom>& num, const shared_ptr<Atom>& den,
+        bool rule, int numAlign, int denomAlign) {
         init(num, den, !rule, UNIT_PIXEL, 0.f);
         _numAlign = checkAlign(numAlign);
         _denomAlign = checkAlign(denomAlign);
     }
 
-    FractionAtom(const shared_ptr<Atom>& num, const shared_ptr<Atom>& den, float deffactor, int numAlign, int denomAlign) {
+    FractionAtom(
+        const shared_ptr<Atom>& num, const shared_ptr<Atom>& den,
+        float deffactor, int numAlign, int denomAlign) {
         init(num, den, false, UNIT_PIXEL, 0.f);
         _numAlign = checkAlign(numAlign);
         _denomAlign = checkAlign(denomAlign);
@@ -521,7 +551,9 @@ public:
         _deffactorset = true;
     }
 
-    FractionAtom(const shared_ptr<Atom>& num, const shared_ptr<Atom>& den, int unit, float t, int numAlign, int denomAlign) {
+    FractionAtom(
+        const shared_ptr<Atom>& num, const shared_ptr<Atom>& den,
+        int unit, float t, int numAlign, int denomAlign) {
         init(num, den, true, unit, t);
         _numAlign = checkAlign(numAlign);
         _denomAlign = checkAlign(denomAlign);
@@ -547,6 +579,7 @@ protected:
     shared_ptr<Atom> _cols;
 
     int parseAlign(const string& str);
+
 public:
     MulticolumnAtom() = delete;
 
@@ -596,11 +629,11 @@ class HdotsforAtom : public MulticolumnAtom {
 private:
     static SpaceAtom _thin;
     float _coeff;
+
 public:
     HdotsforAtom() = delete;
 
-    HdotsforAtom(int n, float coeff) :
-        MulticolumnAtom(n, "c", SymbolAtom::get("ldotp")), _coeff(coeff) {
+    HdotsforAtom(int n, float coeff) : MulticolumnAtom(n, "c", SymbolAtom::get("ldotp")), _coeff(coeff) {
     }
 
     shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
@@ -640,6 +673,7 @@ public:
 class IJAtom : public Atom {
 private:
     bool _upper;
+
 public:
     IJAtom() = delete;
 
@@ -661,6 +695,7 @@ public:
 class ItAtom : public Atom {
 private:
     shared_ptr<Atom> _base;
+
 public:
     ItAtom() = delete;
 
@@ -681,12 +716,13 @@ public:
 };
 
 /**
- * an atom representing a lapped atom (i.e. with no width)
+ * An atom representing a lapped atom (i.e. with no width)
  */
 class LapedAtom : public Atom {
 private:
     shared_ptr<Atom> _at;
     wchar_t _type;
+
 public:
     LapedAtom() = delete;
 
@@ -697,7 +733,7 @@ public:
         VerticalBox* vb = new VerticalBox();
         vb->add(b);
         vb->_width = 0;
-        switch(_type) {
+        switch (_type) {
         case 'l':
             b->_shift = -b->_width;
             break;
@@ -714,7 +750,7 @@ public:
 };
 
 /**
- * an atom representing LaTeX logo. the dimension values can be set using
+ * An atom representing LaTeX logo. the dimension values can be set using
  * different unit types.
  */
 class LaTeXAtom : public Atom {
@@ -723,11 +759,12 @@ public:
 };
 
 /**
- * an atom representing an L with a Caron
+ * An atom representing an L with a Caron
  */
 class LCaronAtom : public Atom {
 private:
     bool _upper;
+
 public:
     LCaronAtom() = delete;
 
@@ -737,26 +774,24 @@ public:
         CharBox* A = new CharBox(env.getTeXFont()->getChar("textapos", env.getStyle()));
         CharBox* L = new CharBox(env.getTeXFont()->getChar(_upper ? 'L' : 'l', "mathnormal", env.getStyle()));
         HorizontalBox* hb = new HorizontalBox(shared_ptr<Box>(L));
-        if (_upper)
-            hb->add(SpaceAtom(UNIT_EM, -0.3f, 0, 0).createBox(env));
-        else
-            hb->add(SpaceAtom(UNIT_EM, -0.13f, 0, 0).createBox(env));
+        if (_upper) hb->add(SpaceAtom(UNIT_EM, -0.3f, 0, 0).createBox(env));
+        else hb->add(SpaceAtom(UNIT_EM, -0.13f, 0, 0).createBox(env));
         hb->add(shared_ptr<Box>(A));
         return shared_ptr<Box>(hb);
     }
 };
 
 /**
- * an atom representing a mono scale atom
+ * An atom representing a mono scale atom
  */
 class MonoScaleAtom : public ScaleAtom {
 private:
     float _factor;
+
 public:
     MonoScaleAtom() = delete;
 
-    MonoScaleAtom(const shared_ptr<Atom>& base, float factor) :
-        ScaleAtom(base, factor, factor), _factor(factor) {
+    MonoScaleAtom(const shared_ptr<Atom>& base, float factor) : ScaleAtom(base, factor, factor), _factor(factor) {
     }
 
     shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override {
@@ -773,6 +808,7 @@ public:
 class OgonekAtom : public Atom {
 private:
     shared_ptr<Atom> _base;
+
 public:
     OgonekAtom() = delete;
 
@@ -804,7 +840,7 @@ public:
 };
 
 /**
- * an atom representing a boxed base atom
+ * An atom representing a boxed base atom
  */
 class OvalAtom : public FBoxAtom {
 public:
@@ -820,16 +856,16 @@ public:
 };
 
 /**
- * an atom representing a over-lined atom
+ * An atom representing a over-lined atom
  */
 class OverlinedAtom : public Atom {
 private:
     shared_ptr<Atom> _base;
+
 public:
     OverlinedAtom() = delete;
 
-    OverlinedAtom(const shared_ptr<Atom>& f) :
-        _base(f) {
+    OverlinedAtom(const shared_ptr<Atom>& f) : _base(f) {
         _type = TYPE_ORDINARY;
     }
 
@@ -853,6 +889,7 @@ private:
     shared_ptr<Atom> _base;
     int _ru, _hu, _du;
     float _r, _h, _d;
+
 public:
     RaiseAtom() = delete;
 
@@ -876,36 +913,31 @@ public:
 
     shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override {
         auto bbox = _base->createBox(env);
-        if (_ru == -1)
-            bbox->_shift = 0;
-        else
-            bbox->_shift = -_r * SpaceAtom::getFactor(_ru, env);
+        if (_ru == -1) bbox->_shift = 0;
+        else bbox->_shift = -_r * SpaceAtom::getFactor(_ru, env);
 
-        if (_hu == -1)
-            return bbox;
+        if (_hu == -1) return bbox;
 
         HorizontalBox* hbox = new HorizontalBox(bbox);
         hbox->_height = _h * SpaceAtom::getFactor(_hu, env);
-        if (_du == -1)
-            hbox->_depth = 0;
-        else
-            hbox->_depth = _d * SpaceAtom::getFactor(_du, env);
+        if (_du == -1) hbox->_depth = 0;
+        else hbox->_depth = _d * SpaceAtom::getFactor(_du, env);
 
         return shared_ptr<Box>(hbox);
     }
 };
 
 /**
- * an atom representing a reflected atom
+ * An atom representing a reflected atom
  */
 class ReflectAtom : public Atom {
 private:
     shared_ptr<Atom> _base;
+
 public:
     ReflectAtom() = delete;
 
-    ReflectAtom(const shared_ptr<Atom>& base) :
-        _base(base) {
+    ReflectAtom(const shared_ptr<Atom>& base) : _base(base) {
         _type = _base->_type;
     }
 
@@ -915,7 +947,7 @@ public:
 };
 
 /**
- * an atom representing a resize atom
+ * An atom representing a resize atom
  */
 class ResizeAtom : public Atom {
 private:
@@ -923,6 +955,7 @@ private:
     int _wu, _hu;
     float _w, _h;
     bool _keep_aspect_ratio;
+
 public:
     ResizeAtom() = delete;
 
@@ -932,9 +965,9 @@ public:
         _keep_aspect_ratio = keep;
         auto w = SpaceAtom::getLength(ws);
         auto h = SpaceAtom::getLength(hs);
-        _wu = (int) w.first;
+        _wu = (int)w.first;
         _w = w.second;
-        _hu = (int) h.first;
+        _hu = (int)h.first;
         _h = h.second;
     }
 
@@ -948,8 +981,7 @@ public:
 
     shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override {
         auto bbox = _base->createBox(env);
-        if (_wu == -1 && _hu == -1)
-            return bbox;
+        if (_wu == -1 && _hu == -1) return bbox;
         float sx = 1.f, sy = 1.f;
         if (_wu != -1 && _hu != -1) {
             sx = _w * SpaceAtom::getFactor(_wu, env) / bbox->_width;
@@ -971,7 +1003,7 @@ public:
 };
 
 /**
- * an atom representing an nth-root construction
+ * An atom representing an nth-root construction
  */
 class NthRoot : public Atom {
 private:
@@ -981,6 +1013,7 @@ private:
     shared_ptr<Atom> _base;
     // root atom to be put in the upper left corner above the root sign
     shared_ptr<Atom> _root;
+
 public:
     NthRoot() = delete;
 
@@ -993,7 +1026,7 @@ public:
 };
 
 /**
- * an atom representing a rotated atom
+ * An atom representing a rotated atom
  */
 class RotateAtom : public Atom {
 private:
@@ -1002,6 +1035,7 @@ private:
     int _option;
     int _xunit, _yunit;
     float _x, _y;
+
 public:
     RotateAtom() = delete;
 
@@ -1016,6 +1050,7 @@ class RuleAtom : public Atom {
 private:
     int _wu, _hu, _ru;
     float _w, _h, _r;
+
 public:
     RuleAtom() = delete;
 
@@ -1042,6 +1077,7 @@ public:
 class SmallCpaAtom : public Atom {
 private:
     shared_ptr<Atom> _base;
+
 public:
     SmallCpaAtom() = delete;
 
@@ -1057,11 +1093,12 @@ public:
 };
 
 /**
- * an atom representing a sans-serif atom
+ * An atom representing a sans-serif atom
  */
 class SsAtom : public Atom {
 private:
     shared_ptr<Atom> _base;
+
 public:
     SsAtom() = delete;
 
@@ -1077,11 +1114,12 @@ public:
 };
 
 /**
- * an atom representing a strike through atom
+ * An atom representing a strike through atom
  */
 class StrikeThroughAtom : public Atom {
 private:
     shared_ptr<Atom> _at;
+
 public:
     StrikeThroughAtom(const shared_ptr<Atom>& a) : _at(a) {}
 
@@ -1102,13 +1140,14 @@ public:
 };
 
 /**
- * an atom representing a modification of style in a formula
+ * An atom representing a modification of style in a formula
  * (e.g. text-style or display-style)
  */
 class StyleAtom : public Atom {
 private:
     int _style;
     shared_ptr<Atom> _at;
+
 public:
     StyleAtom() = delete;
 
@@ -1127,7 +1166,7 @@ public:
 };
 
 /**
- * an atom representing an t with a Caron
+ * An atom representing an t with a Caron
  */
 class TCaronAtom : public Atom {
 public:
@@ -1146,6 +1185,7 @@ public:
 class TextCircledAtom : public Atom {
 private:
     shared_ptr<Atom> _at;
+
 public:
     TextCircledAtom() = delete;
 
@@ -1163,17 +1203,17 @@ public:
 };
 
 /**
- * an atom representing a modification of style in a formula
+ * An atom representing a modification of style in a formula
  */
 class TextStyleAtom : public Atom {
 private:
     string _style;
     shared_ptr<Atom> _at;
+
 public:
     TextStyleAtom() = delete;
 
-    TextStyleAtom(const shared_ptr<Atom>& a, const string& style) :
-        _style(style), _at(a) {
+    TextStyleAtom(const shared_ptr<Atom>& a, const string& style) : _style(style), _at(a) {
     }
 
     shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override {
@@ -1186,11 +1226,12 @@ public:
 };
 
 /**
- * an atom with a stroked T
+ * An atom with a stroked T
  */
 class TStrokeAtom : public Atom {
 private:
     bool _upper;
+
 public:
     TStrokeAtom() = delete;
 
@@ -1219,11 +1260,12 @@ public:
 };
 
 /**
- * an atom representing a typewriter atom
+ * An atom representing a typewriter atom
  */
 class TtAtom : public Atom {
 private:
     shared_ptr<Atom> _base;
+
 public:
     TtAtom() = delete;
 
@@ -1239,11 +1281,12 @@ public:
 };
 
 /**
- * an atom representing another atom with a line under it
+ * An atom representing another atom with a line under it
  */
 class UnderlinedAtom : public Atom {
 private:
     shared_ptr<Atom> _base;
+
 public:
     UnderlinedAtom() = delete;
 
@@ -1273,13 +1316,14 @@ public:
 };
 
 /**
- * an atom representing an other atom with an extensible arrow or double-arrow
+ * An atom representing an other atom with an extensible arrow or double-arrow
  * over or under it
  */
 class UnderOverArrowAtom : public Atom {
 private:
     shared_ptr<Atom> _base;
     bool _over, _left, _dble;
+
 public:
     UnderOverArrowAtom() = delete;
 
@@ -1301,12 +1345,13 @@ public:
 };
 
 /**
- * an atom representing another atom vertically centered with respect to
+ * An atom representing another atom vertically centered with respect to
  * the axis (determined by a general TeXFont parameter)
  */
 class VCenteredAtom : public Atom {
 private:
     shared_ptr<Atom> _at;
+
 public:
     VCenteredAtom() = delete;
 
@@ -1326,7 +1371,7 @@ public:
 };
 
 /**
- * an atom representing vdots
+ * An atom representing vdots
  */
 class VdotsAtom : public Atom {
 public:
@@ -1355,6 +1400,7 @@ class XArrowAtom : public Atom {
 private:
     shared_ptr<Atom> _over, _under;
     bool _left;
+
 public:
     XArrowAtom() = delete;
 
@@ -1367,6 +1413,6 @@ public:
     shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
-}
+}  // namespace tex
 
-#endif // ATOM_IMPL_H_INCLUDED
+#endif  // ATOM_IMPL_H_INCLUDED

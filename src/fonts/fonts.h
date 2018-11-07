@@ -319,24 +319,21 @@ public:
     }
 
     inline const int* const getExtension(wchar_t ch) {
-        if (_unicode_count == 0)
-            return _extensions[ch];
+        if (_unicode_count == 0) return _extensions[ch];
         return _extensions[_unicode[ch]];
     }
 
     inline float getkern(wchar_t left, wchar_t right, float factor) {
         CharCouple c(left, right);
         auto it = _kern.find(c);
-        if (it == _kern.end())
-            return 0;
+        if (it == _kern.end()) return 0;
         return it->second * factor;
     }
 
     inline shared_ptr<CharFont> getLigture(wchar_t left, wchar_t right);
 
     inline const float* getMetrics(wchar_t c) {
-        if (_unicode_count == 0)
-            return _metrics[c];
+        if (_unicode_count == 0) return _metrics[c];
         return _metrics[_unicode[c]];
     }
 
@@ -345,8 +342,7 @@ public:
     }
 
     inline const CharFont* getNextLarger(wchar_t c) {
-        if (_unicode_count == 0)
-            return _nextLarger[c];
+        if (_unicode_count == 0) return _nextLarger[c];
         return _nextLarger[_unicode[c]];
     }
 
@@ -371,9 +367,9 @@ public:
     }
 
     void setExtension(wchar_t ch, _in_ int* ext) {
-        if (_unicode_count == 0)
+        if (_unicode_count == 0) {
             _extensions[ch] = ext;
-        else if (_unicode.find(ch) == _unicode.end()) {
+        } else if (_unicode.find(ch) == _unicode.end()) {
             wchar_t s = (wchar_t) _unicode.size();
             _unicode[ch] = s;
             _extensions[s] = ext;
@@ -383,9 +379,9 @@ public:
     }
 
     void setMetrics(wchar_t c, _in_ float* arr) {
-        if (_unicode_count == 0)
+        if (_unicode_count == 0) {
             _metrics[c] = arr;
-        else if (_unicode.find(c) == _unicode.end()) {
+        } else if (_unicode.find(c) == _unicode.end()) {
             wchar_t s = (wchar_t) _unicode.size();
             _unicode[c] = s;
             _metrics[s] = arr;
@@ -485,7 +481,7 @@ public:
     virtual float getBigOpSpacing5(int style) = 0;
 
     /**
-     * get a Char-object specifying the given character in the given text style
+     * Get a Char-object specifying the given character in the given text style
      * with metric information depending on the given "style".
      * @param c
      *      alphanumeric character
@@ -501,7 +497,7 @@ public:
     virtual Char getChar(wchar_t c, const string& textStyle, int style) throw(ex_text_style_mapping_not_found) = 0;
 
     /**
-     * get a Char-object for this specific character containing the metric information
+     * Get a Char-object for this specific character containing the metric information
      * @param cf
      *      CharFont-object determine a specific character of a specific font
      * @param style
@@ -511,7 +507,7 @@ public:
     virtual Char getChar(const CharFont &cf, int style) = 0;
 
     /**
-     * get a Char-object for the given symbol with metric information depending on "style"
+     * Get a Char-object for the given symbol with metric information depending on "style"
      * @param name
      *      the symbol name
      * @param style
@@ -521,7 +517,7 @@ public:
     virtual Char getChar(const string &name, int style) throw(ex_symbol_mapping_not_found) = 0;
 
     /**
-     * get a Char-object specifying the given character in the default text style
+     * Get a Char-object specifying the given character in the default text style
      * with metric information depending on the given "style"
      * @param c
      *      alphanumeric character
@@ -538,7 +534,7 @@ public:
     virtual float getDenom2(int style) = 0;
 
     /**
-     * get an Extension-object for the given Char containing the 4 possible
+     * Get an Extension-object for the given Char containing the 4 possible
      * parts to build an arbitrary large variant. This will only be called if
      * isExtensionChar(Char) returns true.
      * @param c
@@ -550,7 +546,7 @@ public:
     virtual Extension* getExtension(const Char& c, int style) = 0;
 
     /**
-     * get the kern value to be inserted between the given characters in the
+     * Get the kern value to be inserted between the given characters in the
      * given style
      * @param left
      *      left character
@@ -563,7 +559,7 @@ public:
     virtual float getKern(const CharFont &left, const CharFont &right, int style) = 0;
 
     /**
-     * get the ligature that replaces both characters (if any).
+     * Get the ligature that replaces both characters (if any).
      * @param left
      *      left character
      * @param right
@@ -573,12 +569,12 @@ public:
     virtual shared_ptr<CharFont> getLigature(const CharFont &left, const CharFont &right) = 0;
 
     /**
-     * get the id of mu font
+     * Get the id of mu font
      */
     virtual int getMuFontId() = 0;
 
     /**
-     * get the next larger version of the given character. This is only called
+     * Get the next larger version of the given character. This is only called
      * if hasNextLarger(Char) returns true.
      * @param c
      *      specified character
@@ -602,7 +598,7 @@ public:
     virtual float getSize() = 0;
 
     /**
-     * get the kern amount of the character defined by the given CharFont
+     * Get the kern amount of the character defined by the given CharFont
      * followed by the "skewChar" of it's font. This is used in the algorithm
      * for placing an accent above a single character.
      * @param cf
@@ -746,18 +742,14 @@ public:
 
     inline static float getParameter(const string& name) {
         auto it = _parameters.find(name);
-        if (it == _parameters.end())
-            return 0;
+        if (it == _parameters.end()) return 0;
         return it->second;
     }
 
     inline static float getSizeFactor(int style) {
-        if (style < STYLE_TEXT)
-            return 1;
-        if (style < STYLE_SCRIPT)
-            return _generalSettings["textfactor"];
-        if (style < STYLE_SCRIPT_SCRIPT)
-            return _generalSettings["scriptfactor"];
+        if (style < STYLE_TEXT) return 1;
+        if (style < STYLE_SCRIPT) return _generalSettings["textfactor"];
+        if (style < STYLE_SCRIPT_SCRIPT) return _generalSettings["scriptfactor"];
         return _generalSettings["scriptscriptfactor"];
     }
 
@@ -837,8 +829,7 @@ public:
     inline float getSkew(_in_ const CharFont& cf, int style) override {
         FontInfo* info = _fontInfo[cf._fontId];
         wchar_t skew = info->getSkewChar();
-        if (skew == -1)
-            return 0;
+        if (skew == -1) return 0;
         return getKern(cf, CharFont(skew, cf._fontId), style);
     }
 
@@ -1014,16 +1005,14 @@ private:
 
     inline static void obtainAttr(const char* attr, const XMLElement* e, _out_ string& val) throw() {
         const char* value = e->Attribute(attr);
-        if (value == nullptr || strlen(value) == 0)
-            return;
+        if (value == nullptr || strlen(value) == 0) return;
         val.assign(value);
     }
 
     inline static string getAttrValueAndCheckIfNotNull(const char* attr, const XMLElement* e) throw(ex_xml_parse) {
         // find if attr is exists
         const char* value = e->Attribute(attr);
-        if (value == nullptr || strlen(value) == 0)
-            throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping");
+        if (value == nullptr || strlen(value) == 0) throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping");
         return value;
     }
 
@@ -1032,8 +1021,7 @@ private:
         float v = 0;
         int err = e->QueryFloatAttribute(attr, &v);
         // no attribute mapped by attr
-        if (err != XML_NO_ERROR)
-            throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
+        if (err != XML_NO_ERROR) throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
         return v;
     }
 
@@ -1041,39 +1029,33 @@ private:
         // get value
         int v = 0;
         int err = e->QueryIntAttribute(attr, &v);
-        if (err != XML_NO_ERROR)
-            throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
+        if (err != XML_NO_ERROR) throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
         return v;
     }
 
     inline static int getOptionalInt(const char* attr, const XMLElement* e, const int def) throw(ex_xml_parse) {
         // check exists
-        if (!exists(attr, e))
-            return def;
+        if (!exists(attr, e)) return def;
         // get value
         int v = 0;
         int err = e->QueryAttribute(attr, &v);
-        if (err != XML_NO_ERROR)
-            throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
+        if (err != XML_NO_ERROR) throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
         return v;
     }
 
     inline static float getOptionalFloat(const char* attr, const XMLElement* e, const float def) throw(ex_xml_parse) {
         // check exists
-        if (!exists(attr, e))
-            return def;
+        if (!exists(attr, e)) return def;
         // get value
         float v = 0;
         int err = e->QueryFloatAttribute(attr, &v);
-        if (err != XML_NO_ERROR)
-            throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
+        if (err != XML_NO_ERROR) throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
         return v;
     }
 
     void init(const string& file) throw(ex_xml_parse) {
         int err = _doc.LoadFile(file.c_str());
-        if (err != XML_NO_ERROR)
-            throw ex_xml_parse(file + " not found");
+        if (err != XML_NO_ERROR) throw ex_xml_parse(file + " not found");
         _root = _doc.RootElement();
 #ifdef __DEBUG
         __DBG("root name:%s\n", _root->Name());

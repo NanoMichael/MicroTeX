@@ -1,5 +1,5 @@
-#ifndef BOX_BASIC_H_INCLUDED
-#define BOX_BASIC_H_INCLUDED
+#ifndef BOX_H_INCLUDED
+#define BOX_H_INCLUDED
 
 #include "atom/atom.h"
 
@@ -163,7 +163,7 @@ public:
     OverUnderBox() = delete;
 
     /**
-     * the parameter boxes must have an equal width!!
+     * The parameter boxes must have an equal width!!
      *
      * @param b
      *      base box to be drawn on the baseline
@@ -262,7 +262,7 @@ public:
 };
 
 /**
- * enumeration representing rotation origin
+ * Enumeration representing rotation origin
  */
 enum Rotation {
     // Bottom Left
@@ -405,7 +405,7 @@ public:
  *********************************************************************************/
 
 /**
- * a box representing whitespace
+ * A box representing whitespace
  */
 class StrutBox : public Box {
 public:
@@ -507,7 +507,7 @@ public:
 };
 
 /**
- * A box act as wrapper that with insets in left, top, right and bottom
+ * A box representing 'wrapper' that with insets in left, top, right and bottom
  */
 class WrapperBox : public Box {
 private:
@@ -567,4 +567,4 @@ public:
 
 }
 
-#endif // BOX_BASIC_H_INCLUDED
+#endif // BOX_H_INCLUDED
