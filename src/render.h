@@ -114,7 +114,7 @@ public:
             throw ex_invalid_state("Cannot set 'isMaxWidth' without having specified a width!");
         if (i) {
             // Currently isMaxWidth==true does not work with
-            // ALIGN_CENTER or ALIGN_RIGHT (see HorizontalBox ctor)
+            // ALIGN_CENTER or ALIGN_RIGHT (see HorizontalBox constructor)
             //
             // The case (1) we don't support by setting align := ALIGN_LEFT
             // here is this:
@@ -144,7 +144,7 @@ public:
 
     inline TeXRenderBuilder& setLineSpace(int unit, float space) {
         if (_widthUnit == -1) {
-            throw ex_invalid_state("cannot set line space without having specified a width!");
+            throw ex_invalid_state("Cannot set line space without having specified a width!");
         }
         _lineSpace = space;
         _lineSpaceUnit = unit;

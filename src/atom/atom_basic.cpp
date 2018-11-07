@@ -498,7 +498,7 @@ shared_ptr<Box> RowAtom::createBox(_out_ TeXEnvironment& env) {
         }
 
         // insert glue, unless it's the first element of the row
-        // OR this element or the next is a kerning
+        // or this element or the next is a kerning
         if (i != 0 && _previousAtom != nullptr && !_previousAtom->isKern() && !atom->isKern()) {
             hbox->add(Glue::get(_previousAtom->getRightType(), atom->getLeftType(), env));
         }
