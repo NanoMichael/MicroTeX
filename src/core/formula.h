@@ -216,7 +216,7 @@ public:
     static shared_ptr<TeXFormula> get(const wstring& name) throw(ex_formula_not_found);
 
     /**
-     * set the DPI of target
+     * Set the DPI of target
      *
      * @param dpi
      *      the target DPI

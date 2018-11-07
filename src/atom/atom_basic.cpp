@@ -51,7 +51,8 @@ shared_ptr<Box> UnderScoreAtom::createBox(_out_ TeXEnvironment& env) {
     return shared_ptr<Box>(hb);
 }
 
-CumulativeScriptsAtom::CumulativeScriptsAtom(const shared_ptr<Atom>& base, const shared_ptr<Atom>& sub, const shared_ptr<Atom>& sup) {
+CumulativeScriptsAtom::CumulativeScriptsAtom(
+    const shared_ptr<Atom>& base, const shared_ptr<Atom>& sub, const shared_ptr<Atom>& sup) {
     CumulativeScriptsAtom* ca = dynamic_cast<CumulativeScriptsAtom*>(base.get());
     if (ca != nullptr) {
         _base = ca->_base;
@@ -191,26 +192,20 @@ shared_ptr<Box> SpaceAtom::createBox(_out_ TeXEnvironment& env) {
         float d = _depth * getFactor(_dUnit, env);
         return shared_ptr<Box>(new StrutBox(w, h, d, 0));
     }
-    if (_blankType == 0)
-        return shared_ptr<Box>(new StrutBox(env.getSpace(), 0, 0, 0));
+    if (_blankType == 0) return shared_ptr<Box>(new StrutBox(env.getSpace(), 0, 0, 0));
 
     int bl = _blankType < 0 ? -_blankType : _blankType;
     shared_ptr<Box> b(nullptr);
-    if (bl == THINMUSKIP)
-        b = Glue::get(TYPE_INNER, TYPE_BIG_OPERATOR, env);
-    else if (bl == MEDMUSKIP)
-        b = Glue::get(TYPE_BINARY_OPERATOR, TYPE_BIG_OPERATOR, env);
-    else
-        b = Glue::get(TYPE_RELATION, TYPE_BIG_OPERATOR, env);
+    if (bl == THINMUSKIP) b = Glue::get(TYPE_INNER, TYPE_BIG_OPERATOR, env);
+    else if (bl == MEDMUSKIP) b = Glue::get(TYPE_BINARY_OPERATOR, TYPE_BIG_OPERATOR, env);
+    else b = Glue::get(TYPE_RELATION, TYPE_BIG_OPERATOR, env);
 
-    if (_blankType < 0)
-        b->negWidth();
+    if (_blankType < 0) b->negWidth();
     return b;
 }
 
 pair<int, float> SpaceAtom::getLength(const string& lgth) {
-    if (lgth.empty())
-        return pair<int, float>({UNIT_PIXEL, 0.f});
+    if (lgth.empty()) return pair<int, float>({UNIT_PIXEL, 0.f});
 
     size_t i = 0;
     for (; i < lgth.size() && !isalpha(lgth[i]); i++);
@@ -222,8 +217,7 @@ pair<int, float> SpaceAtom::getLength(const string& lgth) {
     int unit = UNIT_PIXEL;
     string x = lgth.substr(i);
     tolower(x);
-    if (i != lgth.size())
-        unit = getUnit(x);
+    if (i != lgth.size()) unit = getUnit(x);
 
     return pair<int, float>({unit, f});
 }
@@ -285,8 +279,7 @@ ostream& tex::operator<<(ostream& os, const SymbolAtom& s) {
 SymbolAtom::SymbolAtom(const string& name, int type, bool del) : _unicode(0) {
     _name = name;
     _type = type;
-    if (type == TYPE_BIG_OPERATOR)
-        _typelimits = SCRIPT_NORMAL;
+    if (type == TYPE_BIG_OPERATOR) _typelimits = SCRIPT_NORMAL;
 
     _delimiter = del;
 }
@@ -309,14 +302,12 @@ shared_ptr<Box> SymbolAtom::createBox(_out_ TeXEnvironment& env) {
         }
     }
     if (_type == TYPE_BIG_OPERATOR) {
-        if (style < STYLE_TEXT && tf.hasNextLarger(c))
-            c = tf.getNextLarger(c, style);
+        if (style < STYLE_TEXT && tf.hasNextLarger(c)) c = tf.getNextLarger(c, style);
         cb = shared_ptr<Box>(new CharBox(c));
         cb->_shift = -(cb->_height + cb->_depth) / 2.f - tf.getAxisHeight(style);
         float delta = c.getItalic();
         shared_ptr<HorizontalBox> hb(new HorizontalBox(cb));
-        if (delta > PREC)
-            hb->add(shared_ptr<Box>(new StrutBox(delta, 0, 0, 0)));
+        if (delta > PREC) hb->add(shared_ptr<Box>(new StrutBox(delta, 0, 0, 0)));
         return hb;
     }
     return cb;
@@ -337,19 +328,16 @@ void SymbolAtom::addSymbolAtom(const shared_ptr<SymbolAtom>& sym) {
 
 shared_ptr<SymbolAtom> SymbolAtom::get(const string& name) throw(ex_symbol_not_found) {
     auto it = _symbols.find(name);
-    if (it == _symbols.end())
-        throw ex_symbol_not_found(name);
+    if (it == _symbols.end()) throw ex_symbol_not_found(name);
     return it->second;
 }
 
 Char CharAtom::getChar(_in_ TeXFont& tf, int style, bool smallCap) {
     wchar_t chr = _c;
     if (smallCap) {
-        if (islower(_c))
-            chr = toupper(_c);
+        if (islower(_c)) chr = toupper(_c);
     }
-    if (_textStyle.empty())
-        return tf.getDefaultChar(chr, style);
+    if (_textStyle.empty()) return tf.getDefaultChar(chr, style);
     return tf.getChar(chr, _textStyle, style);
 }
 
@@ -360,8 +348,7 @@ shared_ptr<CharFont> CharAtom::getCharFont(_in_ TeXFont& tf) {
 shared_ptr<Box> CharAtom::createBox(_out_ TeXEnvironment& env) {
     if (_textStyle.empty()) {
         const string& ts = env.getTextStyle();
-        if (!ts.empty())
-            _textStyle = ts;
+        if (!ts.empty()) _textStyle = ts;
     }
     bool smallCap = env.getSmallCap();
     Char ch = getChar(*env.getTeXFont(), env.getStyle(), smallCap);
@@ -412,8 +399,7 @@ RowAtom::RowAtom(const shared_ptr<Atom>& el) : _lookAtLastAtom(false), _previous
 }
 
 shared_ptr<Atom> RowAtom::getFirstAtom() {
-    if (!_elements.empty())
-        return _elements.front();
+    if (!_elements.empty()) return _elements.front();
     return shared_ptr<Atom>(nullptr);
 }
 
@@ -427,14 +413,12 @@ shared_ptr<Atom> RowAtom::getLastAtom() {
 }
 
 shared_ptr<Atom> RowAtom::get(size_t pos) {
-    if (pos > _elements.size())
-        return shared_ptr<Atom>(new SpaceAtom(UNIT_POINT, 0, 0, 0));
+    if (pos > _elements.size()) return shared_ptr<Atom>(new SpaceAtom(UNIT_POINT, 0, 0, 0));
     return _elements[pos];
 }
 
 void RowAtom::add(const shared_ptr<Atom>& el) {
-    if (el != nullptr)
-        _elements.push_back(el);
+    if (el != nullptr) _elements.push_back(el);
 }
 
 void RowAtom::change2Ord(_out_ Dummy* cur, _out_ Dummy* prev, _out_ Atom* next) {
@@ -450,14 +434,12 @@ void RowAtom::change2Ord(_out_ Dummy* cur, _out_ Dummy* prev, _out_ Atom* next) 
 }
 
 int RowAtom::getLeftType() const {
-    if (_elements.empty())
-        return TYPE_ORDINARY;
+    if (_elements.empty()) return TYPE_ORDINARY;
     return _elements[0]->getLeftType();
 }
 
 int RowAtom::getRightType() const {
-    if (_elements.empty())
-        return TYPE_ORDINARY;
+    if (_elements.empty()) return TYPE_ORDINARY;
     return _elements[_elements.size() - 1]->getRightType();
 }
 
@@ -474,8 +456,7 @@ shared_ptr<Box> RowAtom::createBox(_out_ TeXEnvironment& env) {
         bool markAdded = false;
         BreakMarkAtom* ba = dynamic_cast<BreakMarkAtom*>(at.get());
         while (ba != nullptr) {
-            if (!markAdded)
-                markAdded = true;
+            if (!markAdded) markAdded = true;
             if (i < e) {
                 at = _elements[++i];
                 ba = dynamic_cast<BreakMarkAtom*>(at.get());
@@ -537,12 +518,10 @@ shared_ptr<Box> RowAtom::createBox(_out_ TeXEnvironment& env) {
         env.setLastFontId(b->getLastFontId());
 
         // insert kerning
-        if (abs(kern) > PREC)
-            hbox->add(shared_ptr<Box>(new StrutBox(kern, 0, 0, 0)));
+        if (abs(kern) > PREC) hbox->add(shared_ptr<Box>(new StrutBox(kern, 0, 0, 0)));
 
         // kerning do not interfere with the normal glue-rules without kerning
-        if (!atom->isKern())
-            _previousAtom = atom;
+        if (!atom->isKern()) _previousAtom = atom;
     }
     // reset previous atom
     _previousAtom = shared_ptr<Dummy>(nullptr);
@@ -584,13 +563,11 @@ shared_ptr<Atom> VRowAtom::getLastAtom() {
 }
 
 void VRowAtom::add(const shared_ptr<Atom>& el) {
-    if (el != nullptr)
-        _elements.insert(_elements.begin(), el);
+    if (el != nullptr) _elements.insert(_elements.begin(), el);
 }
 
 void VRowAtom::append(const shared_ptr<Atom>& el) {
-    if (el != nullptr)
-        _elements.push_back(el);
+    if (el != nullptr) _elements.push_back(el);
 }
 
 shared_ptr<Box> VRowAtom::createBox(_out_ TeXEnvironment& env) {
@@ -600,8 +577,7 @@ shared_ptr<Box> VRowAtom::createBox(_out_ TeXEnvironment& env) {
     const int s = _elements.size();
     for (int i = 0; i < s; i++) {
         vb->add(_elements[i]->createBox(env));
-        if (_addInterline && i < s - 1)
-            vb->add(interline);
+        if (_addInterline && i < s - 1) vb->add(interline);
     }
     vb->_shift = -_raise->createBox(env)->_width;
     float t = vb->getSize() == 0 ? 0 : vb->_children.back()->_depth;
@@ -695,17 +671,17 @@ ColorAtom::ColorAtom(const shared_ptr<Atom>& atom, color bg, color c) :
 }
 
 color ColorAtom::getColor(string s) {
-    if (s.empty())
-        return _default;
+    if (s.empty()) return _default;
     trim(s);
-    if (s[0] == '#')
-        return decode(s);
+    // #AARRGGBB formatted color
+    if (s[0] == '#') return decode(s);
     if (s.find(',') == string::npos) {
+        // find from predefined colors
         auto it = _colors.find(tolower(s));
-        if (it != _colors.end())
-            return it->second;
-        if (s.find('.') == string::npos)
-            return decode("#" + s);
+        if (it != _colors.end()) return it->second;
+        // AARRGGBB formatted color
+        if (s.find('.') == string::npos) return decode("#" + s);
+        // gray color
         float x = 0.f;
         valueof(s, x);
         if (x != 0.f) {
@@ -729,8 +705,7 @@ color ColorAtom::getColor(string s) {
         valueof(trim(G), g);
         valueof(trim(B), b);
 
-        if (r == 0.f && g == 0.f && b == 0.f)
-            return _default;
+        if (r == 0.f && g == 0.f && b == 0.f) return _default;
 
         if (r == (int) r && g == (int) g && b == (int) b &&
                 R.find('.') == en && G.find('.') == en && B.find('.') == en) {
@@ -755,8 +730,7 @@ color ColorAtom::getColor(string s) {
         valueof(trim(Y), y);
         valueof(trim(K), k);
 
-        if (c == 0.f && m == 0.f && y == 0.f && k == 0.f)
-            return _default;
+        if (c == 0.f && m == 0.f && y == 0.f && k == 0.f) return _default;
 
         c = min(1.f, max(0.f, c));
         m = min(1.f, max(0.f, m));
@@ -772,34 +746,27 @@ color ColorAtom::getColor(string s) {
 shared_ptr<Box> ColorAtom::createBox(_out_ TeXEnvironment& env) {
     env._isColored = true;
     TeXEnvironment& c = *(env.copy());
-    if (!istrans(_background))
-        c.setBackground(_background);
-    if (!istrans(_color))
-        c.setColor(_color);
+    if (!istrans(_background)) c.setBackground(_background);
+    if (!istrans(_color)) c.setColor(_color);
     return _elements->createBox(c);
 }
 
 shared_ptr<Box> RomanAtom::createBox(_out_ TeXEnvironment& env) {
-    if (_base == nullptr)
-        return shared_ptr<Box>(new StrutBox(0, 0, 0, 0));
+    if (_base == nullptr) return shared_ptr<Box>(new StrutBox(0, 0, 0, 0));
     TeXEnvironment& c = *(env.copy(env.getTeXFont()->copy()));
     c.getTeXFont()->setRoman(true);
     return _base->createBox(c);
 }
 
 PhantomAtom::PhantomAtom(const shared_ptr<Atom>& el) {
-    if (el == nullptr)
-        _elements = shared_ptr<RowAtom>(new RowAtom());
-    else
-        _elements = shared_ptr<RowAtom>(new RowAtom(el));
+    if (el == nullptr) _elements = shared_ptr<RowAtom>(new RowAtom());
+    else _elements = shared_ptr<RowAtom>(new RowAtom(el));
     _w = _h = _d = true;
 }
 
 PhantomAtom::PhantomAtom(const shared_ptr<Atom>& el, bool w, bool h, bool d) {
-    if (el == nullptr)
-        _elements = shared_ptr<RowAtom>(new RowAtom());
-    else
-        _elements = shared_ptr<RowAtom>(new RowAtom(el));
+    if (el == nullptr) _elements = shared_ptr<RowAtom>(new RowAtom());
+    else _elements = shared_ptr<RowAtom>(new RowAtom(el));
     _w = w, _h = h, _d = d;
 }
 
@@ -817,14 +784,11 @@ shared_ptr<Box> PhantomAtom::createBox(_out_ TeXEnvironment& env) {
 void AccentedAtom::init(const shared_ptr<Atom>& base, const shared_ptr<Atom>& accent) throw(ex_invalid_symbol_type) {
     _base = base;
     AccentedAtom* a = dynamic_cast<AccentedAtom*>(base.get());
-    if (a != nullptr)
-        _underbase = a->_underbase;
-    else
-        _underbase = base;
+    if (a != nullptr) _underbase = a->_underbase;
+    else _underbase = base;
 
     SymbolAtom* sa = dynamic_cast<SymbolAtom*>(accent.get());
-    if (sa == nullptr)
-        throw ex_invalid_symbol_type("Invalid accent!");
+    if (sa == nullptr) throw ex_invalid_symbol_type("Invalid accent!");
 
     _accent = dynamic_pointer_cast<SymbolAtom>(accent);
     _acc = true;
@@ -836,37 +800,34 @@ AccentedAtom::AccentedAtom(const shared_ptr<Atom>& base, const string& name) thr
     if (_accent->_type == TYPE_ACCENT) {
         _base = base;
         AccentedAtom* a = dynamic_cast<AccentedAtom*>(base.get());
-        if (a != nullptr)
-            _underbase = a->_underbase;
-        else
-            _underbase = base;
+        if (a != nullptr) _underbase = a->_underbase;
+        else _underbase = base;
     } else {
-        throw ex_invalid_symbol_type("The symbol with the name '" + name + "' is not defined as an accent ("
-                                     + TeXSymbolParser::TYPE_ATTR + "='acc') in '"
-                                     + TeXSymbolParser::RESOURCE_NAME + "'!");
+        throw ex_invalid_symbol_type(
+            "The symbol with the name '" + name + "' is not defined as an accent ("
+            + TeXSymbolParser::TYPE_ATTR + "='acc') in '"
+            + TeXSymbolParser::RESOURCE_NAME + "'!");
     }
     _changeSize = true;
     _acc = false;
 }
 
-AccentedAtom::AccentedAtom(const shared_ptr<Atom>& base, const shared_ptr<TeXFormula>& acc) throw(ex_invalid_symbol_type, ex_invalid_formula) {
-    if (acc == nullptr)
-        throw ex_invalid_formula("the accent TeXFormula can't be null!");
+AccentedAtom::AccentedAtom(
+    const shared_ptr<Atom>& base, 
+    const shared_ptr<TeXFormula>& acc) throw(ex_invalid_symbol_type, ex_invalid_formula) {
+    if (acc == nullptr) throw ex_invalid_formula("the accent TeXFormula can't be null!");
     _changeSize = true;
     _acc = false;
     auto root = acc->_root;
     SymbolAtom* s = dynamic_cast<SymbolAtom*>(root.get());
     if (s != nullptr) {
         _accent = dynamic_pointer_cast<SymbolAtom>(root);
-        if (_accent->_type == TYPE_ACCENT)
-            _base = base;
-        else
-            throw ex_invalid_symbol_type("The accent TeXFormula represents a single symbol with the name '"
-                                         + s->getName()
-                                         + "', but this symbol is not defined as accent ("
-                                         + TeXSymbolParser::TYPE_ATTR
-                                         + "='acc') in '"
-                                         + TeXSymbolParser::RESOURCE_NAME + "'!");
+        if (_accent->_type == TYPE_ACCENT) _base = base;
+        else throw ex_invalid_symbol_type(
+                "The accent TeXFormula represents a single symbol with the name '"
+                + s->getName() + "', but this symbol is not defined as accent ("
+                + TeXSymbolParser::TYPE_ATTR + "='acc') in '"
+                + TeXSymbolParser::RESOURCE_NAME + "'!");
     }
     throw ex_invalid_formula("The accent TeXFormula does not represent a single symbol!");
 }
@@ -881,18 +842,15 @@ shared_ptr<Box> AccentedAtom::createBox(_out_ TeXEnvironment& env) {
     float u = b->_width;
     float s = 0;
     CharSymbol* sym = dynamic_cast<CharSymbol*>(_underbase.get());
-    if (sym != nullptr)
-        s = tf->getSkew(*(sym->getCharFont(*tf)), style);
+    if (sym != nullptr) s = tf->getSkew(*(sym->getCharFont(*tf)), style);
 
     // retrieve best char form the accent symbol
     SymbolAtom* acc = (SymbolAtom*)_accent.get();
     Char ch = tf->getChar(acc->getName(), style);
     while (tf->hasNextLarger(ch)) {
         Char larger = tf->getNextLarger(ch, style);
-        if (larger.getWidth() <= u)
-            ch = larger;
-        else
-            break;
+        if (larger.getWidth() <= u) ch = larger;
+        else break;
     }
 
     // calculate delta
@@ -906,8 +864,7 @@ shared_ptr<Box> AccentedAtom::createBox(_out_ TeXEnvironment& env) {
     shared_ptr<Box> y(nullptr);
     float italic = ch.getItalic();
     shared_ptr<Box> cb(new CharBox(ch));
-    if (_acc)
-        cb = _accent->createBox(_changeSize ? *(env.subStyle()) : env);
+    if (_acc) cb = _accent->createBox(_changeSize ? *(env.subStyle()) : env);
 
     if (abs(italic) > PREC) {
         y = shared_ptr<Box>(new HorizontalBox(shared_ptr<Box>(new StrutBox(-italic, 0, 0, 0))));
@@ -919,8 +876,7 @@ shared_ptr<Box> AccentedAtom::createBox(_out_ TeXEnvironment& env) {
     // if diff > 0, center accent, otherwise center base
     float diff = (u - y->_width) / 2;
     y->_shift = s + (diff > 0 ? diff : 0);
-    if (diff < 0)
-        b = shared_ptr<Box>(new HorizontalBox(b, y->_width, ALIGN_CENTER));
+    if (diff < 0) b = shared_ptr<Box>(new HorizontalBox(b, y->_width, ALIGN_CENTER));
     vBox->add(y);
 
     // kerning
@@ -1005,8 +961,7 @@ SpaceAtom ScriptsAtom::SCRIPT_SPACE(UNIT_POINT, 0.5f, 0, 0);
 shared_ptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
     auto b = (_base == nullptr ? shared_ptr<Box>(new StrutBox(0, 0, 0, 0)) : _base->createBox(env));
     shared_ptr<Box> deltaSymbol(new StrutBox(0, 0, 0, 0));
-    if (_sub == nullptr && _sup == nullptr)
-        return b;
+    if (_sub == nullptr && _sup == nullptr) return b;
 
     TeXFont* tf = env.getTeXFont().get();
     int style = env.getStyle();
@@ -1020,8 +975,7 @@ shared_ptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
 
     int lastFontId = b->getLastFontId();
     // if no last font found (whitespace box), use default "mu font"
-    if (lastFontId == TeXFont::NO_FONT)
-        lastFontId = tf->getMuFontId();
+    if (lastFontId == TeXFont::NO_FONT) lastFontId = tf->getMuFontId();
 
     TeXEnvironment subStyle = *(env.subStyle()), supStyle = *(env.supStyle());
 
@@ -1049,8 +1003,7 @@ shared_ptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
         // include delta in width or not ?
         delta = c.getItalic();
         deltaSymbol = SpaceAtom(MEDMUSKIP).createBox(env);
-        if (delta > PREC && _sub == nullptr)
-            hor->add(shared_ptr<Box>(new StrutBox(delta, 0, 0, 0)));
+        if (delta > PREC && _sub == nullptr) hor->add(shared_ptr<Box>(new StrutBox(delta, 0, 0, 0)));
 
         shiftUp = hor->_height - tf->getSupDrop(supStyle.getStyle());
         shiftDown = hor->_depth + tf->getSubDrop(subStyle.getStyle());
@@ -1092,12 +1045,9 @@ shared_ptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
     sup->add(SCRIPT_SPACE.createBox(env));
     // adjust shift-up
     float p;
-    if (style == STYLE_DISPLAY)
-        p = tf->getSup1(style);
-    else if (env.crampStyle()->getStyle() == style)
-        p = tf->getSup3(style);
-    else
-        p = tf->getSup2(style);
+    if (style == STYLE_DISPLAY) p = tf->getSup1(style);
+    else if (env.crampStyle()->getStyle() == style) p = tf->getSup3(style);
+    else p = tf->getSup2(style);
     shiftUp = max(max(shiftUp, p), x->_depth + abs(tf->getXHeight(style, lastFontId)) / 4);
 
     if (_sub == nullptr) {
@@ -1157,8 +1107,7 @@ void BigOperatorAtom::init(const shared_ptr<Atom>& base, const shared_ptr<Atom>&
 }
 
 shared_ptr<Box> BigOperatorAtom::changeWidth(const shared_ptr<Box>& b, float maxw) {
-    if (b != nullptr && abs(maxw - b->_width) > PREC)
-        return shared_ptr<Box>(new HorizontalBox(b, maxw, ALIGN_CENTER));
+    if (b != nullptr && abs(maxw - b->_width) > PREC) return shared_ptr<Box>(new HorizontalBox(b, maxw, ALIGN_CENTER));
     return b;
 }
 
@@ -1215,10 +1164,8 @@ shared_ptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
 
         // limits
         shared_ptr<Box> x, z;
-        if (_over != nullptr)
-            x = _over->createBox(*(env.supStyle()));
-        if (_under != nullptr)
-            z = _under->createBox(*(env.subStyle()));
+        if (_over != nullptr) x = _over->createBox(*(env.supStyle()));
+        if (_under != nullptr) z = _under->createBox(*(env.subStyle()));
 
         // make boxes equally wide
         float maxW = max(max(x == nullptr ? 0 : x->_width, y->_width), z == nullptr ? 0 : z->_width);
@@ -1254,8 +1201,7 @@ shared_ptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
 
         // set height and depth vertical box and return
         float h = y->_height, total = vBox->_height + vBox->_depth;
-        if (x != nullptr)
-            h += bigop5 + kern + x->_height + x->_depth;
+        if (x != nullptr) h += bigop5 + kern + x->_height + x->_depth;
         vBox->_height = h;
         vBox->_depth = total - h;
 
@@ -1274,8 +1220,7 @@ shared_ptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
 
 float OverUnderDelimiter::getMaxWidth(const Box* b, const Box* del, const Box* script) {
     float mx = max(b->_width, del->_height + del->_depth);
-    if (script != nullptr)
-        mx = max(mx, script->_width);
+    if (script != nullptr) mx = max(mx, script->_width);
     return mx;
 }
 
@@ -1284,17 +1229,14 @@ shared_ptr<Box> OverUnderDelimiter::createBox(_out_ TeXEnvironment& env) {
     shared_ptr<Box> del = DelimiterFactory::create(_symbol->getName(), env, b->_width);
 
     shared_ptr<Box> sb(nullptr);
-    if (_script != nullptr)
-        sb = _script->createBox((_over ? *(env.supStyle()) : *(env.subStyle())));
+    if (_script != nullptr) sb = _script->createBox((_over ? *(env.supStyle()) : *(env.subStyle())));
 
     // create centered horizontal box if smaller than maximum width
     float mx = getMaxWidth(b.get(), del.get(), sb.get());
-    if (mx - b->_width > PREC)
-        b = shared_ptr<Box>(new HorizontalBox(b, mx, ALIGN_CENTER));
+    if (mx - b->_width > PREC) b = shared_ptr<Box>(new HorizontalBox(b, mx, ALIGN_CENTER));
 
     del = shared_ptr<Box>(new VerticalBox(del, mx, ALIGN_CENTER));
-    if (sb != nullptr && mx - sb->_width > PREC)
-        sb = shared_ptr<Box>(new HorizontalBox(sb, mx, ALIGN_CENTER));
+    if (sb != nullptr && mx - sb->_width > PREC) sb = shared_ptr<Box>(new HorizontalBox(sb, mx, ALIGN_CENTER));
 
     return shared_ptr<Box>(new OverUnderBox(b, del, sb, _kern.createBox(env)->_height, _over));
 }

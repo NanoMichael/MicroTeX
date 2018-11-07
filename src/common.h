@@ -56,13 +56,13 @@ static const float F_MIN = -F_MAX;
 static const double PI = atan(1.0) * 4;
 
 /**
- * for compare with 0.0f, if a value < PREC,
+ * For compare with 0.0f, if a value < PREC,
  * we trade it as 0.0f
  */
 static const float PREC = 0.0000001f;
 
 /**
- * demangling name
+ * Demangling name
  */
 #ifdef __GNUC__
 inline string demangle_name(const char* name) {
@@ -82,8 +82,7 @@ inline string demangle_name(const char* name) {
 #endif // __GNUC__
 
 /**
- * find the position of a value in the vector, if not exists,
- * return -1
+ * Find the position of a value in the vector, return -1 if not found
  */
 template<class T>
 inline int indexOf(const vector<T>& v, const T& x) {
@@ -93,7 +92,7 @@ inline int indexOf(const vector<T>& v, const T& x) {
 }
 
 /**
- * convert a value to string
+ * Convert a value to string
  */
 template<class T>
 inline string tostring(T val) {
@@ -103,7 +102,7 @@ inline string tostring(T val) {
 }
 
 /**
- * convert a value to wide string
+ * Convert a value to wide string
  */
 template<class T>
 inline wstring towstring(T val) {
@@ -140,7 +139,7 @@ inline bool str2int(const string& str, int& res, int radix) {
 }
 
 /**
- * transform a string to lowercase
+ * Transform a string to lowercase
  */
 inline string& tolower(_out_ string& src) {
     transform(src.begin(), src.end(), src.begin(), ::tolower);
@@ -153,7 +152,7 @@ inline wstring& tolower(_out_ wstring& src) {
 }
 
 /**
- * ignore left side whitespace in a string
+ * Ignore left side whitespace in a string
  */
 inline string& ltrim(string& s) {
     s.erase(s.begin(), find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace))));
@@ -161,7 +160,7 @@ inline string& ltrim(string& s) {
 }
 
 /**
- * ignore right side whitespace in a string
+ * Ignore right side whitespace in a string
  */
 inline string& rtrim(string& s) {
     s.erase(find_if(s.rbegin(), s.rend(), not1(ptr_fun<int, int>(isspace))).base(), s.end());
@@ -173,13 +172,12 @@ inline string& trim(string& s) {
 }
 
 /**
- * split string with specified delimeter
+ * Split string with specified delimeter
  */
 inline void split(const string& str, char del, _out_ vector<string>& res) {
     stringstream ss(str);
     string tok;
-    while(getline(ss, tok, del))
-        res.push_back(tok);
+    while(getline(ss, tok, del)) res.push_back(tok);
 }
 
 inline bool startswith(const string& str, const string& cmp) {
@@ -199,7 +197,7 @@ inline bool endswith(const wstring& str, const wstring& cmp) {
 }
 
 /**
- * split string with delimiter
+ * Split string with delimiter
  */
 class strtokenizer {
 private:
@@ -272,7 +270,7 @@ public:
 };
 
 /**
- * convert unicode wide string to UTF-8 encoded string
+ * Convert unicode wide string to UTF-8 encoded string
  */
 inline string& wide2utf8(const wchar_t* in, _out_ string& out) {
     unsigned int codepoint = 0;
@@ -312,7 +310,7 @@ inline string wide2utf8(const wchar_t* in) {
 }
 
 /**
- * convert an UTF-8 encoded char sequence to wide unicode string,
+ * Convert an UTF-8 encoded char sequence to wide unicode string,
  * the encoding of input char sequence must be known as UTF-8
  */
 inline wstring& utf82wide(const char* in, _out_ wstring& out) {
@@ -321,16 +319,11 @@ inline wstring& utf82wide(const char* in, _out_ wstring& out) {
     unsigned int codepoint;
     while (*in != 0) {
         unsigned char ch = static_cast<unsigned char>(*in);
-        if (ch <= 0x7f)
-            codepoint = ch;
-        else if (ch <= 0xbf)
-            codepoint = (codepoint << 6) | (ch & 0x3f);
-        else if (ch <= 0xdf)
-            codepoint = ch & 0x1f;
-        else if (ch <= 0xef)
-            codepoint = ch & 0x0f;
-        else
-            codepoint = ch & 0x07;
+        if (ch <= 0x7f) codepoint = ch;
+        else if (ch <= 0xbf) codepoint = (codepoint << 6) | (ch & 0x3f);
+        else if (ch <= 0xdf) codepoint = ch & 0x1f;
+        else if (ch <= 0xef) codepoint = ch & 0x0f;
+        else codepoint = ch & 0x07;
         ++in;
         if (((*in & 0xc0) != 0x80) && (codepoint <= 0x10ffff)) {
             if (codepoint > 0xffff) {
@@ -349,7 +342,7 @@ inline wstring utf82wide(const char* in) {
 }
 
 /**
- * returns a replacement string for the given one that has all backslashes
+ * Returns a replacement string for the given one that has all backslashes
  * and dollar signs escaped
  */
 inline string& quotereplace(const string& src, _out_ string& out) {
@@ -373,7 +366,7 @@ inline wstring& quotereplace(const wstring& src, _out_ wstring& out) {
 }
 
 /**
- * replace string with specified string in the first
+ * Replace string with specified string in the first
  */
 inline string& replacefirst(_out_ string& src, const string& from, const string& to) {
     size_t start = src.find(from);
@@ -384,8 +377,7 @@ inline string& replacefirst(_out_ string& src, const string& from, const string&
 }
 
 inline string& replaceall(_out_ string& src, const string& from, const string& to) {
-    if (from.empty())
-        return src;
+    if (from.empty()) return src;
     size_t start = 0;
     while ((start = src.find(from, start)) != string::npos) {
         src.replace(start, from.length(), to);
@@ -396,15 +388,13 @@ inline string& replaceall(_out_ string& src, const string& from, const string& t
 
 inline wstring& replacefirst(_out_ wstring& src, const wstring& from, const wstring& to) {
     size_t start = src.find(from);
-    if (start == wstring::npos)
-        return src;
+    if (start == wstring::npos) return src;
     src.replace(start, from.length(), to);
     return src;
 }
 
 inline wstring& replaceall(_out_ wstring& src, const wstring& from, const wstring& to) {
-    if (from.empty())
-        return src;
+    if (from.empty()) return src;
     size_t start = 0;
     while ((start = src.find(from, start)) != wstring::npos) {
         src.replace(start, from.length(), to);
@@ -418,7 +408,7 @@ inline wstring& replaceall(_out_ wstring& src, const wstring& from, const wstrin
  *****************************************************/
 
 /**
- * superclass of all the possible TeX exceptions that can be thrown
+ * Superclass of all the possible TeX exceptions that can be thrown
  */
 class ex_tex : public exception {
 
@@ -435,11 +425,10 @@ public:
     const char* what() const throw() override {
         return _msg.c_str();
     }
-
 };
 
 /**
- * signals that an error occurred while loading the necessary resources into
+ * Signals that an error occurred while loading the necessary resources into
  * memory.
  */
 class ex_res_parse : public ex_tex {
@@ -462,26 +451,30 @@ public:
     /**
      * attribute problem
      */
-    explicit ex_xml_parse(const string& resName,
-                          const string& elName,
-                          const string& attrName,
-                          const string& msg) :
-        ex_res_parse(resName + ": invalid <" + elName
-                     + ">-element found: attribute '" + attrName
-                     + "' " + msg) {}
+    explicit ex_xml_parse(
+        const string& resName,
+        const string& elName,
+        const string& attrName,
+        const string& msg) :
+        ex_res_parse(
+            resName + ": invalid <" + elName
+            + ">-element found: attribute '" + attrName
+            + "' " + msg) {}
 
     /**
      * attribute problem
      */
-    explicit ex_xml_parse(const string& resName,
-                          const string& elName,
-                          const string& attrName,
-                          const string& msg,
-                          const exception& cause) :
-        ex_res_parse(resName + ": invalid <" + elName
-                     + ">-element found: attribute '" + attrName
-                     + "' " + msg,
-                     cause) {}
+    explicit ex_xml_parse(
+        const string& resName,
+        const string& elName,
+        const string& attrName,
+        const string& msg,
+        const exception& cause) :
+        ex_res_parse(
+            resName + ": invalid <" + elName
+            + ">-element found: attribute '" + attrName
+            + "' " + msg,
+            cause) {}
     /**
      * other exceptions
      */
@@ -492,8 +485,9 @@ public:
      * required element missing
      */
     explicit ex_xml_parse(const string& resName, const string& elName) :
-        ex_res_parse(resName + ": the required <" + elName
-                     + ">-elment not found!") {}
+        ex_res_parse(
+            resName + ": the required <" + elName
+            + ">-elment not found!") {}
 
     explicit ex_xml_parse(const string& msg) :
         ex_res_parse(msg) {}
@@ -501,7 +495,7 @@ public:
 };
 
 /**
- * exception while registering an alphabet
+ * Exception while registering an alphabet
  */
 class ex_alphabet_registration : public ex_tex {
 
@@ -511,7 +505,7 @@ public:
 };
 
 /**
- * exception while no character-to-delimiter mapping
+ * Exception while no character-to-delimiter mapping
  */
 class ex_delimiter_mapping_not_found : public ex_tex {
 public:
@@ -532,7 +526,7 @@ public:
 };
 
 /**
- * unknown predefined TeXFormula name was used
+ * Unknown predefined TeXFormula name was used
  */
 class ex_formula_not_found : public ex_tex {
 public:
@@ -541,7 +535,7 @@ public:
 };
 
 /**
- * unknown atom type
+ * Unknown atom type
  */
 class ex_invalid_atom_type : public ex_tex {
 public:
@@ -550,7 +544,7 @@ public:
 };
 
 /**
- * unknown delimiter
+ * Unknown delimiter
  */
 class ex_invalid_delimiter : public ex_tex {
 public:
@@ -559,8 +553,9 @@ public:
                "' is not defined as a delimiter") {}
 
     explicit ex_invalid_delimiter(const char& ch, const string& symbolName) :
-        ex_tex("The character '" + string({ch}) + "' is not mapped to a symbol with the name '" +
-    symbolName + "', but that symbol is not defined as a delimiter.") {}
+        ex_tex(
+            "The character '" + string({ch}) + "' is not mapped to a symbol with the name '" +
+            symbolName + "', but that symbol is not defined as a delimiter.") {}
 };
 
 /**
@@ -827,6 +822,6 @@ enum TeXConstants {
     UNIT_CC
 };
 
-}
+} // namespace tex
 
 #endif // COMMON_H_INCLUDED

@@ -2,6 +2,9 @@
 
 #if defined(_WIN32) && !defined(__MEM_CHECK)
 
+#ifndef GRAPHIC_WIN32_H_INCLUDED
+#define GRAPHIC_WIN32_H_INCLUDED
+
 #include "graphic/graphic.h"
 #include "common.h"
 
@@ -138,4 +141,5 @@ public:
 
 }
 
+#endif // GRAPHIC_WIN32_H_INCLUDED
 #endif

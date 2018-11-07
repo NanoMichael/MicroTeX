@@ -14,8 +14,8 @@ TeXRenderBuilder* LaTeX::_builder = nullptr;
 
 void LaTeX::init(const string& res_root_path) {
     RES_BASE = res_root_path;
-    if (_formula != nullptr)
-        return;
+    if (_formula != nullptr) return;
+
     NewCommandMacro::_init_();
     DefaultTeXFont::_init_();
     SymbolAtom::_init_();
@@ -35,10 +35,8 @@ void LaTeX::release() {
     NewCommandMacro::_free_();
     TextRenderingBox::_free_();
 
-    if (_formula != nullptr)
-        delete _formula;
-    if (_builder != nullptr)
-        delete _builder;
+    if (_formula != nullptr) delete _formula;
+    if (_builder != nullptr) delete _builder;
 }
 
 TeXRender* LaTeX::parse(const wstring& latex, int width, float textSize, float lineSpace, color fg) {

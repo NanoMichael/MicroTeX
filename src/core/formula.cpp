@@ -47,17 +47,18 @@ TeXFormula::TeXFormula(const TeXParser& tp) :
     _xmlMap = tp._formula->_xmlMap;
 }
 
-TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s, const string& textStyle, bool firstpass, bool space) throw(ex_parse) :
-    _parser(tp.getIsPartial(), s, this, firstpass, space) {
+TeXFormula::TeXFormula(
+    const TeXParser& tp,
+    const wstring& s,
+    const string& textStyle,
+    bool firstpass, bool space) throw(ex_parse) : _parser(tp.getIsPartial(), s, this, firstpass, space) {
     _textStyle = textStyle;
     _xmlMap = tp._formula->_xmlMap;
     if (tp.getIsPartial()) {
         try {
             _parser.parse();
         } catch (exception& e) {
-            if (_root == nullptr) {
-                _root = shared_ptr<Atom>(new EmptyAtom());
-            }
+            if (_root == nullptr) _root = shared_ptr<Atom>(new EmptyAtom());
         }
     } else {
         _parser.parse();
@@ -72,9 +73,7 @@ TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s, const string& text
         try {
             _parser.parse();
         } catch (exception& e) {
-            if (_root == nullptr) {
-                _root = shared_ptr<Atom>(new EmptyAtom());
-            }
+            if (_root == nullptr) _root = shared_ptr<Atom>(new EmptyAtom());
         }
     } else {
         _parser.parse();
@@ -102,9 +101,7 @@ TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s) throw(ex_parse) :
         try {
             _parser.parse();
         } catch(exception& e) {
-            if (_root == nullptr) {
-                _root = shared_ptr<Atom>(new EmptyAtom());
-            }
+            if (_root == nullptr) _root = shared_ptr<Atom>(new EmptyAtom());
         }
     } else {
         _parser.parse();
@@ -138,27 +135,22 @@ TeXFormula::TeXFormula(const wstring& s, const string& textStyle, bool firstpass
 }
 
 TeXFormula::TeXFormula(const TeXFormula* f) {
-    if (f != nullptr)
-        addImpl(f);
+    if (f != nullptr) addImpl(f);
 }
 
 void TeXFormula::setLaTeX(const wstring& latex) throw(ex_parse) {
     _parser.reset(latex);
-    if (!latex.empty())
-        _parser.parse();
+    if (!latex.empty()) _parser.parse();
 }
 
 TeXFormula* TeXFormula::add(const shared_ptr<Atom>& el) {
     if (el != nullptr) {
         MiddleAtom* atom = dynamic_cast<MiddleAtom*>(el.get());
-        if (atom != nullptr)
-            _middle.push_back(dynamic_pointer_cast<MiddleAtom>(el));
-        if (_root == nullptr)
-            _root = el;
+        if (atom != nullptr) _middle.push_back(dynamic_pointer_cast<MiddleAtom>(el));
+        if (_root == nullptr) _root = el;
         else {
             RowAtom* rm = dynamic_cast<RowAtom*>(_root.get());
-            if (rm == nullptr)
-                _root = shared_ptr<Atom>(new RowAtom(_root));
+            if (rm == nullptr) _root = shared_ptr<Atom>(new RowAtom(_root));
             rm = dynamic_cast<RowAtom*>(_root.get());
             rm->add(el);
             TypedAtom* ta = dynamic_cast<TypedAtom*>(el.get());
@@ -187,16 +179,13 @@ TeXFormula* TeXFormula::append(const wstring& s) throw(ex_parse) {
 void TeXFormula::addImpl(const TeXFormula* f) {
     if (f != nullptr) {
         RowAtom* rm = dynamic_cast<RowAtom*>(f->_root.get());
-        if (rm != nullptr)
-            add(shared_ptr<Atom>(new RowAtom(f->_root)));
-        else
-            add(f->_root);
+        if (rm != nullptr) add(shared_ptr<Atom>(new RowAtom(f->_root)));
+        else add(f->_root);
     }
 }
 
 shared_ptr<Box> TeXFormula::createBox(_out_ TeXEnvironment& style) {
-    if (_root == nullptr)
-        return shared_ptr<Box>(new StrutBox(0, 0, 0, 0));
+    if (_root == nullptr) return shared_ptr<Box>(new StrutBox(0, 0, 0, 0));
     return _root->createBox(style);
 }
 
@@ -207,10 +196,8 @@ void TeXFormula::setDEBUG(bool b) {
 TeXFormula* TeXFormula::setBackground(color c) {
     if (!istrans(c)) {
         ColorAtom* ca = dynamic_cast<ColorAtom*>(_root.get());
-        if (ca != nullptr)
-            _root = shared_ptr<Atom>(new ColorAtom(c, TRANS, _root));
-        else
-            _root = shared_ptr<Atom>(new ColorAtom(_root, c, TRANS));
+        if (ca != nullptr) _root = shared_ptr<Atom>(new ColorAtom(c, TRANS, _root));
+        else _root = shared_ptr<Atom>(new ColorAtom(_root, c, TRANS));
     }
     return this;
 }
@@ -218,10 +205,8 @@ TeXFormula* TeXFormula::setBackground(color c) {
 TeXFormula* TeXFormula::setColor(color c) {
     if (!istrans(c)) {
         ColorAtom* ca = dynamic_cast<ColorAtom*>(_root.get());
-        if (ca != nullptr)
-            _root = shared_ptr<Atom>(new ColorAtom(TRANS, c, _root));
-        else
-            _root = shared_ptr<Atom>(new ColorAtom(_root, TRANS, c));
+        if (ca != nullptr) _root = shared_ptr<Atom>(new ColorAtom(TRANS, c, _root));
+        else _root = shared_ptr<Atom>(new ColorAtom(_root, TRANS, c));
     }
     return this;
 }
@@ -271,8 +256,7 @@ void TeXFormula::addSymbolMappings(const string& file) throw(ex_res_parse) {
 }
 
 void TeXFormula::_free_() {
-    for (auto i : _externalFontMap)
-        delete i.second;
+    for (auto i : _externalFontMap) delete i.second;
 }
 
 /****************************************** ArrayOfAtoms implementation ******************************/
@@ -338,17 +322,14 @@ shared_ptr<VRowAtom> ArrayOfAtoms::getAsVRow() {
 }
 
 void ArrayOfAtoms::checkDimensions() {
-    if (_array.back().size() != 0)
-        addRow();
-    else if (_root != nullptr)
-        addRow();
+    if (_array.back().size() != 0) addRow();
+    else if (_root != nullptr) addRow();
 
     _row = _array.size() - 1;
     _col = _array[0].size();
 
     for (size_t i = 1; i < _row; i++) {
-        if (_array[i].size() > _col)
-            _col = _array[i].size();
+        if (_array[i].size() > _col) _col = _array[i].size();
     }
 
     for (size_t i = 0; i < _row; i++) {

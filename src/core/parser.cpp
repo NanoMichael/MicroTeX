@@ -87,9 +87,7 @@ void TeXParser::init(bool ispartial, const wstring& parsestring, _out_ TeXFormul
         _parseString = parsestring;
         _len = parsestring.length();
         _pos = 0;
-        if (fp) {
-            firstpass();
-        }
+        if (fp) firstpass();
     } else {
         _parseString = L"";
         _pos = 0;
@@ -118,8 +116,7 @@ void TeXParser::reset(const wstring& latex) {
 shared_ptr<Atom> TeXParser::getLastAtom() {
     auto a = _formula->_root;
     RowAtom* ra = dynamic_cast<RowAtom*>(a.get());
-    if (ra != nullptr)
-        return ra->getLastAtom();
+    if (ra != nullptr) return ra->getLastAtom();
     _formula->_root = shared_ptr<Atom>(nullptr);
     return a;
 }
@@ -135,8 +132,7 @@ void TeXParser::addAtom(const shared_ptr<Atom>& atom) {
 }
 
 void TeXParser::addRow() throw(ex_parse) {
-    if (!_arrayMode)
-        throw ex_parse("can not add row in none-array mode!");
+    if (!_arrayMode) throw ex_parse("Can not add row in none-array mode!");
     ((ArrayOfAtoms*) _formula)->addRow();
 }
 
@@ -146,18 +142,15 @@ wstring TeXParser::getDollarGroup(wchar_t openclose) throw(ex_parse) {
 
     do {
         ch = _parseString[_pos++];
-        if (ch == ESCAPE)
-            _pos++;
+        if (ch == ESCAPE) _pos++;
     } while(_pos < _len && ch != openclose);
 
-    if (ch == openclose)
-        return _parseString.substr(spos, _pos - spos - 1);
+    if (ch == openclose) return _parseString.substr(spos, _pos - spos - 1);
     return _parseString.substr(spos, _pos - spos);
 }
 
 wstring TeXParser::getGroup(wchar_t open, wchar_t close) throw(ex_parse) {
-    if (_pos == _len)
-        return L"";
+    if (_pos == _len) return L"";
 
     int group, spos;
     wchar_t ch = _parseString[_pos];
@@ -168,18 +161,14 @@ wstring TeXParser::getGroup(wchar_t open, wchar_t close) throw(ex_parse) {
         while (_pos < _len - 1 && group != 0) {
             _pos++;
             ch = _parseString[_pos];
-            if (ch == open)
-                group++;
-            else if (ch == close)
-                group--;
-            else if (ch == ESCAPE && _pos != _len - 1)
-                _pos++;
+            if (ch == open) group++;
+            else if (ch == close) group--;
+            else if (ch == ESCAPE && _pos != _len - 1) _pos++;
         }
 
         _pos++;
 
-        if (group != 0)
-            return _parseString.substr(spos + 1, _pos - spos - 1);
+        if (group != 0) return _parseString.substr(spos + 1, _pos - spos - 1);
         return _parseString.substr(spos + 1, _pos - spos - 2);
     }
     throw ex_parse("missing '" + tostring((char)open) + "'!");
@@ -202,38 +191,33 @@ wstring TeXParser::getGroup(const wstring& open, const wstring& close) throw(ex_
         wchar_t c1;
 
         if (prev != ESCAPE && c == ' ') {
-
-            while (_pos < _len && _parseString[_pos++] == ' ')
-                buf.append(1, L' ');
+            while (_pos < _len && _parseString[_pos++] == ' ') buf.append(1, L' ');
             c = _parseString[--_pos];
-            if (isValidCharacterInCommand(prev) && isValidCharacterInCommand(c))
+            if (isValidCharacterInCommand(prev) && isValidCharacterInCommand(c)) {
                 oc = cc = 0;
+            }
         }
 
-        if (c == open[oc])
-            oc++;
-        else
-            oc = 0;
+        if (c == open[oc]) oc++;
+        else oc = 0;
 
         if (c == close[cc]) {
-            if (cc == 0)
-                startC = _pos;
+            if (cc == 0) startC = _pos;
             cc++;
-        } else
+        } else {
             cc = 0;
+        }
 
         if (_pos + 1 < _len) {
             c1 = _parseString[_pos + 1];
 
             if (oc == ol) {
-                if (!lastO || !isValidCharacterInCommand(c1))
-                    group++;
+                if (!lastO || !isValidCharacterInCommand(c1)) group++;
                 oc = 0;
             }
 
             if (cc == cl) {
-                if (!lastC || !isValidCharacterInCommand(c1))
-                    group--;
+                if (!lastC || !isValidCharacterInCommand(c1)) group--;
                 cc = 0;
             }
         } else {
@@ -253,17 +237,15 @@ wstring TeXParser::getGroup(const wstring& open, const wstring& close) throw(ex_
     }
 
     if (group != 0) {
-        if (_isPartial)
-            return buf;
-        throw ex_parse("parse string not closed correctly!");
+        if (_isPartial) return buf;
+        throw ex_parse("Parse string not closed correctly!");
     }
 
     return buf.substr(0, buf.length() - _pos + startC);
 }
 
 wstring TeXParser::getOverArgument() throw(ex_parse) {
-    if (_pos == _len)
-        return L"";
+    if (_pos == _len) return L"";
 
     int ogroup = 1, spos;
     wchar_t ch = L'\0';
@@ -277,8 +259,7 @@ wstring TeXParser::getOverArgument() throw(ex_parse) {
             break;
         case '&':
             // if a & is encountered at the same level as \over we must break the argument
-            if (ogroup == 1)
-                ogroup--;
+            if (ogroup == 1) ogroup--;
             break;
         case R_GROUP:
             ogroup--;
@@ -299,8 +280,8 @@ wstring TeXParser::getOverArgument() throw(ex_parse) {
         _pos++;
     }
 
-    if (ogroup >= 2) // end of string reached, bu not processed properly
-        throw ex_parse("Illegal end, missing '}'!");
+    // end of string reached, bu not processed properly
+    if (ogroup >= 2) throw ex_parse("Illegal end, missing '}'!");
 
     wstring str;
     if (ogroup == 0) {
@@ -310,8 +291,7 @@ wstring TeXParser::getOverArgument() throw(ex_parse) {
         ch = '\0';
     }
 
-    if (ch == '&' || ch == '\\' || ch == R_GROUP)
-        _pos--;
+    if (ch == '&' || ch == '\\' || ch == R_GROUP) _pos--;
 
     return str;
 }
@@ -328,15 +308,12 @@ wstring TeXParser::getCommand() {
         _pos++;
     }
 
-    if (ch == L'\0')
-        return L"";
+    if (ch == L'\0') return L"";
 
-    if (_pos == spos)
-        _pos++;
+    if (_pos == spos) _pos++;
 
     wstring com = _parseString.substr(spos, _pos - spos);
-    if (com == L"cr" && _pos < _len && _parseString[_pos] == ' ')
-        _pos++;
+    if (com == L"cr" && _pos < _len && _parseString[_pos] == ' ') _pos++;
 
     return com;
 }
@@ -349,17 +326,14 @@ void TeXParser::insert(int s, int e, const wstring& formula) {
 }
 
 wstring TeXParser::getCommandWithArgs(const wstring& command) {
-    if (command == L"left")
-        return getGroup(L"\\left", L"\\right");
+    if (command == L"left") return getGroup(L"\\left", L"\\right");
 
     auto it = MacroInfo::_commands.find(command);
-    if (it == MacroInfo::_commands.end())
-        return L"\\" + command;
+    if (it == MacroInfo::_commands.end()) return L"\\" + command;
 
     MacroInfo* mac = it->second;
     int mac_opts = 0;
-    if (mac->_hasOptions)
-        mac_opts = mac->_posOpts;
+    if (mac->_hasOptions) mac_opts = mac->_posOpts;
 
     vector<wstring> mac_args;
     getOptsArgs(mac->_nbArgs, mac_opts, mac_args);
@@ -390,8 +364,7 @@ void TeXParser::skipWhiteSpace() {
     wchar_t c;
     while (_pos < _len) {
         c = _parseString[_pos];
-        if (c != ' ' && c != '\t' && c != '\n' && c != '\r')
-            break;
+        if (c != ' ' && c != '\t' && c != '\n' && c != '\r') break;
         if (c == '\n') {
             _line++;
             _col = _pos;
@@ -462,17 +435,13 @@ void TeXParser::getOptsArgs(int nbArgs, int opts, _out_ vector<wstring>& args) {
             }
         }
 
-        if (_ignoreWhiteSpace)
-            skipWhiteSpace();
+        if (_ignoreWhiteSpace) skipWhiteSpace();
     }
 }
 
 bool TeXParser::isValidName(const wstring& com) {
-    if (com.empty())
-        return false;
-
-    if (com[0] != '\\')
-        return false;
+    if (com.empty()) return false;
+    if (com[0] != '\\') return false;
 
     wchar_t c = L'\0';
     int p = 1;
@@ -543,14 +512,12 @@ shared_ptr<Atom> TeXParser::processEscape() throw(ex_parse) {
     _spos = _pos;
     wstring command = getCommand();
 
-    if (command.length() == 0)
-        return shared_ptr<Atom>(new EmptyAtom());
+    if (command.length() == 0) return shared_ptr<Atom>(new EmptyAtom());
 
     string cmd;
     wide2utf8(command.c_str(), cmd);
     auto it = MacroInfo::_commands.find(command);
-    if (it != MacroInfo::_commands.end())
-        return processCommands(command);
+    if (it != MacroInfo::_commands.end()) return processCommands(command);
 
     try {
         return TeXFormula::get(command)->_root;
@@ -562,7 +529,7 @@ shared_ptr<Atom> TeXParser::processEscape() throw(ex_parse) {
 
     // not a valid command or symbol or predefined TeXFormula found
     if (!_isPartial)
-        throw ex_parse("unknown symbol or command or predefined TeXFormula: '" + cmd + "'");
+        throw ex_parse("Unknown symbol or command or predefined TeXFormula: '" + cmd + "'");
     shared_ptr<Atom> rm(new RomanAtom(TeXFormula(L"\\backslash " + command)._root));
     return shared_ptr<Atom>(new ColorAtom(rm, TRANS, RED));
 }
@@ -570,8 +537,7 @@ shared_ptr<Atom> TeXParser::processEscape() throw(ex_parse) {
 shared_ptr<Atom> TeXParser::processCommands(const wstring& command) throw(ex_parse) {
     MacroInfo* mac = MacroInfo::_commands[command];
     int opts = 0;
-    if (mac->_hasOptions)
-        opts = mac->_posOpts;
+    if (mac->_hasOptions) opts = mac->_posOpts;
 
     vector<wstring> args;
     getOptsArgs(mac->_nbArgs, opts, args);
@@ -593,8 +559,7 @@ shared_ptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
     shared_ptr<Atom> second(nullptr);
     wchar_t s = '\0';
 
-    if (_pos < _len)
-        s = _parseString[_pos];
+    if (_pos < _len) s = _parseString[_pos];
 
     /*
      * 4 conditions
@@ -660,10 +625,8 @@ shared_ptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
 shared_ptr<Atom> TeXParser::getArgument() throw(ex_parse) {
     skipWhiteSpace();
     wchar_t ch;
-    if (_pos < _len)
-        ch = _parseString[_pos];
-    else
-        return shared_ptr<Atom>(new EmptyAtom());
+    if (_pos < _len) ch = _parseString[_pos];
+    else return shared_ptr<Atom>(new EmptyAtom());
 
     if (ch == L_GROUP) {
         TeXFormula tf;
@@ -696,8 +659,7 @@ shared_ptr<Atom> TeXParser::getArgument() throw(ex_parse) {
 }
 
 pair<int, float> TeXParser::getLength() throw(ex_parse) {
-    if (_pos == _len)
-        return make_pair(-1.f, -1.f);
+    if (_pos == _len) return make_pair(-1.f, -1.f);
 
     int spos;
     wchar_t ch = L'\0';
@@ -734,8 +696,7 @@ bool TeXParser::replaceScript() {
 }
 
 void TeXParser::firstpass() throw(ex_parse) {
-    if (_len == 0)
-        return;
+    if (_len == 0) return;
 
     wchar_t ch;
     wstring com;
@@ -743,8 +704,7 @@ void TeXParser::firstpass() throw(ex_parse) {
     vector<wstring> args;
     MacroInfo* mac;
     while (_pos < _len) {
-        if (replaceScript())
-            continue;
+        if (replaceScript()) continue;
 
         ch = _parseString[_pos];
         switch (ch) {
@@ -757,8 +717,7 @@ void TeXParser::firstpass() throw(ex_parse) {
                 try {
                     mac->invoke(*this, args);
                 } catch (ex_parse& e) {
-                    if (!_isPartial)
-                        throw;
+                    if (!_isPartial) throw;
                 }
                 _parseString.erase(spos, _pos - spos);
                 _len = _parseString.length();
@@ -773,8 +732,7 @@ void TeXParser::firstpass() throw(ex_parse) {
                     wstring x = args.back();
                     _parseString.replace(spos, _pos - spos, x);
                 } catch (ex_parse& e) {
-                    if (!_isPartial)
-                        throw;
+                    if (!_isPartial) throw;
                     spos += com.length() + 1;
                 }
                 _len = _parseString.length();
@@ -784,8 +742,11 @@ void TeXParser::firstpass() throw(ex_parse) {
                 wstring env = args[1] + L"@env";
                 auto it = MacroInfo::_commands.find(env);
                 if (it == MacroInfo::_commands.end()) {
-                    if (!_isPartial)
-                        throw ex_parse("unknown environment: " + wide2utf8(args[1].c_str()) + " at position " + tostring(getLine()) + ":" + tostring(getCol()));
+                    if (!_isPartial) {
+                        throw ex_parse(
+                            "Unknown environment: " + wide2utf8(args[1].c_str())
+                            + " at position " + tostring(getLine()) + ":" + tostring(getCol()));
+                    }
                 } else {
                     mac = it->second;
                     try {
@@ -793,15 +754,13 @@ void TeXParser::firstpass() throw(ex_parse) {
                         getOptsArgs(mac->_nbArgs - 1, 0, optarg);
                         wstring grp = getGroup(L"\\begin{" + args[1] + L"}", L"\\end{" + args[1] + L"}");
                         wstring expr = L"{\\makeatletter \\" + args[1] + L"@env";
-                        for (int i = 1; i <= mac->_nbArgs - 1; i++)
-                            expr += L"{" + optarg[i] + L"}";
+                        for (int i = 1; i <= mac->_nbArgs - 1; i++) expr += L"{" + optarg[i] + L"}";
                         expr += L"{" + grp + L"}\\makeatother}";
                         _parseString.replace(spos, _pos - spos, expr);
                         _len = _parseString.length();
                         _pos = spos;
                     } catch (ex_parse& e) {
-                        if (!_isPartial)
-                            throw;
+                        if (!_isPartial) throw;
                     }
                 }
             } else if (com == L"makeatletter") {
@@ -819,11 +778,9 @@ void TeXParser::firstpass() throw(ex_parse) {
             wchar_t chr;
             while (_pos < _len) {
                 chr = _parseString[_pos++];
-                if (chr == '\r' || chr == '\n')
-                    break;
+                if (chr == '\r' || chr == '\n') break;
             }
-            if (_pos < _len)
-                _pos--;
+            if (_pos < _len) _pos--;
             _parseString.replace(spos, _pos - spos, L"");
             _len = _parseString.length();
             _pos = spos;
@@ -870,8 +827,7 @@ void TeXParser::parse() throw(ex_parse) {
                 _formula->add(shared_ptr<Atom>(new BreakMarkAtom()));
                 while (_pos < _len) {
                     ch = _parseString[_pos];
-                    if (ch != ' ' || ch != '\t' || ch != '\r')
-                        break;
+                    if (ch != ' ' || ch != '\t' || ch != '\r') break;
                     _pos++;
                 }
             }
@@ -890,8 +846,7 @@ void TeXParser::parse() throw(ex_parse) {
 
                 _formula->add(shared_ptr<Atom>(new MathAtom(TeXFormula(*this, getDollarGroup(DOLLAR), false)._root, style)));
                 if (doubleDollar) {
-                    if (_parseString[_pos] == DOLLAR)
-                        _pos++;
+                    if (_parseString[_pos] == DOLLAR) _pos++;
                 }
             }
         }
@@ -900,25 +855,24 @@ void TeXParser::parse() throw(ex_parse) {
             shared_ptr<Atom> atom = processEscape();
             _formula->add(atom);
             HlineAtom* h = dynamic_cast<HlineAtom*>(atom.get());
-            if (_arrayMode && h != nullptr) {
-                ((ArrayOfAtoms*)_formula)->addRow();
-            }
-            if (_insertion)
-                _insertion = false;
+            if (_arrayMode && h != nullptr) ((ArrayOfAtoms*)_formula)->addRow();
+            if (_insertion) _insertion = false;
         }
         break;
         case L_GROUP: {
             auto atom = getArgument();
-            if (atom != nullptr)
-                atom->_type = TYPE_ORDINARY;
+            if (atom != nullptr) atom->_type = TYPE_ORDINARY;
             _formula->add(atom);
         }
         break;
         case R_GROUP: {
             _group--;
             _pos++;
-            if (_group == -1)
-                throw ex_parse("found a closing '" + tostring((char)R_GROUP) + "' without an opening " + tostring((char)L_GROUP) + "'!");
+            if (_group == -1) {
+                throw ex_parse(
+                    "Found a closing '" + tostring((char)R_GROUP)
+                    + "' without an opening " + tostring((char)L_GROUP) + "'!");
+            }
         }
         return;
         case SUPER_SCRIPT: {
@@ -935,32 +889,37 @@ void TeXParser::parse() throw(ex_parse) {
         }
         break;
         case '&': {
-            if (!_arrayMode)
-                throw ex_parse("character '&' is only available in array mode!");
+            if (!_arrayMode) throw ex_parse("Character '&' is only available in array mode!");
             ((ArrayOfAtoms*)_formula)->addCol();
             _pos++;
         }
         break;
         case PRIME: {
-            if (_ignoreWhiteSpace)
-                _formula->add(shared_ptr<Atom>(new CumulativeScriptsAtom(getLastAtom(), shared_ptr<Atom>(nullptr), SymbolAtom::get("prime"))));
-            else
+            if (_ignoreWhiteSpace) {
+                _formula->add(shared_ptr<Atom>(new CumulativeScriptsAtom(
+                    getLastAtom(), shared_ptr<Atom>(nullptr), SymbolAtom::get("prime"))));
+            } else {
                 _formula->add(convertCharacter(PRIME, true));
+            }
             _pos++;
         }
         break;
         case BACKPRIME: {
-            if (_ignoreWhiteSpace)
-                _formula->add(shared_ptr<Atom>(new CumulativeScriptsAtom(getLastAtom(), shared_ptr<Atom>(nullptr), SymbolAtom::get("backprime"))));
-            else
+            if (_ignoreWhiteSpace) {
+                _formula->add(shared_ptr<Atom>(new CumulativeScriptsAtom(
+                    getLastAtom(), shared_ptr<Atom>(nullptr), SymbolAtom::get("backprime"))));
+            } else {
                 _formula->add(convertCharacter(BACKPRIME, true));
+            }
             _pos++;
         }
         break;
         case DQUOTE: {
             if (_ignoreWhiteSpace) {
-                _formula->add(shared_ptr<Atom>(new CumulativeScriptsAtom(getLastAtom(), shared_ptr<Atom>(nullptr), SymbolAtom::get("prime"))));
-                _formula->add(shared_ptr<Atom>(new CumulativeScriptsAtom(getLastAtom(), shared_ptr<Atom>(nullptr), SymbolAtom::get("prime"))));
+                _formula->add(shared_ptr<Atom>(new CumulativeScriptsAtom(
+                    getLastAtom(), shared_ptr<Atom>(nullptr), SymbolAtom::get("prime"))));
+                _formula->add(shared_ptr<Atom>(new CumulativeScriptsAtom(
+                    getLastAtom(), shared_ptr<Atom>(nullptr), SymbolAtom::get("prime"))));
             } else {
                 _formula->add(convertCharacter(PRIME, true));
                 _formula->add(convertCharacter(PRIME, true));
@@ -1029,8 +988,7 @@ shared_ptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_p
                 fontInfos = TeXFormula::getExternalFont(block);
             }
             if (fontInfos != nullptr) {
-                if (oneChar)
-                    return shared_ptr<Atom>(new TextRenderingAtom(towstring(c), fontInfos));
+                if (oneChar) return shared_ptr<Atom>(new TextRenderingAtom(towstring(c), fontInfos));
                 int start = _pos++;
                 int en = _len - 1;
                 while (_pos < _len) {
@@ -1044,11 +1002,9 @@ shared_ptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_p
                 return shared_ptr<Atom>(new TextRenderingAtom(_parseString.substr(start, en - start + 1), fontInfos));
             }
 
-            if (!_isPartial)
-                throw ex_parse("unknown character : '" + tostring(c) + "'");
+            if (!_isPartial) throw ex_parse("Unknown character : '" + tostring(c) + "'");
             else {
-                if (_hideUnknownChar)
-                    return shared_ptr<Atom>(nullptr);
+                if (_hideUnknownChar) return shared_ptr<Atom>(nullptr);
 
                 shared_ptr<Atom> rm(new RomanAtom(TeXFormula(L"\\text{(unknown char " + towstring((int)c) + L")}")._root));
                 return shared_ptr<Atom>(new ColorAtom(rm, TRANS, RED));
@@ -1077,7 +1033,9 @@ shared_ptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_p
                 try {
                     return SymbolAtom::get(symbolName);
                 } catch (ex_symbol_not_found& e) {
-                    throw ex_parse("the character '" + tostring(c) + "' was mapped to an unknown symbol with the name '" + symbolName + "'!", e);
+                    throw ex_parse(
+                        "The character '" + tostring(c) +
+                        "' was mapped to an unknown symbol with the name '" + symbolName + "'!", e);
                 }
             }
         }
@@ -1089,8 +1047,7 @@ shared_ptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_p
         auto it = TeXFormula::_externalFontMap.find(UnicodeBlock::BASIC_LATIN);
         if (it != TeXFormula::_externalFontMap.end()) {
             infos = it->second;
-            if (oneChar)
-                return shared_ptr<Atom>(new TextRenderingAtom(towstring(c), infos));
+            if (oneChar) return shared_ptr<Atom>(new TextRenderingAtom(towstring(c), infos));
 
             int start = _pos++;
             int en = _len - 1;

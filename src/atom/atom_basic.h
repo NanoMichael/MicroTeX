@@ -23,7 +23,7 @@ class Dummy;
 class RowAtom;
 
 /**
- * an empty atom
+ * An empty atom
  */
 class EmptyAtom : public Atom {
 public:
@@ -53,7 +53,7 @@ public:
 };
 
 /**
- * an atom representing a smashed atom (i.e. with no height and no depth)
+ * An atom representing a smashed atom (i.e. with no height and no depth)
  */
 class SmashedAtom : public Atom {
 private:
@@ -65,24 +65,20 @@ public:
     SmashedAtom(const shared_ptr<Atom>& a, const string& opt) :
         _h(true), _d(true) {
         _at = a;
-        if (opt == "opt")
-            _d = false;
-        else if (opt == "b")
-            _h = false;
+        if (opt == "opt") _d = false;
+        else if (opt == "b") _h = false;
     }
 
     shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override {
         shared_ptr<Box> b = _at->createBox(env);
-        if (_h)
-            b->_height = 0;
-        if (_d)
-            b->_depth = 0;
+        if (_h) b->_height = 0;
+        if (_d) b->_depth = 0;
         return b;
     }
 };
 
 /**
- * an atom representing a scaled atom
+ * An atom representing a scaled atom
  */
 class ScaleAtom : public Atom {
 protected:
@@ -111,7 +107,7 @@ public:
 };
 
 /**
- * an atom representing a math atom
+ * An atom representing a math atom
  */
 class MathAtom : public Atom {
 private:
@@ -129,7 +125,7 @@ public:
 };
 
 /**
- * an atom representing a horizontal-line in array environment
+ * An atom representing a horizontal-line in array environment
  */
 class HlineAtom : public Atom {
 private:
@@ -154,7 +150,7 @@ public:
 };
 
 /**
- * an atom representing a cumulative scripts atom
+ * An atom representing a cumulative scripts atom
  */
 class CumulativeScriptsAtom : public Atom {
 private:
@@ -169,7 +165,7 @@ public:
 };
 
 /**
- * A "composed atom": an atom that consists of child atoms that will be
+ * A "composed atom": An atom that consists of child atoms that will be
  * displayed next to each other horizontally with glue between them.
  */
 class Row {
@@ -206,7 +202,7 @@ private:
     float _width;
     float _height;
     float _depth;
-    // units for the dimensions
+    // units of the dimensions
     int _wUnit;
     int _hUnit;
     int _dUnit;
@@ -263,14 +259,12 @@ public:
      * a valid unit
      */
     inline static void checkUnit(int unit) throw(ex_invalid_unit) {
-        if (unit < 0 || unit >= _units_count)
-            throw ex_invalid_unit();
+        if (unit < 0 || unit >= _units_count) throw ex_invalid_unit();
     }
 
     inline static int getUnit(const string& unit) {
         auto i = _units.find(unit);
-        if (i == _units.end())
-            return TeXConstants::UNIT_PIXEL;
+        if (i == _units.end()) return TeXConstants::UNIT_PIXEL;
         return i->second;
     }
 
@@ -290,7 +284,7 @@ public:
 };
 
 /**
- * an atom representing an underscore
+ * An atom representing An underscore
  */
 class UnderScoreAtom : public Atom {
 public:
@@ -499,7 +493,7 @@ public:
 };
 
 /**
- * an empty atom just to add a mark.
+ * An empty atom just to add a mark.
  */
 class BreakMarkAtom : public Atom {
 public:
@@ -507,7 +501,7 @@ public:
 };
 
 /**
- * Used by RowAtom. The "textSymbol"-property and the type of an atom can change
+ * Used by RowAtom. The "textSymbol"-property and the type of An atom can change
  * (according to the TeX-algorithms used). Or this atom can be replaced by a
  * ligature, (if it was a CharAtom). But atoms cannot be changed, otherwise
  * different boxes could be made from the same TeXFormula, and that is not
@@ -525,9 +519,9 @@ public:
     Dummy() = delete;
 
     /**
-     * create a new dummy for the given atom
+     * Create a new dummy for the given atom
      * @param a
-     *      an atom
+     *      An atom
      */
     Dummy(const shared_ptr<Atom>& a) {
         _textSymbol = false;
@@ -536,7 +530,7 @@ public:
     }
 
     /**
-     * changes the type of the atom
+     * Changes the type of the atom
      * @param t
      *      the new type
      */
@@ -587,11 +581,9 @@ public:
     }
 
     inline shared_ptr<Box> createBox(_out_ TeXEnvironment& env) {
-        if (_textSymbol)
-            ((CharSymbol*)_el.get())->markAsTextSymbol();
+        if (_textSymbol) ((CharSymbol*)_el.get())->markAsTextSymbol();
         auto b = _el->createBox(env);
-        if (_textSymbol)
-            ((CharSymbol*)_el.get())->removeMark();
+        if (_textSymbol) ((CharSymbol*)_el.get())->removeMark();
         return b;
     }
 
@@ -605,7 +597,7 @@ public:
     }
 
     /**
-     * only for row-elements
+     * Only for row-elements
      */
     inline void setPreviousAtom(const shared_ptr<Dummy>& prev) {
         Row* row = dynamic_cast<Row*>(_el.get());
@@ -677,7 +669,7 @@ public:
     }
 
     /**
-     * Push an atom to back
+     * Push An atom to back
      */
     void add(const shared_ptr<Atom>& el);
 
@@ -698,6 +690,7 @@ private:
     vector<shared_ptr<Atom>> _elements;
     shared_ptr<SpaceAtom> _raise;
     bool _addInterline;
+
 public:
     VRowAtom();
 
@@ -753,8 +746,7 @@ public:
 
     ColorAtom(color bg, color c, const shared_ptr<Atom>& old) throw(ex_invalid_atom_type) {
         ColorAtom* a = dynamic_cast<ColorAtom*>(old.get());
-        if (a == nullptr)
-            throw ex_invalid_atom_type("Should be a ColorAtom!");
+        if (a == nullptr) throw ex_invalid_atom_type("Should be a ColorAtom!");
         _elements = a->_elements;
         _background = istrans(bg) ? a->_background : bg;
         _color = istrans(c) ? a->_color : c;
@@ -774,11 +766,16 @@ public:
         _elements->setPreviousAtom(prev);
     }
 
+    /**
+     * Parse color from given name. The name can be one of the following format:
+     * [#AARRGGBB] or [AARRGGBB], [gray color], [c,m,y,k], [c;m;y;k], [r,g,b], [r;g;b].
+     * Return black if not found.
+     */
     static color getColor(string s);
 };
 
 /**
- * an atom representing a roman atom
+ * An atom representing a roman atom
  */
 class RomanAtom : public Atom {
 public:
@@ -792,7 +789,7 @@ public:
 };
 
 /**
- * an atom representing another atom that should be drawn invisibly
+ * An atom representing another atom that should be drawn invisibly
  */
 class PhantomAtom : public Atom, public Row {
 private:
@@ -821,7 +818,7 @@ public:
 };
 
 /**
- * an atom representing another atom with an override left-type and right-type
+ * An atom representing another atom with An override left-type and right-type
  * this affects the glue inserted before and after this atom.
  */
 class TypedAtom : public Atom {
@@ -859,7 +856,7 @@ public:
 };
 
 /**
- * an atom representing another atom with an accent symbol above it
+ * An atom representing another atom with An accent symbol above it
  */
 class AccentedAtom : public Atom {
 public:
@@ -885,7 +882,7 @@ public:
     }
 
     /**
-     * Creates an AccentedAtom from a base atom and an accent symbol defined by
+     * Creates An AccentedAtom from a base atom and An accent symbol defined by
      * its name
      *
      * @param base
@@ -893,25 +890,25 @@ public:
      * @param name
      *      name of the accent symbol to be put over the base atom
      * @throw ex_invalid_symbol_type
-     *      if the symbol is not defined as an accent ('acc')
+     *      if the symbol is not defined as An accent ('acc')
      * @throw ex_symbol_not_found
      *      if there's no symbol defined with the given name
      */
     AccentedAtom(const shared_ptr<Atom>& base, const string& name) throw(ex_invalid_symbol_type, ex_symbol_not_found);
 
     /**
-     * Creates an AccentedAtom from a base atom and an accent symbol defined as
+     * Creates An AccentedAtom from a base atom and An accent symbol defined as
      * a TeXFormula. This is used for parsing MathML.
      *
      * @param base
      *      base atom
      * @param acc
-     *      TeXFormula representing an accent (SymbolAtom)
+     *      TeXFormula representing An accent (SymbolAtom)
      * @throw ex_invalid_formula
      *      if the given TeXFormula does not represent a single
      *      SymbolAtom (type "TeXConstants.TYPE_ACCENT")
      * @throw ex_invalid_symbol_type
-     *      if the symbol is not defined as an accent ('acc')
+     *      if the symbol is not defined as An accent ('acc')
      */
     AccentedAtom(const shared_ptr<Atom>& base, const shared_ptr<TeXFormula>& acc) throw(ex_invalid_formula, ex_invalid_symbol_type);
 
@@ -945,7 +942,10 @@ private:
 public:
     UnderOverAtom() = delete;
 
-    UnderOverAtom(const shared_ptr<Atom>& base, const shared_ptr<Atom>& script, int unit, float space, bool small, bool over) throw(ex_invalid_unit) {
+    UnderOverAtom(
+        const shared_ptr<Atom>& base,
+        const shared_ptr<Atom>& script,
+        int unit, float space, bool small, bool over) throw(ex_invalid_unit) {
         init();
         // check if unit is valid
         SpaceAtom::checkUnit(unit);
@@ -971,9 +971,10 @@ public:
         }
     }
 
-    UnderOverAtom(const shared_ptr<Atom>& base,
-                  const shared_ptr<Atom>& under, int underunit, float underspace, bool undersmall,
-                  const shared_ptr<Atom>& over, int overunit, float overspace, bool oversmall) throw(ex_invalid_unit) {
+    UnderOverAtom(
+        const shared_ptr<Atom>& base,
+        const shared_ptr<Atom>& under, int underunit, float underspace, bool undersmall,
+        const shared_ptr<Atom>& over, int overunit, float overspace, bool oversmall) throw(ex_invalid_unit) {
         // check unit
         SpaceAtom::checkUnit(underunit);
         SpaceAtom::checkUnit(overunit);
@@ -1001,7 +1002,7 @@ public:
 };
 
 /**
- * an atom representing scripts to be attached to another atom
+ * An atom representing scripts to be attached to another atom
  */
 class ScriptsAtom : public Atom {
 private:
@@ -1027,8 +1028,7 @@ public:
         _sub = sub;
         _sup = sup;
         _align = ALIGN_LEFT;
-        if (!left)
-            _align = ALIGN_RIGHT;
+        if (!left) _align = ALIGN_RIGHT;
     }
 
     int getLeftType() const override {
@@ -1043,7 +1043,7 @@ public:
 };
 
 /**
- * an atom representing a "big operator" (or an tom that acts as one) together
+ * An atom representing a "big operator" (or an atom that acts as one) together
  * with its limits
  */
 class BigOperatorAtom : public Atom {
@@ -1061,9 +1061,10 @@ private:
     void init(const shared_ptr<Atom>& base, const shared_ptr<Atom>& under, const shared_ptr<Atom>& over);
 
     /**
-     * centers the given box in a new box that has the given width
+     * Center the given box in a new box that has the given width
      */
     static shared_ptr<Box> changeWidth(const shared_ptr<Box>& b, float maxW);
+
 public:
     BigOperatorAtom() = delete;
 
@@ -1106,7 +1107,7 @@ public:
 };
 
 /**
- * a atom representing another atom with a delimiter and a script above or
+ * An atom representing another atom with a delimiter and a script above or
  * under it, with script and delimiter separated by a kerning
  */
 class OverUnderDelimiter : public Atom {
@@ -1124,7 +1125,11 @@ private:
 public:
     OverUnderDelimiter() = delete;
 
-    OverUnderDelimiter(const shared_ptr<Atom>& base, const shared_ptr<Atom>& script, const shared_ptr<SymbolAtom>& s, int kernunit, float kern, bool over) throw(ex_invalid_unit) {
+    OverUnderDelimiter(
+        const shared_ptr<Atom>& base,
+        const shared_ptr<Atom>& script,
+        const shared_ptr<SymbolAtom>& s,
+        int kernunit, float kern, bool over) throw(ex_invalid_unit) {
         _type = TYPE_INNER;
         _base = base;
         _script = script;
@@ -1144,6 +1149,6 @@ public:
     shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
-}
+} // namespace tex
 
 #endif // ATOM_BASIC_H_INCLUDED

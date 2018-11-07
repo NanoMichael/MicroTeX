@@ -107,10 +107,10 @@ public:
 };
 
 /**
- * Represent a 2D graphics context, all the TeX drawing operation would be
- * on it. Current supported affine transformation is scale, translation and rotation,
- * but note that the scaling on y direction will be selected as base if the scaling
- * on x and y direction are different when drawing a character, so you should
+ * Represent a 2D graphics context, all the TeX drawing operation will be
+ * on it. Current supported affine transformation is scale, translation, and rotation,
+ * but note that the scaling on y-direction will be selected as base if the scaling
+ * on x and y-direction are different when drawing a character, so you should
  * never use a different scaling unless you are really sure that the coordinate
  * is positioned correctly (i.e. draw a hyphen).
  */
@@ -118,7 +118,7 @@ class Graphics2D {
 public:
 
     /**
-     * Set the color of graphic context
+     * Set the color of the graphics context
      * 
      * @param c
      *      Required color
@@ -126,12 +126,12 @@ public:
     virtual void setColor(color c) = 0;
 
     /**
-     * Get the color of current graphic context
+     * Get the color of the graphics context
      */
     virtual color getColor() const = 0;
 
     /**
-     * Set the stroke of graphic context
+     * Set the stroke of the graphics context
      * 
      * @param s
      *      Required stroke
@@ -139,12 +139,12 @@ public:
     virtual void setStroke(const Stroke& s) = 0;
 
     /**
-     * Get the stroke of current graphic context
+     * Get the stroke of the graphics context
      */
     virtual const Stroke& getStroke() const = 0;
 
     /**
-     * Set stroke width of current graphic context
+     * Set stroke width of the graphics context
      * 
      * @param w
      *      Required stroke width
@@ -157,12 +157,12 @@ public:
     virtual const Font* getFont() const = 0;
 
     /**
-     * Set font of graphic context
+     * Set font of the graphics context
      */
     virtual void setFont(const Font* font) = 0;
 
     /**
-     * Translate the graphic context with distance dx, dy
+     * Translate the graphics context with distance dx, dy
      *
      * @param dx
      *      Distance in x-direction to translate
@@ -172,7 +172,7 @@ public:
     virtual void translate(float dx, float dy) = 0;
 
     /**
-     * Scale the graphic context with sx, sy
+     * Scale the graphics context with sx, sy
      *
      * @param sx
      *      scale ratio in x-direction
@@ -182,8 +182,7 @@ public:
     virtual void scale(float sx, float sy) = 0;
 
     /**
-     * Rotate the graphic context with specified angle (in radian), the pivot of rotation
-     * are settled to (0, 0)
+     * Rotate the graphics context with specified angle (in radian), with pivot (0, 0).
      *
      * @param angle
      *      Angle (in radian) amount to rotate
@@ -191,8 +190,7 @@ public:
     virtual void rotate(float angle) = 0;
 
     /**
-     * Rotate the graphics context with a angle (in radian), the pivot of rotation
-     * are settled to (px, py)
+     * Rotate the graphics context with a angle (in radian), with pivot (px, py).
      *
      * @param angle
      *      Angle (in radian) amount to rotate
@@ -204,45 +202,45 @@ public:
     virtual void rotate(float angle, float px, float py) = 0;
 
     /**
-     * Reset the transformation of current graphics context
+     * Reset transformations of the graphics context
      */
     virtual void reset() = 0;
 
     /**
-     * Get the scale of current context in x-direction
+     * Get the scale of the context in x-direction
      *
      * @return the scale in x-direction
      */
     virtual float sx() const = 0;
 
     /**
-     * Get the scale of current context in y-direction
+     * Get the scale of the context in y-direction
      *
      * @return the scale in y-direction
      */
     virtual float sy() const = 0;
 
     /**
-     * Draw character, assume the drawing is baseline aligned
+     * Draw character, is baseline aligned
      * 
      * @param c
      *      Specified character
      * @param x
-     *      x coordinate
+     *      x-coordinate
      * @param y
-     *      y coordinate, is baseline aligned
+     *      y-coordinate, is baseline aligned
      */
     virtual void drawChar(wchar_t c, float x, float y) = 0;
 
     /**
-     * Draw text, assume the drawing is baseline aligned
+     * Draw text, is baseline aligned
      * 
      * @param c
      *      Specified text
      * @param x
-     *      x coordinate
+     *      x-coordinate
      * @param y
-     *      y coordinate, is baseline aligned
+     *      y-coordinate, is baseline aligned
      */
     virtual void drawText(const wstring& c, float x, float y) = 0;
 
@@ -250,13 +248,13 @@ public:
      * Draw line
      * 
      * @param x1
-     *      Start point in x direction
+     *      Start point in x-direction
      * @param y1
-     *      Start point in y direction
+     *      Start point in y-direction
      * @param x2
-     *      End point in x direction
+     *      End point in x-direction
      * @param y2
-     *      End point in y direction
+     *      End point in y-direction
      */
     virtual void drawLine(float x1, float y1, float x2, float y2) = 0;
 
@@ -300,9 +298,9 @@ public:
      * @param h
      *      Height
      * @param rx
-     *      Radius in x direction
+     *      Radius in x-direction
      * @param ry
-     *      Radius in y direction
+     *      Radius in y-direction
      */
     virtual void drawRoundRect(float x, float y, float w, float h, float rx, float ry) = 0;
 
@@ -318,9 +316,9 @@ public:
      * @param h
      *      Height
      * @param rx
-     *      Radius in x direction
+     *      Radius in x-direction
      * @param ry
-     *      Radius in y direction
+     *      Radius in y-direction
      */
     virtual void fillRoundRect(float x, float y, float w, float h, float rx, float ry) = 0;
 };

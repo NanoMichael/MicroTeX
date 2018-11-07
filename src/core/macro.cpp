@@ -15,15 +15,14 @@ bool NewCommandMacro::isMacro(const wstring& name) {
 void NewCommandMacro::addNewCommand(const wstring& name, const wstring& code, int nbargs) throw(ex_parse) {
     _macrocode[name] = code;
     auto x = MacroInfo::_commands.find(name);
-    if (x != MacroInfo::_commands.end())
-        delete x->second;
+    if (x != MacroInfo::_commands.end()) delete x->second;
     MacroInfo::_commands[name] = new MacroInfo(_instance, nbargs);
 }
 
 void NewCommandMacro::addNewCommand(const wstring& name, const wstring& code, int nbargs, const wstring& def) throw(ex_parse) {
     auto it = _macrocode.find(name);
     if (it != _macrocode.end())
-        throw ex_parse("command " + wide2utf8(name.c_str()) + " already exists! use renewcommand instead!");
+        throw ex_parse("Command " + wide2utf8(name.c_str()) + " already exists! use renewcommand instead!");
     _macrocode[name] = code;
     _macroreplacement[name] = def;
     MacroInfo::_commands[name] = new MacroInfo(_instance, nbargs, 1);
@@ -31,7 +30,7 @@ void NewCommandMacro::addNewCommand(const wstring& name, const wstring& code, in
 
 void NewCommandMacro::addRenewCommand(const wstring& name, const wstring& code, int nbargs) throw(ex_parse) {
     if (!isMacro(name))
-        throw ex_parse("command " + wide2utf8(name.c_str()) + " is no defined! use newcommand instead!");
+        throw ex_parse("Command " + wide2utf8(name.c_str()) + " is no defined! use newcommand instead!");
     _macrocode[name] = code;
     delete MacroInfo::_commands[name];
     MacroInfo::_commands[name] = new MacroInfo(_instance, nbargs);
@@ -63,13 +62,19 @@ void NewCommandMacro::execute(_out_ TeXParser& tp, _out_ vector<wstring>& args) 
     args.push_back(code);
 }
 
-void NewEnvironmentMacro::addNewEnvironment(const wstring& name, const wstring& begdef, const wstring& enddef, int nbargs) throw(ex_parse) {
+void NewEnvironmentMacro::addNewEnvironment(
+    const wstring& name,
+    const wstring& begdef, const wstring& enddef,
+    int nbargs) throw(ex_parse) {
     wstring n = name + L"@env";
     wstring def = begdef + L" #" + towstring(nbargs + 1) + L" " + enddef;
     addNewCommand(n, def, nbargs + 1);
 }
 
-void NewEnvironmentMacro::addRenewEnvironment(const wstring& name, const wstring& begdef, const wstring& enddef, int nbargs) throw(ex_parse) {
+void NewEnvironmentMacro::addRenewEnvironment(
+    const wstring& name,
+    const wstring& begdef, const wstring& enddef,
+    int nbargs) throw(ex_parse) {
     if (_macrocode.find(name + L"@env") == _macrocode.end())
         throw ex_parse("environment " + wide2utf8(name.c_str()) + "is not defined! use newenvironment instead!");
     addRenewCommand(name + L"@env", begdef + L" #" + towstring(nbargs + 1) + L" " + enddef, nbargs + 1);
@@ -610,8 +615,9 @@ shared_ptr<Atom> PredefMacroInfo::invoke(int id, _out_ TeXParser& tp, _out_ vect
             return shared_ptr<Atom>(nullptr);
         }
     } catch (exception& e) {
-        throw ex_parse("Problem with command " + wide2utf8(args[0].c_str())
-                       + " at position " + tostring(tp.getLine()) + ":" + tostring(tp.getCol()) + "\n caused by: "
-                       + e.what());
+        throw ex_parse(
+            "Problem with command " + wide2utf8(args[0].c_str())
+            + " at position " + tostring(tp.getLine()) + ":" + tostring(tp.getCol()) + "\n caused by: "
+            + e.what());
     }
 }

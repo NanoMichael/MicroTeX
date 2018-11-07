@@ -167,17 +167,15 @@ int FormulaBreaker::getBreakPosition(const shared_ptr<HorizontalBox>& hb, int i)
     /**if (i == 0)
         return -1;
     return i;*/
-    if (hb->_breakPositions.empty())
-        return -1;
+    if (hb->_breakPositions.empty()) return -1;
 
-    if (hb->_breakPositions.size() == 1 && hb->_breakPositions[0] <= i)
+    if (hb->_breakPositions.size() == 1 && hb->_breakPositions[0] <= i) 
         return hb->_breakPositions[0];
 
     size_t pos = 0;
     for (; pos < hb->_breakPositions.size(); pos++) {
         if (hb->_breakPositions[pos] > i) {
-            if (pos == 0)
-                return -1;
+            if (pos == 0) return -1;
             return hb->_breakPositions[pos - 1];
         }
     }
@@ -314,8 +312,7 @@ void GlueSettingParser::parseGlueTypes(_out_ vector<Glue*>& glueTypes) throw(ex_
         // retrieve required attribute value, throw ex if not set
         string name = getAttr("name", type);
         Glue* glue = createGlue(type, name);
-        if (tolower(name) == "default")
-            defalutIndex = index;
+        if (tolower(name) == "default") defalutIndex = index;
         glueTypes.push_back(glue);
         index++;
         type = type->NextSiblingElement("GlueType");
@@ -343,8 +340,13 @@ Glue* GlueSettingParser::createGlue(const XMLElement* type, const string& name) 
     for (int i = 0; i < 3; i++) {
         float v = 0;
         int err = type->QueryFloatAttribute(names[i].c_str(), &v);
-        if (err != XML_NO_ERROR)
-            throw ex_xml_parse(RESOURCE_NAME, "GlueType", names[i], "has an invalid real value!");
+        if (err != XML_NO_ERROR) {
+            throw ex_xml_parse(
+                RESOURCE_NAME,
+                "GlueType",
+                names[i],
+                "has an invalid real value!");
+        }
         values[i] = v;
     }
     return new Glue(values[0], values[1], values[2], name);
@@ -357,8 +359,7 @@ int*** GlueSettingParser::createGlueTable() throw(ex_res_parse) {
     for (int i = 0; i < s; i++) {
         table[i] = new int*[s];
         // make sure that all elements are 0 (default)
-        for (int j = 0; j < s; j++)
-            table[i][j] = new int[t]();
+        for (int j = 0; j < s; j++) table[i][j] = new int[t]();
     }
     // remember the count
     GLUE_TAB_DIM_1 = GLUE_TAB_DIM_2 = s;
@@ -382,7 +383,7 @@ int*** GlueSettingParser::createGlueTable() throw(ex_res_parse) {
         auto r = _typeMappings.find(right);
         auto v = _glueTypeMappings.find(type);
         if (l == _typeMappings.end() || r == _typeMappings.end() || v == _glueTypeMappings.end())
-            throw ex_res_parse("error occur when parsing glue tables!");
+            throw ex_res_parse("Failed to parse glue tables!");
         int lv = l->second, rv = r->second, vv = v->second;
         // iterate all style elements
         const XMLElement* style = glue->FirstChildElement("Style");
@@ -392,7 +393,7 @@ int*** GlueSettingParser::createGlueTable() throw(ex_res_parse) {
             auto st = _styleMappings.find(styleName);
             // check exists
             if (st == _styleMappings.end())
-                throw ex_res_parse("style: '" + styleName + "' not found when parsing glue tables!");
+                throw ex_res_parse("Style: '" + styleName + "' not found when parsing glue tables!");
             // put value in table
             table[lv][rv][st->second] = vv;
             style = style->NextSiblingElement("Style");
@@ -422,8 +423,7 @@ void Glue::_init_() {
 #ifdef __DEBUG
     // print glue types
     __log << "elements in _glueTypes" << endl;
-    for (auto x : _glueTypes)
-        __log << "\t" << x << endl;
+    for (auto x : _glueTypes) __log << "\t" << x << endl;
     __log << endl;
 #endif // __DEBUG
 }
@@ -437,8 +437,7 @@ void Glue::_free_() {
     }
     // delete glue-table
     for (int i = 0; i < GLUE_TAB_DIM_1; i++) {
-        for (int j = 0; j < GLUE_TAB_DIM_2; j++)
-            delete[] _glueTable[i][j];
+        for (int j = 0; j < GLUE_TAB_DIM_2; j++) delete[] _glueTable[i][j];
         delete[] _glueTable[i];
     }
     delete[] _glueTable;
@@ -480,8 +479,7 @@ const map<string, int> TeXSymbolParser::_typeMappings = {
 
 string TeXSymbolParser::getAttr(const char* attr, const XMLElement* e) throw(ex_res_parse) {
     const char* x = e->Attribute(attr);
-    if (x == nullptr || strlen(x) == 0)
-        throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping!");
+    if (x == nullptr || strlen(x) == 0) throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping!");
     return x;
 }
 
@@ -489,8 +487,7 @@ TeXSymbolParser::TeXSymbolParser() throw(ex_res_parse) :
     _doc(true, COLLAPSE_WHITESPACE) {
     const string file = RES_BASE + "/" + RESOURCE_NAME;
     int err = _doc.LoadFile(file.c_str());
-    if (err != XML_NO_ERROR)
-        throw ex_res_parse(file + " not found!");
+    if (err != XML_NO_ERROR) throw ex_res_parse(file + " not found!");
     _root = _doc.RootElement();
 #ifdef __DEBUG
     __DBG("root :%s\n", _root->Name());
@@ -500,8 +497,7 @@ TeXSymbolParser::TeXSymbolParser() throw(ex_res_parse) :
 TeXSymbolParser::TeXSymbolParser(const string& file) throw(ex_res_parse) :
     _doc(true, COLLAPSE_WHITESPACE) {
     int err = _doc.LoadFile(file.c_str());
-    if (err != XML_NO_ERROR)
-        throw ex_res_parse(file + " not found!");
+    if (err != XML_NO_ERROR) throw ex_res_parse(file + " not found!");
     _root = _doc.RootElement();
 #ifdef __DEBUG
     __DBG("root :%s\n", _root->Name());
@@ -529,23 +525,20 @@ void TeXSymbolParser::readSymbols(_out_ map<string, shared_ptr<SymbolAtom>>& res
 
 const string TeXFormulaSettingParser::RESOURCE_NAME = "TeXFormulaSettings.xml";
 
-TeXFormulaSettingParser::TeXFormulaSettingParser() throw(ex_res_parse) :
-    _doc(true, COLLAPSE_WHITESPACE) {
+TeXFormulaSettingParser::TeXFormulaSettingParser() throw(ex_res_parse) : _doc(true, COLLAPSE_WHITESPACE) {
     string file = RES_BASE + "/" + RESOURCE_NAME;
     int err = _doc.LoadFile(file.c_str());
-    if (err != XML_NO_ERROR)
-        throw ex_xml_parse(file + " not found!");
+    if (err != XML_NO_ERROR) throw ex_xml_parse(file + " not found!");
     _root = _doc.RootElement();
 #ifdef __DEBUG
     __DBG("TeXFormulaSettings.xml root: %s\n", _root->Name());
 #endif // __DEBUG
 }
 
-TeXFormulaSettingParser::TeXFormulaSettingParser(const string& file) throw(ex_res_parse) :
+TeXFormulaSettingParser::TeXFormulaSettingParser(const string& file) throw(ex_res_parse) : 
     _doc(true, COLLAPSE_WHITESPACE) {
     int err = _doc.LoadFile(file.c_str());
-    if (err != XML_NO_ERROR)
-        throw ex_xml_parse(file + " not found!");
+    if (err != XML_NO_ERROR) throw ex_xml_parse(file + " not found!");
     _root = _doc.RootElement();
 #ifdef __DEBUG
     __DBG("TeXFormulaSettings.xml root: %s\n", _root->Name());
@@ -554,16 +547,21 @@ TeXFormulaSettingParser::TeXFormulaSettingParser(const string& file) throw(ex_re
 
 int TeXFormulaSettingParser::getUtf(const XMLElement* e, const char* attr) throw(ex_res_parse) {
     const char* val = e->Attribute(attr);
-    if (val == nullptr || strlen(val) == 0)
+    if (val == nullptr || strlen(val) == 0) {
         throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping!");
+    }
     wstring wstr;
     utf82wide(val, wstr);
-    if (wstr.empty() || wstr.length() != 1)
+    if (wstr.empty() || wstr.length() != 1) {
         throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "unknown code point!");
+    }
     return wstr[0];
 }
 
-void TeXFormulaSettingParser::add2map(const XMLElement* r, _out_ map<int, string>& math, _out_ map<int, string>& txt) throw(ex_res_parse) {
+void TeXFormulaSettingParser::add2map(
+    const XMLElement* r,
+    _out_ map<int, string>& math,
+    _out_ map<int, string>& txt) throw(ex_res_parse) {
     while (r != nullptr) {
         int ch = getUtf(r, "char");
         const char* symbol = r->Attribute("symbol");
@@ -573,14 +571,15 @@ void TeXFormulaSettingParser::add2map(const XMLElement* r, _out_ map<int, string
             throw ex_xml_parse(RESOURCE_NAME, r->Name(), "symbol", "no mapping!");
         }
         math[ch] = symbol;
-        if (text != nullptr) {
-            txt[ch] = text;
-        }
+        if (text != nullptr) txt[ch] = text;
         r = r->NextSiblingElement("Map");
     }
 }
 
-void TeXFormulaSettingParser::addFormula2map(const XMLElement* r, _out_ map<int, string>& math, _out_ map<int, string>& txt) throw(ex_res_parse) {
+void TeXFormulaSettingParser::addFormula2map(
+    const XMLElement* r,
+    _out_ map<int, string>& math,
+    _out_ map<int, string>& txt) throw(ex_res_parse) {
     while (r != nullptr) {
         int ch = getUtf(r, "char");
         const char* formula = r->Attribute("formula");
@@ -590,27 +589,25 @@ void TeXFormulaSettingParser::addFormula2map(const XMLElement* r, _out_ map<int,
             throw ex_xml_parse(RESOURCE_NAME, r->Name(), "formula", "no mapping!");
         }
         math[ch] = formula;
-        if (text != nullptr) {
-            txt[ch] = text;
-        }
+        if (text != nullptr) txt[ch] = text;
         r = r->NextSiblingElement("Map");
     }
 }
 
-void TeXFormulaSettingParser::parseSymbol2Formula(_out_ map<int, string>& mappings, _out_ map<int, string>& txt) throw(ex_res_parse) {
+void TeXFormulaSettingParser::parseSymbol2Formula(
+    _out_ map<int, string>& mappings, _out_ map<int, string>& txt) throw(ex_res_parse) {
     const XMLElement* e = _root->FirstChildElement("CharacterToFormulaMappings");
     if (e != nullptr) {
         e = e->FirstChildElement("Map");
-        if (e != nullptr)
-            addFormula2map(e, mappings, txt);
+        if (e != nullptr) addFormula2map(e, mappings, txt);
     }
 }
 
-void TeXFormulaSettingParser::parseSymbol(_out_ map<int, string>& mappings, _out_ map<int, string>& txt) throw(ex_res_parse) {
+void TeXFormulaSettingParser::parseSymbol(
+    _out_ map<int, string>& mappings, _out_ map<int, string>& txt) throw(ex_res_parse) {
     const XMLElement* e = _root->FirstChildElement("CharacterToSymbolMappings");
     if (e != nullptr) {
         e = e->FirstChildElement("Map");
-        if (e != nullptr)
-            add2map(e, mappings, txt);
+        if (e != nullptr) add2map(e, mappings, txt);
     }
 }

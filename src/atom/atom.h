@@ -318,6 +318,6 @@ public:
     virtual shared_ptr<Box> createBox(_out_ TeXEnvironment& env) = 0;
 };
 
-}
+} // namespace tex
 
 #endif // ATOM_H_INCLUDED
