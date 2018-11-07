@@ -214,10 +214,8 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
         arr[0] = 0;
         arr[col] = arr[0];
         for (int i = 1; i < col; i++) {
-            if (i % 2 == 0)
-                arr[i] = AlignSep->_width;
-            else
-                arr[i] = Align->_width;
+            if (i % 2 == 0) arr[i] = AlignSep->_width;
+            else arr[i] = Align->_width;
         }
     }
     break;

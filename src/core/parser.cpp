@@ -937,16 +937,18 @@ void TeXParser::parse() throw(ex_parse) {
 }
 
 /**
- * Convert a character to a atom
+ * Convert a character to an atom
  * @param c Character to be convert
  * @param oneChar If Convert only one char in the parse string
  */
 shared_ptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_parse) {
     if (_ignoreWhiteSpace) {
         // the unicode Greek Letters in math mode are not drawn with the Greek font
-        if (c >= 945 && c <= 969) { // Greek small letter
+        if (c >= 945 && c <= 969) {
+            // Greek small letter
             return SymbolAtom::get(TeXFormula::_symbolMappings[c]);
-        } else if (c >= 913 && c <= 937) { // Greek capital letter
+        } else if (c >= 913 && c <= 937) {
+            // Greek capital letter
             wstring ltx;
             utf82wide(TeXFormula::_symbolFormulaMappings[c].c_str(), ltx);
             return TeXFormula(ltx)._root;
@@ -1005,7 +1007,6 @@ shared_ptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_p
             if (!_isPartial) throw ex_parse("Unknown character : '" + tostring(c) + "'");
             else {
                 if (_hideUnknownChar) return shared_ptr<Atom>(nullptr);
-
                 shared_ptr<Atom> rm(new RomanAtom(TeXFormula(L"\\text{(unknown char " + towstring((int)c) + L")}")._root));
                 return shared_ptr<Atom>(new ColorAtom(rm, TRANS, RED));
             }
