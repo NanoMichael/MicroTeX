@@ -728,7 +728,14 @@ public:
     bool _isTt;
     bool _isIt;
 
-    DefaultTeXFont(float pointSize, float f = 1, bool b = false, bool rm = false, bool ss = false, bool tt = false, bool it = false) :
+    DefaultTeXFont(
+        float pointSize,
+        float f = 1,
+        bool b = false,
+        bool rm = false,
+        bool ss = false,
+        bool tt = false,
+        bool it = false) :
         _size(pointSize), _factor(f), _isBold(b), _isRoman(rm), _isSs(ss), _isTt(tt), _isIt(it) {
     }
 
@@ -770,8 +777,6 @@ public:
     shared_ptr<CharFont> getLigature(_in_ const CharFont& left, _in_  const CharFont& right) override;
 
     Char getNextLarger(_in_ const Char& c, int style) override;
-
-    /********************* small functions **********************/
 
     inline shared_ptr<TeXFont> copy() override;
 
@@ -948,7 +953,7 @@ public:
     static void enableMagnification(bool b);
 
     /**
-     * initialize the class (actually load resources), should be called before used
+     * initialize the class (actually load resources), must be called before use
      */
     static void _init_();
 
@@ -1106,5 +1111,6 @@ public:
 
 };
 
-}
+} // namespace tex
+
 #endif // FONTS_H_INCLUDED

@@ -171,7 +171,7 @@ wstring TeXParser::getGroup(wchar_t open, wchar_t close) throw(ex_parse) {
         if (group != 0) return _parseString.substr(spos + 1, _pos - spos - 1);
         return _parseString.substr(spos + 1, _pos - spos - 2);
     }
-    throw ex_parse("missing '" + tostring((char)open) + "'!");
+    throw ex_parse("Missing '" + tostring((char)open) + "'!");
 }
 
 wstring TeXParser::getGroup(const wstring& open, const wstring& close) throw(ex_parse) {
@@ -334,6 +334,8 @@ wstring TeXParser::getCommandWithArgs(const wstring& command) {
     MacroInfo* mac = it->second;
     int mac_opts = 0;
     if (mac->_hasOptions) mac_opts = mac->_posOpts;
+
+    // return as format: \cmd[opt][...]{arg}{...}
 
     vector<wstring> mac_args;
     getOptsArgs(mac->_nbArgs, mac_opts, mac_args);
@@ -728,7 +730,7 @@ void TeXParser::firstpass() throw(ex_parse) {
                 args[0] = com;
                 try {
                     mac->invoke(*this, args);
-                    // retrieve the last element as return
+                    // the last element is the returned value
                     wstring x = args.back();
                     _parseString.replace(spos, _pos - spos, x);
                 } catch (ex_parse& e) {

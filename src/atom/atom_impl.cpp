@@ -82,8 +82,7 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
             int nrep = 0;
             valueof(args[1], nrep);
             wstring str = L"";
-            for (int j = 0; j < nrep; j++)
-                str += args[2];
+            for (int j = 0; j < nrep; j++) str += args[2];
             opt.insert(pos, str);
             len = opt.length();
             pos--;
@@ -115,8 +114,7 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
                     break;
                 }
             }
-            if (!hasrep)
-                lpos.push_back(ALIGN_CENTER);
+            if (!hasrep) lpos.push_back(ALIGN_CENTER);
         }
         break;
         }
@@ -246,8 +244,7 @@ void MatrixAtom::recalculateLine(
             int j = r;
             for (; j >= 0 && j > r + n; j--) {
                 if (boxarr[j][0]->_type == TYPE_HLINE) {
-                    if (j == 0)
-                        break;
+                    if (j == 0) break;
                     h += drt;
                     n--;
                 } else {
@@ -262,8 +259,7 @@ void MatrixAtom::recalculateLine(
         } else {
             for (int j = r; j < r + n && j < row; j++) {
                 if (boxarr[j][0]->_type == TYPE_HLINE) {
-                    if (j == row - 1)
-                        break;
+                    if (j == row - 1) break;
                     h += drt;
                     n++;
                 } else {
@@ -365,8 +361,7 @@ shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     float* lineHeight = new float[row]();
     float* rowWidth = new float[col]();
     shared_ptr<Box>** boxarr = new shared_ptr<Box>*[row]();
-    for (int i = 0; i < row; i++)
-        boxarr[i] = new shared_ptr<Box>[col]();
+    for (int i = 0; i < row; i++) boxarr[i] = new shared_ptr<Box>[col]();
 
     float matW = 0;
     float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
@@ -424,22 +419,19 @@ shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
         int n = multi->getSkipped();
         float w = 0;
         int j = 0;
-        for (j = c; j < c + n - 1; j++)
-            w += rowWidth[j] + Hsep[j + 1];
+        for (j = c; j < c + n - 1; j++) w += rowWidth[j] + Hsep[j + 1];
         w += rowWidth[j];
         if (boxarr[r][c]->_width > w) {
             matW += boxarr[r][c]->_width - w;
             float extraW = (boxarr[r][c]->_width - w) / n;
-            for (int j = c; j < c + n; j++)
-                rowWidth[j] += extraW;
+            for (int j = c; j < c + n; j++) rowWidth[j] += extraW;
         }
     }
 
     for (int j = 0; j < col + 1; j++) {
         matW += Hsep[j];
         auto it = _vlines.find(j);
-        if (it != _vlines.end())
-            matW += it->second->getWidth(env);
+        if (it != _vlines.end()) matW += it->second->getWidth(env);
     }
 
     auto Vsep = _vsep_in.createBox(env);
@@ -528,8 +520,7 @@ shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     // column specifiers
     for (int i = 0; i < col; i++) {
         auto it = _columnSpecifiers.find(i);
-        if (it == _columnSpecifiers.end())
-            continue;
+        if (it == _columnSpecifiers.end()) continue;
         auto spe = it->second;
         RowAtom* p = nullptr;
         RowAtom* r = dynamic_cast<RowAtom*>(spe.get());
@@ -541,8 +532,7 @@ shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
         for (size_t j = 0; j < p->size(); j++) {
             CellSpecifier* s = dynamic_cast<CellSpecifier*>(p->get(j).get());
             if (s != nullptr) {
-                for (int k = 0; k < row; k++)
-                    s->apply(boxarr[k][i]);
+                for (int k = 0; k < row; k++) s->apply(boxarr[k][i]);
             }
         }
     }
@@ -550,24 +540,20 @@ shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     // row specifiers
     for (int i = 0; i < row; i++) {
         auto it = _matrix->_rowSpecifiers.find(i);
-        if (it == _matrix->_rowSpecifiers.end())
-            continue;
+        if (it == _matrix->_rowSpecifiers.end()) continue;
         for (auto s : it->second) {
-            for (int j = 0; j < col; j++)
-                s->apply(boxarr[i][j]);
+            for (int j = 0; j < col; j++) s->apply(boxarr[i][j]);
         }
     }
 
     // cell specifiers
     for (int i = 0; i < row; i++) {
-        if (boxarr[i][0]->_type == TYPE_HLINE)
-            continue;
+        if (boxarr[i][0]->_type == TYPE_HLINE) continue;
         for (int j = 0; j < col; j++) {
             string str = tostring(i) + tostring(j);
             auto it = _matrix->_cellSpecifiers.find(str);
             if (it != _matrix->_cellSpecifiers.end()) {
-                for (auto s : it->second)
-                    s->apply(boxarr[i][j]);
+                for (auto s : it->second) s->apply(boxarr[i][j]);
             }
         }
     }
@@ -583,8 +569,7 @@ shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     delete[] lineDepth;
     delete[] lineHeight;
     delete[] rowWidth;
-    for (int i = 0; i < row; i++)
-        delete[] boxarr[i];
+    for (int i = 0; i < row; i++) delete[] boxarr[i];
     delete[] boxarr;
 
     return shared_ptr<Box>(vb);
@@ -702,6 +687,7 @@ shared_ptr<Box> FencedAtom::createBox(_out_ TeXEnvironment& env) {
 void FractionAtom::init(
     const shared_ptr<Atom>& num, const shared_ptr<Atom>& den,
     bool nodef, int unit, float t) throw(ex_invalid_unit) {
+
     _numAlign = ALIGN_CENTER;
     _denomAlign = ALIGN_CENTER;
     _deffactor = 1.f;
@@ -955,17 +941,17 @@ shared_ptr<Box> NthRoot::createBox(_out_ TeXEnvironment& env) {
     rootSign->_shift = -(b->_height + clr);
     shared_ptr<OverBar> ob(new OverBar(b, clr, rootSign->_height));
     ob->_shift = -(b->_height + clr + drt);
-    shared_ptr<HorizontalBox> squreRoot(new HorizontalBox(rootSign));
-    squreRoot->add(ob);
+    shared_ptr<HorizontalBox> squareRoot(new HorizontalBox(rootSign));
+    squareRoot->add(ob);
 
-    if (_root == nullptr) // simple square-root
-        return squreRoot;
+    // simple square-root
+    if (_root == nullptr) return squareRoot;
 
     // nth root
     auto r = _root->createBox(*(env.rootStyle()));
     // shift root up
-    float bottomShift = FACTOR * (squreRoot->_height + squreRoot->_depth);
-    r->_shift = squreRoot->_depth - r->_depth - bottomShift;
+    float bottomShift = FACTOR * (squareRoot->_height + squareRoot->_depth);
+    r->_shift = squareRoot->_depth - r->_depth - bottomShift;
 
     // negative kerning
     shared_ptr<Box> negkern = SpaceAtom(UNIT_MU, -10.f, 0, 0).createBox(env);
@@ -977,7 +963,7 @@ shared_ptr<Box> NthRoot::createBox(_out_ TeXEnvironment& env) {
 
     res->add(r);
     res->add(negkern);
-    res->add(squreRoot);
+    res->add(squareRoot);
     return res;
 }
 
