@@ -15,8 +15,7 @@ using namespace tex;
 namespace tex {
 
 inline static void parseMap(const string& options, _out_ map<string, string>& res) {
-    if (options.empty())
-        return;
+    if (options.empty()) return;
 
     strtokenizer tokens(options, ",");
     const int c = tokens.count_tokens();
@@ -26,16 +25,14 @@ inline static void parseMap(const string& options, _out_ map<string, string>& re
         vector<string> optarg;
         split(tok, '=', optarg);
         if (!optarg.empty()) {
-            if (optarg.size() == 2)
-                res[trim(optarg[0])] = trim(optarg[1]);
-            else if (optarg.size() == 1)
-                res[trim(optarg[0])] = "";
+            if (optarg.size() == 2) res[trim(optarg[0])] = trim(optarg[1]);
+            else if (optarg.size() == 1) res[trim(optarg[0])] = "";
         }
     }
 }
 
 /**
- * atom to justify cells in array
+ * Atom to justify cells in array
  */
 class CellSpecifier : public Atom {
 public:
@@ -47,7 +44,7 @@ public:
 };
 
 /**
- * atom representing column color in array
+ * Atom representing column color in array
  */
 class CellColorAtom : public CellSpecifier {
 private:
@@ -64,7 +61,7 @@ public:
 };
 
 /**
- * atom representing column foreground in array
+ * Atom representing column foreground in array
  */
 class CellForegroundAtom : public CellSpecifier {
 private:
@@ -81,7 +78,7 @@ public:
 };
 
 /**
- * atom representing multi-row
+ * Atom representing multi-row
  */
 class MultiRowAtom : public Atom {
 private:
@@ -111,7 +108,7 @@ public:
 class VlineAtom;
 
 /**
- * atom representing matrix
+ * Enum specifies matrix type
  */
 enum MAT {
     ARRAY = 0,
@@ -124,6 +121,9 @@ enum MAT {
     ALIGNEDAT
 };
 
+/**
+ * Atom represents matrix
+ */
 class MatrixAtom : public Atom {
 private:
     static map<wstring, wstring> _colspeReplacement;
@@ -158,6 +158,7 @@ private:
     float* getColumnSep(_out_ TeXEnvironment& env, float width);
 
 public:
+    // The color to draw the rule of the matrix
     static color LINE_COLOR;
 
     static SpaceAtom _hsep, _semihsep, _vsep_in, _vsep_ext_top, _vsep_ext_bot;
@@ -180,10 +181,11 @@ public:
 };
 
 /**
- * an atom representing vertical-line in matrix environment
+ * An atom representing vertical-line in matrix environment
  */
 class VlineAtom : public Atom {
 private:
+    // Number of lines to draw
     int _n;
 
 public:
@@ -203,8 +205,7 @@ public:
     }
 
     shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        if (_n == 0)
-            return shared_ptr<Box>(new StrutBox(0, 0, 0, 0));
+        if (_n == 0) return shared_ptr<Box>(new StrutBox(0, 0, 0, 0));
 
         float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
         shared_ptr<Box> b(new HorizontalRule(_height, drt, _shift, MatrixAtom::LINE_COLOR, true));
@@ -215,8 +216,7 @@ public:
             hb->add(sep);
         }
 
-        if (_n > 0)
-            hb->add(b);
+        if (_n > 0) hb->add(b);
 
         return shared_ptr<Box>(hb);
     }
@@ -229,7 +229,7 @@ enum MULTILINETYPE {
 };
 
 /**
- * an atom representing a vertical row of other atoms
+ * An atom representing a vertical row of other atoms
  */
 class MultlineAtom : public Atom {
 private:
@@ -257,7 +257,7 @@ public:
 };
 
 /**
- * an atom representing a big delimiter atom (i.e. sigma)
+ * An atom representing a big delimiter atom (i.e. sigma)
  */
 class BigDelimiterAtom : public Atom {
 private:
@@ -284,7 +284,7 @@ public:
 };
 
 /**
- * an atom representing a bold atom
+ * An atom representing a bold atom
  */
 class BoldAtom : public Atom {
 private:
@@ -307,7 +307,7 @@ public:
 };
 
 /**
- * an atom with cedilla
+ * An atom with cedilla
  */
 class CedillAtom : public Atom {
 private:
@@ -345,7 +345,7 @@ public:
 };
 
 /**
- * an atom representing ddots
+ * An atom representing ddots
  */
 class DdtosAtom : public Atom {
 public:
@@ -372,7 +372,7 @@ public:
 };
 
 /**
- * an atom representing a boxed base atom
+ * An atom representing a boxed base atom
  */
 class FBoxAtom : public Atom {
 protected:
@@ -385,8 +385,7 @@ public:
     FBoxAtom() = delete;
 
     FBoxAtom(const shared_ptr<Atom>& base, color bg = TRANS, color line = TRANS) {
-        if (base == nullptr)
-            _base = shared_ptr<Atom>(new RowAtom());
+        if (base == nullptr) _base = shared_ptr<Atom>(new RowAtom());
         else {
             _base = base;
             _type = base->_type;
@@ -399,15 +398,14 @@ public:
         auto bbase = _base->createBox(env);
         float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
         float space = INTERSPACE * SpaceAtom::getFactor(UNIT_EM, env);
-        if (istrans(_bg))
-            return shared_ptr<Box>(new FramedBox(bbase, drt, space));
+        if (istrans(_bg)) return shared_ptr<Box>(new FramedBox(bbase, drt, space));
         env._isColored = true;
         return shared_ptr<Box>(new FramedBox(bbase, drt, space, _line, _bg));
     }
 };
 
 /**
- * an atom representing a boxed base atom
+ * An atom representing a boxed base atom
  */
 class DoubleFramedAtom : public FBoxAtom {
 public:
@@ -425,7 +423,7 @@ public:
 };
 
 /**
- * an atom representing a box-shadowed atom
+ * An atom representing a box-shadowed atom
  */
 class ShadowAtom : public FBoxAtom {
 public:
@@ -486,7 +484,7 @@ public:
 };
 
 /**
- * an atom representing a fraction
+ * An atom representing a fraction
  */
 class FractionAtom : public Atom {
 private:
@@ -506,8 +504,7 @@ private:
     bool _deffactorset;
 
     inline int checkAlign(int align) {
-        if (align == ALIGN_LEFT || align == ALIGN_RIGHT)
-            return align;
+        if (align == ALIGN_LEFT || align == ALIGN_RIGHT) return align;
         return ALIGN_CENTER;
     }
 
@@ -567,10 +564,11 @@ public:
 };
 
 /**
- * an atom used in array mode to write on several columns
+ * An atom used in array mode that across several columns
  */
 class MulticolumnAtom : public Atom {
 protected:
+    // Number of columns across
     int _n;
     int _align;
     float _w;
@@ -623,7 +621,7 @@ public:
 };
 
 /**
- * an atom used in array mode to write on several columns
+ * An atom used in array mode representing "dots"
  */
 class HdotsforAtom : public MulticolumnAtom {
 private:
@@ -640,7 +638,7 @@ public:
 };
 
 /**
- * an atom representing id-dots
+ * An atom representing id-dots
  */
 class IddotsAtom : public Atom {
 public:
@@ -668,7 +666,7 @@ public:
 };
 
 /**
- * an atom representing an IJ
+ * An atom representing an IJ
  */
 class IJAtom : public Atom {
 private:
@@ -690,7 +688,7 @@ public:
 };
 
 /**
- * an atom representing a italic atom
+ * An atom representing a italic atom
  */
 class ItAtom : public Atom {
 private:
@@ -803,7 +801,7 @@ public:
 };
 
 /**
- * an atom with an Ogonek
+ * An atom with an Ogonek
  */
 class OgonekAtom : public Atom {
 private:
@@ -1072,7 +1070,7 @@ public:
 };
 
 /**
- * an atom representing a small Capital atom
+ * An atom representing a small Capital atom
  */
 class SmallCpaAtom : public Atom {
 private:
@@ -1371,7 +1369,7 @@ public:
 };
 
 /**
- * An atom representing vdots
+ * An atom representing vertical-dots
  */
 class VdotsAtom : public Atom {
 public:

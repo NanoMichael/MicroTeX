@@ -30,7 +30,6 @@ private:
     bool _isPartial;
     bool _hideUnknownChar;
 
-    /********************* statics *****************/
     /**
      * escape character
      */
@@ -75,7 +74,7 @@ private:
     void insert(int beg, int end, const wstring& formula);
 
     /**
-     * return a string with command and options and args
+     * Return a string with command and options and args
      *
      * @param command
      *      name of command
@@ -84,7 +83,7 @@ private:
     wstring getCommandWithArgs(const wstring& command);
 
     /**
-     * process the given TeX command (by parsing following command
+     * Process the given TeX command (by parsing following command
      * arguments in the parse string).
      */
     shared_ptr<Atom> processCommands(const wstring& cmd) throw(ex_parse);
@@ -106,7 +105,7 @@ public:
     }
 
     /**
-     * create a new TeXParser
+     * Create a new TeXParser
      * @param latex
      *      the string to be parsed
      * @param formula
@@ -119,7 +118,7 @@ public:
     }
 
     /**
-     * create a new TeXParser
+     * Create a new TeXParser
      * @param isPartial
      *      if true certain exceptions are not thrown
      * @param latex
@@ -134,7 +133,7 @@ public:
     }
 
     /**
-     * create a new TeXParser with or without a first pass
+     * Create a new TeXParser with or without a first pass
      * @param isPartial
      *      if true certain exceptions are not thrown
      * @param latex
@@ -151,7 +150,7 @@ public:
     }
 
     /**
-     * create a new TeXParser with or without a first pass
+     * Create a new TeXParser with or without a first pass
      * @param latex
      *      the string to be parsed
      * @param formula
@@ -212,38 +211,38 @@ public:
     }
 
     /**
-     * reset the parser with a new latex expression
+     * Reset the parser with a new latex expression
      */
     void reset(const wstring& latex);
 
     /**
-     * return true if we get a partial formula
+     * Return true if we get a partial formula
      */
     inline bool getIsPartial() const {
         return _isPartial;
     }
 
     /**
-     * get the number of the current line
+     * Get the number of the current line
      */
     inline int getLine() const {
         return _line;
     }
 
     /**
-     * get the number of the current column
+     * Get the number of the current column
      */
     inline int getCol() const {
         return _pos - _col - 1;
     }
 
     /**
-     * get and remove the last atom of the current formula
+     * Get and remove the last atom of the current formula
      */
     shared_ptr<Atom> getLastAtom();
 
     /**
-     * get and remove the atom represented by the current formula
+     * Get and remove the atom represented by the current formula
      */
     shared_ptr<Atom> getFormulaAtom();
 
@@ -336,7 +335,7 @@ public:
     void addRow() throw(ex_parse);
 
     /**
-     * parse the input string
+     * Parse the input string
      * @throw ex_parse
      *      if an error is encountered during parse
      */
@@ -410,7 +409,7 @@ public:
      * @param nbArgs
      *      the number of arguments of the command
      * @param opts
-     *      must be 1 if the options are found before the first argument
+     *      must be 1 if the options are found before the first argument,
      *      and must be 2 if they must be found before the second argument
      * @param args
      *      a vector to put with argument strings
@@ -437,6 +436,6 @@ public:
 
 };
 
-}
+} // namespace tex
 
 #endif // PARSER_H_INCLUDED
