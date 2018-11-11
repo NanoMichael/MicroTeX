@@ -21,7 +21,7 @@ private:
     static TeXRenderBuilder* _builder;
 public:
     /**
-     * Initialize TeX context with specified root path of resources
+     * Initialize TeX context with specified root path of the TeX resources
      *
      * @param res_root_path
      *      Root path of resources, default is 'res'
@@ -32,15 +32,15 @@ public:
      * Parse TeX formatted string to TeXRender
      *
      * @param tex
-     *      TeX formatted string
+     *      the TeX formatted string
      * @param width
-     *      Context width
+     *      the width of the 2D graphics context
      * @param textSize
-     *      Text size
+     *      the text size
      * @param lineSpace
-     *      Line space
+     *      the line space
      * @param fg
-     *      Foreground color
+     *      the foreground color
      */
     static TeXRender* parse(const wstring& tex, int width, float textSize, float lineSpace, color fg);
 
@@ -50,6 +50,6 @@ public:
     static void release();
 };
 
-}
+} // namespace tex
 
 #endif // LATEX_H_INCLUDED
