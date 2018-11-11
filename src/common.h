@@ -56,8 +56,7 @@ static const float F_MIN = -F_MAX;
 static const double PI = atan(1.0) * 4;
 
 /**
- * For compare with 0.0f, if a value < PREC,
- * we trade it as 0.0f
+ * For compare with 0.0f, if a value < PREC,  we trade it as 0.0f
  */
 static const float PREC = 0.0000001f;
 
@@ -167,6 +166,9 @@ inline string& rtrim(string& s) {
     return s;
 }
 
+/**
+ * Ignore left and right side whitespace in a string
+ */
 inline string& trim(string& s) {
     return ltrim(rtrim(s));
 }
@@ -225,8 +227,7 @@ public:
         bool in = false;
         for (int i = _pos, len = _str.length(); i < len; i++) {
             if (_del.find(_str[i]) != string::npos) {
-                if (_ret)
-                    c++;
+                if (_ret) c++;
                 if (in) {
                     c++;
                     in = false;
@@ -235,8 +236,7 @@ public:
                 in = true;
             }
         }
-        if (in)
-            c++;
+        if (in) c++;
         return c;
     }
 
@@ -254,8 +254,7 @@ public:
                 return _str.substr(i);
             }
 
-            while (i < len && _del.find(_str[i]) != string::npos)
-                i++;
+            while (i < len && _del.find(_str[i]) != string::npos) i++;
 
             _pos = i;
             if (i < len) {
@@ -275,13 +274,10 @@ public:
 inline string& wide2utf8(const wchar_t* in, _out_ string& out) {
     unsigned int codepoint = 0;
     for (; *in != 0; ++in) {
-        if (*in >= 0xd800 && *in <= 0xdbff)
-            codepoint = ((*in - 0xd800) << 10) + 0x10000;
+        if (*in >= 0xd800 && *in <= 0xdbff) codepoint = ((*in - 0xd800) << 10) + 0x10000;
         else {
-            if (*in >= 0xdc00 && *in <= 0xdfff)
-                codepoint |= *in - 0xdc00;
-            else
-                codepoint = *in;
+            if (*in >= 0xdc00 && *in <= 0xdfff) codepoint |= *in - 0xdc00;
+            else codepoint = *in;
 
             if (codepoint <= 0x7f)
                 out.append(1, static_cast<char>(codepoint));
@@ -314,8 +310,7 @@ inline string wide2utf8(const wchar_t* in) {
  * the encoding of input char sequence must be known as UTF-8
  */
 inline wstring& utf82wide(const char* in, _out_ wstring& out) {
-    if (in == nullptr)
-        return out;
+    if (in == nullptr) return out;
     unsigned int codepoint;
     while (*in != 0) {
         unsigned char ch = static_cast<unsigned char>(*in);
@@ -348,8 +343,7 @@ inline wstring utf82wide(const char* in) {
 inline string& quotereplace(const string& src, _out_ string& out) {
     for (size_t i = 0; i < src.length(); i++) {
         char c = src[i];
-        if (c == '\\' || c == '$')
-            out.append(1, '\\');
+        if (c == '\\' || c == '$') out.append(1, '\\');
         out.append(1, c);
     }
     return out;
@@ -358,8 +352,7 @@ inline string& quotereplace(const string& src, _out_ string& out) {
 inline wstring& quotereplace(const wstring& src, _out_ wstring& out) {
     for (size_t i = 0; i < src.length(); i++) {
         wchar_t c = src[i];
-        if (c == L'\\' || c == L'$')
-            out.append(1, L'\\');
+        if (c == L'\\' || c == L'$') out.append(1, L'\\');
         out.append(1, c);
     }
     return out;
@@ -370,8 +363,7 @@ inline wstring& quotereplace(const wstring& src, _out_ wstring& out) {
  */
 inline string& replacefirst(_out_ string& src, const string& from, const string& to) {
     size_t start = src.find(from);
-    if (start == string::npos)
-        return src;
+    if (start == string::npos) return src;
     src.replace(start, from.length(), to);
     return src;
 }
@@ -559,7 +551,7 @@ public:
 };
 
 /**
- * unknown delimiter type
+ * Unknown delimiter type
  */
 class ex_invalid_delimiter_type : public ex_tex {
 public:
@@ -568,7 +560,7 @@ public:
 };
 
 /**
- * matrix dimension not valid
+ * Matrix dimension not valid
  */
 class ex_invalid_matrix : public ex_tex {
 public:
@@ -577,7 +569,7 @@ public:
 };
 
 /**
- * invalid symbol
+ * Invalid symbol
  */
 class ex_invalid_symbol_type : public ex_tex {
 public:
@@ -586,7 +578,7 @@ public:
 };
 
 /**
- * invalid TeXFormula
+ * Invalid TeXFormula
  */
 class ex_invalid_formula : public ex_tex {
 public:
@@ -595,7 +587,7 @@ public:
 };
 
 /**
- * unknown unit constant was used
+ * Unknown unit constant was used
  */
 class ex_invalid_unit : public ex_tex {
 public:
@@ -604,7 +596,7 @@ public:
 };
 
 /**
- * error occurred while parsing a string to a formula
+ * Error occurred while parsing a string to a formula
  */
 class ex_parse : public ex_tex {
 public:
@@ -616,7 +608,7 @@ public:
 };
 
 /**
- * symbol mapping not found
+ * Symbol mapping not found
  */
 class ex_symbol_mapping_not_found : public ex_tex {
 public:
@@ -625,7 +617,7 @@ public:
 };
 
 /**
- * unknown symbol
+ * Unknown symbol
  */
 class ex_symbol_not_found : public ex_tex {
 public:
@@ -634,7 +626,7 @@ public:
 };
 
 /**
- * text style mapping not found
+ * Text style mapping not found
  */
 class ex_text_style_mapping_not_found : public ex_tex {
 public:
@@ -654,33 +646,34 @@ public:
 
 enum TeXConstants {
 
-    /************ alignment constants ***************/
+    /********** alignment constants ************/
     /**
-     * extra space will be added to the right of the formula
+     * Extra space will be added to the right of the formula
      */
     ALIGN_LEFT = 0,
     /**
-     * extra space will be added to the left of the formula
+     * Extra space will be added to the left of the formula
      */
     ALIGN_RIGHT, // =1
     /**
-     * the formula will be centered in the middle. this constant
+     * The formula will be centered in the middle. this constant
      * can be used for both horizontal and vertical alignment
      */
     ALIGN_CENTER, // =2
     /**
-     * extra space will be added under the formula
+     * Extra space will be added under the formula
      */
     ALIGN_TOP, // =3
     /**
-     * extra space will be added above the formula
+     * Extra space will be added above the formula
      */
     ALIGN_BOTTOM, // =4
     /**
-     * none
+     * None
      */
     ALIGN_NONE, // =5
 
+    /*********** space size constants ***********/
     THINMUSKIP = 1,
     MEDMUSKIP = 2,
     THICKMUSKIP = 3,
@@ -690,45 +683,46 @@ enum TeXConstants {
 
     QUAD = 3,
 
+    /******** script display type constants ******/
     SCRIPT_NORMAL = 0,
     SCRIPT_NOLIMITS,
     SCRIPT_LIMITS,
 
     /*********** symbol type constants ***********/
     /**
-     * ordinary symbol, e.g. "slash"
+     * Ordinary symbol, e.g. "slash"
      */
     TYPE_ORDINARY = 0,
     /**
-     * big operator, e.g. "sum"
+     * Big operator, e.g. "sum"
      */
     TYPE_BIG_OPERATOR, // =1
     /**
-     * binary operator, e.g. "plus"
+     * Binary operator, e.g. "plus"
      */
     TYPE_BINARY_OPERATOR, // =2
     /**
-     * relation, e.g. "equals"
+     * Relation, e.g. "equals"
      */
     TYPE_RELATION, // =3
     /**
-     * opening symbol, e.g. "lbrace"
+     * Opening symbol, e.g. "lbrace"
      */
     TYPE_OPENING, // =4
     /**
-     * closing symbol, e.g. "rbrace"
+     * Closing symbol, e.g. "rbrace"
      */
     TYPE_CLOSING, // =5
     /**
-     * punctuation symbol, e.g. "comma"
+     * Punctuation symbol, e.g. "comma"
      */
     TYPE_PUNCTUATION, // =6
     /**
-     * atom type: inner atom (NOT FOR SYMBOLS)
+     * Atom type: inner atom (NOT FOR SYMBOLS)
      */
     TYPE_INNER, // =7
     /**
-     * accent, e.g. "hat"
+     * Accent, e.g. "hat"
      */
     TYPE_ACCENT = 10,
     TYPE_INTERTEXT, // =11
@@ -736,7 +730,7 @@ enum TeXConstants {
     TYPE_HLINE, // =13
     TYPE_MULTIROW, // =14
 
-    /****** over and under dilimiter type constants ******/
+    /****** over and under delimiter type constants ******/
     DELIM_BRACE = 0,
     DELIM_SQUARE_BRACKET,
     DELIM_BRACKET,
@@ -751,7 +745,7 @@ enum TeXConstants {
 
     /************ TeX style constants ************/
     /**
-     * display style
+     * Display style
      * @par
      * The larger versions of big operators are used and limits are placed under
      * and over these operators (default). Symbols are rendered in the largest
@@ -759,7 +753,7 @@ enum TeXConstants {
      */
     STYLE_DISPLAY = 0,
     /**
-     * text style
+     * Text style
      * @par
      * The small versions of big operator are used and limits are attached to
      * these operators as scripts (default). The same size as in the display
@@ -767,13 +761,13 @@ enum TeXConstants {
      */
     STYLE_TEXT = 2,
     /**
-     * script style
+     * Ccript style
      * @par
      * The same as the the text style, but symbols are rendered in a smaller size.
      */
     STYLE_SCRIPT = 4,
     /**
-     * script_script style
+     * Script_script style
      * @par
      * The same as the script style, but symbols are rendered in a smaller size.
      */
