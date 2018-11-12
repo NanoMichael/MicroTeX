@@ -1,22 +1,21 @@
 #ifndef FONTS_H_INCLUDED
 #define FONTS_H_INCLUDED
 
+#include "common.h"
 #include "core/formula.h"
+#include "fonts/alphabet.h"
 #include "graphic/graphic.h"
 #include "xml/tinyxml2.h"
-#include "fonts/alphabet.h"
-#include "common.h"
 
-#include <string>
-#include <map>
-#include <vector>
 #include <cstring>
+#include <map>
+#include <string>
 #include <unordered_map>
+#include <vector>
 
 using namespace std;
 using namespace tex;
 using namespace tinyxml2;
-
 
 namespace tex {
 
@@ -25,7 +24,6 @@ namespace tex {
  * correction
  */
 class Metrics {
-
 private:
     float _w;
     float _h;
@@ -38,8 +36,8 @@ public:
 
     Metrics(const Metrics&) = delete;
 
-    Metrics(float w, float h, float d, float i, float factor, float s) :
-        _w(w * factor), _h(h * factor), _d(d * factor), _i(i * factor), _s(s) {}
+    Metrics(float w, float h, float d, float i, float factor, float s)
+        : _w(w * factor), _h(h * factor), _d(d * factor), _i(i * factor), _s(s) {}
 
     inline float getWidth() const {
         return _w;
@@ -72,14 +70,11 @@ public:
     int _fontId;
     int _boldFontId;
 
-    CharFont() :
-        _c(0), _fontId(0), _boldFontId(0) {}
+    CharFont() : _c(0), _fontId(0), _boldFontId(0) {}
 
-    CharFont(wchar_t ch, int f) :
-        _c(ch), _fontId(f), _boldFontId(f) {}
+    CharFont(wchar_t ch, int f) : _c(ch), _fontId(f), _boldFontId(f) {}
 
-    CharFont(wchar_t ch, int f, int bf) :
-        _c(ch), _fontId(f), _boldFontId(bf) {}
+    CharFont(wchar_t ch, int f, int bf) : _c(ch), _fontId(f), _boldFontId(bf) {}
 
 #ifdef __DEBUG
     friend ostream& operator<<(ostream& os, const CharFont& info);
@@ -97,6 +92,7 @@ private:
     const Font* _font;
     shared_ptr<CharFont> _cf;
     shared_ptr<Metrics> _m;
+
 public:
     Char() = delete;
 
@@ -155,8 +151,7 @@ public:
 
     Extension(const Extension&) = delete;
 
-    Extension(Char* t, Char* m, Char* r, Char* b) :
-        _top(t), _middle(m), _repeat(r), _bottom(b) {}
+    Extension(Char* t, Char* m, Char* r, Char* b) : _top(t), _middle(m), _repeat(r), _bottom(b) {}
 
     inline bool hasTop() const {
         return _top != nullptr;
@@ -197,8 +192,7 @@ class CharCouple {
 public:
     wchar_t _left, _right;
 
-    CharCouple(wchar_t l, wchar_t r) :
-        _left(l), _right(r) {
+    CharCouple(wchar_t l, wchar_t r) : _left(l), _right(r) {
     }
 
     inline bool operator==(const CharCouple& c) const {
@@ -221,10 +215,9 @@ struct char_couple_hash {
 #define NUMBER_OF_CHAR_CODES 256
 
 /**
- * class contains all the font information for 1 font
+ * Class contains all the font information for 1 font
  */
 class FontInfo {
-
 private:
     static map<int, FontInfo*> _fonts;
     int _fontId;
@@ -282,26 +275,24 @@ public:
              const string& romanVersion,
              const string& ssVersion,
              const string& ttVersion,
-             const string& itVersion) :
-
-        _fontId(fontId),
-        _path(path),
-        _xHeight(xHeight),
-        _space(space),
-        _quad(quad),
-        _boldVersion(boldVersion),
-        _romanVersion(romanVersion),
-        _ssVersion(ssVersion),
-        _ttVersion(ttVersion),
-        _itVersion(itVersion),
-        _skewChar((wchar_t)-1),
-        _font(nullptr),
-        _boldId(-1),
-        _ssId(-1),
-        _itId(-1),
-        _romanId(-1),
-        _ttId(-1) {
-
+             const string& itVersion)
+        : _fontId(fontId),
+          _path(path),
+          _xHeight(xHeight),
+          _space(space),
+          _quad(quad),
+          _boldVersion(boldVersion),
+          _romanVersion(romanVersion),
+          _ssVersion(ssVersion),
+          _ttVersion(ttVersion),
+          _itVersion(itVersion),
+          _skewChar((wchar_t)-1),
+          _font(nullptr),
+          _boldId(-1),
+          _ssId(-1),
+          _itId(-1),
+          _romanId(-1),
+          _ttId(-1) {
         init(unicode);
         _fonts[_fontId] = this;
     }
@@ -370,7 +361,7 @@ public:
         if (_unicode_count == 0) {
             _extensions[ch] = ext;
         } else if (_unicode.find(ch) == _unicode.end()) {
-            wchar_t s = (wchar_t) _unicode.size();
+            wchar_t s = (wchar_t)_unicode.size();
             _unicode[ch] = s;
             _extensions[s] = ext;
         } else {
@@ -382,7 +373,7 @@ public:
         if (_unicode_count == 0) {
             _metrics[c] = arr;
         } else if (_unicode.find(c) == _unicode.end()) {
-            wchar_t s = (wchar_t) _unicode.size();
+            wchar_t s = (wchar_t)_unicode.size();
             _unicode[c] = s;
             _metrics[s] = arr;
         } else {
@@ -462,7 +453,6 @@ public:
  * necessary fonts and font information.
  */
 class TeXFont {
-
 public:
     static const int NO_FONT;
 
@@ -504,7 +494,7 @@ public:
      *      the style in which the atom should be drawn
      * @return the Char-object for this character containing metric information
      */
-    virtual Char getChar(const CharFont &cf, int style) = 0;
+    virtual Char getChar(const CharFont& cf, int style) = 0;
 
     /**
      * Get a Char-object for the given symbol with metric information depending on "style"
@@ -514,7 +504,7 @@ public:
      *      the style in which the atom should be drawn
      * @return a Char-object for this symbol with metric information
      */
-    virtual Char getChar(const string &name, int style) throw(ex_symbol_mapping_not_found) = 0;
+    virtual Char getChar(const string& name, int style) throw(ex_symbol_mapping_not_found) = 0;
 
     /**
      * Get a Char-object specifying the given character in the default text style
@@ -556,7 +546,7 @@ public:
      *      the style in which the atom should be drawn
      * @return the kern value between both characters (default 0)
      */
-    virtual float getKern(const CharFont &left, const CharFont &right, int style) = 0;
+    virtual float getKern(const CharFont& left, const CharFont& right, int style) = 0;
 
     /**
      * Get the ligature that replaces both characters (if any).
@@ -566,7 +556,7 @@ public:
      *      right character
      * @return a ligature replacing both characters (or null if no any ligature)
      */
-    virtual shared_ptr<CharFont> getLigature(const CharFont &left, const CharFont &right) = 0;
+    virtual shared_ptr<CharFont> getLigature(const CharFont& left, const CharFont& right) = 0;
 
     /**
      * Get the id of mu font
@@ -608,7 +598,7 @@ public:
      * @return the kern amount of the character defined by cf followed by the
      * "skewChar" of it's font
      */
-    virtual float getSkew(const CharFont &cf, int style) = 0;
+    virtual float getSkew(const CharFont& cf, int style) = 0;
 
     virtual float getSpace(int style) = 0;
 
@@ -673,7 +663,6 @@ public:
     virtual shared_ptr<TeXFont> copy() = 0;
 
     virtual ~TeXFont();
-
 };
 
 /**
@@ -681,7 +670,6 @@ public:
  * read from an xml-file
  */
 class DefaultTeXFont : public TeXFont {
-
 private:
     // font related
     static string* _defaultTextStyleMappings;
@@ -698,6 +686,7 @@ private:
     Char getChar(wchar_t c, _in_ const vector<CharFont*>& cf, int style);
 
     shared_ptr<Metrics> getMetrics(_in_ const CharFont& cf, float size);
+
 public:
     static vector<UnicodeBlock> _loadedAlphabets;
     static map<UnicodeBlock, AlphabetRegistration*> _registeredAlphabets;
@@ -735,9 +724,8 @@ public:
         bool rm = false,
         bool ss = false,
         bool tt = false,
-        bool it = false) :
-        _size(pointSize), _factor(f), _isBold(b), _isRoman(rm), _isSs(ss), _isTt(tt), _isIt(it) {
-    }
+        bool it = false)
+        : _size(pointSize), _factor(f), _isBold(b), _isRoman(rm), _isSs(ss), _isTt(tt), _isIt(it) {}
 
     static void addTeXFontDescription(const string& base, const string& file) throw(ex_res_parse);
 
@@ -774,7 +762,7 @@ public:
 
     float getKern(_in_ const CharFont& left, _in_ const CharFont& right, int style) override;
 
-    shared_ptr<CharFont> getLigature(_in_ const CharFont& left, _in_  const CharFont& right) override;
+    shared_ptr<CharFont> getLigature(_in_ const CharFont& left, _in_ const CharFont& right) override;
 
     Char getNextLarger(_in_ const Char& c, int style) override;
 
@@ -966,7 +954,6 @@ public:
  * Parses the font information from an xml-file
  */
 class DefaultTeXFontParser {
-
 public:
     static const string FONTS_RES_BASE;
     // document define
@@ -1064,23 +1051,21 @@ private:
         _root = _doc.RootElement();
 #ifdef __DEBUG
         __DBG("root name:%s\n", _root->Name());
-#endif // __DEBUG
+#endif  // __DEBUG
     }
 
 public:
-    DefaultTeXFontParser() throw(ex_res_parse) :
-        _doc(true, COLLAPSE_WHITESPACE) {
+    DefaultTeXFontParser() throw(ex_res_parse) : _doc(true, COLLAPSE_WHITESPACE) {
         string file = RES_BASE + "/" + RESOURCE_NAME;
         init(file);
     }
 
-    DefaultTeXFontParser(const string& file) throw(ex_xml_parse) :
-        _doc(true, COLLAPSE_WHITESPACE) {
+    DefaultTeXFontParser(const string& file) throw(ex_xml_parse) : _doc(true, COLLAPSE_WHITESPACE) {
         init(file);
     }
 
-    DefaultTeXFontParser(const string& base, const string& file) throw(ex_xml_parse) :
-        _doc(true, COLLAPSE_WHITESPACE), _base(base) {
+    DefaultTeXFontParser(const string& base, const string& file) throw(ex_xml_parse)
+        : _doc(true, COLLAPSE_WHITESPACE), _base(base) {
         init(file);
     }
 
@@ -1106,11 +1091,10 @@ public:
     ~DefaultTeXFontParser() {
 #ifdef __DEBUG
         __DBG("DefaultFontParser destruct\n");
-#endif // __DEBUG
+#endif  // __DEBUG
     }
-
 };
 
-} // namespace tex
+}  // namespace tex
 
-#endif // FONTS_H_INCLUDED
+#endif  // FONTS_H_INCLUDED

@@ -1,6 +1,6 @@
-#include "graphic/graphic.h"
 #include "fonts/fonts.h"
 #include "common.h"
+#include "graphic/graphic.h"
 #include "render.h"
 
 #include <cmath>
@@ -12,9 +12,8 @@ using namespace tinyxml2;
  *                                     Font basic implementation                                            *
  ************************************************************************************************************/
 
-Char::Char(wchar_t c, const Font* f, int fc, const shared_ptr<Metrics>& m) :
-    _c(c), _font_code(fc), _font(f), _m(m), _cf(new CharFont(_c, _font_code)) {
-}
+Char::Char(wchar_t c, const Font* f, int fc, const shared_ptr<Metrics>& m)
+    : _c(c), _font_code(fc), _font(f), _m(m), _cf(new CharFont(_c, _font_code)) {}
 
 Extension::~Extension() {
     if (hasTop()) delete _top;
@@ -28,9 +27,7 @@ map<int, FontInfo*> FontInfo::_fonts;
 void FontInfo::init(int unicode) {
     int num = NUMBER_OF_CHAR_CODES;
     _unicode_count = unicode;
-    if (unicode != 0) {
-        num = unicode;
-    }
+    if (unicode != 0) num = unicode;
     _char_count = num;
     _metrics = new float*[num]();
     _nextLarger = new CharFont*[num]();
@@ -45,9 +42,10 @@ inline shared_ptr<CharFont> FontInfo::getLigture(wchar_t left, wchar_t right) {
 }
 
 void FontInfo::setNextLarger(wchar_t c, wchar_t larger, int fontLarger) {
-    if (_unicode_count == 0) _nextLarger[c] = new CharFont(larger, fontLarger);
+    if (_unicode_count == 0)
+        _nextLarger[c] = new CharFont(larger, fontLarger);
     else if (_unicode.find(c) == _unicode.end()) {
-        wchar_t s = (wchar_t) _unicode.size();
+        wchar_t s = (wchar_t)_unicode.size();
         _unicode[c] = s;
         _nextLarger[s] = new CharFont(larger, fontLarger);
     } else {
@@ -124,7 +122,6 @@ const int DefaultTeXFont::BOT = 3;
 
 bool DefaultTeXFont::_magnificationEnable = true;
 
-
 #ifdef __DEBUG
 ostream& tex::operator<<(ostream& os, const FontInfo& info) {
     // base information
@@ -166,19 +163,17 @@ const string DefaultTeXFontParser::MUFONTID_ATTR = "mufontid";
 const string DefaultTeXFontParser::SPACEFONTID_ATTR = "spacefontid";
 
 /** static const member initialize */
-const map<string, int> DefaultTeXFontParser::_rangeTypeMappings({
-    { "numbers", DefaultTeXFont::NUMBERS },
-    { "capitals", DefaultTeXFont::CAPITAL },
-    { "small", DefaultTeXFont::SMALL },
-    { "unicode", DefaultTeXFont::UNICODE }
-}); // range mapping
+const map<string, int> DefaultTeXFontParser::_rangeTypeMappings(
+    {{"numbers", DefaultTeXFont::NUMBERS},
+     {"capitals", DefaultTeXFont::CAPITAL},
+     {"small", DefaultTeXFont::SMALL},
+     {"unicode", DefaultTeXFont::UNICODE}});  // range mapping
 
-const map<string, void (*)(const XMLElement*, wchar_t c, FontInfo&)> DefaultTeXFontParser::_charChildParsers({
-    { "Kern", DefaultTeXFontParser::parse_kern },
-    { "Lig", DefaultTeXFontParser::parse_lig },
-    { "NextLarger", DefaultTeXFontParser::parse_larger },
-    { "Extension", DefaultTeXFontParser::parse_extension }
-}); // child parsers
+const map<string, void (*)(const XMLElement*, wchar_t c, FontInfo&)> DefaultTeXFontParser::_charChildParsers(
+    {{"Kern", DefaultTeXFontParser::parse_kern},
+     {"Lig", DefaultTeXFontParser::parse_lig},
+     {"NextLarger", DefaultTeXFontParser::parse_larger},
+     {"Extension", DefaultTeXFontParser::parse_extension}});  // child parsers
 
 vector<string> DefaultTeXFontParser::_fontId;
 
@@ -202,19 +197,19 @@ void DefaultTeXFontParser::parse_kern(const XMLElement* e, wchar_t c, _out_ Font
     // get required float attributes
     float kern = getFloatAndCheck("val", e);
     // parsing OK, add kern info
-    f.addKern(c, (wchar_t) code, kern);
+    f.addKern(c, (wchar_t)code, kern);
 }
 
 void DefaultTeXFontParser::parse_lig(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(tex::ex_xml_parse) {
     int code = getIntAndCheck("code", e);
     int lig = getIntAndCheck("ligCode", e);
-    f.addLigture(c, (wchar_t) code, (wchar_t) lig);
+    f.addLigture(c, (wchar_t)code, (wchar_t)lig);
 }
 
 void DefaultTeXFontParser::parse_larger(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(tex::ex_xml_parse) {
     const string fontid = getAttrValueAndCheckIfNotNull("fontId", e);
     int code = getIntAndCheck("code", e);
-    f.setNextLarger(c, (wchar_t) code, indexOf(_fontId, fontid));
+    f.setNextLarger(c, (wchar_t)code, indexOf(_fontId, fontid));
 }
 
 /*************************************************font information********************************************/
@@ -239,7 +234,7 @@ void DefaultTeXFontParser::parse_larger(const XMLElement* e, wchar_t c, _out_ Fo
  */
 void DefaultTeXFontParser::processCharElement(const XMLElement* e, _out_ FontInfo& info) throw(tex::ex_res_parse) {
     // retrieve required integer value
-    wchar_t ch = (wchar_t) getIntAndCheck("code", e);
+    wchar_t ch = (wchar_t)getIntAndCheck("code", e);
     // retrieve optional value
     float* metrics = new float[4];
     metrics[DefaultTeXFont::WIDTH] = getOptionalFloat("width", e, 0);
@@ -256,7 +251,7 @@ void DefaultTeXFontParser::processCharElement(const XMLElement* e, _out_ FontInf
             auto parser = _charChildParsers.at(x->Name());
             parser(x, ch, info);
             x = x->NextSiblingElement();
-        } catch(out_of_range& ex) {
+        } catch (out_of_range& ex) {
             throw tex::ex_xml_parse(RESOURCE_NAME + ": a <Char-element> has an unknown child element '" + x->Name() + "'!");
         }
     }
@@ -281,7 +276,7 @@ void DefaultTeXFontParser::parseStyleMappings(_out_ map<string, vector<CharFont*
     if (mapping == nullptr) return;
 #ifdef __DEBUG
     __DBG("TextStyleMappings tag name: %s\n", mapping->Name());
-#endif // __DEBUG
+#endif  // __DEBUG
     // iterate all mappings
     mapping = mapping->FirstChildElement("TextStyleMapping");
     while (mapping != nullptr) {
@@ -292,7 +287,7 @@ void DefaultTeXFontParser::parseStyleMappings(_out_ map<string, vector<CharFont*
         const XMLElement* range = mapping->FirstChildElement("MapRange");
 #ifdef __DEBUG
         __DBG("MapRange tag name: %s\n", range->Name());
-#endif // __DEBUG
+#endif  // __DEBUG
         vector<CharFont*> charFonts(4);
         while (range != nullptr) {
             const string fontId = getAttrValueAndCheckIfNotNull("fontId", range);
@@ -303,8 +298,10 @@ void DefaultTeXFontParser::parseStyleMappings(_out_ map<string, vector<CharFont*
             if (it == _rangeTypeMappings.end())
                 throw tex::ex_xml_parse(RESOURCE_NAME, "MapRange", "code", "contains an unknown 'range name' '" + code + "'!");
             int codeMapping = it->second;
-            if (boldFontId.empty()) charFonts[codeMapping] = new CharFont((wchar_t) ch, indexOf(_fontId, fontId));
-            else charFonts[codeMapping] = new CharFont((wchar_t) ch, indexOf(_fontId, fontId), indexOf(_fontId, boldFontId));
+            if (boldFontId.empty())
+                charFonts[codeMapping] = new CharFont((wchar_t)ch, indexOf(_fontId, fontId));
+            else
+                charFonts[codeMapping] = new CharFont((wchar_t)ch, indexOf(_fontId, fontId), indexOf(_fontId, boldFontId));
             range = range->NextSiblingElement("MapRange");
         }
         res[textStyleName] = charFonts;
@@ -320,9 +317,9 @@ void DefaultTeXFontParser::parseStyleMappings(_out_ map<string, vector<CharFont*
  */
 void DefaultTeXFontParser::parseExtraPath() throw(tex::ex_res_parse) {
     const XMLElement* syms = _root->FirstChildElement("TeXSymbols");
-    if (syms != nullptr) { // element present
+    if (syms != nullptr) {  // element present
         string include = getAttrValueAndCheckIfNotNull("include", syms);
-        SymbolAtom::addSymbolAtom(_base + "/" +  include);
+        SymbolAtom::addSymbolAtom(_base + "/" + include);
     }
     const XMLElement* settings = _root->FirstChildElement("FormulaSettings");
     if (settings != nullptr) {
@@ -345,7 +342,7 @@ void DefaultTeXFontParser::parseFontDescriptions(_out_ vector<FontInfo*>& fi) th
 
 #ifdef __DEBUG
     __DBG("FontDescriptions, tag name:%s <should be FontDescriptions>\n", des->Name());
-#endif // __DEBUG
+#endif  // __DEBUG
 
     const XMLElement* met = des->FirstChildElement("Metrics");
     while (met != nullptr) {
@@ -360,7 +357,7 @@ void DefaultTeXFontParser::parseFontDescriptions(_out_ vector<FontInfo*>& fi) th
 
 #ifdef __DEBUG
         __DBG("Metrics file path, path:%s\n", path.c_str());
-#endif // __DEBUG
+#endif  // __DEBUG
 
         met = met->NextSiblingElement("Metrics");
     }
@@ -386,7 +383,7 @@ void DefaultTeXFontParser::parseFontDescriptions(_out_ vector<FontInfo*>& fi) th
  * </Font>
  * @endcode
  */
-void DefaultTeXFontParser::parseFontDescriptions(_out_ vector<FontInfo*>& fi, const string & file) throw(tex::ex_res_parse) {
+void DefaultTeXFontParser::parseFontDescriptions(_out_ vector<FontInfo*>& fi, const string& file) throw(tex::ex_res_parse) {
     if (file.empty()) return;
 
     XMLDocument doc(true, COLLAPSE_WHITESPACE);
@@ -449,14 +446,14 @@ void DefaultTeXFontParser::parseFontDescriptions(_out_ vector<FontInfo*>& fi, co
         tt,
         it);
 
-    if (skewChar != -1) // attribute set
-        info->setSkewChar((wchar_t) skewChar);
+    if (skewChar != -1)  // attribute set
+        info->setSkewChar((wchar_t)skewChar);
     // process all "Char"-elements
     const XMLElement* e = font->FirstChildElement("Char");
 
 #ifdef __DEBUG
     __DBG("parse Char, tag name: %s <should be Char>\n", e->Name());
-#endif // __DEBUG
+#endif  // __DEBUG
 
     while (e != nullptr) {
         processCharElement(e, *info);
@@ -481,7 +478,7 @@ void DefaultTeXFontParser::parseSymbolMappings(_out_ map<string, CharFont*>& res
 
 #ifdef __DEBUG
     __DBG("parse SymbolMappings, tag name:%s <should be SymbolMappings>\n", mapping->Name());
-#endif // __DEBUG
+#endif  // __DEBUG
 
     // iterate all mappings
     mapping = mapping->FirstChildElement("Mapping");
@@ -506,7 +503,7 @@ void DefaultTeXFontParser::parseSymbolMappings(_out_ map<string, CharFont*>& res
 
 #ifdef __DEBUG
         __DBG("parse symbol, tag name:%s <should be SymbolMapping>\n", symbol->Name());
-#endif // __DEBUG
+#endif  // __DEBUG
 
         while (symbol != nullptr) {
             /**
@@ -529,9 +526,9 @@ void DefaultTeXFontParser::parseSymbolMappings(_out_ map<string, CharFont*>& res
             }
 
             if (boldFontId.empty()) {
-                res[name] = new CharFont((wchar_t) ch, indexOf(_fontId, fontId));
+                res[name] = new CharFont((wchar_t)ch, indexOf(_fontId, fontId));
             } else {
-                res[name] = new CharFont((wchar_t) ch, indexOf(_fontId, fontId), indexOf(_fontId, boldFontId));
+                res[name] = new CharFont((wchar_t)ch, indexOf(_fontId, fontId), indexOf(_fontId, boldFontId));
             }
             // parse next
             symbol = symbol->NextSiblingElement("SymbolMapping");
@@ -541,7 +538,6 @@ void DefaultTeXFontParser::parseSymbolMappings(_out_ map<string, CharFont*>& res
 }
 
 string* DefaultTeXFontParser::parseDefaultTextStyleMappins() throw(tex::ex_res_parse) {
-
     string* res = new string[4];
     const XMLElement* mappings = _root->FirstChildElement("DefaultTextStyleMapping");
     if (mappings == nullptr) return res;
@@ -573,10 +569,8 @@ string* DefaultTeXFontParser::parseDefaultTextStyleMappins() throw(tex::ex_res_p
         int index = codeMapping;
         if (charFonts[index] == nullptr)
             throw ex_xml_parse(
-                RESOURCE_NAME
-                + ": the default text style mapping '"
-                + textStyleName + "' for the range '" + code
-                + "' contains no mapping for that range!");
+                RESOURCE_NAME + ": the default text style mapping '" +
+                textStyleName + "' for the range '" + code + "' contains no mapping for that range!");
 
         res[index] = textStyleName;
         mapping = mapping->NextSiblingElement("MapStyle");
@@ -624,13 +618,13 @@ void DefaultTeXFontParser::parseGeneralSettings(_out_ map<string, float>& res) t
 TeXFont::~TeXFont() {
 #ifdef __DEBUG
     __DBG("TeXFont destruct");
-#endif // __DEBUG
+#endif  // __DEBUG
 }
 
 DefaultTeXFont::~DefaultTeXFont() {
 #ifdef __DEBUG
     __DBG("DefaultTeXFont destruct");
-#endif // __DEBUG
+#endif  // __DEBUG
 }
 
 void DefaultTeXFont::addTeXFontDescription(const string& base, const string& file) throw(ex_res_parse) {
@@ -661,10 +655,11 @@ void DefaultTeXFont::addAlphabet(const string& base, const vector<UnicodeBlock>&
 void DefaultTeXFont::addAlphabet(AlphabetRegistration* reg) {
     try {
         addAlphabet(reg->getPackage(), reg->getUnicodeBlock(), reg->getTeXFontFile());
-    } catch (ex_font_loaded& e) {} catch (ex_alphabet_registration& e) {
+    } catch (ex_font_loaded& e) {
+    } catch (ex_alphabet_registration& e) {
 #ifdef __DEBUG
         __DBG("%s", e.what());
-#endif // __DEBUG
+#endif  // __DEBUG
     }
 }
 
@@ -724,13 +719,13 @@ Char DefaultTeXFont::getChar(const CharFont& c, int style) {
 
 #ifdef __DEBUG
     __DBG("\n{[wchar_t: %d] [font_id: %d]\n", cf._c, id);
-#endif // __DEBUG
+#endif  // __DEBUG
 
     FontInfo* info = _fontInfo[id];
 
 #ifdef __DEBUG
     __log << " [path: " << info->getPath() << "]}\n";
-#endif // __DEBUG
+#endif  // __DEBUG
 
     if (_isBold && cf._fontId == cf._boldFontId) {
         id = info->getBoldId();
@@ -770,7 +765,7 @@ Char DefaultTeXFont::getChar(const string& symbolName, int style) throw(ex_symbo
 
 shared_ptr<Metrics> DefaultTeXFont::getMetrics(_in_ const CharFont& cf, float size) {
     FontInfo* info = _fontInfo[cf._fontId];
-    const float*  m = info->getMetrics(cf._c);
+    const float* m = info->getMetrics(cf._c);
     Metrics* met = new Metrics(m[WIDTH], m[HEIGHT], m[DEPTH], m[IT], size * TeXFormula::PIXELS_PER_POINT, size);
     return shared_ptr<Metrics>(met);
 }
@@ -846,7 +841,6 @@ void DefaultTeXFont::enableMagnification(bool b) {
 }
 
 void DefaultTeXFont::_init_() {
-
     DefaultTeXFontParser parser;
     // load LATIN unicode block
     _loadedAlphabets.push_back(UnicodeBlock::of('a'));
@@ -880,11 +874,13 @@ void DefaultTeXFont::_init_() {
     for (int i = 0; i < 4; i++) __log << _defaultTextStyleMappings[i] << "; ";
     __log << endl;
     // text style mappings
-    __log << "elements in _textStyleMappings" << endl << "\t";
+    __log << "elements in _textStyleMappings" << endl
+          << "\t";
     for (auto i : _textStyleMappings) __log << i.first << "; ";
     __log << endl;
     // symbol mappings
-    __log << "elements in _symbolMappings" << endl << "\t";
+    __log << "elements in _symbolMappings" << endl
+          << "\t";
     for (auto i : _symbolMappings) __log << i.first << "; ";
     __log << endl;
     // font information
@@ -904,13 +900,15 @@ void DefaultTeXFont::_init_() {
     for (auto i : _textStyleMappings) {
         __log << "\t" << i.first << ":" << endl;
         for (auto j : i.second) {
-            if (j == nullptr) __log << "\tnull" << endl;
-            else __log << "\t" << *j << endl;
+            if (j == nullptr)
+                __log << "\tnull" << endl;
+            else
+                __log << "\t" << *j << endl;
         }
         __log << endl;
     }
     __log << endl;
-#endif // __DEBUG
+#endif  // __DEBUG
 }
 
 void DefaultTeXFont::_free_() {
@@ -921,10 +919,10 @@ void DefaultTeXFont::_free_() {
             if (i != nullptr) delete i;
         }
     }
-    for (auto f : _symbolMappings){
+    for (auto f : _symbolMappings) {
         delete f.second;
     }
-    for (auto f : _fontInfo){
+    for (auto f : _fontInfo) {
         delete f;
     }
     // _registeredAlphabets :=> map<UnicodeBlock, AlphabetRegistration>

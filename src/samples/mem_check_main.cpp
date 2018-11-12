@@ -19,11 +19,11 @@ public:
         return shared_ptr<Font>(new Font_none());
     }
 
-    bool operator ==(const Font& f) const override {
+    bool operator==(const Font& f) const override {
         return false;
     }
 
-    bool operator !=(const Font& f) const override {
+    bool operator!=(const Font& f) const override {
         return !(*this == f);
     }
 };
@@ -61,6 +61,7 @@ private:
     static Font* _default_font;
     const Font* _font;
     Stroke _stroke;
+
 public:
     Graphics2D_none() : _font(_default_font), _stroke() {}
 
@@ -161,12 +162,12 @@ public:
 
 Font* Graphics2D_none::_default_font = new Font_none();
 
-}
+}  // namespace tex
 
 int main(int argc, char* argv[]) {
     LaTeX::init();
 
-    TeXRender* r = LaTeX::parse(L"\\text{What a beautiful day}", 720 , 20, 20 / 3.f, 0xff000000);
+    TeXRender* r = LaTeX::parse(L"\\text{What a beautiful day}", 720, 20, 20 / 3.f, 0xff000000);
     Graphics2D_none g2;
     r->draw(g2, 0, 0);
     delete r;

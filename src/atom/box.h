@@ -49,6 +49,7 @@ private:
     static shared_ptr<Atom> MINUS;
     static shared_ptr<Atom> LEFT;
     static shared_ptr<Atom> RIGHT;
+
 public:
     static shared_ptr<Box> create(bool left, _out_ TeXEnvironment& env, float width);
 
@@ -63,11 +64,11 @@ public:
  * A box composed of a horizontal row of child boxes
  */
 class HorizontalBox : public Box {
-
 private:
     void recalculate(const Box& b);
 
     pair<shared_ptr<HorizontalBox>, shared_ptr<HorizontalBox>> split(int pos, int shift);
+
 public:
     vector<int> _breakPositions;
 
@@ -106,14 +107,13 @@ public:
  * A box composed of other boxes, put one above the other
  */
 class VerticalBox : public Box {
-
 private:
     float _leftMostPos, _rightMostPos;
 
     void recalculateWidth(const Box& b);
+
 public:
-    VerticalBox() :
-        _leftMostPos(F_MAX), _rightMostPos(F_MIN) {
+    VerticalBox() : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {
     }
 
     VerticalBox(const shared_ptr<Box>& b, float rest, int alignment);
@@ -138,7 +138,6 @@ public:
  * appropriate kerning.
  */
 class OverBar : public VerticalBox {
-
 public:
     OverBar() = delete;
 
@@ -150,7 +149,6 @@ public:
  * under it, with script and delimiter separated by a kerning.
  */
 class OverUnderBox : public Box {
-
 private:
     // base, delimiter and script
     shared_ptr<Box> _base, _del, _script;
@@ -190,10 +188,10 @@ public:
  * A box representing a horizontal line.
  */
 class HorizontalRule : public Box {
-
 private:
     color _color;
     float _speShift;
+
 public:
     HorizontalRule() = delete;
 
@@ -216,13 +214,13 @@ public:
  * A box representing a scale operation
  */
 class ScaleBox : public Box {
-
 private:
     shared_ptr<Box> _box;
     float _sx, _sy;
     float _factor;
 
     void init(const shared_ptr<Box>& b, float sx, float sy);
+
 public:
     ScaleBox() = delete;
 
@@ -246,9 +244,9 @@ public:
  * A box representing a reflected box
  */
 class ReflectBox : public Box {
-
 private:
     shared_ptr<Box> _box;
+
 public:
     ReflectBox() = delete;
 
@@ -295,7 +293,6 @@ enum Rotation {
  * A box representing a rotate operation
  */
 class RotateBox : public Box {
-
 private:
     shared_ptr<Box> _box;
     float _angle;
@@ -306,10 +303,11 @@ private:
     void init(const shared_ptr<Box>& b, float angle, float x, float y);
 
     static Point calculateShift(const Box& b, int option);
+
 public:
     RotateBox() = delete;
 
-    RotateBox(const shared_ptr<Box>& b, float angle, float x, float y)  {
+    RotateBox(const shared_ptr<Box>& b, float angle, float x, float y) {
         init(b, angle, x, y);
     }
 
@@ -347,6 +345,7 @@ public:
     color _bg;
 
     void init(const shared_ptr<Box>& box, float thickness, float space);
+
 public:
     FramedBox() = delete;
 
@@ -374,8 +373,7 @@ class OvalBox : public FramedBox {
 public:
     OvalBox() = delete;
 
-    OvalBox(const shared_ptr<FramedBox>& fbox) :
-        FramedBox(fbox->_box, fbox->_thickness, fbox->_space) {
+    OvalBox(const shared_ptr<FramedBox>& fbox) : FramedBox(fbox->_box, fbox->_thickness, fbox->_space) {
     }
 
     void draw(Graphics2D& g2, float x, float y) override;
@@ -387,11 +385,12 @@ public:
 class ShadowBox : public FramedBox {
 private:
     float _shadowRule;
+
 public:
     ShadowBox() = delete;
 
-    ShadowBox(const shared_ptr<FramedBox>& fbox, float shadowRule) :
-        FramedBox(fbox->_box, fbox->_thickness, fbox->_space) {
+    ShadowBox(const shared_ptr<FramedBox>& fbox, float shadowRule)
+        : FramedBox(fbox->_box, fbox->_thickness, fbox->_space) {
         _shadowRule = shadowRule;
         _depth += shadowRule;
         _width += shadowRule;
@@ -429,7 +428,6 @@ public:
  * A box representing glue
  */
 class GlueBox : public Box {
-
 public:
     float _stretch, _shrink;
 
@@ -452,12 +450,11 @@ public:
  * A box representing a single character
  */
 class CharBox : public Box {
-
 private:
     shared_ptr<CharFont> _cf;
     float _size;
-public:
 
+public:
     CharBox() = delete;
 
     /**
@@ -484,6 +481,7 @@ private:
     float _size;
 
     void init(const wstring& str, int type, float size, const shared_ptr<Font>& f, bool kerning);
+
 public:
     TextRenderingBox() = delete;
 
@@ -513,18 +511,18 @@ class WrapperBox : public Box {
 private:
     shared_ptr<Box> _base;
     float _l;
+
 public:
     WrapperBox() = delete;
 
-    WrapperBox(const shared_ptr<Box>& base) :
-        _base(base), _l(0) {
+    WrapperBox(const shared_ptr<Box>& base) : _base(base), _l(0) {
         _height = _base->_height;
         _depth = _base->_depth;
         _width = _base->_width;
     }
 
-    WrapperBox(const shared_ptr<Box>& base, float width, float rowheight, float rowdepth, float align) :
-        _base(base), _l(0) {
+    WrapperBox(const shared_ptr<Box>& base, float width, float rowheight, float rowdepth, float align)
+        : _base(base), _l(0) {
         _height = rowheight;
         _depth = rowdepth;
         _width = width;
@@ -551,11 +549,11 @@ class ShiftBox : public Box {
 private:
     float _sf;
     shared_ptr<Box> _base;
+
 public:
     ShiftBox() = delete;
 
-    ShiftBox(const shared_ptr<Box>& base, float shift) :
-        _base(base), _sf(shift) {
+    ShiftBox(const shared_ptr<Box>& base, float shift) : _base(base), _sf(shift) {
     }
 
     void draw(Graphics2D& g2, float x, float y) override;
@@ -565,6 +563,6 @@ public:
     vector<shared_ptr<Box>> getChildren() const override;
 };
 
-}
+}  // namespace tex
 
-#endif // BOX_H_INCLUDED
+#endif  // BOX_H_INCLUDED

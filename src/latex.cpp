@@ -1,8 +1,8 @@
-#include "core/formula.h"
-#include "fonts/fonts.h"
-#include "core/core.h"
-#include "core/macro.h"
 #include "latex.h"
+#include "core/core.h"
+#include "core/formula.h"
+#include "core/macro.h"
+#include "fonts/fonts.h"
 
 using namespace std;
 using namespace tex;
@@ -46,12 +46,13 @@ TeXRender* LaTeX::parse(const wstring& latex, int width, float textSize, float l
     }
     int align = lined ? ALIGN_LEFT : ALIGN_CENTER;
     _formula->setLaTeX(latex);
-    TeXRender* render = _builder->setStyle(STYLE_DISPLAY)
-        .setTextSize(textSize)
-        .setWidth(UNIT_PIXEL, width, align)
-        .setIsMaxWidth(lined)
-        .setLineSpace(UNIT_PIXEL, lineSpace)
-        .setForeground(fg)
-        .build(*_formula);
+    TeXRender* render =
+        _builder->setStyle(STYLE_DISPLAY)
+            .setTextSize(textSize)
+            .setWidth(UNIT_PIXEL, width, align)
+            .setIsMaxWidth(lined)
+            .setLineSpace(UNIT_PIXEL, lineSpace)
+            .setForeground(fg)
+            .build(*_formula);
     return render;
 }

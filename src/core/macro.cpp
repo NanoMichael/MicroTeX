@@ -1,6 +1,6 @@
 #include "core/macro.h"
-#include "core/macro_impl.h"
 #include "common.h"
+#include "core/macro_impl.h"
 
 #include <string>
 
@@ -76,7 +76,7 @@ void NewEnvironmentMacro::addRenewEnvironment(
     const wstring& begdef, const wstring& enddef,
     int nbargs) throw(ex_parse) {
     if (_macrocode.find(name + L"@env") == _macrocode.end())
-        throw ex_parse("environment " + wide2utf8(name.c_str()) + "is not defined! use newenvironment instead!");
+        throw ex_parse("Environment " + wide2utf8(name.c_str()) + "is not defined! use newenvironment instead!");
     addRenewCommand(name + L"@env", begdef + L" #" + towstring(nbargs + 1) + L" " + enddef, nbargs + 1);
 }
 
@@ -610,14 +610,15 @@ shared_ptr<Atom> PredefMacroInfo::invoke(int id, _out_ TeXParser& tp, _out_ vect
             return debug_macro(tp, args);
         case 291:
             return undebug_macro(tp, args);
-#endif // __GA_DEBUG
+#endif  // __GA_DEBUG
         default:
             return shared_ptr<Atom>(nullptr);
         }
     } catch (exception& e) {
         throw ex_parse(
-            "Problem with command " + wide2utf8(args[0].c_str())
-            + " at position " + tostring(tp.getLine()) + ":" + tostring(tp.getCol()) + "\n caused by: "
-            + e.what());
+            "Problem with command " +
+            wide2utf8(args[0].c_str()) +
+            " at position " + tostring(tp.getLine()) + ":" +
+            tostring(tp.getCol()) + "\n caused by: " + e.what());
     }
 }

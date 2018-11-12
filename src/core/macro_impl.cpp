@@ -1,5 +1,5 @@
-#include "graphic/graphic.h"
 #include "core/macro_impl.h"
+#include "graphic/graphic.h"
 
 using namespace tex;
 using namespace std;
@@ -8,7 +8,8 @@ namespace tex {
 
 shared_ptr<Atom> hvspace_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
     size_t i;
-    for (i = 0; i < args[1].length() && !isalpha(args[1][i]); i++);
+    for (i = 0; i < args[1].length() && !isalpha(args[1][i]); i++)
+        ;
     float f = 0;
     valueof(args[1].substr(0, i), f);
 
@@ -41,8 +42,10 @@ shared_ptr<Atom> rule_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) th
 
 shared_ptr<Atom> cfrac_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
     int al = ALIGN_CENTER;
-    if (args[3] == L"r") al = ALIGN_RIGHT;
-    else if (args[3] == L"l") al = ALIGN_LEFT;
+    if (args[3] == L"r")
+        al = ALIGN_RIGHT;
+    else if (args[3] == L"l")
+        al = ALIGN_LEFT;
     TeXFormula num(tp, args[1], false);
     TeXFormula denom(tp, args[2], false);
     if (num._root == nullptr || denom._root == nullptr)
@@ -136,8 +139,8 @@ shared_ptr<Atom> overwithdelims_macro(_out_ TeXParser& tp, _out_ vector<wstring>
     SymbolAtom* sr = dynamic_cast<SymbolAtom*>(right.get());
     if (sl != nullptr && sr != nullptr) {
         shared_ptr<FractionAtom> f(new FractionAtom(num, den, true));
-        return shared_ptr<Atom>(new FencedAtom(f,
-            dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
+        return shared_ptr<Atom>(new FencedAtom(
+            f, dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
     }
 
     RowAtom* ra = new RowAtom();
@@ -166,8 +169,8 @@ shared_ptr<Atom> atopwithdelims_macro(_out_ TeXParser& tp, _out_ vector<wstring>
     SymbolAtom* sr = dynamic_cast<SymbolAtom*>(right.get());
     if (sl != nullptr && sr != nullptr) {
         shared_ptr<Atom> f(new FractionAtom(num, den, false));
-        return shared_ptr<Atom>(new FencedAtom(f,
-            dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
+        return shared_ptr<Atom>(new FencedAtom(
+            f, dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
     }
 
     RowAtom* ra = new RowAtom();
@@ -196,8 +199,8 @@ shared_ptr<Atom> abovewithdelims_macro(_out_ TeXParser& tp, _out_ vector<wstring
     SymbolAtom* sr = dynamic_cast<SymbolAtom*>(right.get());
     if (sl != nullptr && sr != nullptr) {
         shared_ptr<Atom> f(new FractionAtom(num, den, dim.first, dim.second));
-        return shared_ptr<Atom>(new FencedAtom(f,
-            dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
+        return shared_ptr<Atom>(new FencedAtom(
+            f, dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
     }
 
     RowAtom* ra = new RowAtom();
@@ -209,10 +212,14 @@ shared_ptr<Atom> abovewithdelims_macro(_out_ TeXParser& tp, _out_ vector<wstring
 
 shared_ptr<Atom> textstyle_macros(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
     wstring style(args[0]);
-    if (style == L"frak") style = L"mathfrak";
-    else if (style == L"Bbb") style = L"mathbb";
-    else if (style == L"bold") return shared_ptr<Atom>(new BoldAtom(TeXFormula(tp, args[1], false)._root));
-    else if (style == L"cal") style = L"mathcal";
+    if (style == L"frak")
+        style = L"mathfrak";
+    else if (style == L"Bbb")
+        style = L"mathbb";
+    else if (style == L"bold")
+        return shared_ptr<Atom>(new BoldAtom(TeXFormula(tp, args[1], false)._root));
+    else if (style == L"cal")
+        style = L"mathcal";
 
     FontInfos* info = nullptr;
     auto it = TeXFormula::_externalFontMap.find(UnicodeBlock::BASIC_LATIN);
@@ -402,24 +409,34 @@ shared_ptr<Atom> definecolor_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
 
 shared_ptr<Atom> size_macros(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
     float f = 1;
-    if (args[0] == L"tiny") f = 0.5f;
-    else if (args[0] == L"scriptsize") f = 0.7f;
-    else if (args[0] == L"footnotesize") f = 0.8f;
-    else if (args[0] == L"small") f = 0.9f;
-    else if (args[0] == L"normalsize") f = 1.f;
-    else if (args[0] == L"large") f = 1.2f;
-    else if (args[0] == L"Large") f = 1.4f;
-    else if (args[0] == L"LARGE") f = 1.8f;
-    else if (args[0] == L"huge") f = 2.f;
-    else if (args[0] == L"Huge") f = 2.5f;
+    if (args[0] == L"tiny")
+        f = 0.5f;
+    else if (args[0] == L"scriptsize")
+        f = 0.7f;
+    else if (args[0] == L"footnotesize")
+        f = 0.8f;
+    else if (args[0] == L"small")
+        f = 0.9f;
+    else if (args[0] == L"normalsize")
+        f = 1.f;
+    else if (args[0] == L"large")
+        f = 1.2f;
+    else if (args[0] == L"Large")
+        f = 1.4f;
+    else if (args[0] == L"LARGE")
+        f = 1.8f;
+    else if (args[0] == L"huge")
+        f = 2.f;
+    else if (args[0] == L"Huge")
+        f = 2.5f;
 
     auto a = TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root;
     return shared_ptr<Atom>(new MonoScaleAtom(a, f));
 }
 
 shared_ptr<Atom> romannumeral_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    int numbers[] = { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
-    string letters[] = { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    int numbers[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    string letters[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
     string roman = "";
 
     int num;
@@ -444,16 +461,26 @@ shared_ptr<Atom> romannumeral_macro(_out_ TeXParser& tp, _out_ vector<wstring>& 
 
 shared_ptr<Atom> muskip_macros(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
     int type = 0;
-    if (args[0] == L",") type = THINMUSKIP;
-    else if (args[0] == L":") type = MEDMUSKIP;
-    else if (args[0] == L";") type = THICKMUSKIP;
-    else if (args[0] == L"thinspace") type = THINMUSKIP;
-    else if (args[0] == L"medspace") type = MEDMUSKIP;
-    else if (args[0] == L"thickspace") type = THICKMUSKIP;
-    else if (args[0] == L"!") type = NEGTHINMUSKIP;
-    else if (args[0] == L"negthinspace") type = NEGTHINMUSKIP;
-    else if (args[0] == L"negmedspace") type = NEGMEDMUSKIP;
-    else if (args[0] == L"negthickspace") type = NEGTHICKMUSKP;
+    if (args[0] == L",")
+        type = THINMUSKIP;
+    else if (args[0] == L":")
+        type = MEDMUSKIP;
+    else if (args[0] == L";")
+        type = THICKMUSKIP;
+    else if (args[0] == L"thinspace")
+        type = THINMUSKIP;
+    else if (args[0] == L"medspace")
+        type = MEDMUSKIP;
+    else if (args[0] == L"thickspace")
+        type = THICKMUSKIP;
+    else if (args[0] == L"!")
+        type = NEGTHINMUSKIP;
+    else if (args[0] == L"negthinspace")
+        type = NEGTHINMUSKIP;
+    else if (args[0] == L"negmedspace")
+        type = NEGMEDMUSKIP;
+    else if (args[0] == L"negthickspace")
+        type = NEGTHICKMUSKP;
 
     return shared_ptr<Atom>(new SpaceAtom(type));
 }
@@ -467,7 +494,8 @@ shared_ptr<Atom> xml_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) thr
     while ((pos = str.find(L"$")) != wstring::npos) {
         if (pos < str.length() - 1) {
             start = pos;
-            while (++start < str.length() && isalpha(str[start]));
+            while (++start < str.length() && isalpha(str[start]))
+                ;
             wstring key = str.substr(pos + 1, start - pos - 1);
             string x = wide2utf8(key.c_str());
             auto it = m.find(x);
@@ -490,4 +518,4 @@ shared_ptr<Atom> xml_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) thr
     return TeXFormula(tp, str)._root;
 }
 
-} // namespace tex
+}  // namespace tex

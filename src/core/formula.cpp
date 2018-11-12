@@ -1,10 +1,10 @@
 #include "core/formula.h"
-#include "fonts/fonts.h"
-#include "core/parser.h"
-#include "graphic/graphic.h"
-#include "core/core.h"
-#include "fonts/alphabet.h"
 #include "common.h"
+#include "core/core.h"
+#include "core/parser.h"
+#include "fonts/alphabet.h"
+#include "fonts/fonts.h"
+#include "graphic/graphic.h"
 
 using namespace std;
 using namespace tex;
@@ -21,7 +21,7 @@ float TeXFormula::PIXELS_PER_POINT = 1.f;
 void TeXFormula::_init_() {
 #ifdef __DEBUG
     __DBG("%s\n", "init formula");
-#endif // __DEBUG
+#endif  // __DEBUG
     // character-to-symbol and character-to-delimiter mappings
     TeXFormulaSettingParser parser;
     parser.parseSymbol(_symbolMappings, _symbolTextMappings);
@@ -39,11 +39,11 @@ void TeXFormula::_init_() {
     __log << "elements in _symbolFormulaMappings:" << endl;
     for (auto i : _symbolFormulaMappings)
         __log << "\t" << i.first << "->" << i.second << endl;
-#endif // __DEBUG
+#endif  // __DEBUG
 }
 
-TeXFormula::TeXFormula(const TeXParser& tp) :
-    _parser(tp.getIsPartial(), L"", this, false) {
+TeXFormula::TeXFormula(const TeXParser& tp)
+    : _parser(tp.getIsPartial(), L"", this, false) {
     _xmlMap = tp._formula->_xmlMap;
 }
 
@@ -51,7 +51,8 @@ TeXFormula::TeXFormula(
     const TeXParser& tp,
     const wstring& s,
     const string& textStyle,
-    bool firstpass, bool space) throw(ex_parse) : _parser(tp.getIsPartial(), s, this, firstpass, space) {
+    bool firstpass, bool space) throw(ex_parse)
+    : _parser(tp.getIsPartial(), s, this, firstpass, space) {
     _textStyle = textStyle;
     _xmlMap = tp._formula->_xmlMap;
     if (tp.getIsPartial()) {
@@ -65,8 +66,8 @@ TeXFormula::TeXFormula(
     }
 }
 
-TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s, const string& textStyle) throw(ex_parse) :
-    _parser(tp.getIsPartial(), s, this) {
+TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s, const string& textStyle) throw(ex_parse)
+    : _parser(tp.getIsPartial(), s, this) {
     _textStyle = textStyle;
     _xmlMap = tp._formula->_xmlMap;
     if (tp.getIsPartial()) {
@@ -80,8 +81,8 @@ TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s, const string& text
     }
 }
 
-TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s, bool firstpass) throw(ex_parse) :
-    _parser(tp.getIsPartial(), s, this, firstpass) {
+TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s, bool firstpass) throw(ex_parse)
+    : _parser(tp.getIsPartial(), s, this, firstpass) {
     _textStyle = "";
     _xmlMap = tp._formula->_xmlMap;
     if (tp.getIsPartial()) {
@@ -93,14 +94,14 @@ TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s, bool firstpass) th
     }
 }
 
-TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s) throw(ex_parse) :
-    _parser(tp.getIsPartial(), s, this) {
+TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s) throw(ex_parse)
+    : _parser(tp.getIsPartial(), s, this) {
     _textStyle = "";
     _xmlMap = tp._formula->_xmlMap;
     if (tp.getIsPartial()) {
         try {
             _parser.parse();
-        } catch(exception& e) {
+        } catch (exception& e) {
             if (_root == nullptr) _root = shared_ptr<Atom>(new EmptyAtom());
         }
     } else {
@@ -110,26 +111,23 @@ TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s) throw(ex_parse) :
 
 TeXFormula::TeXFormula() : _parser(L"", this, false) {}
 
-TeXFormula::TeXFormula(const wstring& s) throw(ex_parse) :
-    _parser(s, this) {
+TeXFormula::TeXFormula(const wstring& s) throw(ex_parse) : _parser(s, this) {
     _textStyle = "";
     _parser.parse();
 }
 
-TeXFormula::TeXFormula(const wstring& s, bool firstpass) throw(ex_parse) :
-    _parser(s, this, firstpass) {
+TeXFormula::TeXFormula(const wstring& s, bool firstpass) throw(ex_parse) : _parser(s, this, firstpass) {
     _textStyle = "";
     _parser.parse();
 }
 
-TeXFormula::TeXFormula(const wstring& s, const string& textStyle) throw(ex_parse) :
-    _parser(s, this) {
+TeXFormula::TeXFormula(const wstring& s, const string& textStyle) throw(ex_parse) : _parser(s, this) {
     _textStyle = textStyle;
     _parser.parse();
 }
 
-TeXFormula::TeXFormula(const wstring& s, const string& textStyle, bool firstpass, bool space) throw(ex_parse) :
-    _parser(s, this, firstpass, space) {
+TeXFormula::TeXFormula(const wstring& s, const string& textStyle, bool firstpass, bool space) throw(ex_parse)
+    : _parser(s, this, firstpass, space) {
     _textStyle = textStyle;
     _parser.parse();
 }
@@ -147,7 +145,8 @@ TeXFormula* TeXFormula::add(const shared_ptr<Atom>& el) {
     if (el != nullptr) {
         MiddleAtom* atom = dynamic_cast<MiddleAtom*>(el.get());
         if (atom != nullptr) _middle.push_back(dynamic_pointer_cast<MiddleAtom>(el));
-        if (_root == nullptr) _root = el;
+        if (_root == nullptr)
+            _root = el;
         else {
             RowAtom* rm = dynamic_cast<RowAtom*>(_root.get());
             if (rm == nullptr) _root = shared_ptr<Atom>(new RowAtom(_root));
@@ -179,8 +178,10 @@ TeXFormula* TeXFormula::append(const wstring& s) throw(ex_parse) {
 void TeXFormula::addImpl(const TeXFormula* f) {
     if (f != nullptr) {
         RowAtom* rm = dynamic_cast<RowAtom*>(f->_root.get());
-        if (rm != nullptr) add(shared_ptr<Atom>(new RowAtom(f->_root)));
-        else add(f->_root);
+        if (rm != nullptr)
+            add(shared_ptr<Atom>(new RowAtom(f->_root)));
+        else
+            add(f->_root);
     }
 }
 
@@ -196,8 +197,10 @@ void TeXFormula::setDEBUG(bool b) {
 TeXFormula* TeXFormula::setBackground(color c) {
     if (!istrans(c)) {
         ColorAtom* ca = dynamic_cast<ColorAtom*>(_root.get());
-        if (ca != nullptr) _root = shared_ptr<Atom>(new ColorAtom(c, TRANS, _root));
-        else _root = shared_ptr<Atom>(new ColorAtom(_root, c, TRANS));
+        if (ca != nullptr)
+            _root = shared_ptr<Atom>(new ColorAtom(c, TRANS, _root));
+        else
+            _root = shared_ptr<Atom>(new ColorAtom(_root, c, TRANS));
     }
     return this;
 }
@@ -205,8 +208,10 @@ TeXFormula* TeXFormula::setBackground(color c) {
 TeXFormula* TeXFormula::setColor(color c) {
     if (!istrans(c)) {
         ColorAtom* ca = dynamic_cast<ColorAtom*>(_root.get());
-        if (ca != nullptr) _root = shared_ptr<Atom>(new ColorAtom(TRANS, c, _root));
-        else _root = shared_ptr<Atom>(new ColorAtom(_root, TRANS, c));
+        if (ca != nullptr)
+            _root = shared_ptr<Atom>(new ColorAtom(TRANS, c, _root));
+        else
+            _root = shared_ptr<Atom>(new ColorAtom(_root, TRANS, c));
     }
     return this;
 }
@@ -322,8 +327,10 @@ shared_ptr<VRowAtom> ArrayOfAtoms::getAsVRow() {
 }
 
 void ArrayOfAtoms::checkDimensions() {
-    if (_array.back().size() != 0) addRow();
-    else if (_root != nullptr) addRow();
+    if (_array.back().size() != 0)
+        addRow();
+    else if (_root != nullptr)
+        addRow();
 
     _row = _array.size() - 1;
     _col = _array[0].size();

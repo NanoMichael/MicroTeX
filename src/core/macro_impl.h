@@ -2,14 +2,14 @@
 #define MACRO_IMPL_H_INCLUDED
 
 #include "atom/atom_basic.h"
-#include "core/core.h"
-#include "core/formula.h"
-#include "core/parser.h"
-#include "core/macro.h"
-#include "fonts/alphabet.h"
-#include "graphic/graphic.h"
 #include "atom/atom_impl.h"
 #include "common.h"
+#include "core/core.h"
+#include "core/formula.h"
+#include "core/macro.h"
+#include "core/parser.h"
+#include "fonts/alphabet.h"
+#include "graphic/graphic.h"
 
 using namespace std;
 using namespace tex;
@@ -26,7 +26,7 @@ inline shared_ptr<Atom> undebug_macro(_out_ TeXParser& tp, _out_ vector<wstring>
     TeXFormula::setDEBUG(false);
     return shared_ptr<Atom>(nullptr);
 }
-#endif // __GA_DEBUG
+#endif  // __GA_DEBUG
 
 inline shared_ptr<Atom> multirow_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
     if (!tp.isArrayMode())
@@ -42,7 +42,7 @@ inline shared_ptr<Atom> cellcolor_macro(_out_ TeXParser& tp, _out_ vector<wstrin
         throw ex_parse("Command \\cellcolor must used in array environment!");
     color c = ColorAtom::getColor(wide2utf8(args[1].c_str()));
     shared_ptr<CellSpecifier> atom(new CellColorAtom(c));
-    ((ArrayOfAtoms*) tp._formula)->addCellSpecifier(atom);
+    ((ArrayOfAtoms*)tp._formula)->addCellSpecifier(atom);
     return shared_ptr<Atom>(nullptr);
 }
 
@@ -78,7 +78,7 @@ inline shared_ptr<Atom> rowcolor_macro(_out_ TeXParser& tp, _out_ vector<wstring
         throw ex_parse("Command \\rowcolor must used in array environment!");
     color c = ColorAtom::getColor(wide2utf8(args[1].c_str()));
     shared_ptr<CellSpecifier> spe(new CellColorAtom(c));
-    ((ArrayOfAtoms*) tp._formula)->addRowSpecifier(spe);
+    ((ArrayOfAtoms*)tp._formula)->addRowSpecifier(spe);
     return shared_ptr<Atom>(nullptr);
 }
 
@@ -585,7 +585,7 @@ inline shared_ptr<Atom> makeatother_macro(_out_ TeXParser& tp, _out_ vector<wstr
 
 inline shared_ptr<Atom> newenvironment_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
     int opt = 0;
-    if(!args[4].empty()) valueof(args[4], opt);
+    if (!args[4].empty()) valueof(args[4], opt);
 
     NewEnvironmentMacro::addNewEnvironment(args[1], args[2], args[3], opt);
     return shared_ptr<Atom>(nullptr);
@@ -851,8 +851,10 @@ inline shared_ptr<Atom> reflectbox_macro(_out_ TeXParser& tp, _out_ vector<wstri
 inline shared_ptr<Atom> scalebox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
     float sx = 1, sy = 1;
     valueof(args[1], sx);
-    if (args[3].empty()) sy = sx;
-    else valueof(args[3], sy);
+    if (args[3].empty())
+        sy = sx;
+    else
+        valueof(args[3], sy);
     if (sx == 0) sx = 1;
     if (sy == 0) sy = 1;
     return shared_ptr<Atom>(new ScaleAtom(TeXFormula(tp, args[2])._root, sx, sy));
@@ -1019,7 +1021,7 @@ inline shared_ptr<Atom> minuscoloncolon_macro(_out_ TeXParser& tp, _out_ vector<
     shared_ptr<Atom> colon(new UnderOverAtom(
         SymbolAtom::get("normaldot"),
         SymbolAtom::get("normaldot"),
-        UNIT_MU, 5.2f, false , true));
+        UNIT_MU, 5.2f, false, true));
     ra->add(colon);
     ra->add(colon);
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
@@ -1108,7 +1110,7 @@ inline shared_ptr<Atom> colonminus_macro(_out_ TeXParser& tp, _out_ vector<wstri
 inline shared_ptr<Atom> coloncolonminus_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
     shared_ptr<Atom> u(new UnderOverAtom(
         SymbolAtom::get("normaldot"),
-        SymbolAtom::get("normaldot"), 
+        SymbolAtom::get("normaldot"),
         UNIT_MU, 5.2f, false, true));
     RowAtom* ra = new RowAtom(u);
     ra->add(u);
@@ -1459,6 +1461,6 @@ inline shared_ptr<Atom> dynamic_macro(_out_ TeXParser& tp, _out_ vector<wstring>
     return shared_ptr<Atom>(nullptr);
 }
 
-}
+}  // namespace tex
 
-#endif // MACRO_IMPL_H_INCLUDED
+#endif  // MACRO_IMPL_H_INCLUDED

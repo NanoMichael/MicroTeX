@@ -1,9 +1,9 @@
 #ifndef CORE_H_INCLUDED
 #define CORE_H_INCLUDED
 
+#include "common.h"
 #include "fonts/fonts.h"
 #include "xml/tinyxml2.h"
-#include "common.h"
 
 #include <cstring>
 
@@ -18,14 +18,12 @@ class Box;
 void print_box(const shared_ptr<Box>& box);
 
 struct Position {
-
     int _index;
     shared_ptr<HorizontalBox> _hbox;
 
     Position() = delete;
 
-    Position(int index, const shared_ptr<HorizontalBox>& hbox) :
-        _index(index), _hbox(hbox) {
+    Position(int index, const shared_ptr<HorizontalBox>& hbox) : _index(index), _hbox(hbox) {
     }
 };
 
@@ -46,7 +44,6 @@ public:
  * methods that apply the style changing rules for subformula's.
  */
 class TeXEnvironment {
-
 private:
     // colors
     color _background, _color;
@@ -217,7 +214,6 @@ public:
     inline int getLastFontId() const {
         return (_lastFontId == TeXFont::NO_FONT ? _tf->getMuFontId() : _lastFontId);
     }
-
 };
 
 /**
@@ -236,6 +232,7 @@ private:
     string _name;
 
     shared_ptr<Box> createBox(const TeXEnvironment& env) const;
+
 public:
     Glue() = delete;
 
@@ -270,7 +267,7 @@ public:
 
 #ifdef __DEBUG
     friend ostream& operator<<(ostream& out, const Glue& glue);
-#endif // __DEBUG
+#endif  // __DEBUG
 };
 
 class GlueSettingParser {
@@ -291,6 +288,7 @@ private:
         if (value == nullptr || strlen(value) == 0) throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping");
         return value;
     }
+
 public:
     GlueSettingParser() throw(ex_res_parse);
 
@@ -309,6 +307,7 @@ private:
     XMLElement* _root;
 
     static string getAttr(const char* attr, const XMLElement* e) throw(ex_res_parse);
+
 public:
     static const string RESOURCE_NAME;
     static const string DELIMITER_ATTR;
@@ -340,6 +339,7 @@ private:
         const XMLElement* mapping,
         _out_ map<int, string>& tableMath,
         _out_ map<int, string>& tableTxt) throw(ex_res_parse);
+
 public:
     static const string RESOURCE_NAME;
 
@@ -356,6 +356,6 @@ public:
         _out_ map<int, string>& textMappings) throw(ex_res_parse);
 };
 
-} // namespace tex
+}  // namespace tex
 
-#endif // CORE_H_INCLUDED
+#endif  // CORE_H_INCLUDED

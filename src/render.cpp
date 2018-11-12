@@ -1,7 +1,7 @@
 #include "render.h"
-#include "core/formula.h"
 #include "atom/atom.h"
 #include "core/core.h"
+#include "core/formula.h"
 
 using namespace tex;
 
@@ -20,10 +20,10 @@ TeXRender::TeXRender(const shared_ptr<Box> b, float textSize, bool trueValues) {
         _textSize = textSize;
     }
     if (!trueValues) {
-        _insets.top += (int) (0.18f * textSize);
-        _insets.bottom += (int) (0.18f * textSize);
-        _insets.left += (int) (0.18f * textSize);
-        _insets.right += (int) (0.18f * textSize);
+        _insets.top += (int)(0.18f * textSize);
+        _insets.bottom += (int)(0.18f * textSize);
+        _insets.left += (int)(0.18f * textSize);
+        _insets.right += (int)(0.18f * textSize);
     }
 }
 
@@ -32,20 +32,22 @@ float TeXRender::getTextSize() const {
 }
 
 int TeXRender::getHeight() const {
-    return (int) (_box->_height * _textSize + 0.99f + _insets.top + _box->_depth * _textSize + 0.99f + _insets.bottom);
+    return (int)(_box->_height * _textSize + 0.99f +
+                 _insets.top + _box->_depth * _textSize + 0.99f +
+                 _insets.bottom);
 }
 
 int TeXRender::getDepth() const {
-    return (int) (_box->_depth * _textSize + 0.99f + _insets.bottom);
+    return (int)(_box->_depth * _textSize + 0.99f + _insets.bottom);
 }
 
 int TeXRender::getWidth() const {
-    return (int) (_box->_width * _textSize + 0.99f + _insets.left + _insets.right);
+    return (int)(_box->_width * _textSize + 0.99f + _insets.left + _insets.right);
 }
 
 float TeXRender::getBaseline() const {
     return ((_box->_height * _textSize + 0.99f + _insets.top) /
-        ((_box->_height + _box->_depth) * _textSize + 0.99f + _insets.top + _insets.bottom));
+            ((_box->_height + _box->_depth) * _textSize + 0.99f + _insets.top + _insets.bottom));
 }
 
 void TeXRender::setTextSize(float textSize) {
@@ -63,10 +65,10 @@ Insets TeXRender::getInsets() {
 void TeXRender::setInsets(const Insets& insets, bool trueval) {
     _insets = insets;
     if (!trueval) {
-        _insets.top += (int) (0.18f * _textSize);
-        _insets.bottom += (int) (0.18f * _textSize);
-        _insets.left += (int) (0.18f * _textSize);
-        _insets.right += (int) (0.18f * _textSize);
+        _insets.top += (int)(0.18f * _textSize);
+        _insets.bottom += (int)(0.18f * _textSize);
+        _insets.left += (int)(0.18f * _textSize);
+        _insets.right += (int)(0.18f * _textSize);
     }
 }
 

@@ -1,10 +1,10 @@
 #ifndef LATEX_H_INCLUDED
 #define LATEX_H_INCLUDED
 
+#include "common.h"
 #include "graphic/graphic.h"
 #include "graphic/graphic_basic.h"
 #include "render.h"
-#include "common.h"
 
 #include <string>
 
@@ -19,6 +19,7 @@ class LaTeX {
 private:
     static TeXFormula* _formula;
     static TeXRenderBuilder* _builder;
+
 public:
     /**
      * Initialize TeX context with specified root path of the TeX resources
@@ -50,6 +51,6 @@ public:
     static void release();
 };
 
-} // namespace tex
+}  // namespace tex
 
-#endif // LATEX_H_INCLUDED
+#endif  // LATEX_H_INCLUDED

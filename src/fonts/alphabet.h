@@ -1,8 +1,8 @@
 #ifndef ALPHABET_H_INCLUDED
 #define ALPHABET_H_INCLUDED
 
-#include <vector>
 #include <string>
+#include <vector>
 using namespace std;
 
 namespace tex {
@@ -10,6 +10,7 @@ namespace tex {
 class UnicodeBlock {
 private:
     static vector<const UnicodeBlock*> _defined;
+
 public:
     // predefined unicode-blocks
     static const UnicodeBlock BASIC_LATIN;
@@ -21,11 +22,10 @@ public:
 
     const wchar_t _start, _end;
 
-    UnicodeBlock(wchar_t codePointStart, wchar_t codePointEnd) :
-        _start(codePointStart), _end(codePointEnd) {
-    }
+    UnicodeBlock(wchar_t codePointStart, wchar_t codePointEnd)
+        : _start(codePointStart), _end(codePointEnd) {}
 
-    bool in(wchar_t c) const;
+    bool contains(wchar_t c) const;
 
     bool operator==(const UnicodeBlock& ub) const;
 
@@ -54,6 +54,7 @@ private:
     static const vector<UnicodeBlock> _block;
     static const string _package;
     static const string _font;
+
 public:
     const vector<UnicodeBlock>& getUnicodeBlock() const override;
 
@@ -67,6 +68,7 @@ private:
     static const vector<UnicodeBlock> _block;
     static const string _package;
     static const string _font;
+
 public:
     const vector<UnicodeBlock>& getUnicodeBlock() const override;
 
@@ -75,6 +77,6 @@ public:
     const string getTeXFontFile() const override;
 };
 
-}
+}  // namespace tex
 
-#endif // ALPHABET_H_INCLUDED
+#endif  // ALPHABET_H_INCLUDED

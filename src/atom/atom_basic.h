@@ -3,12 +3,12 @@
 
 #include "atom/atom.h"
 #include "atom/box.h"
-#include "graphic/graphic.h"
 #include "common.h"
+#include "graphic/graphic.h"
 
+#include <bitset>
 #include <map>
 #include <string>
-#include <bitset>
 
 using namespace std;
 using namespace tex;
@@ -38,15 +38,14 @@ private:
     wstring _str;
     int _type;
     const FontInfos* _infos;
+
 public:
     TextRenderingAtom() = delete;
 
-    TextRenderingAtom(const wstring& str, int type) :
-        _str(str), _type(type), _infos(nullptr) {
+    TextRenderingAtom(const wstring& str, int type) : _str(str), _type(type), _infos(nullptr) {
     }
 
-    TextRenderingAtom(const wstring& str, const FontInfos* info) :
-        _str(str), _type(0), _infos(info) {
+    TextRenderingAtom(const wstring& str, const FontInfos* info) : _str(str), _type(0), _infos(info) {
     }
 
     shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
@@ -59,14 +58,16 @@ class SmashedAtom : public Atom {
 private:
     shared_ptr<Atom> _at;
     bool _h, _d;
+
 public:
     SmashedAtom() = delete;
 
-    SmashedAtom(const shared_ptr<Atom>& a, const string& opt) :
-        _h(true), _d(true) {
+    SmashedAtom(const shared_ptr<Atom>& a, const string& opt) : _h(true), _d(true) {
         _at = a;
-        if (opt == "opt") _d = false;
-        else if (opt == "b") _h = false;
+        if (opt == "opt")
+            _d = false;
+        else if (opt == "b")
+            _h = false;
     }
 
     shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override {
@@ -83,8 +84,10 @@ public:
 class ScaleAtom : public Atom {
 protected:
     shared_ptr<Atom> _base;
+
 private:
     float _sx, _sy;
+
 public:
     ScaleAtom() = delete;
 
@@ -113,6 +116,7 @@ class MathAtom : public Atom {
 private:
     int _style;
     shared_ptr<Atom> _base;
+
 public:
     MathAtom() = delete;
 
@@ -131,6 +135,7 @@ class HlineAtom : public Atom {
 private:
     float _width, _shift;
     color _color;
+
 public:
     HlineAtom() : _color(trans), _width(0), _shift(0) {}
 
@@ -156,6 +161,7 @@ class CumulativeScriptsAtom : public Atom {
 private:
     shared_ptr<Atom> _base;
     shared_ptr<RowAtom> _sup, _sub;
+
 public:
     CumulativeScriptsAtom() = delete;
 
@@ -189,7 +195,6 @@ public:
  * unit types.
  */
 class SpaceAtom : public Atom {
-
 private:
     static const int _units_count;
     static const map<string, int> _units;
@@ -213,6 +218,7 @@ private:
         _width = _height = _depth = 0;
         _wUnit = _hUnit = _dUnit = 0;
     }
+
 public:
     SpaceAtom() {
         init();
@@ -324,6 +330,7 @@ private:
      * this property for a certain spacing rule.
      */
     bool _textSymbol;
+
 public:
     CharSymbol() : _textSymbol(false) {}
 
@@ -367,6 +374,7 @@ public:
 class FixedCharAtom : public CharSymbol {
 private:
     const shared_ptr<CharFont> _cf;
+
 public:
     FixedCharAtom() = delete;
 
@@ -378,7 +386,6 @@ public:
 };
 
 class SymbolAtom : public CharSymbol {
-
 private:
     // contains all defined symbols
     static map<string, shared_ptr<SymbolAtom>> _symbols;
@@ -450,7 +457,7 @@ public:
 
 #ifdef __DEBUG
     friend ostream& operator<<(ostream& os, const SymbolAtom& s);
-#endif // __DEBUG
+#endif  // __DEBUG
 };
 
 /**
@@ -469,6 +476,7 @@ private:
      * style
      */
     Char getChar(_in_ TeXFont& tf, int style, bool smallCap);
+
 public:
     CharAtom() = delete;
 
@@ -509,7 +517,6 @@ public:
  * createBox-method of a RowAtom) will be reset.
  */
 class Dummy {
-
 private:
     shared_ptr<Atom> _el;
     bool _textSymbol;
@@ -628,6 +635,7 @@ private:
     void change2Ord(_out_ Dummy* cur, _out_ Dummy* prev, _out_ Atom* next);
 
     static bitset<16> _init_();
+
 public:
     bool _lookAtLastAtom;
 
@@ -736,6 +744,7 @@ private:
     }
 
     static color _init_();
+
 public:
     static color _default;
     static map<string, color> _colors;
@@ -795,6 +804,7 @@ class PhantomAtom : public Atom, public Row {
 private:
     shared_ptr<RowAtom> _elements;
     bool _w, _h, _d;
+
 public:
     PhantomAtom() = delete;
 
@@ -827,6 +837,7 @@ private:
     int _leftType, _rightType;
     // atom for which new types are set
     shared_ptr<Atom> _atom;
+
 public:
     TypedAtom() = delete;
 
@@ -869,6 +880,7 @@ public:
     shared_ptr<Atom> _base, _underbase;
 
     void init(const shared_ptr<Atom>& base, const shared_ptr<Atom>& acc) throw(ex_invalid_symbol_type);
+
 public:
     AccentedAtom() = delete;
 
@@ -939,6 +951,7 @@ private:
         _underUnit = _overUnit = 0;
         _underSmall = _overSmall = false;
     }
+
 public:
     UnderOverAtom() = delete;
 
@@ -1013,6 +1026,7 @@ private:
     shared_ptr<Atom> _sub;
     shared_ptr<Atom> _sup;
     int _align;
+
 public:
     ScriptsAtom() = delete;
 
@@ -1122,6 +1136,7 @@ private:
     bool _over;
 
     static float getMaxWidth(const Box* b, const Box* del, const Box* script);
+
 public:
     OverUnderDelimiter() = delete;
 
@@ -1149,6 +1164,6 @@ public:
     shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
-} // namespace tex
+}  // namespace tex
 
-#endif // ATOM_BASIC_H_INCLUDED
+#endif  // ATOM_BASIC_H_INCLUDED

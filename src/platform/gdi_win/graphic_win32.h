@@ -1,12 +1,12 @@
 #include "config.h"
 
-#if defined(_WIN32) && !defined(__MEM_CHECK)
+#if defined(__OS_Windows__) && !defined(__MEM_CHECK)
 
 #ifndef GRAPHIC_WIN32_H_INCLUDED
 #define GRAPHIC_WIN32_H_INCLUDED
 
-#include "graphic/graphic.h"
 #include "common.h"
+#include "graphic/graphic.h"
 
 using namespace std;
 using namespace tex;
@@ -22,7 +22,7 @@ class SolidBrush;
 class StringFormat;
 class Bitmap;
 
-}
+}  // namespace Gdiplus
 
 namespace tex {
 
@@ -34,6 +34,7 @@ private:
     float _size;
 
     Font_win32();
+
 public:
     int _style;
     shared_ptr<Gdiplus::Font> _typeface;
@@ -139,7 +140,7 @@ public:
     virtual void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
 };
 
-}
+}  // namespace tex
 
-#endif // GRAPHIC_WIN32_H_INCLUDED
+#endif  // GRAPHIC_WIN32_H_INCLUDED
 #endif

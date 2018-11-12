@@ -5,35 +5,35 @@
 
 #ifdef __GNUC__
 #include <cxxabi.h>
-#endif // __GNUC__
+#endif  // __GNUC__
 
-#include <map>
-#include <vector>
 #include <algorithm>
-#include <exception>
-#include <memory>
-#include <string>
-#include <limits>
-#include <sstream>
 #include <cctype>
-#include <functional>
+#include <cerrno>
 #include <climits>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
-#include <cmath>
-#include <cerrno>
+#include <exception>
+#include <functional>
+#include <limits>
+#include <map>
+#include <memory>
+#include <sstream>
+#include <string>
+#include <vector>
 
 using namespace std;
 
-#define __DBG(format, ...) \
-{\
-    printf("FILE: %s, LINE: %d, FUNCTION: %s, MSG: " format, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__);\
-}
+#define __DBG(format, ...)                                                                                         \
+    {                                                                                                              \
+        printf("FILE: %s, LINE: %d, FUNCTION: %s, MSG: " format, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
+    }
 
 #ifdef __DEBUG
 #include <iostream>
 #define __log std::cout
-#endif // __DEBUG
+#endif  // __DEBUG
 
 #define __print printf
 
@@ -78,12 +78,12 @@ inline string demangle_name(const char* name) {
 inline string demangle_name(const char* name) {
     return name;
 }
-#endif // __GNUC__
+#endif  // __GNUC__
 
 /**
  * Find the position of a value in the vector, return -1 if not found
  */
-template<class T>
+template <class T>
 inline int indexOf(const vector<T>& v, const T& x) {
     auto it = find(v.begin(), v.end(), x);
     int i = std::distance(v.begin(), it);
@@ -93,7 +93,7 @@ inline int indexOf(const vector<T>& v, const T& x) {
 /**
  * Convert a value to string
  */
-template<class T>
+template <class T>
 inline string tostring(T val) {
     ostringstream os;
     os << val;
@@ -103,21 +103,21 @@ inline string tostring(T val) {
 /**
  * Convert a value to wide string
  */
-template<class T>
+template <class T>
 inline wstring towstring(T val) {
     wostringstream os;
     os << val;
     return os.str();
 }
 
-template<class T>
+template <class T>
 inline void valueof(const string& s, T& val) {
     stringstream ss;
     ss << s;
     ss >> val;
 }
 
-template<class T>
+template <class T>
 inline void valueof(const wstring& s, T& val) {
     wstringstream ss;
     ss << s;
@@ -179,7 +179,7 @@ inline string& trim(string& s) {
 inline void split(const string& str, char del, _out_ vector<string>& res) {
     stringstream ss(str);
     string tok;
-    while(getline(ss, tok, del)) res.push_back(tok);
+    while (getline(ss, tok, del)) res.push_back(tok);
 }
 
 inline bool startswith(const string& str, const string& cmp) {
@@ -207,6 +207,7 @@ private:
     string _del;
     bool _ret;
     int _pos;
+
 public:
     strtokenizer(const string& str) {
         _str = str;
@@ -274,14 +275,18 @@ public:
 inline string& wide2utf8(const wchar_t* in, _out_ string& out) {
     unsigned int codepoint = 0;
     for (; *in != 0; ++in) {
-        if (*in >= 0xd800 && *in <= 0xdbff) codepoint = ((*in - 0xd800) << 10) + 0x10000;
-        else {
-            if (*in >= 0xdc00 && *in <= 0xdfff) codepoint |= *in - 0xdc00;
-            else codepoint = *in;
+        if (*in >= 0xd800 && *in <= 0xdbff) {
+            codepoint = ((*in - 0xd800) << 10) + 0x10000;
+        } else {
+            if (*in >= 0xdc00 && *in <= 0xdfff) {
+                codepoint |= *in - 0xdc00;
+            } else {
+                codepoint = *in;
+            }
 
-            if (codepoint <= 0x7f)
+            if (codepoint <= 0x7f) {
                 out.append(1, static_cast<char>(codepoint));
-            else if (codepoint <= 0x7ff) {
+            } else if (codepoint <= 0x7ff) {
                 out.append(1, static_cast<char>(0xc0 | ((codepoint >> 6) & 0x1f)));
                 out.append(1, static_cast<char>(0x80 | (codepoint & 0x3f)));
             } else if (codepoint <= 0xffff) {
@@ -314,11 +319,16 @@ inline wstring& utf82wide(const char* in, _out_ wstring& out) {
     unsigned int codepoint;
     while (*in != 0) {
         unsigned char ch = static_cast<unsigned char>(*in);
-        if (ch <= 0x7f) codepoint = ch;
-        else if (ch <= 0xbf) codepoint = (codepoint << 6) | (ch & 0x3f);
-        else if (ch <= 0xdf) codepoint = ch & 0x1f;
-        else if (ch <= 0xef) codepoint = ch & 0x0f;
-        else codepoint = ch & 0x07;
+        if (ch <= 0x7f)
+            codepoint = ch;
+        else if (ch <= 0xbf)
+            codepoint = (codepoint << 6) | (ch & 0x3f);
+        else if (ch <= 0xdf)
+            codepoint = ch & 0x1f;
+        else if (ch <= 0xef)
+            codepoint = ch & 0x0f;
+        else
+            codepoint = ch & 0x07;
         ++in;
         if (((*in & 0xc0) != 0x80) && (codepoint <= 0x10ffff)) {
             if (codepoint > 0xffff) {
@@ -403,16 +413,14 @@ inline wstring& replaceall(_out_ wstring& src, const wstring& from, const wstrin
  * Superclass of all the possible TeX exceptions that can be thrown
  */
 class ex_tex : public exception {
-
 private:
     const string _msg;
 
 public:
-    explicit ex_tex(const string& msg) :
-        _msg(msg) {}
+    explicit ex_tex(const string& msg) : _msg(msg) {}
 
-    explicit ex_tex(const string& msg, const exception& cause) :
-        _msg(msg + "\n caused by: " + cause.what()) {}
+    explicit ex_tex(const string& msg, const exception& cause)
+        : _msg(msg + "\n caused by: " + cause.what()) {}
 
     const char* what() const throw() override {
         return _msg.c_str();
@@ -424,21 +432,18 @@ public:
  * memory.
  */
 class ex_res_parse : public ex_tex {
-
 public:
-    explicit ex_res_parse(const string& msg) :
-        ex_tex(msg) {}
+    explicit ex_res_parse(const string& msg)
+        : ex_tex(msg) {}
 
-    explicit ex_res_parse(const string& msg, const exception& cause) :
-        ex_tex(msg, cause) {}
-
+    explicit ex_res_parse(const string& msg, const exception& cause)
+        : ex_tex(msg, cause) {}
 };
 
 /**
  * xml-parse exception
  */
 class ex_xml_parse : public ex_res_parse {
-
 public:
     /**
      * attribute problem
@@ -447,11 +452,10 @@ public:
         const string& resName,
         const string& elName,
         const string& attrName,
-        const string& msg) :
-        ex_res_parse(
-            resName + ": invalid <" + elName
-            + ">-element found: attribute '" + attrName
-            + "' " + msg) {}
+        const string& msg)
+        : ex_res_parse(
+              resName + ": invalid <" + elName + ">-element found: attribute '" +
+              attrName + "' " + msg) {}
 
     /**
      * attribute problem
@@ -461,39 +465,31 @@ public:
         const string& elName,
         const string& attrName,
         const string& msg,
-        const exception& cause) :
-        ex_res_parse(
-            resName + ": invalid <" + elName
-            + ">-element found: attribute '" + attrName
-            + "' " + msg,
-            cause) {}
+        const exception& cause)
+        : ex_res_parse(
+              resName + ": invalid <" + elName + ">-element found: attribute '" + attrName + "' " + msg,
+              cause) {}
     /**
      * other exceptions
      */
-    explicit ex_xml_parse(const string& resName, const exception& e) :
-        ex_res_parse(resName, e) {}
+    explicit ex_xml_parse(const string& resName, const exception& e) : ex_res_parse(resName, e) {}
 
     /**
      * required element missing
      */
-    explicit ex_xml_parse(const string& resName, const string& elName) :
-        ex_res_parse(
-            resName + ": the required <" + elName
-            + ">-elment not found!") {}
+    explicit ex_xml_parse(const string& resName, const string& elName)
+        : ex_res_parse(
+              resName + ": the required <" + elName + ">-elment not found!") {}
 
-    explicit ex_xml_parse(const string& msg) :
-        ex_res_parse(msg) {}
-
+    explicit ex_xml_parse(const string& msg) : ex_res_parse(msg) {}
 };
 
 /**
  * Exception while registering an alphabet
  */
 class ex_alphabet_registration : public ex_tex {
-
 public:
-    explicit ex_alphabet_registration(const string& msg) :
-        ex_tex(msg) {}
+    explicit ex_alphabet_registration(const string& msg) : ex_tex(msg) {}
 };
 
 /**
@@ -501,20 +497,18 @@ public:
  */
 class ex_delimiter_mapping_not_found : public ex_tex {
 public:
-    explicit ex_delimiter_mapping_not_found(const char& delimiter) :
-        ex_tex("No mapping found for the character '" + string({delimiter}) + "'!") {}
+    explicit ex_delimiter_mapping_not_found(const char& delimiter)
+        : ex_tex("No mapping found for the character '" + string({delimiter}) + "'!") {}
 };
 
 class ex_empty_formula : public ex_tex {
 public:
-    explicit ex_empty_formula() :
-        ex_tex("Illegal operation with an empty formula!") {}
+    explicit ex_empty_formula() : ex_tex("Illegal operation with an empty formula!") {}
 };
 
 class ex_font_loaded : public ex_tex {
 public:
-    explicit ex_font_loaded(const string& msg) :
-        ex_tex(msg) {}
+    explicit ex_font_loaded(const string& msg) : ex_tex(msg) {}
 };
 
 /**
@@ -522,8 +516,8 @@ public:
  */
 class ex_formula_not_found : public ex_tex {
 public:
-    explicit ex_formula_not_found(const string& name) :
-        ex_tex("There's no predefined formula with the name '" + name) {}
+    explicit ex_formula_not_found(const string& name)
+        : ex_tex("There's no predefined formula with the name '" + name) {}
 };
 
 /**
@@ -531,8 +525,7 @@ public:
  */
 class ex_invalid_atom_type : public ex_tex {
 public:
-    explicit ex_invalid_atom_type(const string& msg) :
-        ex_tex(msg) {}
+    explicit ex_invalid_atom_type(const string& msg) : ex_tex(msg) {}
 };
 
 /**
@@ -540,14 +533,14 @@ public:
  */
 class ex_invalid_delimiter : public ex_tex {
 public:
-    explicit ex_invalid_delimiter(const string& symbolName) :
-        ex_tex("The symbol with the name '" + symbolName +
-               "' is not defined as a delimiter") {}
+    explicit ex_invalid_delimiter(const string& symbolName)
+        : ex_tex("The symbol with the name '" + symbolName +
+                 "' is not defined as a delimiter") {}
 
-    explicit ex_invalid_delimiter(const char& ch, const string& symbolName) :
-        ex_tex(
-            "The character '" + string({ch}) + "' is not mapped to a symbol with the name '" +
-            symbolName + "', but that symbol is not defined as a delimiter.") {}
+    explicit ex_invalid_delimiter(const char& ch, const string& symbolName)
+        : ex_tex(
+              "The character '" + string({ch}) + "' is not mapped to a symbol with the name '" +
+              symbolName + "', but that symbol is not defined as a delimiter.") {}
 };
 
 /**
@@ -555,8 +548,7 @@ public:
  */
 class ex_invalid_delimiter_type : public ex_tex {
 public:
-    explicit ex_invalid_delimiter_type() :
-        ex_tex("The delimiter type was not valid!") {}
+    explicit ex_invalid_delimiter_type() : ex_tex("The delimiter type was not valid!") {}
 };
 
 /**
@@ -564,8 +556,7 @@ public:
  */
 class ex_invalid_matrix : public ex_tex {
 public:
-    explicit ex_invalid_matrix(const string& msg) :
-        ex_tex(msg) {}
+    explicit ex_invalid_matrix(const string& msg) : ex_tex(msg) {}
 };
 
 /**
@@ -573,8 +564,7 @@ public:
  */
 class ex_invalid_symbol_type : public ex_tex {
 public:
-    explicit ex_invalid_symbol_type(const string& msg) :
-        ex_tex(msg) {}
+    explicit ex_invalid_symbol_type(const string& msg) : ex_tex(msg) {}
 };
 
 /**
@@ -582,8 +572,7 @@ public:
  */
 class ex_invalid_formula : public ex_tex {
 public:
-    explicit ex_invalid_formula(const string& msg) :
-        ex_tex(msg) {}
+    explicit ex_invalid_formula(const string& msg) : ex_tex(msg) {}
 };
 
 /**
@@ -591,8 +580,8 @@ public:
  */
 class ex_invalid_unit : public ex_tex {
 public:
-    explicit ex_invalid_unit() :
-        ex_tex("The unit was not valid! use the unit defined in 'TeXConstants'.") {}
+    explicit ex_invalid_unit()
+        : ex_tex("The unit was not valid! use the unit defined in 'TeXConstants'.") {}
 };
 
 /**
@@ -600,11 +589,9 @@ public:
  */
 class ex_parse : public ex_tex {
 public:
-    explicit ex_parse(const string& msg, const exception& cause) :
-        ex_tex(msg, cause) {}
+    explicit ex_parse(const string& msg, const exception& cause) : ex_tex(msg, cause) {}
 
-    explicit ex_parse(const string& msg) :
-        ex_tex(msg) {}
+    explicit ex_parse(const string& msg) : ex_tex(msg) {}
 };
 
 /**
@@ -612,8 +599,8 @@ public:
  */
 class ex_symbol_mapping_not_found : public ex_tex {
 public:
-    explicit ex_symbol_mapping_not_found(const string& symbolName) :
-        ex_tex("No mapping found for the symbol '" + symbolName + "'!") {}
+    explicit ex_symbol_mapping_not_found(const string& symbolName)
+        : ex_tex("No mapping found for the symbol '" + symbolName + "'!") {}
 };
 
 /**
@@ -621,8 +608,8 @@ public:
  */
 class ex_symbol_not_found : public ex_tex {
 public:
-    explicit ex_symbol_not_found(const string& name) :
-        ex_tex("There's no symbol with the name '" + name + "' defined.") {}
+    explicit ex_symbol_not_found(const string& name)
+        : ex_tex("There's no symbol with the name '" + name + "' defined.") {}
 };
 
 /**
@@ -630,14 +617,13 @@ public:
  */
 class ex_text_style_mapping_not_found : public ex_tex {
 public:
-    explicit ex_text_style_mapping_not_found(const string& name) :
-        ex_tex("No mapping found for the text style '" + name + "'!") {}
+    explicit ex_text_style_mapping_not_found(const string& name)
+        : ex_tex("No mapping found for the text style '" + name + "'!") {}
 };
 
 class ex_invalid_state : public ex_tex {
 public:
-    explicit ex_invalid_state(const string& e) :
-        ex_tex(e) {}
+    explicit ex_invalid_state(const string& e) : ex_tex(e) {}
 };
 
 /*************************************************************
@@ -654,24 +640,24 @@ enum TeXConstants {
     /**
      * Extra space will be added to the left of the formula
      */
-    ALIGN_RIGHT, // =1
+    ALIGN_RIGHT,  // =1
     /**
      * The formula will be centered in the middle. this constant
      * can be used for both horizontal and vertical alignment
      */
-    ALIGN_CENTER, // =2
+    ALIGN_CENTER,  // =2
     /**
      * Extra space will be added under the formula
      */
-    ALIGN_TOP, // =3
+    ALIGN_TOP,  // =3
     /**
      * Extra space will be added above the formula
      */
-    ALIGN_BOTTOM, // =4
+    ALIGN_BOTTOM,  // =4
     /**
      * None
      */
-    ALIGN_NONE, // =5
+    ALIGN_NONE,  // =5
 
     /*********** space size constants ***********/
     THINMUSKIP = 1,
@@ -696,39 +682,39 @@ enum TeXConstants {
     /**
      * Big operator, e.g. "sum"
      */
-    TYPE_BIG_OPERATOR, // =1
+    TYPE_BIG_OPERATOR,  // =1
     /**
      * Binary operator, e.g. "plus"
      */
-    TYPE_BINARY_OPERATOR, // =2
+    TYPE_BINARY_OPERATOR,  // =2
     /**
      * Relation, e.g. "equals"
      */
-    TYPE_RELATION, // =3
+    TYPE_RELATION,  // =3
     /**
      * Opening symbol, e.g. "lbrace"
      */
-    TYPE_OPENING, // =4
+    TYPE_OPENING,  // =4
     /**
      * Closing symbol, e.g. "rbrace"
      */
-    TYPE_CLOSING, // =5
+    TYPE_CLOSING,  // =5
     /**
      * Punctuation symbol, e.g. "comma"
      */
-    TYPE_PUNCTUATION, // =6
+    TYPE_PUNCTUATION,  // =6
     /**
      * Atom type: inner atom (NOT FOR SYMBOLS)
      */
-    TYPE_INNER, // =7
+    TYPE_INNER,  // =7
     /**
      * Accent, e.g. "hat"
      */
     TYPE_ACCENT = 10,
-    TYPE_INTERTEXT, // =11
-    TYPE_MULTICOLUMN, // =12
-    TYPE_HLINE, // =13
-    TYPE_MULTIROW, // =14
+    TYPE_INTERTEXT,    // =11
+    TYPE_MULTICOLUMN,  // =12
+    TYPE_HLINE,        // =13
+    TYPE_MULTIROW,     // =14
 
     /****** over and under delimiter type constants ******/
     DELIM_BRACE = 0,
@@ -816,6 +802,6 @@ enum TeXConstants {
     UNIT_CC
 };
 
-} // namespace tex
+}  // namespace tex
 
-#endif // COMMON_H_INCLUDED
+#endif  // COMMON_H_INCLUDED

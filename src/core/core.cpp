@@ -6,8 +6,8 @@
 using namespace std;
 using namespace tex;
 
-#define ANSI_COLOR_CYAN  "\x1b[36m"
-#define ANSI_COLOR_RED   "\x1b[31m"
+#define ANSI_COLOR_CYAN "\x1b[36m"
+#define ANSI_COLOR_RED "\x1b[31m"
 #define ANSI_COLOR_RESET "\x1b[0m"
 
 void print_box(const shared_ptr<Box>& b, int dep, vector<bool>& lines) {
@@ -60,10 +60,10 @@ void tex::print_box(const shared_ptr<Box>& b) {
 }
 
 shared_ptr<Box> FormulaBreaker::split(const shared_ptr<Box>& b, float width, float interline) {
-#ifdef __GA_DEBUG
+#ifdef __DEBUG
     __print("BEFORE SPLIT\n");
     print_box(b);
-#endif // __GA_DEBUG
+#endif
 
     HorizontalBox* h = dynamic_cast<HorizontalBox*>(b.get());
     shared_ptr<Box> box;
@@ -73,10 +73,10 @@ shared_ptr<Box> FormulaBreaker::split(const shared_ptr<Box>& b, float width, flo
         box = b;
     }
 
-#ifdef __GA_DEBUG
+#ifdef __DEBUG
     __print("AFTER SPLIT\n");
     print_box(box);
-#endif // __GA_DEBUG
+#endif
 
     return box;
 }
@@ -169,7 +169,7 @@ int FormulaBreaker::getBreakPosition(const shared_ptr<HorizontalBox>& hb, int i)
     return i;*/
     if (hb->_breakPositions.empty()) return -1;
 
-    if (hb->_breakPositions.size() == 1 && hb->_breakPositions[0] <= i) 
+    if (hb->_breakPositions.size() == 1 && hb->_breakPositions[0] <= i)
         return hb->_breakPositions[0];
 
     size_t pos = 0;
@@ -262,21 +262,19 @@ shared_ptr<TeXEnvironment>& TeXEnvironment::supStyle() {
 
 const string GlueSettingParser::RESOURCE_NAME = "GlueSettings.xml";
 const map<string, int> GlueSettingParser::_typeMappings = {
-    { "ord", TYPE_ORDINARY },
-    { "op", TYPE_BIG_OPERATOR },
-    { "bin", TYPE_BINARY_OPERATOR },
-    { "rel", TYPE_RELATION },
-    { "open", TYPE_OPENING },
-    { "close", TYPE_CLOSING },
-    { "punct", TYPE_PUNCTUATION },
-    { "inner", TYPE_INNER }
-};
+    {"ord", TYPE_ORDINARY},
+    {"op", TYPE_BIG_OPERATOR},
+    {"bin", TYPE_BINARY_OPERATOR},
+    {"rel", TYPE_RELATION},
+    {"open", TYPE_OPENING},
+    {"close", TYPE_CLOSING},
+    {"punct", TYPE_PUNCTUATION},
+    {"inner", TYPE_INNER}};
 const map<string, int> GlueSettingParser::_styleMappings = {
-    { "display", STYLE_DISPLAY / 2 },
-    { "text", STYLE_TEXT / 2 },
-    { "script", STYLE_SCRIPT / 2 },
-    { "script_script", STYLE_SCRIPT_SCRIPT / 2 }
-};
+    {"display", STYLE_DISPLAY / 2},
+    {"text", STYLE_TEXT / 2},
+    {"script", STYLE_SCRIPT / 2},
+    {"script_script", STYLE_SCRIPT_SCRIPT / 2}};
 
 static int GLUE_TAB_DIM_1 = 0;
 static int GLUE_TAB_DIM_2 = 0;
@@ -288,26 +286,26 @@ GlueSettingParser::GlueSettingParser() throw(ex_res_parse) : _doc(true, COLLAPSE
     if (err != XML_NO_ERROR) {
 #ifdef __DEBUG
         __DBG("%s not found while parsing glue\n", name.c_str());
-#endif // __DEBUG
+#endif  // __DEBUG
         throw ex_xml_parse(name + " not found!");
     }
     _root = _doc.RootElement();
 #ifdef __DEBUG
     __DBG("root name: %s \n", _root->Name());
-#endif // __DEBUG
+#endif  // __DEBUG
 }
 
 void GlueSettingParser::parseGlueTypes(_out_ vector<Glue*>& glueTypes) throw(ex_res_parse) {
     const XMLElement* types = _root->FirstChildElement("GlueTypes");
 #ifdef __DEBUG
     __DBG("GlueTypes tag name: %s\n", types->Name());
-#endif // __DEBUG
+#endif  // __DEBUG
     int defalutIndex = -1;
     int index = 0;
     const XMLElement* type = types->FirstChildElement("GlueType");
 #ifdef __DEBUG
     __DBG("GlueType tag name: %s\n", type->Name());
-#endif // __DEBUG
+#endif  // __DEBUG
     while (type != nullptr) {
         // retrieve required attribute value, throw ex if not set
         string name = getAttr("name", type);
@@ -335,7 +333,7 @@ void GlueSettingParser::parseGlueTypes(_out_ vector<Glue*>& glueTypes) throw(ex_
 }
 
 Glue* GlueSettingParser::createGlue(const XMLElement* type, const string& name) throw(ex_res_parse) {
-    string names[] = { "space", "stretch", "shrink" };
+    string names[] = {"space", "stretch", "shrink"};
     float values[3];
     for (int i = 0; i < 3; i++) {
         float v = 0;
@@ -368,11 +366,11 @@ int*** GlueSettingParser::createGlueTable() throw(ex_res_parse) {
     const XMLElement* glueTable = _root->FirstChildElement("GlueTable");
 #ifdef __DEBUG
     __DBG("GlueTable tag name: %s\n", glueTable->Name());
-#endif // __DEBUG
+#endif  // __DEBUG
     const XMLElement* glue = glueTable->FirstChildElement("Glue");
 #ifdef __DEBUG
     __DBG("Glue tag name: %s\n", glue->Name());
-#endif // __DEBUG
+#endif  // __DEBUG
     while (glue != nullptr) {
         // retrieve required attribute values
         const string& left = getAttr("lefttype", glue);
@@ -411,7 +409,7 @@ ostream& tex::operator<<(ostream& out, const Glue& glue) {
     out << glue._shrink << ", name: " << glue._name << " }";
     return out;
 }
-#endif // __DEBUG
+#endif  // __DEBUG
 
 vector<Glue*> Glue::_glueTypes;
 int*** Glue::_glueTable;
@@ -425,7 +423,7 @@ void Glue::_init_() {
     __log << "elements in _glueTypes" << endl;
     for (auto x : _glueTypes) __log << "\t" << x << endl;
     __log << endl;
-#endif // __DEBUG
+#endif  // __DEBUG
 }
 
 void Glue::_free_() {
@@ -467,15 +465,14 @@ const string TeXSymbolParser::DELIMITER_ATTR = "del";
 const string TeXSymbolParser::TYPE_ATTR = "type";
 
 const map<string, int> TeXSymbolParser::_typeMappings = {
-    { "ord", TYPE_ORDINARY },
-    { "op", TYPE_BIG_OPERATOR },
-    { "bin", TYPE_BINARY_OPERATOR },
-    { "rel", TYPE_RELATION },
-    { "open", TYPE_OPENING },
-    { "close", TYPE_CLOSING },
-    { "punct", TYPE_PUNCTUATION },
-    { "acc", TYPE_ACCENT }
-};
+    {"ord", TYPE_ORDINARY},
+    {"op", TYPE_BIG_OPERATOR},
+    {"bin", TYPE_BINARY_OPERATOR},
+    {"rel", TYPE_RELATION},
+    {"open", TYPE_OPENING},
+    {"close", TYPE_CLOSING},
+    {"punct", TYPE_PUNCTUATION},
+    {"acc", TYPE_ACCENT}};
 
 string TeXSymbolParser::getAttr(const char* attr, const XMLElement* e) throw(ex_res_parse) {
     const char* x = e->Attribute(attr);
@@ -483,25 +480,23 @@ string TeXSymbolParser::getAttr(const char* attr, const XMLElement* e) throw(ex_
     return x;
 }
 
-TeXSymbolParser::TeXSymbolParser() throw(ex_res_parse) :
-    _doc(true, COLLAPSE_WHITESPACE) {
+TeXSymbolParser::TeXSymbolParser() throw(ex_res_parse) : _doc(true, COLLAPSE_WHITESPACE) {
     const string file = RES_BASE + "/" + RESOURCE_NAME;
     int err = _doc.LoadFile(file.c_str());
     if (err != XML_NO_ERROR) throw ex_res_parse(file + " not found!");
     _root = _doc.RootElement();
 #ifdef __DEBUG
     __DBG("root :%s\n", _root->Name());
-#endif // __DEBUG
+#endif  // __DEBUG
 }
 
-TeXSymbolParser::TeXSymbolParser(const string& file) throw(ex_res_parse) :
-    _doc(true, COLLAPSE_WHITESPACE) {
+TeXSymbolParser::TeXSymbolParser(const string& file) throw(ex_res_parse) : _doc(true, COLLAPSE_WHITESPACE) {
     int err = _doc.LoadFile(file.c_str());
     if (err != XML_NO_ERROR) throw ex_res_parse(file + " not found!");
     _root = _doc.RootElement();
 #ifdef __DEBUG
     __DBG("root :%s\n", _root->Name());
-#endif // __DEBUG
+#endif  // __DEBUG
 }
 
 void TeXSymbolParser::readSymbols(_out_ map<string, shared_ptr<SymbolAtom>>& res) throw(ex_res_parse) {
@@ -532,17 +527,16 @@ TeXFormulaSettingParser::TeXFormulaSettingParser() throw(ex_res_parse) : _doc(tr
     _root = _doc.RootElement();
 #ifdef __DEBUG
     __DBG("TeXFormulaSettings.xml root: %s\n", _root->Name());
-#endif // __DEBUG
+#endif  // __DEBUG
 }
 
-TeXFormulaSettingParser::TeXFormulaSettingParser(const string& file) throw(ex_res_parse) : 
-    _doc(true, COLLAPSE_WHITESPACE) {
+TeXFormulaSettingParser::TeXFormulaSettingParser(const string& file) throw(ex_res_parse) : _doc(true, COLLAPSE_WHITESPACE) {
     int err = _doc.LoadFile(file.c_str());
     if (err != XML_NO_ERROR) throw ex_xml_parse(file + " not found!");
     _root = _doc.RootElement();
 #ifdef __DEBUG
     __DBG("TeXFormulaSettings.xml root: %s\n", _root->Name());
-#endif // __DEBUG
+#endif  // __DEBUG
 }
 
 int TeXFormulaSettingParser::getUtf(const XMLElement* e, const char* attr) throw(ex_res_parse) {

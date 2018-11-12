@@ -18,12 +18,10 @@ class CellSpecifier;
 class TeXParser;
 
 struct FontInfos {
-
     const string _sansserif;
     const string _serif;
 
-    FontInfos(const string& ss, const string& s) :
-        _sansserif(ss), _serif(s) {
+    FontInfos(const string& ss, const string& s) : _sansserif(ss), _serif(s) {
     }
 };
 
@@ -54,6 +52,7 @@ private:
     TeXParser _parser;
 
     void addImpl(const TeXFormula* f);
+
 public:
     map<string, string> _xmlMap;
     // point-to-pixel conversion
@@ -268,6 +267,6 @@ public:
     virtual ~ArrayOfAtoms() {}
 };
 
-}
+}  // namespace tex
 
-#endif // FORMULA_H_INCLUDED
+#endif  // FORMULA_H_INCLUDED

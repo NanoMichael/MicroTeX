@@ -1,6 +1,6 @@
 #include "config.h"
 
-#if defined(__linux__) && !defined(__MEM_CHECK)
+#if defined(__OS_Linux__) && !defined(__MEM_CHECK)
 
 #ifndef GRAPHIC_CAIRO_H_INCLUDED
 #define GRAPHIC_CAIRO_H_INCLUDED
@@ -46,7 +46,6 @@ public:
 /********************************************************************************/
 
 class TextLayout_cairo : public TextLayout {
-
 private:
     static Cairo::RefPtr<Cairo::Context> _img_context;
     Glib::RefPtr<Pango::Layout> _layout;
@@ -63,7 +62,6 @@ public:
 /********************************************************************************/
 
 class Graphics2D_cairo : public Graphics2D {
-
 private:
     static Font_cairo _default_font;
 
@@ -74,6 +72,7 @@ private:
     float _sx, _sy;
 
     void roundRect(float x, float y, float w, float h, float rx, float ry);
+
 public:
     Graphics2D_cairo(const Cairo::RefPtr<Cairo::Context>& context);
 
@@ -122,7 +121,7 @@ public:
     virtual void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
 };
 
-}
+}  // namespace tex
 
-#endif // GRAPHIC_CAIRO_H_INCLUDED
-#endif // __linux && !__MEM_CHECK
+#endif  // GRAPHIC_CAIRO_H_INCLUDED
+#endif  // __OS_Linux__ && !__MEM_CHECK
