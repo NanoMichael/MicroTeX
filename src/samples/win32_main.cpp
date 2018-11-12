@@ -1,17 +1,17 @@
-#if defined(_WIN32) && !defined(__MEM_CHECK)
+#if defined(__OS_Windows__) && !defined(__MEM_CHECK)
 
 #include "latex.h"
-#include "samples.h"
 #include "platform/gdi_win/graphic_win32.h"
+#include "samples.h"
 
-#include <iostream>
-#include <cstdlib>
 #include <time.h>
+#include <cstdlib>
+#include <iostream>
 
-#include <windows.h>
-#include <objidl.h>
 #include <gdiplus.h>
+#include <objidl.h>
 #include <tchar.h>
+#include <windows.h>
 
 #define ID_SETTER 256
 #define ID_CANVAS 512
@@ -59,11 +59,11 @@ LRESULT CALLBACK EditorProc(HWND, UINT, WPARAM, LPARAM);
 LRESULT CALLBACK SetterProc(HWND, UINT, WPARAM, LPARAM);
 
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
-    HWND                hWnd;
-    MSG                 msg;
-    WNDCLASS            wndClass;
+    HWND hWnd;
+    MSG msg;
+    WNDCLASS wndClass;
     GdiplusStartupInput gdiplusStartupInput;
-    ULONG_PTR           gdiplusToken;
+    ULONG_PTR gdiplusToken;
 
     // Initialize GDI+.
     GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
@@ -71,37 +71,37 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
 
     RegisterCanvas();
 
-    wndClass.style          = CS_HREDRAW | CS_VREDRAW;
-    wndClass.lpfnWndProc    = WndProc;
-    wndClass.cbClsExtra     = 0;
-    wndClass.cbWndExtra     = 0;
-    wndClass.hInstance      = hInstance;
-    wndClass.hIcon          = LoadIcon(NULL, IDI_APPLICATION);
-    wndClass.hCursor        = LoadCursor(NULL, IDC_ARROW);
-    wndClass.hbrBackground  = (HBRUSH)GetStockObject(WHITE_BRUSH);
-    wndClass.lpszMenuName   = NULL;
-    wndClass.lpszClassName  = TEXT("LaTeX");
+    wndClass.style = CS_HREDRAW | CS_VREDRAW;
+    wndClass.lpfnWndProc = WndProc;
+    wndClass.cbClsExtra = 0;
+    wndClass.cbWndExtra = 0;
+    wndClass.hInstance = hInstance;
+    wndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+    wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+    wndClass.lpszMenuName = NULL;
+    wndClass.lpszClassName = TEXT("LaTeX");
 
     RegisterClass(&wndClass);
 
     hWnd = CreateWindow(
-               TEXT("LaTeX"),            // window class name
-               TEXT("LaTeX"),            // window caption
-               WS_OVERLAPPEDWINDOW,      // window style
-               0,                        // initial x position
-               0,                        // initial y position
-               780,                      // initial x size
-               480,                      // initial y size
-               NULL,                     // parent window handle
-               NULL,                     // window menu handle
-               hInstance,                // program instance handle
-               NULL);                    // creation parameters
+        TEXT("LaTeX"),        // window class name
+        TEXT("LaTeX"),        // window caption
+        WS_OVERLAPPEDWINDOW,  // window style
+        0,                    // initial x position
+        0,                    // initial y position
+        780,                  // initial x size
+        480,                  // initial y size
+        NULL,                 // parent window handle
+        NULL,                 // window menu handle
+        hInstance,            // program instance handle
+        NULL);                // creation parameters
 
     CreateCtrl(hInstance, hWnd);
     ShowWindow(hWnd, SW_SHOWMAXIMIZED);
     UpdateWindow(hWnd);
 
-    while(GetMessage(&msg, NULL, 0, 0)) {
+    while (GetMessage(&msg, NULL, 0, 0)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
@@ -113,7 +113,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
 }  // WinMain
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-    switch(message) {
+    switch (message) {
     case WM_DESTROY:
         PostQuitMessage(0);
         return 0;
@@ -130,7 +130,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
-} // WndProc
+}  // WndProc
 
 void init() {
     LaTeX::init();
@@ -199,59 +199,59 @@ void CreateCtrl(HINSTANCE hInst, HWND hwnd) {
     int l = 0, t = 0, w = 10, h = 10;
     // edit-box
     hEditor = CreateWindowEx(
-                WS_EX_TOPMOST,
-                "edit", NULL,
-                WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL,
-                l, t, w, h,
-                hwnd,
-                (HMENU) ID_EDITBOX,
-                hInst, NULL);
+        WS_EX_TOPMOST,
+        "edit", NULL,
+        WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL,
+        l, t, w, h,
+        hwnd,
+        (HMENU)ID_EDITBOX,
+        hInst, NULL);
     HFONT hf = CreateFont(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "Consolas");
-    SendMessage(hEditor, WM_SETFONT, (WPARAM) hf, 0);
+    SendMessage(hEditor, WM_SETFONT, (WPARAM)hf, 0);
     SetFocus(hEditor);
-    editorProc = (WNDPROC) SetWindowLongPtr(hEditor, GWLP_WNDPROC, (LONG_PTR) EditorProc);
+    editorProc = (WNDPROC)SetWindowLongPtr(hEditor, GWLP_WNDPROC, (LONG_PTR)EditorProc);
     // size setter
     hEditSize = CreateWindowEx(
-                WS_EX_TOPMOST,
-                "edit", NULL,
-                WS_CHILD | WS_VISIBLE | WS_BORDER | ES_CENTER | ES_NUMBER,
-                l, t, w, h,
-                hwnd,
-                (HMENU) ID_SETTER,
-                hInst, NULL);
-    SendMessage(hEditSize, WM_SETFONT, (WPARAM) hf, 0);
-    setterProc = (WNDPROC) SetWindowLongPtr(hEditSize, GWLP_WNDPROC, (LONG_PTR) SetterProc);
+        WS_EX_TOPMOST,
+        "edit", NULL,
+        WS_CHILD | WS_VISIBLE | WS_BORDER | ES_CENTER | ES_NUMBER,
+        l, t, w, h,
+        hwnd,
+        (HMENU)ID_SETTER,
+        hInst, NULL);
+    SendMessage(hEditSize, WM_SETFONT, (WPARAM)hf, 0);
+    setterProc = (WNDPROC)SetWindowLongPtr(hEditSize, GWLP_WNDPROC, (LONG_PTR)SetterProc);
     // button size
     hBtnSize = CreateWindowEx(
-                WS_EX_TOPMOST,
-                "Button", NULL,
-                WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-                l, t, w, h,
-                hwnd,
-                (HMENU) ID_BUTTON_SIZE,
-                hInst, NULL);
-    SendMessage(hBtnSize, WM_SETFONT, (WPARAM) hf, 0);
-    SendMessage(hBtnSize, WM_SETTEXT, (WPARAM) NULL, (LPARAM) ("Set Text Size"));
+        WS_EX_TOPMOST,
+        "Button", NULL,
+        WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+        l, t, w, h,
+        hwnd,
+        (HMENU)ID_BUTTON_SIZE,
+        hInst, NULL);
+    SendMessage(hBtnSize, WM_SETFONT, (WPARAM)hf, 0);
+    SendMessage(hBtnSize, WM_SETTEXT, (WPARAM)NULL, (LPARAM)("Set Text Size"));
     // button random
     hBtnRandom = CreateWindowEx(
-                WS_EX_TOPMOST,
-                "Button", NULL,
-                WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-                l, t, w, h,
-                hwnd,
-                (HMENU) ID_BUTTON_RANDOM,
-                hInst, NULL);
-    SendMessage(hBtnRandom, WM_SETFONT, (WPARAM) hf, 0);
-    SendMessage(hBtnRandom, WM_SETTEXT, (WPARAM) NULL, (LPARAM) ("Random Example"));
+        WS_EX_TOPMOST,
+        "Button", NULL,
+        WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+        l, t, w, h,
+        hwnd,
+        (HMENU)ID_BUTTON_RANDOM,
+        hInst, NULL);
+    SendMessage(hBtnRandom, WM_SETFONT, (WPARAM)hf, 0);
+    SendMessage(hBtnRandom, WM_SETTEXT, (WPARAM)NULL, (LPARAM)("Random Example"));
     // canvas
     hCanvas = CreateWindowEx(
-                WS_EX_TOPMOST,
-                "canvas", NULL,
-                WS_CHILD | WS_VISIBLE,
-                l, t, w, h,
-                hwnd,
-                (HMENU) ID_CANVAS,
-                hInst, NULL);
+        WS_EX_TOPMOST,
+        "canvas", NULL,
+        WS_CHILD | WS_VISIBLE,
+        l, t, w, h,
+        hwnd,
+        (HMENU)ID_CANVAS,
+        hInst, NULL);
 }
 
 void ResizeCtrl(HWND hwnd) {
@@ -281,7 +281,7 @@ void ResizeCtrl(HWND hwnd) {
 }
 
 void RegisterCanvas() {
-    WNDCLASS wnd = { 0 };
+    WNDCLASS wnd = {0};
     wnd.style = CS_GLOBALCLASS | CS_HREDRAW | CS_VREDRAW;
     wnd.lpfnWndProc = CanvasProc;
     wnd.hCursor = LoadCursor(NULL, IDC_ARROW);
@@ -314,8 +314,8 @@ void ScrollCanvas(int d) {
 }
 
 LRESULT CALLBACK CanvasProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-    HDC          hdc;
-    PAINTSTRUCT  ps;
+    HDC hdc;
+    PAINTSTRUCT ps;
 
     switch (message) {
     case WM_PAINT: {
@@ -325,7 +325,7 @@ LRESULT CALLBACK CanvasProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
         break;
     }
     case WM_ERASEBKGND: {
-        hdc = (HDC) wParam;
+        hdc = (HDC)wParam;
         RECT r;
         GetClientRect(hWnd, &r);
         FillRect(hdc, &r, (HBRUSH)GetStockObject(WHITE_BRUSH));

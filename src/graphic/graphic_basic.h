@@ -1,9 +1,9 @@
 #ifndef GRAPHIC_BASIC_H_INCLUDED
 #define GRAPHIC_BASIC_H_INCLUDED
 
-#include "common.h"
-#include <string>
 #include <sstream>
+#include <string>
+#include "common.h"
 
 using namespace std;
 using namespace tex;
@@ -12,24 +12,24 @@ namespace tex {
 
 typedef unsigned int color;
 
-static const color trans   = 0x00000000;
-static const color black   = 0xff000000;
-static const color white   = 0xffffffff;
-static const color red     = 0xffff0000;
-static const color green   = 0xff00ff00;
-static const color blue    = 0xff0000ff;
-static const color yellow  = 0xffffff00;
-static const color cyan    = 0xff00ffff;
+static const color trans = 0x00000000;
+static const color black = 0xff000000;
+static const color white = 0xffffffff;
+static const color red = 0xffff0000;
+static const color green = 0xff00ff00;
+static const color blue = 0xff0000ff;
+static const color yellow = 0xffffff00;
+static const color cyan = 0xff00ffff;
 static const color magenta = 0xffff00ff;
 
-static const color TRANS   = trans;
-static const color BLACK   = black;
-static const color WHITE   = white;
-static const color RED     = red;
-static const color GREEN   = green;
-static const color BLUE    = blue;
-static const color YELLOW  = yellow;
-static const color CYAN    = cyan;
+static const color TRANS = trans;
+static const color BLACK = black;
+static const color WHITE = white;
+static const color RED = red;
+static const color GREEN = green;
+static const color BLUE = blue;
+static const color YELLOW = yellow;
+static const color CYAN = cyan;
 static const color MAGENTA = magenta;
 
 inline color argb(int a, int r, int g, int b) {
@@ -87,41 +87,32 @@ inline color decode(const string& s) {
 }
 
 struct Point {
-
     float x, y;
 
-    Point() :
-        x(0), y(0) {
+    Point() : x(0), y(0) {
     }
 
-    Point(float x1, float y1) :
-        x(x1), y(y1) {
+    Point(float x1, float y1) : x(x1), y(y1) {
     }
 };
 
 struct Rect {
-
     float x, y, w, h;
 
-    Rect() :
-        x(0), y(0), w(0), h(0) {
+    Rect() : x(0), y(0), w(0), h(0) {
     }
 
-    Rect(float x1, float y1, float w1, float h1) :
-        x(x1), y(y1), w(w1), h(h1) {
+    Rect(float x1, float y1, float w1, float h1) : x(x1), y(y1), w(w1), h(h1) {
     }
 };
 
 struct Insets {
-
     int left, top, right, bottom;
 
-    Insets() :
-        left(0), top(0), right(0), bottom(0) {
+    Insets() : left(0), top(0), right(0), bottom(0) {
     }
 
-    Insets(int t, int l, int b, int r) :
-        left(t), top(t), right(r), bottom(b) {
+    Insets(int t, int l, int b, int r) : left(t), top(t), right(r), bottom(b) {
     }
 
     void set(int t, int l, int b, int r) {
@@ -132,23 +123,28 @@ struct Insets {
     }
 };
 
-enum Cap { CAP_BUTT, CAP_ROUND, CAP_SQUARE };
-enum Join { JOIN_BEVEL, JOIN_MITER, JOIN_ROUND };
+enum Cap {
+    CAP_BUTT,
+    CAP_ROUND,
+    CAP_SQUARE
+};
+enum Join {
+    JOIN_BEVEL,
+    JOIN_MITER,
+    JOIN_ROUND
+};
 
 struct Stroke {
-
     float lineWidth;
     float miterLimit;
     Cap cap;
     Join join;
 
-    Stroke() :
-        lineWidth(1.f), cap(CAP_ROUND), join(JOIN_ROUND), miterLimit(0) {
-    }
+    Stroke()
+        : lineWidth(1.f), cap(CAP_ROUND), join(JOIN_ROUND), miterLimit(0) {}
 
-    Stroke(float w, Cap c, Join j, float ml = 0) :
-        lineWidth(w), cap(c), join(j), miterLimit(ml) {
-    }
+    Stroke(float w, Cap c, Join j, float ml = 0)
+        : lineWidth(w), cap(c), join(j), miterLimit(ml) {}
 
     void setStroke(float w, Cap c, Join j, float ml = 0) {
         lineWidth = w;
@@ -158,6 +154,6 @@ struct Stroke {
     }
 };
 
-}
+}  // namespace tex
 
-#endif // PORT_BASIC_H_INCLUDED
+#endif  // PORT_BASIC_H_INCLUDED

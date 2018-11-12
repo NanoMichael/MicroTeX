@@ -1,13 +1,13 @@
 #include "config.h"
 
-#if defined(_WIN32) && !defined(__MEM_CHECK)
+#if defined(__OS_Windows__) && !defined(__MEM_CHECK)
 
 #include "platform/gdi_win/graphic_win32.h"
 
 #include <sstream>
 
-#include <windows.h>
 #include <gdiplus.h>
+#include <windows.h>
 
 using namespace std;
 using namespace tex;
@@ -150,8 +150,8 @@ Gdiplus::Graphics* TextLayout_win32::_g = nullptr;
 Gdiplus::Bitmap* TextLayout_win32::_img = nullptr;
 const Gdiplus::StringFormat* TextLayout_win32::_format = nullptr;
 
-TextLayout_win32::TextLayout_win32(const wstring& src, const shared_ptr<Font_win32>& font) :
-    _txt(src), _font(font) {
+TextLayout_win32::TextLayout_win32(const wstring& src, const shared_ptr<Font_win32>& font)
+    : _txt(src), _font(font) {
     if (_img == nullptr) {
         _img = new Gdiplus::Bitmap(1, 1, PixelFormat32bppARGB);
         _g = Gdiplus::Graphics::FromImage(_img);
@@ -164,7 +164,8 @@ void TextLayout_win32::getBounds(_out_ Rect& r) {
     int ascent = _font->_family->GetCellAscent(_font->_style);
     float ap = _font->getSize() * ascent / em;
     Gdiplus::RectF r1;
-    _g->MeasureString(_txt.c_str(), wcslen(_txt.c_str()), &(*_font->_typeface), Gdiplus::PointF(0, 0), _format, &r1);
+    _g->MeasureString(
+        _txt.c_str(), wcslen(_txt.c_str()), &(*_font->_typeface), Gdiplus::PointF(0, 0), _format, &r1);
     r.x = 0;
     r.y = -ap;
     r.w = r1.Width;
@@ -186,7 +187,7 @@ shared_ptr<TextLayout> TextLayout::create(const wstring& src, const shared_ptr<F
 /******************************************************************************************/
 
 const Gdiplus::StringFormat* Graphics2D_win32::_format = nullptr;
-const Font*  Graphics2D_win32::_defaultFont = nullptr;
+const Font* Graphics2D_win32::_defaultFont = nullptr;
 
 Graphics2D_win32::Graphics2D_win32(Gdiplus::Graphics* g) {
     if (_format == nullptr) {
@@ -304,13 +305,13 @@ float Graphics2D_win32::sy() const {
 }
 
 void Graphics2D_win32::drawChar(wchar_t c, float x, float y) {
-    wchar_t str[] { c, L'\0' };
+    wchar_t str[]{c, L'\0'};
     drawText(str, x, y);
 }
 
 void Graphics2D_win32::drawText(const wstring& c, float x, float y) {
     const wchar_t* str = c.c_str();
-    const Font_win32* f = (const Font_win32*) _font;
+    const Font_win32* f = (const Font_win32*)_font;
     int em = f->_family->GetEmHeight(f->_style);
     int ascent = f->_family->GetCellAscent(f->_style);
     float ap = f->getSize() * ascent / em;

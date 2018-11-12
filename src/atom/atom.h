@@ -3,8 +3,8 @@
 
 #undef DEBUG
 
-#include "graphic/graphic.h"
 #include "common.h"
+#include "graphic/graphic.h"
 
 #include <list>
 
@@ -260,7 +260,6 @@ public:
  *
  */
 class Atom {
-
 public:
     /**
      * The type of the atom (default value: ordinary atom) @see TeXConstants
@@ -275,10 +274,10 @@ public:
      */
     int _alignment;
 
-    Atom() :
-        _type(TYPE_ORDINARY),
-        _typelimits(SCRIPT_NOLIMITS),
-        _alignment(-1) {
+    Atom()
+        : _type(TYPE_ORDINARY),
+          _typelimits(SCRIPT_NOLIMITS),
+          _alignment(-1) {
     }
 
     /**
@@ -318,6 +317,6 @@ public:
     virtual shared_ptr<Box> createBox(_out_ TeXEnvironment& env) = 0;
 };
 
-} // namespace tex
+}  // namespace tex
 
-#endif // ATOM_H_INCLUDED
+#endif  // ATOM_H_INCLUDED

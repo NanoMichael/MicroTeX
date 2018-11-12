@@ -1,6 +1,6 @@
 #include "config.h"
 
-#if defined(__linux__) && !defined(__MEM_CHECK)
+#if defined(__OS_Linux__) && !defined(__MEM_CHECK)
 
 #include "platform/cairo/graphic_cairo.h"
 
@@ -11,11 +11,10 @@ using namespace std;
 
 map<string, string> Font_cairo::_file_name_map;
 
-Font_cairo::Font_cairo(const string& family, int style, float size) :
-    _family(family), _style(style), _size((double) size) {}
+Font_cairo::Font_cairo(const string& family, int style, float size)
+    : _family(family), _style(style), _size((double)size) {}
 
-Font_cairo::Font_cairo(const string& file, float size) :
-    Font_cairo("", PLAIN, size) {
+Font_cairo::Font_cairo(const string& file, float size) : Font_cairo("", PLAIN, size) {
     loadFont(file);
 }
 
@@ -29,7 +28,7 @@ void Font_cairo::loadFont(const string& file) {
 #endif
         return;
     }
-    const FcChar8* f = (const FcChar8*) file.c_str();
+    const FcChar8* f = (const FcChar8*)file.c_str();
 
     // get font family from file first
     int count;
@@ -54,7 +53,7 @@ void Font_cairo::loadFont(const string& file) {
 #endif
     }
 
-    _family = (const char*) family;
+    _family = (const char*)family;
     _file_name_map[file] = _family;
 
     // release
@@ -70,7 +69,7 @@ int Font_cairo::getStyle() const {
 }
 
 float Font_cairo::getSize() const {
-    return (float) _size;
+    return (float)_size;
 }
 
 shared_ptr<Font> Font_cairo::deriveFont(int style) const {
@@ -128,7 +127,7 @@ TextLayout_cairo::TextLayout_cairo(const wstring& src, const shared_ptr<Font_cai
     _layout->set_text(wide2utf8(src.c_str()));
     _layout->set_font_description(fd);
 
-    _ascent = (float) (_layout->get_baseline() / Pango::SCALE);
+    _ascent = (float)(_layout->get_baseline() / Pango::SCALE);
 }
 
 void TextLayout_cairo::getBounds(_out_ Rect& r) {
@@ -136,8 +135,8 @@ void TextLayout_cairo::getBounds(_out_ Rect& r) {
     _layout->get_pixel_size(w, h);
     r.x = 0;
     r.y = -_ascent;
-    r.w = (float) w;
-    r.h = (float) h;
+    r.w = (float)w;
+    r.h = (float)h;
 }
 
 void TextLayout_cairo::draw(Graphics2D& g2, float x, float y) {
@@ -190,11 +189,11 @@ color Graphics2D_cairo::getColor() const {
 
 void Graphics2D_cairo::setStroke(const Stroke& s) {
     _stroke = s;
-    _context->set_line_width((double) s.lineWidth);
+    _context->set_line_width((double)s.lineWidth);
 
     // convert abstract line cap to platform line cap
     Cairo::LineCap c;
-    switch(s.cap) {
+    switch (s.cap) {
     case CAP_BUTT:
         c = Cairo::LINE_CAP_BUTT;
         break;
@@ -209,7 +208,7 @@ void Graphics2D_cairo::setStroke(const Stroke& s) {
 
     // conver abstract line join to platform line join
     Cairo::LineJoin j;
-    switch(s.join) {
+    switch (s.join) {
     case JOIN_BEVEL:
         j = Cairo::LINE_JOIN_BEVEL;
         break;
@@ -222,7 +221,7 @@ void Graphics2D_cairo::setStroke(const Stroke& s) {
     }
     _context->set_line_join(j);
 
-    _context->set_miter_limit((double) s.miterLimit);
+    _context->set_miter_limit((double)s.miterLimit);
 }
 
 const Stroke& Graphics2D_cairo::getStroke() const {
@@ -231,7 +230,7 @@ const Stroke& Graphics2D_cairo::getStroke() const {
 
 void Graphics2D_cairo::setStrokeWidth(float w) {
     _stroke.lineWidth = w;
-    _context->set_line_width((double) w);
+    _context->set_line_width((double)w);
 }
 
 const Font* Graphics2D_cairo::getFont() const {
@@ -243,13 +242,13 @@ void Graphics2D_cairo::setFont(const Font* font) {
 }
 
 void Graphics2D_cairo::translate(float dx, float dy) {
-    _context->translate((double) dx, (double) dy);
+    _context->translate((double)dx, (double)dy);
 }
 
 void Graphics2D_cairo::scale(float sx, float sy) {
     _sx *= sx;
     _sy *= sy;
-    _context->scale((double) sx, (double) sy);
+    _context->scale((double)sx, (double)sy);
 }
 
 void Graphics2D_cairo::rotate(float angle) {
@@ -257,9 +256,9 @@ void Graphics2D_cairo::rotate(float angle) {
 }
 
 void Graphics2D_cairo::rotate(float angle, float px, float py) {
-    _context->translate((double) px, (double) py);
+    _context->translate((double)px, (double)py);
     _context->rotate(angle);
-    _context->translate((double) -px, (double) -py);
+    _context->translate((double)-px, (double)-py);
 }
 
 void Graphics2D_cairo::reset() {

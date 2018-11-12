@@ -1,12 +1,12 @@
+#include "core/parser.h"
 #include "atom/atom.h"
 #include "atom/atom_basic.h"
-#include "core/parser.h"
+#include "common.h"
 #include "core/formula.h"
 #include "core/macro.h"
-#include "graphic/graphic.h"
 #include "fonts/alphabet.h"
 #include "fonts/fonts.h"
-#include "common.h"
+#include "graphic/graphic.h"
 
 using namespace std;
 using namespace tex;
@@ -26,39 +26,38 @@ const wchar_t TeXParser::BACKPRIME = 0x2035;
 const wchar_t TeXParser::DEGRE = 0x00B0;
 
 const map<wchar_t, char> TeXParser::SUP_SCRIPT_MAP = {
-    { 0x2070, '0'},
-    { 0x00B9, '1'},
-    { 0x00B2, '2'},
-    { 0x00B3, '3'},
-    { 0x2074, '4'},
-    { 0x2075, '5'},
-    { 0x2076, '6'},
-    { 0x2077, '7'},
-    { 0x2078, '8'},
-    { 0x2079, '9'},
-    { 0x207A, '+'},
-    { 0x207B, '-'},
-    { 0x207C, '='},
-    { 0x207D, '('},
-    { 0x207E, ')'},
-    { 0x207F, 'n'}
-};
+    {0x2070, '0'},
+    {0x00B9, '1'},
+    {0x00B2, '2'},
+    {0x00B3, '3'},
+    {0x2074, '4'},
+    {0x2075, '5'},
+    {0x2076, '6'},
+    {0x2077, '7'},
+    {0x2078, '8'},
+    {0x2079, '9'},
+    {0x207A, '+'},
+    {0x207B, '-'},
+    {0x207C, '='},
+    {0x207D, '('},
+    {0x207E, ')'},
+    {0x207F, 'n'}};
 const map<wchar_t, char> TeXParser::SUB_SCRIPT_MAP = {
-    { 0x2080, '0'},
-    { 0x2081, '1'},
-    { 0x2082, '2'},
-    { 0x2083, '3'},
-    { 0x2084, '4'},
-    { 0x2085, '5'},
-    { 0x2086, '6'},
-    { 0x2087, '7'},
-    { 0x2088, '8'},
-    { 0x2089, '9'},
-    { 0x208A, '+'},
-    { 0x208B, '-'},
-    { 0x208C, '='},
-    { 0x208D, '('},
-    { 0x208E, ')'},
+    {0x2080, '0'},
+    {0x2081, '1'},
+    {0x2082, '2'},
+    {0x2083, '3'},
+    {0x2084, '4'},
+    {0x2085, '5'},
+    {0x2086, '6'},
+    {0x2087, '7'},
+    {0x2088, '8'},
+    {0x2089, '9'},
+    {0x208A, '+'},
+    {0x208B, '-'},
+    {0x208C, '='},
+    {0x208D, '('},
+    {0x208E, ')'},
 };
 
 const set<wstring> TeXParser::_unparsedContents = {
@@ -67,8 +66,7 @@ const set<wstring> TeXParser::_unparsedContents = {
     L"Textit",
     L"Textbf",
     L"Textitbf",
-    L"externalFont"
-};
+    L"externalFont"};
 
 bool TeXParser::_isLoading = false;
 
@@ -133,7 +131,7 @@ void TeXParser::addAtom(const shared_ptr<Atom>& atom) {
 
 void TeXParser::addRow() throw(ex_parse) {
     if (!_arrayMode) throw ex_parse("Can not add row in none-array mode!");
-    ((ArrayOfAtoms*) _formula)->addRow();
+    ((ArrayOfAtoms*)_formula)->addRow();
 }
 
 wstring TeXParser::getDollarGroup(wchar_t openclose) throw(ex_parse) {
@@ -143,7 +141,7 @@ wstring TeXParser::getDollarGroup(wchar_t openclose) throw(ex_parse) {
     do {
         ch = _parseString[_pos++];
         if (ch == ESCAPE) _pos++;
-    } while(_pos < _len && ch != openclose);
+    } while (_pos < _len && ch != openclose);
 
     if (ch == openclose) return _parseString.substr(spos, _pos - spos - 1);
     return _parseString.substr(spos, _pos - spos);
@@ -161,9 +159,12 @@ wstring TeXParser::getGroup(wchar_t open, wchar_t close) throw(ex_parse) {
         while (_pos < _len - 1 && group != 0) {
             _pos++;
             ch = _parseString[_pos];
-            if (ch == open) group++;
-            else if (ch == close) group--;
-            else if (ch == ESCAPE && _pos != _len - 1) _pos++;
+            if (ch == open)
+                group++;
+            else if (ch == close)
+                group--;
+            else if (ch == ESCAPE && _pos != _len - 1)
+                _pos++;
         }
 
         _pos++;
@@ -198,8 +199,10 @@ wstring TeXParser::getGroup(const wstring& open, const wstring& close) throw(ex_
             }
         }
 
-        if (c == open[oc]) oc++;
-        else oc = 0;
+        if (c == open[oc])
+            oc++;
+        else
+            oc = 0;
 
         if (c == close[cc]) {
             if (cc == 0) startC = _pos;
@@ -382,7 +385,6 @@ void TeXParser::getOptsArgs(int nbArgs, int opts, _out_ vector<wstring>& args) {
      */
     args.resize(nbArgs + 10 + 1 + 1);
     if (nbArgs != 0) {
-
         // we get the options just after the command name
         if (opts == 1) {
             int j = nbArgs + 1;
@@ -463,48 +465,48 @@ bool TeXParser::isValidName(const wstring& com) {
  * @param c Character to be converted
  */
 wchar_t TeXParser::convert2RomanNumber(wchar_t c) {
-    if (c == 0x66b) {// Arabic dot
+    if (c == 0x66b) {  // Arabic dot
         return '.';
-    } else if (0x660 <= c && c <= 0x669) {// Arabic
-        return (wchar_t) (c - (wchar_t) 0x630);
-    } else if (0x6f0 <= c && c <= 0x6f9) {// Arabic
-        return (wchar_t) (c - (wchar_t) 0x6c0);
-    } else if (0x966 <= c && c <= 0x96f) {// Devanagari
-        return (wchar_t) (c - (wchar_t) 0x936);
-    } else if (0x9e6 <= c && c <= 0x9ef) {// Bengali
-        return (wchar_t) (c - (wchar_t) 0x9b6);
-    } else if (0xa66 <= c && c <= 0xa6f) {// Gurmukhi
-        return (wchar_t) (c - (wchar_t) 0xa36);
-    } else if (0xae6 <= c && c <= 0xaef) {// Gujarati
-        return (wchar_t) (c - (wchar_t) 0xab6);
-    } else if (0xb66 <= c && c <= 0xb6f) {// Oriya
-        return (wchar_t) (c - (wchar_t) 0xb36);
-    } else if (0xc66 <= c && c <= 0xc6f) {// Telugu
-        return (wchar_t) (c - (wchar_t) 0xc36);
-    } else if (0xd66 <= c && c <= 0xd6f) {// Malayalam
-        return (wchar_t) (c - (wchar_t) 0xd36);
-    } else if (0xe50 <= c && c <= 0xe59) {// Thai
-        return (wchar_t) (c - (wchar_t) 0xe20);
-    } else if (0xed0 <= c && c <= 0xed9) {// Lao
-        return (wchar_t) (c - (wchar_t) 0xea0);
-    } else if (0xf20 <= c && c <= 0xf29) {// Tibetan
-        return (wchar_t) (c - (wchar_t) 0xe90);
-    } else if (0x1040 <= c && c <= 0x1049) {// Myanmar
-        return (wchar_t) (c - (wchar_t) 0x1010);
-    } else if (0x17e0 <= c && c <= 0x17e9) {// Khmer
-        return (wchar_t) (c - (wchar_t) 0x17b0);
-    } else if (0x1810 <= c && c <= 0x1819) {// Mongolian
-        return (wchar_t) (c - (wchar_t) 0x17e0);
-    } else if (0x1b50 <= c && c <= 0x1b59) {// Balinese
-        return (wchar_t) (c - (wchar_t) 0x1b20);
-    } else if (0x1bb0 <= c && c <= 0x1bb9) {// Sundanese
-        return (wchar_t) (c - (wchar_t) 0x1b80);
-    } else if (0x1c40 <= c && c <= 0x1c49) {// Lepcha
-        return (wchar_t) (c - (wchar_t) 0x1c10);
-    } else if (0x1c50 <= c && c <= 0x1c59) {// Ol Chiki
-        return (wchar_t) (c - (wchar_t) 0x1c20);
-    } else if (0xa8d0 <= c && c <= 0xa8d9) {// Saurashtra
-        return (wchar_t) (c - (wchar_t) 0xa8a0);
+    } else if (0x660 <= c && c <= 0x669) {  // Arabic
+        return (wchar_t)(c - (wchar_t)0x630);
+    } else if (0x6f0 <= c && c <= 0x6f9) {  // Arabic
+        return (wchar_t)(c - (wchar_t)0x6c0);
+    } else if (0x966 <= c && c <= 0x96f) {  // Devanagari
+        return (wchar_t)(c - (wchar_t)0x936);
+    } else if (0x9e6 <= c && c <= 0x9ef) {  // Bengali
+        return (wchar_t)(c - (wchar_t)0x9b6);
+    } else if (0xa66 <= c && c <= 0xa6f) {  // Gurmukhi
+        return (wchar_t)(c - (wchar_t)0xa36);
+    } else if (0xae6 <= c && c <= 0xaef) {  // Gujarati
+        return (wchar_t)(c - (wchar_t)0xab6);
+    } else if (0xb66 <= c && c <= 0xb6f) {  // Oriya
+        return (wchar_t)(c - (wchar_t)0xb36);
+    } else if (0xc66 <= c && c <= 0xc6f) {  // Telugu
+        return (wchar_t)(c - (wchar_t)0xc36);
+    } else if (0xd66 <= c && c <= 0xd6f) {  // Malayalam
+        return (wchar_t)(c - (wchar_t)0xd36);
+    } else if (0xe50 <= c && c <= 0xe59) {  // Thai
+        return (wchar_t)(c - (wchar_t)0xe20);
+    } else if (0xed0 <= c && c <= 0xed9) {  // Lao
+        return (wchar_t)(c - (wchar_t)0xea0);
+    } else if (0xf20 <= c && c <= 0xf29) {  // Tibetan
+        return (wchar_t)(c - (wchar_t)0xe90);
+    } else if (0x1040 <= c && c <= 0x1049) {  // Myanmar
+        return (wchar_t)(c - (wchar_t)0x1010);
+    } else if (0x17e0 <= c && c <= 0x17e9) {  // Khmer
+        return (wchar_t)(c - (wchar_t)0x17b0);
+    } else if (0x1810 <= c && c <= 0x1819) {  // Mongolian
+        return (wchar_t)(c - (wchar_t)0x17e0);
+    } else if (0x1b50 <= c && c <= 0x1b59) {  // Balinese
+        return (wchar_t)(c - (wchar_t)0x1b20);
+    } else if (0x1bb0 <= c && c <= 0x1bb9) {  // Sundanese
+        return (wchar_t)(c - (wchar_t)0x1b80);
+    } else if (0x1c40 <= c && c <= 0x1c49) {  // Lepcha
+        return (wchar_t)(c - (wchar_t)0x1c10);
+    } else if (0x1c50 <= c && c <= 0x1c59) {  // Ol Chiki
+        return (wchar_t)(c - (wchar_t)0x1c20);
+    } else if (0xa8d0 <= c && c <= 0xa8d9) {  // Saurashtra
+        return (wchar_t)(c - (wchar_t)0xa8a0);
     }
 
     return c;
@@ -627,8 +629,10 @@ shared_ptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
 shared_ptr<Atom> TeXParser::getArgument() throw(ex_parse) {
     skipWhiteSpace();
     wchar_t ch;
-    if (_pos < _len) ch = _parseString[_pos];
-    else return shared_ptr<Atom>(new EmptyAtom());
+    if (_pos < _len)
+        ch = _parseString[_pos];
+    else
+        return shared_ptr<Atom>(new EmptyAtom());
 
     if (ch == L_GROUP) {
         TeXFormula tf;
@@ -746,8 +750,9 @@ void TeXParser::firstpass() throw(ex_parse) {
                 if (it == MacroInfo::_commands.end()) {
                     if (!_isPartial) {
                         throw ex_parse(
-                            "Unknown environment: " + wide2utf8(args[1].c_str())
-                            + " at position " + tostring(getLine()) + ":" + tostring(getCol()));
+                            "Unknown environment: " +
+                            wide2utf8(args[1].c_str()) +
+                            " at position " + tostring(getLine()) + ":" + tostring(getCol()));
                     }
                 } else {
                     mac = it->second;
@@ -773,8 +778,7 @@ void TeXParser::firstpass() throw(ex_parse) {
                 getOptsArgs(1, 0, args);
             }
             args.clear();
-        }
-        break;
+        } break;
         case PERCENT: {
             spos = _pos++;
             wchar_t chr;
@@ -786,14 +790,12 @@ void TeXParser::firstpass() throw(ex_parse) {
             _parseString.replace(spos, _pos - spos, L"");
             _len = _parseString.length();
             _pos = spos;
-        }
-        break;
+        } break;
         case DEGRE: {
             _parseString.replace(_pos, 1, L"^\\circ");
             _len = _parseString.length();
             _pos++;
-        }
-        break;
+        } break;
         default:
             _pos++;
             break;
@@ -824,7 +826,7 @@ void TeXParser::parse() throw(ex_parse) {
             break;
         case ' ': {
             _pos++;
-            if (!_ignoreWhiteSpace) { // we are in mbox
+            if (!_ignoreWhiteSpace) {  // we are in mbox
                 _formula->add(shared_ptr<Atom>(new SpaceAtom()));
                 _formula->add(shared_ptr<Atom>(new BreakMarkAtom()));
                 while (_pos < _len) {
@@ -833,11 +835,10 @@ void TeXParser::parse() throw(ex_parse) {
                     _pos++;
                 }
             }
-        }
-        break;
+        } break;
         case DOLLAR: {
             _pos++;
-            if (!_ignoreWhiteSpace) { // we are in mbox
+            if (!_ignoreWhiteSpace) {  // we are in mbox
                 int style = STYLE_TEXT;
                 bool doubleDollar = false;
                 if (_parseString[_pos] == DOLLAR) {
@@ -851,36 +852,33 @@ void TeXParser::parse() throw(ex_parse) {
                     if (_parseString[_pos] == DOLLAR) _pos++;
                 }
             }
-        }
-        break;
+        } break;
         case ESCAPE: {
             shared_ptr<Atom> atom = processEscape();
             _formula->add(atom);
             HlineAtom* h = dynamic_cast<HlineAtom*>(atom.get());
             if (_arrayMode && h != nullptr) ((ArrayOfAtoms*)_formula)->addRow();
             if (_insertion) _insertion = false;
-        }
-        break;
+        } break;
         case L_GROUP: {
             auto atom = getArgument();
             if (atom != nullptr) atom->_type = TYPE_ORDINARY;
             _formula->add(atom);
-        }
-        break;
+        } break;
         case R_GROUP: {
             _group--;
             _pos++;
             if (_group == -1) {
                 throw ex_parse(
-                    "Found a closing '" + tostring((char)R_GROUP)
-                    + "' without an opening " + tostring((char)L_GROUP) + "'!");
+                    "Found a closing '" +
+                    tostring((char)R_GROUP) +
+                    "' without an opening " + tostring((char)L_GROUP) + "'!");
             }
         }
-        return;
+            return;
         case SUPER_SCRIPT: {
             _formula->add(getScripts(ch));
-        }
-        break;
+        } break;
         case SUB_SCRIPT: {
             if (_ignoreWhiteSpace) {
                 _formula->add(getScripts(ch));
@@ -888,14 +886,12 @@ void TeXParser::parse() throw(ex_parse) {
                 _formula->add(shared_ptr<Atom>(new UnderScoreAtom()));
                 _pos++;
             }
-        }
-        break;
+        } break;
         case '&': {
             if (!_arrayMode) throw ex_parse("Character '&' is only available in array mode!");
             ((ArrayOfAtoms*)_formula)->addCol();
             _pos++;
-        }
-        break;
+        } break;
         case PRIME: {
             if (_ignoreWhiteSpace) {
                 _formula->add(shared_ptr<Atom>(new CumulativeScriptsAtom(
@@ -904,8 +900,7 @@ void TeXParser::parse() throw(ex_parse) {
                 _formula->add(convertCharacter(PRIME, true));
             }
             _pos++;
-        }
-        break;
+        } break;
         case BACKPRIME: {
             if (_ignoreWhiteSpace) {
                 _formula->add(shared_ptr<Atom>(new CumulativeScriptsAtom(
@@ -914,8 +909,7 @@ void TeXParser::parse() throw(ex_parse) {
                 _formula->add(convertCharacter(BACKPRIME, true));
             }
             _pos++;
-        }
-        break;
+        } break;
         case DQUOTE: {
             if (_ignoreWhiteSpace) {
                 _formula->add(shared_ptr<Atom>(new CumulativeScriptsAtom(
@@ -927,13 +921,11 @@ void TeXParser::parse() throw(ex_parse) {
                 _formula->add(convertCharacter(PRIME, true));
             }
             _pos++;
-        }
-        break;
+        } break;
         default: {
             _formula->add(convertCharacter(ch, false));
             _pos++;
-        }
-        break;
+        } break;
         }
     }
 }
@@ -970,7 +962,7 @@ shared_ptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_p
 #ifdef __DEBUG
         int idx = indexOf(DefaultTeXFont::_loadedAlphabets, block);
         __log << "block of char: " << c << " is " << idx << endl;
-#endif // __DEBUG
+#endif  // __DEBUG
         bool exist = (indexOf(DefaultTeXFont::_loadedAlphabets, block) != -1);
         if (!_isLoading && !exist) {
             auto it = DefaultTeXFont::_registeredAlphabets.find(block);
@@ -997,7 +989,7 @@ shared_ptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_p
                 int en = _len - 1;
                 while (_pos < _len) {
                     c = _parseString[_pos];
-                    if (!block.in(c)) {
+                    if (!block.contains(c)) {
                         en = --_pos;
                         break;
                     }
@@ -1006,7 +998,8 @@ shared_ptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_p
                 return shared_ptr<Atom>(new TextRenderingAtom(_parseString.substr(start, en - start + 1), fontInfos));
             }
 
-            if (!_isPartial) throw ex_parse("Unknown character : '" + tostring(c) + "'");
+            if (!_isPartial)
+                throw ex_parse("Unknown character : '" + tostring(c) + "'");
             else {
                 if (_hideUnknownChar) return shared_ptr<Atom>(nullptr);
                 shared_ptr<Atom> rm(new RomanAtom(TeXFormula(L"\\text{(unknown char " + towstring((int)c) + L")}")._root));
@@ -1038,7 +1031,8 @@ shared_ptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_p
                 } catch (ex_symbol_not_found& e) {
                     throw ex_parse(
                         "The character '" + tostring(c) +
-                        "' was mapped to an unknown symbol with the name '" + symbolName + "'!", e);
+                            "' was mapped to an unknown symbol with the name '" + symbolName + "'!",
+                        e);
                 }
             }
         }

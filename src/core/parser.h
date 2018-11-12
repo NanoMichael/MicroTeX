@@ -4,8 +4,8 @@
 #include "atom/atom.h"
 #include "common.h"
 
-#include <string>
 #include <set>
+#include <string>
 
 using namespace std;
 
@@ -17,7 +17,6 @@ class TeXFormula;
  * This class implements a parser for latex formulas
  */
 class TeXParser {
-
 private:
     wstring _parseString;
     int _pos, _spos, _len;
@@ -95,6 +94,7 @@ private:
     static wchar_t convert2RomanNumber(wchar_t c);
 
     void init(bool ispartial, const wstring& parsestring, _out_ TeXFormula* formula, bool firstpass) throw(ex_parse);
+
 public:
     static bool _isLoading;
 
@@ -433,9 +433,8 @@ public:
     inline bool isValidCharacterInCommand(wchar_t ch) const {
         return isalpha(ch) || (_atIsLetter != 0 && ch == '@');
     }
-
 };
 
-} // namespace tex
+}  // namespace tex
 
-#endif // PARSER_H_INCLUDED
+#endif  // PARSER_H_INCLUDED

@@ -25,8 +25,10 @@ inline static void parseMap(const string& options, _out_ map<string, string>& re
         vector<string> optarg;
         split(tok, '=', optarg);
         if (!optarg.empty()) {
-            if (optarg.size() == 2) res[trim(optarg[0])] = trim(optarg[1]);
-            else if (optarg.size() == 1) res[trim(optarg[0])] = "";
+            if (optarg.size() == 2)
+                res[trim(optarg[0])] = trim(optarg[1]);
+            else if (optarg.size() == 1)
+                res[trim(optarg[0])] = "";
         }
     }
 }
@@ -385,7 +387,8 @@ public:
     FBoxAtom() = delete;
 
     FBoxAtom(const shared_ptr<Atom>& base, color bg = TRANS, color line = TRANS) {
-        if (base == nullptr) _base = shared_ptr<Atom>(new RowAtom());
+        if (base == nullptr)
+            _base = shared_ptr<Atom>(new RowAtom());
         else {
             _base = base;
             _type = base->_type;
@@ -581,8 +584,8 @@ protected:
 public:
     MulticolumnAtom() = delete;
 
-    MulticolumnAtom(int n, const string& align, const shared_ptr<Atom> cols) :
-        _w(0), _beforeVlines(0), _afterVlines(0), _row(0), _col(0) {
+    MulticolumnAtom(int n, const string& align, const shared_ptr<Atom> cols)
+        : _w(0), _beforeVlines(0), _afterVlines(0), _row(0), _col(0) {
         _n = n >= 1 ? n : 1;
         _cols = cols;
         _align = parseAlign(align);
@@ -772,8 +775,10 @@ public:
         CharBox* A = new CharBox(env.getTeXFont()->getChar("textapos", env.getStyle()));
         CharBox* L = new CharBox(env.getTeXFont()->getChar(_upper ? 'L' : 'l', "mathnormal", env.getStyle()));
         HorizontalBox* hb = new HorizontalBox(shared_ptr<Box>(L));
-        if (_upper) hb->add(SpaceAtom(UNIT_EM, -0.3f, 0, 0).createBox(env));
-        else hb->add(SpaceAtom(UNIT_EM, -0.13f, 0, 0).createBox(env));
+        if (_upper)
+            hb->add(SpaceAtom(UNIT_EM, -0.3f, 0, 0).createBox(env));
+        else
+            hb->add(SpaceAtom(UNIT_EM, -0.13f, 0, 0).createBox(env));
         hb->add(shared_ptr<Box>(A));
         return shared_ptr<Box>(hb);
     }
@@ -911,15 +916,19 @@ public:
 
     shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override {
         auto bbox = _base->createBox(env);
-        if (_ru == -1) bbox->_shift = 0;
-        else bbox->_shift = -_r * SpaceAtom::getFactor(_ru, env);
+        if (_ru == -1)
+            bbox->_shift = 0;
+        else
+            bbox->_shift = -_r * SpaceAtom::getFactor(_ru, env);
 
         if (_hu == -1) return bbox;
 
         HorizontalBox* hbox = new HorizontalBox(bbox);
         hbox->_height = _h * SpaceAtom::getFactor(_hu, env);
-        if (_du == -1) hbox->_depth = 0;
-        else hbox->_depth = _d * SpaceAtom::getFactor(_du, env);
+        if (_du == -1)
+            hbox->_depth = 0;
+        else
+            hbox->_depth = _d * SpaceAtom::getFactor(_du, env);
 
         return shared_ptr<Box>(hbox);
     }

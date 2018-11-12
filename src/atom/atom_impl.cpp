@@ -54,8 +54,7 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
                 }
             }
             _vlines[lpos.size()] = shared_ptr<VlineAtom>(new VlineAtom(nb));
-        }
-        break;
+        } break;
         case '@': {
             pos++;
             tf = shared_ptr<TeXFormula>(new TeXFormula());
@@ -70,8 +69,7 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
             lpos.push_back(ALIGN_NONE);
             pos += tp->getPos();
             pos--;
-        }
-        break;
+        } break;
         case '*': {
             pos++;
             tf = shared_ptr<TeXFormula>(new TeXFormula());
@@ -86,8 +84,7 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
             opt.insert(pos, str);
             len = opt.length();
             pos--;
-        }
-        break;
+        } break;
         case '>': {
             pos++;
             tf = shared_ptr<TeXFormula>(new ArrayOfAtoms());
@@ -96,8 +93,7 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
             _columnSpecifiers[lpos.size()] = cs;
             pos += tp->getPos();
             pos--;
-        }
-        break;
+        } break;
         case ' ':
         case '\t':
             break;
@@ -115,8 +111,7 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
                 }
             }
             if (!hasrep) lpos.push_back(ALIGN_CENTER);
-        }
-        break;
+        } break;
         }
         pos++;
     }
@@ -143,8 +138,10 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
             arr[1] = 0;
             i = 2;
         }
-        if (_spaceAround) arr[0] = _semihsep.createBox(env)->_width;
-        else arr[0] = 0;
+        if (_spaceAround)
+            arr[0] = _semihsep.createBox(env)->_width;
+        else
+            arr[0] = 0;
         arr[col] = arr[0];
         Hsep = _hsep.createBox(env);
         for (; i < col; i++) {
@@ -157,7 +154,7 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
             }
         }
     }
-    return arr;
+        return arr;
     case MATRIX:
     case SMALLMATRIX: {
         // simple matrix (hsep_col/2 or 0) elem hsep_col elem hsep_col ... hsep_col elem (hsep_col/2 or 0)
@@ -166,7 +163,7 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
         Hsep = _hsep.createBox(env);
         for (i = 1; i < col; i++) arr[i] = Hsep->_width;
     }
-    return arr;
+        return arr;
     case ALIGNED:
     case ALIGN: {
         // Align env : hsep=(textwidth-matwidth)/(2n+1) and hsep eq_lft \medskip el_rgt hsep ... hsep elem hsep
@@ -180,25 +177,29 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
 
         arr[col] = AlignSep->_width;
         for (int i = 0; i < col; i++) {
-            if (i % 2 == 0) arr[i] = AlignSep->_width;
-            else arr[i] = Align->_width;
+            if (i % 2 == 0)
+                arr[i] = AlignSep->_width;
+            else
+                arr[i] = Align->_width;
         }
-    }
-    break;
+    } break;
     case ALIGNEDAT:
     case ALIGNAT: {
         // Aignat env : hsep=(textwidth-matwdith)/2 and hsep elem ... elem hsep
-        if (w != POS_INF) h = max((w - width) / 2, 0.f);
-        else h = 0;
+        if (w != POS_INF)
+            h = max((w - width) / 2, 0.f);
+        else
+            h = 0;
         Align = _align.createBox(env);
         arr[0] = h;
         arr[col] = arr[0];
         for (int i = 1; i < col; i++) {
-            if (i % 2 == 0) arr[i] = 0;
-            else arr[i] = Align->_width;
+            if (i % 2 == 0)
+                arr[i] = 0;
+            else
+                arr[i] = Align->_width;
         }
-    }
-    break;
+    } break;
     case FLALIGN: {
         // flalgin env : hsep=(textwidth-matwidth)/(2n+1) and hsep eq_lft \medskip el_rgt hsep ... hsep elem hsep
         Align = _align.createBox(env);
@@ -212,11 +213,12 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
         arr[0] = 0;
         arr[col] = arr[0];
         for (int i = 1; i < col; i++) {
-            if (i % 2 == 0) arr[i] = AlignSep->_width;
-            else arr[i] = Align->_width;
+            if (i % 2 == 0)
+                arr[i] = AlignSep->_width;
+            else
+                arr[i] = Align->_width;
         }
-    }
-    break;
+    } break;
     }
 
     if (w == POS_INF) {
@@ -294,7 +296,7 @@ shared_ptr<Box> MatrixAtom::generateMulticolumn(
     const shared_ptr<Box>& b,
     const float* hsep, const float* rowW, int i, int j) {
     float w = 0;
-    MulticolumnAtom* mca = (MulticolumnAtom*) (_matrix->_array[i][j].get());
+    MulticolumnAtom* mca = (MulticolumnAtom*)(_matrix->_array[i][j].get());
     int k, n = mca->getSkipped();
     for (k = j; k < j + n - 1; k++) {
         w += rowW[k] + hsep[k + 1];
@@ -381,7 +383,7 @@ shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
             shared_ptr<Atom> atom;
             try {
                 atom = _matrix->_array[i][j];
-            } catch(...) {
+            } catch (...) {
                 boxarr[i][j - 1]->_type = TYPE_INTERTEXT;
                 j = col - 1;
             }
@@ -462,7 +464,7 @@ shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
 
                 WrapperBox* wb = nullptr;
                 int tj = j;
-                float l = j == 0 ? Hsep[j] : Hsep[j]/ 2;
+                float l = j == 0 ? Hsep[j] : Hsep[j] / 2;
                 if (boxarr[i][j]->_type == -1) {
                     wb = new WrapperBox(boxarr[i][j], rowWidth[j], lineHeight[i], lineDepth[i], _position[j]);
                 } else {
@@ -486,15 +488,13 @@ shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
                     auto vatBox = vat->createBox(env);
                     hb->add(vatBox);
                 }
-            }
-            break;
+            } break;
             case TYPE_INTERTEXT: {
                 float f = env.getTextWidth();
                 f = f == POS_INF ? rowWidth[j] : f;
                 hb = shared_ptr<HorizontalBox>(new HorizontalBox(boxarr[i][j], f, ALIGN_LEFT));
                 j = col;
-            }
-            break;
+            } break;
             case TYPE_HLINE: {
                 HlineAtom* at = dynamic_cast<HlineAtom*>(_matrix->_array[i][j].get());
                 at->setColor(LINE_COLOR);
@@ -505,8 +505,7 @@ shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
 
                 hb->add(at->createBox(env));
                 j = col;
-            }
-            break;
+            } break;
             }
         }
 
@@ -619,8 +618,10 @@ const int FencedAtom::DELIMITER_FACTOR = 901;
 const float FencedAtom::DELIMITER_SHORTFALL = 5.f;
 
 void FencedAtom::init(const shared_ptr<Atom>& b, const shared_ptr<SymbolAtom>& l, const shared_ptr<SymbolAtom>& r) {
-    if (b == nullptr) _base = shared_ptr<Atom>(new RowAtom());
-    else _base = b;
+    if (b == nullptr)
+        _base = shared_ptr<Atom>(new RowAtom());
+    else
+        _base = b;
     if (l == nullptr || l->getName() != "normaldot") _left = l;
     if (r == nullptr || r->getName() != "normaldot") _right = r;
 }
@@ -687,7 +688,6 @@ shared_ptr<Box> FencedAtom::createBox(_out_ TeXEnvironment& env) {
 void FractionAtom::init(
     const shared_ptr<Atom>& num, const shared_ptr<Atom>& den,
     bool nodef, int unit, float t) throw(ex_invalid_unit) {
-
     _numAlign = ALIGN_CENTER;
     _denomAlign = ALIGN_CENTER;
     _deffactor = 1.f;
@@ -709,15 +709,19 @@ shared_ptr<Box> FractionAtom::createBox(_out_ TeXEnvironment& env) {
     int style = env.getStyle();
     // set thickness to default if default value should be use
     float drt = tf.getDefaultRuleThickness(style);
-    if (_nodefault) _thickness *= SpaceAtom::getFactor(_unit, env);
-    else _thickness = _deffactorset ? _deffactor * drt : drt;
+    if (_nodefault)
+        _thickness *= SpaceAtom::getFactor(_unit, env);
+    else
+        _thickness = _deffactorset ? _deffactor * drt : drt;
 
     // create equal width boxes in appropriate styles
     auto num = (_numerator == nullptr ? shared_ptr<Box>(new StrutBox(0, 0, 0, 0)) : _numerator->createBox(*(env.numStyle())));
     auto denom = (_denominator == nullptr ? shared_ptr<Box>(new StrutBox(0, 0, 0, 0)) : _denominator->createBox(*(env.dnomStyle())));
 
-    if (num->_width < denom->_width) num = shared_ptr<Box>(new HorizontalBox(num, denom->_width, _numAlign));
-    else denom = shared_ptr<Box>(new HorizontalBox(denom, num->_width, _denomAlign));
+    if (num->_width < denom->_width)
+        num = shared_ptr<Box>(new HorizontalBox(num, denom->_width, _numAlign));
+    else
+        denom = shared_ptr<Box>(new HorizontalBox(denom, num->_width, _denomAlign));
 
     // calculate default shift amounts
     float shiftup, shiftdown;
@@ -726,8 +730,10 @@ shared_ptr<Box> FractionAtom::createBox(_out_ TeXEnvironment& env) {
         shiftdown = tf.getDenom1(style);
     } else {
         shiftdown = tf.getDenom2(style);
-        if (_thickness > 0) shiftup = tf.getNum2(style);
-        else shiftup = tf.getNum3(style);
+        if (_thickness > 0)
+            shiftup = tf.getNum2(style);
+        else
+            shiftup = tf.getNum3(style);
     }
 
     // upper part of vertical box = numerator
@@ -740,8 +746,10 @@ shared_ptr<Box> FractionAtom::createBox(_out_ TeXEnvironment& env) {
     if (_thickness > 0) {
         // with fraction rule
         // clearance clr
-        if (style < STYLE_TEXT) clr = 3 * _thickness;
-        else clr = _thickness;
+        if (style < STYLE_TEXT)
+            clr = 3 * _thickness;
+        else
+            clr = _thickness;
 
         // adjust shift amount
         delta = _thickness / 2.f;
@@ -765,8 +773,10 @@ shared_ptr<Box> FractionAtom::createBox(_out_ TeXEnvironment& env) {
     } else {
         // without fraction rule
         // clearance clr
-        if (style < STYLE_TEXT) clr = 7 * drt;
-        else clr = 3 * drt;
+        if (style < STYLE_TEXT)
+            clr = 7 * drt;
+        else
+            clr = 3 * drt;
 
         // adjust shift amounts
         float kern = shiftup - num->_depth - (denom->_height - shiftdown);
@@ -800,37 +810,37 @@ int MulticolumnAtom::parseAlign(const string& str) {
     bool first = true;
     while (pos < len) {
         char c = str[pos];
-        switch(c) {
+        switch (c) {
         case 'l': {
             align = ALIGN_LEFT;
             first = false;
-        }
-        break;
+        } break;
         case 'r': {
             align = ALIGN_RIGHT;
             first = false;
-        }
-        break;
+        } break;
         case 'c': {
             align = ALIGN_CENTER;
             first = false;
-        }
-        break;
+        } break;
         case '|': {
-            if (first) _beforeVlines = 1;
-            else _afterVlines = 1;
+            if (first)
+                _beforeVlines = 1;
+            else
+                _afterVlines = 1;
             while (++pos < len) {
                 c = str[pos];
                 if (c != '|') {
                     pos--;
                     break;
                 } else {
-                    if (first) _beforeVlines++;
-                    else _afterVlines++;
+                    if (first)
+                        _beforeVlines++;
+                    else
+                        _afterVlines++;
                 }
             }
-        }
-        break;
+        } break;
         }
         pos++;
     }
@@ -839,8 +849,10 @@ int MulticolumnAtom::parseAlign(const string& str) {
 
 shared_ptr<Box> MulticolumnAtom::createBox(_out_ TeXEnvironment& env) {
     shared_ptr<Box> b;
-    if (_w == 0) b = _cols->createBox(env);
-    else b = shared_ptr<Box>(new HorizontalBox(_cols->createBox(env), _w, _align));
+    if (_w == 0)
+        b = _cols->createBox(env);
+    else
+        b = shared_ptr<Box>(new HorizontalBox(_cols->createBox(env), _w, _align));
     b->_type = TYPE_MULTICOLUMN;
     return b;
 }
@@ -879,7 +891,7 @@ shared_ptr<Box> LaTeXAtom::createBox(_out_ TeXEnvironment& en) {
         TeXFormula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = nullptr;
     }
     shared_ptr<Atom> root = TeXFormula(L"\\mathrm{XETL}")._root;
-    shared_ptr<Atom> atom = ((RomanAtom*) root.get())->_base;
+    shared_ptr<Atom> atom = ((RomanAtom*)root.get())->_base;
     RowAtom* rm = (RowAtom*)(atom.get());
     if (fontInfos != nullptr)
         TeXFormula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = fontInfos;
@@ -904,7 +916,7 @@ shared_ptr<Box> LaTeXAtom::createBox(_out_ TeXEnvironment& en) {
     auto E = rm->getLastAtom()->createBox(env);
     E->_shift = f1;
     hb->add(E);
-    hb->add(SpaceAtom(UNIT_EM, -0.15f *sc, 0, 0).createBox(env));
+    hb->add(SpaceAtom(UNIT_EM, -0.15f * sc, 0, 0).createBox(env));
 
     // X
     hb->add(rm->getLastAtom()->createBox(env));
@@ -920,8 +932,10 @@ shared_ptr<Box> NthRoot::createBox(_out_ TeXEnvironment& env) {
     int style = env.getStyle();
     // calculate minimum clearance clr
     float clr, drt = tf.getDefaultRuleThickness(style);
-    if (style < STYLE_TEXT) clr = tf.getXHeight(style, tf.getChar(_sqrtSymbol, style).getFontCode());
-    else clr = drt;
+    if (style < STYLE_TEXT)
+        clr = tf.getXHeight(style, tf.getChar(_sqrtSymbol, style).getFontCode());
+    else
+        clr = drt;
     clr = drt + abs(clr) / 4.f;
 
     // cramped style for the formula under the root sign
@@ -967,8 +981,8 @@ shared_ptr<Box> NthRoot::createBox(_out_ TeXEnvironment& env) {
     return res;
 }
 
-RotateAtom::RotateAtom(const shared_ptr<Atom>& base, float angle, const wstring& option) :
-    _angle(0), _option(-1), _xunit(0), _yunit(0), _x(0), _y(0) {
+RotateAtom::RotateAtom(const shared_ptr<Atom>& base, float angle, const wstring& option)
+    : _angle(0), _option(-1), _xunit(0), _yunit(0), _x(0), _y(0) {
     _type = base->_type;
     _base = base;
     _angle = angle;
@@ -984,7 +998,7 @@ RotateAtom::RotateAtom(const shared_ptr<Atom>& base, float angle, const wstring&
     it = opt.find("x");
     if (it != opt.end()) {
         auto xinfo = SpaceAtom::getLength(it->second);
-        _xunit = (int) xinfo.first;
+        _xunit = (int)xinfo.first;
         _x = xinfo.second;
     } else {
         _xunit = UNIT_POINT;
@@ -993,7 +1007,7 @@ RotateAtom::RotateAtom(const shared_ptr<Atom>& base, float angle, const wstring&
     it = opt.find("y");
     if (it != opt.end()) {
         auto yinfo = SpaceAtom::getLength(it->second);
-        _yunit = (int) yinfo.first;
+        _yunit = (int)yinfo.first;
         _y = yinfo.second;
     } else {
         _yunit = UNIT_POINT;
@@ -1001,8 +1015,8 @@ RotateAtom::RotateAtom(const shared_ptr<Atom>& base, float angle, const wstring&
     }
 }
 
-RotateAtom::RotateAtom(const shared_ptr<Atom>& base, const wstring& angle, const wstring& option) :
-    _angle(0), _option(-1), _xunit(0), _yunit(0), _x(0), _y(0) {
+RotateAtom::RotateAtom(const shared_ptr<Atom>& base, const wstring& angle, const wstring& option)
+    : _angle(0), _option(-1), _xunit(0), _yunit(0), _x(0), _y(0) {
     _type = base->_type;
     _base = base;
     valueof(angle, _angle);

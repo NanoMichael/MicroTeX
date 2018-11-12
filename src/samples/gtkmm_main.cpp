@@ -1,26 +1,26 @@
 #include "config.h"
 
-#if defined(__linux__) && !defined(__MEM_CHECK)
+#if defined(__OS_Linux__) && !defined(__MEM_CHECK)
 
+#include "latex.h"
 #include "platform/cairo/graphic_cairo.h"
 #include "samples.h"
-#include "latex.h"
 
+#include <gdkmm/rgba.h>
+#include <gtkmm/adjustment.h>
 #include <gtkmm/application.h>
 #include <gtkmm/box.h>
-#include <gtkmm/paned.h>
 #include <gtkmm/button.h>
-#include <gtkmm/spinbutton.h>
-#include <gtkmm/adjustment.h>
-#include <gtkmm/scrolledwindow.h>
-#include <gtkmm/window.h>
 #include <gtkmm/drawingarea.h>
 #include <gtkmm/filechooserdialog.h>
-#include <gdkmm/rgba.h>
+#include <gtkmm/paned.h>
+#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/spinbutton.h>
+#include <gtkmm/window.h>
 
 #include <gtksourceviewmm/init.h>
-#include <gtksourceviewmm/view.h>
 #include <gtksourceviewmm/languagemanager.h>
+#include <gtksourceviewmm/view.h>
 
 using namespace tex;
 
@@ -39,7 +39,7 @@ private:
         int target_width = parent_width;
         int target_height = parent_height;
 
-        int extra = (int) (_padding * 2);
+        int extra = (int)(_padding * 2);
         if (parent_width < _render->getWidth() + extra) {
             target_width = _render->getWidth() + extra;
         }
@@ -56,6 +56,7 @@ private:
             win->invalidate_rect(r, false);
         }
     }
+
 public:
     TeXDrawingArea() : _render(nullptr), _text_size(20.f), _padding(10) {
         override_background_color(Gdk::RGBA("White"));
@@ -81,10 +82,11 @@ public:
             delete _render;
         }
 
-        _render = LaTeX::parse(latex,
-            get_allocated_width(), 
-            _text_size, 
-            _text_size / 3.f, 
+        _render = LaTeX::parse(
+            latex,
+            get_allocated_width(),
+            _text_size,
+            _text_size / 3.f,
             0xff424242);
 
         checkInvalidate();
@@ -115,6 +117,7 @@ public:
             delete _render;
         }
     }
+
 protected:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override {
         if (_render == nullptr) {
@@ -140,10 +143,15 @@ protected:
     Gtk::Paned _main_box;
 
     int _previous_sample;
-public:
-    MainWindow() : _size_change_info("change text size: "), _next("Next Example"), _rendering("Rendering"), 
-        _save("Save As SVG"), _side_box(Gtk::ORIENTATION_VERTICAL), _previous_sample(0) {
 
+public:
+    MainWindow()
+        : _size_change_info("change text size: "),
+          _next("Next Example"),
+          _rendering("Rendering"),
+          _save("Save As SVG"),
+          _side_box(Gtk::ORIENTATION_VERTICAL),
+          _previous_sample(0) {
         // init before use
         Gsv::init();
 

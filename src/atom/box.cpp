@@ -1,9 +1,9 @@
 #include "atom/box.h"
-#include "fonts/fonts.h"
-#include "graphic/graphic.h"
-#include "core/core.h"
 #include "atom/atom_basic.h"
 #include "common.h"
+#include "core/core.h"
+#include "fonts/fonts.h"
+#include "graphic/graphic.h"
 
 #include <utility>
 
@@ -46,7 +46,7 @@ shared_ptr<Box> DelimiterFactory::create(const string& symbol, _out_ TeXEnvironm
         c = tf.getNextLarger(c, style);
         total = c.getHeight() + c.getDepth();
     }
-    if (total >= minHeight) { // tall enough char found
+    if (total >= minHeight) {  // tall enough char found
         /**if (total > minHeight) {
             shared_ptr<Box> cb(new CharBox(c));
             float scale = minHeight / total;
@@ -58,7 +58,7 @@ shared_ptr<Box> DelimiterFactory::create(const string& symbol, _out_ TeXEnvironm
         VerticalBox* vBox = new VerticalBox();
         Extension* ext = tf.getExtension(c, style);
 
-        if (ext->hasTop()) { // insert top part
+        if (ext->hasTop()) {  // insert top part
             c = ext->getTop();
             vBox->add(shared_ptr<Box>(new CharBox(c)));
         }
@@ -293,13 +293,15 @@ int HorizontalBox::getLastFontId() {
 
 /*********************************** horizontal rule implementation ***************************/
 
-HorizontalRule::HorizontalRule(float thickness, float width, float s) : _color(trans), _speShift(0) {
+HorizontalRule::HorizontalRule(float thickness, float width, float s)
+    : _color(trans), _speShift(0) {
     _height = thickness;
     _width = width;
     _shift = s;
 }
 
-HorizontalRule::HorizontalRule(float thickness, float width, float s, bool trueshift) : _color(trans), _speShift(0) {
+HorizontalRule::HorizontalRule(float thickness, float width, float s, bool trueshift)
+    : _color(trans), _speShift(0) {
     _height = thickness;
     _width = width;
     if (trueshift) {
@@ -310,7 +312,8 @@ HorizontalRule::HorizontalRule(float thickness, float width, float s, bool trues
     }
 }
 
-HorizontalRule::HorizontalRule(float thickness, float width, float s, color c, bool trueshift) : _color(c), _speShift(0) {
+HorizontalRule::HorizontalRule(float thickness, float width, float s, color c, bool trueshift)
+    : _color(c), _speShift(0) {
     _height = thickness;
     _width = width;
     if (trueshift) {
@@ -340,8 +343,8 @@ int HorizontalRule::getLastFontId() {
 
 /*********************************** vertical box implementation ***************************/
 
-VerticalBox::VerticalBox(const shared_ptr<Box>& b, float rest, int alignment) :
-    _leftMostPos(F_MAX), _rightMostPos(F_MIN) {
+VerticalBox::VerticalBox(const shared_ptr<Box>& b, float rest, int alignment)
+    : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {
     add(b);
     if (alignment == ALIGN_CENTER) {
         shared_ptr<Box> s(new StrutBox(0, rest / 2, 0, 0));
@@ -492,7 +495,6 @@ void ScaleBox::init(const shared_ptr<Box>& b, float sx, float sy) {
     _depth = _sy > 0 ? b->_depth * _sy : -b->_height * _sy;
     _shift = b->_shift * _sy;
 }
-
 
 void ScaleBox::draw(Graphics2D& g2, float x, float y) {
     drawDebug(g2, x, y);
@@ -718,11 +720,23 @@ void ShadowBox::draw(Graphics2D& g2, float x, float y) {
     _box->draw(g2, x + _space + _thickness, y);
     const Stroke& st = g2.getStroke();
     g2.setStroke(Stroke(_thickness, CAP_BUTT, JOIN_MITER));
-    g2.drawRect(x + th, y - _height + th, _width - _shadowRule - _thickness, _height + _depth - _shadowRule - _thickness);
+    g2.drawRect(
+        x + th,
+        y - _height + th,
+        _width - _shadowRule - _thickness,
+        _height + _depth - _shadowRule - _thickness);
     float penth = abs(1.f / g2.sx());
     g2.setStroke(Stroke(penth, CAP_BUTT, JOIN_MITER));
-    g2.fillRect(x + _shadowRule - penth, y + _depth - _shadowRule - penth, _width - _shadowRule, _shadowRule);
-    g2.fillRect(x + _width - _shadowRule - penth, y - _height + th + _shadowRule, _shadowRule, _depth + _height - 2 * _shadowRule - th);
+    g2.fillRect(
+        x + _shadowRule - penth,
+        y + _depth - _shadowRule - penth,
+        _width - _shadowRule,
+        _shadowRule);
+    g2.fillRect(
+        x + _width - _shadowRule - penth,
+        y - _height + th + _shadowRule,
+        _shadowRule,
+        _depth + _height - 2 * _shadowRule - th);
     g2.setStroke(st);
 }
 

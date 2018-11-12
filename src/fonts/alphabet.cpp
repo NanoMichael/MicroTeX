@@ -15,14 +15,13 @@ vector<const UnicodeBlock*> UnicodeBlock::_defined = {
     &LATIN1_SUPPLEMENT,
     &CYRILLIC,
     &GREEK,
-    &GREEK_EXTENDED
-};
+    &GREEK_EXTENDED};
 
-bool UnicodeBlock::in(wchar_t c) const {
+bool UnicodeBlock::contains(wchar_t c) const {
     // if this block is UNKNOWN, check others first
     if (*this == UNKNOWN) {
         for (auto b : _defined)
-            if (b->in(c)) return false;
+            if (b->contains(c)) return false;
         return true;
     }
     return (c >= _start && c <= _end);
@@ -46,7 +45,7 @@ void UnicodeBlock::define(wchar_t codePointStart, wchar_t codePointEnd) {
 
 const UnicodeBlock& UnicodeBlock::of(wchar_t c) {
     for (auto x : _defined) {
-        if (x->in(c)) return *x;
+        if (x->contains(c)) return *x;
     }
     return UNKNOWN;
 }
@@ -55,7 +54,7 @@ const UnicodeBlock& UnicodeBlock::of(wchar_t c) {
 
 AlphabetRegistration::~AlphabetRegistration() {}
 
-const vector<UnicodeBlock> CyrillicRegistration::_block = { UnicodeBlock::CYRILLIC };
+const vector<UnicodeBlock> CyrillicRegistration::_block = {UnicodeBlock::CYRILLIC};
 const string CyrillicRegistration::_package = "cyrillic";
 const string CyrillicRegistration::_font = "cyrillic/language_cyrillic.xml";
 
@@ -73,8 +72,7 @@ const string CyrillicRegistration::getTeXFontFile() const {
 
 const vector<UnicodeBlock> GreekRegistration::_block = {
     UnicodeBlock::GREEK,
-    UnicodeBlock::GREEK_EXTENDED
-};
+    UnicodeBlock::GREEK_EXTENDED};
 const string GreekRegistration::_package = "greek";
 const string GreekRegistration::_font = "greek/language_greek.xml";
 

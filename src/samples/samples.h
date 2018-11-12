@@ -9,7 +9,7 @@ namespace tex {
 
 const int SAMPLES_COUNT = 9;
 
-wstring SAMPLES[] {
+wstring SAMPLES[]{
     L"\\begin{array}{lr}\n"
     L"  \\mbox{\\textcolor{Blue}{Russian}}&\\mbox{\\textcolor{Melon}{Greek}}\\\\\n"
     L"  \\mbox{привет мир}&\\mbox{γειά κόσμο}\\\\\n"
@@ -165,10 +165,9 @@ wstring SAMPLES[] {
     L"\\end{array}\n",
 
     L"\\rlap{\\overbrace{\\phantom{1 + a + b + \\cdots + z}}^{\\text{total + 1}}}\n"
-    L"1 + \\underbrace{a + b + \\cdots + z}_{\\text{total}}\n"
-};
+    L"1 + \\underbrace{a + b + \\cdots + z}_{\\text{total}}\n"};
 
-} // namespace tex
+}  // namespace tex
 
-#endif // SAMPLES_H_INCLUDED
-#endif // __USE_SAMPLES
+#endif  // SAMPLES_H_INCLUDED
+#endif  // __USE_SAMPLES

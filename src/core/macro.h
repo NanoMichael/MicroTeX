@@ -4,8 +4,8 @@
 #include "atom/atom.h"
 #include "common.h"
 
-#include <string>
 #include <map>
+#include <string>
 
 using namespace tex;
 using namespace std;
@@ -26,6 +26,7 @@ protected:
     static map<wstring, wstring> _macrocode;
     static map<wstring, wstring> _macroreplacement;
     static Macro* _instance;
+
 public:
     virtual void execute(_out_ TeXParser& tp, _out_ vector<wstring>& args) override;
 
@@ -59,24 +60,19 @@ public:
     bool _hasOptions;
     int _posOpts;
 
-    MacroInfo() :
-        _macro(nullptr), _nbArgs(0), _hasOptions(false), _posOpts(0) {
+    MacroInfo() : _macro(nullptr), _nbArgs(0), _hasOptions(false), _posOpts(0) {
     }
 
-    MacroInfo(Macro* macro, int nbargs) :
-        _macro(macro), _nbArgs(nbargs), _hasOptions(false), _posOpts(0) {
+    MacroInfo(Macro* macro, int nbargs) : _macro(macro), _nbArgs(nbargs), _hasOptions(false), _posOpts(0) {
     }
 
-    MacroInfo(Macro* macro, int nbargs, int posOpts) :
-        _macro(macro), _nbArgs(nbargs), _hasOptions(true), _posOpts(posOpts) {
+    MacroInfo(Macro* macro, int nbargs, int posOpts) : _macro(macro), _nbArgs(nbargs), _hasOptions(true), _posOpts(posOpts) {
     }
 
-    MacroInfo(int nbargs, int posOpts) :
-        _macro(nullptr), _nbArgs(nbargs), _hasOptions(true), _posOpts(posOpts) {
+    MacroInfo(int nbargs, int posOpts) : _macro(nullptr), _nbArgs(nbargs), _hasOptions(true), _posOpts(posOpts) {
     }
 
-    MacroInfo(int nbargs) :
-        _macro(nullptr), _nbArgs(nbargs), _hasOptions(false), _posOpts(0) {
+    MacroInfo(int nbargs) : _macro(nullptr), _nbArgs(nbargs), _hasOptions(false), _posOpts(0) {
     }
 
     virtual shared_ptr<Atom> invoke(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
@@ -94,15 +90,14 @@ private:
     int _id;
 
     static shared_ptr<Atom> invoke(int id, _out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+
 public:
     PredefMacroInfo() = delete;
 
-    PredefMacroInfo(int id, int nbargs, int posOpts) :
-        MacroInfo(nbargs, posOpts), _id(id) {
+    PredefMacroInfo(int id, int nbargs, int posOpts) : MacroInfo(nbargs, posOpts), _id(id) {
     }
 
-    PredefMacroInfo(int id, int nbargs) :
-        MacroInfo(nbargs), _id(id) {
+    PredefMacroInfo(int id, int nbargs) : MacroInfo(nbargs), _id(id) {
     }
 
     shared_ptr<Atom> invoke(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) override {
@@ -110,6 +105,6 @@ public:
     }
 };
 
-}
+}  // namespace tex
 
-#endif // MACRO_H_INCLUDED
+#endif  // MACRO_H_INCLUDED

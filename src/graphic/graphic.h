@@ -10,15 +10,18 @@ namespace tex {
 
 class Graphics2D;
 
-enum TypefaceStyle { PLAIN = 0, BOLD = 1, ITALIC = 2, BOLDITALIC = BOLD | ITALIC };
+enum TypefaceStyle {
+    PLAIN = 0,
+    BOLD = 1,
+    ITALIC = 2,
+    BOLDITALIC = BOLD | ITALIC
+};
 
 /**
  * Class represent font information
  */
 class Font {
-
 public:
-
     /**
      * Get the font size
      */
@@ -70,9 +73,7 @@ public:
  * To layout text with no new line
  */
 class TextLayout {
-
 public:
-
     /**
      * Get the layout bounds with current text and font
      *
@@ -116,7 +117,6 @@ public:
  */
 class Graphics2D {
 public:
-
     /**
      * Set the color of the graphics context
      * 
@@ -323,6 +323,6 @@ public:
     virtual void fillRoundRect(float x, float y, float w, float h, float rx, float ry) = 0;
 };
 
-}
+}  // namespace tex
 
-#endif // GRAPHIC_H_INCLUDED
+#endif  // GRAPHIC_H_INCLUDED

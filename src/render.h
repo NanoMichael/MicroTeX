@@ -21,6 +21,7 @@ private:
     float _textSize;
     color _fg;
     Insets _insets;
+
 public:
     static float _defaultSize;
     static float _magFactor;
@@ -59,6 +60,7 @@ private:
     float _textSize, _textWidth, _lineSpace;
     bool _trueValues, _isMaxWidth;
     color _fg;
+
 public:
     // TODO declaration conflict with graphic/graphic.h
     enum TeXFontStyle {
@@ -70,10 +72,18 @@ public:
         TYPEWRITER = 16
     };
 
-    TeXRenderBuilder() :
-        _style(-1), _type(-1), _widthUnit(-1), _align(-1), _lineSpaceUnit(-1),
-        _textSize(0), _textWidth(0), _lineSpace(0),
-        _trueValues(false), _isMaxWidth(false), _fg(black) {
+    TeXRenderBuilder()
+        : _style(-1),
+          _type(-1),
+          _widthUnit(-1),
+          _align(-1),
+          _lineSpaceUnit(-1),
+          _textSize(0),
+          _textWidth(0),
+          _lineSpace(0),
+          _trueValues(false),
+          _isMaxWidth(false),
+          _fg(black) {
     }
 
     inline TeXRenderBuilder& setStyle(int style) {
@@ -158,6 +168,6 @@ public:
     static DefaultTeXFont* createFont(float s, int type);
 };
 
-}
+}  // namespace tex
 
-#endif // RENDER_H_INCLUDED
+#endif  // RENDER_H_INCLUDED
