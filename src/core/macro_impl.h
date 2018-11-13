@@ -47,9 +47,9 @@ inline shared_ptr<Atom> cellcolor_macro(_out_ TeXParser& tp, _out_ vector<wstrin
 }
 
 inline shared_ptr<Atom> color_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    // we do not care the \color command in non-array mode, since we did pass a color as a parameter
+    // We do not care the \color command in non-array mode, since we did pass a color as a parameter
     // when parsing a LaTeX string, it is useless to specify a global foreground color again, but in
-    // array mode, the \color command is useful to specify column foreground
+    // array mode, the \color command is useful to specify the foreground color of the columns.
     if (tp.isArrayMode()) {
         color c = ColorAtom::getColor(wide2utf8(args[1].c_str()));
         return shared_ptr<Atom>(new CellForegroundAtom(c));

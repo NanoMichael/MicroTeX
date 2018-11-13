@@ -22,11 +22,11 @@ void TeXFormula::_init_() {
 #ifdef __DEBUG
     __DBG("%s\n", "init formula");
 #endif  // __DEBUG
-    // character-to-symbol and character-to-delimiter mappings
+    // Character-to-symbol and character-to-delimiter mappings
     TeXFormulaSettingParser parser;
     parser.parseSymbol(_symbolMappings, _symbolTextMappings);
     parser.parseSymbol2Formula(_symbolFormulaMappings, _symbolTextMappings);
-    // register external alphabet
+    // Register external alphabet
     DefaultTeXFont::registerAlphabet(new CyrillicRegistration());
     DefaultTeXFont::registerAlphabet(new GreekRegistration());
 #ifdef __DEBUG
