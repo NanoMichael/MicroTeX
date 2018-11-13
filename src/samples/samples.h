@@ -10,6 +10,7 @@ namespace tex {
 const int SAMPLES_COUNT = 9;
 
 wstring SAMPLES[]{
+    L"%Cyrillic and Greek alphabet\n"
     L"\\begin{array}{lr}\n"
     L"  \\mbox{\\textcolor{Blue}{Russian}}&\\mbox{\\textcolor{Melon}{Greek}}\\\\\n"
     L"  \\mbox{привет мир}&\\mbox{γειά κόσμο}\\\\\n"
@@ -29,6 +30,7 @@ wstring SAMPLES[]{
     L"  \\mbox{прывітаньне Свет}&\\mbox{привіт світ}\\\\\n"
     L"\\end{array}\n",
 
+    L"%Complex formula test\n"
     L"\\begin{array}{l}\n"
     L"  \\forall\\varepsilon\\in\\mathbb{R}_+^*\\ \\exists\\eta>0\\ |x-x_0|\\leq\\eta\\Longrightarrow|f(x)-f(x_0)|\\leq\\varepsilon\\\\\n"
     L"  \\det\n"
@@ -72,7 +74,7 @@ wstring SAMPLES[]{
     L"          W_2(\\Omega, \\Gamma_1)\\right|\\ \\right|\\left| |u|\\overset{\\circ}{\\to} W_2^{\\widetilde{A}}(\\Omega\\Gamma_r,T)\\right|\\Bigg|\\\\\n"
     L"      &\\\\\n"
     L"      &\\textcolor{magenta}\n"
-    L"          {\\mathrm{Produit\\ avec\\ Java\\ et\\ \\ par\\ }\\mathscr{C}\\mathcal{A}\\mathfrak{L}\\mathbf{I}\\mathtt{X}\\mathbb{T}\\mathsf{E}}\\\\\n"
+    L"          {\\mathrm{Produit\\ avec\\ et\\ \\ par\\ }\\mathscr{C}\\mathcal{A}\\mathfrak{L}\\mathbf{I}\\mathtt{X}\\mathbb{T}\\mathsf{E}}\\\\\n"
     L"      &\\begin{pmatrix}\n"
     L"          \\alpha&\\beta&\\gamma&\\delta\\\\\n"
     L"          \\aleph&\\beth&\\gimel&\\daleth\\\\\n"
@@ -139,12 +141,14 @@ wstring SAMPLES[]{
     L"  \\doublebox{\\text{A double framed box}}&\\ovalbox{\\text{An oval framed box}}\\cr\n"
     L"\\end{array}\n",
 
+    L"%ASCII character\n"
     L"\\text{!\"#'()*+,-./0123456789:<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]\n"
     L"^_`abcdefghijklmnopqrstuvwxyz{|}~\u007F\u0080\u0081\u0082\u0083\u0084\u0085\u0086\n"
     L"\u0087\u0088\u0089\u008A\u008B\u008C\u008D\u008E\u008F\u0090\u0091\u0092\u0093\u0094\n"
     L"\u0095\u0096\u0097\u0098\u0099\u009A\u009B\u009C\u009D\u009E\u009F ¡¢£¤¥¦§¨©ª«¬\u00AD\n"
     L"®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ}\n",
 
+    L"%Table test\n"
     L"\\newcolumntype{s}{>{\\color{#1234B6}}c}\n"
     L"\\begin{array}{|c|c|c|s|}\n"
     L"  \\hline\n"
