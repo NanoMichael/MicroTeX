@@ -20,7 +20,7 @@
     #define __OS_Windows__
 #endif
 
-// Other platfomrs...
+// Other platforms...
 
 // Flag for compile samples
 #if defined(__OS_Linux__) || defined(__OS_Windows__)

@@ -847,7 +847,8 @@ void TeXParser::parse() throw(ex_parse) {
                     _pos++;
                 }
 
-                _formula->add(shared_ptr<Atom>(new MathAtom(TeXFormula(*this, getDollarGroup(DOLLAR), false)._root, style)));
+                _formula->add(shared_ptr<Atom>(new MathAtom(
+                    TeXFormula(*this, getDollarGroup(DOLLAR), false)._root, style)));
                 if (doubleDollar) {
                     if (_parseString[_pos] == DOLLAR) _pos++;
                 }
