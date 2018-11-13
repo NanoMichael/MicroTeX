@@ -107,24 +107,26 @@ public:
     static void _free_();
 };
 
+typedef shared_ptr<Atom> (*MacroDelegate)(
+    _out_ TeXParser& tp,
+    _out_ vector<wstring>& args);
+
 class PredefMacroInfo : public MacroInfo {
 private:
-    int _id;
-
-    static shared_ptr<Atom> invoke(int id, _out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+    MacroDelegate _delegate;
 
 public:
     PredefMacroInfo() = delete;
 
-    PredefMacroInfo(int id, int nbargs, int posOpts)
-        : MacroInfo(nbargs, posOpts), _id(id) {}
+    PredefMacroInfo(int nbargs, int posOpts, MacroDelegate delegate)
+        : MacroInfo(nbargs, posOpts), _delegate(delegate) {}
 
-    PredefMacroInfo(int id, int nbargs)
-        : MacroInfo(nbargs), _id(id) {}
+    PredefMacroInfo(int nbargs, MacroDelegate delegate)
+        : MacroInfo(nbargs), _delegate(delegate) {}
 
-    shared_ptr<Atom> invoke(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) override {
-        return invoke(_id, tp, args);
-    }
+    shared_ptr<Atom> invoke(
+        _out_ TeXParser& tp,
+        _out_ vector<wstring>& args) throw(ex_parse) override;
 };
 
 }  // namespace tex
