@@ -39,6 +39,10 @@ void LaTeX::release() {
     if (_builder != nullptr) delete _builder;
 }
 
+void LaTeX::setDebug(bool debug) {
+    TeXFormula::setDEBUG(debug);
+}
+
 TeXRender* LaTeX::parse(const wstring& latex, int width, float textSize, float lineSpace, color fg) {
     bool lined = true;
     if (startswith(latex, L"$$") || startswith(latex, L"\\[")) {
