@@ -16,19 +16,23 @@ using namespace tex;
 
 namespace tex {
 
+#ifndef macro
+#define macro(name) shared_ptr<Atom> macro_##name(TeXParser& tp, vector<wstring>& args)
+#endif
+
 #ifdef __GA_DEBUG
-inline shared_ptr<Atom> debug_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(debug) {
     TeXFormula::setDEBUG(true);
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> undebug_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(undebug) {
     TeXFormula::setDEBUG(false);
     return shared_ptr<Atom>(nullptr);
 }
 #endif  // __GA_DEBUG
 
-inline shared_ptr<Atom> multirow_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(multirow) {
     if (!tp.isArrayMode())
         throw ex_parse("Command \\multirow must used in array environment!");
     int n = 0;
@@ -37,7 +41,7 @@ inline shared_ptr<Atom> multirow_macro(_out_ TeXParser& tp, _out_ vector<wstring
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> cellcolor_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(cellcolor) {
     if (!tp.isArrayMode())
         throw ex_parse("Command \\cellcolor must used in array environment!");
     color c = ColorAtom::getColor(wide2utf8(args[1].c_str()));
@@ -46,7 +50,7 @@ inline shared_ptr<Atom> cellcolor_macro(_out_ TeXParser& tp, _out_ vector<wstrin
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> color_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(color) {
     // We do not care the \color command in non-array mode, since we did pass a color as a parameter
     // when parsing a LaTeX string, it is useless to specify a global foreground color again, but in
     // array mode, the \color command is useful to specify the foreground color of the columns.
@@ -57,23 +61,23 @@ inline shared_ptr<Atom> color_macro(_out_ TeXParser& tp, _out_ vector<wstring>& 
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> newcolumntype_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(newcolumntype) {
     MatrixAtom::defineColumnSpecifier(args[1], args[2]);
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> arrayrulecolor_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(arrayrulecolor) {
     color c = ColorAtom::getColor(wide2utf8(args[1].c_str()));
     MatrixAtom::LINE_COLOR = c;
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> columnbg_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(columnbg) {
     color c = ColorAtom::getColor(wide2utf8(args[1].c_str()));
     return shared_ptr<Atom>(new CellColorAtom(c));
 }
 
-inline shared_ptr<Atom> rowcolor_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(rowcolor) {
     if (!tp.isArrayMode())
         throw ex_parse("Command \\rowcolor must used in array environment!");
     color c = ColorAtom::getColor(wide2utf8(args[1].c_str()));
@@ -82,44 +86,44 @@ inline shared_ptr<Atom> rowcolor_macro(_out_ TeXParser& tp, _out_ vector<wstring
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> st_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(st) {
     auto base = TeXFormula(tp, args[1], false)._root;
     return shared_ptr<Atom>(new StrikeThroughAtom(base));
 }
 
-inline shared_ptr<Atom> Braket_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(Braket) {
     wstring str(args[1]);
     replaceall(str, L"\\|", L"\\middle\\vert ");
     return TeXFormula(tp, L"\\left\\langle " + str + L"\\right\\rangle")._root;
 }
 
-inline shared_ptr<Atom> Set_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(Set) {
     wstring str(args[1]);
     replacefirst(str, L"\\|", L"\\middle\\vert ");
     return TeXFormula(tp, L"\\left\\{" + str + L"\\right\\}")._root;
 }
 
-inline shared_ptr<Atom> spATbreve_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(spATbreve) {
     VRowAtom* vra = new VRowAtom(TeXFormula(L"\\displaystyle\\!\\breve{}")._root);
     vra->setRaise(UNIT_EX, 0.6f);
     return shared_ptr<Atom>(new SmashedAtom(shared_ptr<Atom>(vra), ""));
 }
 
-inline shared_ptr<Atom> spAThat_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(spAThat) {
     VRowAtom* vra = new VRowAtom(TeXFormula(L"\\displaystyle\\widehat{}")._root);
     vra->setRaise(UNIT_EX, 0.6f);
     return shared_ptr<Atom>(new SmashedAtom(shared_ptr<Atom>(vra), ""));
 }
 
-inline shared_ptr<Atom> clrlap_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(clrlap) {
     return shared_ptr<Atom>(new LapedAtom(TeXFormula(tp, args[1])._root, args[0][0]));
 }
 
-inline shared_ptr<Atom> mathclrlap_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(mathclrlap) {
     return shared_ptr<Atom>(new LapedAtom(TeXFormula(tp, args[1])._root, args[0][4]));
 }
 
-inline shared_ptr<Atom> frac_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(frac) {
     TeXFormula num(tp, args[1], false);
     TeXFormula den(tp, args[2], false);
     if (num._root == nullptr || den._root == nullptr)
@@ -127,7 +131,7 @@ inline shared_ptr<Atom> frac_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
     return shared_ptr<Atom>(new FractionAtom(num._root, den._root, true));
 }
 
-inline shared_ptr<Atom> over_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(over) {
     auto num = tp.getFormulaAtom();
     auto den = TeXFormula(tp, tp.getOverArgument(), false)._root;
     if (num == nullptr || den == nullptr)
@@ -135,7 +139,7 @@ inline shared_ptr<Atom> over_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
     return shared_ptr<Atom>(new FractionAtom(num, den, true));
 }
 
-inline shared_ptr<Atom> atop_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(atop) {
     auto num = tp.getFormulaAtom();
     auto den = TeXFormula(tp, tp.getOverArgument(), false)._root;
     if (num == nullptr || den == nullptr)
@@ -143,7 +147,7 @@ inline shared_ptr<Atom> atop_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
     return shared_ptr<Atom>(new FractionAtom(num, den, false));
 }
 
-inline shared_ptr<Atom> choose_macro(
+inline shared_ptr<Atom> _macro_choose(
     const string& left, const string& right,
     _out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
     auto num = tp.getFormulaAtom();
@@ -156,23 +160,23 @@ inline shared_ptr<Atom> choose_macro(
     return shared_ptr<Atom>(new FencedAtom(f, l, r));
 }
 
-inline shared_ptr<Atom> choose_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return choose_macro("lbrack", "rbrack", tp, args);
+inline macro(choose) {
+    return _macro_choose("lbrack", "rbrack", tp, args);
 }
 
-inline shared_ptr<Atom> brack_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return choose_macro("lsqbrack", "rsqbrack", tp, args);
+inline macro(brack) {
+    return _macro_choose("lsqbrack", "rsqbrack", tp, args);
 }
 
-inline shared_ptr<Atom> bangle_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return choose_macro("langle", "rangle", tp, args);
+inline macro(bangle) {
+    return _macro_choose("langle", "rangle", tp, args);
 }
 
-inline shared_ptr<Atom> brace_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return choose_macro("lbrace", "rbrace", tp, args);
+inline macro(brace) {
+    return _macro_choose("lbrace", "rbrace", tp, args);
 }
 
-inline shared_ptr<Atom> binom_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(binom) {
     TeXFormula num(tp, args[1], false);
     TeXFormula den(tp, args[2], false);
     if (num._root == nullptr || den._root == nullptr)
@@ -183,7 +187,7 @@ inline shared_ptr<Atom> binom_macro(_out_ TeXParser& tp, _out_ vector<wstring>& 
     return shared_ptr<Atom>(new FencedAtom(f, s1, s2));
 }
 
-inline shared_ptr<Atom> above_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(above) {
     auto num = tp.getFormulaAtom();
     pair<int, float> dim = tp.getLength();
     auto den = TeXFormula(tp, tp.getOverArgument(), false)._root;
@@ -193,102 +197,112 @@ inline shared_ptr<Atom> above_macro(_out_ TeXParser& tp, _out_ vector<wstring>& 
     return shared_ptr<Atom>(new FractionAtom(num, den, dim.first, dim.second));
 }
 
-inline shared_ptr<Atom> mbox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(mbox) {
     shared_ptr<Atom> group(new RomanAtom(TeXFormula(tp, args[1], "mathnormal", false, false)._root));
     return shared_ptr<Atom>(new StyleAtom(STYLE_TEXT, group));
 }
 
-inline shared_ptr<Atom> text_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(text) {
     return shared_ptr<Atom>(new RomanAtom(TeXFormula(tp, args[1], "mathnormal", false, false)._root));
 }
 
-inline shared_ptr<Atom> underscore_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(underscore) {
     return shared_ptr<Atom>(new UnderScoreAtom());
 }
 
-inline shared_ptr<Atom> accent_macros(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(accents) {
     string x;
     wide2utf8(args[0].c_str(), x);
     return shared_ptr<Atom>(new AccentedAtom(TeXFormula(tp, args[1], false)._root, x));
 }
 
-inline shared_ptr<Atom> grkaccent_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(grkaccent) {
     return shared_ptr<Atom>(new AccentedAtom(
         TeXFormula(tp, args[2], false)._root, TeXFormula(tp, args[1], false)._root, false));
 }
 
-inline shared_ptr<Atom> accent_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(accent) {
     return shared_ptr<Atom>(new AccentedAtom(
         TeXFormula(tp, args[2], false)._root, TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> cedilla_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(cedilla) {
     return shared_ptr<Atom>(new CedillAtom(TeXFormula(tp, args[1])._root));
 }
 
-inline shared_ptr<Atom> IJ_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(IJ) {
     return shared_ptr<Atom>(new IJAtom(args[0][0] == 'I'));
 }
 
-inline shared_ptr<Atom> TStroke_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(TStroke) {
     return shared_ptr<Atom>(new TStrokeAtom(args[0][0] == 'T'));
 }
 
-inline shared_ptr<Atom> LCaron_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(LCaron) {
     return shared_ptr<Atom>(new LCaronAtom(args[0][0] == 'L'));
 }
 
-inline shared_ptr<Atom> tcaron_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(tcaron) {
     return shared_ptr<Atom>(new TCaronAtom());
 }
 
-inline shared_ptr<Atom> ogonek_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(ogonek) {
     return shared_ptr<Atom>(new OgonekAtom(TeXFormula(tp, args[1])._root));
 }
 
-inline shared_ptr<Atom> nbsp_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(nbsp) {
     return shared_ptr<Atom>(new SpaceAtom());
 }
 
-inline shared_ptr<Atom> sqrt_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(sqrt) {
     if (args[2].empty())
-        return shared_ptr<Atom>(new NthRoot(TeXFormula(tp, args[1], false)._root, shared_ptr<Atom>(nullptr)));
-    return shared_ptr<Atom>(new NthRoot(TeXFormula(tp, args[1], false)._root, TeXFormula(tp, args[2], false)._root));
+        return shared_ptr<Atom>(new NthRoot(
+            TeXFormula(tp, args[1], false)._root, shared_ptr<Atom>(nullptr)));
+    return shared_ptr<Atom>(new NthRoot(
+        TeXFormula(tp, args[1], false)._root, TeXFormula(tp, args[2], false)._root));
 }
 
-inline shared_ptr<Atom> overrightarrow_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, false, true));
+inline macro(overrightarrow) {
+    return shared_ptr<Atom>(new UnderOverArrowAtom(
+        TeXFormula(tp, args[1], false)._root, false, true));
 }
 
-inline shared_ptr<Atom> overleftarrow_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, true, true));
+inline macro(overleftarrow) {
+    return shared_ptr<Atom>(new UnderOverArrowAtom(
+        TeXFormula(tp, args[1], false)._root, true, true));
 }
 
-inline shared_ptr<Atom> overleftrightarrow_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, true));
+inline macro(overleftrightarrow) {
+    return shared_ptr<Atom>(new UnderOverArrowAtom(
+        TeXFormula(tp, args[1], false)._root, true));
 }
 
-inline shared_ptr<Atom> underrightarrow_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, false, false));
+inline macro(underrightarrow) {
+    return shared_ptr<Atom>(new UnderOverArrowAtom(
+        TeXFormula(tp, args[1], false)._root, false, false));
 }
 
-inline shared_ptr<Atom> underleftarrow_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, true, false));
+inline macro(underleftarrow) {
+    return shared_ptr<Atom>(new UnderOverArrowAtom(
+        TeXFormula(tp, args[1], false)._root, true, false));
 }
 
-inline shared_ptr<Atom> underleftrightarrow_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, false));
+inline macro(underleftrightarrow) {
+    return shared_ptr<Atom>(new UnderOverArrowAtom(
+        TeXFormula(tp, args[1], false)._root, false));
 }
 
-inline shared_ptr<Atom> xleftarrow_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new XArrowAtom(TeXFormula(tp, args[1], false)._root, TeXFormula(tp, args[2])._root, true));
+inline macro(xleftarrow) {
+    return shared_ptr<Atom>(new XArrowAtom(
+        TeXFormula(tp, args[1], false)._root, TeXFormula(tp, args[2])._root, true));
 }
 
-inline shared_ptr<Atom> xrightarrow_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new XArrowAtom(TeXFormula(tp, args[1], false)._root, TeXFormula(tp, args[2])._root, false));
+inline macro(xrightarrow) {
+    return shared_ptr<Atom>(new XArrowAtom(
+        TeXFormula(tp, args[1], false)._root, TeXFormula(tp, args[2])._root, false));
 }
 
-inline shared_ptr<Atom> sideset_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(sideset) {
     TeXFormula tf;
     tf.add(shared_ptr<Atom>(new PhantomAtom(TeXFormula(tp, args[3])._root, false, true, true)));
     tf.append(tp.getIsPartial(), args[1]);
@@ -297,16 +311,18 @@ inline shared_ptr<Atom> sideset_macro(_out_ TeXParser& tp, _out_ vector<wstring>
     return shared_ptr<Atom>(new TypedAtom(TYPE_ORDINARY, TYPE_ORDINARY, tf._root));
 }
 
-inline shared_ptr<Atom> prescript_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(prescript) {
     auto base = TeXFormula(tp, args[3])._root;
     shared_ptr<Atom> p(new PhantomAtom(base, false, true, true));
-    shared_ptr<Atom> s(new ScriptsAtom(p, TeXFormula(tp, args[2])._root, TeXFormula(tp, args[1])._root, false));
+    shared_ptr<Atom> s(new ScriptsAtom(
+        p,
+        TeXFormula(tp, args[2])._root, TeXFormula(tp, args[1])._root, false));
     tp.addAtom(s);
     tp.addAtom(shared_ptr<Atom>(new SpaceAtom(UNIT_MU, -0.3f, 0, 0)));
     return shared_ptr<Atom>(new TypedAtom(TYPE_ORDINARY, TYPE_ORDINARY, base));
 }
 
-inline shared_ptr<Atom> underbrace_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(underbrace) {
     return shared_ptr<Atom>(new OverUnderDelimiter(
         TeXFormula(tp, args[1], false)._root,
         shared_ptr<Atom>(nullptr),
@@ -314,7 +330,7 @@ inline shared_ptr<Atom> underbrace_macro(_out_ TeXParser& tp, _out_ vector<wstri
         UNIT_EX, 0, false));
 }
 
-inline shared_ptr<Atom> overbrace_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(overbrace) {
     return shared_ptr<Atom>(new OverUnderDelimiter(
         TeXFormula(tp, args[1], false)._root,
         shared_ptr<Atom>(nullptr),
@@ -322,7 +338,7 @@ inline shared_ptr<Atom> overbrace_macro(_out_ TeXParser& tp, _out_ vector<wstrin
         UNIT_EX, 0, true));
 }
 
-inline shared_ptr<Atom> underbrack_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(underbrack) {
     return shared_ptr<Atom>(new OverUnderDelimiter(
         TeXFormula(tp, args[1], false)._root,
         shared_ptr<Atom>(nullptr),
@@ -330,7 +346,7 @@ inline shared_ptr<Atom> underbrack_macro(_out_ TeXParser& tp, _out_ vector<wstri
         UNIT_EX, 0, false));
 }
 
-inline shared_ptr<Atom> overbrack_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(overbrack) {
     return shared_ptr<Atom>(new OverUnderDelimiter(
         TeXFormula(tp, args[1], false)._root,
         shared_ptr<Atom>(nullptr),
@@ -338,7 +354,7 @@ inline shared_ptr<Atom> overbrack_macro(_out_ TeXParser& tp, _out_ vector<wstrin
         UNIT_EX, 0, true));
 }
 
-inline shared_ptr<Atom> underparen_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(underparen) {
     return shared_ptr<Atom>(new OverUnderDelimiter(
         TeXFormula(tp, args[1], false)._root,
         shared_ptr<Atom>(nullptr),
@@ -346,7 +362,7 @@ inline shared_ptr<Atom> underparen_macro(_out_ TeXParser& tp, _out_ vector<wstri
         UNIT_EX, 0, false));
 }
 
-inline shared_ptr<Atom> overparen_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(overparen) {
     return shared_ptr<Atom>(new OverUnderDelimiter(
         TeXFormula(tp, args[1], false)._root,
         shared_ptr<Atom>(nullptr),
@@ -354,92 +370,105 @@ inline shared_ptr<Atom> overparen_macro(_out_ TeXParser& tp, _out_ vector<wstrin
         UNIT_EX, 0, true));
 }
 
-inline shared_ptr<Atom> overline_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(overline) {
     return shared_ptr<Atom>(new OverlinedAtom(TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> underline_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(underline) {
     return shared_ptr<Atom>(new UnderlinedAtom(TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> mathop_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    shared_ptr<TypedAtom> a(new TypedAtom(TYPE_BIG_OPERATOR, TYPE_BIG_OPERATOR, TeXFormula(tp, args[1], false)._root));
+inline macro(mathop) {
+    shared_ptr<TypedAtom> a(new TypedAtom(
+        TYPE_BIG_OPERATOR, TYPE_BIG_OPERATOR, TeXFormula(tp, args[1], false)._root));
     a->_typelimits = SCRIPT_NORMAL;
     return a;
 }
 
-inline shared_ptr<Atom> mathpunct_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new TypedAtom(TYPE_PUNCTUATION, TYPE_PUNCTUATION, TeXFormula(tp, args[1], false)._root));
+inline macro(mathpunct) {
+    return shared_ptr<Atom>(new TypedAtom(
+        TYPE_PUNCTUATION, TYPE_PUNCTUATION, TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> mathord_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new TypedAtom(TYPE_ORDINARY, TYPE_ORDINARY, TeXFormula(tp, args[1], false)._root));
+inline macro(mathord) {
+    return shared_ptr<Atom>(new TypedAtom(
+        TYPE_ORDINARY, TYPE_ORDINARY, TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> mathrel_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, TeXFormula(tp, args[1], false)._root));
+inline macro(mathrel) {
+    return shared_ptr<Atom>(new TypedAtom(
+        TYPE_RELATION, TYPE_RELATION, TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> mathinner_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new TypedAtom(TYPE_INNER, TYPE_INNER, TeXFormula(tp, args[1], false)._root));
+inline macro(mathinner) {
+    return shared_ptr<Atom>(new TypedAtom(
+        TYPE_INNER, TYPE_INNER, TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> mathbin_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new TypedAtom(TYPE_BINARY_OPERATOR, TYPE_BINARY_OPERATOR, TeXFormula(tp, args[1], false)._root));
+inline macro(mathbin) {
+    return shared_ptr<Atom>(new TypedAtom(
+        TYPE_BINARY_OPERATOR, TYPE_BINARY_OPERATOR, TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> mathopen_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new TypedAtom(TYPE_OPENING, TYPE_OPENING, TeXFormula(tp, args[1], false)._root));
+inline macro(mathopen) {
+    return shared_ptr<Atom>(new TypedAtom(
+        TYPE_OPENING, TYPE_OPENING, TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> mathclose_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new TypedAtom(TYPE_CLOSING, TYPE_CLOSING, TeXFormula(tp, args[1], false)._root));
+inline macro(mathclose) {
+    return shared_ptr<Atom>(new TypedAtom(
+        TYPE_CLOSING, TYPE_CLOSING, TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> joinrel_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(new SpaceAtom(UNIT_MU, -2.6f, 0, 0))));
+inline macro(joinrel) {
+    return shared_ptr<Atom>(new TypedAtom(
+        TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(new SpaceAtom(UNIT_MU, -2.6f, 0, 0))));
 }
 
-inline shared_ptr<Atom> smash_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(smash) {
     string x;
     wide2utf8(args[2].c_str(), x);
     return shared_ptr<Atom>(new SmashedAtom(TeXFormula(tp, args[1], false)._root, x));
 }
 
-inline shared_ptr<Atom> vdots_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(vdots) {
     return shared_ptr<Atom>(new VdotsAtom());
 }
 
-inline shared_ptr<Atom> ddots_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new TypedAtom(TYPE_INNER, TYPE_INNER, shared_ptr<Atom>(new DdtosAtom())));
+inline macro(ddots) {
+    return shared_ptr<Atom>(new TypedAtom(
+        TYPE_INNER, TYPE_INNER, shared_ptr<Atom>(new DdtosAtom())));
 }
 
-inline shared_ptr<Atom> iddots_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new TypedAtom(TYPE_INNER, TYPE_INNER, shared_ptr<Atom>(new IddotsAtom())));
+inline macro(iddots) {
+    return shared_ptr<Atom>(new TypedAtom(
+        TYPE_INNER, TYPE_INNER, shared_ptr<Atom>(new IddotsAtom())));
 }
 
-inline shared_ptr<Atom> leftparenthesis_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(leftparenthesis) {
     wstring grp = tp.getGroup(L"\\(", L"\\)");
     return shared_ptr<Atom>(new MathAtom(TeXFormula(tp, grp, false)._root, STYLE_TEXT));
 }
 
-inline shared_ptr<Atom> leftbracket_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(leftbracket) {
     wstring grp = tp.getGroup(L"\\[", L"\\]");
     return shared_ptr<Atom>(new MathAtom(TeXFormula(tp, grp, false)._root, STYLE_DISPLAY));
 }
 
-inline shared_ptr<Atom> middle_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(middle) {
     return shared_ptr<Atom>(new MiddleAtom(TeXFormula(tp, args[1])._root));
 }
 
-inline shared_ptr<Atom> cr_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(cr) {
     if (tp.isArrayMode()) {
         tp.addRow();
     } else {
         ArrayOfAtoms arr;
         arr.add(tp._formula->_root);
         arr.addRow();
-        TeXParser parser(tp.getIsPartial(), tp.getStringFromCurrentPos(), &arr, false, tp.isIgnoreWhiteSpace());
+        TeXParser parser(
+            tp.getIsPartial(), tp.getStringFromCurrentPos(),
+            &arr, false, tp.isIgnoreWhiteSpace());
         parser.parse();
         arr.checkDimensions();
         tp.finish();
@@ -449,27 +478,29 @@ inline shared_ptr<Atom> cr_macro(_out_ TeXParser& tp, _out_ vector<wstring>& arg
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> backslashcr_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return cr_macro(tp, args);
+inline macro(backslashcr) {
+    return macro_cr(tp, args);
 }
 
-inline shared_ptr<Atom> smallmatrixATATenv_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(smallmatrixATATenv) {
     ArrayOfAtoms* arr = new ArrayOfAtoms();
     TeXParser parser(tp.getIsPartial(), args[1], arr, false);
     parser.parse();
     arr->checkDimensions();
-    return shared_ptr<Atom>(new MatrixAtom(tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), SMALLMATRIX));
+    return shared_ptr<Atom>(new MatrixAtom(
+        tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), SMALLMATRIX));
 }
 
-inline shared_ptr<Atom> matrixATATenv_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(matrixATATenv) {
     ArrayOfAtoms* arr = new ArrayOfAtoms();
     TeXParser parser(tp.getIsPartial(), args[1], arr, false);
     parser.parse();
     arr->checkDimensions();
-    return shared_ptr<Atom>(new MatrixAtom(tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), MATRIX));
+    return shared_ptr<Atom>(new MatrixAtom(
+        tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), MATRIX));
 }
 
-inline shared_ptr<Atom> multicolumn_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(multicolumn) {
     int n = 0;
     valueof(args[1], n);
     string x;
@@ -479,7 +510,7 @@ inline shared_ptr<Atom> multicolumn_macro(_out_ TeXParser& tp, _out_ vector<wstr
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> hdotsfor_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(hdotsfor) {
     int n = 0;
     valueof(args[1], n);
     float f = 1.f;
@@ -489,31 +520,34 @@ inline shared_ptr<Atom> hdotsfor_macro(_out_ TeXParser& tp, _out_ vector<wstring
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> arrayATATenv_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(arrayATATenv) {
     ArrayOfAtoms* arr = new ArrayOfAtoms();
     TeXParser parser(tp.getIsPartial(), args[2], arr, false);
     parser.parse();
     arr->checkDimensions();
-    return shared_ptr<Atom>(new MatrixAtom(tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), args[1], true));
+    return shared_ptr<Atom>(new MatrixAtom(
+        tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), args[1], true));
 }
 
-inline shared_ptr<Atom> alignATATenv_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(alignATATenv) {
     ArrayOfAtoms* arr = new ArrayOfAtoms();
     TeXParser parser(tp.getIsPartial(), args[1], arr, false);
     parser.parse();
     arr->checkDimensions();
-    return shared_ptr<Atom>(new MatrixAtom(tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), ALIGN));
+    return shared_ptr<Atom>(new MatrixAtom(
+        tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), ALIGN));
 }
 
-inline shared_ptr<Atom> flalignATATenv_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(flalignATATenv) {
     ArrayOfAtoms* arr = new ArrayOfAtoms();
     TeXParser parser(tp.getIsPartial(), args[1], arr, false);
     parser.parse();
     arr->checkDimensions();
-    return shared_ptr<Atom>(new MatrixAtom(tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), FLALIGN));
+    return shared_ptr<Atom>(new MatrixAtom(
+        tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), FLALIGN));
 }
 
-inline shared_ptr<Atom> alignatATATenv_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(alignatATATenv) {
     ArrayOfAtoms* arr = new ArrayOfAtoms();
     TeXParser par(tp.getIsPartial(), args[2], arr, false);
     par.parse();
@@ -522,18 +556,20 @@ inline shared_ptr<Atom> alignatATATenv_macro(_out_ TeXParser& tp, _out_ vector<w
     valueof(args[1], n);
     if (arr->_col != 2 * n) throw ex_parse("Bad number of equations in alignat environment!");
 
-    return shared_ptr<Atom>(new MatrixAtom(tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), ALIGNAT));
+    return shared_ptr<Atom>(new MatrixAtom(
+        tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), ALIGNAT));
 }
 
-inline shared_ptr<Atom> alignedATATenv_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(alignedATATenv) {
     ArrayOfAtoms* arr = new ArrayOfAtoms();
     TeXParser p(tp.getIsPartial(), args[1], arr, false);
     p.parse();
     arr->checkDimensions();
-    return shared_ptr<Atom>(new MatrixAtom(tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), ALIGNED));
+    return shared_ptr<Atom>(new MatrixAtom(
+        tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), ALIGNED));
 }
 
-inline shared_ptr<Atom> alignedatATATenv_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(alignedatATATenv) {
     ArrayOfAtoms* arr = new ArrayOfAtoms();
     TeXParser p(tp.getIsPartial(), args[2], arr, false);
     p.parse();
@@ -543,10 +579,11 @@ inline shared_ptr<Atom> alignedatATATenv_macro(_out_ TeXParser& tp, _out_ vector
     if (arr->_col != 2 * n)
         throw ex_parse("Bad number of equations in alignedat environment!");
 
-    return shared_ptr<Atom>(new MatrixAtom(tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), ALIGNEDAT));
+    return shared_ptr<Atom>(new MatrixAtom(
+        tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), ALIGNEDAT));
 }
 
-inline shared_ptr<Atom> multlineATATenv_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(multlineATATenv) {
     ArrayOfAtoms* arr = new ArrayOfAtoms();
     TeXParser p(tp.getIsPartial(), args[1], arr, false);
     p.parse();
@@ -556,10 +593,11 @@ inline shared_ptr<Atom> multlineATATenv_macro(_out_ TeXParser& tp, _out_ vector<
     if (arr->_col == 0)
         return shared_ptr<Atom>(nullptr);
 
-    return shared_ptr<Atom>(new MultlineAtom(tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), MULTILINE));
+    return shared_ptr<Atom>(new MultlineAtom(
+        tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), MULTILINE));
 }
 
-inline shared_ptr<Atom> gatherATATenv_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(gatherATATenv) {
     ArrayOfAtoms* arr = new ArrayOfAtoms();
     TeXParser p(tp.getIsPartial(), args[1], arr, false);
     p.parse();
@@ -567,10 +605,11 @@ inline shared_ptr<Atom> gatherATATenv_macro(_out_ TeXParser& tp, _out_ vector<ws
     if (arr->_col > 1) throw ex_parse("Character '&' is only available in array mode!");
     if (arr->_col == 0) return shared_ptr<Atom>(nullptr);
 
-    return shared_ptr<Atom>(new MultlineAtom(tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), GATHER));
+    return shared_ptr<Atom>(new MultlineAtom(
+        tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), GATHER));
 }
 
-inline shared_ptr<Atom> gatheredATATenv_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(gatheredATATenv) {
     ArrayOfAtoms* arr = new ArrayOfAtoms();
     TeXParser p(tp.getIsPartial(), args[1], arr, false);
     p.parse();
@@ -578,32 +617,33 @@ inline shared_ptr<Atom> gatheredATATenv_macro(_out_ TeXParser& tp, _out_ vector<
     if (arr->_col > 1) throw ex_parse("Character '&' is only available in array mode");
     if (arr->_col == 0) return shared_ptr<Atom>(nullptr);
 
-    return shared_ptr<Atom>(new MultlineAtom(tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), GATHERED));
+    return shared_ptr<Atom>(new MultlineAtom(
+        tp.getIsPartial(), shared_ptr<ArrayOfAtoms>(arr), GATHERED));
 }
 
-inline shared_ptr<Atom> shoveright_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(shoveright) {
     auto a = TeXFormula(tp, args[1])._root;
     a->_alignment = ALIGN_RIGHT;
     return a;
 }
 
-inline shared_ptr<Atom> shoveleft_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(shoveleft) {
     auto a = TeXFormula(tp, args[1])._root;
     a->_alignment = ALIGN_LEFT;
     return a;
 }
 
-inline shared_ptr<Atom> makeatletter_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(makeatletter) {
     tp.makeAtLetter();
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> makeatother_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(makeatother) {
     tp.makeAtOther();
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> newenvironment_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(newenvironment) {
     int opt = 0;
     if (!args[4].empty()) valueof(args[4], opt);
 
@@ -611,7 +651,7 @@ inline shared_ptr<Atom> newenvironment_macro(_out_ TeXParser& tp, _out_ vector<w
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> renewenvironment_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(renewenvironment) {
     int opt = 0;
     if (!args[4].empty()) valueof(args[4], opt);
 
@@ -619,11 +659,11 @@ inline shared_ptr<Atom> renewenvironment_macro(_out_ TeXParser& tp, _out_ vector
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> fbox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(fbox) {
     return shared_ptr<Atom>(new FBoxAtom(TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> questeq_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(questeq) {
     auto eq = SymbolAtom::get(TeXFormula::_symbolMappings['=']);
     auto quest = SymbolAtom::get(TeXFormula::_symbolMappings['?']);
     auto sq = shared_ptr<Atom>(new ScaleAtom(quest, 0.75f));
@@ -631,7 +671,7 @@ inline shared_ptr<Atom> questeq_macro(_out_ TeXParser& tp, _out_ vector<wstring>
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, at));
 }
 
-inline shared_ptr<Atom> stackrel_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(stackrel) {
     shared_ptr<Atom> a(new UnderOverAtom(
         TeXFormula(tp, args[2], false)._root,
         TeXFormula(tp, args[3], false)._root,
@@ -641,7 +681,7 @@ inline shared_ptr<Atom> stackrel_macro(_out_ TeXParser& tp, _out_ vector<wstring
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, a));
 }
 
-inline shared_ptr<Atom> stackbin_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(stackbin) {
     shared_ptr<Atom> a(new UnderOverAtom(
         TeXFormula(tp, args[2], false)._root,
         TeXFormula(tp, args[3], false)._root,
@@ -651,7 +691,7 @@ inline shared_ptr<Atom> stackbin_macro(_out_ TeXParser& tp, _out_ vector<wstring
     return shared_ptr<Atom>(new TypedAtom(TYPE_BINARY_OPERATOR, TYPE_BINARY_OPERATOR, a));
 }
 
-inline shared_ptr<Atom> overset_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(overset) {
     shared_ptr<Atom> a(new UnderOverAtom(
         TeXFormula(tp, args[2], false)._root,
         TeXFormula(tp, args[1], false)._root,
@@ -659,7 +699,7 @@ inline shared_ptr<Atom> overset_macro(_out_ TeXParser& tp, _out_ vector<wstring>
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, a));
 }
 
-inline shared_ptr<Atom> underset_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(underset) {
     shared_ptr<Atom> a(new UnderOverAtom(
         TeXFormula(tp, args[2], false)._root,
         TeXFormula(tp, args[1], false)._root,
@@ -667,114 +707,123 @@ inline shared_ptr<Atom> underset_macro(_out_ TeXParser& tp, _out_ vector<wstring
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, a));
 }
 
-inline shared_ptr<Atom> accentset_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new AccentedAtom(TeXFormula(tp, args[2], false)._root, TeXFormula(tp, args[1], false)._root));
+inline macro(accentset) {
+    return shared_ptr<Atom>(new AccentedAtom(
+        TeXFormula(tp, args[2], false)._root, TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> underaccent_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(underaccent) {
     return shared_ptr<Atom>(new UnderOverAtom(
         TeXFormula(tp, args[2], false)._root,
         TeXFormula(tp, args[1], false)._root,
         UNIT_MU, 0.3f, true, false));
 }
 
-inline shared_ptr<Atom> undertilde_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(undertilde) {
     auto a = TeXFormula(tp, args[1], false)._root;
     shared_ptr<PhantomAtom> p(new PhantomAtom(a, true, false, false));
     shared_ptr<AccentedAtom> acc(new AccentedAtom(p, "widetilde"));
     return shared_ptr<Atom>(new UnderOverAtom(a, acc, UNIT_MU, 0.3f, true, false));
 }
 
-inline shared_ptr<Atom> boldsymbol_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(boldsymbol) {
     return shared_ptr<Atom>(new BoldAtom(TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> mathrm_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(mathrm) {
     return shared_ptr<Atom>(new RomanAtom(TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> rm_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new RomanAtom(TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
+inline macro(rm) {
+    return shared_ptr<Atom>(new RomanAtom(
+        TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
 }
 
-inline shared_ptr<Atom> mathbf_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new BoldAtom(shared_ptr<Atom>(new RomanAtom(TeXFormula(tp, args[1], false)._root))));
+inline macro(mathbf) {
+    return shared_ptr<Atom>(new BoldAtom(
+        shared_ptr<Atom>(new RomanAtom(TeXFormula(tp, args[1], false)._root))));
 }
 
-inline shared_ptr<Atom> bf_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(bf) {
     return shared_ptr<Atom>(new BoldAtom(shared_ptr<Atom>(new RomanAtom(
         TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root))));
 }
 
-inline shared_ptr<Atom> mathtt_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(mathtt) {
     return shared_ptr<Atom>(new TtAtom(TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> tt_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new TtAtom(TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
+inline macro(tt) {
+    return shared_ptr<Atom>(new TtAtom(
+        TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
 }
 
-inline shared_ptr<Atom> mathit_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(mathit) {
     return shared_ptr<Atom>(new ItAtom(TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> it_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new ItAtom(TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
+inline macro(it) {
+    return shared_ptr<Atom>(new ItAtom(
+        TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
 }
 
-inline shared_ptr<Atom> mathsf_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(mathsf) {
     return shared_ptr<Atom>(new SsAtom(TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> sf_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new SsAtom(TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
+inline macro(sf) {
+    return shared_ptr<Atom>(new SsAtom(
+        TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
 }
 
-inline shared_ptr<Atom> LaTeX_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(LaTeX) {
     return shared_ptr<Atom>(new LaTeXAtom());
 }
 
-inline shared_ptr<Atom> hphantom_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new PhantomAtom(TeXFormula(tp, args[1], false)._root, true, false, false));
+inline macro(hphantom) {
+    return shared_ptr<Atom>(
+        new PhantomAtom(TeXFormula(tp, args[1], false)._root, true, false, false));
 }
 
-inline shared_ptr<Atom> vphantom_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new PhantomAtom(TeXFormula(tp, args[1], false)._root, false, true, true));
+inline macro(vphantom) {
+    return shared_ptr<Atom>(
+        new PhantomAtom(TeXFormula(tp, args[1], false)._root, false, true, true));
 }
 
-inline shared_ptr<Atom> phantom_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new PhantomAtom(TeXFormula(tp, args[1], false)._root, true, true, true));
+inline macro(phantom) {
+    return shared_ptr<Atom>(
+        new PhantomAtom(TeXFormula(tp, args[1], false)._root, true, true, true));
 }
 
-inline shared_ptr<Atom> big_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(big) {
     auto a = TeXFormula(tp, args[1], false)._root;
     SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
     if (s == nullptr) return a;
     return shared_ptr<Atom>(new BigDelimiterAtom(dynamic_pointer_cast<SymbolAtom>(a), 1));
 }
 
-inline shared_ptr<Atom> Big_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(Big) {
     auto a = TeXFormula(tp, args[1], false)._root;
     SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
     if (s == nullptr) return a;
     return shared_ptr<Atom>(new BigDelimiterAtom(dynamic_pointer_cast<SymbolAtom>(a), 2));
 }
 
-inline shared_ptr<Atom> bigg_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(bigg) {
     auto a = TeXFormula(tp, args[1], false)._root;
     SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
     if (s == nullptr) return a;
     return shared_ptr<Atom>(new BigDelimiterAtom(dynamic_pointer_cast<SymbolAtom>(a), 3));
 }
 
-inline shared_ptr<Atom> Bigg_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(Bigg) {
     auto a = TeXFormula(tp, args[1], false)._root;
     SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
     if (s == nullptr) return a;
     return shared_ptr<Atom>(new BigDelimiterAtom(dynamic_pointer_cast<SymbolAtom>(a), 4));
 }
 
-inline shared_ptr<Atom> bigl_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(bigl) {
     auto a = TeXFormula(tp, args[1], false)._root;
     SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
     if (s == nullptr) return a;
@@ -783,7 +832,7 @@ inline shared_ptr<Atom> bigl_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
     return t;
 }
 
-inline shared_ptr<Atom> Bigl_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(Bigl) {
     auto a = TeXFormula(tp, args[1], false)._root;
     SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
     if (s == nullptr) return a;
@@ -792,7 +841,7 @@ inline shared_ptr<Atom> Bigl_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
     return t;
 }
 
-inline shared_ptr<Atom> biggl_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(biggl) {
     auto a = TeXFormula(tp, args[1], false)._root;
     SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
     if (s == nullptr) return a;
@@ -801,7 +850,7 @@ inline shared_ptr<Atom> biggl_macro(_out_ TeXParser& tp, _out_ vector<wstring>& 
     return t;
 }
 
-inline shared_ptr<Atom> Biggl_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(Biggl) {
     auto a = TeXFormula(tp, args[1], false)._root;
     SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
     if (s == nullptr) return a;
@@ -810,7 +859,7 @@ inline shared_ptr<Atom> Biggl_macro(_out_ TeXParser& tp, _out_ vector<wstring>& 
     return t;
 }
 
-inline shared_ptr<Atom> bigr_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(bigr) {
     auto a = TeXFormula(tp, args[1], false)._root;
     SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
     if (s == nullptr) return a;
@@ -819,7 +868,7 @@ inline shared_ptr<Atom> bigr_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
     return t;
 }
 
-inline shared_ptr<Atom> Bigr_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(Bigr) {
     auto a = TeXFormula(tp, args[1], false)._root;
     SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
     if (s == nullptr) return a;
@@ -828,7 +877,7 @@ inline shared_ptr<Atom> Bigr_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
     return t;
 }
 
-inline shared_ptr<Atom> biggr_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(biggr) {
     auto a = TeXFormula(tp, args[1], false)._root;
     SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
     if (s == nullptr) return a;
@@ -837,7 +886,7 @@ inline shared_ptr<Atom> biggr_macro(_out_ TeXParser& tp, _out_ vector<wstring>& 
     return t;
 }
 
-inline shared_ptr<Atom> Biggr_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(Biggr) {
     auto a = TeXFormula(tp, args[1], false)._root;
     SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
     if (s == nullptr) return a;
@@ -846,37 +895,37 @@ inline shared_ptr<Atom> Biggr_macro(_out_ TeXParser& tp, _out_ vector<wstring>& 
     return t;
 }
 
-inline shared_ptr<Atom> displaystyle_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(displaystyle) {
     auto g = TeXFormula(tp, tp.getOverArgument(), false)._root;
     return shared_ptr<Atom>(new StyleAtom(STYLE_DISPLAY, g));
 }
 
-inline shared_ptr<Atom> scriptstyle_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(scriptstyle) {
     auto g = TeXFormula(tp, tp.getOverArgument(), false)._root;
     return shared_ptr<Atom>(new StyleAtom(STYLE_SCRIPT, g));
 }
 
-inline shared_ptr<Atom> textstyle_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(textstyle) {
     auto g = TeXFormula(tp, tp.getOverArgument(), false)._root;
     return shared_ptr<Atom>(new StyleAtom(STYLE_TEXT, g));
 }
 
-inline shared_ptr<Atom> scriptscriptstyle_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(scriptscriptstyle) {
     auto g = TeXFormula(tp, tp.getOverArgument(), false)._root;
     return shared_ptr<Atom>(new StyleAtom(STYLE_SCRIPT_SCRIPT, g));
 }
 
-inline shared_ptr<Atom> rotatebox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(rotatebox) {
     float x = 0;
     if (!args[1].empty()) valueof(args[1], x);
     return shared_ptr<Atom>(new RotateAtom(TeXFormula(tp, args[2])._root, x, args[3]));
 }
 
-inline shared_ptr<Atom> reflectbox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(reflectbox) {
     return shared_ptr<Atom>(new ReflectAtom(TeXFormula(tp, args[1])._root));
 }
 
-inline shared_ptr<Atom> scalebox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(scalebox) {
     float sx = 1, sy = 1;
     valueof(args[1], sx);
     if (args[3].empty())
@@ -888,50 +937,51 @@ inline shared_ptr<Atom> scalebox_macro(_out_ TeXParser& tp, _out_ vector<wstring
     return shared_ptr<Atom>(new ScaleAtom(TeXFormula(tp, args[2])._root, sx, sy));
 }
 
-inline shared_ptr<Atom> resizebox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(resizebox) {
     string ws, hs;
     wide2utf8(args[1].c_str(), ws);
     wide2utf8(args[2].c_str(), hs);
-    return shared_ptr<Atom>(new ResizeAtom(TeXFormula(tp, args[3])._root, ws, hs, ws == "!" || hs == "!"));
+    return shared_ptr<Atom>(new ResizeAtom(
+        TeXFormula(tp, args[3])._root, ws, hs, ws == "!" || hs == "!"));
 }
 
-inline shared_ptr<Atom> shadowbox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(shadowbox) {
     return shared_ptr<Atom>(new ShadowAtom(TeXFormula(tp, args[1])._root));
 }
 
-inline shared_ptr<Atom> ovalbox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(ovalbox) {
     return shared_ptr<Atom>(new OvalAtom(TeXFormula(tp, args[1])._root));
 }
 
-inline shared_ptr<Atom> doublebox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(doublebox) {
     return shared_ptr<Atom>(new DoubleFramedAtom(TeXFormula(tp, args[1])._root));
 }
 
-inline shared_ptr<Atom> fgcolor_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(fgcolor) {
     auto a = TeXFormula(tp, args[2])._root;
     string x = wide2utf8(args[1].c_str());
     return shared_ptr<Atom>(new ColorAtom(a, TRANS, ColorAtom::getColor(x)));
 }
 
-inline shared_ptr<Atom> bgcolor_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(bgcolor) {
     auto a = TeXFormula(tp, args[2])._root;
     string x = wide2utf8(args[1].c_str());
     return shared_ptr<Atom>(new ColorAtom(a, ColorAtom::getColor(x), TRANS));
 }
 
-inline shared_ptr<Atom> textcolor_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(textcolor) {
     auto a = TeXFormula(tp, args[2])._root;
     string x = wide2utf8(args[1].c_str());
     return shared_ptr<Atom>(new ColorAtom(a, TRANS, ColorAtom::getColor(x)));
 }
 
-inline shared_ptr<Atom> colorbox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(colorbox) {
     string x = wide2utf8(args[1].c_str());
     color c = ColorAtom::getColor(x);
     return shared_ptr<Atom>(new FBoxAtom(TeXFormula(tp, args[2])._root, c, c));
 }
 
-inline shared_ptr<Atom> fcolorbox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(fcolorbox) {
     string x = wide2utf8(args[2].c_str());
     color f = ColorAtom::getColor(x);
     string y = wide2utf8(args[1].c_str());
@@ -939,7 +989,7 @@ inline shared_ptr<Atom> fcolorbox_macro(_out_ TeXParser& tp, _out_ vector<wstrin
     return shared_ptr<Atom>(new FBoxAtom(TeXFormula(tp, args[3])._root, f, b));
 }
 
-inline shared_ptr<Atom> cong_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(cong) {
     VRowAtom* vra = new VRowAtom(SymbolAtom::get("equals"));
     vra->add(shared_ptr<Atom>(new SpaceAtom(UNIT_MU, 0, 1.5f, 0)));
     vra->add(SymbolAtom::get("sim"));
@@ -947,66 +997,66 @@ inline shared_ptr<Atom> cong_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(vra)));
 }
 
-inline shared_ptr<Atom> doteq_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(doteq) {
     auto e = SymbolAtom::get("equals");
     auto l = SymbolAtom::get("ldotp");
     shared_ptr<Atom> u(new UnderOverAtom(e, l, UNIT_MU, 3.7f, false, true));
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, u));
 }
 
-inline shared_ptr<Atom> externalfont_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(externalfont) {
     string x = wide2utf8(args[1].c_str());
     TextRenderingBox::setFont(x);
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> ctext_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(ctext) {
     return shared_ptr<Atom>(new TextRenderingAtom(args[1], PLAIN));
 }
 
-inline shared_ptr<Atom> textit_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(textit) {
     return shared_ptr<Atom>(new TextRenderingAtom(args[1], ITALIC));
 }
 
-inline shared_ptr<Atom> textbf_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(textbf) {
     return shared_ptr<Atom>(new TextRenderingAtom(args[1], BOLD));
 }
 
-inline shared_ptr<Atom> textitbf_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(textitbf) {
     return shared_ptr<Atom>(new TextRenderingAtom(args[1], BOLD | ITALIC));
 }
 
-inline shared_ptr<Atom> declaremathsizes_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(declaremathsizes) {
     float a, b, c, d;
     valueof(args[1], a), valueof(args[2], b), valueof(args[3], c), valueof(args[4], d);
     DefaultTeXFont::setMathSizes(a, b, c, c);
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> magnification_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(magnification) {
     float x;
     valueof(args[1], x);
     DefaultTeXFont::setMagnification(x);
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> hline_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(hline) {
     if (!tp.isArrayMode())
         throw ex_parse("The macro \\hline only available in array mode!");
     return shared_ptr<Atom>(new HlineAtom());
 }
 
-inline shared_ptr<Atom> mathcumsup_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(mathcumsup) {
     return shared_ptr<Atom>(new CumulativeScriptsAtom(
         tp.getLastAtom(), shared_ptr<Atom>(nullptr), TeXFormula(tp, args[1])._root));
 }
 
-inline shared_ptr<Atom> mathcumsub_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(mathcumsub) {
     return shared_ptr<Atom>(new CumulativeScriptsAtom(
         tp.getLastAtom(), TeXFormula(tp, args[1])._root, shared_ptr<Atom>(nullptr)));
 }
 
-inline shared_ptr<Atom> dotminus_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(dotminus) {
     shared_ptr<Atom> a(new UnderOverAtom(
         SymbolAtom::get("minus"),
         SymbolAtom::get("normaldot"),
@@ -1014,7 +1064,7 @@ inline shared_ptr<Atom> dotminus_macro(_out_ TeXParser& tp, _out_ vector<wstring
     return shared_ptr<Atom>(new TypedAtom(TYPE_BINARY_OPERATOR, TYPE_BINARY_OPERATOR, a));
 }
 
-inline shared_ptr<Atom> ratio_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(ratio) {
     shared_ptr<Atom> a(new UnderOverAtom(
         SymbolAtom::get("normaldot"),
         SymbolAtom::get("normaldot"),
@@ -1022,7 +1072,7 @@ inline shared_ptr<Atom> ratio_macro(_out_ TeXParser& tp, _out_ vector<wstring>& 
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, a));
 }
 
-inline shared_ptr<Atom> geoprop_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(geoprop) {
     shared_ptr<RowAtom> ddot(new RowAtom(SymbolAtom::get("normaldot")));
     ddot->add(shared_ptr<Atom>(new SpaceAtom(UNIT_MU, 4, 0, 0)));
     ddot->add(SymbolAtom::get("normaldot"));
@@ -1032,7 +1082,7 @@ inline shared_ptr<Atom> geoprop_macro(_out_ TeXParser& tp, _out_ vector<wstring>
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, a));
 }
 
-inline shared_ptr<Atom> minuscolon_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(minuscolon) {
     RowAtom* ra = new RowAtom(SymbolAtom::get("minus"));
     ra->add(shared_ptr<Atom>(new SpaceAtom(UNIT_EM, -0.095f, 0, 0)));
     shared_ptr<Atom> colon(new UnderOverAtom(
@@ -1043,7 +1093,7 @@ inline shared_ptr<Atom> minuscolon_macro(_out_ TeXParser& tp, _out_ vector<wstri
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> minuscoloncolon_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(minuscoloncolon) {
     RowAtom* ra = new RowAtom(SymbolAtom::get("minus"));
     ra->add(shared_ptr<Atom>(new SpaceAtom(UNIT_EM, -0.095f, 0, 0)));
     shared_ptr<Atom> colon(new UnderOverAtom(
@@ -1055,7 +1105,7 @@ inline shared_ptr<Atom> minuscoloncolon_macro(_out_ TeXParser& tp, _out_ vector<
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> simcolon_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(simcolon) {
     RowAtom* ra = new RowAtom(SymbolAtom::get("sim"));
     ra->add(shared_ptr<Atom>(new SpaceAtom(UNIT_EM, -0.095f, 0, 0)));
     shared_ptr<Atom> colon(new UnderOverAtom(
@@ -1066,7 +1116,7 @@ inline shared_ptr<Atom> simcolon_macro(_out_ TeXParser& tp, _out_ vector<wstring
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> simcoloncolon_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(simcoloncolon) {
     RowAtom* ra = new RowAtom(SymbolAtom::get("sim"));
     ra->add(shared_ptr<Atom>(new SpaceAtom(UNIT_EM, -0.095f, 0, 0)));
     shared_ptr<Atom> colon(new UnderOverAtom(
@@ -1078,7 +1128,7 @@ inline shared_ptr<Atom> simcoloncolon_macro(_out_ TeXParser& tp, _out_ vector<ws
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> approxcolon_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(approxcolon) {
     RowAtom* ra = new RowAtom(SymbolAtom::get("approx"));
     ra->add(shared_ptr<Atom>(new SpaceAtom(UNIT_EM, -0.095f, 0, 0)));
     shared_ptr<Atom> colon(new UnderOverAtom(
@@ -1089,7 +1139,7 @@ inline shared_ptr<Atom> approxcolon_macro(_out_ TeXParser& tp, _out_ vector<wstr
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> approxcoloncolon_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(approxcoloncolon) {
     RowAtom* ra = new RowAtom(SymbolAtom::get("approx"));
     ra->add(shared_ptr<Atom>(new SpaceAtom(UNIT_EM, -0.095f, 0, 0)));
     shared_ptr<Atom> colon(new UnderOverAtom(
@@ -1101,7 +1151,7 @@ inline shared_ptr<Atom> approxcoloncolon_macro(_out_ TeXParser& tp, _out_ vector
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> equalscolon_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(equalscolon) {
     RowAtom* ra = new RowAtom(SymbolAtom::get("equals"));
     ra->add(shared_ptr<Atom>(new SpaceAtom(UNIT_EM, -0.095f, 0, 0)));
     shared_ptr<Atom> colon(new UnderOverAtom(
@@ -1112,7 +1162,7 @@ inline shared_ptr<Atom> equalscolon_macro(_out_ TeXParser& tp, _out_ vector<wstr
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> equalscoloncolon_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(equalscoloncolon) {
     RowAtom* ra = new RowAtom(SymbolAtom::get("equals"));
     ra->add(shared_ptr<Atom>(new SpaceAtom(UNIT_EM, -0.095f, 0, 0)));
     shared_ptr<Atom> colon(new UnderOverAtom(
@@ -1124,7 +1174,7 @@ inline shared_ptr<Atom> equalscoloncolon_macro(_out_ TeXParser& tp, _out_ vector
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> colonminus_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(colonminus) {
     shared_ptr<Atom> u(new UnderOverAtom(
         SymbolAtom::get("normaldot"),
         SymbolAtom::get("normaldot"),
@@ -1135,7 +1185,7 @@ inline shared_ptr<Atom> colonminus_macro(_out_ TeXParser& tp, _out_ vector<wstri
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> coloncolonminus_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(coloncolonminus) {
     shared_ptr<Atom> u(new UnderOverAtom(
         SymbolAtom::get("normaldot"),
         SymbolAtom::get("normaldot"),
@@ -1147,7 +1197,7 @@ inline shared_ptr<Atom> coloncolonminus_macro(_out_ TeXParser& tp, _out_ vector<
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> colonequals_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(colonequals) {
     shared_ptr<Atom> u(new UnderOverAtom(
         SymbolAtom::get("normaldot"),
         SymbolAtom::get("normaldot"),
@@ -1158,7 +1208,7 @@ inline shared_ptr<Atom> colonequals_macro(_out_ TeXParser& tp, _out_ vector<wstr
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> coloncolonequals_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(coloncolonequals) {
     shared_ptr<Atom> u(new UnderOverAtom(
         SymbolAtom::get("normaldot"),
         SymbolAtom::get("normaldot"),
@@ -1170,7 +1220,7 @@ inline shared_ptr<Atom> coloncolonequals_macro(_out_ TeXParser& tp, _out_ vector
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> coloncolon_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(coloncolon) {
     shared_ptr<Atom> u(new UnderOverAtom(
         SymbolAtom::get("normaldot"),
         SymbolAtom::get("normaldot"),
@@ -1180,7 +1230,7 @@ inline shared_ptr<Atom> coloncolon_macro(_out_ TeXParser& tp, _out_ vector<wstri
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> colonsim_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(colonsim) {
     shared_ptr<Atom> u(new UnderOverAtom(
         SymbolAtom::get("normaldot"),
         SymbolAtom::get("normaldot"),
@@ -1191,7 +1241,7 @@ inline shared_ptr<Atom> colonsim_macro(_out_ TeXParser& tp, _out_ vector<wstring
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> coloncolonsim_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(coloncolonsim) {
     shared_ptr<Atom> u(new UnderOverAtom(
         SymbolAtom::get("normaldot"),
         SymbolAtom::get("normaldot"),
@@ -1203,7 +1253,7 @@ inline shared_ptr<Atom> coloncolonsim_macro(_out_ TeXParser& tp, _out_ vector<ws
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> colonapprox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(colonapprox) {
     shared_ptr<Atom> u(new UnderOverAtom(
         SymbolAtom::get("normaldot"),
         SymbolAtom::get("normaldot"),
@@ -1214,7 +1264,7 @@ inline shared_ptr<Atom> colonapprox_macro(_out_ TeXParser& tp, _out_ vector<wstr
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> coloncolonapprox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(coloncolonapprox) {
     shared_ptr<Atom> u(new UnderOverAtom(
         SymbolAtom::get("normaldot"),
         SymbolAtom::get("normaldot"),
@@ -1226,7 +1276,7 @@ inline shared_ptr<Atom> coloncolonapprox_macro(_out_ TeXParser& tp, _out_ vector
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> smallfrowneq_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(smallfrowneq) {
     shared_ptr<Atom> u(new UnderOverAtom(
         SymbolAtom::get("equals"),
         SymbolAtom::get("smallfrown"),
@@ -1234,7 +1284,7 @@ inline shared_ptr<Atom> smallfrowneq_macro(_out_ TeXParser& tp, _out_ vector<wst
     return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, u));
 }
 
-inline shared_ptr<Atom> hstrok_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(hstrok) {
     shared_ptr<RowAtom> ra(new RowAtom(shared_ptr<Atom>(new SpaceAtom(UNIT_EX, -0.1f, 0, 0))));
     ra->add(SymbolAtom::get("bar"));
     VRowAtom* vra = new VRowAtom(shared_ptr<Atom>(new LapedAtom(ra, 'r')));
@@ -1244,7 +1294,7 @@ inline shared_ptr<Atom> hstrok_macro(_out_ TeXParser& tp, _out_ vector<wstring>&
     return shared_ptr<Atom>(a);
 }
 
-inline shared_ptr<Atom> Hstrok_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(Hstrok) {
     RowAtom* ra = new RowAtom(shared_ptr<Atom>(new SpaceAtom(UNIT_EX, -0.28f, 0, 0)));
     ra->add(SymbolAtom::get("textendash"));
     VRowAtom* vra = new VRowAtom(shared_ptr<Atom>(new LapedAtom(shared_ptr<Atom>(ra), 'r')));
@@ -1254,7 +1304,7 @@ inline shared_ptr<Atom> Hstrok_macro(_out_ TeXParser& tp, _out_ vector<wstring>&
     return shared_ptr<Atom>(a);
 }
 
-inline shared_ptr<Atom> dstrok_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(dstrok) {
     RowAtom* ra = new RowAtom(shared_ptr<Atom>(new SpaceAtom(UNIT_EX, 0.25f, 0, 0)));
     ra->add(SymbolAtom::get("bar"));
     VRowAtom* vra = new VRowAtom(shared_ptr<Atom>(new LapedAtom(shared_ptr<Atom>(ra), 'r')));
@@ -1264,7 +1314,7 @@ inline shared_ptr<Atom> dstrok_macro(_out_ TeXParser& tp, _out_ vector<wstring>&
     return shared_ptr<Atom>(a);
 }
 
-inline shared_ptr<Atom> Dstrok_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(Dstrok) {
     RowAtom* ra = new RowAtom(shared_ptr<Atom>(new SpaceAtom(UNIT_EX, -0.1f, 0, 0)));
     ra->add(SymbolAtom::get("bar"));
     VRowAtom* vra = new VRowAtom(shared_ptr<Atom>(new LapedAtom(shared_ptr<Atom>(ra), 'r')));
@@ -1274,13 +1324,13 @@ inline shared_ptr<Atom> Dstrok_macro(_out_ TeXParser& tp, _out_ vector<wstring>&
     return shared_ptr<Atom>(a);
 }
 
-inline shared_ptr<Atom> kern_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(kern) {
     pair<int, float> info = SpaceAtom::getLength(args[1]);
 
     return shared_ptr<Atom>(new SpaceAtom(info.first, info.second, 0, 0));
 }
 
-inline shared_ptr<Atom> char_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(char) {
     string x;
     wide2utf8(args[1].c_str(), x);
     int radix = 10;
@@ -1299,43 +1349,45 @@ inline shared_ptr<Atom> char_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
     return tp.convertCharacter((wchar_t)n, true);
 }
 
-inline shared_ptr<Atom> T_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(T) {
     return shared_ptr<Atom>(new RotateAtom(TeXFormula(tp, args[1])._root, 180, L"origin=cc"));
 }
 
-inline shared_ptr<Atom> textcircled_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new TextCircledAtom(shared_ptr<Atom>(new RomanAtom(TeXFormula(tp, args[1])._root))));
+inline macro(textcircled) {
+    return shared_ptr<Atom>(new TextCircledAtom(
+        shared_ptr<Atom>(new RomanAtom(TeXFormula(tp, args[1])._root))));
 }
 
-inline shared_ptr<Atom> textsc_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(textsc) {
     return shared_ptr<Atom>(new SmallCpaAtom(TeXFormula(tp, args[1], false)._root));
 }
 
-inline shared_ptr<Atom> sc_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new SmallCpaAtom(TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
+inline macro(sc) {
+    return shared_ptr<Atom>(new SmallCpaAtom(
+        TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
 }
 
-inline shared_ptr<Atom> quad_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(quad) {
     return shared_ptr<Atom>(new SpaceAtom(UNIT_EM, 1, 0, 0));
 }
 
-inline shared_ptr<Atom> surd_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(surd) {
     return shared_ptr<Atom>(new VCenteredAtom(SymbolAtom::get("surdsign")));
 }
 
-inline shared_ptr<Atom> int_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(int) {
     SymbolAtom* integral = new SymbolAtom(*(SymbolAtom::get("int")));
     integral->_typelimits = SCRIPT_NOLIMITS;
     return shared_ptr<Atom>(integral);
 }
 
-inline shared_ptr<Atom> oint_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(oint) {
     SymbolAtom* integral = new SymbolAtom(*(SymbolAtom::get("oint")));
     integral->_typelimits = SCRIPT_NOLIMITS;
     return shared_ptr<Atom>(integral);
 }
 
-inline shared_ptr<Atom> iint_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(iint) {
     SymbolAtom* integral = new SymbolAtom(*(SymbolAtom::get("int")));
     integral->_typelimits = SCRIPT_NOLIMITS;
     shared_ptr<Atom> i(integral);
@@ -1346,7 +1398,7 @@ inline shared_ptr<Atom> iint_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
     return shared_ptr<Atom>(new TypedAtom(TYPE_BIG_OPERATOR, TYPE_BIG_OPERATOR, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> iiint_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(iiint) {
     SymbolAtom* integral = new SymbolAtom(*(SymbolAtom::get("int")));
     integral->_typelimits = SCRIPT_NOLIMITS;
     shared_ptr<Atom> i(integral);
@@ -1359,7 +1411,7 @@ inline shared_ptr<Atom> iiint_macro(_out_ TeXParser& tp, _out_ vector<wstring>& 
     return shared_ptr<Atom>(new TypedAtom(TYPE_BIG_OPERATOR, TYPE_BIG_OPERATOR, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> iiiint_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(iiiint) {
     SymbolAtom* integral = new SymbolAtom(*(SymbolAtom::get("int")));
     integral->_typelimits = SCRIPT_NOLIMITS;
     shared_ptr<Atom> i(integral);
@@ -1374,7 +1426,7 @@ inline shared_ptr<Atom> iiiint_macro(_out_ TeXParser& tp, _out_ vector<wstring>&
     return shared_ptr<Atom>(new TypedAtom(TYPE_BIG_OPERATOR, TYPE_BIG_OPERATOR, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> idotsint_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(idotsint) {
     SymbolAtom* integral = new SymbolAtom(*(SymbolAtom::get("int")));
     integral->_typelimits = SCRIPT_NOLIMITS;
     shared_ptr<Atom> i(integral);
@@ -1391,101 +1443,101 @@ inline shared_ptr<Atom> idotsint_macro(_out_ TeXParser& tp, _out_ vector<wstring
     return shared_ptr<Atom>(new TypedAtom(TYPE_BIG_OPERATOR, TYPE_BIG_OPERATOR, shared_ptr<Atom>(ra)));
 }
 
-inline shared_ptr<Atom> lmoustache_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(lmoustache) {
     SymbolAtom* s = new SymbolAtom(*(SymbolAtom::get("lmoustache")));
     shared_ptr<Atom> b(new BigDelimiterAtom(shared_ptr<SymbolAtom>(s), 1));
     b->_type = TYPE_OPENING;
     return b;
 }
 
-inline shared_ptr<Atom> rmoustache_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(rmoustache) {
     SymbolAtom* s = new SymbolAtom(*(SymbolAtom::get("rmoustache")));
     shared_ptr<Atom> b(new BigDelimiterAtom(shared_ptr<SymbolAtom>(s), 1));
     b->_type = TYPE_CLOSING;
     return b;
 }
 
-inline shared_ptr<Atom> insertBreakMark_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(insertBreakMark) {
     return shared_ptr<Atom>(new BreakMarkAtom());
 }
 
-/******************************************************* implement at .cpp *************************************************/
+/***************************************** implement at .cpp **************************************/
 
-shared_ptr<Atom> hvspace_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(hvspace);
 
-shared_ptr<Atom> rule_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(rule);
 
-shared_ptr<Atom> cfrac_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(cfrac);
 
-shared_ptr<Atom> sfrac_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(sfrac);
 
-shared_ptr<Atom> genfrac_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(genfrac);
 
-shared_ptr<Atom> overwithdelims_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(overwithdelims);
 
-shared_ptr<Atom> atopwithdelims_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(atopwithdelims);
 
-shared_ptr<Atom> abovewithdelims_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(abovewithdelims);
 
-shared_ptr<Atom> textstyle_macros(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(textstyles);
 
-shared_ptr<Atom> accentbis_macros(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(accentbiss);
 
-shared_ptr<Atom> left_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(left);
 
-shared_ptr<Atom> intertext_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(intertext);
 
-shared_ptr<Atom> newcommand_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(newcommand);
 
-shared_ptr<Atom> renewcommand_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(renewcommand);
 
-shared_ptr<Atom> raisebox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(raisebox);
 
-shared_ptr<Atom> definecolor_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(definecolor);
 
-shared_ptr<Atom> size_macros(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(sizes);
 
-shared_ptr<Atom> romannumeral_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(romannumeral);
 
-shared_ptr<Atom> muskip_macros(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(muskips);
 
-shared_ptr<Atom> xml_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse);
+macro(xml);
 
-/******************************************************* should be fixed **************************************************/
+/*************************************** should be fixed ******************************************/
 
-inline shared_ptr<Atom> nolimits_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(nolimits) {
     auto atom = tp.getLastAtom();
     atom->_typelimits = SCRIPT_NOLIMITS;
     return atom;
 }
 
-inline shared_ptr<Atom> limits_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(limits) {
     auto atom = tp.getLastAtom();
     atom->_typelimits = SCRIPT_LIMITS;
     return atom;
 }
 
-inline shared_ptr<Atom> normal_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(normal) {
     auto atom = tp.getLastAtom();
     atom->_typelimits = SCRIPT_NORMAL;
     return atom;
 }
 
-/******************************************************* not implemented **************************************************/
+/******************************************  not implemented **************************************/
 
-inline shared_ptr<Atom> includegraphics_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(includegraphics) {
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> fcscore_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(fcscore) {
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> GeoGebra_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(GeoGebra) {
     return shared_ptr<Atom>(nullptr);
 }
 
-inline shared_ptr<Atom> dynamic_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline macro(dynamic) {
     return shared_ptr<Atom>(nullptr);
 }
 
