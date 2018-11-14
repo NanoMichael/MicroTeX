@@ -143,15 +143,33 @@ inline shared_ptr<Atom> atop_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
     return shared_ptr<Atom>(new FractionAtom(num, den, false));
 }
 
-inline shared_ptr<Atom> choose_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+inline shared_ptr<Atom> choose_macro(
+    const string& left, const string& right,
+    _out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
     auto num = tp.getFormulaAtom();
     auto den = TeXFormula(tp, tp.getOverArgument(), false)._root;
     if (num == nullptr || den == nullptr)
-        throw ex_parse("Both numerator and denominator of choose can't be empty!");
+        throw ex_parse("Both numerator and denominator of choos can't be empty!");
     shared_ptr<Atom> f(new FractionAtom(num, den, false));
-    shared_ptr<SymbolAtom> s1(new SymbolAtom("lbrack", TYPE_OPENING, true));
-    shared_ptr<SymbolAtom> s2(new SymbolAtom("rbrack", TYPE_CLOSING, true));
-    return shared_ptr<Atom>(new FencedAtom(f, s1, s2));
+    shared_ptr<SymbolAtom> l(new SymbolAtom(left, TYPE_OPENING, true));
+    shared_ptr<SymbolAtom> r(new SymbolAtom(right, TYPE_CLOSING, true));
+    return shared_ptr<Atom>(new FencedAtom(f, l, r));
+}
+
+inline shared_ptr<Atom> choose_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+    return choose_macro("lbrack", "rbrack", tp, args);
+}
+
+inline shared_ptr<Atom> brack_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+    return choose_macro("lsqbrack", "rsqbrack", tp, args);
+}
+
+inline shared_ptr<Atom> bangle_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+    return choose_macro("langle", "rangle", tp, args);
+}
+
+inline shared_ptr<Atom> brace_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+    return choose_macro("lbrace", "rbrace", tp, args);
 }
 
 inline shared_ptr<Atom> binom_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {

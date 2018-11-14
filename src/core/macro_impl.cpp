@@ -29,7 +29,8 @@ shared_ptr<Atom> hvspace_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args)
         throw ex_parse("unknown unit '" + str + "'!");
     }
 
-    return args[0][0] == L'h' ? shared_ptr<Atom>(new SpaceAtom(unit, f, 0, 0)) : shared_ptr<Atom>(new SpaceAtom(unit, 0, f, 0));
+    return args[0][0] == L'h' ? shared_ptr<Atom>(new SpaceAtom(unit, f, 0, 0))
+                              : shared_ptr<Atom>(new SpaceAtom(unit, 0, f, 0));
 }
 
 shared_ptr<Atom> rule_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
