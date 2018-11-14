@@ -228,7 +228,10 @@ shared_ptr<TeXFormula> TeXFormula::get(const wstring& name) throw(ex_formula_not
         if (i == _predefinedTeXFormulasAsString.end())
             throw ex_formula_not_found(wide2utf8(name.c_str()));
         shared_ptr<TeXFormula> tf(new TeXFormula(i->second));
-        _predefinedTeXFormulas[name] = tf;
+        RowAtom* ra = dynamic_cast<RowAtom*>(tf->_root.get());
+        if (ra == nullptr) {
+            _predefinedTeXFormulas[name] = tf;
+        }
         return tf;
     }
     return it->second;
