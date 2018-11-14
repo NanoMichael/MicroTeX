@@ -195,11 +195,13 @@ inline shared_ptr<Atom> accent_macros(_out_ TeXParser& tp, _out_ vector<wstring>
 }
 
 inline shared_ptr<Atom> grkaccent_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new AccentedAtom(TeXFormula(tp, args[2], false)._root, TeXFormula(tp, args[1], false)._root, false));
+    return shared_ptr<Atom>(new AccentedAtom(
+        TeXFormula(tp, args[2], false)._root, TeXFormula(tp, args[1], false)._root, false));
 }
 
 inline shared_ptr<Atom> accent_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-    return shared_ptr<Atom>(new AccentedAtom(TeXFormula(tp, args[2], false)._root, TeXFormula(tp, args[1], false)._root));
+    return shared_ptr<Atom>(new AccentedAtom(
+        TeXFormula(tp, args[2], false)._root, TeXFormula(tp, args[1], false)._root));
 }
 
 inline shared_ptr<Atom> cedilla_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {

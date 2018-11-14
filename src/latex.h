@@ -30,6 +30,11 @@ public:
     static void init(const string& res_root_path = "res");
 
     /**
+     * If open debug
+     */
+    static void setDebug(bool debug);
+
+    /**
      * Parse TeX formatted string to TeXRender
      *
      * @param tex
