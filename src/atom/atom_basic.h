@@ -98,6 +98,9 @@ public:
         _sy = sy;
     }
 
+    ScaleAtom(const shared_ptr<Atom>& base, float scale)
+        : ScaleAtom(base, scale, scale) {}
+
     int getLeftType() const override {
         return _base->getLeftType();
     }
