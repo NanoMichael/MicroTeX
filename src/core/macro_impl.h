@@ -623,6 +623,14 @@ inline shared_ptr<Atom> fbox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
     return shared_ptr<Atom>(new FBoxAtom(TeXFormula(tp, args[1], false)._root));
 }
 
+inline shared_ptr<Atom> questeq_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+    auto eq = SymbolAtom::get(TeXFormula::_symbolMappings['=']);
+    auto quest = SymbolAtom::get(TeXFormula::_symbolMappings['?']);
+    auto sq = shared_ptr<Atom>(new ScaleAtom(quest, 0.75f));
+    auto at = shared_ptr<Atom>(new UnderOverAtom(eq, sq, UNIT_MU, 2.5f, true, true));
+    return shared_ptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, at));
+}
+
 inline shared_ptr<Atom> stackrel_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
     shared_ptr<Atom> a(new UnderOverAtom(
         TeXFormula(tp, args[2], false)._root,

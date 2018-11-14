@@ -155,6 +155,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands = {
     {L"makeatother", m(0, makeatother_macro)},
     {L"fbox", m(1, fbox_macro)},
     {L"boxed", m(1, fbox_macro)},
+    {L"questeq", m(0, questeq_macro)},
     {L"stackrel", m(2, 1, stackrel_macro)},
     {L"stackbin", m(2, 1, stackbin_macro)},
     {L"accentset", m(2, accentset_macro)},
