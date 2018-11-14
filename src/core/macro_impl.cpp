@@ -6,7 +6,7 @@ using namespace std;
 
 namespace tex {
 
-shared_ptr<Atom> hvspace_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(hvspace) {
     size_t i;
     for (i = 0; i < args[1].length() && !isalpha(args[1][i]); i++)
         ;
@@ -33,7 +33,7 @@ shared_ptr<Atom> hvspace_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args)
                               : shared_ptr<Atom>(new SpaceAtom(unit, 0, f, 0));
 }
 
-shared_ptr<Atom> rule_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(rule) {
     auto w = SpaceAtom::getLength(args[1]);
     auto h = SpaceAtom::getLength(args[2]);
     auto r = SpaceAtom::getLength(args[3]);
@@ -41,7 +41,7 @@ shared_ptr<Atom> rule_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) th
     return shared_ptr<Atom>(new RuleAtom(w.first, w.second, h.first, h.second, r.first, -r.second));
 }
 
-shared_ptr<Atom> cfrac_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(cfrac) {
     int al = ALIGN_CENTER;
     if (args[3] == L"r")
         al = ALIGN_RIGHT;
@@ -57,7 +57,7 @@ shared_ptr<Atom> cfrac_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) t
     return shared_ptr<Atom>(rat);
 }
 
-shared_ptr<Atom> sfrac_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(sfrac) {
     TeXFormula num(tp, args[1], false);
     TeXFormula den(tp, args[2], false);
     if (num._root == nullptr || den._root == nullptr)
@@ -89,7 +89,7 @@ shared_ptr<Atom> sfrac_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) t
     return shared_ptr<Atom>(ra);
 }
 
-shared_ptr<Atom> genfrac_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(genfrac) {
     shared_ptr<SymbolAtom> L, R;
 
     TeXFormula left(tp, args[1], false);
@@ -121,7 +121,7 @@ shared_ptr<Atom> genfrac_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args)
     return shared_ptr<Atom>(ra);
 }
 
-shared_ptr<Atom> overwithdelims_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(overwithdelims) {
     auto num = tp.getFormulaAtom();
     auto den = TeXFormula(tp, tp.getOverArgument(), false)._root;
 
@@ -151,7 +151,7 @@ shared_ptr<Atom> overwithdelims_macro(_out_ TeXParser& tp, _out_ vector<wstring>
     return shared_ptr<Atom>(ra);
 }
 
-shared_ptr<Atom> atopwithdelims_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(atopwithdelims) {
     auto num = tp.getFormulaAtom();
     auto den = TeXFormula(tp, tp.getOverArgument(), false)._root;
 
@@ -181,7 +181,7 @@ shared_ptr<Atom> atopwithdelims_macro(_out_ TeXParser& tp, _out_ vector<wstring>
     return shared_ptr<Atom>(ra);
 }
 
-shared_ptr<Atom> abovewithdelims_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(abovewithdelims) {
     auto num = tp.getFormulaAtom();
     pair<int, float> dim = tp.getLength();
     auto den = TeXFormula(tp, tp.getOverArgument(), false)._root;
@@ -211,7 +211,7 @@ shared_ptr<Atom> abovewithdelims_macro(_out_ TeXParser& tp, _out_ vector<wstring
     return shared_ptr<Atom>(ra);
 }
 
-shared_ptr<Atom> textstyle_macros(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(textstyles) {
     wstring style(args[0]);
     if (style == L"frak")
         style = L"mathfrak";
@@ -238,7 +238,7 @@ shared_ptr<Atom> textstyle_macros(_out_ TeXParser& tp, _out_ vector<wstring>& ar
     return shared_ptr<Atom>(new TextStyleAtom(atom, s));
 }
 
-shared_ptr<Atom> accentbis_macros(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(accentbiss) {
     string acc;
     switch (args[0][0]) {
     case '~':
@@ -285,7 +285,7 @@ shared_ptr<Atom> accentbis_macros(_out_ TeXParser& tp, _out_ vector<wstring>& ar
     return shared_ptr<Atom>(new AccentedAtom(TeXFormula(tp, args[1], false)._root, acc));
 }
 
-shared_ptr<Atom> left_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(left) {
     wstring grep = tp.getGroup(L"\\left", L"\\right");
 
     auto left = TeXFormula(tp, args[1], false)._root;
@@ -315,7 +315,7 @@ shared_ptr<Atom> left_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) th
     return shared_ptr<Atom>(ra);
 }
 
-shared_ptr<Atom> intertext_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(intertext) {
     if (!tp.isArrayMode()) throw ex_parse("Bad environment for \\intertext command!");
 
     wstring str(args[1]);
@@ -330,7 +330,7 @@ shared_ptr<Atom> intertext_macro(_out_ TeXParser& tp, _out_ vector<wstring>& arg
     return shared_ptr<Atom>(nullptr);
 }
 
-shared_ptr<Atom> newcommand_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(newcommand) {
     wstring newcom(args[1]);
     int nbArgs = 0;
     if (!tp.isValidName(newcom)) throw ex_parse("Invalid name for the command '" + wide2utf8(newcom.c_str()));
@@ -346,7 +346,7 @@ shared_ptr<Atom> newcommand_macro(_out_ TeXParser& tp, _out_ vector<wstring>& ar
     return shared_ptr<Atom>(nullptr);
 }
 
-shared_ptr<Atom> renewcommand_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(renewcommand) {
     wstring newcmd(args[1]);
     int nbargs = 0;
     if (!tp.isValidName(newcmd))
@@ -359,7 +359,7 @@ shared_ptr<Atom> renewcommand_macro(_out_ TeXParser& tp, _out_ vector<wstring>& 
     return shared_ptr<Atom>(nullptr);
 }
 
-shared_ptr<Atom> raisebox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(raisebox) {
     pair<int, float> r = SpaceAtom::getLength(args[1]);
     pair<int, float> h = SpaceAtom::getLength(args[3]);
     pair<int, float> d = SpaceAtom::getLength(args[4]);
@@ -371,7 +371,7 @@ shared_ptr<Atom> raisebox_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args
         d.first, d.second));
 }
 
-shared_ptr<Atom> definecolor_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(definecolor) {
     color c = TRANS;
     string cs;
     wide2utf8(args[3].c_str(), cs);
@@ -408,7 +408,7 @@ shared_ptr<Atom> definecolor_macro(_out_ TeXParser& tp, _out_ vector<wstring>& a
     return shared_ptr<Atom>(nullptr);
 }
 
-shared_ptr<Atom> size_macros(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(sizes) {
     float f = 1;
     if (args[0] == L"tiny")
         f = 0.5f;
@@ -435,7 +435,7 @@ shared_ptr<Atom> size_macros(_out_ TeXParser& tp, _out_ vector<wstring>& args) t
     return shared_ptr<Atom>(new MonoScaleAtom(a, f));
 }
 
-shared_ptr<Atom> romannumeral_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(romannumeral) {
     int numbers[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
     string letters[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
     string roman = "";
@@ -460,7 +460,7 @@ shared_ptr<Atom> romannumeral_macro(_out_ TeXParser& tp, _out_ vector<wstring>& 
     return TeXFormula(str, false)._root;
 }
 
-shared_ptr<Atom> muskip_macros(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(muskips) {
     int type = 0;
     if (args[0] == L",")
         type = THINMUSKIP;
@@ -486,7 +486,7 @@ shared_ptr<Atom> muskip_macros(_out_ TeXParser& tp, _out_ vector<wstring>& args)
     return shared_ptr<Atom>(new SpaceAtom(type));
 }
 
-shared_ptr<Atom> xml_macro(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+macro(xml) {
     map<string, string>& m = tp._formula->_xmlMap;
     wstring str(args[1]);
     wstring buf;
