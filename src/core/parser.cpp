@@ -792,7 +792,7 @@ void TeXParser::firstpass() throw(ex_parse) {
             _pos = spos;
         } break;
         case DEGRE: {
-            _parseString.replace(_pos, 1, L"^\\circ");
+            _parseString.replace(_pos, 1, L"^{\\circ}");
             _len = _parseString.length();
             _pos++;
         } break;
