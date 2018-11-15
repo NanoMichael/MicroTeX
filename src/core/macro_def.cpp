@@ -310,7 +310,8 @@ map<wstring, MacroInfo*> MacroInfo::_commands = {
     mac(2, macro_newcolumntype, "newcolumntype"),
     mac(1, macro_color, "color"),
     mac(1, macro_cellcolor, "cellcolor"),
-    mac(3, macro_multirow, "multirow")
+    mac(3, macro_multirow, "multirow"),
+    mac(2, macro_longdiv, "longdiv")
 #ifdef __GA_DEBUG
         ,
     mac(0, macro_debug, "debug"),

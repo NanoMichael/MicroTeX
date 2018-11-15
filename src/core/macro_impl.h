@@ -41,6 +41,16 @@ inline macro(multirow) {
     return sptr<Atom>(nullptr);
 }
 
+inline macro(longdiv) {
+    long dividend = 0;
+    valueof(args[1], dividend);
+    long divisor = 0;
+    valueof(args[2], divisor);
+    if (divisor == 0)
+        throw ex_parse("Divisor must not be 0.");
+    return sptr<Atom>(new LongDivAtom(divisor, dividend));
+}
+
 inline macro(cellcolor) {
     if (!tp.isArrayMode())
         throw ex_parse("Command \\cellcolor must used in array environment!");

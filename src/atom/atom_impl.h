@@ -1426,6 +1426,21 @@ public:
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
+/**
+ * An atom representing long division
+ */
+class LongDivAtom : public VRowAtom {
+private:
+    long _divisor, _dividend;
+
+    void calculate(_out_ vector<wstring>& results);
+
+public:
+    LongDivAtom() = delete;
+
+    LongDivAtom(long divisor, long dividend);
+};
+
 }  // namespace tex
 
 #endif  // ATOM_IMPL_H_INCLUDED
