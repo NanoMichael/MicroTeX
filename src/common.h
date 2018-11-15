@@ -55,6 +55,9 @@ static const float F_MAX = numeric_limits<float>::max();
 static const float F_MIN = -F_MAX;
 static const double PI = atan(1.0) * 4;
 
+template <typename T>
+using sptr = shared_ptr<T>;
+
 /**
  * For compare with 0.0f, if a value < PREC,  we trade it as 0.0f
  */
@@ -405,9 +408,9 @@ inline wstring& replaceall(_out_ wstring& src, const wstring& from, const wstrin
     return src;
 }
 
-/*****************************************************
- *                  exceptions                       *
- *****************************************************/
+/***************************************************************************************************
+ *                                        exceptions                                               *
+ ***************************************************************************************************/
 
 /**
  * Superclass of all the possible TeX exceptions that can be thrown
@@ -467,7 +470,8 @@ public:
         const string& msg,
         const exception& cause)
         : ex_res_parse(
-              resName + ": invalid <" + elName + ">-element found: attribute '" + attrName + "' " + msg,
+              resName + ": invalid <" + elName + ">-element found: attribute '" +
+                  attrName + "' " + msg,
               cause) {}
     /**
      * other exceptions
@@ -626,13 +630,13 @@ public:
     explicit ex_invalid_state(const string& e) : ex_tex(e) {}
 };
 
-/*************************************************************
- *                    TeXConstants                           *
- *************************************************************/
+/***************************************************************************************************
+ *                                      TeXConstants                                               *
+ ***************************************************************************************************/
 
 enum TeXConstants {
 
-    /********** alignment constants ************/
+    /********************************* alignment constants ****************************************/
     /**
      * Extra space will be added to the right of the formula
      */
@@ -659,7 +663,7 @@ enum TeXConstants {
      */
     ALIGN_NONE,  // =5
 
-    /*********** space size constants ***********/
+    /********************************** space size constants **************************************/
     THINMUSKIP = 1,
     MEDMUSKIP = 2,
     THICKMUSKIP = 3,
@@ -669,12 +673,12 @@ enum TeXConstants {
 
     QUAD = 3,
 
-    /******** script display type constants ******/
+    /****************************** script display type constants *********************************/
     SCRIPT_NORMAL = 0,
     SCRIPT_NOLIMITS,
     SCRIPT_LIMITS,
 
-    /*********** symbol type constants ***********/
+    /********************************** symbol type constants *************************************/
     /**
      * Ordinary symbol, e.g. "slash"
      */
@@ -716,7 +720,7 @@ enum TeXConstants {
     TYPE_HLINE,        // =13
     TYPE_MULTIROW,     // =14
 
-    /****** over and under delimiter type constants ******/
+    /****************************** over and under delimiter type constants ***********************/
     DELIM_BRACE = 0,
     DELIM_SQUARE_BRACKET,
     DELIM_BRACKET,
@@ -729,7 +733,7 @@ enum TeXConstants {
     DELIM_SIGNLE_LINE,
     DELIM_DOUBLE_LINE,
 
-    /************ TeX style constants ************/
+    /************************************* TeX style constants ************************************/
     /**
      * Display style
      * @par
@@ -759,7 +763,7 @@ enum TeXConstants {
      */
     STYLE_SCRIPT_SCRIPT = 6,
 
-    /*********** TeX unit constants ************/
+    /************************************ TeX unit constants **************************************/
     /**
      * 1 em = the width of the capital 'M' in the current font
      */

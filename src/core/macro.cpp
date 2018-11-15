@@ -106,7 +106,7 @@ void MacroInfo::_free_() {
     for (auto i : _commands) delete i.second;
 }
 
-shared_ptr<Atom> PredefMacroInfo::invoke(
+sptr<Atom> PredefMacroInfo::invoke(
     _out_ TeXParser& tp,
     _out_ vector<wstring>& args) throw(ex_parse) {
     try {

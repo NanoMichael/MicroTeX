@@ -97,9 +97,9 @@ public:
     MacroInfo(int nbargs)
         : _macro(nullptr), _nbArgs(nbargs), _hasOptions(false), _posOpts(0) {}
 
-    virtual shared_ptr<Atom> invoke(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+    virtual sptr<Atom> invoke(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
         _macro->execute(tp, args);
-        return shared_ptr<Atom>(nullptr);
+        return sptr<Atom>(nullptr);
     }
 
     virtual ~MacroInfo() {}
@@ -107,7 +107,7 @@ public:
     static void _free_();
 };
 
-typedef shared_ptr<Atom> (*MacroDelegate)(
+typedef sptr<Atom> (*MacroDelegate)(
     _out_ TeXParser& tp,
     _out_ vector<wstring>& args);
 
@@ -124,7 +124,7 @@ public:
     PredefMacroInfo(int nbargs, MacroDelegate delegate)
         : MacroInfo(nbargs), _delegate(delegate) {}
 
-    shared_ptr<Atom> invoke(
+    sptr<Atom> invoke(
         _out_ TeXParser& tp,
         _out_ vector<wstring>& args) throw(ex_parse) override;
 };

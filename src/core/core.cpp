@@ -10,7 +10,7 @@ using namespace tex;
 #define ANSI_COLOR_RED "\x1b[31m"
 #define ANSI_COLOR_RESET "\x1b[0m"
 
-void print_box(const shared_ptr<Box>& b, int dep, vector<bool>& lines) {
+void print_box(const sptr<Box>& b, int dep, vector<bool>& lines) {
     __print("%-4d", dep);
     if (lines.size() < dep + 1) {
         lines.resize(dep + 1, false);
@@ -37,7 +37,7 @@ void print_box(const shared_ptr<Box>& b, int dep, vector<bool>& lines) {
         return;
     }
 
-    vector<shared_ptr<Box>> children = b->getChildren();
+    vector<sptr<Box>> children = b->getChildren();
     const size_t c = children.size();
     const string& str = demangle_name(typeid(*(b)).name());
     string name = str.substr(str.find_last_of("::") + 1);
@@ -53,20 +53,20 @@ void print_box(const shared_ptr<Box>& b, int dep, vector<bool>& lines) {
     }
 }
 
-void tex::print_box(const shared_ptr<Box>& b) {
+void tex::print_box(const sptr<Box>& b) {
     vector<bool> lines;
     ::print_box(b, 0, lines);
     __print("\n");
 }
 
-shared_ptr<Box> FormulaBreaker::split(const shared_ptr<Box>& b, float width, float interline) {
+sptr<Box> FormulaBreaker::split(const sptr<Box>& b, float width, float interline) {
 #ifdef __DEBUG
     __print("BEFORE SPLIT\n");
     print_box(b);
 #endif
 
     HorizontalBox* h = dynamic_cast<HorizontalBox*>(b.get());
-    shared_ptr<Box> box;
+    sptr<Box> box;
     if (h != nullptr) {
         box = split(dynamic_pointer_cast<HorizontalBox>(b), width, interline);
     } else {
@@ -81,16 +81,16 @@ shared_ptr<Box> FormulaBreaker::split(const shared_ptr<Box>& b, float width, flo
     return box;
 }
 
-shared_ptr<Box> FormulaBreaker::split(const shared_ptr<HorizontalBox>& hb, float width, float interline) {
+sptr<Box> FormulaBreaker::split(const sptr<HorizontalBox>& hb, float width, float interline) {
     if (width == 0 || hb->_width <= width) {
         return hb;
     }
 
     VerticalBox* vbox = new VerticalBox();
-    shared_ptr<HorizontalBox> first(nullptr);
-    shared_ptr<HorizontalBox> second(nullptr);
+    sptr<HorizontalBox> first(nullptr);
+    sptr<HorizontalBox> second(nullptr);
     stack<Position> positions;
-    shared_ptr<HorizontalBox> hbox = hb;
+    sptr<HorizontalBox> hbox = hb;
 
     while (hbox->_width > width && canBreak(positions, hbox, width) != hbox->_width) {
         Position pos = positions.top();
@@ -113,14 +113,14 @@ shared_ptr<Box> FormulaBreaker::split(const shared_ptr<HorizontalBox>& hb, float
 
     if (second != nullptr) {
         vbox->add(second, interline);
-        return shared_ptr<Box>(vbox);
+        return sptr<Box>(vbox);
     }
 
     return hbox;
 }
 
-float FormulaBreaker::canBreak(_out_ stack<Position>& s, const shared_ptr<HorizontalBox>& hbox, float width) {
-    vector<shared_ptr<Box>>& children = hbox->_children;
+float FormulaBreaker::canBreak(_out_ stack<Position>& s, const sptr<HorizontalBox>& hbox, float width) {
+    vector<sptr<Box>>& children = hbox->_children;
     const int c = children.size();
     float* cumWidth = new float[c + 1]();
     cumWidth[0] = 0;
@@ -163,7 +163,7 @@ float FormulaBreaker::canBreak(_out_ stack<Position>& s, const shared_ptr<Horizo
     return hbox->_width;
 }
 
-int FormulaBreaker::getBreakPosition(const shared_ptr<HorizontalBox>& hb, int i) {
+int FormulaBreaker::getBreakPosition(const sptr<HorizontalBox>& hb, int i) {
     /**if (i == 0)
         return -1;
     return i;*/
@@ -183,9 +183,9 @@ int FormulaBreaker::getBreakPosition(const shared_ptr<HorizontalBox>& hb, int i)
     return hb->_breakPositions[pos - 1];
 }
 
-/********************************************TeXEnvironment implementation***************************/
+/************************************* TeXEnvironment implementation ******************************/
 
-TeXEnvironment::TeXEnvironment(int style, const shared_ptr<TeXFont>& tf, int wu, float tw) {
+TeXEnvironment::TeXEnvironment(int style, const sptr<TeXFont>& tf, int wu, float tw) {
     init();
     _style = style;
     _tf = tf;
@@ -201,64 +201,72 @@ void TeXEnvironment::setTextWidth(int wu, float w) {
     _textWidth = w * SpaceAtom::getFactor(wu, *this);
 }
 
-shared_ptr<TeXEnvironment>& TeXEnvironment::copy() {
-    TeXEnvironment* t = new TeXEnvironment(_style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
-    _copy = shared_ptr<TeXEnvironment>(t);
+sptr<TeXEnvironment>& TeXEnvironment::copy() {
+    TeXEnvironment* t = new TeXEnvironment(
+        _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
+    _copy = sptr<TeXEnvironment>(t);
     return _copy;
 }
 
-shared_ptr<TeXEnvironment>& TeXEnvironment::copy(const shared_ptr<TeXFont>& tf) {
-    TeXEnvironment* te = new TeXEnvironment(_style, _scaleFactor, tf, _background, _color, _textStyle, _smallCap);
+sptr<TeXEnvironment>& TeXEnvironment::copy(const sptr<TeXFont>& tf) {
+    TeXEnvironment* te = new TeXEnvironment(
+        _style, _scaleFactor, tf, _background, _color, _textStyle, _smallCap);
     te->_textWidth = _textWidth;
     te->_interline = _interline;
     te->_interlineUnit = _interlineUnit;
-    _copytf = shared_ptr<TeXEnvironment>(te);
+    _copytf = sptr<TeXEnvironment>(te);
     return _copytf;
 }
 
-shared_ptr<TeXEnvironment>& TeXEnvironment::crampStyle() {
-    TeXEnvironment* t = new TeXEnvironment(_style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
-    _cramp = shared_ptr<TeXEnvironment>(t);
+sptr<TeXEnvironment>& TeXEnvironment::crampStyle() {
+    TeXEnvironment* t = new TeXEnvironment(
+        _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
+    _cramp = sptr<TeXEnvironment>(t);
     _cramp->_style = (_style % 2 == 1 ? _style : _style + 1);
     return _cramp;
 }
 
-shared_ptr<TeXEnvironment>& TeXEnvironment::dnomStyle() {
-    TeXEnvironment* t = new TeXEnvironment(_style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
-    _dnom = shared_ptr<TeXEnvironment>(t);
+sptr<TeXEnvironment>& TeXEnvironment::dnomStyle() {
+    TeXEnvironment* t = new TeXEnvironment(
+        _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
+    _dnom = sptr<TeXEnvironment>(t);
     _dnom->_style = 2 * (_style / 2) + 1 + 2 - 2 * (_style / 6);
     return _dnom;
 }
 
-shared_ptr<TeXEnvironment>& TeXEnvironment::numStyle() {
-    TeXEnvironment* t = new TeXEnvironment(_style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
-    _num = shared_ptr<TeXEnvironment>(t);
+sptr<TeXEnvironment>& TeXEnvironment::numStyle() {
+    TeXEnvironment* t = new TeXEnvironment(
+        _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
+    _num = sptr<TeXEnvironment>(t);
     _num->_style = _style + 2 - 2 * (_style / 6);
     return _num;
 }
 
-shared_ptr<TeXEnvironment>& TeXEnvironment::rootStyle() {
-    TeXEnvironment* t = new TeXEnvironment(_style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
-    _root = shared_ptr<TeXEnvironment>(t);
+sptr<TeXEnvironment>& TeXEnvironment::rootStyle() {
+    TeXEnvironment* t = new TeXEnvironment(
+        _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
+    _root = sptr<TeXEnvironment>(t);
     _root->_style = STYLE_SCRIPT_SCRIPT;
     return _root;
 }
 
-shared_ptr<TeXEnvironment>& TeXEnvironment::subStyle() {
-    TeXEnvironment* t = new TeXEnvironment(_style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
-    _sub = shared_ptr<TeXEnvironment>(t);
+sptr<TeXEnvironment>& TeXEnvironment::subStyle() {
+    TeXEnvironment* t = new TeXEnvironment(
+        _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
+    _sub = sptr<TeXEnvironment>(t);
     _sub->_style = 2 * (_style / 4) + 4 + 1;
     return _sub;
 }
 
-shared_ptr<TeXEnvironment>& TeXEnvironment::supStyle() {
-    TeXEnvironment* t = new TeXEnvironment(_style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
-    _sup = shared_ptr<TeXEnvironment>(t);
+sptr<TeXEnvironment>& TeXEnvironment::supStyle() {
+    TeXEnvironment* t = new TeXEnvironment(
+        _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
+    _sup = sptr<TeXEnvironment>(t);
     _sup->_style = 2 * (_style / 4) + 4 + (_style % 2);
     return _sup;
 }
 
-/******************************** glue setting parser **************************/
+/************************************ glue setting parser *****************************************/
 
 const string GlueSettingParser::RESOURCE_NAME = "GlueSettings.xml";
 const map<string, int> GlueSettingParser::_typeMappings = {
@@ -401,7 +409,7 @@ int*** GlueSettingParser::createGlueTable() throw(ex_res_parse) {
     return table;
 }
 
-/************************************* Glue implementation ****************************/
+/************************************* Glue implementation ****************************************/
 
 #ifdef __DEBUG
 ostream& tex::operator<<(ostream& out, const Glue& glue) {
@@ -441,15 +449,15 @@ void Glue::_free_() {
     delete[] _glueTable;
 }
 
-shared_ptr<Box> Glue::createBox(const TeXEnvironment& env) const {
+sptr<Box> Glue::createBox(const TeXEnvironment& env) const {
     auto tf = env.getTeXFont();
     // use "quad" from a font marked as an "mu font"
     float quad = tf->getQuad(env.getStyle(), tf->getMuFontId());
     auto x = new GlueBox((_space / 18.f) * quad, (_stretch / 18.f) * quad, (_shrink / 18.f) * quad);
-    return shared_ptr<Box>(x);
+    return sptr<Box>(x);
 }
 
-shared_ptr<Box> Glue::get(int ltype, int rtype, const TeXEnvironment& env) {
+sptr<Box> Glue::get(int ltype, int rtype, const TeXEnvironment& env) {
     // types > INNER are considered of type ORD for glue calculations
     int l = (ltype > TYPE_INNER ? TYPE_ORDINARY : ltype);
     int r = (rtype > TYPE_INNER ? TYPE_ORDINARY : rtype);
@@ -458,7 +466,7 @@ shared_ptr<Box> Glue::get(int ltype, int rtype, const TeXEnvironment& env) {
     return _glueTypes[glue]->createBox(env);
 }
 
-/********************************** TeXSymbolParser implementation *****************************/
+/********************************** TeXSymbolParser implementation ********************************/
 
 const string TeXSymbolParser::RESOURCE_NAME = "TeXSymbols.xml";
 const string TeXSymbolParser::DELIMITER_ATTR = "del";
@@ -490,7 +498,8 @@ TeXSymbolParser::TeXSymbolParser() throw(ex_res_parse) : _doc(true, COLLAPSE_WHI
 #endif  // __DEBUG
 }
 
-TeXSymbolParser::TeXSymbolParser(const string& file) throw(ex_res_parse) : _doc(true, COLLAPSE_WHITESPACE) {
+TeXSymbolParser::TeXSymbolParser(const string& file) throw(ex_res_parse)
+    : _doc(true, COLLAPSE_WHITESPACE) {
     int err = _doc.LoadFile(file.c_str());
     if (err != XML_NO_ERROR) throw ex_res_parse(file + " not found!");
     _root = _doc.RootElement();
@@ -499,7 +508,7 @@ TeXSymbolParser::TeXSymbolParser(const string& file) throw(ex_res_parse) : _doc(
 #endif  // __DEBUG
 }
 
-void TeXSymbolParser::readSymbols(_out_ map<string, shared_ptr<SymbolAtom>>& res) throw(ex_res_parse) {
+void TeXSymbolParser::readSymbols(_out_ map<string, sptr<SymbolAtom>>& res) throw(ex_res_parse) {
     const XMLElement* e = _root->FirstChildElement("Symbol");
     while (e != nullptr) {
         const string name = getAttr("name", e);
@@ -511,16 +520,17 @@ void TeXSymbolParser::readSymbols(_out_ map<string, shared_ptr<SymbolAtom>>& res
         if (it == _typeMappings.end()) {
             throw ex_xml_parse(RESOURCE_NAME, "Symbol", "type", "has an unknown value '" + type + "'!");
         }
-        res[name] = shared_ptr<SymbolAtom>(new SymbolAtom(name, it->second, isDelimiter));
+        res[name] = sptr<SymbolAtom>(new SymbolAtom(name, it->second, isDelimiter));
         e = e->NextSiblingElement("Symbol");
     }
 }
 
-/************************************** TexFormulaSettingParser implementation ******************************/
+/***************************** TexFormulaSettingParser implementation *****************************/
 
 const string TeXFormulaSettingParser::RESOURCE_NAME = "TeXFormulaSettings.xml";
 
-TeXFormulaSettingParser::TeXFormulaSettingParser() throw(ex_res_parse) : _doc(true, COLLAPSE_WHITESPACE) {
+TeXFormulaSettingParser::TeXFormulaSettingParser() throw(ex_res_parse)
+    : _doc(true, COLLAPSE_WHITESPACE) {
     string file = RES_BASE + "/" + RESOURCE_NAME;
     int err = _doc.LoadFile(file.c_str());
     if (err != XML_NO_ERROR) throw ex_xml_parse(file + " not found!");
@@ -530,7 +540,8 @@ TeXFormulaSettingParser::TeXFormulaSettingParser() throw(ex_res_parse) : _doc(tr
 #endif  // __DEBUG
 }
 
-TeXFormulaSettingParser::TeXFormulaSettingParser(const string& file) throw(ex_res_parse) : _doc(true, COLLAPSE_WHITESPACE) {
+TeXFormulaSettingParser::TeXFormulaSettingParser(const string& file) throw(ex_res_parse)
+    : _doc(true, COLLAPSE_WHITESPACE) {
     int err = _doc.LoadFile(file.c_str());
     if (err != XML_NO_ERROR) throw ex_xml_parse(file + " not found!");
     _root = _doc.RootElement();

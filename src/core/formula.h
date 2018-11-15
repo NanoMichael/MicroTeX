@@ -21,8 +21,7 @@ struct FontInfos {
     const string _sansserif;
     const string _serif;
 
-    FontInfos(const string& ss, const string& s) : _sansserif(ss), _serif(s) {
-    }
+    FontInfos(const string& ss, const string& s) : _sansserif(ss), _serif(s) {}
 };
 
 /**
@@ -59,7 +58,7 @@ public:
     static float PIXELS_PER_POINT;
 
     // predefined TeX formulas
-    static map<wstring, shared_ptr<TeXFormula>> _predefinedTeXFormulas;
+    static map<wstring, sptr<TeXFormula>> _predefinedTeXFormulas;
     static map<wstring, wstring> _predefinedTeXFormulasAsString;
 
     // character-to-symbol and character-to-delimiter mappings
@@ -68,9 +67,9 @@ public:
     static map<int, string> _symbolFormulaMappings;
     static map<UnicodeBlock, FontInfos*> _externalFontMap;
 
-    list<shared_ptr<MiddleAtom>> _middle;
+    list<sptr<MiddleAtom>> _middle;
     // the root atom of the "atom tree" that represents the formula
-    shared_ptr<Atom> _root;
+    sptr<Atom> _root;
     // the current text style
     string _textStyle;
 
@@ -97,7 +96,9 @@ public:
      */
     TeXFormula(const TeXParser& tp, const wstring& s, const string& textStyle) throw(ex_parse);
 
-    TeXFormula(const TeXParser& tp, const wstring& s, const string& textStyle, bool firstpass, bool space) throw(ex_parse);
+    TeXFormula(
+        const TeXParser& tp, const wstring& s,
+        const string& textStyle, bool firstpass, bool space) throw(ex_parse);
 
     /**
      * create a empty TeXFormula
@@ -123,7 +124,8 @@ public:
      */
     TeXFormula(const wstring& s, const string& textStyle) throw(ex_parse);
 
-    TeXFormula(const wstring& s, const string& textStyle, bool firstpass, bool space) throw(ex_parse);
+    TeXFormula(
+        const wstring& s, const string& textStyle, bool firstpass, bool space) throw(ex_parse);
 
     /**
      * Creates a new TeXFormula that is a copy of the given TeXFormula.
@@ -146,16 +148,16 @@ public:
     /**
      * inserts an atom at the end of the current formula
      */
-    TeXFormula* add(const shared_ptr<Atom>& el);
+    TeXFormula* add(const sptr<Atom>& el);
 
     TeXFormula* append(const wstring& s) throw(ex_parse);
 
     TeXFormula* append(bool isPartial, const wstring& s) throw(ex_parse);
 
     /**
-     * Convert this TeXFormula into a box, starting form the given style
+     * Convert this TeXFormula into a box, with the given style
      */
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& style);
+    sptr<Box> createBox(_out_ TeXEnvironment& style);
 
     /**
      * Changes the background color of the <i>current</i> TeXFormula into the
@@ -198,8 +200,7 @@ public:
      *      atom type constant @see TeXConstants
      * @return the modified TeXFormula
      * @throw ex_invalid_atom_type
-     *      if the given integer value does not represent a valid atom
-     *      type
+     *      if the given integer value does not represent a valid atom type
      */
     TeXFormula* setFixedTypes(int left, int right) throw(ex_invalid_atom_type);
 
@@ -209,10 +210,10 @@ public:
      * @param name
      *      the name of the predefined TeXFormula
      * @return a <b>copy</b> of the predefined TeXFormula
-     * @throw FormulaNotFoundException
+     * @throw ex_formula_not_found
      *      if no predefined TeXFormula is found with the given name
      */
-    static shared_ptr<TeXFormula> get(const wstring& name) throw(ex_formula_not_found);
+    static sptr<TeXFormula> get(const wstring& name) throw(ex_formula_not_found);
 
     /**
      * Set the DPI of target
@@ -239,9 +240,9 @@ public:
 
 class ArrayOfAtoms : public TeXFormula {
 public:
-    vector<vector<shared_ptr<Atom>>> _array;
-    map<int, vector<shared_ptr<CellSpecifier>>> _rowSpecifiers;
-    map<string, vector<shared_ptr<CellSpecifier>>> _cellSpecifiers;
+    vector<vector<sptr<Atom>>> _array;
+    map<int, vector<sptr<CellSpecifier>>> _rowSpecifiers;
+    map<string, vector<sptr<CellSpecifier>>> _cellSpecifiers;
     size_t _col, _row;
 
     ArrayOfAtoms();
@@ -252,15 +253,15 @@ public:
 
     void addRow();
 
-    void addRowSpecifier(const shared_ptr<CellSpecifier>& spe);
+    void addRowSpecifier(const sptr<CellSpecifier>& spe);
 
-    void addCellSpecifier(const shared_ptr<CellSpecifier>& spe);
+    void addCellSpecifier(const sptr<CellSpecifier>& spe);
 
     int getRows() const;
 
     int getCols() const;
 
-    shared_ptr<VRowAtom> getAsVRow();
+    sptr<VRowAtom> getAsVRow();
 
     void checkDimensions();
 

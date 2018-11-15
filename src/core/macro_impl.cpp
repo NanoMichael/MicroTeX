@@ -29,8 +29,8 @@ macro(hvspace) {
         throw ex_parse("unknown unit '" + str + "'!");
     }
 
-    return args[0][0] == L'h' ? shared_ptr<Atom>(new SpaceAtom(unit, f, 0, 0))
-                              : shared_ptr<Atom>(new SpaceAtom(unit, 0, f, 0));
+    return args[0][0] == L'h' ? sptr<Atom>(new SpaceAtom(unit, f, 0, 0))
+                              : sptr<Atom>(new SpaceAtom(unit, 0, f, 0));
 }
 
 macro(rule) {
@@ -38,7 +38,7 @@ macro(rule) {
     auto h = SpaceAtom::getLength(args[2]);
     auto r = SpaceAtom::getLength(args[3]);
 
-    return shared_ptr<Atom>(new RuleAtom(w.first, w.second, h.first, h.second, r.first, -r.second));
+    return sptr<Atom>(new RuleAtom(w.first, w.second, h.first, h.second, r.first, -r.second));
 }
 
 macro(cfrac) {
@@ -51,10 +51,10 @@ macro(cfrac) {
     TeXFormula denom(tp, args[2], false);
     if (num._root == nullptr || denom._root == nullptr)
         throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
-    shared_ptr<Atom> f(new FractionAtom(num._root, denom._root, true, al, ALIGN_CENTER));
+    sptr<Atom> f(new FractionAtom(num._root, denom._root, true, al, ALIGN_CENTER));
     RowAtom* rat = new RowAtom();
-    rat->add(shared_ptr<Atom>(new StyleAtom(STYLE_DISPLAY, f)));
-    return shared_ptr<Atom>(rat);
+    rat->add(sptr<Atom>(new StyleAtom(STYLE_DISPLAY, f)));
+    return sptr<Atom>(rat);
 }
 
 macro(sfrac) {
@@ -64,7 +64,7 @@ macro(sfrac) {
         throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
 
     float sx = 0.75f, sy = 0.75f, r = 0.45f, sL = -0.13f, sR = -0.065f;
-    shared_ptr<Atom> slash = SymbolAtom::get("slash");
+    sptr<Atom> slash = SymbolAtom::get("slash");
 
     if (!tp.isMathMode()) {
         sx = 0.6f;
@@ -72,25 +72,25 @@ macro(sfrac) {
         r = 0.75f;
         sL = -0.24f;
         sR = -0.24f;
-        auto in = shared_ptr<Atom>(new ScaleAtom(SymbolAtom::get("textfractionsolidus"), 1.25f, 0.65f));
+        auto in = sptr<Atom>(new ScaleAtom(SymbolAtom::get("textfractionsolidus"), 1.25f, 0.65f));
         VRowAtom* vr = new VRowAtom(in);
         vr->setRaise(UNIT_EX, 0.4f);
-        slash = shared_ptr<Atom>(vr);
+        slash = sptr<Atom>(vr);
     }
 
-    VRowAtom* snum = new VRowAtom(shared_ptr<Atom>(new ScaleAtom(num._root, sx, sy)));
+    VRowAtom* snum = new VRowAtom(sptr<Atom>(new ScaleAtom(num._root, sx, sy)));
     snum->setRaise(UNIT_EX, r);
-    RowAtom* ra = new RowAtom(shared_ptr<Atom>(snum));
-    ra->add(shared_ptr<Atom>(new SpaceAtom(UNIT_EM, sL, 0, 0)));
+    RowAtom* ra = new RowAtom(sptr<Atom>(snum));
+    ra->add(sptr<Atom>(new SpaceAtom(UNIT_EM, sL, 0, 0)));
     ra->add(slash);
-    ra->add(shared_ptr<Atom>(new SpaceAtom(UNIT_EM, sR, 0, 0)));
-    ra->add(shared_ptr<Atom>(new ScaleAtom(den._root, sx, sy)));
+    ra->add(sptr<Atom>(new SpaceAtom(UNIT_EM, sR, 0, 0)));
+    ra->add(sptr<Atom>(new ScaleAtom(den._root, sx, sy)));
 
-    return shared_ptr<Atom>(ra);
+    return sptr<Atom>(ra);
 }
 
 macro(genfrac) {
-    shared_ptr<SymbolAtom> L, R;
+    sptr<SymbolAtom> L, R;
 
     TeXFormula left(tp, args[1], false);
     SymbolAtom* lr = dynamic_cast<SymbolAtom*>(left._root.get());
@@ -114,11 +114,11 @@ macro(genfrac) {
     TeXFormula den(tp, args[6], false);
     if (num._root == nullptr || den._root == nullptr)
         throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
-    shared_ptr<Atom> fa(new FractionAtom(num._root, den._root, rule, ths.first, ths.second));
+    sptr<Atom> fa(new FractionAtom(num._root, den._root, rule, ths.first, ths.second));
     RowAtom* ra = new RowAtom();
-    ra->add(shared_ptr<Atom>(new StyleAtom(style * 2, shared_ptr<Atom>(new FencedAtom(fa, L, R)))));
+    ra->add(sptr<Atom>(new StyleAtom(style * 2, sptr<Atom>(new FencedAtom(fa, L, R)))));
 
-    return shared_ptr<Atom>(ra);
+    return sptr<Atom>(ra);
 }
 
 macro(overwithdelims) {
@@ -139,16 +139,16 @@ macro(overwithdelims) {
     SymbolAtom* sl = dynamic_cast<SymbolAtom*>(left.get());
     SymbolAtom* sr = dynamic_cast<SymbolAtom*>(right.get());
     if (sl != nullptr && sr != nullptr) {
-        shared_ptr<FractionAtom> f(new FractionAtom(num, den, true));
-        return shared_ptr<Atom>(new FencedAtom(
+        sptr<FractionAtom> f(new FractionAtom(num, den, true));
+        return sptr<Atom>(new FencedAtom(
             f, dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
     }
 
     RowAtom* ra = new RowAtom();
     ra->add(left);
-    ra->add(shared_ptr<Atom>(new FractionAtom(num, den, true)));
+    ra->add(sptr<Atom>(new FractionAtom(num, den, true)));
     ra->add(right);
-    return shared_ptr<Atom>(ra);
+    return sptr<Atom>(ra);
 }
 
 macro(atopwithdelims) {
@@ -156,7 +156,7 @@ macro(atopwithdelims) {
     auto den = TeXFormula(tp, tp.getOverArgument(), false)._root;
 
     if (num == nullptr || den == nullptr)
-        throw ex_parse("both numerator and denominator of a fraction can't be empty!");
+        throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
 
     auto left = TeXFormula(tp, args[1], false)._root;
     BigDelimiterAtom* big = dynamic_cast<BigDelimiterAtom*>(left.get());
@@ -169,16 +169,16 @@ macro(atopwithdelims) {
     SymbolAtom* sl = dynamic_cast<SymbolAtom*>(left.get());
     SymbolAtom* sr = dynamic_cast<SymbolAtom*>(right.get());
     if (sl != nullptr && sr != nullptr) {
-        shared_ptr<Atom> f(new FractionAtom(num, den, false));
-        return shared_ptr<Atom>(new FencedAtom(
+        sptr<Atom> f(new FractionAtom(num, den, false));
+        return sptr<Atom>(new FencedAtom(
             f, dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
     }
 
     RowAtom* ra = new RowAtom();
     ra->add(left);
-    ra->add(shared_ptr<Atom>(new FractionAtom(num, den, false)));
+    ra->add(sptr<Atom>(new FractionAtom(num, den, false)));
     ra->add(right);
-    return shared_ptr<Atom>(ra);
+    return sptr<Atom>(ra);
 }
 
 macro(abovewithdelims) {
@@ -199,16 +199,16 @@ macro(abovewithdelims) {
     SymbolAtom* sl = dynamic_cast<SymbolAtom*>(left.get());
     SymbolAtom* sr = dynamic_cast<SymbolAtom*>(right.get());
     if (sl != nullptr && sr != nullptr) {
-        shared_ptr<Atom> f(new FractionAtom(num, den, dim.first, dim.second));
-        return shared_ptr<Atom>(new FencedAtom(
+        sptr<Atom> f(new FractionAtom(num, den, dim.first, dim.second));
+        return sptr<Atom>(new FencedAtom(
             f, dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
     }
 
     RowAtom* ra = new RowAtom();
     ra->add(left);
-    ra->add(shared_ptr<Atom>(new FractionAtom(num, den, true)));
+    ra->add(sptr<Atom>(new FractionAtom(num, den, true)));
     ra->add(right);
-    return shared_ptr<Atom>(ra);
+    return sptr<Atom>(ra);
 }
 
 macro(textstyles) {
@@ -218,7 +218,7 @@ macro(textstyles) {
     else if (style == L"Bbb")
         style = L"mathbb";
     else if (style == L"bold")
-        return shared_ptr<Atom>(new BoldAtom(TeXFormula(tp, args[1], false)._root));
+        return sptr<Atom>(new BoldAtom(TeXFormula(tp, args[1], false)._root));
     else if (style == L"cal")
         style = L"mathcal";
 
@@ -235,7 +235,7 @@ macro(textstyles) {
 
     string s;
     wide2utf8(style.c_str(), s);
-    return shared_ptr<Atom>(new TextStyleAtom(atom, s));
+    return sptr<Atom>(new TextStyleAtom(atom, s));
 }
 
 macro(accentbiss) {
@@ -282,7 +282,7 @@ macro(accentbiss) {
         break;
     }
 
-    return shared_ptr<Atom>(new AccentedAtom(TeXFormula(tp, args[1], false)._root, acc));
+    return sptr<Atom>(new AccentedAtom(TeXFormula(tp, args[1], false)._root, acc));
 }
 
 macro(left) {
@@ -300,7 +300,7 @@ macro(left) {
     SymbolAtom* sr = dynamic_cast<SymbolAtom*>(right.get());
     if (sl != nullptr && sr != nullptr) {
         TeXFormula tf(tp, grep, false);
-        return shared_ptr<Atom>(new FencedAtom(
+        return sptr<Atom>(new FencedAtom(
             tf._root,
             dynamic_pointer_cast<SymbolAtom>(left),
             tf._middle,
@@ -312,7 +312,7 @@ macro(left) {
     ra->add(TeXFormula(tp, grep, false)._root);
     ra->add(right);
 
-    return shared_ptr<Atom>(ra);
+    return sptr<Atom>(ra);
 }
 
 macro(intertext) {
@@ -322,18 +322,19 @@ macro(intertext) {
     replaceall(str, L"^{\\prime}", L"\'");
     replaceall(str, L"^{\\prime\\prime}", L"\'\'");
 
-    shared_ptr<RomanAtom> ra(new RomanAtom(TeXFormula(tp, str, "mathnormal", false, false)._root));
+    sptr<RomanAtom> ra(new RomanAtom(TeXFormula(tp, str, "mathnormal", false, false)._root));
     ra->_type = TYPE_INTERTEXT;
     tp.addAtom(ra);
     tp.addRow();
 
-    return shared_ptr<Atom>(nullptr);
+    return sptr<Atom>(nullptr);
 }
 
 macro(newcommand) {
     wstring newcom(args[1]);
     int nbArgs = 0;
-    if (!tp.isValidName(newcom)) throw ex_parse("Invalid name for the command '" + wide2utf8(newcom.c_str()));
+    if (!tp.isValidName(newcom))
+        throw ex_parse("Invalid name for the command '" + wide2utf8(newcom.c_str()));
 
     if (!args[3].empty()) valueof(args[3], nbArgs);
 
@@ -343,7 +344,7 @@ macro(newcommand) {
         NewCommandMacro::addNewCommand(newcom.substr(1), args[2], nbArgs, args[4]);
     }
 
-    return shared_ptr<Atom>(nullptr);
+    return sptr<Atom>(nullptr);
 }
 
 macro(renewcommand) {
@@ -356,7 +357,7 @@ macro(renewcommand) {
 
     NewCommandMacro::addRenewCommand(newcmd.substr(1), args[2], nbargs);
 
-    return shared_ptr<Atom>(nullptr);
+    return sptr<Atom>(nullptr);
 }
 
 macro(raisebox) {
@@ -364,7 +365,7 @@ macro(raisebox) {
     pair<int, float> h = SpaceAtom::getLength(args[3]);
     pair<int, float> d = SpaceAtom::getLength(args[4]);
 
-    return shared_ptr<Atom>(new RaiseAtom(
+    return sptr<Atom>(new RaiseAtom(
         TeXFormula(tp, args[2])._root,
         r.first, r.second,
         h.first, h.second,
@@ -405,7 +406,7 @@ macro(definecolor) {
     }
 
     ColorAtom::_colors[wide2utf8(args[1].c_str())] = c;
-    return shared_ptr<Atom>(nullptr);
+    return sptr<Atom>(nullptr);
 }
 
 macro(sizes) {
@@ -432,7 +433,7 @@ macro(sizes) {
         f = 2.5f;
 
     auto a = TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root;
-    return shared_ptr<Atom>(new MonoScaleAtom(a, f));
+    return sptr<Atom>(new MonoScaleAtom(a, f));
 }
 
 macro(romannumeral) {
@@ -483,7 +484,7 @@ macro(muskips) {
     else if (args[0] == L"negthickspace")
         type = NEGTHICKMUSKP;
 
-    return shared_ptr<Atom>(new SpaceAtom(type));
+    return sptr<Atom>(new SpaceAtom(type));
 }
 
 macro(xml) {

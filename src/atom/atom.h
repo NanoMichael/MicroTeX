@@ -123,7 +123,7 @@ public:
 
     /**
      * The foreground color of the whole box. Child boxes can override this
-     * color. If it's null and it has a parent box, the foreground color of the
+     * color. If it's transparent and it has a parent box, the foreground color of the
      * parent will be used. If it has no parent, the foreground color of the
      * component on which it will be painted, will be used.
      */
@@ -131,7 +131,7 @@ public:
 
     /**
      * The background color of the whole box. Child boxes can paint a background
-     * on top of this background. If it's null, no background will be painted.
+     * on top of this background. If it's transparent, no background will be painted.
      */
     color _background;
 
@@ -160,14 +160,14 @@ public:
     float _shift;
 
     /**
-     * the box type (default = -1, no type)
+     * The box type (default = -1, no type)
      */
     int _type;
 
     /**
-     * children of this box
+     * Children of this box
      */
-    vector<shared_ptr<Box>> _children;
+    vector<sptr<Box>> _children;
 
     /**
      * Create a new box with default
@@ -191,7 +191,7 @@ public:
      * @param b
      *      the box to be inserted
      */
-    virtual void add(const shared_ptr<Box>& b) {
+    virtual void add(const sptr<Box>& b) {
         _children.push_back(b);
     }
 
@@ -203,7 +203,7 @@ public:
      * @param b
      *      the box to be inserted
      */
-    virtual void add(int pos, const shared_ptr<Box>& b) {
+    virtual void add(int pos, const sptr<Box>& b) {
         _children.insert(_children.begin() + pos, b);
     }
 
@@ -215,7 +215,7 @@ public:
     }
 
     /**
-     * Paints this box at the given coordinates using the given graphics
+     * Paints this box at the given coordinates using the given 2D graphics
      * context.
      *
      * @param g2
@@ -239,7 +239,7 @@ public:
      * Get child boxes of this box, modification on the returned value by this function
      * will not effect this box's children
      */
-    virtual vector<shared_ptr<Box>> getChildren() const {
+    virtual vector<sptr<Box>> getChildren() const {
         return _children;
     }
 };
@@ -277,8 +277,7 @@ public:
     Atom()
         : _type(TYPE_ORDINARY),
           _typelimits(SCRIPT_NOLIMITS),
-          _alignment(-1) {
-    }
+          _alignment(-1) {}
 
     /**
      * Get the type of the leftermost child atom. Most atoms have no child
@@ -314,7 +313,7 @@ public:
      *      the current environment settings
      * @return the resulting box.
      */
-    virtual shared_ptr<Box> createBox(_out_ TeXEnvironment& env) = 0;
+    virtual sptr<Box> createBox(_out_ TeXEnvironment& env) = 0;
 };
 
 }  // namespace tex

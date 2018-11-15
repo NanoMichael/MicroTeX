@@ -14,9 +14,9 @@ class CharFont;
 class TeXFont;
 class SymbolAtom;
 
-/*******************************************************************************
- *                      factories to create boxes                              *
- *******************************************************************************/
+/***************************************************************************************************
+ *                              factories to create boxes                                          *
+ ***************************************************************************************************/
 
 /**
  * Responsible for creating a box containing a delimiter symbol that exists in
@@ -24,9 +24,10 @@ class SymbolAtom;
  */
 class DelimiterFactory {
 public:
-    static shared_ptr<Box> create(_in_ SymbolAtom& symbol, _out_ TeXEnvironment& env, int size);
+    static sptr<Box> create(_in_ SymbolAtom& symbol, _out_ TeXEnvironment& env, int size);
 
     /**
+     * Create a delimiter with specified symbol name and min height
      *
      * @param symbol
      *      the name of the delimiter symbol
@@ -37,7 +38,7 @@ public:
      * @return the box representing the delimiter variant that fits best
      *      according to the required minimum size.
      */
-    static shared_ptr<Box> create(const string& symbol, _out_ TeXEnvironment& env, float minHeight);
+    static sptr<Box> create(const string& symbol, _out_ TeXEnvironment& env, float minHeight);
 };
 
 /**
@@ -46,19 +47,19 @@ public:
  */
 class XLeftRightArrowFactory {
 private:
-    static shared_ptr<Atom> MINUS;
-    static shared_ptr<Atom> LEFT;
-    static shared_ptr<Atom> RIGHT;
+    static sptr<Atom> MINUS;
+    static sptr<Atom> LEFT;
+    static sptr<Atom> RIGHT;
 
 public:
-    static shared_ptr<Box> create(bool left, _out_ TeXEnvironment& env, float width);
+    static sptr<Box> create(bool left, _out_ TeXEnvironment& env, float width);
 
-    static shared_ptr<Box> create(_out_ TeXEnvironment& env, float width);
+    static sptr<Box> create(_out_ TeXEnvironment& env, float width);
 };
 
-/**********************************************************************************
- *                                rule boxes                                      *
- **********************************************************************************/
+/***************************************************************************************************
+ *                                        rule boxes                                               *
+ ***************************************************************************************************/
 
 /**
  * A box composed of a horizontal row of child boxes
@@ -67,7 +68,7 @@ class HorizontalBox : public Box {
 private:
     void recalculate(const Box& b);
 
-    pair<shared_ptr<HorizontalBox>, shared_ptr<HorizontalBox>> split(int pos, int shift);
+    pair<sptr<HorizontalBox>, sptr<HorizontalBox>> split(int pos, int shift);
 
 public:
     vector<int> _breakPositions;
@@ -76,25 +77,25 @@ public:
 
     HorizontalBox(color fg, color bg) : Box(fg, bg) {}
 
-    HorizontalBox(const shared_ptr<Box>& b, float w, int alignment);
+    HorizontalBox(const sptr<Box>& b, float w, int alignment);
 
-    HorizontalBox(const shared_ptr<Box>& b);
+    HorizontalBox(const sptr<Box>& b);
 
-    shared_ptr<HorizontalBox> cloneBox();
+    sptr<HorizontalBox> cloneBox();
 
-    void add(const shared_ptr<Box>& b) override;
+    void add(const sptr<Box>& b) override;
 
-    void add(int pos, const shared_ptr<Box>& b) override;
+    void add(int pos, const sptr<Box>& b) override;
 
     inline void addBreakPosition(int pos) {
         _breakPositions.push_back(pos);
     }
 
-    pair<shared_ptr<HorizontalBox>, shared_ptr<HorizontalBox>> split(int pos) {
+    pair<sptr<HorizontalBox>, sptr<HorizontalBox>> split(int pos) {
         return split(pos, 1);
     }
 
-    pair<shared_ptr<HorizontalBox>, shared_ptr<HorizontalBox>> splitRemove(int pos) {
+    pair<sptr<HorizontalBox>, sptr<HorizontalBox>> splitRemove(int pos) {
         return split(pos, 2);
     }
 
@@ -116,13 +117,13 @@ public:
     VerticalBox() : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {
     }
 
-    VerticalBox(const shared_ptr<Box>& b, float rest, int alignment);
+    VerticalBox(const sptr<Box>& b, float rest, int alignment);
 
-    void add(const shared_ptr<Box>& b) override;
+    void add(const sptr<Box>& b) override;
 
-    void add(const shared_ptr<Box>& b, float interline);
+    void add(const sptr<Box>& b, float interline);
 
-    void add(int pos, const shared_ptr<Box>& b) override;
+    void add(int pos, const sptr<Box>& b) override;
 
     inline int getSize() const {
         return _children.size();
@@ -141,7 +142,7 @@ class OverBar : public VerticalBox {
 public:
     OverBar() = delete;
 
-    OverBar(const shared_ptr<Box>& b, float kern, float thickness);
+    OverBar(const sptr<Box>& b, float kern, float thickness);
 };
 
 /**
@@ -151,7 +152,7 @@ public:
 class OverUnderBox : public Box {
 private:
     // base, delimiter and script
-    shared_ptr<Box> _base, _del, _script;
+    sptr<Box> _base, _del, _script;
     // kerning amount between the delimiter and the script
     float _kern;
     // whether the delimiter should be drawn over (<->under) the base box
@@ -163,9 +164,9 @@ public:
     /**
      * The parameter boxes must have an equal width!!
      *
-     * @param b
+     * @param base
      *      base box to be drawn on the baseline
-     * @param d
+     * @param del
      *      delimiter box
      * @param script
      *      subscript or superscript box
@@ -175,13 +176,15 @@ public:
      *      true : draws delimiter and script box above the base box,
      *      false : under the base box
      */
-    OverUnderBox(const shared_ptr<Box>& b, const shared_ptr<Box>& d, const shared_ptr<Box>& script, float kern, bool over);
+    OverUnderBox(
+        const sptr<Box>& base, const sptr<Box>& del,
+        const sptr<Box>& script, float kern, bool over);
 
     void draw(Graphics2D& g2, float x, float y) override;
 
     int getLastFontId() override;
 
-    vector<shared_ptr<Box>> getChildren() const override;
+    vector<sptr<Box>> getChildren() const override;
 };
 
 /**
@@ -206,29 +209,29 @@ public:
     int getLastFontId() override;
 };
 
-/**********************************************************************************
- *                            operation boxes                                     *
- **********************************************************************************/
+/***************************************************************************************************
+ *                                   operation boxes                                               *
+ ***************************************************************************************************/
 
 /**
  * A box representing a scale operation
  */
 class ScaleBox : public Box {
 private:
-    shared_ptr<Box> _box;
+    sptr<Box> _box;
     float _sx, _sy;
     float _factor;
 
-    void init(const shared_ptr<Box>& b, float sx, float sy);
+    void init(const sptr<Box>& b, float sx, float sy);
 
 public:
     ScaleBox() = delete;
 
-    ScaleBox(const shared_ptr<Box>& b, float sx, float sy) {
+    ScaleBox(const sptr<Box>& b, float sx, float sy) {
         init(b, sx, sy);
     }
 
-    ScaleBox(const shared_ptr<Box>& b, float factor) {
+    ScaleBox(const sptr<Box>& b, float factor) {
         init(b, factor, factor);
         _factor = factor;
     }
@@ -237,7 +240,7 @@ public:
 
     int getLastFontId() override;
 
-    vector<shared_ptr<Box>> getChildren() const override;
+    vector<sptr<Box>> getChildren() const override;
 };
 
 /**
@@ -245,18 +248,18 @@ public:
  */
 class ReflectBox : public Box {
 private:
-    shared_ptr<Box> _box;
+    sptr<Box> _box;
 
 public:
     ReflectBox() = delete;
 
-    ReflectBox(const shared_ptr<Box>& b);
+    ReflectBox(const sptr<Box>& b);
 
     void draw(Graphics2D& g2, float x, float y) override;
 
     int getLastFontId() override;
 
-    vector<shared_ptr<Box>> getChildren() const override;
+    vector<sptr<Box>> getChildren() const override;
 };
 
 /**
@@ -294,28 +297,28 @@ enum Rotation {
  */
 class RotateBox : public Box {
 private:
-    shared_ptr<Box> _box;
+    sptr<Box> _box;
     float _angle;
     float _xmax, _xmin, _ymax, _ymin;
     int _option;
     float _shiftX, _shiftY;
 
-    void init(const shared_ptr<Box>& b, float angle, float x, float y);
+    void init(const sptr<Box>& b, float angle, float x, float y);
 
     static Point calculateShift(const Box& b, int option);
 
 public:
     RotateBox() = delete;
 
-    RotateBox(const shared_ptr<Box>& b, float angle, float x, float y) {
+    RotateBox(const sptr<Box>& b, float angle, float x, float y) {
         init(b, angle, x, y);
     }
 
-    RotateBox(const shared_ptr<Box>& b, float angle, const Point& origin) {
+    RotateBox(const sptr<Box>& b, float angle, const Point& origin) {
         init(b, angle, origin.x, origin.y);
     }
 
-    RotateBox(const shared_ptr<Box>& b, float angle, int option) {
+    RotateBox(const sptr<Box>& b, float angle, int option) {
         const Point& p = calculateShift(*b, option);
         init(b, angle, p.x, p.y);
     }
@@ -324,36 +327,36 @@ public:
 
     int getLastFontId() override;
 
-    vector<shared_ptr<Box>> getChildren() const override;
+    vector<sptr<Box>> getChildren() const override;
 
     static int getOrigin(string option);
 };
 
-/*********************************************************************************
- *                              wrapped boxes
- *********************************************************************************/
+/***************************************************************************************************
+ *                                  wrapped boxes                                                  *
+ ***************************************************************************************************/
 
 /**
  * A box representing a wrapped box by square frame
  */
 class FramedBox : public Box {
 public:
-    shared_ptr<Box> _box;
+    sptr<Box> _box;
     float _thickness;
     float _space;
     color _line;
     color _bg;
 
-    void init(const shared_ptr<Box>& box, float thickness, float space);
+    void init(const sptr<Box>& box, float thickness, float space);
 
 public:
     FramedBox() = delete;
 
-    FramedBox(const shared_ptr<Box>& box, float thickness, float space) {
+    FramedBox(const sptr<Box>& box, float thickness, float space) {
         init(box, thickness, space);
     }
 
-    FramedBox(const shared_ptr<Box>& box, float thickness, float space, color line, color bg) {
+    FramedBox(const sptr<Box>& box, float thickness, float space, color line, color bg) {
         init(box, thickness, space);
         _line = line;
         _bg = bg;
@@ -363,7 +366,7 @@ public:
 
     int getLastFontId() override;
 
-    vector<shared_ptr<Box>> getChildren() const override;
+    vector<sptr<Box>> getChildren() const override;
 };
 
 /**
@@ -373,7 +376,7 @@ class OvalBox : public FramedBox {
 public:
     OvalBox() = delete;
 
-    OvalBox(const shared_ptr<FramedBox>& fbox) : FramedBox(fbox->_box, fbox->_thickness, fbox->_space) {
+    OvalBox(const sptr<FramedBox>& fbox) : FramedBox(fbox->_box, fbox->_thickness, fbox->_space) {
     }
 
     void draw(Graphics2D& g2, float x, float y) override;
@@ -389,7 +392,7 @@ private:
 public:
     ShadowBox() = delete;
 
-    ShadowBox(const shared_ptr<FramedBox>& fbox, float shadowRule)
+    ShadowBox(const sptr<FramedBox>& fbox, float shadowRule)
         : FramedBox(fbox->_box, fbox->_thickness, fbox->_space) {
         _shadowRule = shadowRule;
         _depth += shadowRule;
@@ -399,9 +402,9 @@ public:
     void draw(Graphics2D& g2, float x, float y) override;
 };
 
-/*********************************************************************************
- *                               basic boxes                                     *
- *********************************************************************************/
+/***************************************************************************************************
+ *                                      basic boxes                                                *
+ ***************************************************************************************************/
 
 /**
  * A box representing whitespace
@@ -451,7 +454,7 @@ public:
  */
 class CharBox : public Box {
 private:
-    shared_ptr<CharFont> _cf;
+    sptr<CharFont> _cf;
     float _size;
 
 public:
@@ -476,21 +479,21 @@ public:
  */
 class TextRenderingBox : public Box {
 private:
-    static shared_ptr<Font> _font;
-    shared_ptr<TextLayout> _layout;
+    static sptr<Font> _font;
+    sptr<TextLayout> _layout;
     float _size;
 
-    void init(const wstring& str, int type, float size, const shared_ptr<Font>& f, bool kerning);
+    void init(const wstring& str, int type, float size, const sptr<Font>& f, bool kerning);
 
 public:
     TextRenderingBox() = delete;
 
-    TextRenderingBox(const wstring& str, int type, float size, const shared_ptr<Font>& f, bool kerning) {
+    TextRenderingBox(const wstring& str, int type, float size, const sptr<Font>& f, bool kerning) {
         init(str, type, size, f, kerning);
     }
 
     TextRenderingBox(const wstring& str, int type, float size) {
-        init(str, type, size, shared_ptr<Font>(_font), true);
+        init(str, type, size, sptr<Font>(_font), true);
     }
 
     void draw(Graphics2D& g2, float x, float y) override;
@@ -509,19 +512,19 @@ public:
  */
 class WrapperBox : public Box {
 private:
-    shared_ptr<Box> _base;
+    sptr<Box> _base;
     float _l;
 
 public:
     WrapperBox() = delete;
 
-    WrapperBox(const shared_ptr<Box>& base) : _base(base), _l(0) {
+    WrapperBox(const sptr<Box>& base) : _base(base), _l(0) {
         _height = _base->_height;
         _depth = _base->_depth;
         _width = _base->_width;
     }
 
-    WrapperBox(const shared_ptr<Box>& base, float width, float rowheight, float rowdepth, float align)
+    WrapperBox(const sptr<Box>& base, float width, float rowheight, float rowdepth, float align)
         : _base(base), _l(0) {
         _height = rowheight;
         _depth = rowdepth;
@@ -539,7 +542,7 @@ public:
 
     int getLastFontId() override;
 
-    vector<shared_ptr<Box>> getChildren() const override;
+    vector<sptr<Box>> getChildren() const override;
 };
 
 /**
@@ -548,19 +551,19 @@ public:
 class ShiftBox : public Box {
 private:
     float _sf;
-    shared_ptr<Box> _base;
+    sptr<Box> _base;
 
 public:
     ShiftBox() = delete;
 
-    ShiftBox(const shared_ptr<Box>& base, float shift) : _base(base), _sf(shift) {
+    ShiftBox(const sptr<Box>& base, float shift) : _base(base), _sf(shift) {
     }
 
     void draw(Graphics2D& g2, float x, float y) override;
 
     int getLastFontId() override;
 
-    vector<shared_ptr<Box>> getChildren() const override;
+    vector<sptr<Box>> getChildren() const override;
 };
 
 }  // namespace tex

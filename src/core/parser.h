@@ -64,11 +64,11 @@ private:
 
     void firstpass() throw(ex_parse);
 
-    shared_ptr<Atom> getScripts(wchar_t f) throw(ex_parse);
+    sptr<Atom> getScripts(wchar_t f) throw(ex_parse);
 
     wstring getCommand();
 
-    shared_ptr<Atom> processEscape() throw(ex_parse);
+    sptr<Atom> processEscape() throw(ex_parse);
 
     void insert(int beg, int end, const wstring& formula);
 
@@ -77,7 +77,7 @@ private:
      *
      * @param command
      *      name of command
-     * @return
+     * @return command with arguments string with format: \cmd[opt][...]{arg}{...}
      */
     wstring getCommandWithArgs(const wstring& command);
 
@@ -85,7 +85,7 @@ private:
      * Process the given TeX command (by parsing following command
      * arguments in the parse string).
      */
-    shared_ptr<Atom> processCommands(const wstring& cmd) throw(ex_parse);
+    sptr<Atom> processCommands(const wstring& cmd) throw(ex_parse);
 
     bool replaceScript();
 
@@ -93,7 +93,11 @@ private:
 
     static wchar_t convert2RomanNumber(wchar_t c);
 
-    void init(bool ispartial, const wstring& parsestring, _out_ TeXFormula* formula, bool firstpass) throw(ex_parse);
+    void init(
+        bool ispartial,
+        const wstring& parsestring,
+        _out_ TeXFormula* formula,
+        bool firstpass) throw(ex_parse);
 
 public:
     static bool _isLoading;
@@ -145,7 +149,11 @@ public:
      * @throw ex_parse
      *      if the string could not be parsed correctly
      */
-    TeXParser(bool isPartial, const wstring& latex, _out_ TeXFormula* formula, bool firstPass) throw(ex_parse) {
+    TeXParser(
+        bool isPartial,
+        const wstring& latex,
+        _out_ TeXFormula* formula,
+        bool firstPass) throw(ex_parse) {
         init(isPartial, latex, formula, firstPass);
     }
 
@@ -183,9 +191,14 @@ public:
      * @throw ex_parse
      *      if the string could not be parsed correctly
      */
-    TeXParser(bool isPartial, const wstring& latex, _out_ TeXFormula* formula, bool firstpass, bool space) throw(ex_parse) {
+    TeXParser(
+        bool isPartial,
+        const wstring& latex,
+        _out_ TeXFormula* formula,
+        bool firstpass,
+        bool ignoreWhiteSpace) throw(ex_parse) {
         init(isPartial, latex, formula, firstpass);
-        _ignoreWhiteSpace = space;
+        _ignoreWhiteSpace = ignoreWhiteSpace;
     }
 
     /**
@@ -205,9 +218,13 @@ public:
      * @throw ex_parse
      *      if the string could not be parsed correctly
      */
-    TeXParser(const wstring& latex, _out_ TeXFormula* formula, bool firstpass, bool space) throw(ex_parse) {
+    TeXParser(
+        const wstring& latex,
+        _out_ TeXFormula* formula,
+        bool firstpass,
+        bool ignoreWhiteSpace) throw(ex_parse) {
         init(true, latex, formula, firstpass);
-        _ignoreWhiteSpace = space;
+        _ignoreWhiteSpace = ignoreWhiteSpace;
     }
 
     /**
@@ -239,17 +256,17 @@ public:
     /**
      * Get and remove the last atom of the current formula
      */
-    shared_ptr<Atom> getLastAtom();
+    sptr<Atom> getLastAtom();
 
     /**
      * Get and remove the atom represented by the current formula
      */
-    shared_ptr<Atom> getFormulaAtom();
+    sptr<Atom> getFormulaAtom();
 
     /**
      * Put an atom in the current formula
      */
-    void addAtom(const shared_ptr<Atom>& atom);
+    void addAtom(const sptr<Atom>& atom);
 
     /**
      * Indicate if the character @ can be used in the command's name
@@ -266,16 +283,14 @@ public:
     }
 
     /**
-     * Return a boolean indicating if the character @ is considered as a letter
-     * or not
+     * Test if the character @ is considered as a letter or not
      */
     inline bool isAtLetter() {
         return (_atIsLetter != 0);
     }
 
     /**
-     * Return a boolean indicating if the parser is used to parse an array or
-     * not
+     * Test if the parser is used to parse an array or not
      */
     inline bool isArrayMode() const {
         return _arrayMode;
@@ -286,14 +301,14 @@ public:
     }
 
     /**
-     * Return a boolean indicating if the parser must ignore white spaces
+     * Test if the parser must ignore white spaces
      */
     inline bool isIgnoreWhiteSpace() const {
         return _ignoreWhiteSpace;
     }
 
     /**
-     * Return a boolean indicating if the parser is in math mode
+     * Test if the parser is in math mode
      */
     inline bool isMathMode() const {
         return _ignoreWhiteSpace;
@@ -336,6 +351,7 @@ public:
 
     /**
      * Parse the input string
+     * 
      * @throw ex_parse
      *      if an error is encountered during parse
      */
@@ -345,7 +361,7 @@ public:
      * Get the contents between two delimiters
      *
      * @param openClose
-     *      the opening and closing character (such $)
+     *      the opening and closing character (such as $)
      * @return the enclosed contents
      * @throw ex_parse
      *      if the contents are badly enclosed
@@ -385,10 +401,17 @@ public:
      * @throw ex_parse
      *      if the argument is incorrect
      */
-    shared_ptr<Atom> getArgument() throw(ex_parse);
+    sptr<Atom> getArgument() throw(ex_parse);
 
+    /**
+     * Get the supscript argument
+     */
     wstring getOverArgument() throw(ex_parse);
 
+    /**
+     * Get the unit and length from given string. The string must be in the format: a digital
+     * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or (UNIT_PIXEL, 0) will be returned.
+     */
     pair<int, float> getLength() throw(ex_parse);
 
     /**
@@ -401,7 +424,7 @@ public:
      * @throw ex_parse
      *      if the character is unknown
      */
-    shared_ptr<Atom> convertCharacter(wchar_t c, bool oneChar) throw(ex_parse);
+    sptr<Atom> convertCharacter(wchar_t c, bool oneChar) throw(ex_parse);
 
     /**
      * Get the arguments and the options of a command

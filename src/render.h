@@ -17,7 +17,7 @@ class TeXRender {
 private:
     static const color _defaultcolor;
 
-    shared_ptr<Box> _box;
+    sptr<Box> _box;
     float _textSize;
     color _fg;
     Insets _insets;
@@ -27,7 +27,7 @@ public:
     static float _magFactor;
     bool _iscolored;
 
-    TeXRender(const shared_ptr<Box> b, float textSize, bool trueValues = false);
+    TeXRender(const sptr<Box> b, float textSize, bool trueValues = false);
 
     float getTextSize() const;
 
@@ -161,7 +161,7 @@ public:
         return *this;
     }
 
-    TeXRender* build(const shared_ptr<Atom>& f);
+    TeXRender* build(const sptr<Atom>& f);
 
     TeXRender* build(TeXFormula& f);
 

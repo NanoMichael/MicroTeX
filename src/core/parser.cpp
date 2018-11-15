@@ -70,7 +70,10 @@ const set<wstring> TeXParser::_unparsedContents = {
 
 bool TeXParser::_isLoading = false;
 
-void TeXParser::init(bool ispartial, const wstring& parsestring, _out_ TeXFormula* formula, bool fp) throw(ex_parse) {
+void TeXParser::init(
+    bool ispartial,
+    const wstring& parsestring,
+    _out_ TeXFormula* formula, bool fp) throw(ex_parse) {
     _pos = _spos = _len = 0;
     _line = _col = 0;
     _group = 0;
@@ -98,7 +101,7 @@ void TeXParser::init(bool ispartial, const wstring& parsestring, _out_ TeXFormul
 void TeXParser::reset(const wstring& latex) {
     _parseString = latex;
     _len = latex.length();
-    _formula->_root = shared_ptr<Atom>(nullptr);
+    _formula->_root = sptr<Atom>(nullptr);
     _pos = 0;
     _spos = 0;
     _line = 0;
@@ -111,21 +114,21 @@ void TeXParser::reset(const wstring& latex) {
     firstpass();
 }
 
-shared_ptr<Atom> TeXParser::getLastAtom() {
+sptr<Atom> TeXParser::getLastAtom() {
     auto a = _formula->_root;
     RowAtom* ra = dynamic_cast<RowAtom*>(a.get());
     if (ra != nullptr) return ra->getLastAtom();
-    _formula->_root = shared_ptr<Atom>(nullptr);
+    _formula->_root = sptr<Atom>(nullptr);
     return a;
 }
 
-shared_ptr<Atom> TeXParser::getFormulaAtom() {
+sptr<Atom> TeXParser::getFormulaAtom() {
     auto a = _formula->_root;
-    _formula->_root = shared_ptr<Atom>(nullptr);
+    _formula->_root = sptr<Atom>(nullptr);
     return a;
 }
 
-void TeXParser::addAtom(const shared_ptr<Atom>& atom) {
+void TeXParser::addAtom(const sptr<Atom>& atom) {
     _formula->add(atom);
 }
 
@@ -274,7 +277,10 @@ wstring TeXParser::getOverArgument() throw(ex_parse) {
             if (_pos < _len && _parseString[_pos] == '\\' && ogroup == 1) {
                 ogroup--;
                 _pos--;
-            } else if (_pos < _len - 1 && _parseString[_pos] == 'c' && _parseString[_pos + 1] == 'r' && ogroup == 1) {
+            } else if (_pos < _len - 1 &&
+                       _parseString[_pos] == 'c' &&
+                       _parseString[_pos + 1] == 'r' &&
+                       ogroup == 1) {
                 ogroup--;
                 _pos--;
             }
@@ -512,11 +518,11 @@ wchar_t TeXParser::convert2RomanNumber(wchar_t c) {
     return c;
 }
 
-shared_ptr<Atom> TeXParser::processEscape() throw(ex_parse) {
+sptr<Atom> TeXParser::processEscape() throw(ex_parse) {
     _spos = _pos;
     wstring command = getCommand();
 
-    if (command.length() == 0) return shared_ptr<Atom>(new EmptyAtom());
+    if (command.length() == 0) return sptr<Atom>(new EmptyAtom());
 
     string cmd;
     wide2utf8(command.c_str(), cmd);
@@ -534,11 +540,11 @@ shared_ptr<Atom> TeXParser::processEscape() throw(ex_parse) {
     // not a valid command or symbol or predefined TeXFormula found
     if (!_isPartial)
         throw ex_parse("Unknown symbol or command or predefined TeXFormula: '" + cmd + "'");
-    shared_ptr<Atom> rm(new RomanAtom(TeXFormula(L"\\backslash " + command)._root));
-    return shared_ptr<Atom>(new ColorAtom(rm, TRANS, RED));
+    sptr<Atom> rm(new RomanAtom(TeXFormula(L"\\backslash " + command)._root));
+    return sptr<Atom>(new ColorAtom(rm, TRANS, RED));
 }
 
-shared_ptr<Atom> TeXParser::processCommands(const wstring& command) throw(ex_parse) {
+sptr<Atom> TeXParser::processCommands(const wstring& command) throw(ex_parse) {
     MacroInfo* mac = MacroInfo::_commands[command];
     int opts = 0;
     if (mac->_hasOptions) opts = mac->_posOpts;
@@ -556,11 +562,11 @@ shared_ptr<Atom> TeXParser::processCommands(const wstring& command) throw(ex_par
     return mac->invoke(*this, args);
 }
 
-shared_ptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
+sptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
     _pos++;
     // get the first script
-    shared_ptr<Atom> first = getArgument();
-    shared_ptr<Atom> second(nullptr);
+    sptr<Atom> first = getArgument();
+    sptr<Atom> second(nullptr);
     wchar_t s = '\0';
 
     if (_pos < _len) s = _parseString[_pos];
@@ -578,7 +584,7 @@ shared_ptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
      */
     if (f == SUPER_SCRIPT && s == SUPER_SCRIPT) {
         second = first;
-        first = shared_ptr<Atom>(nullptr);
+        first = sptr<Atom>(nullptr);
     } else if (f == SUB_SCRIPT && s == SUPER_SCRIPT) {
         _pos++;
         second = getArgument();
@@ -591,7 +597,7 @@ shared_ptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
         first = nullptr;
     }
 
-    shared_ptr<Atom> atom;
+    sptr<Atom> atom;
     RowAtom* rm = dynamic_cast<RowAtom*>(_formula->_root.get());
     if (rm != nullptr) {
         atom = rm->getLastAtom();
@@ -600,39 +606,39 @@ shared_ptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
          * If there's no root exists, create one with phantom to place
          * the scripts
          */
-        shared_ptr<Atom> in(new CharAtom(L'M', "mathnormal"));
-        atom = shared_ptr<Atom>(new PhantomAtom(in, false, true, true));
+        sptr<Atom> in(new CharAtom(L'M', "mathnormal"));
+        atom = sptr<Atom>(new PhantomAtom(in, false, true, true));
     } else {
         atom = _formula->_root;
-        _formula->_root = shared_ptr<Atom>(nullptr);
+        _formula->_root = sptr<Atom>(nullptr);
     }
 
     if (atom->getRightType() == TYPE_BIG_OPERATOR)
-        return shared_ptr<Atom>(new BigOperatorAtom(atom, first, second));
+        return sptr<Atom>(new BigOperatorAtom(atom, first, second));
 
     OverUnderDelimiter* del = dynamic_cast<OverUnderDelimiter*>(atom.get());
     if (del != nullptr) {
         if (del->isOver()) {
             if (second != nullptr) {
                 del->addScript(second);
-                return shared_ptr<Atom>(new ScriptsAtom(atom, first, shared_ptr<Atom>(nullptr)));
+                return sptr<Atom>(new ScriptsAtom(atom, first, sptr<Atom>(nullptr)));
             }
         } else if (first != nullptr) {
             del->addScript(first);
-            return shared_ptr<Atom>(new ScriptsAtom(atom, shared_ptr<Atom>(nullptr), second));
+            return sptr<Atom>(new ScriptsAtom(atom, sptr<Atom>(nullptr), second));
         }
     }
 
-    return shared_ptr<Atom>(new ScriptsAtom(atom, first, second));
+    return sptr<Atom>(new ScriptsAtom(atom, first, second));
 }
 
-shared_ptr<Atom> TeXParser::getArgument() throw(ex_parse) {
+sptr<Atom> TeXParser::getArgument() throw(ex_parse) {
     skipWhiteSpace();
     wchar_t ch;
     if (_pos < _len)
         ch = _parseString[_pos];
     else
-        return shared_ptr<Atom>(new EmptyAtom());
+        return sptr<Atom>(new EmptyAtom());
 
     if (ch == L_GROUP) {
         TeXFormula tf;
@@ -645,7 +651,7 @@ shared_ptr<Atom> TeXParser::getArgument() throw(ex_parse) {
         if (_formula->_root == nullptr) {
             RowAtom* rm = new RowAtom();
             rm->add(tf._root);
-            return shared_ptr<Atom>(rm);
+            return sptr<Atom>(rm);
         }
         return tf._root;
     }
@@ -808,7 +814,7 @@ void TeXParser::firstpass() throw(ex_parse) {
 void TeXParser::parse() throw(ex_parse) {
     if (_len == 0) {
         if (_formula->_root == nullptr && !_arrayMode)
-            _formula->add(shared_ptr<Atom>(new EmptyAtom()));
+            _formula->add(sptr<Atom>(new EmptyAtom()));
         return;
     }
 
@@ -827,8 +833,8 @@ void TeXParser::parse() throw(ex_parse) {
         case ' ': {
             _pos++;
             if (!_ignoreWhiteSpace) {  // we are in mbox
-                _formula->add(shared_ptr<Atom>(new SpaceAtom()));
-                _formula->add(shared_ptr<Atom>(new BreakMarkAtom()));
+                _formula->add(sptr<Atom>(new SpaceAtom()));
+                _formula->add(sptr<Atom>(new BreakMarkAtom()));
                 while (_pos < _len) {
                     ch = _parseString[_pos];
                     if (ch != ' ' || ch != '\t' || ch != '\r') break;
@@ -847,7 +853,7 @@ void TeXParser::parse() throw(ex_parse) {
                     _pos++;
                 }
 
-                _formula->add(shared_ptr<Atom>(new MathAtom(
+                _formula->add(sptr<Atom>(new MathAtom(
                     TeXFormula(*this, getDollarGroup(DOLLAR), false)._root, style)));
                 if (doubleDollar) {
                     if (_parseString[_pos] == DOLLAR) _pos++;
@@ -855,7 +861,7 @@ void TeXParser::parse() throw(ex_parse) {
             }
         } break;
         case ESCAPE: {
-            shared_ptr<Atom> atom = processEscape();
+            sptr<Atom> atom = processEscape();
             _formula->add(atom);
             HlineAtom* h = dynamic_cast<HlineAtom*>(atom.get());
             if (_arrayMode && h != nullptr) ((ArrayOfAtoms*)_formula)->addRow();
@@ -884,7 +890,7 @@ void TeXParser::parse() throw(ex_parse) {
             if (_ignoreWhiteSpace) {
                 _formula->add(getScripts(ch));
             } else {
-                _formula->add(shared_ptr<Atom>(new UnderScoreAtom()));
+                _formula->add(sptr<Atom>(new UnderScoreAtom()));
                 _pos++;
             }
         } break;
@@ -895,8 +901,8 @@ void TeXParser::parse() throw(ex_parse) {
         } break;
         case PRIME: {
             if (_ignoreWhiteSpace) {
-                _formula->add(shared_ptr<Atom>(new CumulativeScriptsAtom(
-                    getLastAtom(), shared_ptr<Atom>(nullptr), SymbolAtom::get("prime"))));
+                _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
+                    getLastAtom(), sptr<Atom>(nullptr), SymbolAtom::get("prime"))));
             } else {
                 _formula->add(convertCharacter(PRIME, true));
             }
@@ -904,8 +910,8 @@ void TeXParser::parse() throw(ex_parse) {
         } break;
         case BACKPRIME: {
             if (_ignoreWhiteSpace) {
-                _formula->add(shared_ptr<Atom>(new CumulativeScriptsAtom(
-                    getLastAtom(), shared_ptr<Atom>(nullptr), SymbolAtom::get("backprime"))));
+                _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
+                    getLastAtom(), sptr<Atom>(nullptr), SymbolAtom::get("backprime"))));
             } else {
                 _formula->add(convertCharacter(BACKPRIME, true));
             }
@@ -913,10 +919,10 @@ void TeXParser::parse() throw(ex_parse) {
         } break;
         case DQUOTE: {
             if (_ignoreWhiteSpace) {
-                _formula->add(shared_ptr<Atom>(new CumulativeScriptsAtom(
-                    getLastAtom(), shared_ptr<Atom>(nullptr), SymbolAtom::get("prime"))));
-                _formula->add(shared_ptr<Atom>(new CumulativeScriptsAtom(
-                    getLastAtom(), shared_ptr<Atom>(nullptr), SymbolAtom::get("prime"))));
+                _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
+                    getLastAtom(), sptr<Atom>(nullptr), SymbolAtom::get("prime"))));
+                _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
+                    getLastAtom(), sptr<Atom>(nullptr), SymbolAtom::get("prime"))));
             } else {
                 _formula->add(convertCharacter(PRIME, true));
                 _formula->add(convertCharacter(PRIME, true));
@@ -936,7 +942,7 @@ void TeXParser::parse() throw(ex_parse) {
  * @param c Character to be convert
  * @param oneChar If Convert only one char in the parse string
  */
-shared_ptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_parse) {
+sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_parse) {
     if (_ignoreWhiteSpace) {
         // the unicode Greek Letters in math mode are not drawn with the Greek font
         if (c >= 945 && c <= 969) {
@@ -978,14 +984,15 @@ shared_ptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_p
          * Character not in the symbol-mapping and not in the formula-mapping, find from
          * external font-mapping
          */
-        if (sit == TeXFormula::_symbolMappings.end() && fit == TeXFormula::_symbolFormulaMappings.end()) {
+        if (sit == TeXFormula::_symbolMappings.end() &&
+            fit == TeXFormula::_symbolFormulaMappings.end()) {
             FontInfos* fontInfos = nullptr;
             bool isLatin = UnicodeBlock::BASIC_LATIN == block;
             if ((isLatin && TeXFormula::isRegisteredBlock(UnicodeBlock::BASIC_LATIN)) || !isLatin) {
                 fontInfos = TeXFormula::getExternalFont(block);
             }
             if (fontInfos != nullptr) {
-                if (oneChar) return shared_ptr<Atom>(new TextRenderingAtom(towstring(c), fontInfos));
+                if (oneChar) return sptr<Atom>(new TextRenderingAtom(towstring(c), fontInfos));
                 int start = _pos++;
                 int en = _len - 1;
                 while (_pos < _len) {
@@ -996,15 +1003,17 @@ shared_ptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_p
                     }
                     _pos++;
                 }
-                return shared_ptr<Atom>(new TextRenderingAtom(_parseString.substr(start, en - start + 1), fontInfos));
+                return sptr<Atom>(new TextRenderingAtom(
+                    _parseString.substr(start, en - start + 1), fontInfos));
             }
 
             if (!_isPartial)
                 throw ex_parse("Unknown character : '" + tostring(c) + "'");
             else {
-                if (_hideUnknownChar) return shared_ptr<Atom>(nullptr);
-                shared_ptr<Atom> rm(new RomanAtom(TeXFormula(L"\\text{(unknown char " + towstring((int)c) + L")}")._root));
-                return shared_ptr<Atom>(new ColorAtom(rm, TRANS, RED));
+                if (_hideUnknownChar) return sptr<Atom>(nullptr);
+                sptr<Atom> rm(new RomanAtom(
+                    TeXFormula(L"\\text{(unknown char " + towstring((int)c) + L")}")._root));
+                return sptr<Atom>(new ColorAtom(rm, TRANS, RED));
             }
         } else {
             /*
@@ -1045,7 +1054,7 @@ shared_ptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_p
         auto it = TeXFormula::_externalFontMap.find(UnicodeBlock::BASIC_LATIN);
         if (it != TeXFormula::_externalFontMap.end()) {
             infos = it->second;
-            if (oneChar) return shared_ptr<Atom>(new TextRenderingAtom(towstring(c), infos));
+            if (oneChar) return sptr<Atom>(new TextRenderingAtom(towstring(c), infos));
 
             int start = _pos++;
             int en = _len - 1;
@@ -1057,8 +1066,9 @@ shared_ptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_p
                 }
                 _pos++;
             }
-            return shared_ptr<Atom>(new TextRenderingAtom(_parseString.substr(start, en - start + 1), infos));
+            return sptr<Atom>(
+                new TextRenderingAtom(_parseString.substr(start, en - start + 1), infos));
         }
     }
-    return shared_ptr<Atom>(new CharAtom(c, _formula->_textStyle));
+    return sptr<Atom>(new CharAtom(c, _formula->_textStyle));
 }

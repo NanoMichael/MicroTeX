@@ -36,14 +36,14 @@ public:
 
     virtual float getSize() const override;
 
-    virtual shared_ptr<Font> deriveFont(int style) const override;
+    virtual sptr<Font> deriveFont(int style) const override;
 
     virtual bool operator==(const Font& f) const override;
 
     virtual bool operator!=(const Font& f) const override;
 };
 
-/********************************************************************************/
+/**************************************************************************************************/
 
 class TextLayout_cairo : public TextLayout {
 private:
@@ -52,14 +52,14 @@ private:
     float _ascent;
 
 public:
-    TextLayout_cairo(const wstring& src, const shared_ptr<Font_cairo>& font);
+    TextLayout_cairo(const wstring& src, const sptr<Font_cairo>& font);
 
     virtual void getBounds(_out_ Rect& r) override;
 
     virtual void draw(Graphics2D& g2, float x, float y) override;
 };
 
-/********************************************************************************/
+/**************************************************************************************************/
 
 class Graphics2D_cairo : public Graphics2D {
 private:

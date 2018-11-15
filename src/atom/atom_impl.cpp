@@ -3,7 +3,7 @@
 using namespace std;
 using namespace tex;
 
-/************************************ matrix atom *******************************************/
+/*************************************** matrix atom **********************************************/
 
 color MatrixAtom::LINE_COLOR = trans;
 
@@ -16,7 +16,7 @@ SpaceAtom MatrixAtom::_vsep_ext_top(UNIT_EX, 0.f, 0.5f, 0.f);
 SpaceAtom MatrixAtom::_vsep_ext_bot(UNIT_EX, 0.f, 0.5f, 0.f);
 SpaceAtom MatrixAtom::_align       (MEDMUSKIP);
 
-shared_ptr<Box> MatrixAtom::_nullbox(new StrutBox(0, 0, 0, 0));
+sptr<Box> MatrixAtom::_nullbox(new StrutBox(0, 0, 0, 0));
 
 void MatrixAtom::defineColumnSpecifier(const wstring& rep, const wstring& spe) {
     _colspeReplacement[rep] = spe;
@@ -26,8 +26,8 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
     int len = opt.length();
     int pos = 0;
     wchar_t ch;
-    shared_ptr<TeXFormula> tf;
-    shared_ptr<TeXParser> tp;
+    sptr<TeXFormula> tf;
+    sptr<TeXParser> tp;
     // clear first
     lpos.clear();
     while (pos < len) {
@@ -53,12 +53,12 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
                     nb++;
                 }
             }
-            _vlines[lpos.size()] = shared_ptr<VlineAtom>(new VlineAtom(nb));
+            _vlines[lpos.size()] = sptr<VlineAtom>(new VlineAtom(nb));
         } break;
         case '@': {
             pos++;
-            tf = shared_ptr<TeXFormula>(new TeXFormula());
-            tp = shared_ptr<TeXParser>(new TeXParser(_ispartial, opt.substr(pos), &(*tf), false));
+            tf = sptr<TeXFormula>(new TeXFormula());
+            tp = sptr<TeXParser>(new TeXParser(_ispartial, opt.substr(pos), &(*tf), false));
             auto atom = tp->getArgument();
             _matrix->_col++;
             for (size_t j = 0; j < _matrix->_row; j++) {
@@ -72,8 +72,8 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
         } break;
         case '*': {
             pos++;
-            tf = shared_ptr<TeXFormula>(new TeXFormula());
-            tp = shared_ptr<TeXParser>(new TeXParser(_ispartial, opt.substr(pos), &(*tf), false));
+            tf = sptr<TeXFormula>(new TeXFormula());
+            tp = sptr<TeXParser>(new TeXParser(_ispartial, opt.substr(pos), &(*tf), false));
             vector<wstring> args;
             tp->getOptsArgs(2, 0, args);
             pos += tp->getPos();
@@ -87,9 +87,9 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
         } break;
         case '>': {
             pos++;
-            tf = shared_ptr<TeXFormula>(new ArrayOfAtoms());
-            tp = shared_ptr<TeXParser>(new TeXParser(_ispartial, opt.substr(pos), &(*tf), false));
-            shared_ptr<Atom> cs = tp->getArgument();
+            tf = sptr<TeXFormula>(new ArrayOfAtoms());
+            tp = sptr<TeXParser>(new TeXParser(_ispartial, opt.substr(pos), &(*tf), false));
+            sptr<Atom> cs = tp->getArgument();
             _columnSpecifiers[lpos.size()] = cs;
             pos += tp->getPos();
             pos--;
@@ -124,7 +124,7 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
 float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
     int col = _matrix->_col;
     float* arr = new float[col + 1]();
-    shared_ptr<Box> Align, AlignSep, Hsep;
+    sptr<Box> Align, AlignSep, Hsep;
     float h, w = env.getTextWidth();
     int i = 0;
 
@@ -170,7 +170,7 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
         Align = _align.createBox(env);
         if (w != POS_INF) {
             h = max((w - width - col / 2 * Align->_width) / floor((col + 3) / 2.f), 0.f);
-            AlignSep = shared_ptr<Box>(new StrutBox(h, 0, 0, 0));
+            AlignSep = sptr<Box>(new StrutBox(h, 0, 0, 0));
         } else {
             AlignSep = _hsep.createBox(env);
         }
@@ -205,7 +205,7 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
         Align = _align.createBox(env);
         if (w != POS_INF) {
             h = max((w - width - (col / 2) * Align->_width) / floor((col - 1) / 2.f), 0.f);
-            AlignSep = shared_ptr<Box>(new StrutBox(h, 0, 0, 0));
+            AlignSep = sptr<Box>(new StrutBox(h, 0, 0, 0));
         } else {
             AlignSep = _hsep.createBox(env);
         }
@@ -231,8 +231,8 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
 
 void MatrixAtom::recalculateLine(
     const int row,
-    shared_ptr<Box>** boxarr,
-    vector<shared_ptr<Atom>>& rows,
+    sptr<Box>** boxarr,
+    vector<sptr<Atom>>& rows,
     float* height, float* depth, float drt, float vspace) {
     const size_t s = rows.size();
     for (size_t i = 0; i < s; i++) {
@@ -291,9 +291,9 @@ void MatrixAtom::recalculateLine(
     }
 }
 
-shared_ptr<Box> MatrixAtom::generateMulticolumn(
+sptr<Box> MatrixAtom::generateMulticolumn(
     _out_ TeXEnvironment& env,
-    const shared_ptr<Box>& b,
+    const sptr<Box>& b,
     const float* hsep, const float* rowW, int i, int j) {
     float w = 0;
     MulticolumnAtom* mca = (MulticolumnAtom*)(_matrix->_array[i][j].get());
@@ -307,10 +307,10 @@ shared_ptr<Box> MatrixAtom::generateMulticolumn(
 
     if (b->_width >= w) return b;
 
-    return shared_ptr<Box>(new HorizontalBox(b, w, mca->getAlign()));
+    return sptr<Box>(new HorizontalBox(b, w, mca->getAlign()));
 }
 
-MatrixAtom::MatrixAtom(bool ispar, const shared_ptr<ArrayOfAtoms>& arr, const wstring& options, bool sa) {
+MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, const wstring& options, bool sa) {
     _matrix = arr;
     _ttype = ARRAY;
     _ispartial = ispar;
@@ -318,7 +318,7 @@ MatrixAtom::MatrixAtom(bool ispar, const shared_ptr<ArrayOfAtoms>& arr, const ws
     parsePositions(wstring(options), _position);
 }
 
-MatrixAtom::MatrixAtom(bool ispar, const shared_ptr<ArrayOfAtoms>& arr, const wstring& options) {
+MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, const wstring& options) {
     _matrix = arr;
     _ttype = ARRAY;
     _ispartial = ispar;
@@ -326,7 +326,7 @@ MatrixAtom::MatrixAtom(bool ispar, const shared_ptr<ArrayOfAtoms>& arr, const ws
     parsePositions(wstring(options), _position);
 }
 
-MatrixAtom::MatrixAtom(bool ispar, const shared_ptr<ArrayOfAtoms>& arr, int type) {
+MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, int type) {
     _matrix = arr;
     _ttype = type;
     _ispartial = ispar;
@@ -344,7 +344,7 @@ MatrixAtom::MatrixAtom(bool ispar, const shared_ptr<ArrayOfAtoms>& arr, int type
     }
 }
 
-MatrixAtom::MatrixAtom(bool ispar, const shared_ptr<ArrayOfAtoms>& arr, int type, int align) {
+MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, int type, int align) {
     _ispartial = ispar;
     _matrix = arr;
     _ttype = type;
@@ -354,7 +354,7 @@ MatrixAtom::MatrixAtom(bool ispar, const shared_ptr<ArrayOfAtoms>& arr, int type
     for (size_t i = 0; i < arr->_col; i++) _position[i] = align;
 }
 
-shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
+sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     TeXEnvironment& env = e;
     int row = _matrix->_row;
     int col = _matrix->_col;
@@ -362,8 +362,8 @@ shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     float* lineDepth = new float[row]();
     float* lineHeight = new float[row]();
     float* rowWidth = new float[col]();
-    shared_ptr<Box>** boxarr = new shared_ptr<Box>*[row]();
-    for (int i = 0; i < row; i++) boxarr[i] = new shared_ptr<Box>[col]();
+    sptr<Box>** boxarr = new sptr<Box>*[row]();
+    for (int i = 0; i < row; i++) boxarr[i] = new sptr<Box>[col]();
 
     float matW = 0;
     float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
@@ -374,13 +374,13 @@ shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     }
 
     // multi-column & multi-row atoms
-    vector<shared_ptr<Atom>> listMultiCol;
-    vector<shared_ptr<Atom>> listMultiRow;
+    vector<sptr<Atom>> listMultiCol;
+    vector<sptr<Atom>> listMultiRow;
     for (int i = 0; i < row; i++) {
         lineDepth[i] = 0;
         lineHeight[i] = 0;
         for (int j = 0; j < col; j++) {
-            shared_ptr<Atom> atom;
+            sptr<Atom> atom;
             try {
                 atom = _matrix->_array[i][j];
             } catch (...) {
@@ -444,7 +444,7 @@ shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     float Vspace = Vsep->_height / 2;
 
     for (int i = 0; i < row; i++) {
-        shared_ptr<HorizontalBox> hb(new HorizontalBox());
+        sptr<HorizontalBox> hb(new HorizontalBox());
         for (int j = 0; j < col; j++) {
             switch (boxarr[i][j]->_type) {
             case -1:
@@ -476,7 +476,7 @@ shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
                 }
                 float r = j == col - 1 ? Hsep[j + 1] : Hsep[j + 1] / 2;
                 wb->setInsets(l, Vspace, r, Vspace);
-                shared_ptr<Box> swb(wb);
+                sptr<Box> swb(wb);
                 boxarr[i][tj] = swb;
                 hb->add(swb);
 
@@ -492,7 +492,7 @@ shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
             case TYPE_INTERTEXT: {
                 float f = env.getTextWidth();
                 f = f == POS_INF ? rowWidth[j] : f;
-                hb = shared_ptr<HorizontalBox>(new HorizontalBox(boxarr[i][j], f, ALIGN_LEFT));
+                hb = sptr<HorizontalBox>(new HorizontalBox(boxarr[i][j], f, ALIGN_LEFT));
                 j = col;
             } break;
             case TYPE_HLINE: {
@@ -500,7 +500,7 @@ shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
                 at->setColor(LINE_COLOR);
                 at->setWidth(matW);
                 if (i >= 1 && dynamic_cast<HlineAtom*>(_matrix->_array[i - 1][j].get()) != nullptr) {
-                    hb->add(shared_ptr<Box>(new StrutBox(0, 2 * drt, 0, 0)));
+                    hb->add(sptr<Box>(new StrutBox(0, 2 * drt, 0, 0)));
                 }
 
                 hb->add(at->createBox(env));
@@ -571,14 +571,14 @@ shared_ptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     for (int i = 0; i < row; i++) delete[] boxarr[i];
     delete[] boxarr;
 
-    return shared_ptr<Box>(vb);
+    return sptr<Box>(vb);
 }
 
-/************************************* small atoms *******************************************/
+/**************************************** small atoms *********************************************/
 
 SpaceAtom MultlineAtom::_vsep_in(UNIT_EX, 0.f, 1.f, 0.f);
 
-shared_ptr<Box> MultlineAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> MultlineAtom::createBox(_out_ TeXEnvironment& env) {
     float tw = env.getTextWidth();
     if (tw == POS_INF || _ttype == GATHERED)
         return MatrixAtom(_ispartial, _column, L"").createBox(env);
@@ -588,14 +588,14 @@ shared_ptr<Box> MultlineAtom::createBox(_out_ TeXEnvironment& env) {
     int alignment = _ttype == GATHER ? ALIGN_CENTER : ALIGN_LEFT;
     if (atom->_alignment != -1) alignment = atom->_alignment;
 
-    vb->add(shared_ptr<Box>(new HorizontalBox(atom->createBox(env), tw, alignment)));
+    vb->add(sptr<Box>(new HorizontalBox(atom->createBox(env), tw, alignment)));
     auto Vsep = _vsep_in.createBox(env);
     for (size_t i = 1; i < _column->_row - 1; i++) {
         atom = _column->_array[i][0];
         alignment = ALIGN_CENTER;
         if (atom->_alignment != -1) alignment = atom->_alignment;
         vb->add(Vsep);
-        vb->add(shared_ptr<Box>(new HorizontalBox(atom->createBox(env), tw, alignment)));
+        vb->add(sptr<Box>(new HorizontalBox(atom->createBox(env), tw, alignment)));
     }
 
     if (_column->_row > 1) {
@@ -603,23 +603,23 @@ shared_ptr<Box> MultlineAtom::createBox(_out_ TeXEnvironment& env) {
         alignment = _ttype == GATHER ? ALIGN_CENTER : ALIGN_RIGHT;
         if (atom->_alignment != -1) alignment = atom->_alignment;
         vb->add(Vsep);
-        vb->add(shared_ptr<Box>(new HorizontalBox(atom->createBox(env), tw, alignment)));
+        vb->add(sptr<Box>(new HorizontalBox(atom->createBox(env), tw, alignment)));
     }
 
     float h = vb->_height + vb->_depth;
     vb->_height = h / 2;
     vb->_depth = h / 2;
 
-    return shared_ptr<Box>(vb);
+    return sptr<Box>(vb);
 }
 
 const float FBoxAtom::INTERSPACE = 0.65f;
 const int FencedAtom::DELIMITER_FACTOR = 901;
 const float FencedAtom::DELIMITER_SHORTFALL = 5.f;
 
-void FencedAtom::init(const shared_ptr<Atom>& b, const shared_ptr<SymbolAtom>& l, const shared_ptr<SymbolAtom>& r) {
+void FencedAtom::init(const sptr<Atom>& b, const sptr<SymbolAtom>& l, const sptr<SymbolAtom>& r) {
     if (b == nullptr)
-        _base = shared_ptr<Atom>(new RowAtom());
+        _base = sptr<Atom>(new RowAtom());
     else
         _base = b;
     if (l == nullptr || l->getName() != "normaldot") _left = l;
@@ -631,7 +631,7 @@ void FencedAtom::center(_out_ Box& b, float axis) {
     b._shift = -(total / 2 - h) - axis;
 }
 
-shared_ptr<Box> FencedAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> FencedAtom::createBox(_out_ TeXEnvironment& env) {
     TeXFont& tf = *(env.getTeXFont());
     // can not break
     RowAtom* ra = dynamic_cast<RowAtom*>(_base.get());
@@ -680,13 +680,13 @@ shared_ptr<Box> FencedAtom::createBox(_out_ TeXEnvironment& env) {
         hb->add(b);
     }
 
-    return shared_ptr<Box>(hb);
+    return sptr<Box>(hb);
 }
 
-/************************************** fraction atom *********************************/
+/****************************************** fraction atom *****************************************/
 
 void FractionAtom::init(
-    const shared_ptr<Atom>& num, const shared_ptr<Atom>& den,
+    const sptr<Atom>& num, const sptr<Atom>& den,
     bool nodef, int unit, float t) throw(ex_invalid_unit) {
     _numAlign = ALIGN_CENTER;
     _denomAlign = ALIGN_CENTER;
@@ -704,7 +704,7 @@ void FractionAtom::init(
     _deffactorset = false;
 }
 
-shared_ptr<Box> FractionAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> FractionAtom::createBox(_out_ TeXEnvironment& env) {
     TeXFont& tf = *(env.getTeXFont());
     int style = env.getStyle();
     // set thickness to default if default value should be use
@@ -715,13 +715,15 @@ shared_ptr<Box> FractionAtom::createBox(_out_ TeXEnvironment& env) {
         _thickness = _deffactorset ? _deffactor * drt : drt;
 
     // create equal width boxes in appropriate styles
-    auto num = (_numerator == nullptr ? shared_ptr<Box>(new StrutBox(0, 0, 0, 0)) : _numerator->createBox(*(env.numStyle())));
-    auto denom = (_denominator == nullptr ? shared_ptr<Box>(new StrutBox(0, 0, 0, 0)) : _denominator->createBox(*(env.dnomStyle())));
+    auto num = (_numerator == nullptr ? sptr<Box>(new StrutBox(0, 0, 0, 0))
+                                      : _numerator->createBox(*(env.numStyle())));
+    auto denom = (_denominator == nullptr ? sptr<Box>(new StrutBox(0, 0, 0, 0))
+                                          : _denominator->createBox(*(env.dnomStyle())));
 
     if (num->_width < denom->_width)
-        num = shared_ptr<Box>(new HorizontalBox(num, denom->_width, _numAlign));
+        num = sptr<Box>(new HorizontalBox(num, denom->_width, _numAlign));
     else
-        denom = shared_ptr<Box>(new HorizontalBox(denom, num->_width, _denomAlign));
+        denom = sptr<Box>(new HorizontalBox(denom, num->_width, _denomAlign));
 
     // calculate default shift amounts
     float shiftup, shiftdown;
@@ -767,9 +769,9 @@ shared_ptr<Box> FractionAtom::createBox(_out_ TeXEnvironment& env) {
         }
 
         // fill vertical box
-        vb->add(shared_ptr<Box>(new StrutBox(0, kern1, 0, 0)));
-        vb->add(shared_ptr<Box>(new HorizontalRule(_thickness, num->_width, 0)));
-        vb->add(shared_ptr<Box>(new StrutBox(0, kern2, 0, 0)));
+        vb->add(sptr<Box>(new StrutBox(0, kern1, 0, 0)));
+        vb->add(sptr<Box>(new HorizontalRule(_thickness, num->_width, 0)));
+        vb->add(sptr<Box>(new StrutBox(0, kern2, 0, 0)));
     } else {
         // without fraction rule
         // clearance clr
@@ -787,7 +789,7 @@ shared_ptr<Box> FractionAtom::createBox(_out_ TeXEnvironment& env) {
             kern += 2 * delta;
         }
         // fill vertical box
-        vb->add(shared_ptr<Box>(new StrutBox(0, kern, 0, 0)));
+        vb->add(sptr<Box>(new StrutBox(0, kern, 0, 0)));
     }
 
     // finish vertical box
@@ -798,10 +800,10 @@ shared_ptr<Box> FractionAtom::createBox(_out_ TeXEnvironment& env) {
     // \nulldelimiterspace is set by default to 1.2pt = 0.12em
     float f = SpaceAtom(UNIT_EM, 0.12f, 0, 0).createBox(env)->_width;
 
-    return shared_ptr<Box>(new HorizontalBox(shared_ptr<Box>(vb), vb->_width + 2 * f, ALIGN_CENTER));
+    return sptr<Box>(new HorizontalBox(sptr<Box>(vb), vb->_width + 2 * f, ALIGN_CENTER));
 }
 
-/********************************* multicolumn atoms *********************************/
+/*************************************** multicolumn atoms ****************************************/
 
 int MulticolumnAtom::parseAlign(const string& str) {
     int pos = 0;
@@ -847,30 +849,30 @@ int MulticolumnAtom::parseAlign(const string& str) {
     return align;
 }
 
-shared_ptr<Box> MulticolumnAtom::createBox(_out_ TeXEnvironment& env) {
-    shared_ptr<Box> b;
+sptr<Box> MulticolumnAtom::createBox(_out_ TeXEnvironment& env) {
+    sptr<Box> b;
     if (_w == 0)
         b = _cols->createBox(env);
     else
-        b = shared_ptr<Box>(new HorizontalBox(_cols->createBox(env), _w, _align));
+        b = sptr<Box>(new HorizontalBox(_cols->createBox(env), _w, _align));
     b->_type = TYPE_MULTICOLUMN;
     return b;
 }
 
 SpaceAtom HdotsforAtom::_thin(THINMUSKIP);
 
-shared_ptr<Box> HdotsforAtom::createBox(_out_ TeXEnvironment& env) {
-    shared_ptr<Box> sp(new StrutBox(_coeff * _thin.createBox(env)->_width, 0, 0, 0));
-    shared_ptr<HorizontalBox> db(new HorizontalBox(sp));
+sptr<Box> HdotsforAtom::createBox(_out_ TeXEnvironment& env) {
+    sptr<Box> sp(new StrutBox(_coeff * _thin.createBox(env)->_width, 0, 0, 0));
+    sptr<HorizontalBox> db(new HorizontalBox(sp));
     db->add(_cols->createBox(env));
     db->add(sp);
-    shared_ptr<Box> b;
+    sptr<Box> b;
     if (_w != 0) {
-        b = shared_ptr<Box>(new HorizontalBox(db));
+        b = sptr<Box>(new HorizontalBox(db));
         while (b->_width < _w) {
             b->add(db);
         }
-        b = shared_ptr<Box>(new HorizontalBox(b, _w, ALIGN_CENTER));
+        b = sptr<Box>(new HorizontalBox(b, _w, ALIGN_CENTER));
     } else {
         b = db;
     }
@@ -879,7 +881,7 @@ shared_ptr<Box> HdotsforAtom::createBox(_out_ TeXEnvironment& env) {
     return b;
 }
 
-shared_ptr<Box> LaTeXAtom::createBox(_out_ TeXEnvironment& en) {
+sptr<Box> LaTeXAtom::createBox(_out_ TeXEnvironment& en) {
     TeXEnvironment& env = *(en.copy(en.getTeXFont()->copy()));
     env.getTeXFont()->setRoman(true);
     float sc = env.getTeXFont()->getScaleFactor();
@@ -890,8 +892,8 @@ shared_ptr<Box> LaTeXAtom::createBox(_out_ TeXEnvironment& en) {
         fontInfos = it->second;
         TeXFormula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = nullptr;
     }
-    shared_ptr<Atom> root = TeXFormula(L"\\mathrm{XETL}")._root;
-    shared_ptr<Atom> atom = ((RomanAtom*)root.get())->_base;
+    sptr<Atom> root = TeXFormula(L"\\mathrm{XETL}")._root;
+    sptr<Atom> atom = ((RomanAtom*)root.get())->_base;
     RowAtom* rm = (RowAtom*)(atom.get());
     if (fontInfos != nullptr)
         TeXFormula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = fontInfos;
@@ -903,9 +905,10 @@ shared_ptr<Box> LaTeXAtom::createBox(_out_ TeXEnvironment& en) {
     float f1 = SpaceAtom(UNIT_EX, 0.5f * sc, 0, 0).createBox(env)->_width;
 
     // A
-    CharBox* A = new CharBox(env.getTeXFont()->getChar('A', "mathnormal", env.supStyle()->getStyle()));
+    CharBox* A = new CharBox(
+        env.getTeXFont()->getChar('A', "mathnormal", env.supStyle()->getStyle()));
     A->_shift = -f;
-    hb->add(shared_ptr<Box>(A));
+    hb->add(sptr<Box>(A));
     hb->add(SpaceAtom(UNIT_EM, -0.15f * sc, 0, 0).createBox(env));
 
     // T
@@ -920,13 +923,13 @@ shared_ptr<Box> LaTeXAtom::createBox(_out_ TeXEnvironment& en) {
 
     // X
     hb->add(rm->getLastAtom()->createBox(env));
-    return shared_ptr<Box>(hb);
+    return sptr<Box>(hb);
 }
 
 const string NthRoot::_sqrtSymbol = "sqrt";
 const float NthRoot::FACTOR = 0.55f;
 
-shared_ptr<Box> NthRoot::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> NthRoot::createBox(_out_ TeXEnvironment& env) {
     // first create a simple square root construction
     TeXFont& tf = *(env.getTeXFont());
     int style = env.getStyle();
@@ -941,8 +944,8 @@ shared_ptr<Box> NthRoot::createBox(_out_ TeXEnvironment& env) {
     // cramped style for the formula under the root sign
     TeXEnvironment& cramped = *(env.crampStyle());
     auto bs = _base->createBox(cramped);
-    shared_ptr<HorizontalBox> b(new HorizontalBox(bs));
-    b->add(shared_ptr<Box>(SpaceAtom(UNIT_MU, 1, 0, 0).createBox(cramped)));
+    sptr<HorizontalBox> b(new HorizontalBox(bs));
+    b->add(sptr<Box>(SpaceAtom(UNIT_MU, 1, 0, 0).createBox(cramped)));
     // create root sign
     float totalH = b->_height + b->_depth;
     auto rootSign = DelimiterFactory::create(_sqrtSymbol, env, totalH + clr + drt);
@@ -953,9 +956,9 @@ shared_ptr<Box> NthRoot::createBox(_out_ TeXEnvironment& env) {
 
     // create total box
     rootSign->_shift = -(b->_height + clr);
-    shared_ptr<OverBar> ob(new OverBar(b, clr, rootSign->_height));
+    sptr<OverBar> ob(new OverBar(b, clr, rootSign->_height));
     ob->_shift = -(b->_height + clr + drt);
-    shared_ptr<HorizontalBox> squareRoot(new HorizontalBox(rootSign));
+    sptr<HorizontalBox> squareRoot(new HorizontalBox(rootSign));
     squareRoot->add(ob);
 
     // simple square-root
@@ -968,12 +971,12 @@ shared_ptr<Box> NthRoot::createBox(_out_ TeXEnvironment& env) {
     r->_shift = squareRoot->_depth - r->_depth - bottomShift;
 
     // negative kerning
-    shared_ptr<Box> negkern = SpaceAtom(UNIT_MU, -10.f, 0, 0).createBox(env);
+    sptr<Box> negkern = SpaceAtom(UNIT_MU, -10.f, 0, 0).createBox(env);
 
     // arrange both boxes together with the negative kerning
-    shared_ptr<Box> res(new HorizontalBox());
+    sptr<Box> res(new HorizontalBox());
     float pos = r->_width + negkern->_width;
-    if (pos < 0) res->add(shared_ptr<Box>(new StrutBox(-pos, 0, 0, 0)));
+    if (pos < 0) res->add(sptr<Box>(new StrutBox(-pos, 0, 0, 0)));
 
     res->add(r);
     res->add(negkern);
@@ -981,7 +984,7 @@ shared_ptr<Box> NthRoot::createBox(_out_ TeXEnvironment& env) {
     return res;
 }
 
-RotateAtom::RotateAtom(const shared_ptr<Atom>& base, float angle, const wstring& option)
+RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const wstring& option)
     : _angle(0), _option(-1), _xunit(0), _yunit(0), _x(0), _y(0) {
     _type = base->_type;
     _base = base;
@@ -1015,7 +1018,7 @@ RotateAtom::RotateAtom(const shared_ptr<Atom>& base, float angle, const wstring&
     }
 }
 
-RotateAtom::RotateAtom(const shared_ptr<Atom>& base, const wstring& angle, const wstring& option)
+RotateAtom::RotateAtom(const sptr<Atom>& base, const wstring& angle, const wstring& option)
     : _angle(0), _option(-1), _xunit(0), _yunit(0), _x(0), _y(0) {
     _type = base->_type;
     _base = base;
@@ -1025,19 +1028,19 @@ RotateAtom::RotateAtom(const shared_ptr<Atom>& base, const wstring& angle, const
     _option = RotateBox::getOrigin(x);
 }
 
-shared_ptr<Box> RotateAtom::createBox(_out_ TeXEnvironment& env) {
-    if (_option != -1) return shared_ptr<Box>(new RotateBox(_base->createBox(env), _angle, _option));
+sptr<Box> RotateAtom::createBox(_out_ TeXEnvironment& env) {
+    if (_option != -1) return sptr<Box>(new RotateBox(_base->createBox(env), _angle, _option));
 
     float x = _x * SpaceAtom::getFactor(_xunit, env);
     float y = _y * SpaceAtom::getFactor(_yunit, env);
-    return shared_ptr<Box>(new RotateBox(_base->createBox(env), _angle, x, y));
+    return sptr<Box>(new RotateBox(_base->createBox(env), _angle, x, y));
 }
 
-shared_ptr<Box> UnderOverArrowAtom::createBox(_out_ TeXEnvironment& env) {
-    auto b = _base != nullptr ? _base->createBox(env) : shared_ptr<Box>(new StrutBox(0, 0, 0, 0));
+sptr<Box> UnderOverArrowAtom::createBox(_out_ TeXEnvironment& env) {
+    auto b = _base != nullptr ? _base->createBox(env) : sptr<Box>(new StrutBox(0, 0, 0, 0));
     float sep = SpaceAtom(UNIT_POINT, 1, 0, 0).createBox(env)->_width;
 
-    shared_ptr<Box> arrow;
+    sptr<Box> arrow;
 
     if (_dble) {
         arrow = XLeftRightArrowFactory::create(env, b->_width);
@@ -1050,35 +1053,37 @@ shared_ptr<Box> UnderOverArrowAtom::createBox(_out_ TeXEnvironment& env) {
     VerticalBox* vb = new VerticalBox();
     if (_over) {
         vb->add(arrow);
-        vb->add(shared_ptr<Box>(new HorizontalBox(b, arrow->_width, ALIGN_CENTER)));
+        vb->add(sptr<Box>(new HorizontalBox(b, arrow->_width, ALIGN_CENTER)));
         float h = vb->_depth + vb->_height;
         vb->_depth = b->_depth;
         vb->_height = h - b->_depth;
     } else {
-        vb->add(shared_ptr<Box>(new HorizontalBox(b, arrow->_width, ALIGN_CENTER)));
-        vb->add(shared_ptr<Box>(new StrutBox(0, sep, 0, 0)));
+        vb->add(sptr<Box>(new HorizontalBox(b, arrow->_width, ALIGN_CENTER)));
+        vb->add(sptr<Box>(new StrutBox(0, sep, 0, 0)));
         vb->add(arrow);
         float h = vb->_depth + vb->_height;
         vb->_depth = h - b->_height;
         vb->_height = b->_height;
     }
 
-    return shared_ptr<Box>(vb);
+    return sptr<Box>(vb);
 }
 
-shared_ptr<Box> XArrowAtom::createBox(_out_ TeXEnvironment& env) {
-    auto O = _over != nullptr ? _over->createBox(*(env.supStyle())) : shared_ptr<Box>(new StrutBox(0, 0, 0, 0));
-    auto U = _under != nullptr ? _under->createBox(*(env.subStyle())) : shared_ptr<Box>(new StrutBox(0, 0, 0, 0));
+sptr<Box> XArrowAtom::createBox(_out_ TeXEnvironment& env) {
+    auto O = _over != nullptr ? _over->createBox(*(env.supStyle()))
+                              : sptr<Box>(new StrutBox(0, 0, 0, 0));
+    auto U = _under != nullptr ? _under->createBox(*(env.subStyle()))
+                               : sptr<Box>(new StrutBox(0, 0, 0, 0));
     auto oside = SpaceAtom(UNIT_EM, 1.5f, 0, 0).createBox(*(env.supStyle()));
     auto uside = SpaceAtom(UNIT_EM, 1.5f, 0, 0).createBox(*(env.subStyle()));
     auto sep = SpaceAtom(UNIT_MU, 0, 2.f, 0).createBox(env);
     float width = max(O->_width + 2 * oside->_width, U->_width + 2 * uside->_width);
     auto arrow = XLeftRightArrowFactory::create(_left, env, width);
 
-    shared_ptr<Box> ohb(new HorizontalBox(O, width, ALIGN_CENTER));
-    shared_ptr<Box> uhb(new HorizontalBox(U, width, ALIGN_CENTER));
+    sptr<Box> ohb(new HorizontalBox(O, width, ALIGN_CENTER));
+    sptr<Box> uhb(new HorizontalBox(U, width, ALIGN_CENTER));
 
-    shared_ptr<VerticalBox> vb(new VerticalBox());
+    sptr<VerticalBox> vb(new VerticalBox());
     vb->add(ohb);
     vb->add(sep);
     vb->add(arrow);
@@ -1092,5 +1097,5 @@ shared_ptr<Box> XArrowAtom::createBox(_out_ TeXEnvironment& env) {
 
     HorizontalBox* hb = new HorizontalBox(vb, vb->_width + 2 * sep->_height, ALIGN_CENTER);
 
-    return shared_ptr<Box>(hb);
+    return sptr<Box>(hb);
 }

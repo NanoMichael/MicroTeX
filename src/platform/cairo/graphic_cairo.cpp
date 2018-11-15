@@ -72,8 +72,8 @@ float Font_cairo::getSize() const {
     return (float)_size;
 }
 
-shared_ptr<Font> Font_cairo::deriveFont(int style) const {
-    return shared_ptr<Font>(new Font_cairo(_family, style, _size));
+sptr<Font> Font_cairo::deriveFont(int style) const {
+    return sptr<Font>(new Font_cairo(_family, style, _size));
 }
 
 bool Font_cairo::operator==(const Font& ft) const {
@@ -89,15 +89,15 @@ Font* Font::create(const string& file, float size) {
     return new Font_cairo(file, size);
 }
 
-shared_ptr<Font> Font::_create(const string& name, int style, float size) {
-    return shared_ptr<Font>(new Font_cairo(name, style, size));
+sptr<Font> Font::_create(const string& name, int style, float size) {
+    return sptr<Font>(new Font_cairo(name, style, size));
 }
 
-/*****************************************************************************************/
+/**************************************************************************************************/
 
 Cairo::RefPtr<Cairo::Context> TextLayout_cairo::_img_context;
 
-TextLayout_cairo::TextLayout_cairo(const wstring& src, const shared_ptr<Font_cairo>& f) {
+TextLayout_cairo::TextLayout_cairo(const wstring& src, const sptr<Font_cairo>& f) {
     if (!_img_context) {
         auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 1, 1);
         _img_context = Cairo::Context::create(surface);
@@ -154,16 +154,17 @@ void TextLayout_cairo::draw(Graphics2D& g2, float x, float y) {
     g2.translate(-x, -y + _ascent);
 }
 
-shared_ptr<TextLayout> TextLayout::create(const wstring& src, const shared_ptr<Font>& font) {
-    shared_ptr<Font_cairo> f = static_pointer_cast<Font_cairo>(font);
-    return shared_ptr<TextLayout>(new TextLayout_cairo(src, f));
+sptr<TextLayout> TextLayout::create(const wstring& src, const sptr<Font>& font) {
+    sptr<Font_cairo> f = static_pointer_cast<Font_cairo>(font);
+    return sptr<TextLayout>(new TextLayout_cairo(src, f));
 }
 
-/******************************************************************************************/
+/**************************************************************************************************/
 
 Font_cairo Graphics2D_cairo::_default_font("SansSerif", PLAIN, 20.f);
 
-Graphics2D_cairo::Graphics2D_cairo(const Cairo::RefPtr<Cairo::Context>& context) : _context(context) {
+Graphics2D_cairo::Graphics2D_cairo(const Cairo::RefPtr<Cairo::Context>& context)
+    : _context(context) {
     _sx = _sy = 1.f;
     setColor(BLACK);
     setStroke(Stroke());
