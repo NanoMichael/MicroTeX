@@ -770,6 +770,12 @@ CharBox::CharBox(const Char& c) {
     _width = c.getWidth();
     _height = c.getHeight();
     _depth = c.getDepth();
+    _italic = c.getItalic();
+}
+
+void CharBox::addItalicCorrectionToWidth() {
+    _width += _italic;
+    _italic = 0;
 }
 
 void CharBox::draw(Graphics2D& g2, float x, float y) {

@@ -399,7 +399,7 @@ RowAtom::RowAtom(const sptr<Atom>& el)
     if (el != nullptr) {
         RowAtom* x = dynamic_cast<RowAtom*>(el.get());
         if (x != nullptr) {
-            // o need to make an mrow the only element of an mrow
+            // no need to make an mrow the only element of a mrow
             _elements.insert(_elements.end(), x->_elements.begin(), x->_elements.end());
         } else {
             _elements.push_back(el);
@@ -517,6 +517,12 @@ sptr<Box> RowAtom::createBox(_out_ TeXEnvironment& env) {
         // insert atom's box
         atom->setPreviousAtom(_previousAtom);
         auto b = atom->createBox(env);
+        CharBox* cb = dynamic_cast<CharBox*>(b.get());
+        if (cb != nullptr && atom->isCharInMathMode()) {
+            // When we have a single char, we need to add italic correction
+            // As an example: (TVY) looks crappy...
+            cb->addItalicCorrectionToWidth();
+        }
         /**CharAtom* ca = dynamic_cast<CharAtom*>(at.get());
         if (markAdded || (ca != nullptr && isdigit(ca->getCharacter()))) {
             hbox->addBreakPosition(hbox->_children.size());
