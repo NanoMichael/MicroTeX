@@ -5,6 +5,15 @@
 using namespace std;
 using namespace tex;
 
+#define mac3(nbargs, name, code) \
+    { L##code, m(nbargs, name) }
+
+#define mac4(nbargs, posOpts, name, code) \
+    { L##code, m(nbargs, posOpts, name) }
+
+#define __mac__(_1, _2, _3, _4, name, ...) name
+#define mac(...) __mac__(__VA_ARGS__, mac4, mac3)(__VA_ARGS__)
+
 inline static PredefMacroInfo* m(int nbargs, int posOpts, MacroDelegate del) {
     return new PredefMacroInfo(nbargs, posOpts, del);
 }
@@ -14,298 +23,298 @@ inline static PredefMacroInfo* m(int nbargs, MacroDelegate del) {
 }
 
 map<wstring, MacroInfo*> MacroInfo::_commands = {
-    {L"newcommand", m(2, 2, macro_newcommand)},
-    {L"renewcommand", m(2, 2, macro_renewcommand)},
-    {L"rule", m(2, 1, macro_rule)},
-    {L"hspace", m(1, macro_hvspace)},
-    {L"vspace", m(1, macro_hvspace)},
-    {L"llap", m(1, macro_clrlap)},
-    {L"rlap", m(1, macro_clrlap)},
-    {L"clap", m(1, macro_clrlap)},
-    {L"mathllap", m(1, macro_mathclrlap)},
-    {L"mathrlap", m(1, macro_mathclrlap)},
-    {L"mathclap", m(1, macro_mathclrlap)},
-    {L"includegraphics", m(1, 1, macro_includegraphics)},
-    {L"cfrac", m(2, 1, macro_cfrac)},
-    {L"frac", m(2, macro_frac)},
-    {L"sfrac", m(2, macro_sfrac)},
-    {L"genfrac", m(6, macro_genfrac)},
-    {L"over", m(0, macro_over)},
-    {L"overwithdelims", m(2, macro_overwithdelims)},
-    {L"atop", m(0, macro_atop)},
-    {L"atopwithdelims", m(2, macro_atopwithdelims)},
-    {L"choose", m(0, macro_choose)},
-    {L"brace", m(0, macro_brace)},
-    {L"brack", m(0, macro_brack)},
-    {L"bangle", m(0, macro_bangle)},
-    {L"underscore", m(0, macro_underscore)},
-    {L"mbox", m(1, macro_mbox)},
-    {L"text", m(1, macro_text)},
-    {L"intertext", m(1, macro_intertext)},
-    {L"binom", m(2, macro_binom)},
-    {L"mathbf", m(1, macro_mathbf)},
-    {L"bf", m(0, macro_bf)},
-    {L"mathbb", m(1, macro_textstyles)},
-    {L"mathcal", m(1, macro_textstyles)},
-    {L"cal", m(1, macro_textstyles)},
-    {L"mathit", m(1, macro_mathit)},
-    {L"it", m(0, macro_it)},
-    {L"mathrm", m(1, macro_mathrm)},
-    {L"rm", m(0, macro_rm)},
-    {L"mathscr", m(1, macro_textstyles)},
-    {L"mathsf", m(1, macro_mathsf)},
-    {L"sf", m(0, macro_sf)},
-    {L"mathtt", m(1, macro_mathtt)},
-    {L"tt", m(0, macro_tt)},
-    {L"mathfrak", m(1, macro_textstyles)},
-    {L"mathds", m(1, macro_textstyles)},
-    {L"frak", m(1, macro_textstyles)},
-    {L"Bbb", m(1, macro_textstyles)},
-    {L"oldstylenums", m(1, macro_textstyles)},
-    {L"bold", m(1, macro_textstyles)},
-    {L"^", m(1, macro_accentbiss)},
-    {L"\'", m(1, macro_accentbiss)},
-    {L"\"", m(1, macro_accentbiss)},
-    {L"`", m(1, macro_accentbiss)},
-    {L"=", m(1, macro_accentbiss)},
-    {L".", m(1, macro_accentbiss)},
-    {L"~", m(1, macro_accentbiss)},
-    {L"u", m(1, macro_accentbiss)},
-    {L"v", m(1, macro_accentbiss)},
-    {L"H", m(1, macro_accentbiss)},
-    {L"r", m(1, macro_accentbiss)},
-    {L"U", m(1, macro_accentbiss)},
-    {L"T", m(1, macro_T)},
-    {L"t", m(1, macro_accentbiss)},
-    {L"accent", m(2, macro_accent)},
-    {L"grkaccent", m(2, macro_grkaccent)},
-    {L"hat", m(1, macro_accents)},
-    {L"widehat", m(1, macro_accents)},
-    {L"tilde", m(1, macro_accents)},
-    {L"acute", m(1, macro_accents)},
-    {L"grave", m(1, macro_accents)},
-    {L"ddot", m(1, macro_accents)},
-    {L"cyrddot", m(1, macro_accents)},
-    {L"mathring", m(1, macro_accents)},
-    {L"bar", m(1, macro_accents)},
-    {L"breve", m(1, macro_accents)},
-    {L"check", m(1, macro_accents)},
-    {L"vec", m(1, macro_accents)},
-    {L"dot", m(1, macro_accents)},
-    {L"widetilde", m(1, macro_accents)},
-    {L"nbsp", m(0, macro_nbsp)},
-    {L"smallmatrix@@env", m(1, macro_smallmatrixATATenv)},
-    {L"matrix@@env", m(1, macro_matrixATATenv)},
-    {L"overrightarrow", m(1, macro_overrightarrow)},
-    {L"overleftarrow", m(1, macro_overleftarrow)},
-    {L"overleftrightarrow", m(1, macro_overleftrightarrow)},
-    {L"underrightarrow", m(1, macro_underrightarrow)},
-    {L"underleftarrow", m(1, macro_underleftarrow)},
-    {L"underleftrightarrow", m(1, macro_underleftrightarrow)},
-    {L"xleftarrow", m(1, 1, macro_xleftarrow)},
-    {L"xrightarrow", m(1, 1, macro_xrightarrow)},
-    {L"underbrace", m(1, macro_underbrace)},
-    {L"overbrace", m(1, macro_overbrace)},
-    {L"underbrack", m(1, macro_underbrack)},
-    {L"overbrack", m(1, macro_overbrack)},
-    {L"underparen", m(1, macro_underparen)},
-    {L"overparen", m(1, macro_overparen)},
-    {L"sqrt", m(1, 1, macro_sqrt)},
-    {L"sqrtsign", m(1, macro_sqrt)},
-    {L"overline", m(1, macro_overline)},
-    {L"underline", m(1, macro_underline)},
-    {L"mathop", m(1, macro_mathop)},
-    {L"mathpunct", m(1, macro_mathpunct)},
-    {L"mathord", m(1, macro_mathord)},
-    {L"mathrel", m(1, macro_mathrel)},
-    {L"mathinner", m(1, macro_mathinner)},
-    {L"mathbin", m(1, macro_mathbin)},
-    {L"mathopen", m(1, macro_mathopen)},
-    {L"mathclose", m(1, macro_mathclose)},
-    {L"joinrel", m(0, macro_joinrel)},
-    {L"smash", m(1, 1, macro_smash)},
-    {L"vdots", m(0, macro_vdots)},
-    {L"ddots", m(0, macro_ddots)},
-    {L"iddots", m(0, macro_iddots)},
-    {L"nolimits", m(0, macro_nolimits)},
-    {L"limits", m(0, macro_limits)},
-    {L"normal", m(0, macro_normal)},
-    {L"(", m(0, macro_leftparenthesis)},
-    {L"[", m(0, macro_leftbracket)},
-    {L"left", m(1, macro_left)},
-    {L"middle", m(1, macro_middle)},
-    {L"cr", m(0, macro_cr)},
-    {L"multicolumn", m(3, macro_multicolumn)},
-    {L"hdotsfor", m(1, 1, macro_hdotsfor)},
-    {L"array@@env", m(2, macro_arrayATATenv)},
-    {L"align@@env", m(2, macro_alignATATenv)},
-    {L"aligned@@env", m(2, macro_alignedATATenv)},
-    {L"flalign@@env", m(2, macro_flalignATATenv)},
-    {L"alignat@@env", m(2, macro_alignatATATenv)},
-    {L"alignedat@@env", m(2, macro_alignedatATATenv)},
-    {L"multline@@env", m(2, macro_multlineATATenv)},
-    {L"gather@@env", m(2, macro_gatherATATenv)},
-    {L"gathered@@env", m(2, macro_gatheredATATenv)},
-    {L"shoveright", m(1, macro_shoveright)},
-    {L"shoveleft", m(1, macro_shoveleft)},
-    {L"\\", m(0, macro_backslashcr)},
-    {L"newenvironment", m(3, macro_newenvironment)},
-    {L"renewenvironment", m(3, macro_renewenvironment)},
-    {L"makeatletter", m(0, macro_makeatletter)},
-    {L"makeatother", m(0, macro_makeatother)},
-    {L"fbox", m(1, macro_fbox)},
-    {L"boxed", m(1, macro_fbox)},
-    {L"questeq", m(0, macro_questeq)},
-    {L"stackrel", m(2, 1, macro_stackrel)},
-    {L"stackbin", m(2, 1, macro_stackbin)},
-    {L"accentset", m(2, macro_accentset)},
-    {L"underaccent", m(2, macro_underaccent)},
-    {L"undertilde", m(1, macro_undertilde)},
-    {L"overset", m(2, macro_overset)},
-    {L"Braket", m(1, macro_Braket)},
-    {L"Set", m(1, macro_Set)},
-    {L"underset", m(2, macro_underset)},
-    {L"boldsymbol", m(1, macro_boldsymbol)},
-    {L"LaTeX", m(0, macro_LaTeX)},
-    {L"GeoGebra", m(0, macro_GeoGebra)},
-    {L"big", m(1, macro_big)},
-    {L"Big", m(1, macro_Big)},
-    {L"bigg", m(1, macro_bigg)},
-    {L"Bigg", m(1, macro_Bigg)},
-    {L"bigl", m(1, macro_bigl)},
-    {L"Bigl", m(1, macro_Bigl)},
-    {L"biggl", m(1, macro_biggl)},
-    {L"Biggl", m(1, macro_Biggl)},
-    {L"bigr", m(1, macro_bigr)},
-    {L"Bigr", m(1, macro_Bigr)},
-    {L"biggr", m(1, macro_biggr)},
-    {L"Biggr", m(1, macro_Biggr)},
-    {L"displaystyle", m(0, macro_displaystyle)},
-    {L"textstyle", m(0, macro_textstyle)},
-    {L"scriptstyle", m(0, macro_scriptstyle)},
-    {L"scriptscriptstyle", m(0, macro_scriptscriptstyle)},
-    {L"sideset", m(3, macro_sideset)},
-    {L"prescript", m(3, macro_prescript)},
-    {L"rotatebox", m(2, 1, macro_rotatebox)},
-    {L"reflectbox", m(1, macro_reflectbox)},
-    {L"scalebox", m(2, 2, macro_scalebox)},
-    {L"resizebox", m(3, macro_resizebox)},
-    {L"raisebox", m(2, 2, macro_raisebox)},
-    {L"shadowbox", m(1, macro_shadowbox)},
-    {L"ovalbox", m(1, macro_ovalbox)},
-    {L"doublebox", m(1, macro_doublebox)},
-    {L"phantom", m(1, macro_phantom)},
-    {L"hphantom", m(1, macro_hphantom)},
-    {L"vphantom", m(1, macro_vphantom)},
-    {L"sp@breve", m(0, macro_spATbreve)},
-    {L"sp@hat", m(0, macro_spAThat)},
-    {L"definecolor", m(3, macro_definecolor)},
-    {L"textcolor", m(2, macro_textcolor)},
-    {L"fgcolor", m(2, macro_fgcolor)},
-    {L"bgcolor", m(2, macro_bgcolor)},
-    {L"colorbox", m(2, macro_colorbox)},
-    {L"fcolorbox", m(3, macro_fcolorbox)},
-    {L"c", m(1, macro_cedilla)},
-    {L"IJ", m(0, macro_IJ)},
-    {L"ij", m(0, macro_IJ)},
-    {L"TStroke", m(0, macro_TStroke)},
-    {L"tStroke", m(0, macro_TStroke)},
-    {L"Lcaron", m(0, macro_LCaron)},
-    {L"tcaron", m(0, macro_tcaron)},
-    {L"lcaron", m(0, macro_LCaron)},
-    {L"k", m(1, macro_ogonek)},
-    {L"cong", m(0, macro_cong)},
-    {L"doteq", m(0, macro_doteq)},
-    {L"dynamic", m(1, 1, macro_dynamic)},
-    {L"externalFont", m(1, macro_externalfont)},
-    {L"Text", m(1, macro_text)},
-    {L"Textit", m(1, macro_textit)},
-    {L"Textbf", m(1, macro_textbf)},
-    {L"Textitbf", m(1, macro_textitbf)},
-    {L"DeclareMathSizes", m(4, macro_declaremathsizes)},
-    {L"magnification", m(1, macro_magnification)},
-    {L"hline", m(0, macro_hline)},
-    {L"tiny", m(0, macro_sizes)},
-    {L"scriptsize", m(0, macro_sizes)},
-    {L"footnotesize", m(0, macro_sizes)},
-    {L"small", m(0, macro_sizes)},
-    {L"normalsize", m(0, macro_sizes)},
-    {L"large", m(0, macro_sizes)},
-    {L"Large", m(0, macro_sizes)},
-    {L"LARGE", m(0, macro_sizes)},
-    {L"huge", m(0, macro_sizes)},
-    {L"Huge", m(0, macro_sizes)},
-    {L"mathcumsup", m(1, macro_mathcumsup)},
-    {L"mathcumsub", m(1, macro_mathcumsub)},
-    {L"hstrok", m(0, macro_hstrok)},
-    {L"Hstrok", m(0, macro_Hstrok)},
-    {L"dstrok", m(0, macro_dstrok)},
-    {L"Dstrok", m(0, macro_Dstrok)},
-    {L"dotminus", m(0, macro_dotminus)},
-    {L"ratio", m(0, macro_ratio)},
-    {L"smallfrowneq", m(0, macro_smallfrowneq)},
-    {L"geoprop", m(0, macro_geoprop)},
-    {L"minuscolon", m(0, macro_minuscolon)},
-    {L"minuscoloncolon", m(0, macro_minuscoloncolon)},
-    {L"simcolon", m(0, macro_simcolon)},
-    {L"simcoloncolon", m(0, macro_simcoloncolon)},
-    {L"approxcolon", m(0, macro_approxcolon)},
-    {L"approxcoloncolon", m(0, macro_approxcoloncolon)},
-    {L"coloncolon", m(0, macro_coloncolon)},
-    {L"equalscolon", m(0, macro_equalscolon)},
-    {L"equalscoloncolon", m(0, macro_equalscoloncolon)},
-    {L"colonminus", m(0, macro_colonminus)},
-    {L"coloncolonminus", m(0, macro_coloncolonminus)},
-    {L"colonequals", m(0, macro_colonequals)},
-    {L"coloncolonequals", m(0, macro_coloncolonequals)},
-    {L"colonsim", m(0, macro_colonsim)},
-    {L"coloncolonsim", m(0, macro_coloncolonsim)},
-    {L"colonapprox", m(0, macro_colonapprox)},
-    {L"coloncolonapprox", m(0, macro_coloncolonapprox)},
-    {L"kern", m(1, macro_kern)},
-    {L"char", m(1, macro_char)},
-    {L"roman", m(1, macro_romannumeral)},
-    {L"Roman", m(1, macro_romannumeral)},
-    {L"textcircled", m(1, macro_textcircled)},
-    {L"textsc", m(1, macro_textsc)},
-    {L"sc", m(0, macro_sc)},
-    {L",", m(0, macro_muskips)},
-    {L":", m(0, macro_muskips)},
-    {L";", m(0, macro_muskips)},
-    {L"thinspace", m(0, macro_muskips)},
-    {L"medspace", m(0, macro_muskips)},
-    {L"thickspace", m(0, macro_muskips)},
-    {L"!", m(0, macro_muskips)},
-    {L"negthinspace", m(0, macro_muskips)},
-    {L"negmedspace", m(0, macro_muskips)},
-    {L"negthickspace", m(0, macro_muskips)},
-    {L"quad", m(0, macro_quad)},
-    {L"surd", m(0, macro_surd)},
-    {L"iint", m(0, macro_iint)},
-    {L"iiint", m(0, macro_iiint)},
-    {L"iiiint", m(0, macro_iiiint)},
-    {L"idotsint", m(0, macro_idotsint)},
-    {L"int", m(0, macro_int)},
-    {L"oint", m(0, macro_oint)},
-    {L"lmoustache", m(0, macro_lmoustache)},
-    {L"rmoustache", m(0, macro_rmoustache)},
-    {L"-", m(0, macro_insertBreakMark)},
-    {L"XML", m(1, macro_xml)},
-    {L"above", m(0, macro_above)},
-    {L"abovewithdelims", m(2, macro_abovewithdelims)},
-    {L"st", m(1, macro_st)},
-    {L"fcscore", m(1, macro_fcscore)},
-    {L"rowcolor", m(1, macro_rowcolor)},
-    {L"columncolor", m(1, macro_columnbg)},
-    {L"arrayrulecolor", m(1, macro_arrayrulecolor)},
-    {L"newcolumntype", m(2, macro_newcolumntype)},
-    {L"color", m(1, macro_color)},
-    {L"cellcolor", m(1, macro_cellcolor)},
-    {L"multirow", m(3, macro_multirow)}
+    mac(2, 2, macro_newcommand, "newcommand"),
+    mac(2, 2, macro_renewcommand, "renewcommand"),
+    mac(2, 1, macro_rule, "rule"),
+    mac(1, 1, macro_includegraphics, "includegraphics"),
+    mac(2, 1, macro_cfrac, "cfrac"),
+    mac(1, 1, macro_xleftarrow, "xleftarrow"),
+    mac(1, 1, macro_xrightarrow, "xrightarrow"),
+    mac(1, 1, macro_sqrt, "sqrt"),
+    mac(1, 1, macro_smash, "smash"),
+    mac(1, 1, macro_hdotsfor, "hdotsfor"),
+    mac(2, 1, macro_stackrel, "stackrel"),
+    mac(2, 1, macro_stackbin, "stackbin"),
+    mac(2, 1, macro_rotatebox, "rotatebox"),
+    mac(2, 2, macro_scalebox, "scalebox"),
+    mac(2, 2, macro_raisebox, "raisebox"),
+    mac(1, 1, macro_dynamic, "dynamic"),
+    mac(1, macro_hvspace, "hspace"),
+    mac(1, macro_hvspace, "vspace"),
+    mac(1, macro_clrlap, "llap"),
+    mac(1, macro_clrlap, "rlap"),
+    mac(1, macro_clrlap, "clap"),
+    mac(1, macro_mathclrlap, "mathllap"),
+    mac(1, macro_mathclrlap, "mathrlap"),
+    mac(1, macro_mathclrlap, "mathclap"),
+    mac(2, macro_frac, "frac"),
+    mac(2, macro_sfrac, "sfrac"),
+    mac(6, macro_genfrac, "genfrac"),
+    mac(0, macro_over, "over"),
+    mac(2, macro_overwithdelims, "overwithdelims"),
+    mac(0, macro_atop, "atop"),
+    mac(2, macro_atopwithdelims, "atopwithdelims"),
+    mac(0, macro_choose, "choose"),
+    mac(0, macro_brace, "brace"),
+    mac(0, macro_brack, "brack"),
+    mac(0, macro_bangle, "bangle"),
+    mac(0, macro_underscore, "underscore"),
+    mac(1, macro_mbox, "mbox"),
+    mac(1, macro_text, "text"),
+    mac(1, macro_intertext, "intertext"),
+    mac(2, macro_binom, "binom"),
+    mac(1, macro_mathbf, "mathbf"),
+    mac(0, macro_bf, "bf"),
+    mac(1, macro_textstyles, "mathbb"),
+    mac(1, macro_textstyles, "mathcal"),
+    mac(1, macro_textstyles, "cal"),
+    mac(1, macro_mathit, "mathit"),
+    mac(0, macro_it, "it"),
+    mac(1, macro_mathrm, "mathrm"),
+    mac(0, macro_rm, "rm"),
+    mac(1, macro_textstyles, "mathscr"),
+    mac(1, macro_mathsf, "mathsf"),
+    mac(0, macro_sf, "sf"),
+    mac(1, macro_mathtt, "mathtt"),
+    mac(0, macro_tt, "tt"),
+    mac(1, macro_textstyles, "mathfrak"),
+    mac(1, macro_textstyles, "mathds"),
+    mac(1, macro_textstyles, "frak"),
+    mac(1, macro_textstyles, "Bbb"),
+    mac(1, macro_textstyles, "oldstylenums"),
+    mac(1, macro_textstyles, "bold"),
+    mac(1, macro_accentbiss, "^"),
+    mac(1, macro_accentbiss, "\'"),
+    mac(1, macro_accentbiss, "\""),
+    mac(1, macro_accentbiss, "`"),
+    mac(1, macro_accentbiss, "="),
+    mac(1, macro_accentbiss, "."),
+    mac(1, macro_accentbiss, "~"),
+    mac(1, macro_accentbiss, "u"),
+    mac(1, macro_accentbiss, "v"),
+    mac(1, macro_accentbiss, "H"),
+    mac(1, macro_accentbiss, "r"),
+    mac(1, macro_accentbiss, "U"),
+    mac(1, macro_T, "T"),
+    mac(1, macro_accentbiss, "t"),
+    mac(2, macro_accent, "accent"),
+    mac(2, macro_grkaccent, "grkaccent"),
+    mac(1, macro_accents, "hat"),
+    mac(1, macro_accents, "widehat"),
+    mac(1, macro_accents, "tilde"),
+    mac(1, macro_accents, "acute"),
+    mac(1, macro_accents, "grave"),
+    mac(1, macro_accents, "ddot"),
+    mac(1, macro_accents, "cyrddot"),
+    mac(1, macro_accents, "mathring"),
+    mac(1, macro_accents, "bar"),
+    mac(1, macro_accents, "breve"),
+    mac(1, macro_accents, "check"),
+    mac(1, macro_accents, "vec"),
+    mac(1, macro_accents, "dot"),
+    mac(1, macro_accents, "widetilde"),
+    mac(0, macro_nbsp, "nbsp"),
+    mac(1, macro_smallmatrixATATenv, "smallmatrix@@env"),
+    mac(1, macro_matrixATATenv, "matrix@@env"),
+    mac(1, macro_overrightarrow, "overrightarrow"),
+    mac(1, macro_overleftarrow, "overleftarrow"),
+    mac(1, macro_overleftrightarrow, "overleftrightarrow"),
+    mac(1, macro_underrightarrow, "underrightarrow"),
+    mac(1, macro_underleftarrow, "underleftarrow"),
+    mac(1, macro_underleftrightarrow, "underleftrightarrow"),
+    mac(1, macro_underbrace, "underbrace"),
+    mac(1, macro_overbrace, "overbrace"),
+    mac(1, macro_underbrack, "underbrack"),
+    mac(1, macro_overbrack, "overbrack"),
+    mac(1, macro_underparen, "underparen"),
+    mac(1, macro_overparen, "overparen"),
+    mac(1, macro_sqrt, "sqrtsign"),
+    mac(1, macro_overline, "overline"),
+    mac(1, macro_underline, "underline"),
+    mac(1, macro_mathop, "mathop"),
+    mac(1, macro_mathpunct, "mathpunct"),
+    mac(1, macro_mathord, "mathord"),
+    mac(1, macro_mathrel, "mathrel"),
+    mac(1, macro_mathinner, "mathinner"),
+    mac(1, macro_mathbin, "mathbin"),
+    mac(1, macro_mathopen, "mathopen"),
+    mac(1, macro_mathclose, "mathclose"),
+    mac(0, macro_joinrel, "joinrel"),
+    mac(0, macro_vdots, "vdots"),
+    mac(0, macro_ddots, "ddots"),
+    mac(0, macro_iddots, "iddots"),
+    mac(0, macro_nolimits, "nolimits"),
+    mac(0, macro_limits, "limits"),
+    mac(0, macro_normal, "normal"),
+    mac(0, macro_leftparenthesis, "("),
+    mac(0, macro_leftbracket, "["),
+    mac(1, macro_left, "left"),
+    mac(1, macro_middle, "middle"),
+    mac(0, macro_cr, "cr"),
+    mac(3, macro_multicolumn, "multicolumn"),
+    mac(2, macro_arrayATATenv, "array@@env"),
+    mac(2, macro_alignATATenv, "align@@env"),
+    mac(2, macro_alignedATATenv, "aligned@@env"),
+    mac(2, macro_flalignATATenv, "flalign@@env"),
+    mac(2, macro_alignatATATenv, "alignat@@env"),
+    mac(2, macro_alignedatATATenv, "alignedat@@env"),
+    mac(2, macro_multlineATATenv, "multline@@env"),
+    mac(2, macro_gatherATATenv, "gather@@env"),
+    mac(2, macro_gatheredATATenv, "gathered@@env"),
+    mac(1, macro_shoveright, "shoveright"),
+    mac(1, macro_shoveleft, "shoveleft"),
+    mac(0, macro_backslashcr, "\\"),
+    mac(3, macro_newenvironment, "newenvironment"),
+    mac(3, macro_renewenvironment, "renewenvironment"),
+    mac(0, macro_makeatletter, "makeatletter"),
+    mac(0, macro_makeatother, "makeatother"),
+    mac(1, macro_fbox, "fbox"),
+    mac(1, macro_fbox, "boxed"),
+    mac(0, macro_questeq, "questeq"),
+    mac(2, macro_accentset, "accentset"),
+    mac(2, macro_underaccent, "underaccent"),
+    mac(1, macro_undertilde, "undertilde"),
+    mac(2, macro_overset, "overset"),
+    mac(1, macro_Braket, "Braket"),
+    mac(1, macro_Set, "Set"),
+    mac(2, macro_underset, "underset"),
+    mac(1, macro_boldsymbol, "boldsymbol"),
+    mac(0, macro_LaTeX, "LaTeX"),
+    mac(0, macro_GeoGebra, "GeoGebra"),
+    mac(1, macro_big, "big"),
+    mac(1, macro_Big, "Big"),
+    mac(1, macro_bigg, "bigg"),
+    mac(1, macro_Bigg, "Bigg"),
+    mac(1, macro_bigl, "bigl"),
+    mac(1, macro_Bigl, "Bigl"),
+    mac(1, macro_biggl, "biggl"),
+    mac(1, macro_Biggl, "Biggl"),
+    mac(1, macro_bigr, "bigr"),
+    mac(1, macro_Bigr, "Bigr"),
+    mac(1, macro_biggr, "biggr"),
+    mac(1, macro_Biggr, "Biggr"),
+    mac(0, macro_displaystyle, "displaystyle"),
+    mac(0, macro_textstyle, "textstyle"),
+    mac(0, macro_scriptstyle, "scriptstyle"),
+    mac(0, macro_scriptscriptstyle, "scriptscriptstyle"),
+    mac(3, macro_sideset, "sideset"),
+    mac(3, macro_prescript, "prescript"),
+    mac(1, macro_reflectbox, "reflectbox"),
+    mac(3, macro_resizebox, "resizebox"),
+    mac(1, macro_shadowbox, "shadowbox"),
+    mac(1, macro_ovalbox, "ovalbox"),
+    mac(1, macro_doublebox, "doublebox"),
+    mac(1, macro_phantom, "phantom"),
+    mac(1, macro_hphantom, "hphantom"),
+    mac(1, macro_vphantom, "vphantom"),
+    mac(0, macro_spATbreve, "sp@breve"),
+    mac(0, macro_spAThat, "sp@hat"),
+    mac(3, macro_definecolor, "definecolor"),
+    mac(2, macro_textcolor, "textcolor"),
+    mac(2, macro_fgcolor, "fgcolor"),
+    mac(2, macro_bgcolor, "bgcolor"),
+    mac(2, macro_colorbox, "colorbox"),
+    mac(3, macro_fcolorbox, "fcolorbox"),
+    mac(1, macro_cedilla, "c"),
+    mac(0, macro_IJ, "IJ"),
+    mac(0, macro_IJ, "ij"),
+    mac(0, macro_TStroke, "TStroke"),
+    mac(0, macro_TStroke, "tStroke"),
+    mac(0, macro_LCaron, "Lcaron"),
+    mac(0, macro_tcaron, "tcaron"),
+    mac(0, macro_LCaron, "lcaron"),
+    mac(1, macro_ogonek, "k"),
+    mac(0, macro_cong, "cong"),
+    mac(0, macro_doteq, "doteq"),
+    mac(1, macro_externalfont, "externalFont"),
+    mac(1, macro_text, "Text"),
+    mac(1, macro_textit, "Textit"),
+    mac(1, macro_textbf, "Textbf"),
+    mac(1, macro_textitbf, "Textitbf"),
+    mac(4, macro_declaremathsizes, "DeclareMathSizes"),
+    mac(1, macro_magnification, "magnification"),
+    mac(0, macro_hline, "hline"),
+    mac(0, macro_sizes, "tiny"),
+    mac(0, macro_sizes, "scriptsize"),
+    mac(0, macro_sizes, "footnotesize"),
+    mac(0, macro_sizes, "small"),
+    mac(0, macro_sizes, "normalsize"),
+    mac(0, macro_sizes, "large"),
+    mac(0, macro_sizes, "Large"),
+    mac(0, macro_sizes, "LARGE"),
+    mac(0, macro_sizes, "huge"),
+    mac(0, macro_sizes, "Huge"),
+    mac(1, macro_mathcumsup, "mathcumsup"),
+    mac(1, macro_mathcumsub, "mathcumsub"),
+    mac(0, macro_hstrok, "hstrok"),
+    mac(0, macro_Hstrok, "Hstrok"),
+    mac(0, macro_dstrok, "dstrok"),
+    mac(0, macro_Dstrok, "Dstrok"),
+    mac(0, macro_dotminus, "dotminus"),
+    mac(0, macro_ratio, "ratio"),
+    mac(0, macro_smallfrowneq, "smallfrowneq"),
+    mac(0, macro_geoprop, "geoprop"),
+    mac(0, macro_minuscolon, "minuscolon"),
+    mac(0, macro_minuscoloncolon, "minuscoloncolon"),
+    mac(0, macro_simcolon, "simcolon"),
+    mac(0, macro_simcoloncolon, "simcoloncolon"),
+    mac(0, macro_approxcolon, "approxcolon"),
+    mac(0, macro_approxcoloncolon, "approxcoloncolon"),
+    mac(0, macro_coloncolon, "coloncolon"),
+    mac(0, macro_equalscolon, "equalscolon"),
+    mac(0, macro_equalscoloncolon, "equalscoloncolon"),
+    mac(0, macro_colonminus, "colonminus"),
+    mac(0, macro_coloncolonminus, "coloncolonminus"),
+    mac(0, macro_colonequals, "colonequals"),
+    mac(0, macro_coloncolonequals, "coloncolonequals"),
+    mac(0, macro_colonsim, "colonsim"),
+    mac(0, macro_coloncolonsim, "coloncolonsim"),
+    mac(0, macro_colonapprox, "colonapprox"),
+    mac(0, macro_coloncolonapprox, "coloncolonapprox"),
+    mac(1, macro_kern, "kern"),
+    mac(1, macro_char, "char"),
+    mac(1, macro_romannumeral, "roman"),
+    mac(1, macro_romannumeral, "Roman"),
+    mac(1, macro_textcircled, "textcircled"),
+    mac(1, macro_textsc, "textsc"),
+    mac(0, macro_sc, "sc"),
+    mac(0, macro_muskips, ","),
+    mac(0, macro_muskips, ":"),
+    mac(0, macro_muskips, ";"),
+    mac(0, macro_muskips, "thinspace"),
+    mac(0, macro_muskips, "medspace"),
+    mac(0, macro_muskips, "thickspace"),
+    mac(0, macro_muskips, "!"),
+    mac(0, macro_muskips, "negthinspace"),
+    mac(0, macro_muskips, "negmedspace"),
+    mac(0, macro_muskips, "negthickspace"),
+    mac(0, macro_quad, "quad"),
+    mac(0, macro_surd, "surd"),
+    mac(0, macro_iint, "iint"),
+    mac(0, macro_iiint, "iiint"),
+    mac(0, macro_iiiint, "iiiint"),
+    mac(0, macro_idotsint, "idotsint"),
+    mac(0, macro_int, "int"),
+    mac(0, macro_oint, "oint"),
+    mac(0, macro_lmoustache, "lmoustache"),
+    mac(0, macro_rmoustache, "rmoustache"),
+    mac(0, macro_insertBreakMark, "-"),
+    mac(1, macro_xml, "XML"),
+    mac(0, macro_above, "above"),
+    mac(2, macro_abovewithdelims, "abovewithdelims"),
+    mac(1, macro_st, "st"),
+    mac(1, macro_fcscore, "fcscore"),
+    mac(1, macro_rowcolor, "rowcolor"),
+    mac(1, macro_columnbg, "columncolor"),
+    mac(1, macro_arrayrulecolor, "arrayrulecolor"),
+    mac(2, macro_newcolumntype, "newcolumntype"),
+    mac(1, macro_color, "color"),
+    mac(1, macro_cellcolor, "cellcolor"),
+    mac(3, macro_multirow, "multirow")
 #ifdef __GA_DEBUG
-    ,
-    {L"debug", m(0, macro_debug)},
-    {L"undebug", m(0, macro_undebug)}
+        ,
+    mac(0, macro_debug, "debug"),
+    mac(0, macro_undebug, "undebug")
 #endif  // __GA_DEBUG
 };
 
@@ -314,80 +323,80 @@ map<wstring, wstring> NewCommandMacro::_macroreplacement;
 Macro* NewCommandMacro::_instance = new NewCommandMacro();
 
 inline static void e(
+    int nbargs,
     const wstring& name,
     const wstring& begdef,
-    const wstring& enddef,
-    int nbargs) throw(ex_parse) {
+    const wstring& enddef) throw(ex_parse) {
     NewEnvironmentMacro::addNewEnvironment(name, begdef, enddef, nbargs);
 }
 
 inline static void c(
+    int nbargs,
     const wstring& name,
-    const wstring& code,
-    int nbargs) throw(ex_parse) {
+    const wstring& code) throw(ex_parse) {
     NewCommandMacro::addNewCommand(name, code, nbargs);
 }
 
 void NewCommandMacro::_init_() {
     // Predefined environments
-    e(L"array", L"\\array@@env{#1}{", L"}", 1);
-    e(L"tabular", L"\\array@@env{#1}{", L"}", 1);
-    e(L"matrix", L"\\matrix@@env{", L"}", 0);
-    e(L"smallmatrix", L"\\smallmatrix@@env{", L"}", 0);
-    e(L"pmatrix", L"\\left(\\begin{matrix}", L"\\end{matrix}\\right)", 0);
-    e(L"bmatrix", L"\\left[\\begin{matrix}", L"\\end{matrix}\\right]", 0);
-    e(L"Bmatrix", L"\\left\\{\\begin{matrix}", L"\\end{matrix}\\right\\}", 0);
-    e(L"vmatrix", L"\\left|\\begin{matrix}", L"\\end{matrix}\\right|", 0);
-    e(L"Vmatrix", L"\\left\\|\\begin{matrix}", L"\\end{matrix}\\right\\|", 0);
-    e(L"eqnarray", L"\\begin{array}{rcl}", L"\\end{array}", 0);
-    e(L"align", L"\\align@@env{", L"}", 0);
-    e(L"flalign", L"\\flalign@@env{", L"}", 0);
-    e(L"alignat", L"\\alignat@@env{#1}{", L"}", 1);
-    e(L"aligned", L"\\aligned@@env{", L"}", 0);
-    e(L"alignedat", L"\\alignedat@@env{#1}{", L"}", 1);
-    e(L"multline", L"\\multline@@env{", L"}", 0);
-    e(L"cases", L"\\left\\{\\begin{array}{l@{\\!}l}", L"\\end{array}\\right.", 0);
-    e(L"split", L"\\begin{array}{rl}", L"\\end{array}", 0);
-    e(L"gather", L"\\gather@@env{", L"}", 0);
-    e(L"gathered", L"\\gathered@@env{", L"}", 0);
-    e(L"math", L"\\(", L"\\)", 0);
-    e(L"displaymath", L"\\[", L"\\]", 0);
+    e(1, L"array", L"\\array@@env{#1}{", L"}");
+    e(1, L"tabular", L"\\array@@env{#1}{", L"}");
+    e(0, L"matrix", L"\\matrix@@env{", L"}");
+    e(0, L"smallmatrix", L"\\smallmatrix@@env{", L"}");
+    e(0, L"pmatrix", L"\\left(\\begin{matrix}", L"\\end{matrix}\\right)");
+    e(0, L"bmatrix", L"\\left[\\begin{matrix}", L"\\end{matrix}\\right]");
+    e(0, L"Bmatrix", L"\\left\\{\\begin{matrix}", L"\\end{matrix}\\right\\}");
+    e(0, L"vmatrix", L"\\left|\\begin{matrix}", L"\\end{matrix}\\right|");
+    e(0, L"Vmatrix", L"\\left\\|\\begin{matrix}", L"\\end{matrix}\\right\\|");
+    e(0, L"eqnarray", L"\\begin{array}{rcl}", L"\\end{array}");
+    e(0, L"align", L"\\align@@env{", L"}");
+    e(0, L"flalign", L"\\flalign@@env{", L"}");
+    e(1, L"alignat", L"\\alignat@@env{#1}{", L"}");
+    e(0, L"aligned", L"\\aligned@@env{", L"}");
+    e(1, L"alignedat", L"\\alignedat@@env{#1}{", L"}");
+    e(0, L"multline", L"\\multline@@env{", L"}");
+    e(0, L"cases", L"\\left\\{\\begin{array}{l@{\\!}l}", L"\\end{array}\\right.");
+    e(0, L"split", L"\\begin{array}{rl}", L"\\end{array}");
+    e(0, L"gather", L"\\gather@@env{", L"}");
+    e(0, L"gathered", L"\\gathered@@env{", L"}");
+    e(0, L"math", L"\\(", L"\\)");
+    e(0, L"displaymath", L"\\[", L"\\]");
     // Predefined commands
-    c(L"operatorname", L"\\mathop{\\mathrm{#1}}\\nolimits ", 1);
-    c(L"DeclareMathOperator", L"\\newcommand{#1}{\\mathop{\\mathrm{#2}}\\nolimits}", 2);
-    c(L"substack", L"{\\scriptstyle\\begin{array}{c}#1\\end{array}}", 1);
-    c(L"dfrac", L"\\genfrac{}{}{}{}{#1}{#2}", 2);
-    c(L"tfrac", L"\\genfrac{}{}{}{1}{#1}{#2}", 2);
-    c(L"dbinom", L"\\genfrac{(}{)}{0pt}{}{#1}{#2}", 2);
-    c(L"tbinom", L"\\genfrac{(}{)}{0pt}{1}{#1}{#2}", 2);
-    c(L"pmod", L"\\qquad\\mathbin{(\\mathrm{mod}\\ #1)}", 1);
-    c(L"mod", L"\\qquad\\mathbin{\\mathrm{mod}\\ #1}", 1);
-    c(L"pod", L"\\qquad\\mathbin{(#1)}", 1);
-    c(L"dddot", L"\\mathop{#1}\\limits^{...}", 1);
-    c(L"ddddot", L"\\mathop{#1}\\limits^{....}", 1);
-    c(L"spdddot", L"^{\\mathrm{...}}", 0);
-    c(L"spbreve", L"^{\\makeatletter\\sp@breve\\makeatother}", 0);
-    c(L"sphat", L"^{\\makeatletter\\sp@hat\\makeatother}", 0);
-    c(L"spddot", L"^{\\displaystyle..}", 0);
-    c(L"spcheck", L"^{\\vee}", 0);
-    c(L"sptilde", L"^{\\sim}", 0);
-    c(L"spdot", L"^{\\displaystyle.}", 0);
-    c(L"d", L"\\underaccent{\\dot}{#1}", 1);
-    c(L"b", L"\\underaccent{\\bar}{#1}", 1);
-    c(L"Bra", L"\\left\\langle{#1}\\right\\vert", 1);
-    c(L"Ket", L"\\left\\vert{#1}\\right\\rangle", 1);
-    c(L"textsuperscript", L"{}^{\\text{#1}}", 1);
-    c(L"textsubscript", L"{}_{\\text{#1}}", 1);
-    c(L"textit", L"\\mathit{\\text{#1}}", 1);
-    c(L"textbf", L"\\mathbf{\\text{#1}}", 1);
-    c(L"textsf", L"\\mathsf{\\text{#1}}", 1);
-    c(L"texttt", L"\\mathtt{\\text{#1}}", 1);
-    c(L"textrm", L"\\text{#1}", 1);
-    c(L"degree", L"^\\circ", 0);
-    c(L"with", L"\\mathbin{\\&}", 0);
-    c(L"parr", L"\\mathbin{\\rotatebox[origin=c]{180}{\\&}}", 0);
-    c(L"copyright", L"\\textcircled{\\raisebox{0.2ex}{c}}", 0);
-    c(L"L", L"\\mathrm{\\polishlcross L}", 0);
-    c(L"l", L"\\mathrm{\\polishlcross l}", 0);
-    c(L"Join", L"\\mathop{\\rlap{\\ltimes}\\rtimes}", 0);
+    c(1, L"operatorname", L"\\mathop{\\mathrm{#1}}\\nolimits ");
+    c(2, L"DeclareMathOperator", L"\\newcommand{#1}{\\mathop{\\mathrm{#2}}\\nolimits}");
+    c(1, L"substack", L"{\\scriptstyle\\begin{array}{c}#1\\end{array}}");
+    c(2, L"dfrac", L"\\genfrac{}{}{}{}{#1}{#2}");
+    c(2, L"tfrac", L"\\genfrac{}{}{}{1}{#1}{#2}");
+    c(2, L"dbinom", L"\\genfrac{(}{)}{0pt}{}{#1}{#2}");
+    c(2, L"tbinom", L"\\genfrac{(}{)}{0pt}{1}{#1}{#2}");
+    c(1, L"pmod", L"\\qquad\\mathbin{(\\mathrm{mod}\\ #1)}");
+    c(1, L"mod", L"\\qquad\\mathbin{\\mathrm{mod}\\ #1}");
+    c(1, L"pod", L"\\qquad\\mathbin{(#1)}");
+    c(1, L"dddot", L"\\mathop{#1}\\limits^{...}");
+    c(1, L"ddddot", L"\\mathop{#1}\\limits^{....}");
+    c(0, L"spdddot", L"^{\\mathrm{...}}");
+    c(0, L"spbreve", L"^{\\makeatletter\\sp@breve\\makeatother}");
+    c(0, L"sphat", L"^{\\makeatletter\\sp@hat\\makeatother}");
+    c(0, L"spddot", L"^{\\displaystyle..}");
+    c(0, L"spcheck", L"^{\\vee}");
+    c(0, L"sptilde", L"^{\\sim}");
+    c(0, L"spdot", L"^{\\displaystyle.}");
+    c(1, L"d", L"\\underaccent{\\dot}{#1}");
+    c(1, L"b", L"\\underaccent{\\bar}{#1}");
+    c(1, L"Bra", L"\\left\\langle{#1}\\right\\vert");
+    c(1, L"Ket", L"\\left\\vert{#1}\\right\\rangle");
+    c(1, L"textsuperscript", L"{}^{\\text{#1}}");
+    c(1, L"textsubscript", L"{}_{\\text{#1}}");
+    c(1, L"textit", L"\\mathit{\\text{#1}}");
+    c(1, L"textbf", L"\\mathbf{\\text{#1}}");
+    c(1, L"textsf", L"\\mathsf{\\text{#1}}");
+    c(1, L"texttt", L"\\mathtt{\\text{#1}}");
+    c(1, L"textrm", L"\\text{#1}");
+    c(0, L"degree", L"^\\circ");
+    c(0, L"with", L"\\mathbin{\\&}");
+    c(0, L"parr", L"\\mathbin{\\rotatebox[origin=c]{180}{\\&}}");
+    c(0, L"copyright", L"\\textcircled{\\raisebox{0.2ex}{c}}");
+    c(0, L"L", L"\\mathrm{\\polishlcross L}");
+    c(0, L"l", L"\\mathrm{\\polishlcross l}");
+    c(0, L"Join", L"\\mathop{\\rlap{\\ltimes}\\rtimes}");
 }
