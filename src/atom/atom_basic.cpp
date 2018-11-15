@@ -128,7 +128,7 @@ const map<string, int> SpaceAtom::_units = {
     {"dd", UNIT_DD},
     {"cc", UNIT_CC}};
 
-const int SpaceAtom::_units_count = 13;
+const int SpaceAtom::_units_count = 14;
 
 const function<float(_in_ const TeXEnvironment&)> SpaceAtom::_unitConversions[] = {
     // EM
@@ -183,6 +183,10 @@ const function<float(_in_ const TeXEnvironment&)> SpaceAtom::_unitConversions[] 
     // CC
     [](_in_ const TeXEnvironment& env) -> float {
         return (12.7924193070f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
+    },
+    // X8
+    [](_in_ const TeXEnvironment& env) -> float {
+        return env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
     }};
 
 sptr<Box> SpaceAtom::createBox(_out_ TeXEnvironment& env) {
@@ -544,11 +548,15 @@ void RowAtom::setPreviousAtom(const sptr<Dummy>& prev) {
 
 VRowAtom::VRowAtom() {
     _addInterline = false;
+    _vtop = false;
+    _halign = ALIGN_NONE;
     _raise = sptr<SpaceAtom>(new SpaceAtom(UNIT_EX, 0, 0, 0));
 }
 
 VRowAtom::VRowAtom(const sptr<Atom>& el) {
     _addInterline = false;
+    _vtop = false;
+    _halign = ALIGN_NONE;
     _raise = sptr<SpaceAtom>(new SpaceAtom(UNIT_EX, 0, 0, 0));
     if (el != nullptr) {
         VRowAtom* a = dynamic_cast<VRowAtom*>(el.get());
@@ -581,16 +589,43 @@ void VRowAtom::append(const sptr<Atom>& el) {
 sptr<Box> VRowAtom::createBox(_out_ TeXEnvironment& env) {
     VerticalBox* vb = new VerticalBox();
     sptr<Box> interline(new StrutBox(0, env.getInterline(), 0, 0));
-    // convert atoms to boxes and add to the vertical box
-    const int s = _elements.size();
-    for (int i = 0; i < s; i++) {
-        vb->add(_elements[i]->createBox(env));
-        if (_addInterline && i < s - 1) vb->add(interline);
+
+    if (_halign != ALIGN_NONE) {
+        float maxWidth = F_MIN;
+        vector<sptr<Box>> boxes;
+        const int s = _elements.size();
+        // find the width of the widest box
+        for (int i = 0; i < s; i++) {
+            sptr<Box> box = _elements[i]->createBox(env);
+            boxes.push_back(box);
+            if (maxWidth < box->_width) maxWidth = box->_width;
+        }
+        // align the boxes and add it to the vertical box
+        for (int i = 0; i < s; i++) {
+            auto box = boxes[i];
+            auto hb = sptr<Box>(new HorizontalBox(box, maxWidth, _halign));
+            vb->add(hb);
+            if (_addInterline && i < s - 1) vb->add(interline);
+        }
+    } else {
+        // convert atoms to boxes and add to the vertical box
+        const int s = _elements.size();
+        for (int i = 0; i < s; i++) {
+            vb->add(_elements[i]->createBox(env));
+            if (_addInterline && i < s - 1) vb->add(interline);
+        }
     }
+
     vb->_shift = -_raise->createBox(env)->_width;
-    float t = vb->getSize() == 0 ? 0 : vb->_children.back()->_depth;
-    vb->_height = vb->_depth + vb->_height - t;
-    vb->_depth = t;
+    if (_vtop) {
+        float t = vb->getSize() == 0 ? 0 : vb->_children.front()->_height;
+        vb->_height = t;
+        vb->_depth = vb->_depth + vb->_height - t;
+    } else {
+        float t = vb->getSize() == 0 ? 0 : vb->_children.back()->_depth;
+        vb->_height = vb->_depth + vb->_height - t;
+        vb->_depth = t;
+    }
     return sptr<Box>(vb);
 }
 

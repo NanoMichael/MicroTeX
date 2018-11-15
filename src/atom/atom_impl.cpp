@@ -9,12 +9,12 @@ color MatrixAtom::LINE_COLOR = trans;
 
 map<wstring, wstring> MatrixAtom::_colspeReplacement;
 
-SpaceAtom MatrixAtom::_hsep        (UNIT_EM, 1.f, 0.f, 0.f);
-SpaceAtom MatrixAtom::_semihsep    (UNIT_EM, 0.5f, 0.f, 0.f);
-SpaceAtom MatrixAtom::_vsep_in     (UNIT_EX, 0.f, 1.f, 0.f);
+SpaceAtom MatrixAtom::_hsep(UNIT_EM, 1.f, 0.f, 0.f);
+SpaceAtom MatrixAtom::_semihsep(UNIT_EM, 0.5f, 0.f, 0.f);
+SpaceAtom MatrixAtom::_vsep_in(UNIT_EX, 0.f, 1.f, 0.f);
 SpaceAtom MatrixAtom::_vsep_ext_top(UNIT_EX, 0.f, 0.5f, 0.f);
 SpaceAtom MatrixAtom::_vsep_ext_bot(UNIT_EX, 0.f, 0.5f, 0.f);
-SpaceAtom MatrixAtom::_align       (MEDMUSKIP);
+SpaceAtom MatrixAtom::_align(MEDMUSKIP);
 
 sptr<Box> MatrixAtom::_nullbox(new StrutBox(0, 0, 0, 0));
 
@@ -466,10 +466,12 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
                 int tj = j;
                 float l = j == 0 ? Hsep[j] : Hsep[j] / 2;
                 if (boxarr[i][j]->_type == -1) {
-                    wb = new WrapperBox(boxarr[i][j], rowWidth[j], lineHeight[i], lineDepth[i], _position[j]);
+                    wb = new WrapperBox(
+                        boxarr[i][j], rowWidth[j], lineHeight[i], lineDepth[i], _position[j]);
                 } else {
                     auto b = generateMulticolumn(env, boxarr[i][j], Hsep, rowWidth, i, j);
-                    MulticolumnAtom* matom = dynamic_cast<MulticolumnAtom*>(_matrix->_array[i][j].get());
+                    MulticolumnAtom* matom = dynamic_cast<MulticolumnAtom*>(
+                        _matrix->_array[i][j].get());
                     j += matom->getSkipped() - 1;
                     wb = new WrapperBox(b, b->_width, lineHeight[i], lineDepth[i], ALIGN_LEFT);
                     lastVline = matom->hasRightVline();
@@ -499,7 +501,8 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
                 HlineAtom* at = dynamic_cast<HlineAtom*>(_matrix->_array[i][j].get());
                 at->setColor(LINE_COLOR);
                 at->setWidth(matW);
-                if (i >= 1 && dynamic_cast<HlineAtom*>(_matrix->_array[i - 1][j].get()) != nullptr) {
+                if (i >= 1 &&
+                    dynamic_cast<HlineAtom*>(_matrix->_array[i - 1][j].get()) != nullptr) {
                     hb->add(sptr<Box>(new StrutBox(0, 2 * drt, 0, 0)));
                 }
 
@@ -1098,4 +1101,70 @@ sptr<Box> XArrowAtom::createBox(_out_ TeXEnvironment& env) {
     HorizontalBox* hb = new HorizontalBox(vb, vb->_width + 2 * sep->_height, ALIGN_CENTER);
 
     return sptr<Box>(hb);
+}
+
+void LongDivAtom::calculate(_out_ vector<wstring>& results) {
+    long quotient = _dividend / _divisor;
+    results.push_back(towstring(quotient));
+    string x = tostring(quotient);
+    size_t len = x.length();
+    long remaining = _dividend;
+    results.push_back(towstring(remaining));
+    for (size_t i = 0; i < len; i++) {
+        long b = (x[i] - '0') * pow(10, len - i - 1);
+        long product = b * _divisor;
+        remaining = remaining - product;
+        results.push_back(towstring(product));
+        results.push_back(towstring(remaining));
+    }
+}
+
+LongDivAtom::LongDivAtom(long divisor, long dividend)
+    : _divisor(divisor), _dividend(dividend) {
+    setHalign(ALIGN_RIGHT);
+    setVtop(true);
+    vector<wstring> results;
+    calculate(results);
+
+    auto rule = sptr<Atom>(new RuleAtom(
+        UNIT_EX, 0.f,
+        UNIT_EX, 2.6f,
+        UNIT_EX, 0.5f));
+
+    const int s = results.size();
+    for (int i = 0; i < s; i++) {
+        auto num = TeXFormula(results[i])._root;
+        if (i == 1) {
+            wstring divisor = towstring(_divisor);
+            auto rparen = SymbolAtom::get(TeXFormula::_symbolMappings[')']);
+            auto big = sptr<Atom>(new BigDelimiterAtom(rparen, 1));
+            auto ph = sptr<Atom>(new PhantomAtom(big, false, true, true));
+            auto ra = sptr<RowAtom>(new RowAtom(ph));
+            auto raised = sptr<Atom>(new RaiseAtom(
+                big,
+                UNIT_X8, 3.5f,
+                UNIT_X8, 0.f,
+                UNIT_X8, 0.f));
+            ra->add(sptr<Atom>(new SmashedAtom(raised)));
+            ra->add(num);
+            auto oa = sptr<Atom>(new OverlinedAtom(ra));
+            auto row = sptr<RowAtom>(new RowAtom(TeXFormula(divisor)._root));
+            row->add(sptr<Atom>(new SpaceAtom(THINMUSKIP)));
+            row->add(oa);
+            append(row);
+            continue;
+        }
+        if (i % 2 == 0) {
+            auto row = sptr<RowAtom>(new RowAtom(num));
+            row->add(rule);
+            if (i == 0)
+                append(row);
+            else
+                append(sptr<Atom>(new UnderlinedAtom(row)));
+        } else {
+            auto row = sptr<RowAtom>(new RowAtom(num));
+            row->add(rule);
+            append(row);
+        }
+    }
 }

@@ -71,6 +71,8 @@ public:
             _h = false;
     }
 
+    SmashedAtom(const sptr<Atom>& a) : _at(a), _h(true), _d(true) {}
+
     sptr<Box> createBox(_out_ TeXEnvironment& env) override {
         sptr<Box> b = _at->createBox(env);
         if (_h) b->_height = 0;
@@ -710,6 +712,8 @@ private:
     vector<sptr<Atom>> _elements;
     sptr<SpaceAtom> _raise;
     bool _addInterline;
+    bool _vtop;
+    int _halign;
 
 public:
     VRowAtom();
@@ -722,6 +726,22 @@ public:
 
     inline bool getAddInterline() const {
         return _addInterline;
+    }
+
+    inline void setHalign(int halign) {
+        _halign = halign;
+    }
+
+    inline bool getHalign() const {
+        return _halign;
+    }
+
+    inline void setVtop(bool vtop) {
+        _vtop = vtop;
+    }
+
+    inline bool getVtop() const {
+        return _vtop;
     }
 
     void setRaise(int unit, float r);

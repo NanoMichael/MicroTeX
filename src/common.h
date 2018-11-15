@@ -803,7 +803,11 @@ enum TeXConstants {
     UNIT_SP,
     UNIT_PT,
     UNIT_DD,
-    UNIT_CC
+    UNIT_CC,
+    /**
+     * 1 x8 = 1 default rule thickness
+     */
+    UNIT_X8
 };
 
 }  // namespace tex
