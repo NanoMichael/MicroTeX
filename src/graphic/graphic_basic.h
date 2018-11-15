@@ -12,14 +12,14 @@ namespace tex {
 
 typedef unsigned int color;
 
-static const color trans = 0x00000000;
-static const color black = 0xff000000;
-static const color white = 0xffffffff;
-static const color red = 0xffff0000;
-static const color green = 0xff00ff00;
-static const color blue = 0xff0000ff;
-static const color yellow = 0xffffff00;
-static const color cyan = 0xff00ffff;
+static const color trans   = 0x00000000;
+static const color black   = 0xff000000;
+static const color white   = 0xffffffff;
+static const color red     = 0xffff0000;
+static const color green   = 0xff00ff00;
+static const color blue    = 0xff0000ff;
+static const color yellow  = 0xffffff00;
+static const color cyan    = 0xff00ffff;
 static const color magenta = 0xffff00ff;
 
 static const color TRANS = trans;

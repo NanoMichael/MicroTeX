@@ -31,10 +31,10 @@ public:
      * Derive font from current font with specified style
      *
      * @param style
-     *      Required style, specified in enum TypefaceStyle,
+     *      required style, specified in enum TypefaceStyle,
      *      we use int type to represents style
      */
-    virtual shared_ptr<Font> deriveFont(int style) const = 0;
+    virtual sptr<Font> deriveFont(int style) const = 0;
 
     /**
      * Check if current font equals other
@@ -50,9 +50,9 @@ public:
      * Create font from file
      * 
      * @param file
-     *      Specified path of font file
+     *      specified path of the font file
      * @param size
-     *      The required font size
+     *      required font size
      */
     static Font* create(const string& file, float size);
 
@@ -60,13 +60,13 @@ public:
      * Create font with specified name, style and size
      *
      * @param name
-     *      The font name
+     *      the font name
      * @param style
-     *      The font style
+     *      the font style
      * @param size
-     *      The font size
+     *      the font size
      */
-    static shared_ptr<Font> _create(const string& name, int style, float size);
+    static sptr<Font> _create(const string& name, int style, float size);
 };
 
 /**
@@ -78,7 +78,7 @@ public:
      * Get the layout bounds with current text and font
      *
      * @param bounds
-     *      Rectangle to retrieve bounds
+     *      rectangle to retrieve bounds
      */
     virtual void getBounds(_out_ Rect& bounds) = 0;
 
@@ -86,11 +86,11 @@ public:
      * Draw the layout
      *
      * @param g2
-     *      The graphic context
+     *      the graphic context
      * @param x
-     *      The x coordinate
+     *      the x coordinate
      * @param y
-     *      The y coordinate, is basline aligned
+     *      the y coordinate, is basline aligned
      */
     virtual void draw(Graphics2D& g2, float x, float y) = 0;
 
@@ -98,13 +98,13 @@ public:
      * Create a TextLayout with specified text and font
      *
      * @param src
-     *      The specified text
+     *      the specified text
      * @param font
-     *      The specified font
+     *      the specified font
      * @return
-     *      New TextLayout
+     *      new TextLayout
      */
-    static shared_ptr<TextLayout> create(const wstring& src, const shared_ptr<Font>& font);
+    static sptr<TextLayout> create(const wstring& src, const sptr<Font>& font);
 };
 
 /**
@@ -121,7 +121,7 @@ public:
      * Set the color of the graphics context
      * 
      * @param c
-     *      Required color
+     *      required color
      */
     virtual void setColor(color c) = 0;
 
@@ -134,7 +134,7 @@ public:
      * Set the stroke of the graphics context
      * 
      * @param s
-     *      Required stroke
+     *      required stroke
      */
     virtual void setStroke(const Stroke& s) = 0;
 
@@ -144,20 +144,20 @@ public:
     virtual const Stroke& getStroke() const = 0;
 
     /**
-     * Set stroke width of the graphics context
+     * Set the stroke width of the graphics context
      * 
      * @param w
-     *      Required stroke width
+     *      required stroke width
      */
     virtual void setStrokeWidth(float w) = 0;
 
     /**
-     * Get current font
+     * Get the current font
      */
     virtual const Font* getFont() const = 0;
 
     /**
-     * Set font of the graphics context
+     * Set the font of the graphics context
      */
     virtual void setFont(const Font* font) = 0;
 
@@ -165,9 +165,9 @@ public:
      * Translate the graphics context with distance dx, dy
      *
      * @param dx
-     *      Distance in x-direction to translate
+     *      distance in x-direction to translate
      * @param dy
-     *      Distance in y-direction to translate
+     *      distance in y-direction to translate
      */
     virtual void translate(float dx, float dy) = 0;
 
@@ -185,7 +185,7 @@ public:
      * Rotate the graphics context with specified angle (in radian), with pivot (0, 0).
      *
      * @param angle
-     *      Angle (in radian) amount to rotate
+     *      angle (in radian) amount to rotate
      */
     virtual void rotate(float angle) = 0;
 
@@ -193,11 +193,11 @@ public:
      * Rotate the graphics context with a angle (in radian), with pivot (px, py).
      *
      * @param angle
-     *      Angle (in radian) amount to rotate
+     *      angle (in radian) amount to rotate
      * @param px
-     *      Pivot in x-direction
+     *      pivot in x-direction
      * @param py
-     *      Pivot in y-direction
+     *      pivot in y-direction
      */
     virtual void rotate(float angle, float px, float py) = 0;
 
@@ -224,7 +224,7 @@ public:
      * Draw character, is baseline aligned
      * 
      * @param c
-     *      Specified character
+     *      specified character
      * @param x
      *      x-coordinate
      * @param y
@@ -236,7 +236,7 @@ public:
      * Draw text, is baseline aligned
      * 
      * @param c
-     *      Specified text
+     *      specified text
      * @param x
      *      x-coordinate
      * @param y
@@ -248,13 +248,13 @@ public:
      * Draw line
      * 
      * @param x1
-     *      Start point in x-direction
+     *      start point in x-direction
      * @param y1
-     *      Start point in y-direction
+     *      start point in y-direction
      * @param x2
-     *      End point in x-direction
+     *      end point in x-direction
      * @param y2
-     *      End point in y-direction
+     *      end point in y-direction
      */
     virtual void drawLine(float x1, float y1, float x2, float y2) = 0;
 
@@ -262,13 +262,13 @@ public:
      * Draw rectangle
      *
      * @param x
-     *      Left position
+     *      left position
      * @param y
-     *      Top position
+     *      top position
      * @param w
-     *      Width
+     *      width
      * @param h
-     *      Height
+     *      height
      */
     virtual void drawRect(float x, float y, float w, float h) = 0;
 
@@ -276,13 +276,13 @@ public:
      * Fill rectangle
      *
      * @param x
-     *      Left position
+     *      left position
      * @param y
-     *      Top position
+     *      top position
      * @param w
-     *      Width
+     *      width
      * @param h
-     *      Height
+     *      height
      */
     virtual void fillRect(float x, float y, float w, float h) = 0;
 
@@ -290,17 +290,17 @@ public:
      * Draw round rectangle
      *
      * @param x
-     *      Left position
+     *      left position
      * @param y
-     *      Top position
+     *      top position
      * @param w
-     *      Width
+     *      width
      * @param h
-     *      Height
+     *      height
      * @param rx
-     *      Radius in x-direction
+     *      radius in x-direction
      * @param ry
-     *      Radius in y-direction
+     *      radius in y-direction
      */
     virtual void drawRoundRect(float x, float y, float w, float h, float rx, float ry) = 0;
 
@@ -308,17 +308,17 @@ public:
      * Fill round rectangle
      *
      * @param x
-     *      Left position
+     *      left position
      * @param y
-     *      Top position
+     *      top position
      * @param w
-     *      Width
+     *      width
      * @param h
-     *      Height
+     *      height
      * @param rx
-     *      Radius in x-direction
+     *      radius in x-direction
      * @param ry
-     *      Radius in y-direction
+     *      radius in y-direction
      */
     virtual void fillRoundRect(float x, float y, float w, float h, float rx, float ry) = 0;
 };

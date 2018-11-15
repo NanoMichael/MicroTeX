@@ -15,27 +15,27 @@ namespace tex {
 
 class Box;
 
-void print_box(const shared_ptr<Box>& box);
+void print_box(const sptr<Box>& box);
 
 struct Position {
     int _index;
-    shared_ptr<HorizontalBox> _hbox;
+    sptr<HorizontalBox> _hbox;
 
     Position() = delete;
 
-    Position(int index, const shared_ptr<HorizontalBox>& hbox) : _index(index), _hbox(hbox) {
+    Position(int index, const sptr<HorizontalBox>& hbox) : _index(index), _hbox(hbox) {
     }
 };
 
 class FormulaBreaker {
 public:
-    static shared_ptr<Box> split(const shared_ptr<Box>& box, float w, float interline);
+    static sptr<Box> split(const sptr<Box>& box, float w, float interline);
 
-    static shared_ptr<Box> split(const shared_ptr<HorizontalBox>& hb, float w, float interline);
+    static sptr<Box> split(const sptr<HorizontalBox>& hb, float w, float interline);
 
-    static float canBreak(_out_ stack<Position>& s, const shared_ptr<HorizontalBox>& hbox, float w);
+    static float canBreak(_out_ stack<Position>& s, const sptr<HorizontalBox>& hbox, float w);
 
-    static int getBreakPosition(const shared_ptr<HorizontalBox>& hb, int i);
+    static int getBreakPosition(const sptr<HorizontalBox>& hb, int i);
 };
 
 /**
@@ -50,7 +50,7 @@ private:
     // current style
     int _style;
     // TeXFont used
-    shared_ptr<TeXFont> _tf;
+    sptr<TeXFont> _tf;
     // last used font
     int _lastFontId;
     // Environment width
@@ -62,8 +62,8 @@ private:
     int _interlineUnit;
     float _interline;
 
-    shared_ptr<TeXEnvironment> _copy, _copytf, _cramp, _dnom;
-    shared_ptr<TeXEnvironment> _num, _root, _sub, _sup;
+    sptr<TeXEnvironment> _copy, _copytf, _cramp, _dnom;
+    sptr<TeXEnvironment> _num, _root, _sub, _sup;
 
     inline void init() {
         _background = trans;
@@ -78,7 +78,7 @@ private:
         _isColored = false;
     }
 
-    TeXEnvironment(int style, const shared_ptr<TeXFont>& tf, color bg, const color c) {
+    TeXEnvironment(int style, const sptr<TeXFont>& tf, color bg, const color c) {
         init();
         _style = style;
         _tf = tf;
@@ -88,7 +88,7 @@ private:
     }
 
     TeXEnvironment(
-        int style, float scaleFactor, const shared_ptr<TeXFont>& tf,
+        int style, float scaleFactor, const sptr<TeXFont>& tf,
         color bg, color c, const string& textstyle, bool smallCap) {
         init();
         _style = style;
@@ -104,14 +104,14 @@ private:
 public:
     bool _isColored;
 
-    TeXEnvironment(int style, const shared_ptr<TeXFont>& tf) {
+    TeXEnvironment(int style, const sptr<TeXFont>& tf) {
         init();
         _style = style;
         _tf = tf;
         setInterline(UNIT_EX, 1.f);
     }
 
-    TeXEnvironment(int style, const shared_ptr<TeXFont>& tf, int widthUnit, float textWidth);
+    TeXEnvironment(int style, const sptr<TeXFont>& tf, int widthUnit, float textWidth);
 
     inline void setInterline(int unit, float len) {
         _interline = len;
@@ -134,21 +134,21 @@ public:
         return _scaleFactor;
     }
 
-    shared_ptr<TeXEnvironment>& copy();
+    sptr<TeXEnvironment>& copy();
 
-    shared_ptr<TeXEnvironment>& copy(const shared_ptr<TeXFont>& tf);
+    sptr<TeXEnvironment>& copy(const sptr<TeXFont>& tf);
 
-    shared_ptr<TeXEnvironment>& crampStyle();
+    sptr<TeXEnvironment>& crampStyle();
 
-    shared_ptr<TeXEnvironment>& dnomStyle();
+    sptr<TeXEnvironment>& dnomStyle();
 
-    shared_ptr<TeXEnvironment>& numStyle();
+    sptr<TeXEnvironment>& numStyle();
 
-    shared_ptr<TeXEnvironment>& rootStyle();
+    sptr<TeXEnvironment>& rootStyle();
 
-    shared_ptr<TeXEnvironment>& subStyle();
+    sptr<TeXEnvironment>& subStyle();
 
-    shared_ptr<TeXEnvironment>& supStyle();
+    sptr<TeXEnvironment>& supStyle();
 
     inline void setBackground(color bg) {
         _background = bg;
@@ -194,7 +194,7 @@ public:
         _smallCap = s;
     }
 
-    inline const shared_ptr<TeXFont>& getTeXFont() const {
+    inline const sptr<TeXFont>& getTeXFont() const {
         return _tf;
     }
 
@@ -231,7 +231,7 @@ private:
     float _shrink;
     string _name;
 
-    shared_ptr<Box> createBox(const TeXEnvironment& env) const;
+    sptr<Box> createBox(const TeXEnvironment& env) const;
 
 public:
     Glue() = delete;
@@ -259,7 +259,7 @@ public:
      *      the TeXEnvironment
      * @return a box containing representing the glue
      */
-    static shared_ptr<Box> get(int ltype, int rtype, const TeXEnvironment& env);
+    static sptr<Box> get(int ltype, int rtype, const TeXEnvironment& env);
 
     static void _init_();
 
@@ -317,7 +317,7 @@ public:
 
     TeXSymbolParser(const string& file) throw(ex_res_parse);
 
-    void readSymbols(_out_ map<string, shared_ptr<SymbolAtom>>& res) throw(ex_res_parse);
+    void readSymbols(_out_ map<string, sptr<SymbolAtom>>& res) throw(ex_res_parse);
 };
 
 /**

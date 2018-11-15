@@ -20,8 +20,7 @@ using namespace tinyxml2;
 namespace tex {
 
 /**
- * contains the metrics for 1 character: width, height, depth and italic
- * correction
+ * Contains the metrics for 1 character: width, height, depth and italic correction
  */
 class Metrics {
 private:
@@ -61,8 +60,7 @@ public:
 };
 
 /**
- * represents a specific character in a specific font (identified by its font
- * id)
+ * Represents a specific character in a specific font (identified by its font id)
  */
 class CharFont {
 public:
@@ -82,23 +80,22 @@ public:
 };
 
 /**
- * class represents a character together with its font, font id and metric
- * information
+ * class represents a character together with its font, font id and metric information
  */
 class Char {
 private:
     wchar_t _c;
     int _font_code;
     const Font* _font;
-    shared_ptr<CharFont> _cf;
-    shared_ptr<Metrics> _m;
+    sptr<CharFont> _cf;
+    sptr<Metrics> _m;
 
 public:
     Char() = delete;
 
-    Char(wchar_t c, const Font* f, int fc, const shared_ptr<Metrics>& m);
+    Char(wchar_t c, const Font* f, int fc, const sptr<Metrics>& m);
 
-    shared_ptr<CharFont> getCharFont() const {
+    sptr<CharFont> getCharFont() const {
         return _cf;
     }
 
@@ -321,7 +318,7 @@ public:
         return it->second * factor;
     }
 
-    inline shared_ptr<CharFont> getLigture(wchar_t left, wchar_t right);
+    inline sptr<CharFont> getLigture(wchar_t left, wchar_t right);
 
     inline const float* getMetrics(wchar_t c) {
         if (_unicode_count == 0) return _metrics[c];
@@ -484,7 +481,10 @@ public:
      * @throw ex_text_style_mapping_not_found
      *      if the text style mapping not found
      */
-    virtual Char getChar(wchar_t c, const string& textStyle, int style) throw(ex_text_style_mapping_not_found) = 0;
+    virtual Char getChar(
+        wchar_t c,
+        const string& textStyle,
+        int style) throw(ex_text_style_mapping_not_found) = 0;
 
     /**
      * Get a Char-object for this specific character containing the metric information
@@ -556,7 +556,7 @@ public:
      *      right character
      * @return a ligature replacing both characters (or null if no any ligature)
      */
-    virtual shared_ptr<CharFont> getLigature(const CharFont& left, const CharFont& right) = 0;
+    virtual sptr<CharFont> getLigature(const CharFont& left, const CharFont& right) = 0;
 
     /**
      * Get the id of mu font
@@ -621,6 +621,8 @@ public:
     virtual float getEM(int style) = 0;
 
     /**
+     * Test if a character has larger version.
+     * 
      * @param c
      *      a character
      * @return true if the given character has a larger version, false otherwise
@@ -629,9 +631,6 @@ public:
 
     virtual bool hasSpace(int font) = 0;
 
-    /**
-     * getters and setters
-     */
     virtual void setBold(bool bold) = 0;
 
     virtual bool getBold() = 0;
@@ -653,6 +652,8 @@ public:
     virtual bool getSs() = 0;
 
     /**
+     * Test if the given character is an extension character.
+     * 
      * @param c
      *      a character
      * @return true if the given character contains extension information to
@@ -660,7 +661,7 @@ public:
      */
     virtual bool isExtensionChar(const Char& c) = 0;
 
-    virtual shared_ptr<TeXFont> copy() = 0;
+    virtual sptr<TeXFont> copy() = 0;
 
     virtual ~TeXFont();
 };
@@ -685,7 +686,7 @@ private:
 
     Char getChar(wchar_t c, _in_ const vector<CharFont*>& cf, int style);
 
-    shared_ptr<Metrics> getMetrics(_in_ const CharFont& cf, float size);
+    sptr<Metrics> getMetrics(_in_ const CharFont& cf, float size);
 
 public:
     static vector<UnicodeBlock> _loadedAlphabets;
@@ -731,7 +732,10 @@ public:
 
     static void addAlphabet(AlphabetRegistration* reg);
 
-    static void addAlphabet(const string& base, const vector<UnicodeBlock>& alphabet, const string& lang) throw(ex_res_parse);
+    static void addAlphabet(
+        const string& base,
+        const vector<UnicodeBlock>& alphabet,
+        const string& lang) throw(ex_res_parse);
 
     static void registerAlphabet(AlphabetRegistration* reg);
 
@@ -748,25 +752,28 @@ public:
         return _generalSettings["scriptscriptfactor"];
     }
 
-    /******************** get char *****************************/
+    /************************************ get char ************************************************/
     Char getDefaultChar(wchar_t c, int style) override;
 
-    Char getChar(wchar_t c, const string& textStyle, int style) throw(ex_text_style_mapping_not_found) override;
+    Char getChar(
+        wchar_t c,
+        const string& textStyle,
+        int style) throw(ex_text_style_mapping_not_found) override;
 
     Char getChar(const CharFont& cf, int style) override;
 
     Char getChar(const string& symbolName, int style) throw(ex_symbol_mapping_not_found) override;
 
-    /******************* font information *******************/
+    /*********************************** font information *****************************************/
     Extension* getExtension(_in_ const Char& c, int style) override;
 
     float getKern(_in_ const CharFont& left, _in_ const CharFont& right, int style) override;
 
-    shared_ptr<CharFont> getLigature(_in_ const CharFont& left, _in_ const CharFont& right) override;
+    sptr<CharFont> getLigature(_in_ const CharFont& left, _in_ const CharFont& right) override;
 
     Char getNextLarger(_in_ const Char& c, int style) override;
 
-    inline shared_ptr<TeXFont> copy() override;
+    inline sptr<TeXFont> copy() override;
 
     inline float getScaleFactor() override {
         return _factor;
@@ -921,7 +928,8 @@ public:
     }
 
     inline float getDefaultRuleThickness(int style) override {
-        return getParameter("defaultrulethickness") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
+        return getParameter("defaultrulethickness") *
+               getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
     }
 
     inline float getDenom1(int style) override {
@@ -931,8 +939,6 @@ public:
     inline float getDenom2(int style) override {
         return getParameter("denom2") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
     }
-
-    /*********************** static **********************/
 
     static void setMathSizes(float ds, float ts, float ss, float sss);
 
@@ -976,9 +982,6 @@ private:
     const XMLElement* _root;
     string _base;
 
-    /*******************************************************************
-     *                          child  parsers                         *
-     *******************************************************************/
     static void parse_extension(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(ex_xml_parse);
     static void parse_kern(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(ex_xml_parse);
     static void parse_lig(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(ex_xml_parse);
@@ -987,8 +990,6 @@ private:
     void parseStyleMappings(_out_ map<string, vector<CharFont*>>& styles) throw(ex_res_parse);
 
     static void processCharElement(const XMLElement* e, _out_ FontInfo& info) throw(ex_res_parse);
-
-    /*************************check values*******************************/
 
     inline static bool exists(const char* attr, const XMLElement* e) throw() {
         const XMLAttribute* value = e->FindAttribute(attr);
@@ -1001,47 +1002,57 @@ private:
         val.assign(value);
     }
 
-    inline static string getAttrValueAndCheckIfNotNull(const char* attr, const XMLElement* e) throw(ex_xml_parse) {
+    inline static string getAttrValueAndCheckIfNotNull(
+        const char* attr, const XMLElement* e) throw(ex_xml_parse) {
         // find if attr is exists
         const char* value = e->Attribute(attr);
-        if (value == nullptr || strlen(value) == 0) throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping");
+        if (value == nullptr || strlen(value) == 0)
+            throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping");
         return value;
     }
 
-    inline static float getFloatAndCheck(const char* attr, const XMLElement* e) throw(ex_xml_parse) {
+    inline static float getFloatAndCheck(
+        const char* attr, const XMLElement* e) throw(ex_xml_parse) {
         // get value
         float v = 0;
         int err = e->QueryFloatAttribute(attr, &v);
         // no attribute mapped by attr
-        if (err != XML_NO_ERROR) throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
+        if (err != XML_NO_ERROR)
+            throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
         return v;
     }
 
-    inline static int getIntAndCheck(const char* attr, const XMLElement* e) throw(ex_xml_parse) {
+    inline static int getIntAndCheck(
+        const char* attr, const XMLElement* e) throw(ex_xml_parse) {
         // get value
         int v = 0;
         int err = e->QueryIntAttribute(attr, &v);
-        if (err != XML_NO_ERROR) throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
+        if (err != XML_NO_ERROR)
+            throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
         return v;
     }
 
-    inline static int getOptionalInt(const char* attr, const XMLElement* e, const int def) throw(ex_xml_parse) {
+    inline static int getOptionalInt(
+        const char* attr, const XMLElement* e, const int def) throw(ex_xml_parse) {
         // check exists
         if (!exists(attr, e)) return def;
         // get value
         int v = 0;
         int err = e->QueryAttribute(attr, &v);
-        if (err != XML_NO_ERROR) throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
+        if (err != XML_NO_ERROR)
+            throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
         return v;
     }
 
-    inline static float getOptionalFloat(const char* attr, const XMLElement* e, const float def) throw(ex_xml_parse) {
+    inline static float getOptionalFloat(
+        const char* attr, const XMLElement* e, const float def) throw(ex_xml_parse) {
         // check exists
         if (!exists(attr, e)) return def;
         // get value
         float v = 0;
         int err = e->QueryFloatAttribute(attr, &v);
-        if (err != XML_NO_ERROR) throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
+        if (err != XML_NO_ERROR)
+            throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
         return v;
     }
 
@@ -1055,12 +1066,14 @@ private:
     }
 
 public:
-    DefaultTeXFontParser() throw(ex_res_parse) : _doc(true, COLLAPSE_WHITESPACE) {
+    DefaultTeXFontParser() throw(ex_res_parse)
+        : _doc(true, COLLAPSE_WHITESPACE) {
         string file = RES_BASE + "/" + RESOURCE_NAME;
         init(file);
     }
 
-    DefaultTeXFontParser(const string& file) throw(ex_xml_parse) : _doc(true, COLLAPSE_WHITESPACE) {
+    DefaultTeXFontParser(const string& file) throw(ex_xml_parse)
+        : _doc(true, COLLAPSE_WHITESPACE) {
         init(file);
     }
 

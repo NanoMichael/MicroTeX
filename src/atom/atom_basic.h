@@ -27,7 +27,7 @@ class RowAtom;
  */
 class EmptyAtom : public Atom {
 public:
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 /**
@@ -45,10 +45,11 @@ public:
     TextRenderingAtom(const wstring& str, int type) : _str(str), _type(type), _infos(nullptr) {
     }
 
-    TextRenderingAtom(const wstring& str, const FontInfos* info) : _str(str), _type(0), _infos(info) {
+    TextRenderingAtom(const wstring& str, const FontInfos* info)
+        : _str(str), _type(0), _infos(info) {
     }
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 /**
@@ -56,13 +57,13 @@ public:
  */
 class SmashedAtom : public Atom {
 private:
-    shared_ptr<Atom> _at;
+    sptr<Atom> _at;
     bool _h, _d;
 
 public:
     SmashedAtom() = delete;
 
-    SmashedAtom(const shared_ptr<Atom>& a, const string& opt) : _h(true), _d(true) {
+    SmashedAtom(const sptr<Atom>& a, const string& opt) : _h(true), _d(true) {
         _at = a;
         if (opt == "opt")
             _d = false;
@@ -70,8 +71,8 @@ public:
             _h = false;
     }
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        shared_ptr<Box> b = _at->createBox(env);
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+        sptr<Box> b = _at->createBox(env);
         if (_h) b->_height = 0;
         if (_d) b->_depth = 0;
         return b;
@@ -83,7 +84,7 @@ public:
  */
 class ScaleAtom : public Atom {
 protected:
-    shared_ptr<Atom> _base;
+    sptr<Atom> _base;
 
 private:
     float _sx, _sy;
@@ -91,14 +92,14 @@ private:
 public:
     ScaleAtom() = delete;
 
-    ScaleAtom(const shared_ptr<Atom>& base, float sx, float sy) {
+    ScaleAtom(const sptr<Atom>& base, float sx, float sy) {
         _type = base->_type;
         _base = base;
         _sx = sx;
         _sy = sy;
     }
 
-    ScaleAtom(const shared_ptr<Atom>& base, float scale)
+    ScaleAtom(const sptr<Atom>& base, float scale)
         : ScaleAtom(base, scale, scale) {}
 
     int getLeftType() const override {
@@ -109,7 +110,7 @@ public:
         return _base->getRightType();
     }
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 /**
@@ -118,17 +119,17 @@ public:
 class MathAtom : public Atom {
 private:
     int _style;
-    shared_ptr<Atom> _base;
+    sptr<Atom> _base;
 
 public:
     MathAtom() = delete;
 
-    MathAtom(const shared_ptr<Atom>& base, int style) {
+    MathAtom(const sptr<Atom>& base, int style) {
         _base = base;
         _style = style;
     }
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 /**
@@ -154,7 +155,7 @@ public:
         _color = c;
     }
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 /**
@@ -162,15 +163,15 @@ public:
  */
 class CumulativeScriptsAtom : public Atom {
 private:
-    shared_ptr<Atom> _base;
-    shared_ptr<RowAtom> _sup, _sub;
+    sptr<Atom> _base;
+    sptr<RowAtom> _sup, _sub;
 
 public:
     CumulativeScriptsAtom() = delete;
 
-    CumulativeScriptsAtom(const shared_ptr<Atom>& base, const shared_ptr<Atom>& sub, const shared_ptr<Atom>& sup);
+    CumulativeScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup);
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 /**
@@ -190,7 +191,7 @@ public:
      * @param dummy
      *      the dummy that comes just before this "composed atom"
      */
-    virtual void setPreviousAtom(const shared_ptr<Dummy>& dummy) = 0;
+    virtual void setPreviousAtom(const sptr<Dummy>& dummy) = 0;
 };
 
 /**
@@ -285,15 +286,23 @@ public:
         return _unitConversions[unit](env) * s;
     }
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
+    /**
+     * Get the unit and length from given string. The string must be in the format: a digital
+     * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or (UNIT_PIXEL, 0) will be returned.
+     */
     static pair<int, float> getLength(const string& lgth);
 
+    /**
+     * Get the unit and length from given string. The string must be in the format: a digital
+     * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or (UNIT_PIXEL, 0) will be returned.
+     */
     static pair<int, float> getLength(const wstring& lgth);
 };
 
 /**
- * An atom representing An underscore
+ * An atom representing an underscore
  */
 class UnderScoreAtom : public Atom {
 public:
@@ -301,7 +310,7 @@ public:
 
     UnderScoreAtom() {}
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 /**
@@ -310,14 +319,14 @@ public:
  */
 class MiddleAtom : public Atom {
 public:
-    shared_ptr<Atom> _base;
-    shared_ptr<Box> _box;
+    sptr<Atom> _base;
+    sptr<Box> _box;
 
     MiddleAtom() = delete;
 
-    MiddleAtom(const shared_ptr<Atom>& a);
+    MiddleAtom(const sptr<Atom>& a);
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
         return _box;
     }
 };
@@ -368,7 +377,7 @@ public:
      *       the TeXFont containing all font related information
      * @return a CharFont
      */
-    virtual shared_ptr<CharFont> getCharFont(_in_ TeXFont& tf) = 0;
+    virtual sptr<CharFont> getCharFont(_in_ TeXFont& tf) = 0;
 };
 
 /**
@@ -376,22 +385,22 @@ public:
  */
 class FixedCharAtom : public CharSymbol {
 private:
-    const shared_ptr<CharFont> _cf;
+    const sptr<CharFont> _cf;
 
 public:
     FixedCharAtom() = delete;
 
-    FixedCharAtom(const shared_ptr<CharFont>& c) : _cf(c) {}
+    FixedCharAtom(const sptr<CharFont>& c) : _cf(c) {}
 
-    shared_ptr<CharFont> getCharFont(_in_ TeXFont& tf) override;
+    sptr<CharFont> getCharFont(_in_ TeXFont& tf) override;
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 class SymbolAtom : public CharSymbol {
 private:
     // contains all defined symbols
-    static map<string, shared_ptr<SymbolAtom>> _symbols;
+    static map<string, sptr<SymbolAtom>> _symbols;
     // contains all the possible valid symbol types
     static bitset<16> _validSymbolTypes;
     // whether it's a delimiter symbol
@@ -436,13 +445,13 @@ public:
         return _name;
     }
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
-    shared_ptr<CharFont> getCharFont(_in_ TeXFont& tf) override;
+    sptr<CharFont> getCharFont(_in_ TeXFont& tf) override;
 
     static void addSymbolAtom(const string& file);
 
-    static void addSymbolAtom(const shared_ptr<SymbolAtom>& sym);
+    static void addSymbolAtom(const sptr<SymbolAtom>& sym);
 
     /**
      * Looks up the name in the table and returns the corresponding SymbolAtom
@@ -454,7 +463,7 @@ public:
      * @throw ex_symbol_not_found
      *      if no symbol with the given name was found
      */
-    static shared_ptr<SymbolAtom> get(const string& name) throw(ex_symbol_not_found);
+    static sptr<SymbolAtom> get(const string& name) throw(ex_symbol_not_found);
 
     static void _init_();
 
@@ -498,9 +507,9 @@ public:
         return _c;
     }
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
-    shared_ptr<CharFont> getCharFont(_in_ TeXFont& tf) override;
+    sptr<CharFont> getCharFont(_in_ TeXFont& tf) override;
 };
 
 /**
@@ -508,7 +517,7 @@ public:
  */
 class BreakMarkAtom : public Atom {
 public:
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 /**
@@ -521,7 +530,7 @@ public:
  */
 class Dummy {
 private:
-    shared_ptr<Atom> _el;
+    sptr<Atom> _el;
     bool _textSymbol;
     int _type;
 
@@ -533,7 +542,7 @@ public:
      * @param a
      *      An atom
      */
-    Dummy(const shared_ptr<Atom>& a) {
+    Dummy(const sptr<Atom>& a) {
         _textSymbol = false;
         _type = -1;
         _el = a;
@@ -574,7 +583,7 @@ public:
     /**
      * This method will only be called if isCharSymbol returns true.
      */
-    inline shared_ptr<CharFont> getCharFont(_in_ TeXFont& tf) const {
+    inline sptr<CharFont> getCharFont(_in_ TeXFont& tf) const {
         return ((CharSymbol*)_el.get())->getCharFont(tf);
     }
 
@@ -584,13 +593,13 @@ public:
      * @param a
      *      the ligature atom
      */
-    inline void changeAtom(const shared_ptr<FixedCharAtom>& a) {
+    inline void changeAtom(const sptr<FixedCharAtom>& a) {
         _textSymbol = false;
         _type = -1;
         _el = a;
     }
 
-    inline shared_ptr<Box> createBox(_out_ TeXEnvironment& env) {
+    inline sptr<Box> createBox(_out_ TeXEnvironment& env) {
         if (_textSymbol) ((CharSymbol*)_el.get())->markAsTextSymbol();
         auto b = _el->createBox(env);
         if (_textSymbol) ((CharSymbol*)_el.get())->removeMark();
@@ -609,7 +618,7 @@ public:
     /**
      * Only for row-elements
      */
-    inline void setPreviousAtom(const shared_ptr<Dummy>& prev) {
+    inline void setPreviousAtom(const sptr<Dummy>& prev) {
         Row* row = dynamic_cast<Row*>(_el.get());
         if (row != nullptr) {
             row->setPreviousAtom(prev);
@@ -631,9 +640,9 @@ private:
     // whether the box generated can be broken
     bool _canBreak;
     // atoms to be displayed horizontally next to each-other
-    vector<shared_ptr<Atom>> _elements;
+    vector<sptr<Atom>> _elements;
     // previous atom (for nested Row atoms)
-    shared_ptr<Dummy> _previousAtom;
+    sptr<Dummy> _previousAtom;
 
     void change2Ord(_out_ Dummy* cur, _out_ Dummy* prev, _out_ Atom* next);
 
@@ -644,24 +653,24 @@ public:
 
     RowAtom() : _lookAtLastAtom(false), _canBreak(true) {}
 
-    RowAtom(const shared_ptr<Atom>& el);
+    RowAtom(const sptr<Atom>& el);
 
     /**
      * Get the atom at the front in the elements
      */
-    shared_ptr<Atom> getFirstAtom();
+    sptr<Atom> getFirstAtom();
 
     /**
      * Get and remove the atom at the tail in the elements
      */
-    shared_ptr<Atom> getLastAtom();
+    sptr<Atom> getLastAtom();
 
     /**
      * Get the atom at position
      * @param pos
      *      the position of the atom to retrieve
      */
-    shared_ptr<Atom> get(size_t pos);
+    sptr<Atom> get(size_t pos);
 
     /**
      * Indicate the box generated by this atom can be broken or not
@@ -682,11 +691,11 @@ public:
     /**
      * Push An atom to back
      */
-    void add(const shared_ptr<Atom>& el);
+    void add(const sptr<Atom>& el);
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
-    void setPreviousAtom(const shared_ptr<Dummy>& prev) override;
+    void setPreviousAtom(const sptr<Dummy>& prev) override;
 
     int getLeftType() const override;
 
@@ -698,14 +707,14 @@ public:
  */
 class VRowAtom : public Atom {
 private:
-    vector<shared_ptr<Atom>> _elements;
-    shared_ptr<SpaceAtom> _raise;
+    vector<sptr<Atom>> _elements;
+    sptr<SpaceAtom> _raise;
     bool _addInterline;
 
 public:
     VRowAtom();
 
-    VRowAtom(const shared_ptr<Atom>& el);
+    VRowAtom(const sptr<Atom>& el);
 
     inline void setAddInterline(bool addInterline) {
         _addInterline = addInterline;
@@ -717,19 +726,19 @@ public:
 
     void setRaise(int unit, float r);
 
-    shared_ptr<Atom> getLastAtom();
+    sptr<Atom> getLastAtom();
 
     /**
      * Add a atom at the front
      */
-    void add(const shared_ptr<Atom>& el);
+    void add(const sptr<Atom>& el);
 
     /**
      * Add a atom at the tail
      */
-    void append(const shared_ptr<Atom>& el);
+    void append(const sptr<Atom>& el);
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 /**
@@ -739,7 +748,7 @@ class ColorAtom : public Atom, public Row {
 private:
     color _background, _color;
     // RowAtom for which the color settings apply
-    shared_ptr<RowAtom> _elements;
+    sptr<RowAtom> _elements;
 
     inline static color convColor(float c, float m, float y, float k) {
         float kk = 1 - k;
@@ -754,9 +763,9 @@ public:
 
     ColorAtom() = delete;
 
-    ColorAtom(const shared_ptr<Atom>& atom, color bg, color c);
+    ColorAtom(const sptr<Atom>& atom, color bg, color c);
 
-    ColorAtom(color bg, color c, const shared_ptr<Atom>& old) throw(ex_invalid_atom_type) {
+    ColorAtom(color bg, color c, const sptr<Atom>& old) throw(ex_invalid_atom_type) {
         ColorAtom* a = dynamic_cast<ColorAtom*>(old.get());
         if (a == nullptr) throw ex_invalid_atom_type("Should be a ColorAtom!");
         _elements = a->_elements;
@@ -764,7 +773,7 @@ public:
         _color = istrans(c) ? a->_color : c;
     }
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
     int getLeftType() const override {
         return _elements->getLeftType();
@@ -774,7 +783,7 @@ public:
         return _elements->getRightType();
     }
 
-    void setPreviousAtom(const shared_ptr<Dummy>& prev) override {
+    void setPreviousAtom(const sptr<Dummy>& prev) override {
         _elements->setPreviousAtom(prev);
     }
 
@@ -783,7 +792,7 @@ public:
      * [#AARRGGBB] or [AARRGGBB], [gray color], [c,m,y,k], [c;m;y;k], [r,g,b], [r;g;b].
      * Return black if not found.
      */
-    static color getColor(string s);
+    static color getColor(string name);
 };
 
 /**
@@ -791,13 +800,13 @@ public:
  */
 class RomanAtom : public Atom {
 public:
-    shared_ptr<Atom> _base;
+    sptr<Atom> _base;
 
     RomanAtom() = delete;
 
-    RomanAtom(const shared_ptr<Atom>& base) : _base(base) {}
+    RomanAtom(const sptr<Atom>& base) : _base(base) {}
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 /**
@@ -805,15 +814,16 @@ public:
  */
 class PhantomAtom : public Atom, public Row {
 private:
-    shared_ptr<RowAtom> _elements;
+    sptr<RowAtom> _elements;
+    // if show with width, height or depth
     bool _w, _h, _d;
 
 public:
     PhantomAtom() = delete;
 
-    PhantomAtom(const shared_ptr<Atom>& el);
+    PhantomAtom(const sptr<Atom>& el);
 
-    PhantomAtom(const shared_ptr<Atom>& el, bool w, bool h, bool d);
+    PhantomAtom(const sptr<Atom>& el, bool w, bool h, bool d);
 
     int getLeftType() const override {
         return _elements->getLeftType();
@@ -823,15 +833,15 @@ public:
         return _elements->getRightType();
     }
 
-    void setPreviousAtom(const shared_ptr<Dummy>& prev) override {
+    void setPreviousAtom(const sptr<Dummy>& prev) override {
         _elements->setPreviousAtom(prev);
     }
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 /**
- * An atom representing another atom with An override left-type and right-type
+ * An atom representing another atom with an override left-type and right-type
  * this affects the glue inserted before and after this atom.
  */
 class TypedAtom : public Atom {
@@ -839,24 +849,24 @@ private:
     // override left-type and right-type
     int _leftType, _rightType;
     // atom for which new types are set
-    shared_ptr<Atom> _atom;
+    sptr<Atom> _atom;
 
 public:
     TypedAtom() = delete;
 
-    TypedAtom(int lt, int rt, const shared_ptr<Atom>& atom) {
+    TypedAtom(int lt, int rt, const sptr<Atom>& atom) {
         _leftType = lt;
         _rightType = rt;
         _atom = atom;
         _typelimits = atom->_typelimits;
     }
 
-    shared_ptr<Atom> getBase() {
+    sptr<Atom> getBase() {
         _atom->_typelimits = _typelimits;
         return _atom;
     }
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
         return _atom->createBox(env);
     }
 
@@ -870,34 +880,37 @@ public:
 };
 
 /**
- * An atom representing another atom with An accent symbol above it
+ * An atom representing another atom with an accent symbol above it
  */
 class AccentedAtom : public Atom {
 public:
     // accent symbol
-    shared_ptr<SymbolAtom> _accent;
+    sptr<SymbolAtom> _accent;
     bool _acc;
     bool _changeSize;
 
     // base atom
-    shared_ptr<Atom> _base, _underbase;
+    sptr<Atom> _base, _underbase;
 
-    void init(const shared_ptr<Atom>& base, const shared_ptr<Atom>& acc) throw(ex_invalid_symbol_type);
+    void init(const sptr<Atom>& base, const sptr<Atom>& acc) throw(ex_invalid_symbol_type);
 
 public:
     AccentedAtom() = delete;
 
-    AccentedAtom(const shared_ptr<Atom>& base, const shared_ptr<Atom>& accent) throw(ex_invalid_symbol_type) {
+    AccentedAtom(const sptr<Atom>& base, const sptr<Atom>& accent) throw(ex_invalid_symbol_type) {
         init(base, accent);
     }
 
-    AccentedAtom(const shared_ptr<Atom>& base, const shared_ptr<Atom>& accent, bool changeSize) throw(ex_invalid_symbol_type) {
+    AccentedAtom(
+        const sptr<Atom>& base,
+        const sptr<Atom>& accent,
+        bool changeSize) throw(ex_invalid_symbol_type) {
         init(base, accent);
         _changeSize = changeSize;
     }
 
     /**
-     * Creates An AccentedAtom from a base atom and An accent symbol defined by
+     * Create an AccentedAtom from a base atom and an accent symbol defined by
      * its name
      *
      * @param base
@@ -909,25 +922,29 @@ public:
      * @throw ex_symbol_not_found
      *      if there's no symbol defined with the given name
      */
-    AccentedAtom(const shared_ptr<Atom>& base, const string& name) throw(ex_invalid_symbol_type, ex_symbol_not_found);
+    AccentedAtom(
+        const sptr<Atom>& base,
+        const string& name) throw(ex_invalid_symbol_type, ex_symbol_not_found);
 
     /**
-     * Creates An AccentedAtom from a base atom and An accent symbol defined as
+     * Creates an AccentedAtom from a base atom and an accent symbol defined as
      * a TeXFormula. This is used for parsing MathML.
      *
      * @param base
      *      base atom
      * @param acc
-     *      TeXFormula representing An accent (SymbolAtom)
+     *      TeXFormula representing an accent (SymbolAtom)
      * @throw ex_invalid_formula
      *      if the given TeXFormula does not represent a single
      *      SymbolAtom (type "TeXConstants.TYPE_ACCENT")
      * @throw ex_invalid_symbol_type
-     *      if the symbol is not defined as An accent ('acc')
+     *      if the symbol is not defined as an accent ('acc')
      */
-    AccentedAtom(const shared_ptr<Atom>& base, const shared_ptr<TeXFormula>& acc) throw(ex_invalid_formula, ex_invalid_symbol_type);
+    AccentedAtom(
+        const sptr<Atom>& base,
+        const sptr<TeXFormula>& acc) throw(ex_invalid_formula, ex_invalid_symbol_type);
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 /**
@@ -939,7 +956,7 @@ public:
 class UnderOverAtom : public Atom {
 private:
     // base, under script & over script
-    shared_ptr<Atom> _base, _under, _over;
+    sptr<Atom> _base, _under, _over;
     // kerning between base and under and over script
     float _underSpace, _overSpace;
     // unit
@@ -947,7 +964,7 @@ private:
     // whether the under over should be drawn in a smaller size
     bool _underSmall, _overSmall;
 
-    static shared_ptr<Box> changeWidth(const shared_ptr<Box>& b, float maxW);
+    static sptr<Box> changeWidth(const sptr<Box>& b, float maxW);
 
     inline void init() {
         _underSpace = _overSpace = 0;
@@ -959,15 +976,15 @@ public:
     UnderOverAtom() = delete;
 
     UnderOverAtom(
-        const shared_ptr<Atom>& base,
-        const shared_ptr<Atom>& script,
+        const sptr<Atom>& base,
+        const sptr<Atom>& script,
         int unit, float space, bool small, bool over) throw(ex_invalid_unit) {
         init();
         // check if unit is valid
         SpaceAtom::checkUnit(unit);
         _base = base;
         if (over) {
-            _under = shared_ptr<Atom>(nullptr);
+            _under = sptr<Atom>(nullptr);
             _underSpace = 0.f;
             _underUnit = 0;
             _underSmall = false;
@@ -981,16 +998,18 @@ public:
             _underSpace = space;
             _underSmall = small;
             _overSpace = 0.f;
-            _over = shared_ptr<Atom>(nullptr);
+            _over = sptr<Atom>(nullptr);
             _overUnit = 0;
             _overSmall = false;
         }
     }
 
     UnderOverAtom(
-        const shared_ptr<Atom>& base,
-        const shared_ptr<Atom>& under, int underunit, float underspace, bool undersmall,
-        const shared_ptr<Atom>& over, int overunit, float overspace, bool oversmall) throw(ex_invalid_unit) {
+        const sptr<Atom>& base,
+        const sptr<Atom>& under,
+        int underunit, float underspace, bool undersmall,
+        const sptr<Atom>& over,
+        int overunit, float overspace, bool oversmall) throw(ex_invalid_unit) {
         // check unit
         SpaceAtom::checkUnit(underunit);
         SpaceAtom::checkUnit(overunit);
@@ -1014,7 +1033,7 @@ public:
         return _base->getRightType();
     }
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 /**
@@ -1024,23 +1043,23 @@ class ScriptsAtom : public Atom {
 private:
     static SpaceAtom SCRIPT_SPACE;
     // base atom
-    shared_ptr<Atom> _base;
+    sptr<Atom> _base;
     // subscript and superscript to be attached to the base
-    shared_ptr<Atom> _sub;
-    shared_ptr<Atom> _sup;
+    sptr<Atom> _sub;
+    sptr<Atom> _sup;
     int _align;
 
 public:
     ScriptsAtom() = delete;
 
-    ScriptsAtom(const shared_ptr<Atom>& base, const shared_ptr<Atom>& sub, const shared_ptr<Atom>& sup) {
+    ScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup) {
         _base = base;
         _sub = sub;
         _sup = sup;
         _align = ALIGN_LEFT;
     }
 
-    ScriptsAtom(const shared_ptr<Atom>& base, const shared_ptr<Atom>& sub, const shared_ptr<Atom>& sup, bool left) {
+    ScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup, bool left) {
         _base = base;
         _sub = sub;
         _sup = sup;
@@ -1056,7 +1075,7 @@ public:
         return _base->getRightType();
     }
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 /**
@@ -1066,27 +1085,27 @@ public:
 class BigOperatorAtom : public Atom {
 private:
     // limits
-    shared_ptr<Atom> _under, _over;
+    sptr<Atom> _under, _over;
     // atom representing a big operator
-    shared_ptr<Atom> _base;
+    sptr<Atom> _base;
     // whether the "limits"-value should be taken into account
     // (otherwise the default rules will be applied)
     bool _limitsSet;
     // whether limits should be drawn over and under the base (<-> as scripts)
     bool _limits;
 
-    void init(const shared_ptr<Atom>& base, const shared_ptr<Atom>& under, const shared_ptr<Atom>& over);
+    void init(const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over);
 
     /**
      * Center the given box in a new box that has the given width
      */
-    static shared_ptr<Box> changeWidth(const shared_ptr<Box>& b, float maxW);
+    static sptr<Box> changeWidth(const sptr<Box>& b, float maxW);
 
 public:
     BigOperatorAtom() = delete;
 
     /**
-     * Creates a new BigOperatorAtom from the given atoms. The default rules the
+     * Create a new BigOperatorAtom from the given atoms. The default rules the
      * positioning of the limits will be applied.
      *
      * @param base
@@ -1096,12 +1115,12 @@ public:
      * @param over
      *      atom representing the over limit
      */
-    BigOperatorAtom(const shared_ptr<Atom>& base, const shared_ptr<Atom>& under, const shared_ptr<Atom>& over) {
+    BigOperatorAtom(const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over) {
         init(base, under, over);
     }
 
     /**
-     * Creates a new BigOperatorAtom from the given atoms. Limits will be drawn
+     * Create a new BigOperatorAtom from the given atoms. Limits will be drawn
      * according to the "limits"-value
      *
      * @param base
@@ -1114,13 +1133,14 @@ public:
      *      whether limits should be drawn over and under the base (<-> as
      *      scripts)
      */
-    BigOperatorAtom(const shared_ptr<Atom>& base, const shared_ptr<Atom>& under, const shared_ptr<Atom>& over, bool limits) {
+    BigOperatorAtom(
+        const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over, bool limits) {
         init(base, under, over);
         _limits = limits;
         _limitsSet = true;
     }
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 /**
@@ -1130,9 +1150,9 @@ public:
 class OverUnderDelimiter : public Atom {
 private:
     // base and script atom
-    shared_ptr<Atom> _base, _script;
+    sptr<Atom> _base, _script;
     // delimiter symbol
-    shared_ptr<SymbolAtom> _symbol;
+    sptr<SymbolAtom> _symbol;
     // kerning between delimiter and script
     SpaceAtom _kern;
     // whether the delimiter should be positioned above or under the base
@@ -1144,9 +1164,9 @@ public:
     OverUnderDelimiter() = delete;
 
     OverUnderDelimiter(
-        const shared_ptr<Atom>& base,
-        const shared_ptr<Atom>& script,
-        const shared_ptr<SymbolAtom>& s,
+        const sptr<Atom>& base,
+        const sptr<Atom>& script,
+        const sptr<SymbolAtom>& s,
         int kernunit, float kern, bool over) throw(ex_invalid_unit) {
         _type = TYPE_INNER;
         _base = base;
@@ -1156,7 +1176,7 @@ public:
         _over = over;
     }
 
-    inline void addScript(const shared_ptr<Atom>& script) {
+    inline void addScript(const sptr<Atom>& script) {
         _script = script;
     }
 
@@ -1164,7 +1184,7 @@ public:
         return _over;
     }
 
-    shared_ptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 }  // namespace tex

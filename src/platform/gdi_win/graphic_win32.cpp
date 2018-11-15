@@ -12,7 +12,7 @@
 using namespace std;
 using namespace tex;
 
-/****************************************************************************************/
+/**************************************************************************************************/
 
 int Font_win32::convertStyle(int style) {
     int s;
@@ -71,7 +71,7 @@ Font_win32::Font_win32(const string& name, int style, float size) : _size(size) 
     Gdiplus::Font* tf = new Gdiplus::Font(f, _size, s, Gdiplus::UnitPixel);
     _style = s;
     _family = f;
-    _typeface = shared_ptr<Gdiplus::Font>(tf);
+    _typeface = sptr<Gdiplus::Font>(tf);
 }
 
 Font_win32::Font_win32(const string& file, float size) {
@@ -106,14 +106,14 @@ Font_win32::Font_win32(const string& file, float size) {
     } else {
         throw ex_invalid_state("no available font in file " + file);
     }
-    _typeface = shared_ptr<Gdiplus::Font>(f);
+    _typeface = sptr<Gdiplus::Font>(f);
 }
 
 float Font_win32::getSize() const {
     return _size;
 }
 
-shared_ptr<Font> Font_win32::deriveFont(int style) const {
+sptr<Font> Font_win32::deriveFont(int style) const {
     int s = convertStyle(style);
     if (!_family->IsStyleAvailable(s)) {
         throw ex_invalid_state("specified font style not available!");
@@ -123,8 +123,8 @@ shared_ptr<Font> Font_win32::deriveFont(int style) const {
     f->_style = s;
     f->_size = _size;
     Gdiplus::Font* ff = new Gdiplus::Font(&(*_family), _size, s, Gdiplus::UnitPixel);
-    f->_typeface = shared_ptr<Gdiplus::Font>(ff);
-    return shared_ptr<Font>(f);
+    f->_typeface = sptr<Gdiplus::Font>(ff);
+    return sptr<Font>(f);
 }
 
 bool Font_win32::operator==(const Font& ft) const {
@@ -140,17 +140,17 @@ Font* Font::create(const string& file, float s) {
     return new Font_win32(file, s);
 }
 
-shared_ptr<Font> Font::_create(const string& name, int style, float size) {
-    return shared_ptr<Font>(new Font_win32(name, style, size));
+sptr<Font> Font::_create(const string& name, int style, float size) {
+    return sptr<Font>(new Font_win32(name, style, size));
 }
 
-/******************************************************************************************/
+/**************************************************************************************************/
 
 Gdiplus::Graphics* TextLayout_win32::_g = nullptr;
 Gdiplus::Bitmap* TextLayout_win32::_img = nullptr;
 const Gdiplus::StringFormat* TextLayout_win32::_format = nullptr;
 
-TextLayout_win32::TextLayout_win32(const wstring& src, const shared_ptr<Font_win32>& font)
+TextLayout_win32::TextLayout_win32(const wstring& src, const sptr<Font_win32>& font)
     : _txt(src), _font(font) {
     if (_img == nullptr) {
         _img = new Gdiplus::Bitmap(1, 1, PixelFormat32bppARGB);
@@ -179,12 +179,12 @@ void TextLayout_win32::draw(Graphics2D& g2, float x, float y) {
     g2.setFont(prev);
 }
 
-shared_ptr<TextLayout> TextLayout::create(const wstring& src, const shared_ptr<Font>& font) {
-    shared_ptr<Font_win32> f = static_pointer_cast<Font_win32>(font);
-    return shared_ptr<TextLayout>(new TextLayout_win32(src, f));
+sptr<TextLayout> TextLayout::create(const wstring& src, const sptr<Font>& font) {
+    sptr<Font_win32> f = static_pointer_cast<Font_win32>(font);
+    return sptr<TextLayout>(new TextLayout_win32(src, f));
 }
 
-/******************************************************************************************/
+/**************************************************************************************************/
 
 const Gdiplus::StringFormat* Graphics2D_win32::_format = nullptr;
 const Font* Graphics2D_win32::_defaultFont = nullptr;

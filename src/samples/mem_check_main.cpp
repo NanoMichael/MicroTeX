@@ -15,8 +15,8 @@ public:
         return 1.f;
     }
 
-    shared_ptr<Font> deriveFont(int style) const override {
-        return shared_ptr<Font>(new Font_none());
+    sptr<Font> deriveFont(int style) const override {
+        return sptr<Font>(new Font_none());
     }
 
     bool operator==(const Font& f) const override {
@@ -32,11 +32,11 @@ Font* Font::create(const string& file, float size) {
     return new Font_none();
 }
 
-shared_ptr<Font> Font::_create(const string& name, int style, float size) {
-    return shared_ptr<Font>(new Font_none());
+sptr<Font> Font::_create(const string& name, int style, float size) {
+    return sptr<Font>(new Font_none());
 }
 
-/**************************************************************************/
+/**************************************************************************************************/
 
 class TextLayout_none : public TextLayout {
 public:
@@ -50,11 +50,11 @@ public:
     }
 };
 
-shared_ptr<TextLayout> TextLayout::create(const wstring& src, const shared_ptr<Font>& font) {
-    return shared_ptr<TextLayout>(new TextLayout_none());
+sptr<TextLayout> TextLayout::create(const wstring& src, const sptr<Font>& font) {
+    return sptr<TextLayout>(new TextLayout_none());
 }
 
-/**************************************************************************/
+/**************************************************************************************************/
 
 class Graphics2D_none : public Graphics2D {
 private:

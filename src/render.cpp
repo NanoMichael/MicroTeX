@@ -9,7 +9,7 @@ const color TeXRender::_defaultcolor = black;
 float TeXRender::_defaultSize = -1;
 float TeXRender::_magFactor = 0;
 
-TeXRender::TeXRender(const shared_ptr<Box> b, float textSize, bool trueValues) {
+TeXRender::TeXRender(const sptr<Box> b, float textSize, bool trueValues) {
     _box = b;
     if (_defaultSize != -1) {
         _textSize = _defaultSize;
@@ -77,7 +77,7 @@ void TeXRender::setWidth(int w, int align) {
     // FIXME
     // only care if new width larger than old
     if (diff > 0) {
-        _box = shared_ptr<Box>(new HorizontalBox(_box, (float)w, align));
+        _box = sptr<Box>(new HorizontalBox(_box, (float)w, align));
     }
 }
 
@@ -86,7 +86,7 @@ void TeXRender::setHeight(int h, int align) {
     // FIXME
     // only care if new height larger than old
     if (diff > 0) {
-        _box = shared_ptr<Box>(new VerticalBox(_box, diff, align));
+        _box = sptr<Box>(new VerticalBox(_box, diff, align));
     }
 }
 
@@ -122,10 +122,10 @@ TeXRender* TeXRenderBuilder::build(TeXFormula& f) {
     return build(f._root);
 }
 
-TeXRender* TeXRenderBuilder::build(const shared_ptr<Atom>& fc) {
-    shared_ptr<Atom> f = fc;
+TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
+    sptr<Atom> f = fc;
     if (f == nullptr) {
-        f = shared_ptr<Atom>(new EmptyAtom());
+        f = sptr<Atom>(new EmptyAtom());
     }
     if (_style == -1) {
         throw ex_invalid_state("A style is required, call function setStyle before build");
@@ -135,7 +135,7 @@ TeXRender* TeXRenderBuilder::build(const shared_ptr<Atom>& fc) {
     }
 
     DefaultTeXFont* font = (_type == -1) ? new DefaultTeXFont(_textSize) : createFont(_textSize, _type);
-    shared_ptr<TeXFont> tf(font);
+    sptr<TeXFont> tf(font);
     TeXEnvironment* te = nullptr;
     if (_widthUnit != -1 && _textWidth != 0) {
         te = new TeXEnvironment(_style, tf, _widthUnit, _textWidth);
@@ -158,7 +158,7 @@ TeXRender* TeXRenderBuilder::build(const shared_ptr<Atom>& fc) {
         } else {
             hb = new HorizontalBox(box, _isMaxWidth ? box->_width : te->getTextWidth(), _align);
         }
-        ti = new TeXRender(shared_ptr<Box>(hb), _textSize, _trueValues);
+        ti = new TeXRender(sptr<Box>(hb), _textSize, _trueValues);
     } else {
         ti = new TeXRender(box, _textSize, _trueValues);
     }

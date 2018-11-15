@@ -12,9 +12,9 @@ using namespace tex;
 
 bool Box::DEBUG = false;
 
-/*********************************** factory implementation ********************************/
+/************************************** factory implementation ************************************/
 
-shared_ptr<Box> DelimiterFactory::create(_in_ SymbolAtom& symbol, _out_ TeXEnvironment& env, int size) {
+sptr<Box> DelimiterFactory::create(_in_ SymbolAtom& symbol, _out_ TeXEnvironment& env, int size) {
     if (size > 4) return symbol.createBox(env);
 
     TeXFont& tf = *(env.getTeXFont());
@@ -30,10 +30,10 @@ shared_ptr<Box> DelimiterFactory::create(_in_ SymbolAtom& symbol, _out_ TeXEnvir
         return b;
     }
 
-    return shared_ptr<Box>(new CharBox(c));
+    return sptr<Box>(new CharBox(c));
 }
 
-shared_ptr<Box> DelimiterFactory::create(const string& symbol, _out_ TeXEnvironment& env, float minHeight) {
+sptr<Box> DelimiterFactory::create(const string& symbol, _out_ TeXEnvironment& env, float minHeight) {
     TeXFont& tf = *(env.getTeXFont());
     int style = env.getStyle();
     Char c = tf.getChar(symbol, style);
@@ -48,11 +48,11 @@ shared_ptr<Box> DelimiterFactory::create(const string& symbol, _out_ TeXEnvironm
     }
     if (total >= minHeight) {  // tall enough char found
         /**if (total > minHeight) {
-            shared_ptr<Box> cb(new CharBox(c));
+            sptr<Box> cb(new CharBox(c));
             float scale = minHeight / total;
-            return shared_ptr<Box>(new ScaleBox(cb, scale));
+            return sptr<Box>(new ScaleBox(cb, scale));
         }*/
-        return shared_ptr<Box>(new CharBox(c));
+        return sptr<Box>(new CharBox(c));
     } else if (tf.isExtensionChar(c)) {
         // construct vertical box
         VerticalBox* vBox = new VerticalBox();
@@ -60,22 +60,22 @@ shared_ptr<Box> DelimiterFactory::create(const string& symbol, _out_ TeXEnvironm
 
         if (ext->hasTop()) {  // insert top part
             c = ext->getTop();
-            vBox->add(shared_ptr<Box>(new CharBox(c)));
+            vBox->add(sptr<Box>(new CharBox(c)));
         }
 
         if (ext->hasMiddle()) {
             c = ext->getMiddle();
-            vBox->add(shared_ptr<Box>(new CharBox(c)));
+            vBox->add(sptr<Box>(new CharBox(c)));
         }
 
         if (ext->hasBottom()) {
             c = ext->getBottom();
-            vBox->add(shared_ptr<Box>(new CharBox(c)));
+            vBox->add(sptr<Box>(new CharBox(c)));
         }
 
         // insert repeatable part until tall enough
         c = ext->getRepeat();
-        shared_ptr<Box> rep(new CharBox(c));
+        sptr<Box> rep(new CharBox(c));
         while (vBox->_height + vBox->_depth <= minHeight) {
             if (ext->hasTop() && ext->hasBottom()) {
                 vBox->add(1, rep);
@@ -89,36 +89,36 @@ shared_ptr<Box> DelimiterFactory::create(const string& symbol, _out_ TeXEnvironm
             }
         }
         delete ext;
-        return shared_ptr<Box>(vBox);
+        return sptr<Box>(vBox);
     }
     // no extensions, so return the tallest possible character
-    return shared_ptr<Box>(new CharBox(c));
+    return sptr<Box>(new CharBox(c));
 }
 
-shared_ptr<Atom> XLeftRightArrowFactory::MINUS;
-shared_ptr<Atom> XLeftRightArrowFactory::LEFT;
-shared_ptr<Atom> XLeftRightArrowFactory::RIGHT;
+sptr<Atom> XLeftRightArrowFactory::MINUS;
+sptr<Atom> XLeftRightArrowFactory::LEFT;
+sptr<Atom> XLeftRightArrowFactory::RIGHT;
 
-shared_ptr<Box> XLeftRightArrowFactory::create(_out_ TeXEnvironment& env, float width) {
+sptr<Box> XLeftRightArrowFactory::create(_out_ TeXEnvironment& env, float width) {
     // initialize
     if (MINUS == nullptr) {
         MINUS = SymbolAtom::get("minus");
         LEFT = SymbolAtom::get("leftarrow");
         RIGHT = SymbolAtom::get("rightarrow");
     }
-    shared_ptr<Box> left = LEFT->createBox(env);
-    shared_ptr<Box> right = RIGHT->createBox(env);
+    sptr<Box> left = LEFT->createBox(env);
+    sptr<Box> right = RIGHT->createBox(env);
     float swidth = left->_width + right->_width;
 
     if (width < swidth) {
         HorizontalBox* hb = new HorizontalBox(left);
-        hb->add(shared_ptr<Box>(new StrutBox(-min(swidth - width, left->_width), 0, 0, 0)));
+        hb->add(sptr<Box>(new StrutBox(-min(swidth - width, left->_width), 0, 0, 0)));
         hb->add(right);
-        return shared_ptr<Box>(hb);
+        return sptr<Box>(hb);
     }
 
-    shared_ptr<Box> minu = SmashedAtom(MINUS, "").createBox(env);
-    shared_ptr<Box> kern = SpaceAtom(UNIT_MU, -3.4f, 0, 0).createBox(env);
+    sptr<Box> minu = SmashedAtom(MINUS, "").createBox(env);
+    sptr<Box> kern = SpaceAtom(UNIT_MU, -3.4f, 0, 0).createBox(env);
 
     float mwidth = minu->_width + kern->_width;
     swidth += 2 * kern->_width;
@@ -130,17 +130,17 @@ shared_ptr<Box> XLeftRightArrowFactory::create(_out_ TeXEnvironment& env, float 
         hb->add(kern);
     }
 
-    hb->add(shared_ptr<Box>(new ScaleBox(minu, (width - swidth - w) / minu->_width, 1)));
+    hb->add(sptr<Box>(new ScaleBox(minu, (width - swidth - w) / minu->_width, 1)));
 
     hb->add(0, kern);
     hb->add(0, left);
     hb->add(kern);
     hb->add(right);
 
-    return shared_ptr<Box>(hb);
+    return sptr<Box>(hb);
 }
 
-shared_ptr<Box> XLeftRightArrowFactory::create(bool left, _out_ TeXEnvironment& env, float width) {
+sptr<Box> XLeftRightArrowFactory::create(bool left, _out_ TeXEnvironment& env, float width) {
     // initialize
     if (MINUS == nullptr) {
         MINUS = SymbolAtom::get("minus");
@@ -157,8 +157,8 @@ shared_ptr<Box> XLeftRightArrowFactory::create(bool left, _out_ TeXEnvironment& 
         return arr;
     }
 
-    shared_ptr<Box> minu = SmashedAtom(MINUS, "").createBox(env);
-    shared_ptr<Box> kern = SpaceAtom(UNIT_MU, -4.f, 0, 0).createBox(env);
+    sptr<Box> minu = SmashedAtom(MINUS, "").createBox(env);
+    sptr<Box> kern = SpaceAtom(UNIT_MU, -4.f, 0, 0).createBox(env);
     float mwidth = minu->_width + kern->_width;
     swidth += kern->_width;
     HorizontalBox* hb = new HorizontalBox();
@@ -184,12 +184,12 @@ shared_ptr<Box> XLeftRightArrowFactory::create(bool left, _out_ TeXEnvironment& 
     hb->_depth = d / 2;
     hb->_height = h;
 
-    return shared_ptr<Box>(hb);
+    return sptr<Box>(hb);
 }
 
-/***********************************horizontal box implementation***************************/
+/************************************* horizontal box implementation ******************************/
 
-HorizontalBox::HorizontalBox(const shared_ptr<Box>& b, float w, int aligment) {
+HorizontalBox::HorizontalBox(const sptr<Box>& b, float w, int aligment) {
     if (w == POS_INF) {
         add(b);
         return;
@@ -200,16 +200,16 @@ HorizontalBox::HorizontalBox(const shared_ptr<Box>& b, float w, int aligment) {
         return;
     }
     if (aligment == ALIGN_CENTER || aligment == ALIGN_NONE) {
-        shared_ptr<Box> s(new StrutBox(rest / 2, 0, 0, 0));
+        sptr<Box> s(new StrutBox(rest / 2, 0, 0, 0));
         add(s);
         add(b);
         add(s);
     } else if (aligment == ALIGN_LEFT) {
         add(b);
-        shared_ptr<Box> s(new StrutBox(rest, 0, 0, 0));
+        sptr<Box> s(new StrutBox(rest, 0, 0, 0));
         add(s);
     } else if (aligment == ALIGN_RIGHT) {
-        shared_ptr<Box> s(new StrutBox(rest, 0, 0, 0));
+        sptr<Box> s(new StrutBox(rest, 0, 0, 0));
         add(s);
         add(b);
     } else {
@@ -217,7 +217,7 @@ HorizontalBox::HorizontalBox(const shared_ptr<Box>& b, float w, int aligment) {
     }
 }
 
-HorizontalBox::HorizontalBox(const shared_ptr<Box>& b) {
+HorizontalBox::HorizontalBox(const sptr<Box>& b) {
     add(b);
 }
 
@@ -235,24 +235,24 @@ void HorizontalBox::recalculate(const Box& b) {
     _depth = max(x, b._depth + b._shift);
 }
 
-shared_ptr<HorizontalBox> HorizontalBox::cloneBox() {
+sptr<HorizontalBox> HorizontalBox::cloneBox() {
     HorizontalBox* b = new HorizontalBox(_foreground, _background);
     b->_shift = _shift;
 
-    return shared_ptr<HorizontalBox>(b);
+    return sptr<HorizontalBox>(b);
 }
 
-void HorizontalBox::add(const shared_ptr<Box>& b) {
+void HorizontalBox::add(const sptr<Box>& b) {
     recalculate(*b);
     Box::add(b);
 }
 
-void HorizontalBox::add(int pos, const shared_ptr<Box>& b) {
+void HorizontalBox::add(int pos, const sptr<Box>& b) {
     recalculate(*b);
     Box::add(pos, b);
 }
 
-pair<shared_ptr<HorizontalBox>, shared_ptr<HorizontalBox>> HorizontalBox::split(int pos, int shift) {
+pair<sptr<HorizontalBox>, sptr<HorizontalBox>> HorizontalBox::split(int pos, int shift) {
     auto hb1 = cloneBox();
     auto hb2 = cloneBox();
     for (int i = 0; i <= pos; i++) {
@@ -291,7 +291,7 @@ int HorizontalBox::getLastFontId() {
     return id;
 }
 
-/*********************************** horizontal rule implementation ***************************/
+/************************************ horizontal rule implementation ******************************/
 
 HorizontalRule::HorizontalRule(float thickness, float width, float s)
     : _color(trans), _speShift(0) {
@@ -341,24 +341,24 @@ int HorizontalRule::getLastFontId() {
     return TeXFont::NO_FONT;
 }
 
-/*********************************** vertical box implementation ***************************/
+/************************************* vertical box implementation ********************************/
 
-VerticalBox::VerticalBox(const shared_ptr<Box>& b, float rest, int alignment)
+VerticalBox::VerticalBox(const sptr<Box>& b, float rest, int alignment)
     : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {
     add(b);
     if (alignment == ALIGN_CENTER) {
-        shared_ptr<Box> s(new StrutBox(0, rest / 2, 0, 0));
+        sptr<Box> s(new StrutBox(0, rest / 2, 0, 0));
         Box::add(0, s);
         _height += rest / 2.f;
         _depth += rest / 2.f;
         Box::add(s);
     } else if (alignment == ALIGN_TOP) {
         _depth += rest;
-        shared_ptr<Box> s(new StrutBox(0, rest, 0, 0));
+        sptr<Box> s(new StrutBox(0, rest, 0, 0));
         Box::add(s);
     } else if (alignment == ALIGN_BOTTOM) {
         _height += rest;
-        shared_ptr<Box> s(new StrutBox(0, rest, 0, 0));
+        sptr<Box> s(new StrutBox(0, rest, 0, 0));
         Box::add(0, s);
     }
 }
@@ -369,7 +369,7 @@ void VerticalBox::recalculateWidth(const Box& b) {
     _width = _rightMostPos - _leftMostPos;
 }
 
-void VerticalBox::add(const shared_ptr<Box>& b) {
+void VerticalBox::add(const sptr<Box>& b) {
     Box::add(b);
     if (_children.size() == 1) {
         _height = b->_height;
@@ -380,15 +380,15 @@ void VerticalBox::add(const shared_ptr<Box>& b) {
     recalculateWidth(*b);
 }
 
-void VerticalBox::add(const shared_ptr<Box>& b, float interline) {
+void VerticalBox::add(const sptr<Box>& b, float interline) {
     if (_children.size() >= 1) {
-        shared_ptr<Box> s(new StrutBox(0, interline, 0, 0));
+        sptr<Box> s(new StrutBox(0, interline, 0, 0));
         add(s);
     }
     add(b);
 }
 
-void VerticalBox::add(int pos, const shared_ptr<Box>& b) {
+void VerticalBox::add(int pos, const sptr<Box>& b) {
     Box::add(pos, b);
     if (pos == 0) {
         _depth += b->_depth + _height;
@@ -415,19 +415,19 @@ int VerticalBox::getLastFontId() {
     return id;
 }
 
-OverBar::OverBar(const shared_ptr<Box>& b, float kern, float thickness) : VerticalBox() {
-    add(shared_ptr<Box>(new StrutBox(0, thickness, 0, 0)));
-    add(shared_ptr<Box>(new HorizontalRule(thickness, b->_width, 0)));
-    add(shared_ptr<Box>(new StrutBox(0, kern, 0, 0)));
+OverBar::OverBar(const sptr<Box>& b, float kern, float thickness) : VerticalBox() {
+    add(sptr<Box>(new StrutBox(0, thickness, 0, 0)));
+    add(sptr<Box>(new HorizontalRule(thickness, b->_width, 0)));
+    add(sptr<Box>(new StrutBox(0, kern, 0, 0)));
     add(b);
 }
 
-/*********************************** over-under box implementation ***************************/
+/************************************ over-under box implementation *******************************/
 
 OverUnderBox::OverUnderBox(
-    const shared_ptr<Box>& b,
-    const shared_ptr<Box>& d,
-    const shared_ptr<Box>& script, float kern, bool over) {
+    const sptr<Box>& b,
+    const sptr<Box>& d,
+    const sptr<Box>& script, float kern, bool over) {
     _base = b;
     _del = d;
     _script = script;
@@ -479,17 +479,17 @@ int OverUnderBox::getLastFontId() {
     return _base->getLastFontId();
 }
 
-vector<shared_ptr<Box>> OverUnderBox::getChildren() const {
+vector<sptr<Box>> OverUnderBox::getChildren() const {
     return {_base, _del, _script};
 }
 
-/*********************************** scale box implementation ***************************/
+/*************************************** scale box implementation *********************************/
 
-void ScaleBox::init(const shared_ptr<Box>& b, float sx, float sy) {
+void ScaleBox::init(const sptr<Box>& b, float sx, float sy) {
     _factor = 1;
     _box = b;
-    _sx = (isnan(sx) || isinf(sx)) ? 0 : sx;
-    _sy = (isnan(sy) || isinf(sy)) ? 0 : sy;
+    _sx = (isnan(sx) || isinf(sx)) ? 1 : sx;
+    _sy = (isnan(sy) || isinf(sy)) ? 1 : sy;
     _width = b->_width * abs(_sx);
     _height = _sy > 0 ? b->_height * _sy : -b->_depth * _sy;
     _depth = _sy > 0 ? b->_depth * _sy : -b->_height * _sy;
@@ -512,13 +512,13 @@ int ScaleBox::getLastFontId() {
     return _box->getLastFontId();
 }
 
-vector<shared_ptr<Box>> ScaleBox::getChildren() const {
+vector<sptr<Box>> ScaleBox::getChildren() const {
     return {_box};
 }
 
-/*********************************** reflect box implementation ***************************/
+/************************************** reflect box implementation ********************************/
 
-ReflectBox::ReflectBox(const shared_ptr<Box>& b) {
+ReflectBox::ReflectBox(const sptr<Box>& b) {
     _box = b;
     _width = b->_width;
     _height = b->_height;
@@ -539,13 +539,13 @@ int ReflectBox::getLastFontId() {
     return _box->getLastFontId();
 }
 
-vector<shared_ptr<Box>> ReflectBox::getChildren() const {
+vector<sptr<Box>> ReflectBox::getChildren() const {
     return {_box};
 }
 
-/*********************************** rotate box implementation ***************************/
+/************************************** rotate box implementation *********************************/
 
-void RotateBox::init(const shared_ptr<Box>& b, float angle, float x, float y) {
+void RotateBox::init(const sptr<Box>& b, float angle, float x, float y) {
     _box = b;
     _angle = angle * PI / 180;
     _height = b->_height;
@@ -556,11 +556,21 @@ void RotateBox::init(const shared_ptr<Box>& b, float angle, float x, float y) {
     _shiftX = x * (1 - c) + y * s;
     _shiftY = y * (1 - c) - x * s;
 
-    _xmax = max(-_height * s, max(_depth * s, max(_width * c + _depth * s, _width * c - _height * s))) + _shiftX;
-    _xmin = min(-_height * s, min(_depth * s, min(_width * c + _depth * s, _width * c - _height * s))) + _shiftX;
+    _xmax = max(-_height * s,
+                max(_depth * s,
+                    max(_width * c + _depth * s, _width * c - _height * s))) +
+            _shiftX;
+    _xmin = min(-_height * s,
+                min(_depth * s,
+                    min(_width * c + _depth * s, _width * c - _height * s))) +
+            _shiftX;
 
-    _ymax = max(_height * c, max(-_depth * c, max(_width * s - _depth * c, _width * s + _height * c)));
-    _ymin = min(_height * c, min(-_depth * c, min(_width * s - _depth * c, _width * s + _height * c)));
+    _ymax = max(_height * c,
+                max(-_depth * c,
+                    max(_width * s - _depth * c, _width * s + _height * c)));
+    _ymin = min(_height * c,
+                min(-_depth * c,
+                    min(_width * s - _depth * c, _width * s + _height * c)));
 
     _width = _xmax - _xmin;
     _height = _ymax + _shiftY;
@@ -656,13 +666,13 @@ int RotateBox::getLastFontId() {
     return _box->getLastFontId();
 }
 
-vector<shared_ptr<Box>> RotateBox::getChildren() const {
+vector<sptr<Box>> RotateBox::getChildren() const {
     return {_box};
 }
 
-/*********************************** framed box implementation ***************************/
+/************************************* framed box implementation **********************************/
 
-void FramedBox::init(const shared_ptr<Box>& box, float thickness, float space) {
+void FramedBox::init(const sptr<Box>& box, float thickness, float space) {
     _line = trans;
     _bg = trans;
     _box = box;
@@ -701,7 +711,7 @@ int FramedBox::getLastFontId() {
     return _box->getLastFontId();
 }
 
-vector<shared_ptr<Box>> FramedBox::getChildren() const {
+vector<sptr<Box>> FramedBox::getChildren() const {
     return {_box};
 }
 
@@ -711,7 +721,11 @@ void OvalBox::draw(Graphics2D& g2, float x, float y) {
     g2.setStroke(Stroke(_thickness, CAP_BUTT, JOIN_MITER));
     float th = _thickness / 2.f;
     float r = 0.5f * min(_width - _thickness, _height + _depth - _thickness);
-    g2.drawRoundRect(x + th, y - _height + th, _width - _thickness, _height + _depth - _thickness, r, r);
+    g2.drawRoundRect(
+        x + th,
+        y - _height + th,
+        _width - _thickness,
+        _height + _depth - _thickness, r, r);
     g2.setStroke(st);
 }
 
@@ -740,7 +754,7 @@ void ShadowBox::draw(Graphics2D& g2, float x, float y) {
     g2.setStroke(st);
 }
 
-/*********************************** basic box implementation ***************************/
+/************************************** basic box implementation **********************************/
 
 int StrutBox::getLastFontId() {
     return TeXFont::NO_FONT;
@@ -781,7 +795,7 @@ int CharBox::getLastFontId() {
     return _cf->_fontId;
 }
 
-shared_ptr<Font> TextRenderingBox::_font(nullptr);
+sptr<Font> TextRenderingBox::_font(nullptr);
 
 void TextRenderingBox::_init_() {
     _font = Font::_create("Serif", PLAIN, 10);
@@ -797,7 +811,8 @@ void TextRenderingBox::setFont(const string& name) {
     _font = Font::_create(name, PLAIN, 10);
 }
 
-void TextRenderingBox::init(const wstring& str, int type, float size, const shared_ptr<Font>& f, bool kerning) {
+void TextRenderingBox::init(
+    const wstring& str, int type, float size, const sptr<Font>& f, bool kerning) {
     _size = size;
     _layout = TextLayout::create(str, f->deriveFont(type));
     Rect rect;
@@ -837,7 +852,7 @@ int WrapperBox::getLastFontId() {
     return _base->getLastFontId();
 }
 
-vector<shared_ptr<Box>> WrapperBox::getChildren() const {
+vector<sptr<Box>> WrapperBox::getChildren() const {
     return {_base};
 }
 
@@ -850,6 +865,6 @@ int ShiftBox::getLastFontId() {
     return _base->getLastFontId();
 }
 
-vector<shared_ptr<Box>> ShiftBox::getChildren() const {
+vector<sptr<Box>> ShiftBox::getChildren() const {
     return {_base};
 }

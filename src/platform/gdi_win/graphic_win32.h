@@ -37,7 +37,7 @@ private:
 
 public:
     int _style;
-    shared_ptr<Gdiplus::Font> _typeface;
+    sptr<Gdiplus::Font> _typeface;
     const Gdiplus::FontFamily* _family;
 
     Font_win32(const string& name, int style, float size);
@@ -46,7 +46,7 @@ public:
 
     virtual float getSize() const override;
 
-    virtual shared_ptr<Font> deriveFont(int style) const override;
+    virtual sptr<Font> deriveFont(int style) const override;
 
     virtual bool operator==(const Font& f) const override;
 
@@ -57,11 +57,11 @@ public:
     static int convertStyle(int style);
 };
 
-/***************************************************************************************/
+/**************************************************************************************************/
 
 class TextLayout_win32 : public TextLayout {
 private:
-    shared_ptr<Font_win32> _font;
+    sptr<Font_win32> _font;
     wstring _txt;
 
 public:
@@ -69,14 +69,14 @@ public:
     static Gdiplus::Graphics* _g;
     static Gdiplus::Bitmap* _img;
 
-    TextLayout_win32(const wstring& src, const shared_ptr<Font_win32>& font);
+    TextLayout_win32(const wstring& src, const sptr<Font_win32>& font);
 
     virtual void getBounds(_out_ Rect& bounds) override;
 
     virtual void draw(Graphics2D& g2, float x, float y) override;
 };
 
-/**************************************************************************************/
+/**************************************************************************************************/
 
 class Graphics2D_win32 : public Graphics2D {
 private:

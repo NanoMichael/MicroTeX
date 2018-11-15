@@ -8,11 +8,11 @@
 using namespace tex;
 using namespace tinyxml2;
 
-/************************************************************************************************************
- *                                     Font basic implementation                                            *
- ************************************************************************************************************/
+/***************************************************************************************************
+ *                               Font basic implementation                                         *
+ ***************************************************************************************************/
 
-Char::Char(wchar_t c, const Font* f, int fc, const shared_ptr<Metrics>& m)
+Char::Char(wchar_t c, const Font* f, int fc, const sptr<Metrics>& m)
     : _c(c), _font_code(fc), _font(f), _m(m), _cf(new CharFont(_c, _font_code)) {}
 
 Extension::~Extension() {
@@ -34,11 +34,11 @@ void FontInfo::init(int unicode) {
     _extensions = new int*[num]();
 }
 
-inline shared_ptr<CharFont> FontInfo::getLigture(wchar_t left, wchar_t right) {
+inline sptr<CharFont> FontInfo::getLigture(wchar_t left, wchar_t right) {
     CharCouple c(left, right);
     auto it = _lig.find(c);
-    if (it == _lig.end()) return shared_ptr<CharFont>(nullptr);
-    return shared_ptr<CharFont>(new CharFont(it->second, _fontId));
+    if (it == _lig.end()) return sptr<CharFont>(nullptr);
+    return sptr<CharFont>(new CharFont(it->second, _fontId));
 }
 
 void FontInfo::setNextLarger(wchar_t c, wchar_t larger, int fontLarger) {
@@ -148,9 +148,9 @@ ostream& tex::operator<<(ostream& os, const CharFont& font) {
 }
 #endif
 
-/*******************************************************************************************************
- *                              DefaultTeXFontParser implementation                                    *
- *******************************************************************************************************/
+/***************************************************************************************************
+ *                             DefaultTeXFontParser implementation                                 *
+ ***************************************************************************************************/
 
 const string DefaultTeXFontParser::FONTS_RES_BASE = "fonts";
 /** document define  */
@@ -169,17 +169,19 @@ const map<string, int> DefaultTeXFontParser::_rangeTypeMappings(
      {"small", DefaultTeXFont::SMALL},
      {"unicode", DefaultTeXFont::UNICODE}});  // range mapping
 
-const map<string, void (*)(const XMLElement*, wchar_t c, FontInfo&)> DefaultTeXFontParser::_charChildParsers(
-    {{"Kern", DefaultTeXFontParser::parse_kern},
-     {"Lig", DefaultTeXFontParser::parse_lig},
-     {"NextLarger", DefaultTeXFontParser::parse_larger},
-     {"Extension", DefaultTeXFontParser::parse_extension}});  // child parsers
+const map<string, void (*)(const XMLElement*, wchar_t c, FontInfo&)>
+    DefaultTeXFontParser::_charChildParsers(
+        {{"Kern", DefaultTeXFontParser::parse_kern},
+         {"Lig", DefaultTeXFontParser::parse_lig},
+         {"NextLarger", DefaultTeXFontParser::parse_larger},
+         {"Extension", DefaultTeXFontParser::parse_extension}});  // child parsers
 
 vector<string> DefaultTeXFontParser::_fontId;
 
-/**********************************************child parsers*************************************************/
+/**************************************** child parsers *******************************************/
 
-void DefaultTeXFontParser::parse_extension(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(tex::ex_xml_parse) {
+void DefaultTeXFontParser::parse_extension(
+    const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(tex::ex_xml_parse) {
     int* extensions = new int[4];
     // get required integer attributes
     extensions[DefaultTeXFont::REP] = getIntAndCheck("rep", e);
@@ -191,7 +193,8 @@ void DefaultTeXFontParser::parse_extension(const XMLElement* e, wchar_t c, _out_
     f.setExtension(c, extensions);
 }
 
-void DefaultTeXFontParser::parse_kern(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(tex::ex_xml_parse) {
+void DefaultTeXFontParser::parse_kern(
+    const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(tex::ex_xml_parse) {
     // get required integer attributes
     int code = getIntAndCheck("code", e);
     // get required float attributes
@@ -200,19 +203,21 @@ void DefaultTeXFontParser::parse_kern(const XMLElement* e, wchar_t c, _out_ Font
     f.addKern(c, (wchar_t)code, kern);
 }
 
-void DefaultTeXFontParser::parse_lig(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(tex::ex_xml_parse) {
+void DefaultTeXFontParser::parse_lig(
+    const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(tex::ex_xml_parse) {
     int code = getIntAndCheck("code", e);
     int lig = getIntAndCheck("ligCode", e);
     f.addLigture(c, (wchar_t)code, (wchar_t)lig);
 }
 
-void DefaultTeXFontParser::parse_larger(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(tex::ex_xml_parse) {
+void DefaultTeXFontParser::parse_larger(
+    const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(tex::ex_xml_parse) {
     const string fontid = getAttrValueAndCheckIfNotNull("fontId", e);
     int code = getIntAndCheck("code", e);
     f.setNextLarger(c, (wchar_t)code, indexOf(_fontId, fontid));
 }
 
-/*************************************************font information********************************************/
+/**************************************** font information ****************************************/
 
 /**
  * xml structure
@@ -232,7 +237,8 @@ void DefaultTeXFontParser::parse_larger(const XMLElement* e, wchar_t c, _out_ Fo
  * i = int
  * @endcode
  */
-void DefaultTeXFontParser::processCharElement(const XMLElement* e, _out_ FontInfo& info) throw(tex::ex_res_parse) {
+void DefaultTeXFontParser::processCharElement(
+    const XMLElement* e, _out_ FontInfo& info) throw(tex::ex_res_parse) {
     // retrieve required integer value
     wchar_t ch = (wchar_t)getIntAndCheck("code", e);
     // retrieve optional value
@@ -252,7 +258,9 @@ void DefaultTeXFontParser::processCharElement(const XMLElement* e, _out_ FontInf
             parser(x, ch, info);
             x = x->NextSiblingElement();
         } catch (out_of_range& ex) {
-            throw tex::ex_xml_parse(RESOURCE_NAME + ": a <Char-element> has an unknown child element '" + x->Name() + "'!");
+            throw tex::ex_xml_parse(
+                RESOURCE_NAME + ": a <Char-element> has an unknown child element '" +
+                x->Name() + "'!");
         }
     }
 }
@@ -270,7 +278,8 @@ void DefaultTeXFontParser::processCharElement(const XMLElement* e, _out_ FontInf
  * r = required
  * o = optional
  */
-void DefaultTeXFontParser::parseStyleMappings(_out_ map<string, vector<CharFont*>>& res) throw(tex::ex_res_parse) {
+void DefaultTeXFontParser::parseStyleMappings(
+    _out_ map<string, vector<CharFont*>>& res) throw(tex::ex_res_parse) {
     const XMLElement* mapping = _root->FirstChildElement("TextStyleMappings");
     // no defined style mappings
     if (mapping == nullptr) return;
@@ -296,12 +305,17 @@ void DefaultTeXFontParser::parseStyleMappings(_out_ map<string, vector<CharFont*
             // find the code mapping
             auto it = _rangeTypeMappings.find(code);
             if (it == _rangeTypeMappings.end())
-                throw tex::ex_xml_parse(RESOURCE_NAME, "MapRange", "code", "contains an unknown 'range name' '" + code + "'!");
+                throw tex::ex_xml_parse(
+                    RESOURCE_NAME,
+                    "MapRange", "code", "contains an unknown 'range name' '" + code + "'!");
             int codeMapping = it->second;
-            if (boldFontId.empty())
-                charFonts[codeMapping] = new CharFont((wchar_t)ch, indexOf(_fontId, fontId));
-            else
-                charFonts[codeMapping] = new CharFont((wchar_t)ch, indexOf(_fontId, fontId), indexOf(_fontId, boldFontId));
+            if (boldFontId.empty()) {
+                charFonts[codeMapping] = new CharFont(
+                    (wchar_t)ch, indexOf(_fontId, fontId));
+            } else {
+                charFonts[codeMapping] = new CharFont(
+                    (wchar_t)ch, indexOf(_fontId, fontId), indexOf(_fontId, boldFontId));
+            }
             range = range->NextSiblingElement("MapRange");
         }
         res[textStyleName] = charFonts;
@@ -336,7 +350,8 @@ void DefaultTeXFontParser::parseExtraPath() throw(tex::ex_res_parse) {
  *   ...
  * @endcode
  */
-void DefaultTeXFontParser::parseFontDescriptions(_out_ vector<FontInfo*>& fi) throw(tex::ex_res_parse) {
+void DefaultTeXFontParser::parseFontDescriptions(
+    _out_ vector<FontInfo*>& fi) throw(tex::ex_res_parse) {
     const XMLElement* des = _root->FirstChildElement("FontDescriptions");
     if (des == nullptr) return;
 
@@ -383,7 +398,8 @@ void DefaultTeXFontParser::parseFontDescriptions(_out_ vector<FontInfo*>& fi) th
  * </Font>
  * @endcode
  */
-void DefaultTeXFontParser::parseFontDescriptions(_out_ vector<FontInfo*>& fi, const string& file) throw(tex::ex_res_parse) {
+void DefaultTeXFontParser::parseFontDescriptions(
+    _out_ vector<FontInfo*>& fi, const string& file) throw(tex::ex_res_parse) {
     if (file.empty()) return;
 
     XMLDocument doc(true, COLLAPSE_WHITESPACE);
@@ -472,7 +488,8 @@ void DefaultTeXFontParser::parseFontDescriptions(_out_ vector<FontInfo*>& fi, co
  * </SymbolMappings>
  * @endcode
  */
-void DefaultTeXFontParser::parseSymbolMappings(_out_ map<string, CharFont*>& res) throw(tex::ex_res_parse) {
+void DefaultTeXFontParser::parseSymbolMappings(
+    _out_ map<string, CharFont*>& res) throw(tex::ex_res_parse) {
     const XMLElement* mapping = _root->FirstChildElement("SymbolMappings");
     if (mapping == nullptr) throw ex_xml_parse(RESOURCE_NAME, "SymbolMappings");
 
@@ -526,9 +543,11 @@ void DefaultTeXFontParser::parseSymbolMappings(_out_ map<string, CharFont*>& res
             }
 
             if (boldFontId.empty()) {
-                res[name] = new CharFont((wchar_t)ch, indexOf(_fontId, fontId));
+                res[name] = new CharFont(
+                    (wchar_t)ch, indexOf(_fontId, fontId));
             } else {
-                res[name] = new CharFont((wchar_t)ch, indexOf(_fontId, fontId), indexOf(_fontId, boldFontId));
+                res[name] = new CharFont(
+                    (wchar_t)ch, indexOf(_fontId, fontId), indexOf(_fontId, boldFontId));
             }
             // parse next
             symbol = symbol->NextSiblingElement("SymbolMapping");
@@ -555,14 +574,19 @@ string* DefaultTeXFontParser::parseDefaultTextStyleMappins() throw(tex::ex_res_p
         try {
             codeMapping = _rangeTypeMappings.at(code);
         } catch (out_of_range& ex) {
-            throw ex_xml_parse(RESOURCE_NAME, "MapStyle", "code", "contains an unknown 'range name' '" + code + "'!");
+            throw ex_xml_parse(
+                RESOURCE_NAME,
+                "MapStyle", "code", "contains an unknown 'range name' '" + code + "'!");
         }
         // get mapped style and check
         const string textStyleName = getAttrValueAndCheckIfNotNull("textStyle", mapping);
 
         const auto& it = _parsedTextStyles.find(textStyleName);
         if (it == _parsedTextStyles.end())
-            throw ex_xml_parse(RESOURCE_NAME, "Mapstyle", "textStyle", "contains an unknown 'range name' '" + textStyleName + "'!");
+            throw ex_xml_parse(
+                RESOURCE_NAME,
+                "Mapstyle", "textStyle",
+                "contains an unknown 'range name' '" + textStyleName + "'!");
 
         const auto& charFonts = it->second;
         // now check if the range is defined within the mapped text style
@@ -570,7 +594,8 @@ string* DefaultTeXFontParser::parseDefaultTextStyleMappins() throw(tex::ex_res_p
         if (charFonts[index] == nullptr)
             throw ex_xml_parse(
                 RESOURCE_NAME + ": the default text style mapping '" +
-                textStyleName + "' for the range '" + code + "' contains no mapping for that range!");
+                textStyleName + "' for the range '" + code +
+                "' contains no mapping for that range!");
 
         res[index] = textStyleName;
         mapping = mapping->NextSiblingElement("MapStyle");
@@ -611,9 +636,9 @@ void DefaultTeXFontParser::parseGeneralSettings(_out_ map<string, float>& res) t
     res["scriptscriptfactor"] = getFloatAndCheck("scriptscriptfactor", settings);
 }
 
-/*****************************************************************************************************
- *                                    DefaultTeXFont implementation                                  *
- *****************************************************************************************************/
+/***************************************************************************************************
+ *                                  DefaultTeXFont implementation                                  *
+ ***************************************************************************************************/
 
 TeXFont::~TeXFont() {
 #ifdef __DEBUG
@@ -627,7 +652,8 @@ DefaultTeXFont::~DefaultTeXFont() {
 #endif  // __DEBUG
 }
 
-void DefaultTeXFont::addTeXFontDescription(const string& base, const string& file) throw(ex_res_parse) {
+void DefaultTeXFont::addTeXFontDescription(
+    const string& base, const string& file) throw(ex_res_parse) {
     DefaultTeXFontParser parser(base, file);
     parser.parseFontDescriptions(_fontInfo);
     parser.parseExtraPath();
@@ -636,7 +662,10 @@ void DefaultTeXFont::addTeXFontDescription(const string& base, const string& fil
     parser.parseSymbolMappings(_symbolMappings);
 }
 
-void DefaultTeXFont::addAlphabet(const string& base, const vector<UnicodeBlock>& alphabet, const string& lang) throw(ex_res_parse) {
+void DefaultTeXFont::addAlphabet(
+    const string& base,
+    const vector<UnicodeBlock>& alphabet,
+    const string& lang) throw(ex_res_parse) {
     bool b = false;
     for (size_t i = 0; !b && i < alphabet.size(); i++) {
         b = (indexOf(_loadedAlphabets, alphabet[i]) != -1) || b;
@@ -670,8 +699,9 @@ void DefaultTeXFont::registerAlphabet(AlphabetRegistration* reg) {
     }
 }
 
-inline shared_ptr<TeXFont> DefaultTeXFont::copy() {
-    return shared_ptr<TeXFont>(new DefaultTeXFont(_size, _factor, _isBold, _isRoman, _isSs, _isTt, _isIt));
+inline sptr<TeXFont> DefaultTeXFont::copy() {
+    return sptr<TeXFont>(new DefaultTeXFont(
+        _size, _factor, _isBold, _isRoman, _isSs, _isTt, _isIt));
 }
 
 Char DefaultTeXFont::getChar(wchar_t c, _in_ const vector<CharFont*>& cf, int style) {
@@ -705,7 +735,10 @@ Char DefaultTeXFont::getDefaultChar(wchar_t c, int style) {
     return getChar(c, _defaultTextStyleMappings[CAPITAL], style);
 }
 
-Char DefaultTeXFont::getChar(wchar_t c, const string& textStyle, int style) throw(ex_text_style_mapping_not_found) {
+Char DefaultTeXFont::getChar(
+    wchar_t c,
+    const string& textStyle,
+    int style) throw(ex_text_style_mapping_not_found) {
     // find first
     auto i = _textStyleMappings.find(textStyle);
     if (i == _textStyleMappings.end()) throw ex_text_style_mapping_not_found(textStyle);
@@ -755,7 +788,8 @@ Char DefaultTeXFont::getChar(const CharFont& c, int style) {
     return Char(cf._c, info->getFont(), id, getMetrics(cf, _factor * fsize));
 }
 
-Char DefaultTeXFont::getChar(const string& symbolName, int style) throw(ex_symbol_mapping_not_found) {
+Char DefaultTeXFont::getChar(
+    const string& symbolName, int style) throw(ex_symbol_mapping_not_found) {
     // find first
     auto i = _symbolMappings.find(symbolName);
     // no symbol mapping found
@@ -763,11 +797,13 @@ Char DefaultTeXFont::getChar(const string& symbolName, int style) throw(ex_symbo
     return getChar(*(i->second), style);
 }
 
-shared_ptr<Metrics> DefaultTeXFont::getMetrics(_in_ const CharFont& cf, float size) {
+sptr<Metrics> DefaultTeXFont::getMetrics(_in_ const CharFont& cf, float size) {
     FontInfo* info = _fontInfo[cf._fontId];
     const float* m = info->getMetrics(cf._c);
-    Metrics* met = new Metrics(m[WIDTH], m[HEIGHT], m[DEPTH], m[IT], size * TeXFormula::PIXELS_PER_POINT, size);
-    return shared_ptr<Metrics>(met);
+    Metrics* met = new Metrics(
+        m[WIDTH], m[HEIGHT], m[DEPTH], m[IT],
+        size * TeXFormula::PIXELS_PER_POINT, size);
+    return sptr<Metrics>(met);
 }
 
 Extension* DefaultTeXFont::getExtension(_in_ const Char& c, int style) {
@@ -793,17 +829,18 @@ Extension* DefaultTeXFont::getExtension(_in_ const Char& c, int style) {
 float DefaultTeXFont::getKern(_in_ const CharFont& left, _in_ const CharFont& right, int style) {
     if (left._fontId == right._fontId) {
         FontInfo* info = _fontInfo[left._fontId];
-        return info->getkern(left._c, right._c, getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT);
+        return info->getkern(
+            left._c, right._c, getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT);
     }
     return 0;
 }
 
-shared_ptr<CharFont> DefaultTeXFont::getLigature(_in_ const CharFont& left, _in_ const CharFont& right) {
+sptr<CharFont> DefaultTeXFont::getLigature(_in_ const CharFont& left, _in_ const CharFont& right) {
     if (left._fontId == right._fontId) {
         FontInfo* info = _fontInfo[left._fontId];
         return info->getLigture(left._c, right._c);
     }
-    return shared_ptr<CharFont>(nullptr);
+    return sptr<CharFont>(nullptr);
 }
 
 inline int DefaultTeXFont::getMuFontId() {
