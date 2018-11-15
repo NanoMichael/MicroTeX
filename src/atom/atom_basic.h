@@ -484,6 +484,7 @@ private:
     wchar_t _c;
     // text style (empty means the default text style)
     string _textStyle;
+    bool _mathMode;
 
     /**
      * Get the Char-object representing this character ("c") in the right text
@@ -503,10 +504,18 @@ public:
      * @param textStyle
      *      the text style in which the character should be drawn
      */
-    CharAtom(wchar_t c, const string& textStyle) : _c(c), _textStyle(textStyle) {}
+    CharAtom(wchar_t c, const string& textStyle)
+        : _c(c), _textStyle(textStyle), _mathMode(false) {}
+
+    CharAtom(wchar_t c, const string& textStyle, bool mathMode)
+        : _c(c), _textStyle(textStyle), _mathMode(mathMode) {}
 
     inline wchar_t getCharacter() {
         return _c;
+    }
+
+    inline bool isMathMode() {
+        return _mathMode;
     }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
@@ -580,6 +589,11 @@ public:
     inline bool isCharSymbol() const {
         CharSymbol* x = dynamic_cast<CharSymbol*>(_el.get());
         return (x != nullptr);
+    }
+
+    inline bool isCharInMathMode() const {
+        CharAtom* at = dynamic_cast<CharAtom*>(_el.get());
+        return at != nullptr && at->isMathMode();
     }
 
     /**

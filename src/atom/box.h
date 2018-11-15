@@ -456,6 +456,7 @@ class CharBox : public Box {
 private:
     sptr<CharFont> _cf;
     float _size;
+    float _italic;
 
 public:
     CharBox() = delete;
@@ -468,6 +469,8 @@ public:
      *      a Char-object containing the character's font information.
      */
     CharBox(const Char& c);
+
+    void addItalicCorrectionToWidth();
 
     void draw(Graphics2D& g2, float x, float y) override;
 

@@ -1070,5 +1070,5 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_parse) 
                 new TextRenderingAtom(_parseString.substr(start, en - start + 1), infos));
         }
     }
-    return sptr<Atom>(new CharAtom(c, _formula->_textStyle));
+    return sptr<Atom>(new CharAtom(c, _formula->_textStyle, _ignoreWhiteSpace));
 }
