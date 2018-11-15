@@ -74,13 +74,13 @@ class MacroInfo {
 public:
     static map<wstring, MacroInfo*> _commands;
     // The actual macro to execute
-    Macro* _macro;
+    Macro* const _macro;
     // Number of arguments
-    int _nbArgs;
+    const int _nbArgs;
     // If has options
-    bool _hasOptions;
+    const bool _hasOptions;
     // Options' position
-    int _posOpts;
+    const int _posOpts;
 
     MacroInfo()
         : _macro(nullptr), _nbArgs(0), _hasOptions(false), _posOpts(0) {}
