@@ -382,15 +382,16 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     for (int i = 0; i < rows; i++) {
         lineDepth[i] = 0;
         lineHeight[i] = 0;
+        const int size = _matrix->_array[i].size();
         for (int j = 0; j < cols; j++) {
-            sptr<Atom> atom;
-            try {
-                atom = _matrix->_array[i][j];
-            } catch (...) {
-                boxarr[i][j - 1]->_type = TYPE_INTERTEXT;
-                j = cols - 1;
+            if (j >= size) {
+                // If current row is not full-filled, fill the row with _nullbox
+                if (j - 1 >= 0) boxarr[i][j - 1]->_type = TYPE_INTERTEXT;
+                for (int k = j; k < cols; k++) boxarr[i][k] = _nullbox;
+                break;
             }
 
+            sptr<Atom> atom = _matrix->_array[i][j];
             boxarr[i][j] = (atom == nullptr) ? _nullbox : atom->createBox(env);
 
             if (boxarr[i][j]->_type != TYPE_MULTIROW) {
