@@ -678,7 +678,7 @@ enum TeXConstants {
     SCRIPT_NOLIMITS,
     SCRIPT_LIMITS,
 
-    /********************************** symbol type constants *************************************/
+    /*********************************** atom type constants **************************************/
     /**
      * Ordinary symbol, e.g. "slash"
      */
