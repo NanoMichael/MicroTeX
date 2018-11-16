@@ -230,19 +230,20 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
 }
 
 void MatrixAtom::recalculateLine(
-    const int row,
+    const int rows,
     sptr<Box>** boxarr,
-    vector<sptr<Atom>>& rows,
+    vector<sptr<Atom>>& multiRows,
     float* height, float* depth, float drt, float vspace) {
-    const size_t s = rows.size();
+    const size_t s = multiRows.size();
     for (size_t i = 0; i < s; i++) {
-        MultiRowAtom* m = dynamic_cast<MultiRowAtom*>(rows[i].get());
+        MultiRowAtom* m = dynamic_cast<MultiRowAtom*>(multiRows[i].get());
         const int r = m->_i;
         const int c = m->_j;
         int n = m->_n;
         int skipped = 0;
         float h = 0;
         if (n < 0) {
+            // Across from bottom to top
             int j = r;
             for (; j >= 0 && j > r + n; j--) {
                 if (boxarr[j][0]->_type == TYPE_HLINE) {
@@ -259,9 +260,10 @@ void MatrixAtom::recalculateLine(
             boxarr[r][c] = boxarr[j][c];
             boxarr[j][c] = tmp;
         } else {
-            for (int j = r; j < r + n && j < row; j++) {
+            // Across from top to bottom
+            for (int j = r; j < r + n && j < rows; j++) {
                 if (boxarr[j][0]->_type == TYPE_HLINE) {
-                    if (j == row - 1) break;
+                    if (j == rows - 1) break;
                     h += drt;
                     n++;
                 } else {
@@ -294,27 +296,28 @@ void MatrixAtom::recalculateLine(
 sptr<Box> MatrixAtom::generateMulticolumn(
     _out_ TeXEnvironment& env,
     const sptr<Box>& b,
-    const float* hsep, const float* rowW, int i, int j) {
+    const float* hsep, const float* colWidth, int i, int j) {
     float w = 0;
     MulticolumnAtom* mca = (MulticolumnAtom*)(_matrix->_array[i][j].get());
     int k, n = mca->getSkipped();
     for (k = j; k < j + n - 1; k++) {
-        w += rowW[k] + hsep[k + 1];
+        w += colWidth[k] + hsep[k + 1];
         auto it = _vlines.find(k + 1);
         if (it != _vlines.end()) w += it->second->getWidth(env);
     }
-    w += rowW[k];
+    w += colWidth[k];
 
     if (b->_width >= w) return b;
 
     return sptr<Box>(new HorizontalBox(b, w, mca->getAlign()));
 }
 
-MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, const wstring& options, bool sa) {
+MatrixAtom::MatrixAtom(
+    bool ispar, const sptr<ArrayOfAtoms>& arr, const wstring& options, bool spaceAround) {
     _matrix = arr;
     _ttype = ARRAY;
     _ispartial = ispar;
-    _spaceAround = sa;
+    _spaceAround = spaceAround;
     parsePositions(wstring(options), _position);
 }
 
@@ -356,14 +359,14 @@ MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, int type, int 
 
 sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     TeXEnvironment& env = e;
-    int row = _matrix->_row;
-    int col = _matrix->_col;
+    const int rows = _matrix->_row;
+    const int cols = _matrix->_col;
 
-    float* lineDepth = new float[row]();
-    float* lineHeight = new float[row]();
-    float* rowWidth = new float[col]();
-    sptr<Box>** boxarr = new sptr<Box>*[row]();
-    for (int i = 0; i < row; i++) boxarr[i] = new sptr<Box>[col]();
+    float* lineDepth = new float[rows]();
+    float* lineHeight = new float[rows]();
+    float* colWidth = new float[cols]();
+    sptr<Box>** boxarr = new sptr<Box>*[rows]();
+    for (int i = 0; i < rows; i++) boxarr[i] = new sptr<Box>[cols]();
 
     float matW = 0;
     float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
@@ -376,21 +379,22 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     // multi-column & multi-row atoms
     vector<sptr<Atom>> listMultiCol;
     vector<sptr<Atom>> listMultiRow;
-    for (int i = 0; i < row; i++) {
+    for (int i = 0; i < rows; i++) {
         lineDepth[i] = 0;
         lineHeight[i] = 0;
-        for (int j = 0; j < col; j++) {
+        for (int j = 0; j < cols; j++) {
             sptr<Atom> atom;
             try {
                 atom = _matrix->_array[i][j];
             } catch (...) {
                 boxarr[i][j - 1]->_type = TYPE_INTERTEXT;
-                j = col - 1;
+                j = cols - 1;
             }
 
             boxarr[i][j] = (atom == nullptr) ? _nullbox : atom->createBox(env);
 
             if (boxarr[i][j]->_type != TYPE_MULTIROW) {
+                // Find the highest line (row)
                 lineDepth[i] = max(boxarr[i][j]->_depth, lineDepth[i]);
                 lineHeight[i] = max(boxarr[i][j]->_height, lineHeight[i]);
             } else {
@@ -400,7 +404,8 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
             }
 
             if (boxarr[i][j]->_type != TYPE_MULTICOLUMN) {
-                rowWidth[j] = max(boxarr[i][j]->_width, rowWidth[j]);
+                // Find the widest column
+                colWidth[j] = max(boxarr[i][j]->_width, colWidth[j]);
             } else {
                 MulticolumnAtom* mca = dynamic_cast<MulticolumnAtom*>(atom.get());
                 mca->setRowColumn(i, j);
@@ -409,9 +414,9 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
         }
     }
 
-    for (int j = 0; j < col; j++)
-        matW += rowWidth[j];
+    for (int j = 0; j < cols; j++) matW += colWidth[j];
 
+    // The horizontal separator's width
     float* Hsep = getColumnSep(env, matW);
 
     for (size_t i = 0; i < listMultiCol.size(); i++) {
@@ -421,31 +426,35 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
         int n = multi->getSkipped();
         float w = 0;
         int j = 0;
-        for (j = c; j < c + n - 1; j++) w += rowWidth[j] + Hsep[j + 1];
-        w += rowWidth[j];
+        for (j = c; j < c + n - 1; j++) w += colWidth[j] + Hsep[j + 1];
+        w += colWidth[j];
         if (boxarr[r][c]->_width > w) {
+            // If the multi-column's width > the total width of the acrossed columns,
+            // add an extra-space to each column
             matW += boxarr[r][c]->_width - w;
             float extraW = (boxarr[r][c]->_width - w) / n;
-            for (int j = c; j < c + n; j++) rowWidth[j] += extraW;
+            for (int j = c; j < c + n; j++) colWidth[j] += extraW;
         }
     }
 
-    for (int j = 0; j < col + 1; j++) {
+    // Add seprator's space to the matrix width
+    for (int j = 0; j < cols + 1; j++) {
         matW += Hsep[j];
         auto it = _vlines.find(j);
         if (it != _vlines.end()) matW += it->second->getWidth(env);
     }
 
     auto Vsep = _vsep_in.createBox(env);
-    recalculateLine(row, boxarr, listMultiRow, lineHeight, lineDepth, drt, Vsep->_height);
+    // Recalculate the height of the row
+    recalculateLine(rows, boxarr, listMultiRow, lineHeight, lineDepth, drt, Vsep->_height);
 
     VerticalBox* vb = new VerticalBox();
     float totalHeight = 0;
     float Vspace = Vsep->_height / 2;
 
-    for (int i = 0; i < row; i++) {
+    for (int i = 0; i < rows; i++) {
         sptr<HorizontalBox> hb(new HorizontalBox());
-        for (int j = 0; j < col; j++) {
+        for (int j = 0; j < cols; j++) {
             switch (boxarr[i][j]->_type) {
             case -1:
             case TYPE_MULTICOLUMN: {
@@ -460,30 +469,30 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
                     }
                 }
 
-                bool lastVline = true;
+                bool isLastVline = true;
 
                 WrapperBox* wb = nullptr;
                 int tj = j;
                 float l = j == 0 ? Hsep[j] : Hsep[j] / 2;
                 if (boxarr[i][j]->_type == -1) {
                     wb = new WrapperBox(
-                        boxarr[i][j], rowWidth[j], lineHeight[i], lineDepth[i], _position[j]);
+                        boxarr[i][j], colWidth[j], lineHeight[i], lineDepth[i], _position[j]);
                 } else {
-                    auto b = generateMulticolumn(env, boxarr[i][j], Hsep, rowWidth, i, j);
+                    auto b = generateMulticolumn(env, boxarr[i][j], Hsep, colWidth, i, j);
                     MulticolumnAtom* matom = dynamic_cast<MulticolumnAtom*>(
                         _matrix->_array[i][j].get());
                     j += matom->getSkipped() - 1;
                     wb = new WrapperBox(b, b->_width, lineHeight[i], lineDepth[i], ALIGN_LEFT);
-                    lastVline = matom->hasRightVline();
+                    isLastVline = matom->hasRightVline();
                 }
-                float r = j == col - 1 ? Hsep[j + 1] : Hsep[j + 1] / 2;
+                float r = j == cols - 1 ? Hsep[j + 1] : Hsep[j + 1] / 2;
                 wb->setInsets(l, Vspace, r, Vspace);
                 sptr<Box> swb(wb);
                 boxarr[i][tj] = swb;
                 hb->add(swb);
 
                 auto it = _vlines.find(j + 1);
-                if (lastVline && it != _vlines.end()) {
+                if (isLastVline && it != _vlines.end()) {
                     auto vat = it->second;
                     vat->_height = lineHeight[i] + lineDepth[i] + Vsep->_height;
                     vat->_shift = lineDepth[i] + Vspace;
@@ -493,9 +502,9 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
             } break;
             case TYPE_INTERTEXT: {
                 float f = env.getTextWidth();
-                f = f == POS_INF ? rowWidth[j] : f;
+                f = f == POS_INF ? colWidth[j] : f;
                 hb = sptr<HorizontalBox>(new HorizontalBox(boxarr[i][j], f, ALIGN_LEFT));
-                j = col;
+                j = cols;
             } break;
             case TYPE_HLINE: {
                 HlineAtom* at = dynamic_cast<HlineAtom*>(_matrix->_array[i][j].get());
@@ -507,7 +516,7 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
                 }
 
                 hb->add(at->createBox(env));
-                j = col;
+                j = cols;
             } break;
             }
         }
@@ -520,7 +529,7 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     }
 
     // column specifiers
-    for (int i = 0; i < col; i++) {
+    for (int i = 0; i < cols; i++) {
         auto it = _columnSpecifiers.find(i);
         if (it == _columnSpecifiers.end()) continue;
         auto spe = it->second;
@@ -534,24 +543,24 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
         for (size_t j = 0; j < p->size(); j++) {
             CellSpecifier* s = dynamic_cast<CellSpecifier*>(p->get(j).get());
             if (s != nullptr) {
-                for (int k = 0; k < row; k++) s->apply(boxarr[k][i]);
+                for (int k = 0; k < rows; k++) s->apply(boxarr[k][i]);
             }
         }
     }
 
     // row specifiers
-    for (int i = 0; i < row; i++) {
+    for (int i = 0; i < rows; i++) {
         auto it = _matrix->_rowSpecifiers.find(i);
         if (it == _matrix->_rowSpecifiers.end()) continue;
         for (auto s : it->second) {
-            for (int j = 0; j < col; j++) s->apply(boxarr[i][j]);
+            for (int j = 0; j < cols; j++) s->apply(boxarr[i][j]);
         }
     }
 
     // cell specifiers
-    for (int i = 0; i < row; i++) {
+    for (int i = 0; i < rows; i++) {
         if (boxarr[i][0]->_type == TYPE_HLINE) continue;
-        for (int j = 0; j < col; j++) {
+        for (int j = 0; j < cols; j++) {
             string str = tostring(i) + tostring(j);
             auto it = _matrix->_cellSpecifiers.find(str);
             if (it != _matrix->_cellSpecifiers.end()) {
@@ -566,12 +575,11 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     vb->_height = totalHeight / 2 + axis;
     vb->_depth = totalHeight / 2 - axis;
 
-    // release resources
     delete[] Hsep;
     delete[] lineDepth;
     delete[] lineHeight;
-    delete[] rowWidth;
-    for (int i = 0; i < row; i++) delete[] boxarr[i];
+    delete[] colWidth;
+    for (int i = 0; i < rows; i++) delete[] boxarr[i];
     delete[] boxarr;
 
     return sptr<Box>(vb);

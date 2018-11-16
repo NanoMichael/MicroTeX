@@ -146,22 +146,21 @@ void TeXFormula::setLaTeX(const wstring& latex) throw(ex_parse) {
 }
 
 TeXFormula* TeXFormula::add(const sptr<Atom>& el) {
-    if (el != nullptr) {
-        MiddleAtom* atom = dynamic_cast<MiddleAtom*>(el.get());
-        if (atom != nullptr) _middle.push_back(dynamic_pointer_cast<MiddleAtom>(el));
-        if (_root == nullptr)
-            _root = el;
-        else {
-            RowAtom* rm = dynamic_cast<RowAtom*>(_root.get());
-            if (rm == nullptr) _root = sptr<Atom>(new RowAtom(_root));
-            rm = dynamic_cast<RowAtom*>(_root.get());
-            rm->add(el);
-            TypedAtom* ta = dynamic_cast<TypedAtom*>(el.get());
-            if (ta != nullptr) {
-                int rt = ta->getRightType();
-                if (rt == TYPE_BINARY_OPERATOR || rt == TYPE_RELATION)
-                    rm->add(sptr<Atom>(new BreakMarkAtom()));
-            }
+    if (el == nullptr) return this;
+    MiddleAtom* atom = dynamic_cast<MiddleAtom*>(el.get());
+    if (atom != nullptr) _middle.push_back(dynamic_pointer_cast<MiddleAtom>(el));
+    if (_root == nullptr) {
+        _root = el;
+    } else {
+        RowAtom* rm = dynamic_cast<RowAtom*>(_root.get());
+        if (rm == nullptr) _root = sptr<Atom>(new RowAtom(_root));
+        rm = dynamic_cast<RowAtom*>(_root.get());
+        rm->add(el);
+        TypedAtom* ta = dynamic_cast<TypedAtom*>(el.get());
+        if (ta != nullptr) {
+            int rt = ta->getRightType();
+            if (rt == TYPE_BINARY_OPERATOR || rt == TYPE_RELATION)
+                rm->add(sptr<Atom>(new BreakMarkAtom()));
         }
     }
     return this;
@@ -199,24 +198,22 @@ void TeXFormula::setDEBUG(bool b) {
 }
 
 TeXFormula* TeXFormula::setBackground(color c) {
-    if (!istrans(c)) {
-        ColorAtom* ca = dynamic_cast<ColorAtom*>(_root.get());
-        if (ca != nullptr)
-            _root = sptr<Atom>(new ColorAtom(c, TRANS, _root));
-        else
-            _root = sptr<Atom>(new ColorAtom(_root, c, TRANS));
-    }
+    if (istrans(c)) return this;
+    ColorAtom* ca = dynamic_cast<ColorAtom*>(_root.get());
+    if (ca != nullptr)
+        _root = sptr<Atom>(new ColorAtom(c, TRANS, _root));
+    else
+        _root = sptr<Atom>(new ColorAtom(_root, c, TRANS));
     return this;
 }
 
 TeXFormula* TeXFormula::setColor(color c) {
-    if (!istrans(c)) {
-        ColorAtom* ca = dynamic_cast<ColorAtom*>(_root.get());
-        if (ca != nullptr)
-            _root = sptr<Atom>(new ColorAtom(TRANS, c, _root));
-        else
-            _root = sptr<Atom>(new ColorAtom(_root, TRANS, c));
-    }
+    if (istrans(c)) return this;
+    ColorAtom* ca = dynamic_cast<ColorAtom*>(_root.get());
+    if (ca != nullptr)
+        _root = sptr<Atom>(new ColorAtom(TRANS, c, _root));
+    else
+        _root = sptr<Atom>(new ColorAtom(_root, TRANS, c));
     return this;
 }
 
@@ -327,8 +324,7 @@ sptr<VRowAtom> ArrayOfAtoms::getAsVRow() {
     vr->setAddInterline(true);
     for (size_t i = 0; i < _array.size(); i++) {
         vector<sptr<Atom>>& c = _array[i];
-        for (size_t j = 0; j < c.size(); j++)
-            vr->append(c[j]);
+        for (size_t j = 0; j < c.size(); j++) vr->append(c[j]);
     }
     return sptr<VRowAtom>(vr);
 }
@@ -342,16 +338,19 @@ void ArrayOfAtoms::checkDimensions() {
     _row = _array.size() - 1;
     _col = _array[0].size();
 
+    // Find the column count of the widest row
     for (size_t i = 1; i < _row; i++) {
         if (_array[i].size() > _col) _col = _array[i].size();
     }
 
     for (size_t i = 0; i < _row; i++) {
         size_t j = _array[i].size();
-        if (j != _col && _array[i][0] != nullptr && _array[i][0]->_type != TYPE_INTERTEXT) {
+        if (j != _col &&
+            _array[i][0] != nullptr &&
+            _array[i][0]->_type != TYPE_INTERTEXT) {
+            // Use null atom to fill the column
             vector<sptr<Atom>>& r = _array[i];
-            for (; j < _col; j++)
-                r.push_back(sptr<Atom>(nullptr));
+            for (; j < _col; j++) r.push_back(sptr<Atom>(nullptr));
         }
     }
 }

@@ -91,7 +91,8 @@ public:
 
     MultiRowAtom() = delete;
 
-    MultiRowAtom(int n, const wstring& option, const sptr<Atom> rows) : _i(0), _j(0), _rows(rows) {
+    MultiRowAtom(int n, const wstring& option, const sptr<Atom> rows)
+        : _i(0), _j(0), _rows(rows) {
         _n = n == 0 ? 1 : n;
     }
 
@@ -147,13 +148,13 @@ private:
         _out_ TeXEnvironment& env,
         const sptr<Box>& b,
         const float* hsep,
-        const float* rowW,
+        const float* colWidth,
         int i, int j);
 
     void recalculateLine(
-        const int row,
+        const int rows,
         sptr<Box>** boxarr,
-        vector<sptr<Atom>>& rows,
+        vector<sptr<Atom>>& multiRows,
         float* height, float* depth,
         float drt, float vspace);
 
@@ -169,13 +170,27 @@ public:
 
     MatrixAtom() = delete;
 
-    MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, const wstring& options, bool sa);
+    MatrixAtom(
+        bool ispar,
+        const sptr<ArrayOfAtoms>& arr,
+        const wstring& options,
+        bool spaceAround);
 
-    MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, const wstring& options);
+    MatrixAtom(
+        bool ispar,
+        const sptr<ArrayOfAtoms>& arr,
+        const wstring& options);
 
-    MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, int type);
+    MatrixAtom(
+        bool ispar,
+        const sptr<ArrayOfAtoms>& arr,
+        int type);
 
-    MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, int type, int align);
+    MatrixAtom(
+        bool ispar,
+        const sptr<ArrayOfAtoms>& arr,
+        int type,
+        int align);
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
