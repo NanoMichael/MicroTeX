@@ -26,7 +26,7 @@ macro(hvspace) {
     if (unit == -1) {
         string str;
         wide2utf8(args[1].c_str(), str);
-        throw ex_parse("unknown unit '" + str + "'!");
+        throw ex_parse("Unknown unit '" + str + "'!");
     }
 
     return args[0][0] == L'h' ? sptr<Atom>(new SpaceAtom(unit, f, 0, 0))
@@ -316,7 +316,8 @@ macro(left) {
 }
 
 macro(intertext) {
-    if (!tp.isArrayMode()) throw ex_parse("Bad environment for \\intertext command!");
+    if (!tp.isArrayMode())
+        throw ex_parse("Command \\intertext must used in array environment!");
 
     wstring str(args[1]);
     replaceall(str, L"^{\\prime}", L"\'");

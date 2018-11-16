@@ -257,9 +257,9 @@ public:
 
     void addCellSpecifier(const sptr<CellSpecifier>& spe);
 
-    int getRows() const;
+    int rows() const;
 
-    int getCols() const;
+    int cols() const;
 
     sptr<VRowAtom> getAsVRow();
 

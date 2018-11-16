@@ -311,11 +311,11 @@ void ArrayOfAtoms::addCellSpecifier(const sptr<CellSpecifier>& spe) {
     _cellSpecifiers[str].push_back(spe);
 }
 
-int ArrayOfAtoms::getRows() const {
+int ArrayOfAtoms::rows() const {
     return _row;
 }
 
-int ArrayOfAtoms::getCols() const {
+int ArrayOfAtoms::cols() const {
     return _col;
 }
 
@@ -330,10 +330,7 @@ sptr<VRowAtom> ArrayOfAtoms::getAsVRow() {
 }
 
 void ArrayOfAtoms::checkDimensions() {
-    if (_array.back().size() != 0)
-        addRow();
-    else if (_root != nullptr)
-        addRow();
+    if (_array.back().size() != 0 || _root != nullptr) addRow();
 
     _row = _array.size() - 1;
     _col = _array[0].size();
@@ -348,7 +345,7 @@ void ArrayOfAtoms::checkDimensions() {
         if (j != _col &&
             _array[i][0] != nullptr &&
             _array[i][0]->_type != TYPE_INTERTEXT) {
-            // Use null atom to fill the column
+            // Fill the row with null atom
             vector<sptr<Atom>>& r = _array[i];
             for (; j < _col; j++) r.push_back(sptr<Atom>(nullptr));
         }
