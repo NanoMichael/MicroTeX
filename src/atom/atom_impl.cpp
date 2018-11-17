@@ -386,7 +386,6 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
         for (int j = 0; j < cols; j++) {
             if (j >= size) {
                 // If current row is not full-filled, fill the row with _nullbox
-                if (j - 1 >= 0) boxarr[i][j - 1]->_type = TYPE_INTERTEXT;
                 for (int k = j; k < cols; k++) boxarr[i][k] = _nullbox;
                 break;
             }
