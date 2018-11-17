@@ -12,3 +12,4 @@ doxyfile
 build/
 src/doc
 src/Doxyfile
+.vscode/
