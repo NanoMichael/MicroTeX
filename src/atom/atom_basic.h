@@ -42,12 +42,10 @@ private:
 public:
     TextRenderingAtom() = delete;
 
-    TextRenderingAtom(const wstring& str, int type) : _str(str), _type(type), _infos(nullptr) {
-    }
+    TextRenderingAtom(const wstring& str, int type) : _str(str), _type(type), _infos(nullptr) {}
 
     TextRenderingAtom(const wstring& str, const FontInfos* info)
-        : _str(str), _type(0), _infos(info) {
-    }
+        : _str(str), _type(0), _infos(info) {}
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
@@ -276,7 +274,7 @@ public:
 
     inline static int getUnit(const string& unit) {
         auto i = _units.find(unit);
-        if (i == _units.end()) return TeXConstants::UNIT_PIXEL;
+        if (i == _units.end()) return UNIT_PIXEL;
         return i->second;
     }
 
@@ -291,13 +289,13 @@ public:
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
     /**
-     * Get the unit and length from given string. The string must be in the format: a digital
+     * Get the unit and length from given string. The string must be in the format: a number
      * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or (UNIT_PIXEL, 0) will be returned.
      */
     static pair<int, float> getLength(const string& lgth);
 
     /**
-     * Get the unit and length from given string. The string must be in the format: a digital
+     * Get the unit and length from given string. The string must be in the format: a number
      * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or (UNIT_PIXEL, 0) will be returned.
      */
     static pair<int, float> getLength(const wstring& lgth);
@@ -551,7 +549,7 @@ public:
     /**
      * Create a new dummy for the given atom
      * @param a
-     *      An atom
+     *      an atom
      */
     Dummy(const sptr<Atom>& a) {
         _textSymbol = false;
@@ -742,6 +740,9 @@ public:
         return _addInterline;
     }
 
+    /**
+     * Set the horizontal alignment
+     */
     inline void setHalign(int halign) {
         _halign = halign;
     }

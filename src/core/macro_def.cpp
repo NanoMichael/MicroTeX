@@ -311,7 +311,10 @@ map<wstring, MacroInfo*> MacroInfo::_commands = {
     mac(1, macro_color, "color"),
     mac(1, macro_cellcolor, "cellcolor"),
     mac(3, macro_multirow, "multirow"),
-    mac(2, macro_longdiv, "longdiv")
+    mac(2, macro_longdiv, "longdiv"),
+    mac(1, macro_cancel, "cancel"),
+    mac(1, macro_bcancel, "bcancel"),
+    mac(1, macro_xcancel, "xcancel")
 #ifdef __GA_DEBUG
         ,
     mac(0, macro_debug, "debug"),

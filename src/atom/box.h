@@ -198,13 +198,13 @@ private:
 public:
     HorizontalRule() = delete;
 
-    HorizontalRule(float thickness, float width, float s);
+    HorizontalRule(float thickness, float width, float shift);
 
-    HorizontalRule(float thickness, float width, float s, bool trueShift);
+    HorizontalRule(float thickness, float width, float shift, bool trueShift);
 
-    HorizontalRule(float thickness, float withd, float s, color c, bool trueshift);
+    HorizontalRule(float thickness, float width, float shift, color c, bool trueshift);
 
-    void draw(Graphics2D& g2, float s, float y) override;
+    void draw(Graphics2D& g2, float x, float y) override;
 
     int getLastFontId() override;
 };
@@ -549,7 +549,7 @@ public:
 };
 
 /**
- * class representing a box that shifted up or down (when shift is negative)
+ * Class representing a box that shifted up or down (when shift is negative)
  */
 class ShiftBox : public Box {
 private:
@@ -559,7 +559,55 @@ private:
 public:
     ShiftBox() = delete;
 
-    ShiftBox(const sptr<Box>& base, float shift) : _base(base), _sf(shift) {
+    ShiftBox(const sptr<Box>& base, float shift) : _base(base), _sf(shift) {}
+
+    void draw(Graphics2D& g2, float x, float y) override;
+
+    int getLastFontId() override;
+
+    vector<sptr<Box>> getChildren() const override;
+};
+
+/**
+ * Class represents several lines
+ */
+class LineBox : public Box {
+private:
+    float* _lines;
+    float _thickness;
+    int _lineCount;
+
+public:
+    LineBox() = delete;
+
+    LineBox(float* lines, int lineCount, float thickness)
+        : _lines(lines), _lineCount(lineCount), _thickness(thickness) {}
+
+    void draw(Graphics2D& g2, float x, float y) override;
+
+    int getLastFontId() override;
+
+    ~LineBox();
+};
+
+/**
+ * Class representing a box covered by another box
+ */
+class OverlappedBox : public Box {
+private:
+    sptr<Box> _base;
+    sptr<Box> _overlap;
+
+public:
+    OverlappedBox() = delete;
+
+    OverlappedBox(const sptr<Box> base, const sptr<Box> overlap)
+        : _base(base), _overlap(overlap) {
+        _width = base->_width;
+        _height = base->_height;
+        _depth = base->_depth;
+        _shift = base->_shift;
+        _type = base->_type;
     }
 
     void draw(Graphics2D& g2, float x, float y) override;
