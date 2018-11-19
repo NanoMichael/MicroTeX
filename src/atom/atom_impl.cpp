@@ -60,11 +60,7 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
             tf = sptr<TeXFormula>(new TeXFormula());
             tp = sptr<TeXParser>(new TeXParser(_ispartial, opt.substr(pos), &(*tf), false));
             auto atom = tp->getArgument();
-            _matrix->_col++;
-            for (size_t j = 0; j < _matrix->_row; j++) {
-                auto it = _matrix->_array[j].begin();
-                _matrix->_array[j].insert(it + lpos.size(), atom);
-            }
+            _matrix->insertAtomIntoCol(lpos.size(), atom);
 
             lpos.push_back(ALIGN_NONE);
             pos += tp->getPos();
@@ -116,14 +112,14 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
         pos++;
     }
 
-    for (size_t j = lpos.size(); j < _matrix->_col; j++) lpos.push_back(ALIGN_CENTER);
+    for (size_t j = lpos.size(); j < _matrix->cols(); j++) lpos.push_back(ALIGN_CENTER);
 
     if (lpos.size() == 0) lpos.push_back(ALIGN_CENTER);
 }
 
 float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
-    int col = _matrix->_col;
-    float* arr = new float[col + 1]();
+    const int cols = _matrix->cols();
+    float* arr = new float[cols + 1]();
     sptr<Box> Align, AlignSep, Hsep;
     float h, w = env.getTextWidth();
     int i = 0;
@@ -142,9 +138,9 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
             arr[0] = _semihsep.createBox(env)->_width;
         else
             arr[0] = 0;
-        arr[col] = arr[0];
+        arr[cols] = arr[0];
         Hsep = _hsep.createBox(env);
-        for (; i < col; i++) {
+        for (; i < cols; i++) {
             if (_position[i] == ALIGN_NONE) {
                 arr[i] = 0;
                 arr[i + 1] = arr[i];
@@ -159,9 +155,9 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
     case SMALLMATRIX: {
         // simple matrix (hsep_col/2 or 0) elem hsep_col elem hsep_col ... hsep_col elem (hsep_col/2 or 0)
         arr[0] = 0;
-        arr[col] = arr[0];
+        arr[cols] = arr[0];
         Hsep = _hsep.createBox(env);
-        for (i = 1; i < col; i++) arr[i] = Hsep->_width;
+        for (i = 1; i < cols; i++) arr[i] = Hsep->_width;
     }
         return arr;
     case ALIGNED:
@@ -169,14 +165,14 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
         // Align env : hsep=(textwidth-matwidth)/(2n+1) and hsep eq_lft \medskip el_rgt hsep ... hsep elem hsep
         Align = _align.createBox(env);
         if (w != POS_INF) {
-            h = max((w - width - col / 2 * Align->_width) / floor((col + 3) / 2.f), 0.f);
+            h = max((w - width - cols / 2 * Align->_width) / floor((cols + 3) / 2.f), 0.f);
             AlignSep = sptr<Box>(new StrutBox(h, 0, 0, 0));
         } else {
             AlignSep = _hsep.createBox(env);
         }
 
-        arr[col] = AlignSep->_width;
-        for (int i = 0; i < col; i++) {
+        arr[cols] = AlignSep->_width;
+        for (int i = 0; i < cols; i++) {
             if (i % 2 == 0)
                 arr[i] = AlignSep->_width;
             else
@@ -192,8 +188,8 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
             h = 0;
         Align = _align.createBox(env);
         arr[0] = h;
-        arr[col] = arr[0];
-        for (int i = 1; i < col; i++) {
+        arr[cols] = arr[0];
+        for (int i = 1; i < cols; i++) {
             if (i % 2 == 0)
                 arr[i] = 0;
             else
@@ -204,15 +200,15 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
         // flalgin env : hsep=(textwidth-matwidth)/(2n+1) and hsep eq_lft \medskip el_rgt hsep ... hsep elem hsep
         Align = _align.createBox(env);
         if (w != POS_INF) {
-            h = max((w - width - (col / 2) * Align->_width) / floor((col - 1) / 2.f), 0.f);
+            h = max((w - width - (cols / 2) * Align->_width) / floor((cols - 1) / 2.f), 0.f);
             AlignSep = sptr<Box>(new StrutBox(h, 0, 0, 0));
         } else {
             AlignSep = _hsep.createBox(env);
         }
 
         arr[0] = 0;
-        arr[col] = arr[0];
-        for (int i = 1; i < col; i++) {
+        arr[cols] = arr[0];
+        for (int i = 1; i < cols; i++) {
             if (i % 2 == 0)
                 arr[i] = AlignSep->_width;
             else
@@ -223,7 +219,7 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
 
     if (w == POS_INF) {
         arr[0] = 0;
-        arr[col] = arr[0];
+        arr[cols] = arr[0];
     }
 
     return arr;
@@ -335,15 +331,16 @@ MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, int type) {
     _ispartial = ispar;
     _spaceAround = false;
 
+    const int cols = arr->cols();
     if (type != MATRIX && type != SMALLMATRIX) {
-        _position.resize(arr->_col);
-        for (size_t i = 0; i < arr->_col; i += 2) {
+        _position.resize(cols);
+        for (size_t i = 0; i < cols; i += 2) {
             _position[i] = ALIGN_RIGHT;
-            if (i + 1 < arr->_col) _position[i + 1] = ALIGN_LEFT;
+            if (i + 1 < cols) _position[i + 1] = ALIGN_LEFT;
         }
     } else {
-        _position.resize(arr->_col);
-        for (size_t i = 0; i < arr->_col; i++) _position[i] = ALIGN_CENTER;
+        _position.resize(cols);
+        for (size_t i = 0; i < cols; i++) _position[i] = ALIGN_CENTER;
     }
 }
 
@@ -353,14 +350,14 @@ MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, int type, int 
     _ttype = type;
     _spaceAround = true;
 
-    _position.resize(arr->_col);
-    for (size_t i = 0; i < arr->_col; i++) _position[i] = align;
+    _position.resize(arr->cols());
+    for (size_t i = 0; i < arr->cols(); i++) _position[i] = align;
 }
 
 sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     TeXEnvironment& env = e;
-    const int rows = _matrix->_row;
-    const int cols = _matrix->_col;
+    const int rows = _matrix->rows();
+    const int cols = _matrix->cols();
 
     float* lineDepth = new float[rows]();
     float* lineHeight = new float[rows]();
@@ -601,7 +598,7 @@ sptr<Box> MultlineAtom::createBox(_out_ TeXEnvironment& env) {
 
     vb->add(sptr<Box>(new HorizontalBox(atom->createBox(env), tw, alignment)));
     auto Vsep = _vsep_in.createBox(env);
-    for (size_t i = 1; i < _column->_row - 1; i++) {
+    for (size_t i = 1; i < _column->rows() - 1; i++) {
         atom = _column->_array[i][0];
         alignment = ALIGN_CENTER;
         if (atom->_alignment != -1) alignment = atom->_alignment;
@@ -609,8 +606,8 @@ sptr<Box> MultlineAtom::createBox(_out_ TeXEnvironment& env) {
         vb->add(sptr<Box>(new HorizontalBox(atom->createBox(env), tw, alignment)));
     }
 
-    if (_column->_row > 1) {
-        atom = _column->_array[_column->_row - 1][0];
+    if (_column->rows() > 1) {
+        atom = _column->_array[_column->rows() - 1][0];
         alignment = _ttype == GATHER ? ALIGN_CENTER : ALIGN_RIGHT;
         if (atom->_alignment != -1) alignment = atom->_alignment;
         vb->add(Vsep);

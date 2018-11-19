@@ -289,6 +289,14 @@ void ArrayOfAtoms::addCol(int n) {
     _col += n;
 }
 
+void ArrayOfAtoms::insertAtomIntoCol(int col, const sptr<Atom>& atom) {
+    _col++;
+    for (size_t j = 0; j < _row; j++) {
+        auto it = _array[j].begin();
+        _array[j].insert(it + col, atom);
+    }
+}
+
 void ArrayOfAtoms::addRow() {
     addCol();
     _array.push_back(vector<sptr<Atom>>());
