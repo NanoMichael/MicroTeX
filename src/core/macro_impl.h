@@ -564,7 +564,7 @@ inline macro(alignatATATenv) {
     arr->checkDimensions();
     size_t n = 0;
     valueof(args[1], n);
-    if (arr->_col != 2 * n) throw ex_parse("Bad number of equations in alignat environment!");
+    if (arr->cols() != 2 * n) throw ex_parse("Bad number of equations in alignat environment!");
 
     return sptr<Atom>(new MatrixAtom(
         tp.getIsPartial(), sptr<ArrayOfAtoms>(arr), ALIGNAT));
@@ -586,7 +586,7 @@ inline macro(alignedatATATenv) {
     arr->checkDimensions();
     size_t n = 0;
     valueof(args[1], n);
-    if (arr->_col != 2 * n)
+    if (arr->cols() != 2 * n)
         throw ex_parse("Bad number of equations in alignedat environment!");
 
     return sptr<Atom>(new MatrixAtom(
@@ -598,9 +598,9 @@ inline macro(multlineATATenv) {
     TeXParser p(tp.getIsPartial(), args[1], arr, false);
     p.parse();
     arr->checkDimensions();
-    if (arr->_col > 1)
-        throw ex_parse("Character '&' is only available in array mode!");
-    if (arr->_col == 0)
+    if (arr->cols() > 1)
+        throw ex_parse("Requires exact one column in multiline envrionment!");
+    if (arr->cols() == 0)
         return sptr<Atom>(nullptr);
 
     return sptr<Atom>(new MultlineAtom(
@@ -612,8 +612,8 @@ inline macro(gatherATATenv) {
     TeXParser p(tp.getIsPartial(), args[1], arr, false);
     p.parse();
     arr->checkDimensions();
-    if (arr->_col > 1) throw ex_parse("Character '&' is only available in array mode!");
-    if (arr->_col == 0) return sptr<Atom>(nullptr);
+    if (arr->cols() > 1) throw ex_parse("Requires exact one column in gather envrionment!");
+    if (arr->cols() == 0) return sptr<Atom>(nullptr);
 
     return sptr<Atom>(new MultlineAtom(
         tp.getIsPartial(), sptr<ArrayOfAtoms>(arr), GATHER));
@@ -624,8 +624,8 @@ inline macro(gatheredATATenv) {
     TeXParser p(tp.getIsPartial(), args[1], arr, false);
     p.parse();
     arr->checkDimensions();
-    if (arr->_col > 1) throw ex_parse("Character '&' is only available in array mode");
-    if (arr->_col == 0) return sptr<Atom>(nullptr);
+    if (arr->cols() > 1) throw ex_parse("Requires exact one column in gathered envrionment!");
+    if (arr->cols() == 0) return sptr<Atom>(nullptr);
 
     return sptr<Atom>(new MultlineAtom(
         tp.getIsPartial(), sptr<ArrayOfAtoms>(arr), GATHERED));

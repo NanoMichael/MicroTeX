@@ -239,17 +239,21 @@ public:
 };
 
 class ArrayOfAtoms : public TeXFormula {
+private:
+    size_t _row, _col;
+
 public:
     vector<vector<sptr<Atom>>> _array;
     map<int, vector<sptr<CellSpecifier>>> _rowSpecifiers;
     map<string, vector<sptr<CellSpecifier>>> _cellSpecifiers;
-    size_t _col, _row;
 
     ArrayOfAtoms();
 
     void addCol();
 
     void addCol(int n);
+
+    void insertAtomIntoCol(int col, const sptr<Atom>& atom);
 
     void addRow();
 

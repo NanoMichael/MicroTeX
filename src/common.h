@@ -715,10 +715,22 @@ enum TeXConstants {
      * Accent, e.g. "hat"
      */
     TYPE_ACCENT = 10,
-    TYPE_INTERTEXT,    // =11
+    /**
+     * Inter-text in matrix environment
+     */
+    TYPE_INTERTEXT,  // =11
+    /**
+     * Multi-column in matrix envrionment
+     */
     TYPE_MULTICOLUMN,  // =12
-    TYPE_HLINE,        // =13
-    TYPE_MULTIROW,     // =14
+    /**
+     * Horizontal line in matrix envrionment
+     */
+    TYPE_HLINE,  // =13
+    /**
+     * Multi-row in matrix envrionment
+     */
+    TYPE_MULTIROW,  // =14
 
     /****************************** over and under delimiter type constants ***********************/
     DELIM_BRACE = 0,

@@ -881,8 +881,9 @@ void TeXParser::parse() throw(ex_parse) {
                     tostring((char)R_GROUP) +
                     "' without an opening " + tostring((char)L_GROUP) + "'!");
             }
-        }
+            // End of a group
             return;
+        }
         case SUPER_SCRIPT: {
             _formula->add(getScripts(ch));
         } break;
