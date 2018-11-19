@@ -1173,3 +1173,36 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
         }
     }
 }
+
+sptr<Box> CancelAtom::createBox(_out_ TeXEnvironment& env) {
+    auto box = _base->createBox(env);
+    float* lines;
+    int count = 0;
+    if (_cancelType == SLASH) {
+        count = 1;
+        lines = new float[4]{
+            0, 0,
+            box->_width, box->_height + box->_depth};
+    } else if (_cancelType == BACKSLASH) {
+        count = 1;
+        lines = new float[4]{
+            box->_width, 0,
+            0, box->_height + box->_depth};
+    } else if (_cancelType == CROSS) {
+        count = 2;
+        lines = new float[8]{
+            0, 0,
+            box->_width, box->_height + box->_depth,
+            box->_width, 0,
+            0, box->_height + box->_depth};
+    } else {
+        return box;
+    }
+
+    const float rt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
+    auto overlap = sptr<Box>(new LineBox(lines, count, rt));
+    overlap->_width = box->_width;
+    overlap->_height = box->_height;
+    overlap->_depth = box->_depth;
+    return sptr<Box>(new OverlappedBox(box, overlap));
+}

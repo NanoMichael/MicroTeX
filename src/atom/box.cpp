@@ -291,44 +291,42 @@ int HorizontalBox::getLastFontId() {
     return id;
 }
 
-/************************************ horizontal rule implementation ******************************/
+/********************************** horizontal rule implementation ********************************/
 
-HorizontalRule::HorizontalRule(float thickness, float width, float s)
+HorizontalRule::HorizontalRule(float thickness, float width, float shift)
     : _color(trans), _speShift(0) {
     _height = thickness;
     _width = width;
-    _shift = s;
+    _shift = shift;
 }
 
-HorizontalRule::HorizontalRule(float thickness, float width, float s, bool trueshift)
+HorizontalRule::HorizontalRule(float thickness, float width, float shift, bool trueshift)
     : _color(trans), _speShift(0) {
     _height = thickness;
     _width = width;
     if (trueshift) {
-        _shift = s;
+        _shift = shift;
     } else {
         _shift = 0;
-        _speShift = s;
+        _speShift = shift;
     }
 }
 
-HorizontalRule::HorizontalRule(float thickness, float width, float s, color c, bool trueshift)
+HorizontalRule::HorizontalRule(float thickness, float width, float shift, color c, bool trueshift)
     : _color(c), _speShift(0) {
     _height = thickness;
     _width = width;
     if (trueshift) {
-        _shift = s;
+        _shift = shift;
     } else {
         _shift = 0;
-        _speShift = s;
+        _speShift = shift;
     }
 }
 
 void HorizontalRule::draw(Graphics2D& g2, float x, float y) {
     color oldColor = g2.getColor();
-    if (!istrans(_color)) {
-        g2.setColor(_color);
-    }
+    if (!istrans(_color)) g2.setColor(_color);
     const Stroke& oldStroke = g2.getStroke();
     g2.setStroke(Stroke(_height, CAP_BUTT, JOIN_BEVEL));
     y = y - _height / 2.f - _speShift;
@@ -782,17 +780,11 @@ void CharBox::draw(Graphics2D& g2, float x, float y) {
     startDraw(g2, x, y);
     g2.translate(x, y);
     const Font* font = FontInfo::getFont(_cf->_fontId);
-    if (_size != 1) {
-        g2.scale(_size, _size);
-    }
-    if (g2.getFont() != font) {
-        g2.setFont(font);
-    }
+    if (_size != 1) g2.scale(_size, _size);
+    if (g2.getFont() != font) g2.setFont(font);
     g2.drawChar(_cf->_c, 0, 0);
     // reset
-    if (_size != 1) {
-        g2.scale(1.f / _size, 1.f / _size);
-    }
+    if (_size != 1) g2.scale(1.f / _size, 1.f / _size);
     g2.translate(-x, -y);
     endDraw(g2);
 }
@@ -873,4 +865,39 @@ int ShiftBox::getLastFontId() {
 
 vector<sptr<Box>> ShiftBox::getChildren() const {
     return {_base};
+}
+
+void LineBox::draw(Graphics2D& g2, float x, float y) {
+    const float oldThickness = g2.getStroke().lineWidth;
+    g2.setStrokeWidth(_thickness);
+    g2.translate(0, -_height);
+    for (int i = 0; i < _lineCount; i++) {
+        int j = i * 4;
+        float x1 = _lines[j] + x, y1 = _lines[j + 1] + y;
+        float x2 = _lines[j + 2] + x, y2 = _lines[j + 3] + y;
+        g2.drawLine(x1, y1, x2, y2);
+    }
+    g2.translate(0, _height);
+    g2.setStrokeWidth(oldThickness);
+}
+
+int LineBox::getLastFontId() {
+    return 0;
+}
+
+LineBox::~LineBox() {
+    delete _lines;
+}
+
+void OverlappedBox::draw(Graphics2D& g2, float x, float y) {
+    _base->draw(g2, x, y);
+    _overlap->draw(g2, x, y);
+}
+
+int OverlappedBox::getLastFontId() {
+    return _base->getLastFontId();
+}
+
+vector<sptr<Box>> OverlappedBox::getChildren() const {
+    return {_base, _overlap};
 }

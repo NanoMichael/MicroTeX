@@ -917,15 +917,8 @@ private:
 public:
     RaiseAtom() = delete;
 
-    RaiseAtom(const sptr<Atom>& base, int ru, float r, int hu, float h, int du, float d) {
-        _base = base;
-        _ru = ru;
-        _r = r;
-        _hu = hu;
-        _h = h;
-        _du = du;
-        _d = d;
-    }
+    RaiseAtom(const sptr<Atom>& base, int ru, float r, int hu, float h, int du, float d)
+        : _base(base), _ru(ru), _r(r), _hu(hu), _h(h), _du(du), _d(d) {}
 
     int getLeftType() const override {
         return _base->getLeftType();
@@ -987,10 +980,10 @@ private:
 public:
     ResizeAtom() = delete;
 
-    ResizeAtom(const sptr<Atom>& base, const string& ws, const string& hs, bool keep) {
+    ResizeAtom(const sptr<Atom>& base, const string& ws, const string& hs, bool keepAspectRatio) {
         _type = base->_type;
         _base = base;
-        _keep_aspect_ratio = keep;
+        _keep_aspect_ratio = keepAspectRatio;
         auto w = SpaceAtom::getLength(ws);
         auto h = SpaceAtom::getLength(hs);
         _wu = (int)w.first;
@@ -1082,14 +1075,8 @@ private:
 public:
     RuleAtom() = delete;
 
-    RuleAtom(int wu, float w, int hu, float h, int ru, float r) {
-        _wu = wu;
-        _hu = hu;
-        _ru = ru;
-        _w = w;
-        _h = h;
-        _r = r;
-    }
+    RuleAtom(int wu, float w, int hu, float h, int ru, float r)
+        : _wu(wu), _hu(hu), _ru(ru), _w(w), _h(h), _r(r) {}
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override {
         float w = SpaceAtom::getFactor(_wu, env) * _w;
@@ -1454,6 +1441,29 @@ public:
     LongDivAtom() = delete;
 
     LongDivAtom(long divisor, long dividend);
+};
+
+/**
+ * An atom representing an atom with lines covered
+ */
+class CancelAtom : public Atom {
+private:
+    sptr<Atom> _base;
+    int _cancelType;
+
+public:
+    enum CancelType {
+        SLASH,
+        BACKSLASH,
+        CROSS
+    };
+
+    CancelAtom() = delete;
+
+    CancelAtom(const sptr<Atom>& base, int cancelType)
+        : _base(base), _cancelType(cancelType) {}
+
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 };
 
 }  // namespace tex

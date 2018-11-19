@@ -186,6 +186,27 @@ inline macro(brace) {
     return _macro_choose("lbrace", "rbrace", tp, args);
 }
 
+inline sptr<Atom> _marco_cancel(
+    int cancelType,
+    _out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
+    auto base = TeXFormula(tp, args[1], false)._root;
+    if (base == nullptr)
+        throw ex_parse("Cancel content must not be empty!");
+    return sptr<Atom>(new CancelAtom(base, cancelType));
+}
+
+inline macro(cancel) {
+    return _marco_cancel(CancelAtom::SLASH, tp, args);
+}
+
+inline macro(bcancel) {
+    return _marco_cancel(CancelAtom::BACKSLASH, tp, args);
+}
+
+inline macro(xcancel) {
+    return _marco_cancel(CancelAtom::CROSS, tp, args);
+}
+
 inline macro(binom) {
     TeXFormula num(tp, args[1], false);
     TeXFormula den(tp, args[2], false);
