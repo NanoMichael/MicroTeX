@@ -328,7 +328,7 @@ macro(intertext) {
     tp.addAtom(ra);
     tp.addRow();
 
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 macro(newcommand) {
@@ -345,7 +345,7 @@ macro(newcommand) {
         NewCommandMacro::addNewCommand(newcom.substr(1), args[2], nbArgs, args[4]);
     }
 
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 macro(renewcommand) {
@@ -358,7 +358,7 @@ macro(renewcommand) {
 
     NewCommandMacro::addRenewCommand(newcmd.substr(1), args[2], nbargs);
 
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 macro(raisebox) {
@@ -407,7 +407,7 @@ macro(definecolor) {
     }
 
     ColorAtom::_colors[wide2utf8(args[1].c_str())] = c;
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 macro(sizes) {

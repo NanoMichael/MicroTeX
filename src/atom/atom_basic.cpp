@@ -409,7 +409,7 @@ RowAtom::RowAtom(const sptr<Atom>& el)
 
 sptr<Atom> RowAtom::getFirstAtom() {
     if (!_elements.empty()) return _elements.front();
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 sptr<Atom> RowAtom::getLastAtom() {
@@ -542,7 +542,7 @@ sptr<Box> RowAtom::createBox(_out_ TeXEnvironment& env) {
         if (!atom->isKern()) _previousAtom = atom;
     }
     // reset previous atom
-    _previousAtom = sptr<Dummy>(nullptr);
+    _previousAtom = nullptr;
     return sptr<Box>(hbox);
 }
 

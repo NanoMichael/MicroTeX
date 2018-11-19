@@ -101,7 +101,7 @@ void TeXParser::init(
 void TeXParser::reset(const wstring& latex) {
     _parseString = latex;
     _len = latex.length();
-    _formula->_root = sptr<Atom>(nullptr);
+    _formula->_root = nullptr;
     _pos = 0;
     _spos = 0;
     _line = 0;
@@ -118,13 +118,13 @@ sptr<Atom> TeXParser::getLastAtom() {
     auto a = _formula->_root;
     RowAtom* ra = dynamic_cast<RowAtom*>(a.get());
     if (ra != nullptr) return ra->getLastAtom();
-    _formula->_root = sptr<Atom>(nullptr);
+    _formula->_root = nullptr;
     return a;
 }
 
 sptr<Atom> TeXParser::getFormulaAtom() {
     auto a = _formula->_root;
-    _formula->_root = sptr<Atom>(nullptr);
+    _formula->_root = nullptr;
     return a;
 }
 
@@ -584,7 +584,7 @@ sptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
      */
     if (f == SUPER_SCRIPT && s == SUPER_SCRIPT) {
         second = first;
-        first = sptr<Atom>(nullptr);
+        first = nullptr;
     } else if (f == SUB_SCRIPT && s == SUPER_SCRIPT) {
         _pos++;
         second = getArgument();
@@ -610,7 +610,7 @@ sptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
         atom = sptr<Atom>(new PhantomAtom(in, false, true, true));
     } else {
         atom = _formula->_root;
-        _formula->_root = sptr<Atom>(nullptr);
+        _formula->_root = nullptr;
     }
 
     if (atom->getRightType() == TYPE_BIG_OPERATOR)
@@ -621,11 +621,11 @@ sptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
         if (del->isOver()) {
             if (second != nullptr) {
                 del->addScript(second);
-                return sptr<Atom>(new ScriptsAtom(atom, first, sptr<Atom>(nullptr)));
+                return sptr<Atom>(new ScriptsAtom(atom, first, nullptr));
             }
         } else if (first != nullptr) {
             del->addScript(first);
-            return sptr<Atom>(new ScriptsAtom(atom, sptr<Atom>(nullptr), second));
+            return sptr<Atom>(new ScriptsAtom(atom, nullptr, second));
         }
     }
 
@@ -903,7 +903,7 @@ void TeXParser::parse() throw(ex_parse) {
         case PRIME: {
             if (_ignoreWhiteSpace) {
                 _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
-                    getLastAtom(), sptr<Atom>(nullptr), SymbolAtom::get("prime"))));
+                    getLastAtom(), nullptr, SymbolAtom::get("prime"))));
             } else {
                 _formula->add(convertCharacter(PRIME, true));
             }
@@ -912,7 +912,7 @@ void TeXParser::parse() throw(ex_parse) {
         case BACKPRIME: {
             if (_ignoreWhiteSpace) {
                 _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
-                    getLastAtom(), sptr<Atom>(nullptr), SymbolAtom::get("backprime"))));
+                    getLastAtom(), nullptr, SymbolAtom::get("backprime"))));
             } else {
                 _formula->add(convertCharacter(BACKPRIME, true));
             }
@@ -921,9 +921,9 @@ void TeXParser::parse() throw(ex_parse) {
         case DQUOTE: {
             if (_ignoreWhiteSpace) {
                 _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
-                    getLastAtom(), sptr<Atom>(nullptr), SymbolAtom::get("prime"))));
+                    getLastAtom(), nullptr, SymbolAtom::get("prime"))));
                 _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
-                    getLastAtom(), sptr<Atom>(nullptr), SymbolAtom::get("prime"))));
+                    getLastAtom(), nullptr, SymbolAtom::get("prime"))));
             } else {
                 _formula->add(convertCharacter(PRIME, true));
                 _formula->add(convertCharacter(PRIME, true));
@@ -1011,7 +1011,7 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_parse) 
             if (!_isPartial)
                 throw ex_parse("Unknown character : '" + tostring(c) + "'");
             else {
-                if (_hideUnknownChar) return sptr<Atom>(nullptr);
+                if (_hideUnknownChar) return nullptr;
                 sptr<Atom> rm(new RomanAtom(
                     TeXFormula(L"\\text{(unknown char " + towstring((int)c) + L")}")._root));
                 return sptr<Atom>(new ColorAtom(rm, TRANS, RED));

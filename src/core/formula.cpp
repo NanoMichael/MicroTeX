@@ -276,14 +276,14 @@ ArrayOfAtoms::ArrayOfAtoms() : _row(0), _col(0) {
 
 void ArrayOfAtoms::addCol() {
     _array[_row].push_back(_root);
-    _root = sptr<Atom>(nullptr);
+    _root = nullptr;
     _col++;
 }
 
 void ArrayOfAtoms::addCol(int n) {
     _array[_row].push_back(_root);
     for (int i = 1; i < n - 1; i++) {
-        _array[_row].push_back(sptr<Atom>(nullptr));
+        _array[_row].push_back(nullptr);
     }
     _root = nullptr;
     _col += n;
@@ -355,7 +355,7 @@ void ArrayOfAtoms::checkDimensions() {
             _array[i][0]->_type != TYPE_INTERTEXT) {
             // Fill the row with null atom
             vector<sptr<Atom>>& r = _array[i];
-            for (; j < _col; j++) r.push_back(sptr<Atom>(nullptr));
+            for (; j < _col; j++) r.push_back(nullptr);
         }
     }
 }

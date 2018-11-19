@@ -23,12 +23,12 @@ namespace tex {
 #ifdef __GA_DEBUG
 inline macro(debug) {
     TeXFormula::setDEBUG(true);
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(undebug) {
     TeXFormula::setDEBUG(false);
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 #endif  // __GA_DEBUG
 
@@ -38,7 +38,7 @@ inline macro(multirow) {
     int n = 0;
     valueof(args[1], n);
     tp.addAtom(sptr<Atom>(new MultiRowAtom(n, args[2], TeXFormula(tp, args[3])._root)));
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(longdiv) {
@@ -57,7 +57,7 @@ inline macro(cellcolor) {
     color c = ColorAtom::getColor(wide2utf8(args[1].c_str()));
     sptr<CellSpecifier> atom(new CellColorAtom(c));
     ((ArrayOfAtoms*)tp._formula)->addCellSpecifier(atom);
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(color) {
@@ -68,18 +68,18 @@ inline macro(color) {
         color c = ColorAtom::getColor(wide2utf8(args[1].c_str()));
         return sptr<Atom>(new CellForegroundAtom(c));
     }
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(newcolumntype) {
     MatrixAtom::defineColumnSpecifier(args[1], args[2]);
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(arrayrulecolor) {
     color c = ColorAtom::getColor(wide2utf8(args[1].c_str()));
     MatrixAtom::LINE_COLOR = c;
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(columnbg) {
@@ -93,7 +93,7 @@ inline macro(rowcolor) {
     color c = ColorAtom::getColor(wide2utf8(args[1].c_str()));
     sptr<CellSpecifier> spe(new CellColorAtom(c));
     ((ArrayOfAtoms*)tp._formula)->addRowSpecifier(spe);
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(st) {
@@ -267,7 +267,7 @@ inline macro(nbsp) {
 inline macro(sqrt) {
     if (args[2].empty())
         return sptr<Atom>(new NthRoot(
-            TeXFormula(tp, args[1], false)._root, sptr<Atom>(nullptr)));
+            TeXFormula(tp, args[1], false)._root, nullptr));
     return sptr<Atom>(new NthRoot(
         TeXFormula(tp, args[1], false)._root, TeXFormula(tp, args[2], false)._root));
 }
@@ -335,7 +335,7 @@ inline macro(prescript) {
 inline macro(underbrace) {
     return sptr<Atom>(new OverUnderDelimiter(
         TeXFormula(tp, args[1], false)._root,
-        sptr<Atom>(nullptr),
+        nullptr,
         SymbolAtom::get("rbrace"),
         UNIT_EX, 0, false));
 }
@@ -343,7 +343,7 @@ inline macro(underbrace) {
 inline macro(overbrace) {
     return sptr<Atom>(new OverUnderDelimiter(
         TeXFormula(tp, args[1], false)._root,
-        sptr<Atom>(nullptr),
+        nullptr,
         SymbolAtom::get("lbrace"),
         UNIT_EX, 0, true));
 }
@@ -351,7 +351,7 @@ inline macro(overbrace) {
 inline macro(underbrack) {
     return sptr<Atom>(new OverUnderDelimiter(
         TeXFormula(tp, args[1], false)._root,
-        sptr<Atom>(nullptr),
+        nullptr,
         SymbolAtom::get("rsqbrack"),
         UNIT_EX, 0, false));
 }
@@ -359,7 +359,7 @@ inline macro(underbrack) {
 inline macro(overbrack) {
     return sptr<Atom>(new OverUnderDelimiter(
         TeXFormula(tp, args[1], false)._root,
-        sptr<Atom>(nullptr),
+        nullptr,
         SymbolAtom::get("lsqbrack"),
         UNIT_EX, 0, true));
 }
@@ -367,7 +367,7 @@ inline macro(overbrack) {
 inline macro(underparen) {
     return sptr<Atom>(new OverUnderDelimiter(
         TeXFormula(tp, args[1], false)._root,
-        sptr<Atom>(nullptr),
+        nullptr,
         SymbolAtom::get("rbrack"),
         UNIT_EX, 0, false));
 }
@@ -375,7 +375,7 @@ inline macro(underparen) {
 inline macro(overparen) {
     return sptr<Atom>(new OverUnderDelimiter(
         TeXFormula(tp, args[1], false)._root,
-        sptr<Atom>(nullptr),
+        nullptr,
         SymbolAtom::get("lbrack"),
         UNIT_EX, 0, true));
 }
@@ -485,7 +485,7 @@ inline macro(cr) {
         tp._formula->_root = arr.getAsVRow();
     }
 
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(backslashcr) {
@@ -517,7 +517,7 @@ inline macro(multicolumn) {
     wide2utf8(args[2].c_str(), x);
     tp.addAtom(sptr<Atom>(new MulticolumnAtom(n, x, TeXFormula(tp, args[3])._root)));
     ((ArrayOfAtoms*)tp._formula)->addCol(n);
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(hdotsfor) {
@@ -527,7 +527,7 @@ inline macro(hdotsfor) {
     if (!args[2].empty()) valueof(args[2], f);
     tp.addAtom(sptr<Atom>(new HdotsforAtom(n, f)));
     ((ArrayOfAtoms*)tp._formula)->addCol(n);
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(arrayATATenv) {
@@ -601,7 +601,7 @@ inline macro(multlineATATenv) {
     if (arr->cols() > 1)
         throw ex_parse("Requires exact one column in multiline envrionment!");
     if (arr->cols() == 0)
-        return sptr<Atom>(nullptr);
+        return nullptr;
 
     return sptr<Atom>(new MultlineAtom(
         tp.getIsPartial(), sptr<ArrayOfAtoms>(arr), MULTILINE));
@@ -613,7 +613,7 @@ inline macro(gatherATATenv) {
     p.parse();
     arr->checkDimensions();
     if (arr->cols() > 1) throw ex_parse("Requires exact one column in gather envrionment!");
-    if (arr->cols() == 0) return sptr<Atom>(nullptr);
+    if (arr->cols() == 0) return nullptr;
 
     return sptr<Atom>(new MultlineAtom(
         tp.getIsPartial(), sptr<ArrayOfAtoms>(arr), GATHER));
@@ -625,7 +625,7 @@ inline macro(gatheredATATenv) {
     p.parse();
     arr->checkDimensions();
     if (arr->cols() > 1) throw ex_parse("Requires exact one column in gathered envrionment!");
-    if (arr->cols() == 0) return sptr<Atom>(nullptr);
+    if (arr->cols() == 0) return nullptr;
 
     return sptr<Atom>(new MultlineAtom(
         tp.getIsPartial(), sptr<ArrayOfAtoms>(arr), GATHERED));
@@ -645,12 +645,12 @@ inline macro(shoveleft) {
 
 inline macro(makeatletter) {
     tp.makeAtLetter();
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(makeatother) {
     tp.makeAtOther();
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(newenvironment) {
@@ -658,7 +658,7 @@ inline macro(newenvironment) {
     if (!args[4].empty()) valueof(args[4], opt);
 
     NewEnvironmentMacro::addNewEnvironment(args[1], args[2], args[3], opt);
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(renewenvironment) {
@@ -666,7 +666,7 @@ inline macro(renewenvironment) {
     if (!args[4].empty()) valueof(args[4], opt);
 
     NewEnvironmentMacro::addRenewEnvironment(args[1], args[2], args[3], opt);
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(fbox) {
@@ -1017,7 +1017,7 @@ inline macro(doteq) {
 inline macro(externalfont) {
     string x = wide2utf8(args[1].c_str());
     TextRenderingBox::setFont(x);
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(ctext) {
@@ -1040,14 +1040,14 @@ inline macro(declaremathsizes) {
     float a, b, c, d;
     valueof(args[1], a), valueof(args[2], b), valueof(args[3], c), valueof(args[4], d);
     DefaultTeXFont::setMathSizes(a, b, c, c);
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(magnification) {
     float x;
     valueof(args[1], x);
     DefaultTeXFont::setMagnification(x);
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(hline) {
@@ -1058,12 +1058,12 @@ inline macro(hline) {
 
 inline macro(mathcumsup) {
     return sptr<Atom>(new CumulativeScriptsAtom(
-        tp.getLastAtom(), sptr<Atom>(nullptr), TeXFormula(tp, args[1])._root));
+        tp.getLastAtom(), nullptr, TeXFormula(tp, args[1])._root));
 }
 
 inline macro(mathcumsub) {
     return sptr<Atom>(new CumulativeScriptsAtom(
-        tp.getLastAtom(), TeXFormula(tp, args[1])._root, sptr<Atom>(nullptr)));
+        tp.getLastAtom(), TeXFormula(tp, args[1])._root, nullptr));
 }
 
 inline macro(dotminus) {
@@ -1536,19 +1536,19 @@ inline macro(normal) {
 /**************************************** not implemented *****************************************/
 
 inline macro(includegraphics) {
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(fcscore) {
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(GeoGebra) {
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 inline macro(dynamic) {
-    return sptr<Atom>(nullptr);
+    return nullptr;
 }
 
 }  // namespace tex
