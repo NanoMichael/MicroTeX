@@ -37,7 +37,7 @@ void FontInfo::init(int unicode) {
 inline sptr<CharFont> FontInfo::getLigture(wchar_t left, wchar_t right) {
     CharCouple c(left, right);
     auto it = _lig.find(c);
-    if (it == _lig.end()) return sptr<CharFont>(nullptr);
+    if (it == _lig.end()) return nullptr;
     return sptr<CharFont>(new CharFont(it->second, _fontId));
 }
 
@@ -840,7 +840,7 @@ sptr<CharFont> DefaultTeXFont::getLigature(_in_ const CharFont& left, _in_ const
         FontInfo* info = _fontInfo[left._fontId];
         return info->getLigture(left._c, right._c);
     }
-    return sptr<CharFont>(nullptr);
+    return nullptr;
 }
 
 inline int DefaultTeXFont::getMuFontId() {

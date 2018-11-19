@@ -1018,7 +1018,7 @@ public:
         SpaceAtom::checkUnit(unit);
         _base = base;
         if (over) {
-            _under = sptr<Atom>(nullptr);
+            _under = nullptr;
             _underSpace = 0.f;
             _underUnit = 0;
             _underSmall = false;
@@ -1032,7 +1032,7 @@ public:
             _underSpace = space;
             _underSmall = small;
             _overSpace = 0.f;
-            _over = sptr<Atom>(nullptr);
+            _over = nullptr;
             _overUnit = 0;
             _overSmall = false;
         }

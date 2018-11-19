@@ -99,7 +99,7 @@ public:
 
     virtual sptr<Atom> invoke(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
         _macro->execute(tp, args);
-        return sptr<Atom>(nullptr);
+        return nullptr;
     }
 
     virtual ~MacroInfo() {}
