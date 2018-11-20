@@ -266,7 +266,7 @@ public:
      */
     int _type;
     /**
-     * The limits type of the atom (default value: normal) @see TeXConstants
+     * The limits type of the atom (default value: nolimits) @see TeXConstants
      */
     int _typelimits;
     /**
@@ -314,6 +314,16 @@ public:
      * @return the resulting box.
      */
     virtual sptr<Box> createBox(_out_ TeXEnvironment& env) = 0;
+
+    /**
+     * Shallow clone a atom from this atom.
+     */
+    virtual sptr<Atom> clone() const = 0;
+
+#ifndef __decl_clone
+#define __decl_clone(type) \
+    virtual sptr<Atom> clone() const override { return sptr<Atom>(new type(*this)); }
+#endif
 };
 
 }  // namespace tex

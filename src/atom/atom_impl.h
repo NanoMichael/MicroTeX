@@ -60,6 +60,8 @@ public:
     void apply(const sptr<Box>& box) {
         box->_background = _color;
     }
+
+    __decl_clone(CellColorAtom)
 };
 
 /**
@@ -77,6 +79,8 @@ public:
     void apply(const sptr<Box>& box) {
         box->_foreground = _color;
     }
+
+    __decl_clone(CellForegroundAtom)
 };
 
 /**
@@ -106,6 +110,8 @@ public:
         b->_type = TYPE_MULTIROW;
         return b;
     }
+
+    __decl_clone(MultiRowAtom)
 };
 
 class VlineAtom;
@@ -195,6 +201,8 @@ public:
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
     static void defineColumnSpecifier(const wstring& rep, const wstring& spe);
+
+    __decl_clone(MatrixAtom)
 };
 
 /**
@@ -237,6 +245,8 @@ public:
 
         return sptr<Box>(hb);
     }
+
+    __decl_clone(VlineAtom)
 };
 
 enum MULTILINETYPE {
@@ -271,6 +281,8 @@ public:
     }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(MultlineAtom)
 };
 
 /**
@@ -298,6 +310,8 @@ public:
         hb->add(b);
         return sptr<Box>(hb);
     }
+
+    __decl_clone(BigDelimiterAtom)
 };
 
 /**
@@ -321,6 +335,8 @@ public:
         }
         return sptr<Box>(new StrutBox(0, 0, 0, 0));
     }
+
+    __decl_clone(BoldAtom)
 };
 
 /**
@@ -359,6 +375,8 @@ public:
         vb->_depth = f - b->_height;
         return sptr<Box>(vb);
     }
+
+    __decl_clone(CedillAtom)
 };
 
 /**
@@ -386,6 +404,8 @@ public:
         vb->_depth = 0;
         return sptr<Box>(vb);
     }
+
+    __decl_clone(DdtosAtom)
 };
 
 /**
@@ -420,6 +440,8 @@ public:
         env._isColored = true;
         return sptr<Box>(new FramedBox(bbase, drt, space, _line, _bg));
     }
+
+    __decl_clone(FBoxAtom)
 };
 
 /**
@@ -439,6 +461,8 @@ public:
         return sptr<Box>(new FramedBox(
             sptr<Box>(new FramedBox(bbase, 0.75 * drt, space)), 1.5f * drt, sspace));
     }
+
+    __decl_clone(DoubleFramedAtom)
 };
 
 /**
@@ -456,6 +480,8 @@ public:
         float t = env.getTeXFont()->getDefaultRuleThickness(env.getStyle()) * 4;
         return sptr<Box>(new ShadowBox(box, t));
     }
+
+    __decl_clone(ShadowAtom)
 };
 
 /**
@@ -500,6 +526,8 @@ public:
     }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(FencedAtom)
 };
 
 /**
@@ -580,6 +608,8 @@ public:
     }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(FractionAtom)
 };
 
 /**
@@ -637,6 +667,8 @@ public:
     }
 
     virtual sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(MulticolumnAtom)
 };
 
 /**
@@ -654,6 +686,8 @@ public:
         : MulticolumnAtom(n, "c", SymbolAtom::get("ldotp")), _coeff(coeff) {}
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(HdotsforAtom)
 };
 
 /**
@@ -682,6 +716,8 @@ public:
 
         return sptr<Box>(vb);
     }
+
+    __decl_clone(IddotsAtom)
 };
 
 /**
@@ -706,6 +742,8 @@ public:
         hb->add(sptr<Box>(J));
         return sptr<Box>(hb);
     }
+
+    __decl_clone(IJAtom)
 };
 
 /**
@@ -732,6 +770,8 @@ public:
 
         return box;
     }
+
+    __decl_clone(ItAtom)
 };
 
 /**
@@ -766,6 +806,8 @@ public:
 
         return sptr<Box>(vb);
     }
+
+    __decl_clone(LapedAtom)
 };
 
 /**
@@ -775,6 +817,8 @@ public:
 class LaTeXAtom : public Atom {
 public:
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(LaTeXAtom)
 };
 
 /**
@@ -802,6 +846,8 @@ public:
         hb->add(sptr<Box>(A));
         return sptr<Box>(hb);
     }
+
+    __decl_clone(LCaronAtom)
 };
 
 /**
@@ -823,6 +869,8 @@ public:
         e.setScaleFactor(_factor);
         return sptr<Box>(new ScaleBox(_base->createBox(e), _factor / f));
     }
+
+    __decl_clone(MonoScaleAtom)
 };
 
 /**
@@ -860,6 +908,8 @@ public:
         vb->_depth = f - b->_height;
         return sptr<Box>(vb);
     }
+
+    __decl_clone(OgonekAtom)
 };
 
 /**
@@ -876,6 +926,8 @@ public:
         auto box = dynamic_pointer_cast<FramedBox>(x);
         return sptr<Box>(new OvalBox(box));
     }
+
+    __decl_clone(OvalAtom)
 };
 
 /**
@@ -906,6 +958,8 @@ public:
 
         return sptr<Box>(ob);
     }
+
+    __decl_clone(OverlinedAtom)
 };
 
 class RaiseAtom : public Atom {
@@ -946,6 +1000,8 @@ public:
 
         return sptr<Box>(hbox);
     }
+
+    __decl_clone(RaiseAtom)
 };
 
 /**
@@ -965,6 +1021,8 @@ public:
     sptr<Box> createBox(_out_ TeXEnvironment& env) override {
         return sptr<Box>(new ReflectBox(_base->createBox(env)));
     }
+
+    __decl_clone(ReflectAtom)
 };
 
 /**
@@ -1021,6 +1079,8 @@ public:
 
         return sptr<Box>(new ScaleBox(bbox, sx, sy));
     }
+
+    __decl_clone(ResizeAtom)
 };
 
 /**
@@ -1044,6 +1104,8 @@ public:
     }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(NthRoot)
 };
 
 /**
@@ -1065,6 +1127,8 @@ public:
     RotateAtom(const sptr<Atom>& base, float angle, const wstring& option);
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(RotateAtom)
 };
 
 class RuleAtom : public Atom {
@@ -1084,6 +1148,8 @@ public:
         float r = SpaceAtom::getFactor(_ru, env) * _r;
         return sptr<Box>(new HorizontalRule(h, w, r));
     }
+
+    __decl_clone(RuleAtom)
 };
 
 /**
@@ -1105,6 +1171,8 @@ public:
         env.setSmallCap(prev);
         return box;
     }
+
+    __decl_clone(SmallCpaAtom)
 };
 
 /**
@@ -1126,6 +1194,8 @@ public:
         env.getTeXFont()->setSs(prev);
         return box;
     }
+
+    __decl_clone(SsAtom)
 };
 
 /**
@@ -1152,6 +1222,8 @@ public:
 
         return sptr<Box>(hb);
     }
+
+    __decl_clone(StrikeThroughAtom)
 };
 
 /**
@@ -1178,6 +1250,8 @@ public:
         env.setStyle(s);
         return box;
     }
+
+    __decl_clone(StyleAtom)
 };
 
 /**
@@ -1195,6 +1269,8 @@ public:
         hb->add(sptr<Box>(A));
         return sptr<Box>(hb);
     }
+
+    __decl_clone(TCaronAtom)
 };
 
 class TextCircledAtom : public Atom {
@@ -1215,6 +1291,8 @@ public:
         hb->add(circle);
         return sptr<Box>(hb);
     }
+
+    __decl_clone(TextCircledAtom)
 };
 
 /**
@@ -1238,6 +1316,8 @@ public:
         env.setTextStyle(prev);
         return box;
     }
+
+    __decl_clone(TextStyleAtom)
 };
 
 /**
@@ -1272,6 +1352,8 @@ public:
         vb->add(sptr<Box>(b));
         return sptr<Box>(vb);
     }
+
+    __decl_clone(TStrokeAtom)
 };
 
 /**
@@ -1293,6 +1375,8 @@ public:
         env.getTeXFont()->setTt(prev);
         return box;
     }
+
+    __decl_clone(TtAtom)
 };
 
 /**
@@ -1328,6 +1412,8 @@ public:
 
         return sptr<Box>(vb);
     }
+
+    __decl_clone(UnderlinedAtom)
 };
 
 /**
@@ -1357,6 +1443,8 @@ public:
     }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(UnderOverArrowAtom)
 };
 
 /**
@@ -1383,6 +1471,8 @@ public:
 
         return sptr<Box>(new HorizontalBox(b));
     }
+
+    __decl_clone(VCenteredAtom)
 };
 
 /**
@@ -1405,6 +1495,8 @@ public:
 
         return sptr<Box>(vb);
     }
+
+    __decl_clone(VdotsAtom)
 };
 
 /**
@@ -1426,6 +1518,8 @@ public:
     }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(XArrowAtom)
 };
 
 /**
@@ -1441,6 +1535,8 @@ public:
     LongDivAtom() = delete;
 
     LongDivAtom(long divisor, long dividend);
+
+    __decl_clone(LongDivAtom)
 };
 
 /**
@@ -1464,6 +1560,8 @@ public:
         : _base(base), _cancelType(cancelType) {}
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(CancelAtom)
 };
 
 }  // namespace tex

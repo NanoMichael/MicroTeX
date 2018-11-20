@@ -170,7 +170,8 @@ public:
         _tex_editor.set_highlight_current_line(true);
         _tex_editor.set_tab_width(4);
         _tex_editor.override_font(Pango::FontDescription("Monospace 12"));
-        _tex_editor.signal_key_press_event().connect(sigc::mem_fun(*this, &MainWindow::on_text_key_press), false);
+        _tex_editor.signal_key_press_event().connect(
+            sigc::mem_fun(*this, &MainWindow::on_text_key_press), false);
         _tex_editor.set_border_width(5);
 
         _text_scroller.set_size_request(480);
@@ -178,11 +179,15 @@ public:
         _text_scroller.add(_tex_editor);
 
         Glib::RefPtr<Gtk::Adjustment> adj = Gtk::Adjustment::create(_tex.getTextSize(), 1, 300);
-        adj->signal_value_changed().connect(sigc::mem_fun(*this, &MainWindow::on_text_size_changed));
+        adj->signal_value_changed().connect(
+            sigc::mem_fun(*this, &MainWindow::on_text_size_changed));
         _size_spin.set_adjustment(adj);
-        _next.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_next_clicked));
-        _rendering.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_rendering_clicked));
-        _save.signal_clicked().connect(sigc::mem_fun(*this, &MainWindow::on_save_clicked));
+        _next.signal_clicked().connect(
+            sigc::mem_fun(*this, &MainWindow::on_next_clicked));
+        _rendering.signal_clicked().connect(
+            sigc::mem_fun(*this, &MainWindow::on_rendering_clicked));
+        _save.signal_clicked().connect(
+            sigc::mem_fun(*this, &MainWindow::on_save_clicked));
         _save.set_sensitive(_tex.isRenderDisplayed());
 
         _bottom_box.set_spacing(10);
@@ -225,7 +230,10 @@ protected:
         int result = dialog.run();
         if (result == Gtk::RESPONSE_OK) {
             auto file = dialog.get_filename();
-            auto surface = Cairo::SvgSurface::create(file, _tex.getRenderWidth(), _tex.getRenderHeight());
+            auto surface = Cairo::SvgSurface::create(
+                file,
+                _tex.getRenderWidth(),
+                _tex.getRenderHeight());
             auto context = Cairo::Context::create(surface);
             _tex.drawInContext(context);
         }

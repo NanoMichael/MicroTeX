@@ -28,6 +28,8 @@ class RowAtom;
 class EmptyAtom : public Atom {
 public:
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(EmptyAtom)
 };
 
 /**
@@ -48,6 +50,8 @@ public:
         : _str(str), _type(0), _infos(info) {}
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(TextRenderingAtom)
 };
 
 /**
@@ -77,6 +81,8 @@ public:
         if (_d) b->_depth = 0;
         return b;
     }
+
+    __decl_clone(SmashedAtom)
 };
 
 /**
@@ -111,6 +117,8 @@ public:
     }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(ScaleAtom)
 };
 
 /**
@@ -130,6 +138,8 @@ public:
     }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(MathAtom)
 };
 
 /**
@@ -156,6 +166,8 @@ public:
     }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(HlineAtom)
 };
 
 /**
@@ -172,6 +184,8 @@ public:
     CumulativeScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup);
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(CumulativeScriptsAtom)
 };
 
 /**
@@ -299,6 +313,8 @@ public:
      * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or (UNIT_PIXEL, 0) will be returned.
      */
     static pair<int, float> getLength(const wstring& lgth);
+
+    __decl_clone(SpaceAtom)
 };
 
 /**
@@ -311,6 +327,8 @@ public:
     UnderScoreAtom() {}
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(UnderScoreAtom)
 };
 
 /**
@@ -329,6 +347,8 @@ public:
     sptr<Box> createBox(_out_ TeXEnvironment& env) override {
         return _box;
     }
+
+    __decl_clone(MiddleAtom)
 };
 
 /**
@@ -395,6 +415,8 @@ public:
     sptr<CharFont> getCharFont(_in_ TeXFont& tf) override;
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(FixedCharAtom)
 };
 
 class SymbolAtom : public CharSymbol {
@@ -470,6 +492,8 @@ public:
 #ifdef __DEBUG
     friend ostream& operator<<(ostream& os, const SymbolAtom& s);
 #endif  // __DEBUG
+
+    __decl_clone(SymbolAtom)
 };
 
 /**
@@ -519,6 +543,8 @@ public:
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
     sptr<CharFont> getCharFont(_in_ TeXFont& tf) override;
+
+    __decl_clone(CharAtom)
 };
 
 /**
@@ -527,6 +553,8 @@ public:
 class BreakMarkAtom : public Atom {
 public:
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(BreakMarkAtom)
 };
 
 /**
@@ -714,6 +742,8 @@ public:
     int getLeftType() const override;
 
     int getRightType() const override;
+
+    __decl_clone(RowAtom)
 };
 
 /**
@@ -774,6 +804,8 @@ public:
     void append(const sptr<Atom>& el);
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(VRowAtom)
 };
 
 /**
@@ -828,6 +860,8 @@ public:
      * Return black if not found.
      */
     static color getColor(string name);
+
+    __decl_clone(ColorAtom)
 };
 
 /**
@@ -842,6 +876,8 @@ public:
     RomanAtom(const sptr<Atom>& base) : _base(base) {}
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(RomanAtom)
 };
 
 /**
@@ -873,6 +909,8 @@ public:
     }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(PhantomAtom)
 };
 
 /**
@@ -912,6 +950,8 @@ public:
     int getRightType() const override {
         return _rightType;
     }
+
+    __decl_clone(TypedAtom)
 };
 
 /**
@@ -980,6 +1020,8 @@ public:
         const sptr<TeXFormula>& acc) throw(ex_invalid_formula, ex_invalid_symbol_type);
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(AccentedAtom)
 };
 
 /**
@@ -1069,6 +1111,8 @@ public:
     }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(UnderOverAtom)
 };
 
 /**
@@ -1111,6 +1155,8 @@ public:
     }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(ScriptsAtom)
 };
 
 /**
@@ -1176,6 +1222,8 @@ public:
     }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(BigOperatorAtom)
 };
 
 /**
@@ -1220,6 +1268,8 @@ public:
     }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(OverUnderDelimiter)
 };
 
 }  // namespace tex
