@@ -346,8 +346,7 @@ inline macro(prescript) {
     auto base = TeXFormula(tp, args[3])._root;
     sptr<Atom> p(new PhantomAtom(base, false, true, true));
     sptr<Atom> s(new ScriptsAtom(
-        p,
-        TeXFormula(tp, args[2])._root, TeXFormula(tp, args[1])._root, false));
+        p, TeXFormula(tp, args[2])._root, TeXFormula(tp, args[1])._root, false));
     tp.addAtom(s);
     tp.addAtom(sptr<Atom>(new SpaceAtom(UNIT_MU, -0.3f, 0, 0)));
     return sptr<Atom>(new TypedAtom(TYPE_ORDINARY, TYPE_ORDINARY, base));
@@ -1536,22 +1535,23 @@ macro(xml);
 
 /*************************************** should be fixed ******************************************/
 
-inline macro(nolimits) {
+inline sptr<Atom> _macro_typelimits(_out_ TeXParser& tp, _out_ vector<wstring>& args, int type) {
     auto atom = tp.getLastAtom();
-    atom->_typelimits = SCRIPT_NOLIMITS;
-    return atom;
+    auto copy = atom->clone();
+    copy->_typelimits = type;
+    return copy;
+}
+
+inline macro(nolimits) {
+    return _macro_typelimits(tp, args, SCRIPT_NOLIMITS);
 }
 
 inline macro(limits) {
-    auto atom = tp.getLastAtom();
-    atom->_typelimits = SCRIPT_LIMITS;
-    return atom;
+    return _macro_typelimits(tp, args, SCRIPT_LIMITS);
 }
 
 inline macro(normal) {
-    auto atom = tp.getLastAtom();
-    atom->_typelimits = SCRIPT_NORMAL;
-    return atom;
+    return _macro_typelimits(tp, args, SCRIPT_NORMAL);
 }
 
 /**************************************** not implemented *****************************************/

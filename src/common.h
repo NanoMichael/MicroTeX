@@ -763,7 +763,7 @@ enum TeXConstants {
      */
     STYLE_TEXT = 2,
     /**
-     * Ccript style
+     * Script style
      * @par
      * The same as the the text style, but symbols are rendered in a smaller size.
      */

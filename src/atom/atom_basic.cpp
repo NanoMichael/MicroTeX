@@ -1163,7 +1163,8 @@ sptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
 
 /************************************ BigOperatorAtom implementation ******************************/
 
-void BigOperatorAtom::init(const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over) {
+void BigOperatorAtom::init(
+    const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over) {
     _base = base;
     _under = under;
     _over = over;
@@ -1226,7 +1227,8 @@ sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
             delta = c.getItalic();
         } else {
             delta = 0;
-            auto in = _base == nullptr ? sptr<Box>(new StrutBox(0, 0, 0, 0)) : _base->createBox(env);
+            auto in = _base == nullptr ? sptr<Box>(new StrutBox(0, 0, 0, 0))
+                                       : _base->createBox(env);
             y = sptr<Box>(new HorizontalBox(in));
         }
 
@@ -1236,7 +1238,9 @@ sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
         if (_under != nullptr) z = _under->createBox(*(env.subStyle()));
 
         // make boxes equally wide
-        float maxW = max(max(x == nullptr ? 0 : x->_width, y->_width), z == nullptr ? 0 : z->_width);
+        float maxW = max(
+            max(x == nullptr ? 0 : x->_width, y->_width),
+            z == nullptr ? 0 : z->_width);
         x = changeWidth(x, maxW);
         y = changeWidth(y, maxW);
         z = changeWidth(z, maxW);
@@ -1297,7 +1301,8 @@ sptr<Box> OverUnderDelimiter::createBox(_out_ TeXEnvironment& env) {
     sptr<Box> del = DelimiterFactory::create(_symbol->getName(), env, b->_width);
 
     sptr<Box> sb(nullptr);
-    if (_script != nullptr) sb = _script->createBox((_over ? *(env.supStyle()) : *(env.subStyle())));
+    if (_script != nullptr)
+        sb = _script->createBox((_over ? *(env.supStyle()) : *(env.subStyle())));
 
     // create centered horizontal box if smaller than maximum width
     float mx = getMaxWidth(b.get(), del.get(), sb.get());
