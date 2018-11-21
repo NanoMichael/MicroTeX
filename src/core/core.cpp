@@ -453,7 +453,8 @@ sptr<Box> Glue::createBox(const TeXEnvironment& env) const {
     auto tf = env.getTeXFont();
     // use "quad" from a font marked as an "mu font"
     float quad = tf->getQuad(env.getStyle(), tf->getMuFontId());
-    auto x = new GlueBox((_space / 18.f) * quad, (_stretch / 18.f) * quad, (_shrink / 18.f) * quad);
+    float factor = quad / 18.f;
+    auto x = new GlueBox(_space * factor, _stretch * factor, _shrink * factor);
     return sptr<Box>(x);
 }
 
@@ -464,6 +465,18 @@ sptr<Box> Glue::get(int ltype, int rtype, const TeXEnvironment& env) {
     // search right glue-type in "glue-table"
     int glue = _glueTable[l][r][env.getStyle() / 2];
     return _glueTypes[glue]->createBox(env);
+}
+
+float Glue::getSpace(int ltype, int rtype, const TeXEnvironment& env) {
+    int l = (ltype > TYPE_INNER ? TYPE_ORDINARY : ltype);
+    int r = (rtype > TYPE_INNER ? TYPE_ORDINARY : rtype);
+    int glue = _glueTable[l][r][env.getStyle() / 2];
+
+    auto tf = env.getTeXFont();
+    float quad = tf->getQuad(env.getStyle(), tf->getMuFontId());
+    float factor = quad / 18.f;
+
+    return _glueTypes[glue]->_space * factor;
 }
 
 /********************************** TeXSymbolParser implementation ********************************/

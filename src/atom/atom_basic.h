@@ -1121,14 +1121,16 @@ public:
 class ScriptsAtom : public Atom {
 private:
     static SpaceAtom SCRIPT_SPACE;
+
+public:
     // base atom
     sptr<Atom> _base;
     // subscript and superscript to be attached to the base
     sptr<Atom> _sub;
     sptr<Atom> _sup;
+    // scripts alignment
     int _align;
 
-public:
     ScriptsAtom() = delete;
 
     ScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup) {
@@ -1224,6 +1226,31 @@ public:
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
     __decl_clone(BigOperatorAtom)
+};
+
+/**
+ * An atom represeting scripts around a base atom
+ */
+class SideSetsAtom : public Atom {
+public:
+    sptr<Atom> _left, _right, _base;
+
+    SideSetsAtom() = delete;
+
+    SideSetsAtom(const sptr<Atom>& base, const sptr<Atom>& left, const sptr<Atom>& right)
+        : _base(base), _left(left), _right(right) {}
+
+    int getLeftType() const override {
+        return _base->getLeftType();
+    }
+
+    int getRightType() const override {
+        return _base->getRightType();
+    }
+
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+
+    __decl_clone(SideSetsAtom)
 };
 
 /**

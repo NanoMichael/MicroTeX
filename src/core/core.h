@@ -284,6 +284,12 @@ public:
      */
     static sptr<Box> get(int ltype, int rtype, const TeXEnvironment& env);
 
+    /**
+     * Get the space amount from the given left-type and right-type of atoms according
+     * to the "glue rules".
+     */
+    static float getSpace(int ltype, int rtype, const TeXEnvironment& env);
+
     static void _init_();
 
     static void _free_();
