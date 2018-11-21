@@ -1079,12 +1079,12 @@ inline macro(hline) {
 
 inline macro(mathcumsup) {
     return sptr<Atom>(new CumulativeScriptsAtom(
-        tp.getLastAtom(), nullptr, TeXFormula(tp, args[1])._root));
+        tp.popLastAtom(), nullptr, TeXFormula(tp, args[1])._root));
 }
 
 inline macro(mathcumsub) {
     return sptr<Atom>(new CumulativeScriptsAtom(
-        tp.getLastAtom(), TeXFormula(tp, args[1])._root, nullptr));
+        tp.popLastAtom(), TeXFormula(tp, args[1])._root, nullptr));
 }
 
 inline macro(dotminus) {
@@ -1537,7 +1537,7 @@ macro(xml);
 /*************************************** should be fixed ******************************************/
 
 inline sptr<Atom> _macro_typelimits(_out_ TeXParser& tp, _out_ vector<wstring>& args, int type) {
-    auto atom = tp.getLastAtom();
+    auto atom = tp.popLastAtom();
     auto copy = atom->clone();
     copy->_typelimits = type;
     return copy;
