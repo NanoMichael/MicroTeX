@@ -154,7 +154,7 @@ TeXFormula* TeXFormula::add(const sptr<Atom>& el) {
     } else {
         RowAtom* rm = dynamic_cast<RowAtom*>(_root.get());
         if (rm == nullptr) _root = sptr<Atom>(new RowAtom(_root));
-        rm = dynamic_cast<RowAtom*>(_root.get());
+        rm = static_cast<RowAtom*>(_root.get());
         rm->add(el);
         TypedAtom* ta = dynamic_cast<TypedAtom*>(el.get());
         if (ta != nullptr) {

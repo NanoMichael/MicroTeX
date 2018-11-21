@@ -335,9 +335,10 @@ inline macro(xrightarrow) {
 
 inline macro(sideset) {
     TeXFormula tf;
-    tf.add(sptr<Atom>(new PhantomAtom(TeXFormula(tp, args[3])._root, false, true, true)));
+    auto target = TeXFormula(tp, args[3])._root;
+    tf.add(sptr<Atom>(new PhantomAtom(target, false, true, true)));
     tf.append(tp.getIsPartial(), args[1]);
-    tf.add(sptr<Atom>(new SpaceAtom(UNIT_MU, -0.3f, 0, 0)));
+    tf.add(sptr<Atom>(new SpaceAtom(UNIT_MU, -0.5f, 0, 0)));
     tf.append(tp.getIsPartial(), args[3] + L"\\nolimits" + args[2]);
     return sptr<Atom>(new TypedAtom(TYPE_ORDINARY, TYPE_ORDINARY, tf._root));
 }
