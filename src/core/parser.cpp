@@ -608,6 +608,8 @@ sptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
          */
         sptr<Atom> in(new CharAtom(L'M', "mathnormal"));
         atom = sptr<Atom>(new PhantomAtom(in, false, true, true));
+
+        return sptr<Atom>(new ScriptsAtom(atom, first, second));
     } else {
         atom = _formula->_root;
         _formula->_root = nullptr;

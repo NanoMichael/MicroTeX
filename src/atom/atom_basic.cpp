@@ -1287,6 +1287,32 @@ sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
     return sptr<Box>(vBox);
 }
 
+/*********************************** SideSetsAtom implementation **********************************/
+
+sptr<Box> SideSetsAtom::createBox(_out_ TeXEnvironment& env) {
+    if (_base == nullptr) {
+        // create a phatom to place side-sets
+        sptr<Atom> in(new CharAtom(L'M', "mathnormal"));
+        _base = sptr<Atom>(new PhantomAtom(in, false, true, true));
+    }
+
+    ScriptsAtom* l = dynamic_cast<ScriptsAtom*>(_left.get());
+    ScriptsAtom* r = dynamic_cast<ScriptsAtom*>(_right.get());
+
+    if (l != nullptr) {
+        l->_base = sptr<Atom>(new PhantomAtom(_base, false, true, true));
+        l->_align = ALIGN_RIGHT;
+    }
+
+    if (r != nullptr) r->_base = _base;
+
+    auto hb = new HorizontalBox();
+    if (_left != nullptr) hb->add(_left->createBox(env));
+    if (_right != nullptr) hb->add(_right->createBox(env));
+
+    return sptr<Box>(hb);
+}
+
 /******************************** OverUnderDelimiter implementation *******************************/
 
 float OverUnderDelimiter::getMaxWidth(const Box* b, const Box* del, const Box* script) {

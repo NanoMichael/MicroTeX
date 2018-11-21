@@ -343,6 +343,16 @@ inline macro(sideset) {
     return sptr<Atom>(new TypedAtom(TYPE_ORDINARY, TYPE_ORDINARY, tf._root));
 }
 
+inline macro(sideset1) {
+    auto l = TeXFormula(tp, args[1])._root;
+    auto r = TeXFormula(tp, args[2])._root;
+    auto op = TeXFormula(tp, args[3])._root;
+    if (op == nullptr) op = sptr<Atom>(new EmptyAtom());
+    op->_type = TYPE_BIG_OPERATOR;
+    op->_typelimits = SCRIPT_NOLIMITS;
+    return sptr<Atom>(new SideSetsAtom(op, l, r));
+}
+
 inline macro(prescript) {
     auto base = TeXFormula(tp, args[3])._root;
     sptr<Atom> p(new PhantomAtom(base, false, true, true));
