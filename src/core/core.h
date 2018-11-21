@@ -56,12 +56,17 @@ private:
     // Environment width
     float _textWidth;
 
+    // The text style to use
     string _textStyle;
+    // If is small capital
     bool _smallCap;
     float _scaleFactor;
+    // The unit of inter-line space
     int _interlineUnit;
+    // The inter line space
     float _interline;
 
+    // Member to store copies to prevent destruct
     sptr<TeXEnvironment> _copy, _copytf, _cramp, _dnom;
     sptr<TeXEnvironment> _num, _root, _sub, _sup;
 
@@ -138,16 +143,34 @@ public:
 
     sptr<TeXEnvironment>& copy(const sptr<TeXFont>& tf);
 
+    /**
+     * Copy of this envrionment in cramped style.
+     */
     sptr<TeXEnvironment>& crampStyle();
 
+    /**
+     * Style to display denominator.
+     */
     sptr<TeXEnvironment>& dnomStyle();
 
+    /**
+     * Style to display numerator.
+     */
     sptr<TeXEnvironment>& numStyle();
 
+    /**
+     * Style to display roots.
+     */
     sptr<TeXEnvironment>& rootStyle();
 
+    /**
+     * Style to display subscripts.
+     */
     sptr<TeXEnvironment>& subStyle();
 
+    /**
+     * Style to display superscripts.
+     */
     sptr<TeXEnvironment>& supStyle();
 
     inline void setBackground(color bg) {

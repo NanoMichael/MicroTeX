@@ -1062,7 +1062,7 @@ sptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
         x->_shift = -(x->_height + x->_depth) / 2 - env.getTeXFont()->getAxisHeight(env.getStyle());
         hor = sptr<HorizontalBox>(new HorizontalBox(x));
 
-        // include delta in width or not ?
+        // include delta in width or not?
         delta = c.getItalic();
         deltaSymbol = SpaceAtom(MEDMUSKIP).createBox(env);
         if (delta > PREC && _sub == nullptr) hor->add(sptr<Box>(new StrutBox(delta, 0, 0, 0)));
@@ -1088,7 +1088,7 @@ sptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
     if (_sup == nullptr) {
         // only sub script
         auto x = _sub->createBox(subStyle);
-        // calculate andd set shift amount
+        // calculate and set shift amount
         x->_shift = max(
             max(shiftDown, tf->getSub1(style)),
             x->_height - 0.8f * abs(tf->getXHeight(style, lastFontId)));
@@ -1183,9 +1183,6 @@ sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
     TeXFont* tf = env.getTeXFont().get();
     int style = env.getStyle();
 
-    sptr<Box> y(nullptr);
-    float delta;
-
     RowAtom* bbase = nullptr;
     auto Base = _base;
     TypedAtom* ta = dynamic_cast<TypedAtom*>(_base.get());
@@ -1216,76 +1213,78 @@ sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
             return b;
         }
         return ScriptsAtom(_base, _under, _over).createBox(env);
-    } else {
-        SymbolAtom* sym = dynamic_cast<SymbolAtom*>(_base.get());
-        if (sym != nullptr && _base->_type == TYPE_BIG_OPERATOR) {
-            // single big operator symbol
-            Char c = tf->getChar(sym->getName(), style);
-            y = _base->createBox(env);
-
-            // include delta in width
-            delta = c.getItalic();
-        } else {
-            delta = 0;
-            auto in = _base == nullptr ? sptr<Box>(new StrutBox(0, 0, 0, 0))
-                                       : _base->createBox(env);
-            y = sptr<Box>(new HorizontalBox(in));
-        }
-
-        // limits
-        sptr<Box> x, z;
-        if (_over != nullptr) x = _over->createBox(*(env.supStyle()));
-        if (_under != nullptr) z = _under->createBox(*(env.subStyle()));
-
-        // make boxes equally wide
-        float maxW = max(
-            max(x == nullptr ? 0 : x->_width, y->_width),
-            z == nullptr ? 0 : z->_width);
-        x = changeWidth(x, maxW);
-        y = changeWidth(y, maxW);
-        z = changeWidth(z, maxW);
-
-        // build vertical box
-        VerticalBox* vBox = new VerticalBox();
-
-        float bigop5 = tf->getBigOpSpacing5(style), kern = 0;
-
-        // over
-        if (_over != nullptr) {
-            vBox->add(sptr<Box>(new StrutBox(0, bigop5, 0, 0)));
-            x->_shift = delta / 2;
-            vBox->add(x);
-            kern = max(tf->getBigOpSpacing1(style), tf->getBigOpSpacing3(style) - x->_depth);
-            vBox->add(sptr<Box>(new StrutBox(0, kern, 0, 0)));
-        }
-
-        // base
-        vBox->add(y);
-
-        // under
-        if (_under != nullptr) {
-            float k = max(tf->getBigOpSpacing2(style), tf->getBigOpSpacing4(style) - z->_height);
-            vBox->add(sptr<Box>(new StrutBox(0, k, 0, 0)));
-            z->_shift = -delta / 2;
-            vBox->add(z);
-            vBox->add(sptr<Box>(new StrutBox(0, bigop5, 0, 0)));
-        }
-
-        // set height and depth vertical box and return
-        float h = y->_height, total = vBox->_height + vBox->_depth;
-        if (x != nullptr) h += bigop5 + kern + x->_height + x->_depth;
-        vBox->_height = h;
-        vBox->_depth = total - h;
-
-        if (bbase != nullptr) {
-            HorizontalBox* hb = new HorizontalBox(bbase->createBox(env));
-            bbase->add(_base);
-            hb->add(sptr<Box>(vBox));
-            _base = Base;
-            return sptr<Box>(hb);
-        }
-        return sptr<Box>(vBox);
     }
+
+    sptr<Box> y(nullptr);
+    float delta;
+
+    SymbolAtom* sym = dynamic_cast<SymbolAtom*>(_base.get());
+    if (sym != nullptr && _base->_type == TYPE_BIG_OPERATOR) {
+        // single big operator symbol
+        Char c = tf->getChar(sym->getName(), style);
+        y = _base->createBox(env);
+        // include delta in width
+        delta = c.getItalic();
+    } else {
+        delta = 0;
+        auto in = _base == nullptr ? sptr<Box>(new StrutBox(0, 0, 0, 0))
+                                   : _base->createBox(env);
+        y = sptr<Box>(new HorizontalBox(in));
+    }
+
+    // limits
+    sptr<Box> x, z;
+    if (_over != nullptr) x = _over->createBox(*(env.supStyle()));
+    if (_under != nullptr) z = _under->createBox(*(env.subStyle()));
+
+    // make boxes equally wide
+    float maxW = max(
+        max(x == nullptr ? 0 : x->_width, y->_width),
+        z == nullptr ? 0 : z->_width);
+    x = changeWidth(x, maxW);
+    y = changeWidth(y, maxW);
+    z = changeWidth(z, maxW);
+
+    // build vertical box
+    VerticalBox* vBox = new VerticalBox();
+
+    float bigop5 = tf->getBigOpSpacing5(style), kern = 0;
+
+    // over
+    if (_over != nullptr) {
+        vBox->add(sptr<Box>(new StrutBox(0, bigop5, 0, 0)));
+        x->_shift = delta / 2;
+        vBox->add(x);
+        kern = max(tf->getBigOpSpacing1(style), tf->getBigOpSpacing3(style) - x->_depth);
+        vBox->add(sptr<Box>(new StrutBox(0, kern, 0, 0)));
+    }
+
+    // base
+    vBox->add(y);
+
+    // under
+    if (_under != nullptr) {
+        float k = max(tf->getBigOpSpacing2(style), tf->getBigOpSpacing4(style) - z->_height);
+        vBox->add(sptr<Box>(new StrutBox(0, k, 0, 0)));
+        z->_shift = -delta / 2;
+        vBox->add(z);
+        vBox->add(sptr<Box>(new StrutBox(0, bigop5, 0, 0)));
+    }
+
+    // set height and depth vertical box and return
+    float h = y->_height, total = vBox->_height + vBox->_depth;
+    if (x != nullptr) h += bigop5 + kern + x->_height + x->_depth;
+    vBox->_height = h;
+    vBox->_depth = total - h;
+
+    if (bbase != nullptr) {
+        HorizontalBox* hb = new HorizontalBox(bbase->createBox(env));
+        bbase->add(_base);
+        hb->add(sptr<Box>(vBox));
+        _base = Base;
+        return sptr<Box>(hb);
+    }
+    return sptr<Box>(vBox);
 }
 
 /******************************** OverUnderDelimiter implementation *******************************/
