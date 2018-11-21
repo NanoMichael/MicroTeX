@@ -412,7 +412,7 @@ sptr<Atom> RowAtom::getFirstAtom() {
     return nullptr;
 }
 
-sptr<Atom> RowAtom::getLastAtom() {
+sptr<Atom> RowAtom::popLastAtom() {
     if (!_elements.empty()) {
         sptr<Atom> x = _elements.back();
         _elements.pop_back();
@@ -575,7 +575,7 @@ void VRowAtom::setRaise(int unit, float r) {
     _raise = sptr<SpaceAtom>(new SpaceAtom(unit, r, 0, 0));
 }
 
-sptr<Atom> VRowAtom::getLastAtom() {
+sptr<Atom> VRowAtom::popLastAtom() {
     auto x = _elements.back();
     _elements.pop_back();
     return x;
@@ -1190,7 +1190,7 @@ sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
         auto atom = ta->getBase();
         RowAtom* ra = dynamic_cast<RowAtom*>(atom.get());
         if (ra != nullptr && ra->_lookAtLastAtom && _base->_typelimits != SCRIPT_LIMITS) {
-            _base = ra->getLastAtom();
+            _base = ra->popLastAtom();
             bbase = ra;
         } else {
             _base = atom;
@@ -1207,7 +1207,7 @@ sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
         if (bbase != nullptr) {
             bbase->add(sptr<Atom>(new ScriptsAtom(_base, _under, _over)));
             auto b = bbase->createBox(env);
-            bbase->getLastAtom();
+            bbase->popLastAtom();
             bbase->add(_base);
             _base = Base;
             return b;

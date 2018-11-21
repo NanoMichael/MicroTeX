@@ -705,7 +705,7 @@ public:
     /**
      * Get and remove the atom at the tail in the elements
      */
-    sptr<Atom> getLastAtom();
+    sptr<Atom> popLastAtom();
 
     /**
      * Get the atom at position
@@ -791,7 +791,7 @@ public:
 
     void setRaise(int unit, float r);
 
-    sptr<Atom> getLastAtom();
+    sptr<Atom> popLastAtom();
 
     /**
      * Add a atom at the front

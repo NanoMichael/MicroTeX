@@ -256,7 +256,7 @@ public:
     /**
      * Get and remove the last atom of the current formula
      */
-    sptr<Atom> getLastAtom();
+    sptr<Atom> popLastAtom();
 
     /**
      * Get and remove the atom represented by the current formula

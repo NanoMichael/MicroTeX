@@ -114,10 +114,10 @@ void TeXParser::reset(const wstring& latex) {
     firstpass();
 }
 
-sptr<Atom> TeXParser::getLastAtom() {
+sptr<Atom> TeXParser::popLastAtom() {
     auto a = _formula->_root;
     RowAtom* ra = dynamic_cast<RowAtom*>(a.get());
-    if (ra != nullptr) return ra->getLastAtom();
+    if (ra != nullptr) return ra->popLastAtom();
     _formula->_root = nullptr;
     return a;
 }
@@ -600,7 +600,7 @@ sptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
     sptr<Atom> atom;
     RowAtom* rm = dynamic_cast<RowAtom*>(_formula->_root.get());
     if (rm != nullptr) {
-        atom = rm->getLastAtom();
+        atom = rm->popLastAtom();
     } else if (_formula->_root == nullptr) {
         /*
          * If there's no root exists, create one with phantom to place
@@ -903,7 +903,7 @@ void TeXParser::parse() throw(ex_parse) {
         case PRIME: {
             if (_ignoreWhiteSpace) {
                 _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
-                    getLastAtom(), nullptr, SymbolAtom::get("prime"))));
+                    popLastAtom(), nullptr, SymbolAtom::get("prime"))));
             } else {
                 _formula->add(convertCharacter(PRIME, true));
             }
@@ -912,7 +912,7 @@ void TeXParser::parse() throw(ex_parse) {
         case BACKPRIME: {
             if (_ignoreWhiteSpace) {
                 _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
-                    getLastAtom(), nullptr, SymbolAtom::get("backprime"))));
+                    popLastAtom(), nullptr, SymbolAtom::get("backprime"))));
             } else {
                 _formula->add(convertCharacter(BACKPRIME, true));
             }
@@ -921,9 +921,9 @@ void TeXParser::parse() throw(ex_parse) {
         case DQUOTE: {
             if (_ignoreWhiteSpace) {
                 _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
-                    getLastAtom(), nullptr, SymbolAtom::get("prime"))));
+                    popLastAtom(), nullptr, SymbolAtom::get("prime"))));
                 _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
-                    getLastAtom(), nullptr, SymbolAtom::get("prime"))));
+                    popLastAtom(), nullptr, SymbolAtom::get("prime"))));
             } else {
                 _formula->add(convertCharacter(PRIME, true));
                 _formula->add(convertCharacter(PRIME, true));

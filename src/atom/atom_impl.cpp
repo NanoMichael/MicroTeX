@@ -907,7 +907,7 @@ sptr<Box> LaTeXAtom::createBox(_out_ TeXEnvironment& en) {
         TeXFormula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = fontInfos;
 
     // L
-    HorizontalBox* hb = new HorizontalBox(rm->getLastAtom()->createBox(env));
+    HorizontalBox* hb = new HorizontalBox(rm->popLastAtom()->createBox(env));
     hb->add(SpaceAtom(UNIT_EM, -0.35f * sc, 0, 0).createBox(env));
     float f = SpaceAtom(UNIT_EX, 0.45f * sc, 0, 0).createBox(env)->_width;
     float f1 = SpaceAtom(UNIT_EX, 0.5f * sc, 0, 0).createBox(env)->_width;
@@ -920,17 +920,17 @@ sptr<Box> LaTeXAtom::createBox(_out_ TeXEnvironment& en) {
     hb->add(SpaceAtom(UNIT_EM, -0.15f * sc, 0, 0).createBox(env));
 
     // T
-    hb->add(rm->getLastAtom()->createBox(env));
+    hb->add(rm->popLastAtom()->createBox(env));
     hb->add(SpaceAtom(UNIT_EM, -0.15f * sc, 0, 0).createBox(env));
 
     // E
-    auto E = rm->getLastAtom()->createBox(env);
+    auto E = rm->popLastAtom()->createBox(env);
     E->_shift = f1;
     hb->add(E);
     hb->add(SpaceAtom(UNIT_EM, -0.15f * sc, 0, 0).createBox(env));
 
     // X
-    hb->add(rm->getLastAtom()->createBox(env));
+    hb->add(rm->popLastAtom()->createBox(env));
     return sptr<Box>(hb);
 }
 
