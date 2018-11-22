@@ -1021,7 +1021,7 @@ sptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
     if (_sub == nullptr && _sup == nullptr) return b;
 
     TeXFont* tf = env.getTeXFont().get();
-    int style = env.getStyle();
+    const int style = env.getStyle();
 
     if (_base->_typelimits == SCRIPT_LIMITS ||
         (_base->_typelimits == SCRIPT_NORMAL && style == STYLE_DISPLAY)) {
@@ -1038,7 +1038,7 @@ sptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
     TeXEnvironment subStyle = *(env.subStyle()), supStyle = *(env.supStyle());
 
     // set delta and preliminary shift-up and shift-down values
-    float delta = 0, shiftUp, shiftDown;
+    float delta = 0, shiftUp = 0, shiftDown = 0;
 
     AccentedAtom* acc = dynamic_cast<AccentedAtom*>(_base.get());
     SymbolAtom* sym = dynamic_cast<SymbolAtom*>(_base.get());
@@ -1051,11 +1051,12 @@ sptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
     } else if (sym != nullptr && _base->_type == TYPE_BIG_OPERATOR) {
         // single big operator symbol
         Char c = tf->getChar(sym->getName(), style);
-        if (style < STYLE_TEXT && tf->hasNextLarger(c))  // display style
-            c = tf->getNextLarger(c, style);
+        // display style
+        if (style < STYLE_TEXT && tf->hasNextLarger(c)) c = tf->getNextLarger(c, style);
         sptr<Box> x(new CharBox(c));
 
-        x->_shift = -(x->_height + x->_depth) / 2 - env.getTeXFont()->getAxisHeight(env.getStyle());
+        float axish = env.getTeXFont()->getAxisHeight(env.getStyle());
+        x->_shift = -(x->_height + x->_depth) / 2 - axish;
         hor = sptr<HorizontalBox>(new HorizontalBox(x));
 
         // include delta in width or not?

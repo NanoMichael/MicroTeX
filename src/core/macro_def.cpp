@@ -197,7 +197,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands = {
     mac(0, macro_textstyle, "textstyle"),
     mac(0, macro_scriptstyle, "scriptstyle"),
     mac(0, macro_scriptscriptstyle, "scriptscriptstyle"),
-    mac(3, macro_sideset1, "sideset"),
+    mac(3, macro_sideset, "sideset"),
     mac(3, macro_prescript, "prescript"),
     mac(1, macro_reflectbox, "reflectbox"),
     mac(3, macro_resizebox, "resizebox"),
