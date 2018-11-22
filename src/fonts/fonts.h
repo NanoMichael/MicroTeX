@@ -24,11 +24,7 @@ namespace tex {
  */
 class Metrics {
 private:
-    float _w;
-    float _h;
-    float _d;
-    float _i;
-    float _s;
+    float _w, _h, _d, _i, _s;
 
 public:
     Metrics() = delete;
@@ -148,7 +144,8 @@ public:
 
     Extension(const Extension&) = delete;
 
-    Extension(Char* t, Char* m, Char* r, Char* b) : _top(t), _middle(m), _repeat(r), _bottom(b) {}
+    Extension(Char* t, Char* m, Char* r, Char* b)
+        : _top(t), _middle(m), _repeat(r), _bottom(b) {}
 
     inline bool hasTop() const {
         return _top != nullptr;
@@ -189,8 +186,7 @@ class CharCouple {
 public:
     wchar_t _left, _right;
 
-    CharCouple(wchar_t l, wchar_t r) : _left(l), _right(r) {
-    }
+    CharCouple(wchar_t l, wchar_t r) : _left(l), _right(r) {}
 
     inline bool operator==(const CharCouple& c) const {
         return (_left == c._left && _right == c._right);
@@ -243,10 +239,15 @@ private:
     float _xHeight;
     float _space;
     float _quad;
+    // bold version font id
     int _boldId;
+    // roman version font id
     int _romanId;
+    // sans-serif version font id
     int _ssId;
+    // typewriter version font id
     int _ttId;
+    // italic version font id
     int _itId;
 
     void init(int unicode);
@@ -726,7 +727,13 @@ public:
         bool ss = false,
         bool tt = false,
         bool it = false)
-        : _size(pointSize), _factor(f), _isBold(b), _isRoman(rm), _isSs(ss), _isTt(tt), _isIt(it) {}
+        : _size(pointSize),
+          _factor(f),
+          _isBold(b),
+          _isRoman(rm),
+          _isSs(ss),
+          _isTt(tt),
+          _isIt(it) {}
 
     static void addTeXFontDescription(const string& base, const string& file) throw(ex_res_parse);
 
@@ -753,6 +760,7 @@ public:
     }
 
     /************************************ get char ************************************************/
+
     Char getDefaultChar(wchar_t c, int style) override;
 
     Char getChar(
@@ -765,6 +773,7 @@ public:
     Char getChar(const string& symbolName, int style) throw(ex_symbol_mapping_not_found) override;
 
     /*********************************** font information *****************************************/
+
     Extension* getExtension(_in_ const Char& c, int style) override;
 
     float getKern(_in_ const CharFont& left, _in_ const CharFont& right, int style) override;
@@ -974,7 +983,8 @@ public:
 private:
     static vector<string> _fontId;
     static const map<string, int> _rangeTypeMappings;
-    static const map<string, void (*)(const XMLElement*, wchar_t c, _out_ FontInfo&)> _charChildParsers;
+    static const map<string, void (*)(const XMLElement*, wchar_t, _out_ FontInfo&)>
+        _charChildParsers;
     // the xml-document we used
     XMLDocument _doc;
 
@@ -982,10 +992,10 @@ private:
     const XMLElement* _root;
     string _base;
 
-    static void parse_extension(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(ex_xml_parse);
-    static void parse_kern(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(ex_xml_parse);
-    static void parse_lig(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(ex_xml_parse);
-    static void parse_larger(const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(ex_xml_parse);
+    static void parse_extension(const XMLElement*, wchar_t, _out_ FontInfo&) throw(ex_xml_parse);
+    static void parse_kern(const XMLElement*, wchar_t, _out_ FontInfo&) throw(ex_xml_parse);
+    static void parse_lig(const XMLElement*, wchar_t, _out_ FontInfo&) throw(ex_xml_parse);
+    static void parse_larger(const XMLElement*, wchar_t, _out_ FontInfo&) throw(ex_xml_parse);
 
     void parseStyleMappings(_out_ map<string, vector<CharFont*>>& styles) throw(ex_res_parse);
 
@@ -996,7 +1006,8 @@ private:
         return (value != nullptr);
     }
 
-    inline static void obtainAttr(const char* attr, const XMLElement* e, _out_ string& val) throw() {
+    inline static void obtainAttr(
+        const char* attr, const XMLElement* e, _out_ string& val) throw() {
         const char* value = e->Attribute(attr);
         if (value == nullptr || strlen(value) == 0) return;
         val.assign(value);
@@ -1084,7 +1095,8 @@ public:
 
     void parseExtraPath() throw(ex_res_parse);
 
-    void parseFontDescriptions(_out_ vector<FontInfo*>& fin, const string& file) throw(ex_res_parse);
+    void parseFontDescriptions(
+        _out_ vector<FontInfo*>& fin, const string& file) throw(ex_res_parse);
 
     void parseFontDescriptions(_out_ vector<FontInfo*>& fin) throw(ex_res_parse);
 

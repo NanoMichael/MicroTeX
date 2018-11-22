@@ -27,9 +27,29 @@ class RowAtom;
  */
 class EmptyAtom : public Atom {
 public:
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+        return sptr<Box>(new StrutBox(0, 0, 0, 0));
+    }
 
     __decl_clone(EmptyAtom)
+};
+
+/**
+ * A placeholder atom
+ */
+class PlaceholderAtom : public Atom {
+private:
+    int _w, _h, _d, _s;
+
+public:
+    PlaceholderAtom(float w, float h, float d, float s)
+        : _w(w), _h(h), _d(d), _s(s) {}
+
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+        return sptr<Box>(new StrutBox(_w, _h, _d, _s));
+    }
+
+    __decl_clone(PlaceholderAtom)
 };
 
 /**
@@ -1179,6 +1199,8 @@ private:
 
     void init(const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over);
 
+    sptr<Box> createSideSets(_out_ TeXEnvironment& env);
+
     /**
      * Center the given box in a new box that has the given width
      */
@@ -1238,14 +1260,9 @@ public:
     SideSetsAtom() = delete;
 
     SideSetsAtom(const sptr<Atom>& base, const sptr<Atom>& left, const sptr<Atom>& right)
-        : _base(base), _left(left), _right(right) {}
-
-    int getLeftType() const override {
-        return _base->getLeftType();
-    }
-
-    int getRightType() const override {
-        return _base->getRightType();
+        : _base(base), _left(left), _right(right) {
+        _type = TYPE_BIG_OPERATOR;
+        _typelimits = SCRIPT_NOLIMITS;
     }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;

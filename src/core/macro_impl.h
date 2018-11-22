@@ -347,9 +347,10 @@ inline macro(sideset1) {
     auto l = TeXFormula(tp, args[1])._root;
     auto r = TeXFormula(tp, args[2])._root;
     auto op = TeXFormula(tp, args[3])._root;
-    if (op == nullptr) op = sptr<Atom>(new EmptyAtom());
-    op->_type = TYPE_BIG_OPERATOR;
-    op->_typelimits = SCRIPT_NOLIMITS;
+    if (op == nullptr) {
+        sptr<Atom> in(new CharAtom(L'M', "mathnormal"));
+        op = sptr<Atom>(new PhantomAtom(in, false, true, true));
+    }
     return sptr<Atom>(new SideSetsAtom(op, l, r));
 }
 
