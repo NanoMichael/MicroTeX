@@ -203,6 +203,8 @@ public:
 
     CumulativeScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup);
 
+    sptr<Atom> getScriptsAtom() const;
+
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
     __decl_clone(CumulativeScriptsAtom)
@@ -362,7 +364,8 @@ public:
 
     MiddleAtom() = delete;
 
-    MiddleAtom(const sptr<Atom>& a);
+    MiddleAtom(const sptr<Atom>& a)
+        : _base(a), _box(new StrutBox(0, 0, 0, 0)) {}
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override {
         return _box;
@@ -1169,10 +1172,12 @@ public:
     }
 
     int getLeftType() const override {
+        if (_base == nullptr) return _type;
         return _base->getLeftType();
     }
 
     int getRightType() const override {
+        if (_base == nullptr) return _type;
         return _base->getRightType();
     }
 
