@@ -311,7 +311,9 @@ wstring TeXParser::getCommand() {
 
     while (_pos < _len) {
         ch = _parseString[_pos];
-        if ((ch < 'a' || ch > 'z') && (ch < 'A' || ch > 'Z') && (_atIsLetter == 0 || ch != '@'))
+        if ((ch < 'a' || ch > 'z') &&
+            (ch < 'A' || ch > 'Z') &&
+            (_atIsLetter == 0 || ch != '@'))
             break;
 
         _pos++;
@@ -603,12 +605,10 @@ sptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
         atom = rm->popLastAtom();
     } else if (_formula->_root == nullptr) {
         /*
-         * If there's no root exists, create one with phantom to place
-         * the scripts
+         * If there's no root exists, pass a null atom to ScriptsAtom as base is OK,
+         * the ScriptsAtom will handle it
          */
-        sptr<Atom> in(new CharAtom(L'M', "mathnormal"));
-        atom = sptr<Atom>(new PhantomAtom(in, false, true, true));
-        return sptr<Atom>(new ScriptsAtom(atom, first, second));
+        return sptr<Atom>(new ScriptsAtom(nullptr, first, second));
     } else {
         atom = _formula->_root;
         _formula->_root = nullptr;

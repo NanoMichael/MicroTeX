@@ -57,15 +57,14 @@ CumulativeScriptsAtom::CumulativeScriptsAtom(
         _sup = ca->_sup;
         _sub = ca->_sub;
     } else {
-        if (base == nullptr) {
-            sptr<Atom> c(new CharAtom(L'M', "mathnormal"));
-            _base = sptr<Atom>(new PhantomAtom(c, false, true, true));
-        } else {
-            _base = base;
-        }
+        _base = base;
         _sup = sptr<RowAtom>(new RowAtom(sup));
         _sub = sptr<RowAtom>(new RowAtom(sub));
     }
+}
+
+sptr<Atom> CumulativeScriptsAtom::getScriptsAtom() const {
+    return sptr<Atom>(new ScriptsAtom(_base, _sub, _sup));
 }
 
 sptr<Box> CumulativeScriptsAtom::createBox(_out_ TeXEnvironment& env) {
@@ -98,9 +97,6 @@ sptr<Box> TextRenderingAtom::createBox(_out_ TeXEnvironment& env) {
     }
     return sptr<Box>(new TextRenderingBox(
         _str, type, DefaultTeXFont::getSizeFactor(env.getStyle()), font, kerning));
-}
-
-MiddleAtom::MiddleAtom(const sptr<Atom>& a) : _base(a), _box(new StrutBox(0, 0, 0, 0)) {
 }
 
 /***************************************************************************************************
@@ -1016,7 +1012,12 @@ sptr<Box> UnderOverAtom::createBox(_out_ TeXEnvironment& env) {
 SpaceAtom ScriptsAtom::SCRIPT_SPACE(UNIT_POINT, 0.5f, 0, 0);
 
 sptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
-    auto b = (_base == nullptr ? sptr<Box>(new StrutBox(0, 0, 0, 0)) : _base->createBox(env));
+    if (_base == nullptr) {
+        sptr<Atom> in(new CharAtom(L'M', "mathnormal"));
+        _base = sptr<Atom>(new PhantomAtom(in, false, true, true));
+    }
+
+    auto b = _base->createBox(env);
     sptr<Box> deltaSymbol(new StrutBox(0, 0, 0, 0));
     if (_sub == nullptr && _sup == nullptr) return b;
 
@@ -1192,11 +1193,11 @@ sptr<Box> BigOperatorAtom::createSideSets(_out_ TeXEnvironment& env) {
     ScriptsAtom* l = dynamic_cast<ScriptsAtom*>(sl.get());
     ScriptsAtom* r = dynamic_cast<ScriptsAtom*>(sr.get());
 
-    if (l != nullptr) {
+    if (l != nullptr && l->_base == nullptr) {
         l->_base = pa;
         l->_align = ALIGN_RIGHT;
     }
-    if (r != nullptr) r->_base = pa;
+    if (r != nullptr && r->_base == nullptr) r->_base = pa;
 
     auto y = sptr<Box>(new HorizontalBox());
     float limitsShift = 0;
@@ -1381,11 +1382,11 @@ sptr<Box> SideSetsAtom::createBox(_out_ TeXEnvironment& env) {
     ScriptsAtom* l = dynamic_cast<ScriptsAtom*>(_left.get());
     ScriptsAtom* r = dynamic_cast<ScriptsAtom*>(_right.get());
 
-    if (l != nullptr) {
+    if (l != nullptr && l->_base == nullptr) {
         l->_base = pa;
         l->_align = ALIGN_RIGHT;
     }
-    if (r != nullptr) r->_base = pa;
+    if (r != nullptr && r->_base == nullptr) r->_base = pa;
 
     auto hb = new HorizontalBox();
     if (_left != nullptr) hb->add(_left->createBox(env));

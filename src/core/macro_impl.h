@@ -341,6 +341,10 @@ inline macro(sideset) {
         sptr<Atom> in(new CharAtom(L'M', "mathnormal"));
         op = sptr<Atom>(new PhantomAtom(in, false, true, true));
     }
+    auto cl = dynamic_cast<CumulativeScriptsAtom*>(l.get());
+    auto cr = dynamic_cast<CumulativeScriptsAtom*>(r.get());
+    if (cl != nullptr) l = cl->getScriptsAtom();
+    if (cr != nullptr) r = cr->getScriptsAtom();
     return sptr<Atom>(new SideSetsAtom(op, l, r));
 }
 

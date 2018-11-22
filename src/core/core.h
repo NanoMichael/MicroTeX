@@ -23,8 +23,8 @@ struct Position {
 
     Position() = delete;
 
-    Position(int index, const sptr<HorizontalBox>& hbox) : _index(index), _hbox(hbox) {
-    }
+    Position(int index, const sptr<HorizontalBox>& hbox)
+        : _index(index), _hbox(hbox) {}
 };
 
 class FormulaBreaker {
@@ -314,7 +314,8 @@ private:
     inline static string getAttr(const char* attr, const XMLElement* e) throw(ex_res_parse) {
         // find if attr is exists
         const char* value = e->Attribute(attr);
-        if (value == nullptr || strlen(value) == 0) throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping");
+        if (value == nullptr || strlen(value) == 0)
+            throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping");
         return value;
     }
 
