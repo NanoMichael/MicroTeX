@@ -334,16 +334,6 @@ inline macro(xrightarrow) {
 }
 
 inline macro(sideset) {
-    TeXFormula tf;
-    auto target = TeXFormula(tp, args[3])._root;
-    tf.add(sptr<Atom>(new PhantomAtom(target, false, true, true)));
-    tf.append(tp.getIsPartial(), args[1]);
-    tf.add(sptr<Atom>(new SpaceAtom(UNIT_MU, -0.5f, 0, 0)));
-    tf.append(tp.getIsPartial(), args[3] + L"\\nolimits" + args[2]);
-    return sptr<Atom>(new TypedAtom(TYPE_ORDINARY, TYPE_ORDINARY, tf._root));
-}
-
-inline macro(sideset1) {
     auto l = TeXFormula(tp, args[1])._root;
     auto r = TeXFormula(tp, args[2])._root;
     auto op = TeXFormula(tp, args[3])._root;
@@ -1503,6 +1493,27 @@ inline macro(insertBreakMark) {
     return sptr<Atom>(new BreakMarkAtom());
 }
 
+/**************************************** limits macros *******************************************/
+
+inline sptr<Atom> _macro_typelimits(_out_ TeXParser& tp, _out_ vector<wstring>& args, int type) {
+    auto atom = tp.popLastAtom();
+    auto copy = atom->clone();
+    copy->_typelimits = type;
+    return copy;
+}
+
+inline macro(nolimits) {
+    return _macro_typelimits(tp, args, SCRIPT_NOLIMITS);
+}
+
+inline macro(limits) {
+    return _macro_typelimits(tp, args, SCRIPT_LIMITS);
+}
+
+inline macro(normal) {
+    return _macro_typelimits(tp, args, SCRIPT_NORMAL);
+}
+
 /***************************************** implement at .cpp **************************************/
 
 macro(hvspace);
@@ -1544,27 +1555,6 @@ macro(romannumeral);
 macro(muskips);
 
 macro(xml);
-
-/*************************************** should be fixed ******************************************/
-
-inline sptr<Atom> _macro_typelimits(_out_ TeXParser& tp, _out_ vector<wstring>& args, int type) {
-    auto atom = tp.popLastAtom();
-    auto copy = atom->clone();
-    copy->_typelimits = type;
-    return copy;
-}
-
-inline macro(nolimits) {
-    return _macro_typelimits(tp, args, SCRIPT_NOLIMITS);
-}
-
-inline macro(limits) {
-    return _macro_typelimits(tp, args, SCRIPT_LIMITS);
-}
-
-inline macro(normal) {
-    return _macro_typelimits(tp, args, SCRIPT_NORMAL);
-}
 
 /**************************************** not implemented *****************************************/
 

@@ -39,7 +39,7 @@ public:
  */
 class PlaceholderAtom : public Atom {
 private:
-    int _w, _h, _d, _s;
+    float _w, _h, _d, _s;
 
 public:
     PlaceholderAtom(float w, float h, float d, float s)
