@@ -135,7 +135,8 @@ ostream& tex::operator<<(ostream& os, const FontInfo& info) {
 
     os << "ligatures:" << endl;
     for (auto x : info._lig) {
-        os << "\t[" << x.first._left << ", " << x.first._right << "] = " << x.second << endl;
+        os << "\t[" << x.first._left << ", " << x.first._right << "] = "
+           << x.second << endl;
     }
 
     return os;
@@ -310,8 +311,8 @@ void DefaultTeXFontParser::parseStyleMappings(
                     "MapRange", "code", "contains an unknown 'range name' '" + code + "'!");
             int codeMapping = it->second;
             if (boldFontId.empty()) {
-                charFonts[codeMapping] = new CharFont(
-                    (wchar_t)ch, indexOf(_fontId, fontId));
+                charFonts[codeMapping] =
+                    new CharFont((wchar_t)ch, indexOf(_fontId, fontId));
             } else {
                 charFonts[codeMapping] = new CharFont(
                     (wchar_t)ch, indexOf(_fontId, fontId), indexOf(_fontId, boldFontId));
@@ -462,8 +463,8 @@ void DefaultTeXFontParser::parseFontDescriptions(
         tt,
         it);
 
-    if (skewChar != -1)  // attribute set
-        info->setSkewChar((wchar_t)skewChar);
+    // attribute set
+    if (skewChar != -1) info->setSkewChar((wchar_t)skewChar);
     // process all "Char"-elements
     const XMLElement* e = font->FirstChildElement("Char");
 
@@ -719,7 +720,7 @@ Char DefaultTeXFont::getChar(wchar_t c, _in_ const vector<CharFont*>& cf, int st
         kind = UNICODE;
         offset = c;
     }
-    // if the no mapping for the character's range, then use the default style
+    // if no mapping for the character's range, then use the default style
     auto x = cf[kind];
     if (x == nullptr) return getDefaultChar(c, style);
     return getChar(CharFont(x->_c + offset, x->_fontId), style);

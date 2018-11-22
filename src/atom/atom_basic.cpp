@@ -14,10 +14,6 @@ using namespace tex;
  *                                     basic atom implementation                                   *
  ***************************************************************************************************/
 
-sptr<Box> EmptyAtom::createBox(_out_ TeXEnvironment& env) {
-    return sptr<Box>(new StrutBox(0, 0, 0, 0));
-}
-
 sptr<Box> ScaleAtom::createBox(_out_ TeXEnvironment& env) {
     return sptr<Box>(new ScaleBox(_base->createBox(env), _sx, _sy));
 }
@@ -1179,19 +1175,101 @@ sptr<Box> BigOperatorAtom::changeWidth(const sptr<Box>& b, float maxw) {
     return b;
 }
 
-sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
-    TeXFont* tf = env.getTeXFont().get();
-    int style = env.getStyle();
+sptr<Box> BigOperatorAtom::createSideSets(_out_ TeXEnvironment& env) {
+    SideSetsAtom* sa = static_cast<SideSetsAtom*>(_base.get());
+    auto sl = sa->_left, sr = sa->_right, sb = sa->_base;
+    if (sb == nullptr) {
+        sptr<Atom> in(new CharAtom(L'M', "mathnormal"));
+        sb = sptr<Atom>(new PhantomAtom(in, false, true, true));
+    }
 
-    RowAtom* bbase = nullptr;
+    auto opbox = sb->createBox(env);
+    auto pa = sptr<Atom>(new PlaceholderAtom(0, opbox->_height, opbox->_depth, opbox->_shift));
+    pa->_typelimits = SCRIPT_NOLIMITS;
+    pa->_type = TYPE_BIG_OPERATOR;
+
+    ScriptsAtom* l = dynamic_cast<ScriptsAtom*>(sl.get());
+    ScriptsAtom* r = dynamic_cast<ScriptsAtom*>(sr.get());
+
+    if (l != nullptr) {
+        l->_base = pa;
+        l->_align = ALIGN_RIGHT;
+    }
+    if (r != nullptr) r->_base = pa;
+
+    auto y = sptr<Box>(new HorizontalBox());
+    float limitsShift = 0;
+    if (sl != nullptr) {
+        auto lb = sl->createBox(env);
+        y->add(lb);
+        limitsShift = lb->_width + opbox->_width / 2;
+    }
+    y->add(opbox);
+    if (sr != nullptr) y->add(sr->createBox(env));
+
+    TeXFont* tf = env.getTeXFont().get();
+    const int style = env.getStyle();
+
+    float delta = 0;
+    if (sb->_type == TYPE_BIG_OPERATOR) {
+        SymbolAtom* sym = dynamic_cast<SymbolAtom*>(sb.get());
+        if (sym != nullptr) {
+            Char c = tf->getChar(sym->getName(), style);
+            delta = c.getItalic();
+        }
+    }
+
+    // under and over
+    sptr<Box> x, z;
+    if (_over != nullptr) x = _over->createBox(*(env.supStyle()));
+    if (_under != nullptr) z = _under->createBox(*(env.subStyle()));
+
+    // build vertical box
+    VerticalBox* vbox = new VerticalBox();
+    float bigop5 = tf->getBigOpSpacing5(style), kern = 0;
+
+    if (_over != nullptr) {
+        vbox->add(sptr<Box>(new StrutBox(0, bigop5, 0, 0)));
+        x->_shift = limitsShift - x->_width / 2 + delta / 2;
+        vbox->add(x);
+        kern = max(tf->getBigOpSpacing1(style), tf->getBigOpSpacing3(style) - x->_depth);
+        vbox->add(sptr<Box>(new StrutBox(0, kern, 0, 0)));
+    }
+
+    vbox->add(y);
+
+    if (_under != nullptr) {
+        float k = max(tf->getBigOpSpacing2(style), tf->getBigOpSpacing4(style) - z->_height);
+        vbox->add(sptr<Box>(new StrutBox(0, k, 0, 0)));
+        z->_shift = limitsShift - z->_width / 2 - delta / 2;
+        vbox->add(z);
+        vbox->add(sptr<Box>(new StrutBox(0, bigop5, 0, 0)));
+    }
+
+    float h = y->_height, total = vbox->_height + vbox->_depth;
+    if (x != nullptr) h += bigop5 + kern + x->_height + x->_depth;
+    vbox->_height = h;
+    vbox->_depth = total - h;
+
+    return sptr<Box>(vbox);
+}
+
+sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
+    if (dynamic_cast<SideSetsAtom*>(_base.get())) return createSideSets(env);
+
+    TeXFont* tf = env.getTeXFont().get();
+    const int style = env.getStyle();
+
+    RowAtom* row = nullptr;
     auto Base = _base;
+
     TypedAtom* ta = dynamic_cast<TypedAtom*>(_base.get());
     if (ta != nullptr) {
         auto atom = ta->getBase();
         RowAtom* ra = dynamic_cast<RowAtom*>(atom.get());
         if (ra != nullptr && ra->_lookAtLastAtom && _base->_typelimits != SCRIPT_LIMITS) {
             _base = ra->popLastAtom();
-            bbase = ra;
+            row = ra;
         } else {
             _base = atom;
         }
@@ -1204,11 +1282,11 @@ sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
         // if explicitly set to not display as limits or if not set and
         // style is not display, then attach over and under as regular sub or
         // super script
-        if (bbase != nullptr) {
-            bbase->add(sptr<Atom>(new ScriptsAtom(_base, _under, _over)));
-            auto b = bbase->createBox(env);
-            bbase->popLastAtom();
-            bbase->add(_base);
+        if (row != nullptr) {
+            row->add(sptr<Atom>(new ScriptsAtom(_base, _under, _over)));
+            auto b = row->createBox(env);
+            row->popLastAtom();
+            row->add(_base);
             _base = Base;
             return b;
         }
@@ -1271,15 +1349,15 @@ sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
         vBox->add(sptr<Box>(new StrutBox(0, bigop5, 0, 0)));
     }
 
-    // set height and depth vertical box and return
+    // set height and depth of vertical box
     float h = y->_height, total = vBox->_height + vBox->_depth;
     if (x != nullptr) h += bigop5 + kern + x->_height + x->_depth;
     vBox->_height = h;
     vBox->_depth = total - h;
 
-    if (bbase != nullptr) {
-        HorizontalBox* hb = new HorizontalBox(bbase->createBox(env));
-        bbase->add(_base);
+    if (row != nullptr) {
+        HorizontalBox* hb = new HorizontalBox(row->createBox(env));
+        row->add(_base);
         hb->add(sptr<Box>(vBox));
         _base = Base;
         return sptr<Box>(hb);
@@ -1296,18 +1374,21 @@ sptr<Box> SideSetsAtom::createBox(_out_ TeXEnvironment& env) {
         _base = sptr<Atom>(new PhantomAtom(in, false, true, true));
     }
 
+    auto bb = _base->createBox(env);
+    auto pa = sptr<Atom>(new PlaceholderAtom(0, bb->_height, bb->_depth, bb->_shift));
+
     ScriptsAtom* l = dynamic_cast<ScriptsAtom*>(_left.get());
     ScriptsAtom* r = dynamic_cast<ScriptsAtom*>(_right.get());
 
     if (l != nullptr) {
-        l->_base = sptr<Atom>(new PhantomAtom(_base, false, true, true));
+        l->_base = pa;
         l->_align = ALIGN_RIGHT;
     }
-
-    if (r != nullptr) r->_base = _base;
+    if (r != nullptr) r->_base = pa;
 
     auto hb = new HorizontalBox();
     if (_left != nullptr) hb->add(_left->createBox(env));
+    hb->add(bb);
     if (_right != nullptr) hb->add(_right->createBox(env));
 
     return sptr<Box>(hb);
