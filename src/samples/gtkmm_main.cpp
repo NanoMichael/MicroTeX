@@ -142,16 +142,16 @@ protected:
     Gtk::Box _side_box, _bottom_box;
     Gtk::Paned _main_box;
 
-    int _previous_sample;
+    Samples _samples;
 
 public:
     MainWindow()
         : _size_change_info("change text size: "),
           _next("Next Example"),
           _rendering("Rendering"),
-          _save("Save As SVG"),
+          _save("Save as SVG"),
           _side_box(Gtk::ORIENTATION_VERTICAL),
-          _previous_sample(0) {
+          _samples() {
         // init before use
         Gsv::init();
 
@@ -214,17 +214,16 @@ public:
 
 protected:
     void on_next_clicked() {
-        int idx = (_previous_sample + 1) % tex::SAMPLES_COUNT;
+        auto sample = _samples.next();
         string x;
-        wide2utf8(tex::SAMPLES[idx].c_str(), x);
+        wide2utf8(sample.c_str(), x);
         _tex_editor.get_buffer()->set_text(x);
-        _tex.setLaTeX(tex::SAMPLES[idx]);
-        _previous_sample = idx;
+        _tex.setLaTeX(sample);
         _save.set_sensitive(_tex.isRenderDisplayed());
     }
 
     void on_save_clicked() {
-        Gtk::FileChooserDialog dialog(*this, "Save As SVG", Gtk::FILE_CHOOSER_ACTION_SAVE);
+        Gtk::FileChooserDialog dialog(*this, "Save as SVG", Gtk::FILE_CHOOSER_ACTION_SAVE);
         dialog.add_button("Cancel", Gtk::RESPONSE_CANCEL);
         dialog.add_button("Confirm", Gtk::RESPONSE_OK);
         int result = dialog.run();
