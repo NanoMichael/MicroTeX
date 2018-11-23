@@ -781,7 +781,7 @@ private:
     vector<sptr<Atom>> _elements;
     sptr<SpaceAtom> _raise;
     bool _addInterline;
-    bool _vtop;
+    int _valign;
     int _halign;
 
 public:
@@ -809,11 +809,11 @@ public:
     }
 
     inline void setVtop(bool vtop) {
-        _vtop = vtop;
+        _valign = ALIGN_TOP;
     }
 
     inline bool getVtop() const {
-        return _vtop;
+        return _valign == ALIGN_TOP;
     }
 
     void setRaise(int unit, float r);
