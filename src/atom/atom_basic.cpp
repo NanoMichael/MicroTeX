@@ -630,85 +630,14 @@ sptr<Box> VRowAtom::createBox(_out_ TeXEnvironment& env) {
 
 /*************************************** color atom implementation ********************************/
 
-map<string, color> ColorAtom::_colors;
-color ColorAtom::_default = ColorAtom::_init_();
-
-color ColorAtom::_init_() {
-    _colors["black"] = black;
-    _colors["white"] = white;
-    _colors["red"] = red;
-    _colors["green"] = green;
-    _colors["blue"] = blue;
-    _colors["cyan"] = cyan;
-    _colors["magenta"] = magenta;
-    _colors["yellow"] = yellow;
-    _colors["greenyellow"] = convColor(0.15f, 0.f, 0.69f, 0.f);
-    _colors["goldenrod"] = convColor(0.f, 0.10f, 0.84f, 0.f);
-    _colors["dandelion"] = convColor(0.f, 0.29f, 0.84f, 0.f);
-    _colors["apricot"] = convColor(0.f, 0.32f, 0.52f, 0.f);
-    _colors["peach"] = convColor(0.f, 0.50f, 0.70f, 0.f);
-    _colors["melon"] = convColor(0.f, 0.46f, 0.50f, 0.f);
-    _colors["yelloworange"] = convColor(0.f, 0.42f, 1.f, 0.f);
-    _colors["orange"] = convColor(0.f, 0.61f, 0.87f, 0.f);
-    _colors["burntorange"] = convColor(0.f, 0.51f, 1.f, 0.f);
-    _colors["bittersweet"] = convColor(0.f, 0.75f, 1.f, 0.24f);
-    _colors["redorange"] = convColor(0.f, 0.77f, 0.87f, 0.f);
-    _colors["mahogany"] = convColor(0.f, 0.85f, 0.87f, 0.35f);
-    _colors["maroon"] = convColor(0.f, 0.87f, 0.68f, 0.32f);
-    _colors["brickred"] = convColor(0.f, 0.89f, 0.94f, 0.28f);
-    _colors["orangered"] = convColor(0.f, 1.f, 0.50f, 0.f);
-    _colors["rubinered"] = convColor(0.f, 1.f, 0.13f, 0.f);
-    _colors["wildstrawberry"] = convColor(0.f, 0.96f, 0.39f, 0.f);
-    _colors["salmon"] = convColor(0.f, 0.53f, 0.38f, 0.f);
-    _colors["carnationpink"] = convColor(0.f, 0.63f, 0.f, 0.f);
-    _colors["magenta"] = convColor(0.f, 1.f, 0.f, 0.f);
-    _colors["violetred"] = convColor(0.f, 0.81f, 0.f, 0.f);
-    _colors["rhodamine"] = convColor(0.f, 0.82f, 0.f, 0.f);
-    _colors["mulberry"] = convColor(0.34f, 0.90f, 0.f, 0.02f);
-    _colors["redviolet"] = convColor(0.07f, 0.90f, 0.f, 0.34f);
-    _colors["fuchsia"] = convColor(0.47f, 0.91f, 0.f, 0.08f);
-    _colors["lavender"] = convColor(0.f, 0.48f, 0.f, 0.f);
-    _colors["thistle"] = convColor(0.12f, 0.59f, 0.f, 0.f);
-    _colors["orchid"] = convColor(0.32f, 0.64f, 0.f, 0.f);
-    _colors["darkorchid"] = convColor(0.40f, 0.80f, 0.20f, 0.f);
-    _colors["purple"] = convColor(0.45f, 0.86f, 0.f, 0.f);
-    _colors["plum"] = convColor(0.50f, 1.f, 0.f, 0.f);
-    _colors["violet"] = convColor(0.79f, 0.88f, 0.f, 0.f);
-    _colors["royalpurple"] = convColor(0.75f, 0.90f, 0.f, 0.f);
-    _colors["blueviolet"] = convColor(0.86f, 0.91f, 0.f, 0.04f);
-    _colors["periwinkle"] = convColor(0.57f, 0.55f, 0.f, 0.f);
-    _colors["cadetblue"] = convColor(0.62f, 0.57f, 0.23f, 0.f);
-    _colors["cornflowerblue"] = convColor(0.65f, 0.13f, 0.f, 0.f);
-    _colors["midnightblue"] = convColor(0.98f, 0.13f, 0.f, 0.43f);
-    _colors["navyblue"] = convColor(0.94f, 0.54f, 0.f, 0.f);
-    _colors["royalblue"] = convColor(1.f, 0.50f, 0.f, 0.f);
-    _colors["cerulean"] = convColor(0.94f, 0.11f, 0.f, 0.f);
-    _colors["processblue"] = convColor(0.96f, 0.f, 0.f, 0.f);
-    _colors["skyblue"] = convColor(0.62f, 0.f, 0.12f, 0.f);
-    _colors["turquoise"] = convColor(0.85f, 0.f, 0.20f, 0.f);
-    _colors["tealblue"] = convColor(0.86f, 0.f, 0.34f, 0.02f);
-    _colors["aquamarine"] = convColor(0.82f, 0.f, 0.30f, 0.f);
-    _colors["bluegreen"] = convColor(0.85f, 0.f, 0.33f, 0.f);
-    _colors["emerald"] = convColor(1.f, 0.f, 0.50f, 0.f);
-    _colors["junglegreen"] = convColor(0.99f, 0.f, 0.52f, 0.f);
-    _colors["seagreen"] = convColor(0.69f, 0.f, 0.50f, 0.f);
-    _colors["forestgreen"] = convColor(0.91f, 0.f, 0.88f, 0.12f);
-    _colors["pinegreen"] = convColor(0.92f, 0.f, 0.59f, 0.25f);
-    _colors["limegreen"] = convColor(0.50f, 0.f, 1.f, 0.f);
-    _colors["yellowgreen"] = convColor(0.44f, 0.f, 0.74f, 0.f);
-    _colors["springgreen"] = convColor(0.26f, 0.f, 0.76f, 0.f);
-    _colors["olivegreen"] = convColor(0.64f, 0.f, 0.95f, 0.40f);
-    _colors["rawsienna"] = convColor(0.f, 0.72f, 1.f, 0.45f);
-    _colors["sepia"] = convColor(0.f, 0.83f, 1.f, 0.70f);
-    _colors["brown"] = convColor(0.f, 0.81f, 1.f, 0.60f);
-    _colors["tan"] = convColor(0.14f, 0.42f, 0.56f, 0.f);
-    _colors["gray"] = convColor(0.f, 0.f, 0.f, 0.50f);
-
-    return black;
-}
+const color ColorAtom::_default = black;
 
 ColorAtom::ColorAtom(const sptr<Atom>& atom, color bg, color c) : _background(bg), _color(c) {
     _elements = sptr<RowAtom>(new RowAtom(atom));
+}
+
+void ColorAtom::defineColor(const string& name, color c) {
+    _colors[name] = c;
 }
 
 color ColorAtom::getColor(string s) {
@@ -778,7 +707,7 @@ color ColorAtom::getColor(string s) {
         y = min(1.f, max(0.f, y));
         k = min(1.f, max(0.f, k));
 
-        return convColor(c, m, y, k);
+        return cmyk(c, m, y, k);
     }
 
     return _default;

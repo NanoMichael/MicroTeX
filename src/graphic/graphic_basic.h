@@ -66,7 +66,7 @@ inline int color_b(color c) {
 
 inline color cmyk(float c, float m, float y, float k) {
     float kk = 1.f - k;
-    return rgb(kk * (1 - c), kk * (1 - m), kk * (1, y));
+    return rgb(kk * (1 - c), kk * (1 - m), kk * (1 - y));
 }
 
 /**
@@ -164,4 +164,4 @@ struct Stroke {
 
 }  // namespace tex
 
-#endif  // PORT_BASIC_H_INCLUDED
+#endif  // GRAPHIC_BASIC_H_INCLUDED
