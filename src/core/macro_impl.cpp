@@ -406,7 +406,7 @@ macro(definecolor) {
         throw ex_parse("Color model is incorrect!");
     }
 
-    ColorAtom::_colors[wide2utf8(args[1].c_str())] = c;
+    ColorAtom::defineColor(wide2utf8(args[1].c_str()), c);
     return nullptr;
 }
 

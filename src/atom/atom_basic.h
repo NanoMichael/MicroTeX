@@ -840,21 +840,14 @@ public:
  */
 class ColorAtom : public Atom, public Row {
 private:
+    static map<string, color> _colors;
+    static const color _default;
+
     color _background, _color;
     // RowAtom for which the color settings apply
     sptr<RowAtom> _elements;
 
-    inline static color convColor(float c, float m, float y, float k) {
-        float kk = 1 - k;
-        return rgb(kk * (1 - c), kk * (1 - m), kk * (1 - y));
-    }
-
-    static color _init_();
-
 public:
-    static color _default;
-    static map<string, color> _colors;
-
     ColorAtom() = delete;
 
     ColorAtom(const sptr<Atom>& atom, color bg, color c);
@@ -883,10 +876,15 @@ public:
 
     /**
      * Parse color from given name. The name can be one of the following format:
-     * [#AARRGGBB] or [AARRGGBB], [gray color], [c,m,y,k], [c;m;y;k], [r,g,b], [r;g;b].
-     * Return black if not found.
+     * [#AARRGGBB] or [AARRGGBB], [gray color], [c,m,y,k], [c;m;y;k], [r,g,b], [r;g;b]
+     * or a predefined color name.  Return black if not found.
      */
     static color getColor(string name);
+
+    /**
+     * Define a color with given name
+     */
+    static void defineColor(const string& name, color c);
 
     __decl_clone(ColorAtom)
 };
