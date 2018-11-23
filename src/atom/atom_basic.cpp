@@ -547,14 +547,14 @@ void RowAtom::setPreviousAtom(const sptr<Dummy>& prev) {
 
 VRowAtom::VRowAtom() {
     _addInterline = false;
-    _vtop = false;
+    _valign = ALIGN_CENTER;
     _halign = ALIGN_NONE;
     _raise = sptr<SpaceAtom>(new SpaceAtom(UNIT_EX, 0, 0, 0));
 }
 
 VRowAtom::VRowAtom(const sptr<Atom>& el) {
     _addInterline = false;
-    _vtop = false;
+    _valign = ALIGN_CENTER;
     _halign = ALIGN_NONE;
     _raise = sptr<SpaceAtom>(new SpaceAtom(UNIT_EX, 0, 0, 0));
     if (el != nullptr) {
@@ -616,10 +616,15 @@ sptr<Box> VRowAtom::createBox(_out_ TeXEnvironment& env) {
     }
 
     vb->_shift = -_raise->createBox(env)->_width;
-    if (_vtop) {
+    if (_valign == ALIGN_TOP) {
         float t = vb->getSize() == 0 ? 0 : vb->_children.front()->_height;
         vb->_height = t;
         vb->_depth = vb->_depth + vb->_height - t;
+    } else if (_valign == ALIGN_CENTER) {
+        float axis = env.getTeXFont()->getAxisHeight(env.getStyle());
+        float h = vb->_height + vb->_depth;
+        vb->_height = h / 2 + axis;
+        vb->_depth = h / 2 - axis;
     } else {
         float t = vb->getSize() == 0 ? 0 : vb->_children.back()->_depth;
         vb->_height = vb->_depth + vb->_height - t;
