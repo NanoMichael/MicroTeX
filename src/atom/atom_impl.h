@@ -637,8 +637,16 @@ public:
         _align = parseAlign(align);
     }
 
-    inline void setWidth(float w) {
+    virtual bool isNeedWidth() const {
+        return false;
+    }
+
+    inline void setColumnWidth(float w) {
         _w = w;
+    }
+
+    inline float getColumnWidth() {
+        return _w;
     }
 
     inline int getSkipped() {
@@ -684,6 +692,10 @@ public:
 
     HdotsforAtom(int n, float coeff)
         : MulticolumnAtom(n, "c", SymbolAtom::get("ldotp")), _coeff(coeff) {}
+
+    bool isNeedWidth() const override {
+        return true;
+    }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 

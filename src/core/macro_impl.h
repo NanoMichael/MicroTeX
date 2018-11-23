@@ -547,6 +547,8 @@ inline macro(multicolumn) {
 }
 
 inline macro(hdotsfor) {
+    if (!tp.isArrayMode())
+        throw ex_parse("Command 'hdotsfor' only available in array mode!");
     int n = 0;
     valueof(args[1], n);
     float f = 1.f;

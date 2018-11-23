@@ -149,8 +149,8 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
                 arr[i] = Hsep->_width;
             }
         }
-    }
         return arr;
+    }
     case MATRIX:
     case SMALLMATRIX: {
         // simple matrix (hsep_col/2 or 0) elem hsep_col elem hsep_col ... hsep_col elem (hsep_col/2 or 0)
@@ -158,8 +158,8 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
         arr[cols] = arr[0];
         Hsep = _hsep.createBox(env);
         for (i = 1; i < cols; i++) arr[i] = Hsep->_width;
-    }
         return arr;
+    }
     case ALIGNED:
     case ALIGN: {
         // Align env : hsep=(textwidth-matwidth)/(2n+1) and hsep eq_lft \medskip el_rgt hsep ... hsep elem hsep
@@ -232,7 +232,7 @@ void MatrixAtom::recalculateLine(
     float* height, float* depth, float drt, float vspace) {
     const size_t s = multiRows.size();
     for (size_t i = 0; i < s; i++) {
-        MultiRowAtom* m = dynamic_cast<MultiRowAtom*>(multiRows[i].get());
+        MultiRowAtom* m = (MultiRowAtom*)multiRows[i].get();
         const int r = m->_i;
         const int c = m->_j;
         int n = m->_n;
@@ -302,6 +302,11 @@ sptr<Box> MatrixAtom::generateMulticolumn(
         if (it != _vlines.end()) w += it->second->getWidth(env);
     }
     w += colWidth[k];
+
+    if (mca->isNeedWidth() && mca->getColumnWidth() <= PREC) {
+        mca->setColumnWidth(w);
+        return mca->createBox(env);
+    }
 
     if (b->_width >= w) return b;
 
@@ -395,7 +400,7 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
                 lineDepth[i] = max(boxarr[i][j]->_depth, lineDepth[i]);
                 lineHeight[i] = max(boxarr[i][j]->_height, lineHeight[i]);
             } else {
-                MultiRowAtom* mra = dynamic_cast<MultiRowAtom*>(atom.get());
+                MultiRowAtom* mra = (MultiRowAtom*)atom.get();
                 mra->setRowColumn(i, j);
                 listMultiRow.push_back(atom);
             }
@@ -404,7 +409,7 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
                 // Find the widest column
                 colWidth[j] = max(boxarr[i][j]->_width, colWidth[j]);
             } else {
-                MulticolumnAtom* mca = dynamic_cast<MulticolumnAtom*>(atom.get());
+                MulticolumnAtom* mca = (MulticolumnAtom*)atom.get();
                 mca->setRowColumn(i, j);
                 listMultiCol.push_back(atom);
             }
@@ -417,7 +422,7 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     float* Hsep = getColumnSep(env, matW);
 
     for (size_t i = 0; i < listMultiCol.size(); i++) {
-        MulticolumnAtom* multi = dynamic_cast<MulticolumnAtom*>(listMultiCol[i].get());
+        MulticolumnAtom* multi = (MulticolumnAtom*)listMultiCol[i].get();
         int c = multi->getCol();
         int r = multi->getRow();
         int n = multi->getSkipped();
@@ -476,8 +481,7 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
                         boxarr[i][j], colWidth[j], lineHeight[i], lineDepth[i], _position[j]);
                 } else {
                     auto b = generateMulticolumn(env, boxarr[i][j], Hsep, colWidth, i, j);
-                    MulticolumnAtom* matom = dynamic_cast<MulticolumnAtom*>(
-                        _matrix->_array[i][j].get());
+                    MulticolumnAtom* matom = (MulticolumnAtom*)_matrix->_array[i][j].get();
                     j += matom->getSkipped() - 1;
                     wb = new WrapperBox(b, b->_width, lineHeight[i], lineDepth[i], ALIGN_LEFT);
                     isLastVline = matom->hasRightVline();
@@ -504,7 +508,7 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
                 j = cols;
             } break;
             case TYPE_HLINE: {
-                HlineAtom* at = dynamic_cast<HlineAtom*>(_matrix->_array[i][j].get());
+                HlineAtom* at = (HlineAtom*)_matrix->_array[i][j].get();
                 at->setColor(LINE_COLOR);
                 at->setWidth(matW);
                 if (i >= 1 &&
@@ -877,9 +881,7 @@ sptr<Box> HdotsforAtom::createBox(_out_ TeXEnvironment& env) {
     sptr<Box> b;
     if (_w != 0) {
         b = sptr<Box>(new HorizontalBox(db));
-        while (b->_width < _w) {
-            b->add(db);
-        }
+        while (b->_width < _w) b->add(db);
         b = sptr<Box>(new HorizontalBox(b, _w, ALIGN_CENTER));
     } else {
         b = db;
