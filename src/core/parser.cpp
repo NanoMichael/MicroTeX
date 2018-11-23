@@ -600,18 +600,26 @@ sptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
     }
 
     sptr<Atom> atom;
-    RowAtom* rm = dynamic_cast<RowAtom*>(_formula->_root.get());
-    if (rm != nullptr) {
-        atom = rm->popLastAtom();
-    } else if (_formula->_root == nullptr) {
+    RowAtom* rm = nullptr;
+    if (_formula->_root == nullptr) {
         /*
-         * If there's no root exists, pass a null atom to ScriptsAtom as base is OK,
+         * If there's no root exists, passing a null atom to ScriptsAtom as base is OK,
          * the ScriptsAtom will handle it
          */
         return sptr<Atom>(new ScriptsAtom(nullptr, first, second));
+    } else if (rm = dynamic_cast<RowAtom*>(_formula->_root.get())) {
+        atom = rm->popLastAtom();
     } else {
         atom = _formula->_root;
         _formula->_root = nullptr;
+    }
+
+    // Check if previous atom is CumulativeScriptsAtom
+    CumulativeScriptsAtom* ca = dynamic_cast<CumulativeScriptsAtom*>(atom.get());
+    if (ca != nullptr) {
+        ca->addSubscript(first);
+        ca->addSuperscript(second);
+        return atom;
     }
 
     if (atom->getRightType() == TYPE_BIG_OPERATOR)

@@ -203,6 +203,10 @@ public:
 
     CumulativeScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup);
 
+    void addSuperscript(const sptr<Atom>& sup);
+
+    void addSubscript(const sptr<Atom>& sub);
+
     sptr<Atom> getScriptsAtom() const;
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override;

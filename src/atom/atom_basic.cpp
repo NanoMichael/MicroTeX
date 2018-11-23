@@ -50,17 +50,32 @@ sptr<Box> UnderScoreAtom::createBox(_out_ TeXEnvironment& env) {
 CumulativeScriptsAtom::CumulativeScriptsAtom(
     const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup) {
     CumulativeScriptsAtom* ca = dynamic_cast<CumulativeScriptsAtom*>(base.get());
+    ScriptsAtom* sa = nullptr;
     if (ca != nullptr) {
         _base = ca->_base;
         ca->_sup->add(sup);
         ca->_sub->add(sub);
         _sup = ca->_sup;
         _sub = ca->_sub;
+    } else if (sa = dynamic_cast<ScriptsAtom*>(base.get())) {
+        _base = sa->_base;
+        _sup = sptr<RowAtom>(new RowAtom(sa->_sup));
+        _sub = sptr<RowAtom>(new RowAtom(sa->_sub));
+        _sup->add(sup);
+        _sub->add(sub);
     } else {
         _base = base;
         _sup = sptr<RowAtom>(new RowAtom(sup));
         _sub = sptr<RowAtom>(new RowAtom(sub));
     }
+}
+
+void CumulativeScriptsAtom::addSuperscript(const sptr<Atom>& sup) {
+    _sup->add(sup);
+}
+
+void CumulativeScriptsAtom::addSubscript(const sptr<Atom>& sub) {
+    _sub->add(sub);
 }
 
 sptr<Atom> CumulativeScriptsAtom::getScriptsAtom() const {
