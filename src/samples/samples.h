@@ -7,7 +7,6 @@
 
 #include <algorithm>
 #include <fstream>
-#include <iostream>
 #include "latex.h"
 
 namespace tex {
@@ -41,7 +40,6 @@ private:
     void add(const string& str) {
         if (str.empty()) return;
         if (isSpace(str)) return;
-        std::cout << str << std::endl;
         _samples.push_back(utf82wide(str.c_str()));
     }
 
