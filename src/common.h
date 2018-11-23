@@ -37,9 +37,9 @@ using namespace std;
 
 #define __print printf
 
-// out parameter
+// OUT parameter, that the parameter may be affected by this function
 #define _out_
-// in parameter
+// IN parameter, that the parameter will never be changed by this function
 #define _in_
 
 /**

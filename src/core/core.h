@@ -285,6 +285,12 @@ public:
     static sptr<Box> get(int ltype, int rtype, const TeXEnvironment& env);
 
     /**
+     * Creates a box representing the glue type according to the "glue rules" based
+     * on the skip-type
+     */
+    static sptr<Box> get(int skipType, const TeXEnvironment& env);
+
+    /**
      * Get the space amount from the given left-type and right-type of atoms according
      * to the "glue rules".
      */
