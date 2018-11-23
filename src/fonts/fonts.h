@@ -752,6 +752,9 @@ public:
         return it->second;
     }
 
+    /**
+     * Get the size factor of given style
+     */
     inline static float getSizeFactor(int style) {
         if (style < STYLE_TEXT) return 1;
         if (style < STYLE_SCRIPT) return _generalSettings["textfactor"];
@@ -949,7 +952,14 @@ public:
         return getParameter("denom2") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
     }
 
-    static void setMathSizes(float ds, float ts, float ss, float sss);
+    /**
+     * Set the various sizes of the envrionment
+     */
+    static void setMathSizes(
+        float defaultSize,
+        float textStyleSize,
+        float scriptStyleSize,
+        float scriptsScriptStyleSize);
 
     static void setMagnification(float mag);
 

@@ -467,6 +467,31 @@ sptr<Box> Glue::get(int ltype, int rtype, const TeXEnvironment& env) {
     return _glueTypes[glue]->createBox(env);
 }
 
+sptr<Box> Glue::get(int skipType, const TeXEnvironment& env) {
+    int lt = 0, rt = 0;
+    int st = skipType < 0 ? -skipType : skipType;
+    string name;
+    switch (st) {
+    case THINMUSKIP:
+        name = "thin";
+        break;
+    case MEDMUSKIP:
+        name = "med";
+        break;
+    default:
+        name = "thick";
+        break;
+    }
+    auto it = find_if(_glueTypes.begin(), _glueTypes.end(), [&name](const Glue* g) {
+        return g->_name == name;
+    });
+    if (it == _glueTypes.end()) return sptr<Box>(new GlueBox(0, 0, 0));
+
+    auto b = (*it)->createBox(env);
+    if (skipType < 0) b->negWidth();
+    return b;
+}
+
 float Glue::getSpace(int ltype, int rtype, const TeXEnvironment& env) {
     int l = (ltype > TYPE_INNER ? TYPE_ORDINARY : ltype);
     int r = (rtype > TYPE_INNER ? TYPE_ORDINARY : rtype);

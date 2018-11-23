@@ -204,18 +204,7 @@ sptr<Box> SpaceAtom::createBox(_out_ TeXEnvironment& env) {
         return sptr<Box>(new StrutBox(w, h, d, 0));
     }
     if (_blankType == 0) return sptr<Box>(new StrutBox(env.getSpace(), 0, 0, 0));
-
-    int bl = _blankType < 0 ? -_blankType : _blankType;
-    sptr<Box> b(nullptr);
-    if (bl == THINMUSKIP)
-        b = Glue::get(TYPE_INNER, TYPE_BIG_OPERATOR, env);
-    else if (bl == MEDMUSKIP)
-        b = Glue::get(TYPE_BINARY_OPERATOR, TYPE_BIG_OPERATOR, env);
-    else
-        b = Glue::get(TYPE_RELATION, TYPE_BIG_OPERATOR, env);
-
-    if (_blankType < 0) b->negWidth();
-    return b;
+    return Glue::get(_blankType, env);
 }
 
 pair<int, float> SpaceAtom::getLength(const string& lgth) {
