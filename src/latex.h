@@ -30,6 +30,11 @@ public:
     static void init(const string& res_root_path = "res");
 
     /**
+     * Get the root path of the "TeX resources"
+     */
+    static const string& getResRootPath();
+
+    /**
      * If open debug
      */
     static void setDebug(bool debug);

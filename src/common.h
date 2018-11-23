@@ -42,12 +42,12 @@ using namespace std;
 // IN parameter, that the parameter will never be changed by this function
 #define _in_
 
+namespace tex {
+
 /**
  * The root directory of the resources included (defined in latex.cpp)
  */
 extern string RES_BASE;
-
-namespace tex {
 
 static const float POS_INF = numeric_limits<float>::infinity();
 static const float NEG_INF = -POS_INF;

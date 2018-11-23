@@ -7,7 +7,7 @@
 using namespace std;
 using namespace tex;
 
-string RES_BASE = "res";
+string tex::RES_BASE = "res";
 
 TeXFormula* LaTeX::_formula = nullptr;
 TeXRenderBuilder* LaTeX::_builder = nullptr;
@@ -37,6 +37,10 @@ void LaTeX::release() {
 
     if (_formula != nullptr) delete _formula;
     if (_builder != nullptr) delete _builder;
+}
+
+const string& LaTeX::getResRootPath() {
+    return RES_BASE;
 }
 
 void LaTeX::setDebug(bool debug) {
