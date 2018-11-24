@@ -684,8 +684,12 @@ public:
  */
 class HdotsforAtom : public MulticolumnAtom {
 private:
-    static SpaceAtom _thin;
     float _coeff;
+
+    sptr<Box> createBox(
+        float space,
+        const sptr<Box>& b,
+        _out_ TeXEnvironment& env);
 
 public:
     HdotsforAtom() = delete;
