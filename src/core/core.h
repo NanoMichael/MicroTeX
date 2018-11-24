@@ -256,6 +256,10 @@ private:
 
     sptr<Box> createBox(const TeXEnvironment& env) const;
 
+    float getFactor(const TeXEnvironment& env) const;
+
+    static Glue* getGlue(int skipType);
+
 public:
     Glue() = delete;
 
@@ -291,10 +295,15 @@ public:
     static sptr<Box> get(int skipType, const TeXEnvironment& env);
 
     /**
-     * Get the space amount from the given left-type and right-type of atoms according
-     * to the "glue rules".
+     * Get the space amount from the given left-type and right-type of atoms
+     * according to the "glue rules".
      */
     static float getSpace(int ltype, int rtype, const TeXEnvironment& env);
+
+    /**
+     * Get the space amount from the given skip-type according to the "glue rules"
+     */
+    static float getSpace(int skipType, const TeXEnvironment& env);
 
     static void _init_();
 

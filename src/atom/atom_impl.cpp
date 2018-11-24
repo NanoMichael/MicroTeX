@@ -871,24 +871,45 @@ sptr<Box> MulticolumnAtom::createBox(_out_ TeXEnvironment& env) {
     return b;
 }
 
-SpaceAtom HdotsforAtom::_thin(THINMUSKIP);
+sptr<Box> HdotsforAtom::createBox(
+    float space, const sptr<Box>& b, _out_ TeXEnvironment& env) {
+    auto sb = sptr<Box>(new StrutBox(0, space, 0, 0));
+    auto vb = sptr<Box>(new VerticalBox());
+    vb->add(sb);
+    vb->add(b);
+    vb->add(sb);
+    vb->_type = TYPE_MULTICOLUMN;
+    return vb;
+}
 
 sptr<Box> HdotsforAtom::createBox(_out_ TeXEnvironment& env) {
-    sptr<Box> sp(new StrutBox(_coeff * _thin.createBox(env)->_width, 0, 0, 0));
-    sptr<HorizontalBox> db(new HorizontalBox(sp));
-    db->add(_cols->createBox(env));
-    db->add(sp);
-    sptr<Box> b;
-    if (_w != 0) {
-        b = sptr<Box>(new HorizontalBox(db));
-        while (b->_width < _w) b->add(db);
-        b = sptr<Box>(new HorizontalBox(b, _w, ALIGN_CENTER));
-    } else {
-        b = db;
+    auto dot = _cols->createBox(env);
+    float space = Glue::getSpace(THINMUSKIP, env) * _coeff * 2;
+
+    // If no width specified, create a box with one dot
+    if (_w == 0) return createBox(space, dot, env);
+
+    float x = (_w - dot->_width) / (space + dot->_width);
+    int count = (int)floor(x);
+
+    // Only one dot can be placed in
+    if (count == 0) {
+        auto b = sptr<Box>(new HorizontalBox(dot, _w, ALIGN_CENTER));
+        return createBox(space, b, env);
     }
 
-    b->_type = TYPE_MULTICOLUMN;
-    return b;
+    // Adjust the spce between
+    space += (x - count) * space / count;
+    auto sb = sptr<Box>(new StrutBox(space, 0, 0, 0));
+    auto b = sptr<Box>(new HorizontalBox());
+    for (int i = 0; i < count; i++) {
+        b->add(dot);
+        b->add(sb);
+    }
+    b->add(dot);
+
+    auto hb = sptr<Box>(new HorizontalBox(b, _w, ALIGN_CENTER));
+    return createBox(space, hb, env);
 }
 
 sptr<Box> LaTeXAtom::createBox(_out_ TeXEnvironment& en) {

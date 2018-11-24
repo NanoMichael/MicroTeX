@@ -449,11 +449,15 @@ void Glue::_free_() {
     delete[] _glueTable;
 }
 
-sptr<Box> Glue::createBox(const TeXEnvironment& env) const {
+float Glue::getFactor(const TeXEnvironment& env) const {
     auto tf = env.getTeXFont();
     // use "quad" from a font marked as an "mu font"
     float quad = tf->getQuad(env.getStyle(), tf->getMuFontId());
-    float factor = quad / 18.f;
+    return quad / 18.f;
+}
+
+sptr<Box> Glue::createBox(const TeXEnvironment& env) const {
+    float factor = getFactor(env);
     auto x = new GlueBox(_space * factor, _stretch * factor, _shrink * factor);
     return sptr<Box>(x);
 }
@@ -467,8 +471,7 @@ sptr<Box> Glue::get(int ltype, int rtype, const TeXEnvironment& env) {
     return _glueTypes[glue]->createBox(env);
 }
 
-sptr<Box> Glue::get(int skipType, const TeXEnvironment& env) {
-    int lt = 0, rt = 0;
+Glue* Glue::getGlue(int skipType) {
     int st = skipType < 0 ? -skipType : skipType;
     string name;
     switch (st) {
@@ -485,9 +488,13 @@ sptr<Box> Glue::get(int skipType, const TeXEnvironment& env) {
     auto it = find_if(_glueTypes.begin(), _glueTypes.end(), [&name](const Glue* g) {
         return g->_name == name;
     });
-    if (it == _glueTypes.end()) return sptr<Box>(new GlueBox(0, 0, 0));
+    return *it;
+}
 
-    auto b = (*it)->createBox(env);
+sptr<Box> Glue::get(int skipType, const TeXEnvironment& env) {
+    auto glue = getGlue(skipType);
+    if (glue == nullptr) return sptr<Box>(new GlueBox(0, 0, 0));
+    auto b = glue->createBox(env);
     if (skipType < 0) b->negWidth();
     return b;
 }
@@ -496,12 +503,14 @@ float Glue::getSpace(int ltype, int rtype, const TeXEnvironment& env) {
     int l = (ltype > TYPE_INNER ? TYPE_ORDINARY : ltype);
     int r = (rtype > TYPE_INNER ? TYPE_ORDINARY : rtype);
     int glue = _glueTable[l][r][env.getStyle() / 2];
+    auto glueType = _glueTypes[glue];
+    return glueType->_space * glueType->getFactor(env);
+}
 
-    auto tf = env.getTeXFont();
-    float quad = tf->getQuad(env.getStyle(), tf->getMuFontId());
-    float factor = quad / 18.f;
-
-    return _glueTypes[glue]->_space * factor;
+float Glue::getSpace(int skipType, const TeXEnvironment& env) {
+    auto glue = getGlue(skipType);
+    if (glue == nullptr) return 0;
+    return glue->_space * glue->getFactor(env);
 }
 
 /********************************** TeXSymbolParser implementation ********************************/
