@@ -29,7 +29,7 @@ void NewCommandMacro::addNewCommand(
     if (it != _macrocode.end()) {
         throw ex_parse(
             "Command " + wide2utf8(name.c_str()) +
-            " already exists! use renewcommand instead!");
+            " already exists! Use renewcommand instead!");
     }
     _macrocode[name] = code;
     _macroreplacement[name] = def;
@@ -41,7 +41,7 @@ void NewCommandMacro::addRenewCommand(
     if (!isMacro(name)) {
         throw ex_parse(
             "Command " + wide2utf8(name.c_str()) +
-            " is no defined! use newcommand instead!");
+            " is no defined! Use newcommand instead!");
     }
     _macrocode[name] = code;
     delete MacroInfo::_commands[name];
@@ -90,7 +90,7 @@ void NewEnvironmentMacro::addRenewEnvironment(
     if (_macrocode.find(name + L"@env") == _macrocode.end()) {
         throw ex_parse(
             "Environment " + wide2utf8(name.c_str()) +
-            "is not defined! use newenvironment instead!");
+            "is not defined! Use newenvironment instead!");
     }
     addRenewCommand(
         name + L"@env",
