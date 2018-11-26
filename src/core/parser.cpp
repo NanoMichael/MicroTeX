@@ -909,6 +909,10 @@ void TeXParser::parse() throw(ex_parse) {
             ((ArrayOfAtoms*)_formula)->addCol();
             _pos++;
         } break;
+        case '~': {
+            _formula->add(sptr<Atom>(new SpaceAtom()));
+            _pos++;
+        } break;
         case PRIME: {
             if (_ignoreWhiteSpace) {
                 _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
