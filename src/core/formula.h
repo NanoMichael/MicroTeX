@@ -146,7 +146,7 @@ public:
     void setLaTeX(const wstring& latex) throw(ex_parse);
 
     /**
-     * inserts an atom at the end of the current formula
+     * Inserts an atom at the end of the current formula
      */
     TeXFormula* add(const sptr<Atom>& el);
 
@@ -203,6 +203,11 @@ public:
      *      if the given integer value does not represent a valid atom type
      */
     TeXFormula* setFixedTypes(int left, int right) throw(ex_invalid_atom_type);
+
+    /**
+     * Test if this formula is in array mode.
+     */
+    virtual bool isArrayMode() const { return false; }
 
     /**
      * Get a predefined TeXFormula.
@@ -268,6 +273,8 @@ public:
     sptr<VRowAtom> getAsVRow();
 
     void checkDimensions();
+
+    virtual bool isArrayMode() const override { return true; }
 
     virtual ~ArrayOfAtoms() {}
 };

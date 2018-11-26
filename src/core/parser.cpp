@@ -94,8 +94,7 @@ void TeXParser::init(
         _pos = 0;
         _len = 0;
     }
-    ArrayOfAtoms* arr = dynamic_cast<ArrayOfAtoms*>(formula);
-    _arrayMode = (arr != nullptr);
+    _arrayMode = formula->isArrayMode();
 }
 
 void TeXParser::reset(const wstring& latex) {
