@@ -128,7 +128,7 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
 
     switch (_ttype) {
     case ARRAY: {
-        // Array: hsep_col/2 elem hsep_col elem hsep_col ... hsep_col elem hsep_col/2
+        // Array: (hsep_col/2 or 0) elem hsep_col elem hsep_col ... hsep_col elem (hsep_col/2 or 0)
         Hsep = _hsep.createBox(env);
         for (int i = 0; i < cols; i++) {
             if (_position[i] == ALIGN_NONE) {
@@ -147,7 +147,7 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
     }
     case MATRIX:
     case SMALLMATRIX: {
-        // simple matrix (hsep_col/2 or 0) elem hsep_col elem hsep_col ... hsep_col elem (hsep_col/2 or 0)
+        // Simple matrix: 0 elem hsep_col elem hsep_col ... hsep_col elem 0
         arr[0] = 0;
         arr[cols] = arr[0];
         Hsep = _hsep.createBox(env);
@@ -156,7 +156,8 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
     }
     case ALIGNED:
     case ALIGN: {
-        // Align env : hsep=(textwidth-matwidth)/(2n+1) and hsep eq_lft \medskip el_rgt hsep ... hsep elem hsep
+        // Align env: hsep = (textwidth - matwidth) / (2n + 1)
+        // Spaces: hsep eq_left \medskip eq_right hsep ... hsep elem hsep
         Align = _align.createBox(env);
         if (w != POS_INF) {
             h = max((w - width - cols / 2 * Align->_width) / floor((cols + 3) / 2.f), 0.f);
@@ -175,7 +176,8 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
     } break;
     case ALIGNEDAT:
     case ALIGNAT: {
-        // Aignat env : hsep=(textwidth-matwdith)/2 and hsep elem ... elem hsep
+        // Aignat env: hsep = (textwidth - matwdith) / 2
+        // Spaces: hsep elem ... elem hsep
         if (w != POS_INF)
             h = max((w - width) / 2, 0.f);
         else
@@ -191,7 +193,8 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
         }
     } break;
     case FLALIGN: {
-        // flalgin env : hsep=(textwidth-matwidth)/(2n+1) and hsep eq_lft \medskip el_rgt hsep ... hsep elem hsep
+        // flalgin env : hsep = (textwidth - matwidth) / (2n + 1)
+        // Spaces: hsep eq_left \medskip el_right hsep ... hsep elem hsep
         Align = _align.createBox(env);
         if (w != POS_INF) {
             h = max((w - width - (cols / 2) * Align->_width) / floor((cols - 1) / 2.f), 0.f);
