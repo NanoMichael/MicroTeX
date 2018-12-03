@@ -60,9 +60,9 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
             tf = sptr<TeXFormula>(new TeXFormula());
             tp = sptr<TeXParser>(new TeXParser(_ispartial, opt.substr(pos), &(*tf), false));
             auto atom = tp->getArgument();
-            _matrix->insertAtomIntoCol(lpos.size(), atom);
+            _matrix->insertAtomIntoCol(lpos.size() - 1, atom);
 
-            lpos.push_back(ALIGN_NONE);
+            lpos.insert(lpos.end() - 1, ALIGN_NONE);
             pos += tp->getPos();
             pos--;
         } break;

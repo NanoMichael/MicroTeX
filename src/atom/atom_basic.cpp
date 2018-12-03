@@ -475,6 +475,7 @@ sptr<Box> RowAtom::createBox(_out_ TeXEnvironment& env) {
 
         sptr<Dummy> atom(new Dummy(at));
         // if necessary, change BIN type to ORD
+        // i.e. for formula: $+ e - f$, the plus sign should be traded as an ordinary type
         sptr<Atom> nextAtom(nullptr);
         if (i < e) nextAtom = _elements[i + 1];
         change2Ord(&(*atom), &(*_previousAtom), &(*nextAtom));
