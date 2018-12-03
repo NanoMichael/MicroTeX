@@ -60,9 +60,9 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
             tf = sptr<TeXFormula>(new TeXFormula());
             tp = sptr<TeXParser>(new TeXParser(_ispartial, opt.substr(pos), &(*tf), false));
             auto atom = tp->getArgument();
-            _matrix->insertAtomIntoCol(lpos.size() - 1, atom);
+            _matrix->insertAtomIntoCol(lpos.size(), atom);
 
-            lpos.insert(lpos.end() - 1, ALIGN_NONE);
+            lpos.push_back(ALIGN_NONE);
             pos += tp->getPos();
             pos--;
         } break;
@@ -129,25 +129,19 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
     switch (_ttype) {
     case ARRAY: {
         // Array: hsep_col/2 elem hsep_col elem hsep_col ... hsep_col elem hsep_col/2
-        i = 1;
-        if (_position[0] == ALIGN_NONE) {
-            arr[1] = 0;
-            i = 2;
-        }
-        if (_spaceAround)
-            arr[0] = _semihsep.createBox(env)->_width;
-        else
-            arr[0] = 0;
-        arr[cols] = arr[0];
         Hsep = _hsep.createBox(env);
-        for (; i < cols; i++) {
+        for (int i = 0; i < cols; i++) {
             if (_position[i] == ALIGN_NONE) {
-                arr[i] = 0;
-                arr[i + 1] = arr[i];
+                arr[i] = arr[i + 1] = 0;
                 i++;
             } else {
                 arr[i] = Hsep->_width;
             }
+        }
+        if (_spaceAround) {
+            const auto half = Hsep->_width / 2;
+            if (_position.front() != ALIGN_NONE) arr[0] = half;
+            if (_position.back() != ALIGN_NONE) arr[cols] = half;
         }
         return arr;
     }

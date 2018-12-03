@@ -532,6 +532,7 @@ public:
         _height = rowheight;
         _depth = rowdepth;
         _width = width;
+        if (base->_width < 0) _width += base->_width;
         if (align == ALIGN_RIGHT) {
             _l = width - _base->_width;
         } else if (align == ALIGN_CENTER) {
