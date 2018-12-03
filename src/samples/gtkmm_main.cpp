@@ -84,7 +84,7 @@ public:
 
         _render = LaTeX::parse(
             latex,
-            get_allocated_width(),
+            get_allocated_width() - _padding * 2,
             _text_size,
             _text_size / 3.f,
             0xff424242);
