@@ -52,6 +52,7 @@ private:
     static const wchar_t SUB_SCRIPT;
     static const wchar_t SUPER_SCRIPT;
     static const wchar_t PRIME;
+    static const wchar_t PRIME_UTF;
     static const wchar_t BACKPRIME;
     static const wchar_t DEGRE;
     /**
