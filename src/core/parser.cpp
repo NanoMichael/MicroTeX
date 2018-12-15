@@ -22,6 +22,7 @@ const wchar_t TeXParser::PERCENT = '%';
 const wchar_t TeXParser::SUB_SCRIPT = '_';
 const wchar_t TeXParser::SUPER_SCRIPT = '^';
 const wchar_t TeXParser::PRIME = '\'';
+const wchar_t TeXParser::PRIME_UTF = 0x2019;
 const wchar_t TeXParser::BACKPRIME = 0x2035;
 const wchar_t TeXParser::DEGRE = 0x00B0;
 
@@ -912,6 +913,7 @@ void TeXParser::parse() throw(ex_parse) {
             _formula->add(sptr<Atom>(new SpaceAtom()));
             _pos++;
         } break;
+        case PRIME_UTF:
         case PRIME: {
             if (_ignoreWhiteSpace) {
                 _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
