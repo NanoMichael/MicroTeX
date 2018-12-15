@@ -991,6 +991,15 @@ inline macro(ovalbox) {
     return sptr<Atom>(new OvalAtom(TeXFormula(tp, args[1])._root));
 }
 
+inline macro(cornersize) {
+    float size = 0.5f;
+    valueof(args[1], size);
+    if (size <= 0 || size > 0.5f) size = 0.5f;
+    OvalAtom::_multiplier = size;
+    OvalAtom::_diameter = 0;
+    return nullptr;
+}
+
 inline macro(doublebox) {
     return sptr<Atom>(new DoubleFramedAtom(TeXFormula(tp, args[1])._root));
 }

@@ -373,11 +373,19 @@ public:
  * A box representing a wrapped box by oval frame
  */
 class OvalBox : public FramedBox {
+private:
+    float _multiplier, _diameter;
+
 public:
     OvalBox() = delete;
 
-    OvalBox(const sptr<FramedBox>& fbox) : FramedBox(fbox->_box, fbox->_thickness, fbox->_space) {
-    }
+    OvalBox(
+        const sptr<FramedBox>& fbox,
+        float multiplier = 0.5f,
+        float diameter = 0.f)
+        : FramedBox(fbox->_box, fbox->_thickness, fbox->_space),
+          _multiplier(multiplier),
+          _diameter(diameter) {}
 
     void draw(Graphics2D& g2, float x, float y) override;
 };

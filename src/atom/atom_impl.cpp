@@ -623,6 +623,9 @@ sptr<Box> MultlineAtom::createBox(_out_ TeXEnvironment& env) {
 }
 
 const float FBoxAtom::INTERSPACE = 0.65f;
+float OvalAtom::_multiplier = 0.5f;
+float OvalAtom::_diameter = 0.f;
+
 const int FencedAtom::DELIMITER_FACTOR = 901;
 const float FencedAtom::DELIMITER_SHORTFALL = 5.f;
 
