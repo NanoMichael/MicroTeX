@@ -713,7 +713,7 @@ void FractionAtom::init(
     _nodefault = nodef;
     _thickness = t;
     _unit = unit;
-    _type = TYPE_INNER;
+    _type = TYPE_ORDINARY;
 
     _deffactorset = false;
 }
@@ -812,7 +812,7 @@ sptr<Box> FractionAtom::createBox(_out_ TeXEnvironment& env) {
     vb->_depth = shiftdown + denom->_depth;
 
     // \nulldelimiterspace is set by default to 1.2pt = 0.12em
-    float f = SpaceAtom(UNIT_EM, 0.12f, 0, 0).createBox(env)->_width;
+    float f = SpaceAtom::getSize(UNIT_EM, 0.12f, env);
 
     return sptr<Box>(new HorizontalBox(sptr<Box>(vb), vb->_width + 2 * f, ALIGN_CENTER));
 }
