@@ -52,9 +52,9 @@ macro(cfrac) {
     if (num._root == nullptr || denom._root == nullptr)
         throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
     sptr<Atom> f(new FractionAtom(num._root, denom._root, true, al, ALIGN_CENTER));
-    RowAtom* rat = new RowAtom();
-    rat->add(sptr<Atom>(new StyleAtom(STYLE_DISPLAY, f)));
-    return sptr<Atom>(rat);
+    RowAtom* r = new RowAtom();
+    r->add(sptr<Atom>(new StyleAtom(STYLE_DISPLAY, f)));
+    return sptr<Atom>(r);
 }
 
 macro(sfrac) {
@@ -93,12 +93,10 @@ macro(genfrac) {
     sptr<SymbolAtom> L, R;
 
     TeXFormula left(tp, args[1], false);
-    SymbolAtom* lr = dynamic_cast<SymbolAtom*>(left._root.get());
-    if (lr != nullptr) L = dynamic_pointer_cast<SymbolAtom>(left._root);
+    L = dynamic_pointer_cast<SymbolAtom>(left._root);
 
     TeXFormula right(tp, args[2], false);
-    SymbolAtom* rr = dynamic_cast<SymbolAtom*>(right._root.get());
-    if (rr != nullptr) R = dynamic_pointer_cast<SymbolAtom>(right._root);
+    R = dynamic_pointer_cast<SymbolAtom>(right._root);
 
     bool rule = true;
     pair<int, float> ths = SpaceAtom::getLength(args[3]);
