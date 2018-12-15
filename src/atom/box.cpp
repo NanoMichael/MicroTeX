@@ -46,7 +46,8 @@ sptr<Box> DelimiterFactory::create(const string& symbol, _out_ TeXEnvironment& e
         c = tf.getNextLarger(c, style);
         total = c.getHeight() + c.getDepth();
     }
-    if (total >= minHeight) {  // tall enough char found
+    // tall enough char found
+    if (total >= minHeight) {
         /**if (total > minHeight) {
             sptr<Box> cb(new CharBox(c));
             float scale = minHeight / total;
@@ -58,7 +59,8 @@ sptr<Box> DelimiterFactory::create(const string& symbol, _out_ TeXEnvironment& e
         VerticalBox* vBox = new VerticalBox();
         Extension* ext = tf.getExtension(c, style);
 
-        if (ext->hasTop()) {  // insert top part
+        // insert top part
+        if (ext->hasTop()) {
             c = ext->getTop();
             vBox->add(sptr<Box>(new CharBox(c)));
         }
@@ -718,7 +720,11 @@ void OvalBox::draw(Graphics2D& g2, float x, float y) {
     const Stroke& st = g2.getStroke();
     g2.setStroke(Stroke(_thickness, CAP_BUTT, JOIN_MITER));
     float th = _thickness / 2.f;
-    float r = 0.5f * min(_width - _thickness, _height + _depth - _thickness);
+    float r = 0.f;
+    if (_diameter != 0)
+        r = _diameter;
+    else
+        r = _multiplier * min(_width - _thickness, _height + _depth - _thickness);
     g2.drawRoundRect(
         x + th,
         y - _height + th,

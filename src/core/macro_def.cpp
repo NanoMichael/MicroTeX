@@ -203,6 +203,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands = {
     mac(3, macro_resizebox, "resizebox"),
     mac(1, macro_shadowbox, "shadowbox"),
     mac(1, macro_ovalbox, "ovalbox"),
+    mac(1, macro_cornersize, "cornersize"),
     mac(1, macro_doublebox, "doublebox"),
     mac(1, macro_phantom, "phantom"),
     mac(1, macro_hphantom, "hphantom"),

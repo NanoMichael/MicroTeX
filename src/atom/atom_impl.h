@@ -485,6 +485,27 @@ public:
 };
 
 /**
+ * An atom representing a oval-boxed base atom
+ */
+class OvalAtom : public FBoxAtom {
+public:
+    static float _multiplier;
+    static float _diameter;
+
+    OvalAtom() = delete;
+
+    OvalAtom(const sptr<Atom>& base) : FBoxAtom(base) {}
+
+    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+        auto x = FBoxAtom::createBox(env);
+        auto box = dynamic_pointer_cast<FramedBox>(x);
+        return sptr<Box>(new OvalBox(box, _multiplier, _diameter));
+    }
+
+    __decl_clone(OvalAtom)
+};
+
+/**
  * An atom representing a base atom surrounded with delimiters that change their
  * size according to the height of the base
  */
@@ -926,24 +947,6 @@ public:
     }
 
     __decl_clone(OgonekAtom)
-};
-
-/**
- * An atom representing a boxed base atom
- */
-class OvalAtom : public FBoxAtom {
-public:
-    OvalAtom() = delete;
-
-    OvalAtom(const sptr<Atom>& base) : FBoxAtom(base) {}
-
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        auto x = FBoxAtom::createBox(env);
-        auto box = dynamic_pointer_cast<FramedBox>(x);
-        return sptr<Box>(new OvalBox(box));
-    }
-
-    __decl_clone(OvalAtom)
 };
 
 /**
