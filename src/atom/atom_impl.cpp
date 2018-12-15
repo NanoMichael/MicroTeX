@@ -391,6 +391,8 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
 
             sptr<Atom> atom = _matrix->_array[i][j];
             boxarr[i][j] = (atom == nullptr) ? _nullbox : atom->createBox(env);
+            if (atom != nullptr && atom->_type == TYPE_INTERTEXT)
+                boxarr[i][j]->_type = TYPE_INTERTEXT;
 
             if (boxarr[i][j]->_type != TYPE_MULTIROW) {
                 // Find the highest line (row)
@@ -431,7 +433,7 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
             // If the multi-column's width > the total width of the acrossed columns,
             // add an extra-space to each column
             matW += boxarr[r][c]->_width - w;
-            float extraW = (boxarr[r][c]->_width - w) / n;
+            const float extraW = (boxarr[r][c]->_width - w) / n;
             for (int j = c; j < c + n; j++) colWidth[j] += extraW;
         }
     }
