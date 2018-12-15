@@ -361,7 +361,7 @@ void NewCommandMacro::_init_() {
     e(1, L"alignedat", L"\\alignedat@@env{#1}{", L"}");
     e(0, L"multline", L"\\multline@@env{", L"}");
     e(0, L"cases", L"\\left\\{\\begin{array}{@{}ll@{\\,}}", L"\\end{array}\\right.");
-    e(0, L"split", L"\\begin{array}{rl}", L"\\end{array}");
+    e(0, L"split", L"\\begin{array}{r@{\\;}l}", L"\\end{array}");
     e(0, L"gather", L"\\gather@@env{", L"}");
     e(0, L"gathered", L"\\gathered@@env{", L"}");
     e(0, L"math", L"\\(", L"\\)");
