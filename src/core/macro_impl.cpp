@@ -42,16 +42,18 @@ macro(rule) {
 }
 
 macro(cfrac) {
-    int al = ALIGN_CENTER;
+    int numAlign = ALIGN_CENTER;
     if (args[3] == L"r")
-        al = ALIGN_RIGHT;
+        numAlign = ALIGN_RIGHT;
     else if (args[3] == L"l")
-        al = ALIGN_LEFT;
+        numAlign = ALIGN_LEFT;
     TeXFormula num(tp, args[1], false);
     TeXFormula denom(tp, args[2], false);
     if (num._root == nullptr || denom._root == nullptr)
         throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
-    sptr<Atom> f(new FractionAtom(num._root, denom._root, true, al, ALIGN_CENTER));
+    sptr<FractionAtom> f(new FractionAtom(num._root, denom._root, true, numAlign, ALIGN_CENTER));
+    f->_useKern = false;
+    f->_type = TYPE_INNER;
     RowAtom* r = new RowAtom();
     r->add(sptr<Atom>(new StyleAtom(STYLE_DISPLAY, f)));
     return sptr<Atom>(r);

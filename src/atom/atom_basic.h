@@ -821,12 +821,12 @@ public:
     sptr<Atom> popLastAtom();
 
     /**
-     * Add a atom at the front
+     * Add an atom at the front
      */
     void add(const sptr<Atom>& el);
 
     /**
-     * Add a atom at the tail
+     * Add an atom at the tail
      */
     void append(const sptr<Atom>& el);
 

@@ -582,6 +582,11 @@ private:
         bool nodef, int unit, float t) throw(ex_invalid_unit);
 
 public:
+    /**
+     * If add space to start and end of fraction, default is true
+     */
+    bool _useKern;
+
     FractionAtom() = delete;
 
     FractionAtom(const sptr<Atom>& num, const sptr<Atom>& den) {
@@ -1260,6 +1265,7 @@ public:
     StyleAtom(int style, const sptr<Atom>& a) {
         _style = style;
         _at = a;
+        _type = a->_type;
     }
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override {

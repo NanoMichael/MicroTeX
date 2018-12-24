@@ -373,6 +373,9 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     if (_ttype == SMALLMATRIX) {
         env = *(e.copy());
         env.setStyle(STYLE_SCRIPT);
+    } else if (_ttype == MATRIX) {
+        env = *(e.copy());
+        env.setStyle(STYLE_TEXT);
     }
 
     // multi-column & multi-row atoms
@@ -714,7 +717,7 @@ void FractionAtom::init(
     _thickness = t;
     _unit = unit;
     _type = TYPE_ORDINARY;
-
+    _useKern = true;
     _deffactorset = false;
 }
 
@@ -810,6 +813,8 @@ sptr<Box> FractionAtom::createBox(_out_ TeXEnvironment& env) {
     vb->add(denom);
     vb->_height = shiftup + num->_height;
     vb->_depth = shiftdown + denom->_depth;
+
+    if (!_useKern) return sptr<Box>(vb);
 
     // \nulldelimiterspace is set by default to 1.2pt = 0.12em
     float f = SpaceAtom::getSize(UNIT_EM, 0.12f, env);
@@ -1071,21 +1076,20 @@ sptr<Box> RotateAtom::createBox(_out_ TeXEnvironment& env) {
 
 sptr<Box> UnderOverArrowAtom::createBox(_out_ TeXEnvironment& env) {
     auto b = _base != nullptr ? _base->createBox(env) : sptr<Box>(new StrutBox(0, 0, 0, 0));
-    float sep = SpaceAtom(UNIT_POINT, 1, 0, 0).createBox(env)->_width;
+    float sep = SpaceAtom::getSize(UNIT_MU, 1, env);
 
     sptr<Box> arrow;
 
     if (_dble) {
         arrow = XLeftRightArrowFactory::create(env, b->_width);
-        sep = 4 * sep;
     } else {
         arrow = XLeftRightArrowFactory::create(_left, env, b->_width);
-        sep = -sep;
     }
 
     VerticalBox* vb = new VerticalBox();
     if (_over) {
         vb->add(arrow);
+        if (_dble) vb->add(sptr<Box>(new StrutBox(0, -sep, 0, 0)));
         vb->add(sptr<Box>(new HorizontalBox(b, arrow->_width, ALIGN_CENTER)));
         float h = vb->_depth + vb->_height;
         vb->_depth = b->_depth;
