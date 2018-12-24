@@ -287,8 +287,7 @@ inline macro(nbsp) {
 
 inline macro(sqrt) {
     if (args[2].empty())
-        return sptr<Atom>(new NthRoot(
-            TeXFormula(tp, args[1], false)._root, nullptr));
+        return sptr<Atom>(new NthRoot(TeXFormula(tp, args[1], false)._root, nullptr));
     return sptr<Atom>(new NthRoot(
         TeXFormula(tp, args[1], false)._root, TeXFormula(tp, args[2], false)._root));
 }
@@ -833,105 +832,38 @@ inline macro(phantom) {
         new PhantomAtom(TeXFormula(tp, args[1], false)._root, true, true, true));
 }
 
-inline macro(big) {
+inline sptr<Atom> _macro_big(TeXParser& tp, vector<wstring>& args, int size, int type = -1) {
     auto a = TeXFormula(tp, args[1], false)._root;
-    SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
+    auto s = dynamic_pointer_cast<SymbolAtom>(a);
     if (s == nullptr) return a;
-    return sptr<Atom>(new BigDelimiterAtom(dynamic_pointer_cast<SymbolAtom>(a), 1));
-}
-
-inline macro(Big) {
-    auto a = TeXFormula(tp, args[1], false)._root;
-    SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
-    if (s == nullptr) return a;
-    return sptr<Atom>(new BigDelimiterAtom(dynamic_pointer_cast<SymbolAtom>(a), 2));
-}
-
-inline macro(bigg) {
-    auto a = TeXFormula(tp, args[1], false)._root;
-    SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
-    if (s == nullptr) return a;
-    return sptr<Atom>(new BigDelimiterAtom(dynamic_pointer_cast<SymbolAtom>(a), 3));
-}
-
-inline macro(Bigg) {
-    auto a = TeXFormula(tp, args[1], false)._root;
-    SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
-    if (s == nullptr) return a;
-    return sptr<Atom>(new BigDelimiterAtom(dynamic_pointer_cast<SymbolAtom>(a), 4));
-}
-
-inline macro(bigl) {
-    auto a = TeXFormula(tp, args[1], false)._root;
-    SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
-    if (s == nullptr) return a;
-    sptr<Atom> t(new BigDelimiterAtom(dynamic_pointer_cast<SymbolAtom>(a), 1));
-    t->_type = TYPE_OPENING;
+    sptr<Atom> t(new BigDelimiterAtom(s, size));
+    if (type != -1) t->_type = type;
     return t;
 }
 
-inline macro(Bigl) {
-    auto a = TeXFormula(tp, args[1], false)._root;
-    SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
-    if (s == nullptr) return a;
-    sptr<Atom> t(new BigDelimiterAtom(dynamic_pointer_cast<SymbolAtom>(a), 2));
-    t->_type = TYPE_OPENING;
-    return t;
-}
+inline macro(big) { return _macro_big(tp, args, 1); }
 
-inline macro(biggl) {
-    auto a = TeXFormula(tp, args[1], false)._root;
-    SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
-    if (s == nullptr) return a;
-    sptr<Atom> t(new BigDelimiterAtom(dynamic_pointer_cast<SymbolAtom>(a), 3));
-    t->_type = TYPE_OPENING;
-    return t;
-}
+inline macro(Big) { return _macro_big(tp, args, 2); }
 
-inline macro(Biggl) {
-    auto a = TeXFormula(tp, args[1], false)._root;
-    SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
-    if (s == nullptr) return a;
-    sptr<Atom> t(new BigDelimiterAtom(dynamic_pointer_cast<SymbolAtom>(a), 4));
-    t->_type = TYPE_OPENING;
-    return t;
-}
+inline macro(bigg) { return _macro_big(tp, args, 3); }
 
-inline macro(bigr) {
-    auto a = TeXFormula(tp, args[1], false)._root;
-    SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
-    if (s == nullptr) return a;
-    sptr<Atom> t(new BigDelimiterAtom(dynamic_pointer_cast<SymbolAtom>(a), 1));
-    t->_type = TYPE_CLOSING;
-    return t;
-}
+inline macro(Bigg) { return _macro_big(tp, args, 4); }
 
-inline macro(Bigr) {
-    auto a = TeXFormula(tp, args[1], false)._root;
-    SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
-    if (s == nullptr) return a;
-    sptr<Atom> t(new BigDelimiterAtom(dynamic_pointer_cast<SymbolAtom>(a), 2));
-    t->_type = TYPE_CLOSING;
-    return t;
-}
+inline macro(bigl) { return _macro_big(tp, args, 1, TYPE_OPENING); }
 
-inline macro(biggr) {
-    auto a = TeXFormula(tp, args[1], false)._root;
-    SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
-    if (s == nullptr) return a;
-    sptr<Atom> t(new BigDelimiterAtom(dynamic_pointer_cast<SymbolAtom>(a), 3));
-    t->_type = TYPE_CLOSING;
-    return t;
-}
+inline macro(Bigl) { return _macro_big(tp, args, 2, TYPE_OPENING); }
 
-inline macro(Biggr) {
-    auto a = TeXFormula(tp, args[1], false)._root;
-    SymbolAtom* s = dynamic_cast<SymbolAtom*>(a.get());
-    if (s == nullptr) return a;
-    sptr<Atom> t(new BigDelimiterAtom(dynamic_pointer_cast<SymbolAtom>(a), 4));
-    t->_type = TYPE_CLOSING;
-    return t;
-}
+inline macro(biggl) { return _macro_big(tp, args, 3, TYPE_OPENING); }
+
+inline macro(Biggl) { return _macro_big(tp, args, 4, TYPE_OPENING); }
+
+inline macro(bigr) { return _macro_big(tp, args, 1, TYPE_CLOSING); }
+
+inline macro(Bigr) { return _macro_big(tp, args, 2, TYPE_CLOSING); }
+
+inline macro(biggr) { return _macro_big(tp, args, 3, TYPE_CLOSING); }
+
+inline macro(Biggr) { return _macro_big(tp, args, 4, TYPE_CLOSING); }
 
 inline macro(displaystyle) {
     auto g = TeXFormula(tp, tp.getOverArgument(), false)._root;
