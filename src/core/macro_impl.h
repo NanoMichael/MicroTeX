@@ -293,33 +293,27 @@ inline macro(sqrt) {
 }
 
 inline macro(overrightarrow) {
-    return sptr<Atom>(new UnderOverArrowAtom(
-        TeXFormula(tp, args[1], false)._root, false, true));
+    return sptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, false, true));
 }
 
 inline macro(overleftarrow) {
-    return sptr<Atom>(new UnderOverArrowAtom(
-        TeXFormula(tp, args[1], false)._root, true, true));
+    return sptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, true, true));
 }
 
 inline macro(overleftrightarrow) {
-    return sptr<Atom>(new UnderOverArrowAtom(
-        TeXFormula(tp, args[1], false)._root, true));
+    return sptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, true));
 }
 
 inline macro(underrightarrow) {
-    return sptr<Atom>(new UnderOverArrowAtom(
-        TeXFormula(tp, args[1], false)._root, false, false));
+    return sptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, false, false));
 }
 
 inline macro(underleftarrow) {
-    return sptr<Atom>(new UnderOverArrowAtom(
-        TeXFormula(tp, args[1], false)._root, true, false));
+    return sptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, true, false));
 }
 
 inline macro(underleftrightarrow) {
-    return sptr<Atom>(new UnderOverArrowAtom(
-        TeXFormula(tp, args[1], false)._root, false));
+    return sptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, false));
 }
 
 inline macro(xleftarrow) {

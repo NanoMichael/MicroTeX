@@ -443,12 +443,12 @@ void RowAtom::change2Ord(_out_ Dummy* cur, _out_ Dummy* prev, _out_ Atom* next) 
 
 int RowAtom::getLeftType() const {
     if (_elements.empty()) return TYPE_ORDINARY;
-    return _elements[0]->getLeftType();
+    return _elements.front()->getLeftType();
 }
 
 int RowAtom::getRightType() const {
     if (_elements.empty()) return TYPE_ORDINARY;
-    return _elements[_elements.size() - 1]->getRightType();
+    return _elements.back()->getRightType();
 }
 
 sptr<Box> RowAtom::createBox(_out_ TeXEnvironment& env) {
