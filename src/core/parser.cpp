@@ -386,6 +386,32 @@ void TeXParser::skipWhiteSpace() {
     }
 }
 
+wstring TeXParser::forwardFromCurrentPos() {
+    if (_group == 0) {
+        const wstring& sub = _parseString.substr(_pos);
+        finish();
+        return sub;
+    }
+    int closing = _group;
+    auto i = _parseString.length() - 1;
+    for (; i >= _pos; i--) {
+        auto ch = _parseString[i];
+        if (ch == R_GROUP) {
+            closing--;
+            if (closing == 0) break;
+        }
+    }
+    if (closing != 0) {
+        throw ex_parse(
+            "Found a closing '" +
+            tostring((char)R_GROUP) +
+            "' without an opening '" + tostring((char)L_GROUP) + "'!");
+    }
+    const wstring& sub = _parseString.substr(_pos, i - _pos);
+    _pos = i;
+    return sub;
+}
+
 void TeXParser::getOptsArgs(int nbArgs, int opts, _out_ vector<wstring>& args) {
     /*
      * A maximum of 10 options can be passed to a command,
@@ -888,7 +914,7 @@ void TeXParser::parse() throw(ex_parse) {
                 throw ex_parse(
                     "Found a closing '" +
                     tostring((char)R_GROUP) +
-                    "' without an opening " + tostring((char)L_GROUP) + "'!");
+                    "' without an opening '" + tostring((char)L_GROUP) + "'!");
             }
             // End of a group
             return;

@@ -334,13 +334,11 @@ public:
         return _pos;
     }
 
-    inline wstring getStringFromCurrentPos() {
-        return _parseString.substr(_pos);
-    }
-
     inline void finish() {
         _pos = _parseString.size();
     }
+
+    wstring forwardFromCurrentPos();
 
     /**
      * Add a new row when the parser is in array mode
