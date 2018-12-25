@@ -496,11 +496,10 @@ inline macro(cr) {
         arr.add(tp._formula->_root);
         arr.addRow();
         TeXParser parser(
-            tp.getIsPartial(), tp.getStringFromCurrentPos(),
+            tp.getIsPartial(), tp.forwardFromCurrentPos(),
             &arr, false, tp.isIgnoreWhiteSpace());
         parser.parse();
         arr.checkDimensions();
-        tp.finish();
         tp._formula->_root = arr.getAsVRow();
     }
 
