@@ -375,10 +375,10 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
     if (_ttype == SMALLMATRIX) {
         env = *(e.copy());
         env.setStyle(STYLE_SCRIPT);
-    } else if (_ttype == MATRIX) {
+    } /* else if (_ttype == MATRIX) {
         env = *(e.copy());
         env.setStyle(STYLE_TEXT);
-    }
+    }*/
 
     // multi-column & multi-row atoms
     vector<sptr<Atom>> listMultiCol;

@@ -42,7 +42,7 @@ elseif(UNIX AND NOT APPLE)
     include_directories(${GTKMM_INCLUDE_DIRS} ${GSVMM_INCLUDE_DIRS} "src")
     set(LINK_LIBS ${GTKMM_LIBRARIES} ${GSVMM_LIBRARIES} fontconfig)
 else()
-    message(STATUS "We are working on a unknow platform")
+    message(STATUS "We are working on a unknown platform")
     # other platforms...
 endif()
 
