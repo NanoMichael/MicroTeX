@@ -46,6 +46,10 @@ else()
     # other platforms...
 endif()
 
+option(GRAPHICS_DEBUG "If enable graphics debug" ON)
+if(GRAPHICS_DEBUG)
+    add_definitions(-DGRAPHICS_DEBUG)
+endif()
 
 add_executable(LaTeX ${SRC})
 target_link_libraries(LaTeX ${LINK_LIBS})

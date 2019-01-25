@@ -20,7 +20,7 @@ namespace tex {
 #define macro(name) sptr<Atom> macro_##name(TeXParser& tp, vector<wstring>& args)
 #endif
 
-#ifdef __GA_DEBUG
+#ifdef GRAPHICS_DEBUG
 inline macro(debug) {
     TeXFormula::setDEBUG(true);
     return nullptr;
@@ -30,7 +30,7 @@ inline macro(undebug) {
     TeXFormula::setDEBUG(false);
     return nullptr;
 }
-#endif  // __GA_DEBUG
+#endif  // GRAPHICS_DEBUG
 
 inline macro(multirow) {
     if (!tp.isArrayMode())
