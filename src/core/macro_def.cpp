@@ -316,11 +316,11 @@ map<wstring, MacroInfo*> MacroInfo::_commands = {
     mac(1, macro_cancel, "cancel"),
     mac(1, macro_bcancel, "bcancel"),
     mac(1, macro_xcancel, "xcancel")
-#ifdef __GA_DEBUG
+#ifdef GRAPHICS_DEBUG
         ,
     mac(0, macro_debug, "debug"),
     mac(0, macro_undebug, "undebug")
-#endif  // __GA_DEBUG
+#endif  // GRAPHICS_DEBUG
 };
 
 map<wstring, wstring> NewCommandMacro::_macrocode;
