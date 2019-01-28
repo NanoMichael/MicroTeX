@@ -742,14 +742,75 @@ bool TeXParser::replaceScript() {
     return false;
 }
 
+void TeXParser::preprocess(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse) {
+    if (cmd == L"newcommand" || cmd == L"renewcommand") {
+        preprocessNewCmd(cmd, args, pos);
+    } else if (NewCommandMacro::isMacro(cmd)) {
+        inflateNewCmd(cmd, args, pos);
+    } else if (cmd == L"begin") {
+        inflateEnv(cmd, args, pos);
+    } else if (cmd == L"makeatletter") {
+        _atIsLetter++;
+    } else if (cmd == L"makeatother") {
+        _atIsLetter--;
+    } else if (_unparsedContents.find(cmd) != _unparsedContents.end()) {
+        getOptsArgs(1, 0, args);
+    }
+}
+
+void TeXParser::preprocessNewCmd(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse) {
+    getOptsArgs(2, 2, args);
+    MacroInfo* const mac = MacroInfo::_commands[cmd];
+    mac->invoke(*this, args);
+    _parseString.erase(pos, _pos - pos);
+    _len = _parseString.length();
+    _pos = pos;
+}
+
+void TeXParser::inflateNewCmd(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse) {
+    MacroInfo* const mac = MacroInfo::_commands[cmd];
+    getOptsArgs(mac->_nbArgs, mac->_hasOptions ? 1 : 0, args);
+    args[0] = cmd;
+    try {
+        mac->invoke(*this, args);
+        // The last element is the returned value (after inflated macro)
+        _parseString.replace(pos, _pos - pos, args.back());
+    } catch (ex_parse& e) {
+        if (!_isPartial) throw;
+        pos += cmd.length() + 1;
+    }
+    _len = _parseString.length();
+    _pos = pos;
+}
+
+void TeXParser::inflateEnv(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse) {
+    getOptsArgs(1, 0, args);
+    wstring env = args[1] + L"@env";
+    auto it = MacroInfo::_commands.find(env);
+    if (it == MacroInfo::_commands.end()) {
+        throw ex_parse(
+            "Unknown environment: " +
+            wide2utf8(args[1].c_str()) +
+            " at position " + tostring(getLine()) + ":" + tostring(getCol()));
+    }
+    MacroInfo* const mac = it->second;
+    vector<wstring> optargs;
+    getOptsArgs(mac->_nbArgs - 1, 0, optargs);
+    wstring grp = getGroup(L"\\begin{" + args[1] + L"}", L"\\end{" + args[1] + L"}");
+    wstring expr = L"{\\makeatletter \\" + args[1] + L"@env";
+    for (int i = 1; i <= mac->_nbArgs - 1; i++) expr += L"{" + optargs[i] + L"}";
+    expr += L"{" + grp + L"}\\makeatother}";
+    _parseString.replace(pos, _pos - pos, expr);
+    _len = _parseString.length();
+    _pos = pos;
+}
+
 void TeXParser::firstpass() throw(ex_parse) {
     if (_len == 0) return;
 
     wchar_t ch;
-    wstring com;
     int spos;
     vector<wstring> args;
-    MacroInfo* mac;
     while (_pos < _len) {
         if (replaceScript()) continue;
 
@@ -757,66 +818,11 @@ void TeXParser::firstpass() throw(ex_parse) {
         switch (ch) {
         case ESCAPE: {
             spos = _pos;
-            com = getCommand();
-            if (com == L"newcommand" || com == L"renewcommand") {
-                getOptsArgs(2, 2, args);
-                mac = MacroInfo::_commands[com];
-                try {
-                    mac->invoke(*this, args);
-                } catch (ex_parse& e) {
-                    if (!_isPartial) throw;
-                }
-                _parseString.erase(spos, _pos - spos);
-                _len = _parseString.length();
-                _pos = spos;
-            } else if (NewCommandMacro::isMacro(com)) {
-                mac = MacroInfo::_commands[com];
-                getOptsArgs(mac->_nbArgs, mac->_hasOptions ? 1 : 0, args);
-                args[0] = com;
-                try {
-                    mac->invoke(*this, args);
-                    // the last element is the returned value
-                    wstring x = args.back();
-                    _parseString.replace(spos, _pos - spos, x);
-                } catch (ex_parse& e) {
-                    if (!_isPartial) throw;
-                    spos += com.length() + 1;
-                }
-                _len = _parseString.length();
-                _pos = spos;
-            } else if (com == L"begin") {
-                getOptsArgs(1, 0, args);
-                wstring env = args[1] + L"@env";
-                auto it = MacroInfo::_commands.find(env);
-                if (it == MacroInfo::_commands.end()) {
-                    if (!_isPartial) {
-                        throw ex_parse(
-                            "Unknown environment: " +
-                            wide2utf8(args[1].c_str()) +
-                            " at position " + tostring(getLine()) + ":" + tostring(getCol()));
-                    }
-                } else {
-                    mac = it->second;
-                    try {
-                        vector<wstring> optarg;
-                        getOptsArgs(mac->_nbArgs - 1, 0, optarg);
-                        wstring grp = getGroup(L"\\begin{" + args[1] + L"}", L"\\end{" + args[1] + L"}");
-                        wstring expr = L"{\\makeatletter \\" + args[1] + L"@env";
-                        for (int i = 1; i <= mac->_nbArgs - 1; i++) expr += L"{" + optarg[i] + L"}";
-                        expr += L"{" + grp + L"}\\makeatother}";
-                        _parseString.replace(spos, _pos - spos, expr);
-                        _len = _parseString.length();
-                        _pos = spos;
-                    } catch (ex_parse& e) {
-                        if (!_isPartial) throw;
-                    }
-                }
-            } else if (com == L"makeatletter") {
-                _atIsLetter++;
-            } else if (com == L"makeatother") {
-                _atIsLetter--;
-            } else if (_unparsedContents.find(com) != _unparsedContents.end()) {
-                getOptsArgs(1, 0, args);
+            wstring cmd = getCommand();
+            try {
+                preprocess(cmd, args, spos);
+            } catch (ex_parse& e) {
+                if (!_isPartial) throw;
             }
             args.clear();
         } break;
@@ -978,11 +984,6 @@ void TeXParser::parse() throw(ex_parse) {
     }
 }
 
-/**
- * Convert a character to an atom
- * @param c Character to be convert
- * @param oneChar If Convert only one char in the parse string
- */
 sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_parse) {
     if (_ignoreWhiteSpace) {
         // the unicode Greek Letters in math mode are not drawn with the Greek font

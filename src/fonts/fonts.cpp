@@ -643,13 +643,13 @@ void DefaultTeXFontParser::parseGeneralSettings(_out_ map<string, float>& res) t
 
 TeXFont::~TeXFont() {
 #ifdef __DEBUG
-    __DBG("TeXFont destruct");
+    __DBG("TeXFont destruct\n");
 #endif  // __DEBUG
 }
 
 DefaultTeXFont::~DefaultTeXFont() {
 #ifdef __DEBUG
-    __DBG("DefaultTeXFont destruct");
+    __DBG("DefaultTeXFont destruct\n");
 #endif  // __DEBUG
 }
 
