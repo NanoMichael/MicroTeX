@@ -1,6 +1,6 @@
 #include "config.h"
 
-#ifdef __MEM_CHECK
+#ifdef MEM_CHECK
 
 #include "graphic/graphic.h"
 #include "latex.h"
@@ -116,26 +116,6 @@ public:
 
     float sy() const override {
         return 1.f;
-    }
-
-    float tx() const override {
-        return 0.f;
-    }
-
-    float ty() const override {
-        return 0.f;
-    }
-
-    float r() const override {
-        return 0.f;
-    }
-
-    float px() const override {
-        return 0.f;
-    }
-
-    float py() const override {
-        return 0.f;
     }
 
     void drawChar(wchar_t c, float x, float y) override {

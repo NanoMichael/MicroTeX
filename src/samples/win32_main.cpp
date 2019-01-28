@@ -1,4 +1,4 @@
-#if defined(__OS_Windows__) && !defined(__MEM_CHECK)
+#if defined(__OS_Windows__) && !defined(MEM_CHECK)
 
 #include "latex.h"
 #include "platform/gdi_win/graphic_win32.h"

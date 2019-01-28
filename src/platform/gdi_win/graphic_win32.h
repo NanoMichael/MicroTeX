@@ -1,6 +1,6 @@
 #include "config.h"
 
-#if defined(__OS_Windows__) && !defined(__MEM_CHECK)
+#if defined(__OS_Windows__) && !defined(MEM_CHECK)
 
 #ifndef GRAPHIC_WIN32_H_INCLUDED
 #define GRAPHIC_WIN32_H_INCLUDED

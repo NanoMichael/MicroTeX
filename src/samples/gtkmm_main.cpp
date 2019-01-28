@@ -1,6 +1,6 @@
 #include "config.h"
 
-#if defined(__OS_Linux__) && !defined(__MEM_CHECK)
+#if defined(__OS_Linux__) && !defined(MEM_CHECK)
 
 #include "latex.h"
 #include "platform/cairo/graphic_cairo.h"
