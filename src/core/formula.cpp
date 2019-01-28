@@ -20,7 +20,7 @@ float TeXFormula::PIXELS_PER_POINT = 1.f;
 
 void TeXFormula::_init_() {
 #ifdef __DEBUG
-    __DBG("%s\n", "init formula");
+    __dbg("%s\n", "init formula");
 #endif  // __DEBUG
     // Character-to-symbol and character-to-delimiter mappings
     TeXFormulaSettingParser parser;

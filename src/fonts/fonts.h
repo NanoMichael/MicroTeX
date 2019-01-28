@@ -1082,7 +1082,7 @@ private:
         if (err != XML_NO_ERROR) throw ex_xml_parse(file + " not found");
         _root = _doc.RootElement();
 #ifdef __DEBUG
-        __DBG("root name:%s\n", _root->Name());
+        __dbg("root name:%s\n", _root->Name());
 #endif  // __DEBUG
     }
 
@@ -1125,7 +1125,7 @@ public:
 
     ~DefaultTeXFontParser() {
 #ifdef __DEBUG
-        __DBG("DefaultFontParser destruct\n");
+        __dbg("DefaultFontParser destruct\n");
 #endif  // __DEBUG
     }
 };

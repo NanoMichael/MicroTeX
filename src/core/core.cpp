@@ -293,26 +293,26 @@ GlueSettingParser::GlueSettingParser() throw(ex_res_parse) : _doc(true, COLLAPSE
     int err = _doc.LoadFile(name.c_str());
     if (err != XML_NO_ERROR) {
 #ifdef __DEBUG
-        __DBG("%s not found while parsing glue\n", name.c_str());
+        __dbg("%s not found while parsing glue\n", name.c_str());
 #endif  // __DEBUG
         throw ex_xml_parse(name + " not found!");
     }
     _root = _doc.RootElement();
 #ifdef __DEBUG
-    __DBG("root name: %s \n", _root->Name());
+    __dbg("root name: %s \n", _root->Name());
 #endif  // __DEBUG
 }
 
 void GlueSettingParser::parseGlueTypes(_out_ vector<Glue*>& glueTypes) throw(ex_res_parse) {
     const XMLElement* types = _root->FirstChildElement("GlueTypes");
 #ifdef __DEBUG
-    __DBG("GlueTypes tag name: %s\n", types->Name());
+    __dbg("GlueTypes tag name: %s\n", types->Name());
 #endif  // __DEBUG
     int defalutIndex = -1;
     int index = 0;
     const XMLElement* type = types->FirstChildElement("GlueType");
 #ifdef __DEBUG
-    __DBG("GlueType tag name: %s\n", type->Name());
+    __dbg("GlueType tag name: %s\n", type->Name());
 #endif  // __DEBUG
     while (type != nullptr) {
         // retrieve required attribute value, throw ex if not set
@@ -373,11 +373,11 @@ int*** GlueSettingParser::createGlueTable() throw(ex_res_parse) {
 
     const XMLElement* glueTable = _root->FirstChildElement("GlueTable");
 #ifdef __DEBUG
-    __DBG("GlueTable tag name: %s\n", glueTable->Name());
+    __dbg("GlueTable tag name: %s\n", glueTable->Name());
 #endif  // __DEBUG
     const XMLElement* glue = glueTable->FirstChildElement("Glue");
 #ifdef __DEBUG
-    __DBG("Glue tag name: %s\n", glue->Name());
+    __dbg("Glue tag name: %s\n", glue->Name());
 #endif  // __DEBUG
     while (glue != nullptr) {
         // retrieve required attribute values
@@ -541,7 +541,7 @@ TeXSymbolParser::TeXSymbolParser() throw(ex_res_parse) : _doc(true, COLLAPSE_WHI
     if (err != XML_NO_ERROR) throw ex_res_parse(file + " not found!");
     _root = _doc.RootElement();
 #ifdef __DEBUG
-    __DBG("root :%s\n", _root->Name());
+    __dbg("root :%s\n", _root->Name());
 #endif  // __DEBUG
 }
 
@@ -551,7 +551,7 @@ TeXSymbolParser::TeXSymbolParser(const string& file) throw(ex_res_parse)
     if (err != XML_NO_ERROR) throw ex_res_parse(file + " not found!");
     _root = _doc.RootElement();
 #ifdef __DEBUG
-    __DBG("root :%s\n", _root->Name());
+    __dbg("root :%s\n", _root->Name());
 #endif  // __DEBUG
 }
 
@@ -583,7 +583,7 @@ TeXFormulaSettingParser::TeXFormulaSettingParser() throw(ex_res_parse)
     if (err != XML_NO_ERROR) throw ex_xml_parse(file + " not found!");
     _root = _doc.RootElement();
 #ifdef __DEBUG
-    __DBG("TeXFormulaSettings.xml root: %s\n", _root->Name());
+    __dbg("TeXFormulaSettings.xml root: %s\n", _root->Name());
 #endif  // __DEBUG
 }
 
@@ -593,7 +593,7 @@ TeXFormulaSettingParser::TeXFormulaSettingParser(const string& file) throw(ex_re
     if (err != XML_NO_ERROR) throw ex_xml_parse(file + " not found!");
     _root = _doc.RootElement();
 #ifdef __DEBUG
-    __DBG("TeXFormulaSettings.xml root: %s\n", _root->Name());
+    __dbg("TeXFormulaSettings.xml root: %s\n", _root->Name());
 #endif  // __DEBUG
 }
 
