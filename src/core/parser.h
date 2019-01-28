@@ -63,6 +63,9 @@ private:
 
     static const set<wstring> _unparsedContents;
 
+    /**
+     * Preprocess parse string
+     */
     void firstpass() throw(ex_parse);
 
     sptr<Atom> getScripts(wchar_t f) throw(ex_parse);
@@ -88,9 +91,20 @@ private:
      */
     sptr<Atom> processCommands(const wstring& cmd) throw(ex_parse);
 
+    void skipWhiteSpace();
+
+    /**
+     * Replace the script-characters with command.
+     */
     bool replaceScript();
 
-    void skipWhiteSpace();
+    void preprocess(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse);
+
+    void preprocessNewCmd(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse);
+
+    void inflateNewCmd(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse);
+
+    void inflateEnv(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse);
 
     static wchar_t convert2RomanNumber(wchar_t c);
 
@@ -419,6 +433,8 @@ public:
      *
      * @param c
      *      the character to be converted
+     * @param onChar
+     *      if convert only one char in the parse string
      * @return the corresponding atom
      * @throw ex_parse
      *      if the character is unknown
