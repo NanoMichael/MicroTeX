@@ -25,9 +25,23 @@
 
 using namespace std;
 
-#define __DBG(format, ...)                                                                                         \
-    {                                                                                                              \
-        printf("FILE: %s, LINE: %d, FUNCTION: %s, MSG: " format, __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
+#define ANSI_COLOR_CYAN "\x1b[36m"
+#define ANSI_COLOR_RED "\x1b[31m"
+#define ANSI_COLOR_UNDERLINE "\x1b[4m"
+#define ANSI_COLOR_RESET "\x1b[0m"
+
+#define __dbg(format, ...)                                    \
+    {                                                         \
+        fprintf(                                              \
+            stdout,                                           \
+            "FILE: " ANSI_COLOR_UNDERLINE                     \
+            "%s" ANSI_COLOR_RESET                             \
+            ", LINE: " ANSI_COLOR_RED                         \
+            "%d" ANSI_COLOR_RESET                             \
+            ", FUNCTION: " ANSI_COLOR_CYAN                    \
+            "%s" ANSI_COLOR_RESET                             \
+            ", MSG: " format,                                 \
+            __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
     }
 
 #ifdef __DEBUG
