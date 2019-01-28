@@ -11,6 +11,12 @@ using namespace std;
 
 namespace tex {
 
+/**
+ * Convert a character to roman-number if it is a digit localized
+ * @param c character to be converted
+ */
+wchar_t convertToRomanNumber(wchar_t c);
+
 class TeXFormula;
 
 /**
@@ -105,8 +111,6 @@ private:
     void inflateNewCmd(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse);
 
     void inflateEnv(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse);
-
-    static wchar_t convert2RomanNumber(wchar_t c);
 
     void init(
         bool ispartial,
