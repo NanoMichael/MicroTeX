@@ -2,23 +2,27 @@
 #define CONFIG_H_INCLUDED
 
 // Flag for debug
-// #define __DEBUG
-
-#if defined(__linux__)
-    #ifdef __ANDROID__
-        #define __OS_Android__
-    #else
-        #define __OS_Linux__
-    #endif
-#elif defined(_WIN32)
-    #define __OS_Windows__
+#if defined(_DEBUG) || defined(DEBUG) || defined(__DEBUG__) || !defined(NDEBUG)
+#   ifndef __DEBUG
+#       define __DEBUG
+#   endif
 #endif
 
+// Check platforms
+#if defined(__linux__)
+#   ifdef __ANDROID__
+#       define __OS_Android__
+#   else
+#       define __OS_Linux__
+#   endif
+#elif defined(_WIN32)
+#   define __OS_Windows__
+#endif
 // Other platforms...
 
 // Flag for compile samples
 #if defined(__OS_Linux__) || defined(__OS_Windows__)
-    #define __USE_SAMPLES
+#   define __USE_SAMPLES
 #endif
 
 #endif  // CONFIG_H_INCLUDED
