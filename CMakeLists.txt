@@ -46,9 +46,17 @@ else()
     # other platforms...
 endif()
 
+
+# compile options
+
 option(GRAPHICS_DEBUG "If enable graphics debug" ON)
 if(GRAPHICS_DEBUG)
     add_definitions(-DGRAPHICS_DEBUG)
+endif()
+
+option(MEM_CHECK "If compile for memory check only" OFF)
+if(MEM_CHECK)
+    add_definitions(-DMEM_CHECK)
 endif()
 
 add_executable(LaTeX ${SRC})

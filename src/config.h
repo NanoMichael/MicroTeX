@@ -4,9 +4,6 @@
 // Flag for debug
 // #define __DEBUG
 
-// Flag for memcheck
-// #define __MEM_CHECK
-
 #if defined(__linux__)
     #ifdef __ANDROID__
         #define __OS_Android__
