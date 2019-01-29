@@ -27,7 +27,18 @@ protected:
     static map<wstring, wstring> _macroreplacement;
     static Macro* _instance;
 
+    static void checkNew(const wstring& name) throw(ex_parse);
+
+    static void checkRenew(const wstring& name) throw(ex_parse);
+
 public:
+    /**
+     * If notify a fatal error when defining a new command but it has been
+     * defined already or redefine a command but it has not been defined,
+     * default is true.
+     */
+    static bool _errIfConflict;
+
     virtual void execute(_out_ TeXParser& tp, _out_ vector<wstring>& args) override;
 
     static void addNewCommand(
@@ -45,6 +56,12 @@ public:
         const wstring& name,
         const wstring& code,
         int nbargs) throw(ex_parse);
+
+    static void addRenewCommand(
+        const wstring& name,
+        const wstring& code,
+        int nbargs,
+        const wstring& def) throw(ex_parse);
 
     static bool isMacro(const wstring& name);
 
@@ -73,13 +90,23 @@ public:
 class MacroInfo {
 public:
     static map<wstring, MacroInfo*> _commands;
+
+    /**
+     * Add a macro, replace it if the macro is exists.
+     */
+    static void addMacro(const wstring& name, MacroInfo* mac);
+
     // The actual macro to execute
     Macro* const _macro;
     // Number of arguments
     const int _nbArgs;
     // If has options
     const bool _hasOptions;
-    // Options' position
+    // Options' position, can be 1 or 2
+    // 1 represents the options appear after the command name, e.g.:
+    //      \sqrt[3]{2}
+    // 2 represents the options appear after the first argument, e.g.:
+    //      \scalebox{0.5}[2]{\LaTeX}
     const int _posOpts;
 
     MacroInfo()
