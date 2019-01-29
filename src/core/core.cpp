@@ -6,10 +6,6 @@
 using namespace std;
 using namespace tex;
 
-#define ANSI_COLOR_CYAN "\x1b[36m"
-#define ANSI_COLOR_RED "\x1b[31m"
-#define ANSI_COLOR_RESET "\x1b[0m"
-
 void print_box(const sptr<Box>& b, int dep, vector<bool>& lines) {
     __print("%-4d", dep);
     if (lines.size() < dep + 1) {
