@@ -343,8 +343,7 @@ wstring TeXParser::getCommandWithArgs(const wstring& command) {
     if (it == MacroInfo::_commands.end()) return L"\\" + command;
 
     MacroInfo* mac = it->second;
-    int mac_opts = 0;
-    if (mac->_hasOptions) mac_opts = mac->_posOpts;
+    int mac_opts = mac->_posOpts;
 
     // return as format: \cmd[opt][...]{arg}{...}
 
@@ -522,8 +521,7 @@ sptr<Atom> TeXParser::processEscape() throw(ex_parse) {
 
 sptr<Atom> TeXParser::processCommands(const wstring& command) throw(ex_parse) {
     MacroInfo* mac = MacroInfo::_commands[command];
-    int opts = 0;
-    if (mac->_hasOptions) opts = mac->_posOpts;
+    int opts = mac->_posOpts;
 
     vector<wstring> args;
     getOptsArgs(mac->_nbArgs, opts, args);
@@ -719,7 +717,7 @@ void TeXParser::preprocessNewCmd(wstring& cmd, vector<wstring>& args, int& pos) 
 
 void TeXParser::inflateNewCmd(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse) {
     MacroInfo* const mac = MacroInfo::_commands[cmd];
-    getOptsArgs(mac->_nbArgs, mac->_hasOptions ? 1 : 0, args);
+    getOptsArgs(mac->_nbArgs, mac->_posOpts, args);
     args[0] = cmd;
     try {
         mac->invoke(*this, args);

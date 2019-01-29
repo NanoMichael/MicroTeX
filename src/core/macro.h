@@ -98,8 +98,6 @@ public:
 
     // Number of arguments
     const int _nbArgs;
-    // If has options
-    const bool _hasOptions;
     // Options' position, can be 1 or 2
     // 1 represents the options appear after the command name, e.g.:
     //      \sqrt[3]{2}
@@ -107,14 +105,15 @@ public:
     //      \scalebox{0.5}[2]{\LaTeX}
     const int _posOpts;
 
-    MacroInfo()
-        : _nbArgs(0), _hasOptions(false), _posOpts(0) {}
+    MacroInfo() : _nbArgs(0), _posOpts(0) {}
 
-    MacroInfo(int nbargs, int posOpts)
-        : _nbArgs(nbargs), _hasOptions(true), _posOpts(posOpts) {}
+    MacroInfo(int nbargs, int posOpts) : _nbArgs(nbargs), _posOpts(posOpts) {}
 
-    MacroInfo(int nbargs)
-        : _nbArgs(nbargs), _hasOptions(false), _posOpts(0) {}
+    MacroInfo(int nbargs) : _nbArgs(nbargs), _posOpts(0) {}
+
+    inline bool hasOptions() const {
+        return _posOpts != 0;
+    }
 
     virtual sptr<Atom> invoke(
         _out_ TeXParser& tp,
