@@ -7,17 +7,29 @@
 using namespace std;
 using namespace tex;
 
+bool NewCommandMacro::_errIfConflict = true;
+
 bool NewCommandMacro::isMacro(const wstring& name) {
     auto it = _macrocode.find(name);
     return (it != _macrocode.end());
 }
 
+void NewCommandMacro::checkNew(const wstring& name) throw(ex_parse) {
+    if (_errIfConflict && isMacro(name)) throw ex_parse(
+        "Command " + wide2utf8(name.c_str()) +
+        " already exists! Use renewcommand instead!");
+}
+
+void NewCommandMacro::checkRenew(const wstring& name) throw(ex_parse) {
+    if (NewCommandMacro::_errIfConflict && !isMacro(name)) throw ex_parse(
+        "Command " + wide2utf8(name.c_str()) +
+        " is no defined! Use newcommand instead!");
+}
+
 void NewCommandMacro::addNewCommand(
     const wstring& name, const wstring& code, int nbargs) throw(ex_parse) {
     _macrocode[name] = code;
-    auto x = MacroInfo::_commands.find(name);
-    if (x != MacroInfo::_commands.end()) delete x->second;
-    MacroInfo::_commands[name] = new MacroInfo(_instance, nbargs);
+    MacroInfo::addMacro(name, new MacroInfo(_instance, nbargs));
 }
 
 void NewCommandMacro::addNewCommand(
@@ -25,27 +37,28 @@ void NewCommandMacro::addNewCommand(
     const wstring& code,
     int nbargs,
     const wstring& def) throw(ex_parse) {
-    auto it = _macrocode.find(name);
-    if (it != _macrocode.end()) {
-        throw ex_parse(
-            "Command " + wide2utf8(name.c_str()) +
-            " already exists! Use renewcommand instead!");
-    }
+    checkNew(name);
     _macrocode[name] = code;
     _macroreplacement[name] = def;
-    MacroInfo::_commands[name] = new MacroInfo(_instance, nbargs, 1);
+    MacroInfo::addMacro(name, new MacroInfo(_instance, nbargs, 1));
 }
 
 void NewCommandMacro::addRenewCommand(
     const wstring& name, const wstring& code, int nbargs) throw(ex_parse) {
-    if (!isMacro(name)) {
-        throw ex_parse(
-            "Command " + wide2utf8(name.c_str()) +
-            " is no defined! Use newcommand instead!");
-    }
+    checkRenew(name);
     _macrocode[name] = code;
-    delete MacroInfo::_commands[name];
-    MacroInfo::_commands[name] = new MacroInfo(_instance, nbargs);
+    MacroInfo::addMacro(name, new MacroInfo(_instance, nbargs));
+}
+
+void NewCommandMacro::addRenewCommand(
+    const wstring& name,
+    const wstring& code,
+    int nbargs,
+    const wstring& def) throw(ex_parse) {
+    checkRenew(name);
+    _macrocode[name] = code;
+    _macroreplacement[name] = def;
+    MacroInfo::addMacro(name, new MacroInfo(_instance, nbargs, 1));
 }
 
 void NewCommandMacro::execute(_out_ TeXParser& tp, _out_ vector<wstring>& args) {
@@ -105,6 +118,12 @@ void NewEnvironmentMacro::addRenewEnvironment(
 
 void NewCommandMacro::_free_() {
     delete _instance;
+}
+
+void MacroInfo::addMacro(const wstring& name, MacroInfo* mac) {
+    auto it = _commands.find(name);
+    if (it != _commands.end()) delete it->second;
+    _commands[name] = mac;
 }
 
 void MacroInfo::_free_() {

@@ -332,17 +332,17 @@ macro(intertext) {
 }
 
 macro(newcommand) {
-    wstring newcom(args[1]);
+    wstring newcmd(args[1]);
     int nbArgs = 0;
-    if (!tp.isValidName(newcom))
-        throw ex_parse("Invalid name for the command '" + wide2utf8(newcom.c_str()));
+    if (!tp.isValidName(newcmd))
+        throw ex_parse("Invalid name for the command '" + wide2utf8(newcmd.c_str()));
 
     if (!args[3].empty()) valueof(args[3], nbArgs);
 
     if (args[4].empty()) {
-        NewCommandMacro::addNewCommand(newcom.substr(1), args[2], nbArgs);
+        NewCommandMacro::addNewCommand(newcmd.substr(1), args[2], nbArgs);
     } else {
-        NewCommandMacro::addNewCommand(newcom.substr(1), args[2], nbArgs, args[4]);
+        NewCommandMacro::addNewCommand(newcmd.substr(1), args[2], nbArgs, args[4]);
     }
 
     return nullptr;
@@ -350,13 +350,17 @@ macro(newcommand) {
 
 macro(renewcommand) {
     wstring newcmd(args[1]);
-    int nbargs = 0;
+    int nbArgs = 0;
     if (!tp.isValidName(newcmd))
         throw ex_parse("Invalid name for the command: " + wide2utf8(newcmd.c_str()));
 
-    if (!args[3].empty()) valueof(args[3], nbargs);
+    if (!args[3].empty()) valueof(args[3], nbArgs);
 
-    NewCommandMacro::addRenewCommand(newcmd.substr(1), args[2], nbargs);
+    if (args[4].empty()) {
+        NewCommandMacro::addRenewCommand(newcmd.substr(1), args[2], nbArgs);
+    } else {
+        NewCommandMacro::addRenewCommand(newcmd.substr(1), args[2], nbArgs, args[4]);
+    }
 
     return nullptr;
 }
