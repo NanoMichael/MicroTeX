@@ -415,7 +415,7 @@ wstring TeXParser::forwardFromCurrentPos() {
 void TeXParser::getOptsArgs(int nbArgs, int opts, _out_ vector<wstring>& args) {
     /*
      * A maximum of 10 options can be passed to a command,
-     * and the extra value will be added at the tail if needed
+     * the value will be added at the tail of the args if found any
      */
     args.resize(nbArgs + 10 + 1 + 1);
     if (nbArgs != 0) {
@@ -693,6 +693,8 @@ bool TeXParser::replaceScript() {
 void TeXParser::preprocess(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse) {
     if (cmd == L"newcommand" || cmd == L"renewcommand") {
         preprocessNewCmd(cmd, args, pos);
+    } else if (cmd == L"newenvironment" || cmd == L"renewenvironment") {
+        preprocessNewCmd(cmd, args, pos);
     } else if (NewCommandMacro::isMacro(cmd)) {
         inflateNewCmd(cmd, args, pos);
     } else if (cmd == L"begin") {
@@ -707,8 +709,8 @@ void TeXParser::preprocess(wstring& cmd, vector<wstring>& args, int& pos) throw(
 }
 
 void TeXParser::preprocessNewCmd(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse) {
-    getOptsArgs(2, 2, args);
     MacroInfo* const mac = MacroInfo::_commands[cmd];
+    getOptsArgs(mac->_nbArgs, mac->_posOpts, args);
     mac->invoke(*this, args);
     _parseString.erase(pos, _pos - pos);
     _len = _parseString.length();
