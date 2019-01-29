@@ -56,21 +56,26 @@ void NewCommandMacro::execute(_out_ TeXParser& tp, _out_ vector<wstring>& args) 
 
     auto it = _macroreplacement.find(args[0]);
 
+    // FIXME
+    // Keep slash "\" and dollar "$" signs?
+    // Example:
+    //      \newcommand{\cmd}[2][\sqrt{e^x}]{ #2 - #1 }
+    // we want the optional argument "\sqrt{e^x}" keep the slash sign
     if (!args[nbargs + 1].empty()) {
         dec = 1;
-        quotereplace(args[nbargs + 1], rep);
-        replaceall(code, L"#1", rep);
+        // quotereplace(args[nbargs + 1], rep);
+        replaceall(code, L"#1", args[nbargs + 1]);
     } else if (it != _macroreplacement.end()) {
         dec = 1;
-        quotereplace(it->second, rep);
-        replaceall(code, L"#1", rep);
+        // quotereplace(it->second, rep);
+        replaceall(code, L"#1", it->second);
     }
 
     for (int i = 1; i <= nbargs; i++) {
         rep = args[i];
         replaceall(code, L"#" + towstring(i + dec), rep);
     }
-    // push back as a return value
+    // push back as returned value (inflated macro)
     args.push_back(code);
 }
 
