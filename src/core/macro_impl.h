@@ -32,6 +32,16 @@ inline macro(undebug) {
 }
 #endif  // GRAPHICS_DEBUG
 
+inline macro(fatalIfCmdConflict) {
+    int fatal = 1;
+    valueof(args[1], fatal);
+    if (fatal == 0)
+        NewCommandMacro::_errIfConflict = false;
+    else
+        NewCommandMacro::_errIfConflict = true;
+    return nullptr;
+}
+
 inline macro(multirow) {
     if (!tp.isArrayMode())
         throw ex_parse("Command \\multirow must used in array environment!");
