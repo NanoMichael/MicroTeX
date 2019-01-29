@@ -29,7 +29,7 @@ void NewCommandMacro::checkRenew(const wstring& name) throw(ex_parse) {
 void NewCommandMacro::addNewCommand(
     const wstring& name, const wstring& code, int nbargs) throw(ex_parse) {
     _macrocode[name] = code;
-    MacroInfo::addMacro(name, new MacroInfo(_instance, nbargs));
+    MacroInfo::addMacro(name, new InflationMacroInfo(_instance, nbargs));
 }
 
 void NewCommandMacro::addNewCommand(
@@ -40,14 +40,14 @@ void NewCommandMacro::addNewCommand(
     checkNew(name);
     _macrocode[name] = code;
     _macroreplacement[name] = def;
-    MacroInfo::addMacro(name, new MacroInfo(_instance, nbargs, 1));
+    MacroInfo::addMacro(name, new InflationMacroInfo(_instance, nbargs, 1));
 }
 
 void NewCommandMacro::addRenewCommand(
     const wstring& name, const wstring& code, int nbargs) throw(ex_parse) {
     checkRenew(name);
     _macrocode[name] = code;
-    MacroInfo::addMacro(name, new MacroInfo(_instance, nbargs));
+    MacroInfo::addMacro(name, new InflationMacroInfo(_instance, nbargs));
 }
 
 void NewCommandMacro::addRenewCommand(
@@ -58,7 +58,7 @@ void NewCommandMacro::addRenewCommand(
     checkRenew(name);
     _macrocode[name] = code;
     _macroreplacement[name] = def;
-    MacroInfo::addMacro(name, new MacroInfo(_instance, nbargs, 1));
+    MacroInfo::addMacro(name, new InflationMacroInfo(_instance, nbargs, 1));
 }
 
 void NewCommandMacro::execute(_out_ TeXParser& tp, _out_ vector<wstring>& args) {

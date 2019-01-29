@@ -96,8 +96,6 @@ public:
      */
     static void addMacro(const wstring& name, MacroInfo* mac);
 
-    // The actual macro to execute
-    Macro* const _macro;
     // Number of arguments
     const int _nbArgs;
     // If has options
@@ -110,28 +108,43 @@ public:
     const int _posOpts;
 
     MacroInfo()
-        : _macro(nullptr), _nbArgs(0), _hasOptions(false), _posOpts(0) {}
-
-    MacroInfo(Macro* macro, int nbargs)
-        : _macro(macro), _nbArgs(nbargs), _hasOptions(false), _posOpts(0) {}
-
-    MacroInfo(Macro* macro, int nbargs, int posOpts)
-        : _macro(macro), _nbArgs(nbargs), _hasOptions(true), _posOpts(posOpts) {}
+        : _nbArgs(0), _hasOptions(false), _posOpts(0) {}
 
     MacroInfo(int nbargs, int posOpts)
-        : _macro(nullptr), _nbArgs(nbargs), _hasOptions(true), _posOpts(posOpts) {}
+        : _nbArgs(nbargs), _hasOptions(true), _posOpts(posOpts) {}
 
     MacroInfo(int nbargs)
-        : _macro(nullptr), _nbArgs(nbargs), _hasOptions(false), _posOpts(0) {}
+        : _nbArgs(nbargs), _hasOptions(false), _posOpts(0) {}
 
-    virtual sptr<Atom> invoke(_out_ TeXParser& tp, _out_ vector<wstring>& args) throw(ex_parse) {
-        _macro->execute(tp, args);
+    virtual sptr<Atom> invoke(
+        _out_ TeXParser& tp,
+        _out_ vector<wstring>& args) throw(ex_parse) {
         return nullptr;
     }
 
     virtual ~MacroInfo() {}
 
     static void _free_();
+};
+
+class InflationMacroInfo : public MacroInfo {
+private:
+    // The actual macro to execute
+    Macro* const _macro;
+
+public:
+    InflationMacroInfo(Macro* macro, int nbargs)
+        : _macro(macro), MacroInfo(nbargs) {}
+
+    InflationMacroInfo(Macro* macro, int nbargs, int posOpts)
+        : _macro(macro), MacroInfo(nbargs, posOpts) {}
+
+    virtual sptr<Atom> invoke(
+        _out_ TeXParser& tp,
+        _out_ vector<wstring>& args) throw(ex_parse) override {
+        _macro->execute(tp, args);
+        return nullptr;
+    }
 };
 
 typedef sptr<Atom> (*MacroDelegate)(
