@@ -136,12 +136,11 @@ macro(overwithdelims) {
     a = dynamic_cast<BigDelimiterAtom*>(right.get());
     if (a != nullptr) right = a->_delim;
 
-    SymbolAtom* sl = dynamic_cast<SymbolAtom*>(left.get());
-    SymbolAtom* sr = dynamic_cast<SymbolAtom*>(right.get());
+    auto sl = dynamic_pointer_cast<SymbolAtom>(left);
+    auto sr = dynamic_pointer_cast<SymbolAtom>(right);
     if (sl != nullptr && sr != nullptr) {
         sptr<FractionAtom> f(new FractionAtom(num, den, true));
-        return sptr<Atom>(new FencedAtom(
-            f, dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
+        return sptr<Atom>(new FencedAtom(f, sl, sr));
     }
 
     RowAtom* ra = new RowAtom();
@@ -166,12 +165,11 @@ macro(atopwithdelims) {
     big = dynamic_cast<BigDelimiterAtom*>(right.get());
     if (big != nullptr) right = big->_delim;
 
-    SymbolAtom* sl = dynamic_cast<SymbolAtom*>(left.get());
-    SymbolAtom* sr = dynamic_cast<SymbolAtom*>(right.get());
+    auto sl = dynamic_pointer_cast<SymbolAtom>(left);
+    auto sr = dynamic_pointer_cast<SymbolAtom>(right);
     if (sl != nullptr && sr != nullptr) {
         sptr<Atom> f(new FractionAtom(num, den, false));
-        return sptr<Atom>(new FencedAtom(
-            f, dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
+        return sptr<Atom>(new FencedAtom(f, sl, sr));
     }
 
     RowAtom* ra = new RowAtom();
@@ -196,12 +194,11 @@ macro(abovewithdelims) {
     big = dynamic_cast<BigDelimiterAtom*>(right.get());
     if (big != nullptr) right = big->_delim;
 
-    SymbolAtom* sl = dynamic_cast<SymbolAtom*>(left.get());
-    SymbolAtom* sr = dynamic_cast<SymbolAtom*>(right.get());
+    auto sl = dynamic_pointer_cast<SymbolAtom>(left);
+    auto sr = dynamic_pointer_cast<SymbolAtom>(right);
     if (sl != nullptr && sr != nullptr) {
         sptr<Atom> f(new FractionAtom(num, den, dim.first, dim.second));
-        return sptr<Atom>(new FencedAtom(
-            f, dynamic_pointer_cast<SymbolAtom>(left), dynamic_pointer_cast<SymbolAtom>(right)));
+        return sptr<Atom>(new FencedAtom(f, sl, sr));
     }
 
     RowAtom* ra = new RowAtom();
@@ -296,15 +293,11 @@ macro(left) {
     big = dynamic_cast<BigDelimiterAtom*>(right.get());
     if (big != nullptr) right = big->_delim;
 
-    SymbolAtom* sl = dynamic_cast<SymbolAtom*>(left.get());
-    SymbolAtom* sr = dynamic_cast<SymbolAtom*>(right.get());
+    auto sl = dynamic_pointer_cast<SymbolAtom>(left);
+    auto sr = dynamic_pointer_cast<SymbolAtom>(right);
     if (sl != nullptr && sr != nullptr) {
         TeXFormula tf(tp, grep, false);
-        return sptr<Atom>(new FencedAtom(
-            tf._root,
-            dynamic_pointer_cast<SymbolAtom>(left),
-            tf._middle,
-            dynamic_pointer_cast<SymbolAtom>(right)));
+        return sptr<Atom>(new FencedAtom(tf._root, sl, tf._middle, sr));
     }
 
     RowAtom* ra = new RowAtom();
