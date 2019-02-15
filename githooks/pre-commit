@@ -1,0 +1,17 @@
+#!/bin/sh
+# Check compiling before commit
+
+CYAN='\033[0;36m'
+RESET='\033[0m'
+
+echo -e "${CYAN}############################# START BUILD #############################${RESET}"
+
+workingDir=$(pwd)
+
+cd build
+cmake -DCMAKE_BUILD_TYPE=Debug -DGRAPHICS_DEBUG=ON -DMEM_CHECK=OFF ..
+make -j32
+
+cd $workingDir
+
+echo -e "${CYAN}############################## END BUILD ##############################${RESET}"
