@@ -211,12 +211,9 @@ pair<int, float> SpaceAtom::getLength(const string& lgth) {
     if (lgth.empty()) return pair<int, float>({UNIT_PIXEL, 0.f});
 
     size_t i = 0;
-    for (; i < lgth.size() && !isalpha(lgth[i]); i++)
-        ;
+    for (; i < lgth.size() && !isalpha(lgth[i]); i++);
     float f = 0;
-    stringstream ss;
-    ss << lgth.substr(0, i);
-    ss >> f;
+    valueof(lgth.substr(0, i), f);
 
     int unit = UNIT_PIXEL;
     string x = lgth.substr(i);

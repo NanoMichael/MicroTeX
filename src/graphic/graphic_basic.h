@@ -76,6 +76,9 @@ inline bool istrans(color c) {
     return (c >> 24 == 0);
 }
 
+/**
+ * Convert #AARRGGBB or #RRGGBB formatted string into color.
+ */
 inline color decode(const string& s) {
     if (s[0] == '#') {
         const string x = s.substr(1);
@@ -97,31 +100,25 @@ inline color decode(const string& s) {
 struct Point {
     float x, y;
 
-    Point() : x(0), y(0) {
-    }
+    Point() : x(0), y(0) {}
 
-    Point(float x1, float y1) : x(x1), y(y1) {
-    }
+    Point(float x1, float y1) : x(x1), y(y1) {}
 };
 
 struct Rect {
     float x, y, w, h;
 
-    Rect() : x(0), y(0), w(0), h(0) {
-    }
+    Rect() : x(0), y(0), w(0), h(0) {}
 
-    Rect(float x1, float y1, float w1, float h1) : x(x1), y(y1), w(w1), h(h1) {
-    }
+    Rect(float x1, float y1, float w1, float h1) : x(x1), y(y1), w(w1), h(h1) {}
 };
 
 struct Insets {
     int left, top, right, bottom;
 
-    Insets() : left(0), top(0), right(0), bottom(0) {
-    }
+    Insets() : left(0), top(0), right(0), bottom(0) {}
 
-    Insets(int t, int l, int b, int r) : left(t), top(t), right(r), bottom(b) {
-    }
+    Insets(int t, int l, int b, int r) : left(t), top(t), right(r), bottom(b) {}
 
     void set(int t, int l, int b, int r) {
         left = l;

@@ -218,8 +218,7 @@ public:
 
     VlineAtom() = delete;
 
-    VlineAtom(int n) : _n(n), _height(0), _shift(0) {
-    }
+    VlineAtom(int n) : _n(n), _height(0), _shift(0) {}
 
     inline float getWidth(_in_ TeXEnvironment& env) {
         if (_n != 0) {
@@ -297,8 +296,7 @@ public:
 
     BigDelimiterAtom() = delete;
 
-    BigDelimiterAtom(const sptr<SymbolAtom>& delim, int s) : _delim(delim), _size(s) {
-    }
+    BigDelimiterAtom(const sptr<SymbolAtom>& delim, int s) : _delim(delim), _size(s) {}
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override {
         auto b = DelimiterFactory::create(*_delim, env, _size);
@@ -324,8 +322,7 @@ private:
 public:
     BoldAtom() = delete;
 
-    BoldAtom(const sptr<Atom>& base) : _base(base) {
-    }
+    BoldAtom(const sptr<Atom>& base) : _base(base) {}
 
     sptr<Box> createBox(_out_ TeXEnvironment& env) override {
         if (_base != nullptr) {

@@ -128,10 +128,10 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
         f = sptr<Atom>(new EmptyAtom());
     }
     if (_style == -1) {
-        throw ex_invalid_state("A style is required, call function setStyle before build");
+        throw ex_invalid_state("A style is required, call function setStyle before build.");
     }
     if (_textSize == -1) {
-        throw ex_invalid_state("A size is required, call function setSize before build");
+        throw ex_invalid_state("A size is required, call function setSize before build.");
     }
 
     DefaultTeXFont* font = (_type == -1) ? new DefaultTeXFont(_textSize) : createFont(_textSize, _type);

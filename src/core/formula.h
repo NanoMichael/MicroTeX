@@ -101,7 +101,7 @@ public:
         const string& textStyle, bool firstpass, bool space) throw(ex_parse);
 
     /**
-     * create a empty TeXFormula
+     * Create an empty TeXFormula
      */
     TeXFormula();
 
@@ -138,7 +138,7 @@ public:
     TeXFormula(const TeXFormula* f);
 
     /**
-     * Change the text of the TeXFormula and regenerate the root
+     * Change the text of the TeXFormula and regenerate the root atom.
      *
      * @param latex
      *      the latex formula
@@ -146,7 +146,7 @@ public:
     void setLaTeX(const wstring& latex) throw(ex_parse);
 
     /**
-     * Inserts an atom at the end of the current formula
+     * Inserts an atom at the end of the current formula.
      */
     TeXFormula* add(const sptr<Atom>& el);
 
@@ -177,7 +177,7 @@ public:
     /**
      * Changes the (foreground) color of the <i>current</i> TeXFormula into the
      * given color. By default, the foreground color of a TeXFormula is the
-     * foreground color of the component on which the TeXIcon (created from this
+     * foreground color of the component on which the TeXRender (created from this
      * TeXFormula) will be painted. The color of subformula's overrides the
      * color of the whole formula. Any changes that will be made to this
      * TeXFormula after this color was set, will be painted in the default color
@@ -195,12 +195,12 @@ public:
      * TeXFormula.
      *
      * @param left
-     *      atom type constant @see TeXConstants
+     *      the left type of this formula @see TeXConstants
      * @param right
-     *      atom type constant @see TeXConstants
+     *      the right type of this formula @see TeXConstants
      * @return the modified TeXFormula
      * @throw ex_invalid_atom_type
-     *      if the given integer value does not represent a valid atom type
+     *      if the given value does not represent a valid atom type
      */
     TeXFormula* setFixedTypes(int left, int right) throw(ex_invalid_atom_type);
 
@@ -228,12 +228,18 @@ public:
      */
     static void setDPITarget(float dpi);
 
+    /**
+     * Check if the given unicode-block is registered.
+     */
     static bool isRegisteredBlock(const UnicodeBlock& block);
 
     static FontInfos* getExternalFont(const UnicodeBlock& block);
 
     static void addSymbolMappings(const string& file) throw(ex_res_parse);
 
+    /**
+     * Enable or disable debug mode.
+     */
     static void setDEBUG(bool b);
 
     static void _init_();

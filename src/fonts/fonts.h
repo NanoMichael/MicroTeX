@@ -193,12 +193,18 @@ public:
     }
 };
 
+/**
+ * Function to check if two CharCouple is equal.
+ */
 struct char_couple_eq {
     bool operator()(const CharCouple& c1, const CharCouple& c2) const {
         return c1 == c2;
     }
 };
 
+/**
+ * Function to generate hash code for one CharCouple.
+ */
 struct char_couple_hash {
     size_t operator()(const CharCouple& c) const {
         return (c._left + c._right) % 128;
@@ -213,8 +219,10 @@ struct char_couple_hash {
 class FontInfo {
 private:
     static map<int, FontInfo*> _fonts;
+    // The id of this font info
     int _fontId;
     const Font* _font;
+    // The path of the font file
     string _path;
 
     // ligatures
