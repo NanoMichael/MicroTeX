@@ -211,7 +211,8 @@ pair<int, float> SpaceAtom::getLength(const string& lgth) {
     if (lgth.empty()) return pair<int, float>({UNIT_PIXEL, 0.f});
 
     size_t i = 0;
-    for (; i < lgth.size() && !isalpha(lgth[i]); i++);
+    for (; i < lgth.size() && !isalpha(lgth[i]); i++)
+        ;
     float f = 0;
     valueof(lgth.substr(0, i), f);
 
@@ -767,10 +768,9 @@ void AccentedAtom::init(
     else
         _underbase = base;
 
-    SymbolAtom* sa = dynamic_cast<SymbolAtom*>(accent.get());
-    if (sa == nullptr) throw ex_invalid_symbol_type("Invalid accent!");
-
     _accent = dynamic_pointer_cast<SymbolAtom>(accent);
+    if (_accent == nullptr) throw ex_invalid_symbol_type("Invalid accent!");
+
     _acc = true;
     _changeSize = true;
 }
@@ -803,19 +803,18 @@ AccentedAtom::AccentedAtom(
     _changeSize = true;
     _acc = false;
     auto root = acc->_root;
-    SymbolAtom* s = dynamic_cast<SymbolAtom*>(root.get());
-    if (s != nullptr) {
-        _accent = dynamic_pointer_cast<SymbolAtom>(root);
-        if (_accent->_type == TYPE_ACCENT)
-            _base = base;
-        else
-            throw ex_invalid_symbol_type(
-                "The accent TeXFormula represents a single symbol with the name '" +
-                s->getName() + "', but this symbol is not defined as accent (" +
-                TeXSymbolParser::TYPE_ATTR + "='acc') in '" +
-                TeXSymbolParser::RESOURCE_NAME + "'!");
+    _accent = dynamic_pointer_cast<SymbolAtom>(root);
+    if (_accent == nullptr)
+        throw ex_invalid_formula("The accent TeXFormula does not represet a single symbol!");
+    if (_accent->_type == TYPE_ACCENT) {
+        _base = base;
+    } else {
+        throw ex_invalid_symbol_type(
+            "The accent TeXFormula represents a single symbol with the name '" +
+            _accent->getName() + "', but this symbol is not defined as accent (" +
+            TeXSymbolParser::TYPE_ATTR + "='acc') in '" +
+            TeXSymbolParser::RESOURCE_NAME + "'!");
     }
-    throw ex_invalid_formula("The accent TeXFormula does not represent a single symbol!");
 }
 
 sptr<Box> AccentedAtom::createBox(_out_ TeXEnvironment& env) {

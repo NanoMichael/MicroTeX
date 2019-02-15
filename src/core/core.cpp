@@ -57,20 +57,20 @@ void tex::print_box(const sptr<Box>& b) {
 
 sptr<Box> FormulaBreaker::split(const sptr<Box>& b, float width, float interline) {
 #ifdef __DEBUG
-    __print("BEFORE SPLIT\n");
+    __print("[BEFORE SPLIT]:\n");
     print_box(b);
 #endif
 
-    HorizontalBox* h = dynamic_cast<HorizontalBox*>(b.get());
+    auto h = dynamic_pointer_cast<HorizontalBox>(b);
     sptr<Box> box;
     if (h != nullptr) {
-        box = split(dynamic_pointer_cast<HorizontalBox>(b), width, interline);
+        box = split(h, width, interline);
     } else {
         box = b;
     }
 
 #ifdef __DEBUG
-    __print("AFTER SPLIT\n");
+    __print("[AFTER SPLIT]:\n");
     print_box(box);
 #endif
 
@@ -125,10 +125,10 @@ float FormulaBreaker::canBreak(_out_ stack<Position>& s, const sptr<HorizontalBo
         cumWidth[i + 1] = cumWidth[i] + box->_width;
         if (cumWidth[i + 1] > width) {
             int pos = getBreakPosition(hbox, i);
-            HorizontalBox* h = dynamic_cast<HorizontalBox*>(box.get());
+            auto h = dynamic_pointer_cast<HorizontalBox>(box);
             if (h != nullptr) {
                 stack<Position> sub;
-                float w = canBreak(sub, dynamic_pointer_cast<HorizontalBox>(box), width - cumWidth[i]);
+                float w = canBreak(sub, h, width - cumWidth[i]);
                 if (w != box->_width && (cumWidth[i] + w <= width || pos == -1)) {
                     s.push(Position(i - 1, hbox));
                     // add to stack
@@ -137,8 +137,7 @@ float FormulaBreaker::canBreak(_out_ stack<Position>& s, const sptr<HorizontalBo
                         p.push_back(sub.top());
                         sub.pop();
                     }
-                    for (auto it = p.rbegin(); it != p.rend(); it++)
-                        s.push(*it);
+                    for (auto it = p.rbegin(); it != p.rend(); it++) s.push(*it);
                     // release cum-width
                     float x = cumWidth[i] + w;
                     delete[] cumWidth;

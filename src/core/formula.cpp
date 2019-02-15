@@ -147,21 +147,21 @@ void TeXFormula::setLaTeX(const wstring& latex) throw(ex_parse) {
 
 TeXFormula* TeXFormula::add(const sptr<Atom>& el) {
     if (el == nullptr) return this;
-    MiddleAtom* atom = dynamic_cast<MiddleAtom*>(el.get());
-    if (atom != nullptr) _middle.push_back(dynamic_pointer_cast<MiddleAtom>(el));
+    auto atom = dynamic_pointer_cast<MiddleAtom>(el);
+    if (atom != nullptr) _middle.push_back(atom);
     if (_root == nullptr) {
         _root = el;
-    } else {
-        RowAtom* rm = dynamic_cast<RowAtom*>(_root.get());
-        if (rm == nullptr) _root = sptr<Atom>(new RowAtom(_root));
-        rm = static_cast<RowAtom*>(_root.get());
-        rm->add(el);
-        TypedAtom* ta = dynamic_cast<TypedAtom*>(el.get());
-        if (ta != nullptr) {
-            int rt = ta->getRightType();
-            if (rt == TYPE_BINARY_OPERATOR || rt == TYPE_RELATION)
-                rm->add(sptr<Atom>(new BreakMarkAtom()));
-        }
+        return this;
+    }
+    RowAtom* rm = dynamic_cast<RowAtom*>(_root.get());
+    if (rm == nullptr) _root = sptr<Atom>(new RowAtom(_root));
+    rm = static_cast<RowAtom*>(_root.get());
+    rm->add(el);
+    TypedAtom* ta = dynamic_cast<TypedAtom*>(el.get());
+    if (ta != nullptr) {
+        int rt = ta->getRightType();
+        if (rt == TYPE_BINARY_OPERATOR || rt == TYPE_RELATION)
+            rm->add(sptr<Atom>(new BreakMarkAtom()));
     }
     return this;
 }
