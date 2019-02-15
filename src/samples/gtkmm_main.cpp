@@ -22,6 +22,8 @@
 #include <gtksourceviewmm/languagemanager.h>
 #include <gtksourceviewmm/view.h>
 
+#include <pangomm/init.h>
+
 using namespace tex;
 
 class TeXDrawingArea : public Gtk::DrawingArea {
@@ -31,9 +33,8 @@ private:
     int _padding;
 
     void checkInvalidate() {
-        if (_render == nullptr) {
-            return;
-        }
+        if (_render == nullptr) return;
+
         int parent_width = get_parent()->get_width();
         int parent_height = get_parent()->get_height();
         int target_width = parent_width;
@@ -67,9 +68,7 @@ public:
     }
 
     void setTextSize(float size) {
-        if (size == _text_size) {
-            return;
-        }
+        if (size == _text_size) return;
         _text_size = size;
         if (_render != nullptr) {
             _render->setTextSize(_text_size);
@@ -78,9 +77,7 @@ public:
     }
 
     void setLaTeX(const wstring& latex) {
-        if (_render != nullptr) {
-            delete _render;
-        }
+        if (_render != nullptr) delete _render;
 
         _render = LaTeX::parse(
             latex,
@@ -105,24 +102,18 @@ public:
     }
 
     void drawInContext(const Cairo::RefPtr<Cairo::Context>& cr) {
-        if (_render == nullptr) {
-            return;
-        }
+        if (_render == nullptr) return;
         Graphics2D_cairo g2(cr);
         _render->draw(g2, _padding, _padding);
     }
 
     virtual ~TeXDrawingArea() {
-        if (_render != nullptr) {
-            delete _render;
-        }
+        if (_render != nullptr) delete _render;
     }
 
 protected:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override {
-        if (_render == nullptr) {
-            return true;
-        }
+        if (_render == nullptr) return true;
         Graphics2D_cairo g2(cr);
         _render->draw(g2, _padding, _padding);
         return true;
@@ -259,15 +250,70 @@ protected:
     }
 };
 
-int main(int argc, char* argv[]) {
-    LaTeX::init();
+class Headless {
+public:
+    int run(const string& dir, const string& samplesFile = "") {
+        Samples samples(samplesFile);
+        if (samples.count() == 0) return 1;
 
+        const int padding = 10, maxWidth = 720;
+        const float textSize = 20.f, linespace = textSize / 3.f;
+
+        for (int i = 0; i < samples.count(); i++) {
+            auto r = LaTeX::parse(samples.next(), maxWidth, textSize, linespace, 0xff424242);
+            string file = dir + "/sample_" + tostring(i) + ".svg";
+            auto surface = Cairo::SvgSurface::create(
+                file,
+                r->getWidth() + padding * 2,
+                r->getHeight() + padding * 2);
+            auto context = Cairo::Context::create(surface);
+            Graphics2D_cairo g2(context);
+            r->draw(g2, padding, padding);
+            delete r;
+        }
+
+        return 0;
+    }
+};
+
+int runHeadless(const vector<string>& opts) {
+    string outputDir = "";
+    string samplesFile = "";
+    for (size_t i = 0; i < opts.size(); i++) {
+        auto x = opts[i];
+        if (startswith(x, "-outputdir")) {
+            outputDir = x.substr(x.find("=") + 1);
+        } else if (startswith(x, "-samples")) {
+            samplesFile = x.substr(x.find("=") + 1);
+        }
+    }
+
+    if (outputDir.empty()) return 1;
+    Headless().run(outputDir, samplesFile);
+    return 0;
+}
+
+int runWindow(int argc, char* argv[]) {
     auto app = Gtk::Application::create(argc, argv, "io.nano.LaTeX");
     MainWindow win;
     int result = app->run(win);
+    return result;
+}
+
+int main(int argc, char* argv[]) {
+    Pango::init();
+    LaTeX::init();
+
+    vector<string> opts;
+    for (int i = 0; i < argc; i++) opts.push_back(argv[i]);
+    int result = 0;
+    if (indexOf(opts, string("-headless")) >= 0) {
+        result = runHeadless(opts);
+    } else {
+        result = runWindow(argc, argv);
+    }
 
     LaTeX::release();
-
     return result;
 }
 
