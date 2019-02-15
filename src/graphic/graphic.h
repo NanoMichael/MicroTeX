@@ -18,7 +18,8 @@ enum TypefaceStyle {
 };
 
 /**
- * Class represent font information
+ * Abstract class represents font information. The methods Font#create and Font#_create must be
+ * implemented in different platforms.
  */
 class Font {
 public:
@@ -78,7 +79,7 @@ public:
      * Get the layout bounds with current text and font
      *
      * @param bounds
-     *      rectangle to retrieve bounds
+     *      rectangle to retrieve the bounds
      */
     virtual void getBounds(_out_ Rect& bounds) = 0;
 
@@ -86,7 +87,7 @@ public:
      * Draw the layout
      *
      * @param g2
-     *      the graphic context
+     *      the graphics (2D) context
      * @param x
      *      the x coordinate
      * @param y
@@ -95,10 +96,10 @@ public:
     virtual void draw(Graphics2D& g2, float x, float y) = 0;
 
     /**
-     * Create a TextLayout with specified text and font
+     * Create a TextLayout with given text and font
      *
      * @param src
-     *      the specified text
+     *      the given text to layout
      * @param font
      *      the specified font
      * @return
@@ -108,17 +109,16 @@ public:
 };
 
 /**
- * Represent a 2D graphics context, all the TeX drawing operation will be
- * on it. Current supported affine transformation is scale, translation, and rotation,
- * but note that the scaling on y-direction will be selected as base if the scaling
- * on x and y-direction are different when drawing a character, so you should
- * never use a different scaling unless you are really sure that the coordinate
- * is positioned correctly (i.e. draw a hyphen).
+ * Abstract class to represents a 2D graphics context, all the TeX drawing operations will on it.
+ * It must have scale, translation, and rotation support. You should notice that scaling on
+ * y-direction will be selected as the base if it is different on x and y-direction when drawing
+ * characters. In most cases, you should never use different scalings, unless you are really sure the
+ * coordinates are correct (i.e. draw a hyphen).
  */
 class Graphics2D {
 public:
     /**
-     * Set the color of the graphics context
+     * Set the color of the context
      * 
      * @param c
      *      required color
@@ -126,28 +126,22 @@ public:
     virtual void setColor(color c) = 0;
 
     /**
-     * Get the color of the graphics context
+     * Get the color of the context
      */
     virtual color getColor() const = 0;
 
     /**
-     * Set the stroke of the graphics context
-     * 
-     * @param s
-     *      required stroke
+     * Set the stroke of the context
      */
     virtual void setStroke(const Stroke& s) = 0;
 
     /**
-     * Get the stroke of the graphics context
+     * Get the stroke of the context
      */
     virtual const Stroke& getStroke() const = 0;
 
     /**
-     * Set the stroke width of the graphics context
-     * 
-     * @param w
-     *      required stroke width
+     * Set the stroke width of the context
      */
     virtual void setStrokeWidth(float w) = 0;
 
@@ -157,7 +151,7 @@ public:
     virtual const Font* getFont() const = 0;
 
     /**
-     * Set the font of the graphics context
+     * Set the font of the context
      */
     virtual void setFont(const Font* font) = 0;
 
@@ -182,7 +176,7 @@ public:
     virtual void scale(float sx, float sy) = 0;
 
     /**
-     * Rotate the graphics context with specified angle (in radian), with pivot (0, 0).
+     * Rotate the graphics context with the given angle (in radian), with pivot (0, 0).
      *
      * @param angle
      *      angle (in radian) amount to rotate
@@ -190,7 +184,7 @@ public:
     virtual void rotate(float angle) = 0;
 
     /**
-     * Rotate the graphics context with a angle (in radian), with pivot (px, py).
+     * Rotate the graphics context with the given angle (in radian), with pivot (px, py).
      *
      * @param angle
      *      angle (in radian) amount to rotate

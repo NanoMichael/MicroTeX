@@ -22,10 +22,10 @@ private:
 
 public:
     /**
-     * Initialize TeX context with specified root path of the TeX resources
+     * Initialize TeX context with given root path of the TeX resources
      *
      * @param res_root_path
-     *      Root path of resources, default is 'res'
+     *      root path of the resources, default is 'res'
      */
     static void init(const string& res_root_path = "res");
 

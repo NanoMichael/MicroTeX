@@ -62,7 +62,7 @@ private:
     static const wchar_t BACKPRIME;
     static const wchar_t DEGRE;
     /**
-     * script to formula map
+     * scripts to formula map
      */
     static const map<wchar_t, char> SUP_SCRIPT_MAP;
     static const map<wchar_t, char> SUB_SCRIPT_MAP;
@@ -83,7 +83,7 @@ private:
     void insert(int beg, int end, const wstring& formula);
 
     /**
-     * Return a string with command and options and args
+     * Return a string with command, options and arguments.
      *
      * @param command
      *      name of command
@@ -427,7 +427,8 @@ public:
 
     /**
      * Get the unit and length from given string. The string must be in the format: a digital
-     * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or (UNIT_PIXEL, 0) will be returned.
+     * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or a pair (UNIT_PIXEL, 0) will be
+     * returned.
      */
     pair<int, float> getLength() throw(ex_parse);
 
@@ -452,7 +453,8 @@ public:
      *      the number of arguments of the command
      * @param opts
      *      must be 1 if the options are found before the first argument,
-     *      and must be 2 if they must be found before the second argument
+     *      and must be 2 if they must be found before the second argument,
+     *      otherwise there're no options for the command.
      * @param args
      *      a vector to put with argument strings
      */

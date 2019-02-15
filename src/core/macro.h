@@ -98,7 +98,8 @@ public:
 
     // Number of arguments
     const int _nbArgs;
-    // Options' position, can be 1 or 2
+    // Options' position, can be  0, 1 and 2
+    // 0 represetns this macro has no options
     // 1 represents the options appear after the command name, e.g.:
     //      \sqrt[3]{2}
     // 2 represents the options appear after the first argument, e.g.:

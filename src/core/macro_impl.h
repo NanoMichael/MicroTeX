@@ -43,8 +43,7 @@ inline macro(fatalIfCmdConflict) {
 }
 
 inline macro(multirow) {
-    if (!tp.isArrayMode())
-        throw ex_parse("Command \\multirow must used in array environment!");
+    if (!tp.isArrayMode()) throw ex_parse("Command \\multirow must used in array environment!");
     int n = 0;
     valueof(args[1], n);
     tp.addAtom(sptr<Atom>(new MultiRowAtom(n, args[2], TeXFormula(tp, args[3])._root)));
@@ -56,14 +55,12 @@ inline macro(longdiv) {
     valueof(args[1], dividend);
     long divisor = 0;
     valueof(args[2], divisor);
-    if (divisor == 0)
-        throw ex_parse("Divisor must not be 0.");
+    if (divisor == 0) throw ex_parse("Divisor must not be 0.");
     return sptr<Atom>(new LongDivAtom(divisor, dividend));
 }
 
 inline macro(cellcolor) {
-    if (!tp.isArrayMode())
-        throw ex_parse("Command \\cellcolor must used in array environment!");
+    if (!tp.isArrayMode()) throw ex_parse("Command \\cellcolor must used in array environment!");
     color c = ColorAtom::getColor(wide2utf8(args[1].c_str()));
     sptr<CellSpecifier> atom(new CellColorAtom(c));
     ((ArrayOfAtoms*)tp._formula)->addCellSpecifier(atom);
@@ -98,8 +95,7 @@ inline macro(columnbg) {
 }
 
 inline macro(rowcolor) {
-    if (!tp.isArrayMode())
-        throw ex_parse("Command \\rowcolor must used in array environment!");
+    if (!tp.isArrayMode()) throw ex_parse("Command \\rowcolor must used in array environment!");
     color c = ColorAtom::getColor(wide2utf8(args[1].c_str()));
     sptr<CellSpecifier> spe(new CellColorAtom(c));
     ((ArrayOfAtoms*)tp._formula)->addRowSpecifier(spe);
