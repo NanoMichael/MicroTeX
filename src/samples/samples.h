@@ -16,8 +16,9 @@ private:
     int _index;
     vector<wstring> _samples;
 
-    void readSamples() {
-        const string path = LaTeX::getResRootPath() + "/SAMPLES.tex";
+    void readSamples(const string& file = "") {
+        string path = file;
+        if (path.empty()) path = LaTeX::getResRootPath() + "/SAMPLES.tex";
         string line = "";
         string sample = "";
         std::ifstream f(path);
@@ -48,13 +49,17 @@ private:
     }
 
 public:
-    Samples() : _index(0) { readSamples(); }
+    Samples(const string& file = "") : _index(0) { readSamples(file); }
 
     const wstring& next() {
         if (_index >= _samples.size()) _index = 0;
         const wstring& x = _samples[_index];
         _index++;
         return x;
+    }
+
+    int count() const {
+        return _samples.size();
     }
 };
 
