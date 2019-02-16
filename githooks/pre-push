@@ -83,6 +83,10 @@ update_change() {
     fi
 }
 
+# Allows us to read user input below, assigns stdin to keyboard,
+# since git hooks not run in an interactive environment
+exec < /dev/tty
+
 while true; do
     read -p "Do you wish to update samples (Y/N)?" yn
     case $yn in
@@ -90,6 +94,9 @@ while true; do
         * ) echo -e "${RED}Samples updating canceled.${RESET}"; break;;
     esac
 done
+
+# Close STDIN
+exec <&-
 
 cd $workingDir
 
