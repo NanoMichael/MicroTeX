@@ -252,22 +252,31 @@ protected:
 
 class Headless {
 public:
-    int run(const string& dir, const string& samplesFile = "", const string& prefix = "") {
+    int run(
+        const string& dir,
+        const string& samplesFile,
+        const string& prefix,
+        const float textSize,
+        const color foreground,
+        const color background) {
         Samples samples(samplesFile);
         if (samples.count() == 0) return 1;
 
         const int padding = 10, maxWidth = 720;
-        const float textSize = 20.f, linespace = textSize / 3.f;
+        const float linespace = textSize / 3.f;
 
         for (int i = 0; i < samples.count(); i++) {
-            auto r = LaTeX::parse(samples.next(), maxWidth, textSize, linespace, 0xff424242);
+            auto r = LaTeX::parse(samples.next(), maxWidth, textSize, linespace, foreground);
             string file = dir + "/" + prefix + tostring(i) + ".svg";
-            auto surface = Cairo::SvgSurface::create(
-                file,
-                r->getWidth() + padding * 2,
-                r->getHeight() + padding * 2);
+            const float w = r->getWidth() + padding * 2;
+            const float h = r->getHeight() + padding * 2;
+            auto surface = Cairo::SvgSurface::create(file, w, h);
             auto context = Cairo::Context::create(surface);
             Graphics2D_cairo g2(context);
+            if (!istrans(background)) {
+                g2.setColor(background);
+                g2.fillRect(0, 0, w, h);
+            }
             r->draw(g2, padding, padding);
             delete r;
         }
@@ -276,10 +285,15 @@ public:
     }
 };
 
+#include "atom/atom_basic.h"
+
 int runHeadless(const vector<string>& opts) {
     string outputDir = "";
     string samplesFile = "";
     string prefix = "";
+    float textSize = 20.f;
+    color foreground = BLACK;
+    color background = TRANS;
     for (size_t i = 0; i < opts.size(); i++) {
         auto x = opts[i];
         if (startswith(x, "-outputdir")) {
@@ -288,11 +302,21 @@ int runHeadless(const vector<string>& opts) {
             samplesFile = x.substr(x.find("=") + 1);
         } else if (startswith(x, "-prefix")) {
             prefix = x.substr(x.find("=") + 1);
+        } else if (startswith(x, "-textsize")) {
+            auto str = x.substr(x.find("=") + 1);
+            valueof(str, textSize);
+            if (textSize <= 0.f) textSize = 20.f;
+        } else if (startswith(x, "-foreground")) {
+            auto str = x.substr(x.find("=") + 1);
+            foreground = tex::ColorAtom::getColor(str);
+        } else if (startswith(x, "-background")) {
+            auto str = x.substr(x.find("=") + 1);
+            background = tex::ColorAtom::getColor(str);
         }
     }
 
     if (outputDir.empty()) return 1;
-    Headless().run(outputDir, samplesFile, prefix);
+    Headless().run(outputDir, samplesFile, prefix, textSize, foreground, background);
     return 0;
 }
 
