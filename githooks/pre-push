@@ -1,0 +1,96 @@
+#!/bin/bash
+#
+# Update samples before push
+#
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+RESET='\033[0m'
+
+echo -e "${CYAN}############################# UPDATE SAMPLES #############################${RESET}"
+
+workingDir=$(pwd)
+
+cd build
+
+write_sample() {
+    echo -e "\`\`\`tex" >> samples.md
+    cat __tmp >> samples.md
+    echo -e "\`\`\`" >> samples.md
+    cp /dev/null __tmp
+    echo -e "\n![sample_$1](samples/sample_$1.svg)\n\n" >> samples.md
+}
+
+update_samples() {
+    # regenerate sample_*.svg
+    if [ -d samples ]; then
+        rm -r samples
+    fi
+    mkdir samples
+    ./LaTeX -headless \
+        -outputdir=./samples \
+        -prefix=sample_ \
+        -textsize=14 \
+        -foreground=black \
+        -background=white
+    # regenerate samples.md
+    if [ -e samples.md ]; then
+        rm samples.md
+    fi
+    touch samples.md
+    echo -e "# SAMPLES\n" >> samples.md
+    touch __tmp
+    cp /dev/null __tmp
+    j=0
+    while IFS='' read -r i || [[ -n "$i" ]]; do
+        if [[ $i == +(['%']) ]]; then
+            write_sample $j
+            j=`expr $j + 1`
+        elif [ -n "$i" ]; then
+            echo "$i" >> __tmp
+        fi
+    done < res/SAMPLES.tex
+    # the last sample
+    write_sample $j
+
+    rm __tmp
+}
+
+update_change() {
+    if [ ! -d ../readme/samples ]; then
+        mkdir ../readme/samples
+    fi
+    # compress svg files
+    for svg in `ls samples`; do
+        scour -i `pwd`/samples/$svg -o ../readme/samples/$svg \
+            --enable-viewboxing --enable-id-stripping \
+            --enable-comment-stripping --shorten-ids --indent=none
+    done
+    cp samples.md ../readme
+    # check if samples changed
+    git add ../readme/samples.md
+    git add ../readme/samples
+    git diff --cached --exit-code ../readme/samples > /dev/null
+    samplesChanged=$?
+    git diff --cached --exit-code ../readme/samples.md > /dev/null
+    mdChanged=$?
+    if [ $samplesChanged != 0 -o $mdChanged != 0 ]; then
+        echo -e "${RED}Samples changed, commit changes...${RESET}"
+        git commit -m "update samples"
+    else
+        echo -e "${GREEN}No changes need to commit.${RESET}"
+    fi
+}
+
+while true; do
+    read -p "Do you wish to update samples (Y/N)?" yn
+    case $yn in
+        [Yy]* ) update_samples; update_change; break;;
+        * ) echo -e "${RED}Samples updating canceled.${RESET}"; break;;
+    esac
+done
+
+cd $workingDir
+
+echo -e "${CYAN}################################## DONE ##################################${RESET}"
