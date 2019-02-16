@@ -292,7 +292,7 @@ int runHeadless(const vector<string>& opts) {
     }
 
     if (outputDir.empty()) return 1;
-    Headless().run(outputDir, samplesFile);
+    Headless().run(outputDir, samplesFile, prefix);
     return 0;
 }
 
