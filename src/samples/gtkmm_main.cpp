@@ -252,7 +252,7 @@ protected:
 
 class Headless {
 public:
-    int run(const string& dir, const string& samplesFile = "") {
+    int run(const string& dir, const string& samplesFile = "", const string& prefix = "") {
         Samples samples(samplesFile);
         if (samples.count() == 0) return 1;
 
@@ -261,7 +261,7 @@ public:
 
         for (int i = 0; i < samples.count(); i++) {
             auto r = LaTeX::parse(samples.next(), maxWidth, textSize, linespace, 0xff424242);
-            string file = dir + "/sample_" + tostring(i) + ".svg";
+            string file = dir + "/" + prefix + tostring(i) + ".svg";
             auto surface = Cairo::SvgSurface::create(
                 file,
                 r->getWidth() + padding * 2,
@@ -279,12 +279,15 @@ public:
 int runHeadless(const vector<string>& opts) {
     string outputDir = "";
     string samplesFile = "";
+    string prefix = "";
     for (size_t i = 0; i < opts.size(); i++) {
         auto x = opts[i];
         if (startswith(x, "-outputdir")) {
             outputDir = x.substr(x.find("=") + 1);
         } else if (startswith(x, "-samples")) {
             samplesFile = x.substr(x.find("=") + 1);
+        } else if (startswith(x, "-prefix")) {
+            prefix = x.substr(x.find("=") + 1);
         }
     }
 
