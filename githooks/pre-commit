@@ -1,10 +1,12 @@
-#!/bin/sh
+#!/bin/bash
+#
 # Check compiling before commit
+#
 
 CYAN='\033[0;36m'
 RESET='\033[0m'
 
-echo -e "${CYAN}############################# START BUILD #############################${RESET}"
+echo -e "${CYAN}############################### START BUILD ##############################${RESET}"
 
 workingDir=$(pwd)
 
@@ -14,4 +16,4 @@ make -j32
 
 cd $workingDir
 
-echo -e "${CYAN}############################## END BUILD ##############################${RESET}"
+echo -e "${CYAN}################################## DONE ##################################${RESET}"
