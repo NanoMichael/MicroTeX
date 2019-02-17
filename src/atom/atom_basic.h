@@ -516,9 +516,9 @@ public:
 
     static void _init_();
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     friend ostream& operator<<(ostream& os, const SymbolAtom& s);
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 
     __decl_clone(SymbolAtom)
 };

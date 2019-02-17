@@ -70,7 +70,7 @@ public:
 
     CharFont(wchar_t ch, int f, int bf) : _c(ch), _fontId(f), _boldFontId(bf) {}
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     friend ostream& operator<<(ostream& os, const CharFont& info);
 #endif
 };
@@ -449,7 +449,7 @@ public:
 
     ~FontInfo();
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     friend ostream& operator<<(ostream& os, const FontInfo& info);
 #endif
 };
@@ -1089,9 +1089,9 @@ private:
         int err = _doc.LoadFile(file.c_str());
         if (err != XML_NO_ERROR) throw ex_xml_parse(file + " not found");
         _root = _doc.RootElement();
-#ifdef __DEBUG
+#ifdef HAVE_LOG
         __dbg("root name:%s\n", _root->Name());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
     }
 
 public:
@@ -1132,9 +1132,9 @@ public:
     // static Font createFont(const string& name);
 
     ~DefaultTeXFontParser() {
-#ifdef __DEBUG
+#ifdef HAVE_LOG
         __dbg("DefaultFontParser destruct\n");
-#endif  // __DEBUG
+#endif  // HAVE_LOG
     }
 };
 

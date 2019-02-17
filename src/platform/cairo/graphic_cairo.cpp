@@ -23,7 +23,7 @@ void Font_cairo::loadFont(const string& file) {
     if (it != _file_name_map.end()) {
         // already loaded
         _family = _file_name_map[file];
-#ifdef __DEBUG
+#ifdef HAVE_LOG
         __log << file << " already loaded, skip\n";
 #endif
         return;
@@ -36,7 +36,7 @@ void Font_cairo::loadFont(const string& file) {
     FcBlanks* blanks = FcConfigGetBlanks(NULL);
     FcPattern* p = FcFreeTypeQuery(f, 0, blanks, &count);
     FcPatternGetString(p, FC_FAMILY, 0, &family);
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __log << "font count: " << count << "\n";
     FcPatternPrint(p);
 #endif
@@ -44,11 +44,11 @@ void Font_cairo::loadFont(const string& file) {
     // load font to fontconfig
     FcBool status = FcConfigAppFontAddFile(NULL, f);
     if (status) {
-#ifdef __DEBUG
+#ifdef HAVE_LOG
         __log << "load " << file << " successfully\n";
 #endif
     } else {
-#ifdef __DEBUG
+#ifdef HAVE_LOG
         __log << "load " << file << " failed\n";
 #endif
     }

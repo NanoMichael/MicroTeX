@@ -309,9 +309,9 @@ public:
 
     static void _free_();
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     friend ostream& operator<<(ostream& out, const Glue& glue);
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 };
 
 class GlueSettingParser {

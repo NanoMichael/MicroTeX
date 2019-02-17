@@ -19,7 +19,7 @@ endif()
 
 file(COPY res DESTINATION .)
 
-# source file
+# source files
 
 file(GLOB_RECURSE SRC "src/*.cpp")
 
@@ -48,6 +48,11 @@ endif()
 
 
 # compile options
+
+option(HAVE_LOG "If enable log" ON)
+if(HAVE_LOG)
+    add_definitions(-DHAVE_LOG)
+endif()
 
 option(GRAPHICS_DEBUG "If enable graphics debug" ON)
 if(GRAPHICS_DEBUG)
