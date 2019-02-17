@@ -122,7 +122,7 @@ const int DefaultTeXFont::BOT = 3;
 
 bool DefaultTeXFont::_magnificationEnable = true;
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
 ostream& tex::operator<<(ostream& os, const FontInfo& info) {
     // base information
     os << "font id: " << info._fontId;
@@ -284,9 +284,9 @@ void DefaultTeXFontParser::parseStyleMappings(
     const XMLElement* mapping = _root->FirstChildElement("TextStyleMappings");
     // no defined style mappings
     if (mapping == nullptr) return;
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("TextStyleMappings tag name: %s\n", mapping->Name());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
     // iterate all mappings
     mapping = mapping->FirstChildElement("TextStyleMapping");
     while (mapping != nullptr) {
@@ -295,9 +295,9 @@ void DefaultTeXFontParser::parseStyleMappings(
         obtainAttr("bold", mapping, boldFontId);
         // parse range
         const XMLElement* range = mapping->FirstChildElement("MapRange");
-#ifdef __DEBUG
+#ifdef HAVE_LOG
         __dbg("MapRange tag name: %s\n", range->Name());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
         vector<CharFont*> charFonts(4);
         while (range != nullptr) {
             const string fontId = getAttrValueAndCheckIfNotNull("fontId", range);
@@ -356,9 +356,9 @@ void DefaultTeXFontParser::parseFontDescriptions(
     const XMLElement* des = _root->FirstChildElement("FontDescriptions");
     if (des == nullptr) return;
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("FontDescriptions, tag name:%s <should be FontDescriptions>\n", des->Name());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 
     const XMLElement* met = des->FirstChildElement("Metrics");
     while (met != nullptr) {
@@ -371,9 +371,9 @@ void DefaultTeXFontParser::parseFontDescriptions(
         }
         parseFontDescriptions(fi, path);
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
         __dbg("Metrics file path, path:%s\n", path.c_str());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 
         met = met->NextSiblingElement("Metrics");
     }
@@ -409,7 +409,7 @@ void DefaultTeXFontParser::parseFontDescriptions(
     // get root
     const XMLElement* font = doc.RootElement();
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("Font root element, tag name:%s <should be Font>\n", font->Name());
 #endif
 
@@ -468,9 +468,9 @@ void DefaultTeXFontParser::parseFontDescriptions(
     // process all "Char"-elements
     const XMLElement* e = font->FirstChildElement("Char");
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("parse Char, tag name: %s <should be Char>\n", e->Name());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 
     while (e != nullptr) {
         processCharElement(e, *info);
@@ -494,9 +494,9 @@ void DefaultTeXFontParser::parseSymbolMappings(
     const XMLElement* mapping = _root->FirstChildElement("SymbolMappings");
     if (mapping == nullptr) throw ex_xml_parse(RESOURCE_NAME, "SymbolMappings");
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("parse SymbolMappings, tag name:%s <should be SymbolMappings>\n", mapping->Name());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 
     // iterate all mappings
     mapping = mapping->FirstChildElement("Mapping");
@@ -510,7 +510,7 @@ void DefaultTeXFontParser::parseSymbolMappings(
             path = _base + "/" + include;
         }
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
         __dbg("symbol map path: %s \n", path.c_str());
 #endif
 
@@ -519,9 +519,9 @@ void DefaultTeXFontParser::parseSymbolMappings(
             throw ex_xml_parse("Cannot find the file '" + path + "'!");
         const XMLElement* symbol = doc.RootElement()->FirstChildElement("SymbolMapping");
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
         __dbg("parse symbol, tag name:%s <should be SymbolMapping>\n", symbol->Name());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 
         while (symbol != nullptr) {
             /**
@@ -562,7 +562,7 @@ string* DefaultTeXFontParser::parseDefaultTextStyleMappins() throw(tex::ex_res_p
     const XMLElement* mappings = _root->FirstChildElement("DefaultTextStyleMapping");
     if (mappings == nullptr) return res;
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("tag name:%s <should be DefaultTextStyleMapping>\n", mappings->Name());
 #endif
 
@@ -642,15 +642,15 @@ void DefaultTeXFontParser::parseGeneralSettings(_out_ map<string, float>& res) t
  ***************************************************************************************************/
 
 TeXFont::~TeXFont() {
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("TeXFont destruct\n");
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 }
 
 DefaultTeXFont::~DefaultTeXFont() {
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("DefaultTeXFont destruct\n");
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 }
 
 void DefaultTeXFont::addTeXFontDescription(
@@ -687,9 +687,9 @@ void DefaultTeXFont::addAlphabet(AlphabetRegistration* reg) {
         addAlphabet(reg->getPackage(), reg->getUnicodeBlock(), reg->getTeXFontFile());
     } catch (ex_font_loaded& e) {
     } catch (ex_alphabet_registration& e) {
-#ifdef __DEBUG
+#ifdef HAVE_LOG
         __dbg("%s", e.what());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
     }
 }
 
@@ -751,15 +751,15 @@ Char DefaultTeXFont::getChar(const CharFont& c, int style) {
     float fsize = getSizeFactor(style);
     int id = _isBold ? cf._boldFontId : cf._fontId;
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("\n\t{[char: %d], [font_id: %d]", cf._c, id);
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 
     FontInfo* info = _fontInfo[id];
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __log << ", [path: " << info->getPath() << "]}\n";
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 
     if (_isBold && cf._fontId == cf._boldFontId) {
         id = info->getBoldId();
@@ -906,7 +906,7 @@ void DefaultTeXFont::_init_() {
             "contains an unknown font id");
     }
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     // check if text style mapping is correct
     __log << "elements in _defaultTextStyleMappings: ";
     for (int i = 0; i < 4; i++) __log << _defaultTextStyleMappings[i] << "; ";
@@ -946,7 +946,7 @@ void DefaultTeXFont::_init_() {
         __log << endl;
     }
     __log << endl;
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 }
 
 void DefaultTeXFont::_free_() {

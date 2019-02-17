@@ -56,7 +56,7 @@ void tex::print_box(const sptr<Box>& b) {
 }
 
 sptr<Box> FormulaBreaker::split(const sptr<Box>& b, float width, float interline) {
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __print("[BEFORE SPLIT]:\n");
     print_box(b);
 #endif
@@ -69,7 +69,7 @@ sptr<Box> FormulaBreaker::split(const sptr<Box>& b, float width, float interline
         box = b;
     }
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __print("[AFTER SPLIT]:\n");
     print_box(box);
 #endif
@@ -287,28 +287,28 @@ GlueSettingParser::GlueSettingParser() throw(ex_res_parse) : _doc(true, COLLAPSE
     string name = RES_BASE + "/" + RESOURCE_NAME;
     int err = _doc.LoadFile(name.c_str());
     if (err != XML_NO_ERROR) {
-#ifdef __DEBUG
+#ifdef HAVE_LOG
         __dbg("%s not found while parsing glue\n", name.c_str());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
         throw ex_xml_parse(name + " not found!");
     }
     _root = _doc.RootElement();
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("root name: %s \n", _root->Name());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 }
 
 void GlueSettingParser::parseGlueTypes(_out_ vector<Glue*>& glueTypes) throw(ex_res_parse) {
     const XMLElement* types = _root->FirstChildElement("GlueTypes");
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("GlueTypes tag name: %s\n", types->Name());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
     int defalutIndex = -1;
     int index = 0;
     const XMLElement* type = types->FirstChildElement("GlueType");
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("GlueType tag name: %s\n", type->Name());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
     while (type != nullptr) {
         // retrieve required attribute value, throw ex if not set
         string name = getAttr("name", type);
@@ -367,13 +367,13 @@ int*** GlueSettingParser::createGlueTable() throw(ex_res_parse) {
     GLUE_TAB_DIM_3 = t;
 
     const XMLElement* glueTable = _root->FirstChildElement("GlueTable");
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("GlueTable tag name: %s\n", glueTable->Name());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
     const XMLElement* glue = glueTable->FirstChildElement("Glue");
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("Glue tag name: %s\n", glue->Name());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
     while (glue != nullptr) {
         // retrieve required attribute values
         const string& left = getAttr("lefttype", glue);
@@ -406,13 +406,13 @@ int*** GlueSettingParser::createGlueTable() throw(ex_res_parse) {
 
 /************************************* Glue implementation ****************************************/
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
 ostream& tex::operator<<(ostream& out, const Glue& glue) {
     out << "glue: { space: " << glue._space << ", stretch: " << glue._stretch << ", shrink: ";
     out << glue._shrink << ", name: " << glue._name << " }";
     return out;
 }
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 
 vector<Glue*> Glue::_glueTypes;
 int*** Glue::_glueTable;
@@ -421,12 +421,12 @@ void Glue::_init_() {
     GlueSettingParser parser;
     parser.parseGlueTypes(_glueTypes);
     _glueTable = parser.createGlueTable();
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     // print glue types
     __log << "elements in _glueTypes" << endl;
     for (auto x : _glueTypes) __log << "\t" << x << endl;
     __log << endl;
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 }
 
 void Glue::_free_() {
@@ -535,9 +535,9 @@ TeXSymbolParser::TeXSymbolParser() throw(ex_res_parse) : _doc(true, COLLAPSE_WHI
     int err = _doc.LoadFile(file.c_str());
     if (err != XML_NO_ERROR) throw ex_res_parse(file + " not found!");
     _root = _doc.RootElement();
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("root :%s\n", _root->Name());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 }
 
 TeXSymbolParser::TeXSymbolParser(const string& file) throw(ex_res_parse)
@@ -545,9 +545,9 @@ TeXSymbolParser::TeXSymbolParser(const string& file) throw(ex_res_parse)
     int err = _doc.LoadFile(file.c_str());
     if (err != XML_NO_ERROR) throw ex_res_parse(file + " not found!");
     _root = _doc.RootElement();
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("root :%s\n", _root->Name());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 }
 
 void TeXSymbolParser::readSymbols(_out_ map<string, sptr<SymbolAtom>>& res) throw(ex_res_parse) {
@@ -577,9 +577,9 @@ TeXFormulaSettingParser::TeXFormulaSettingParser() throw(ex_res_parse)
     int err = _doc.LoadFile(file.c_str());
     if (err != XML_NO_ERROR) throw ex_xml_parse(file + " not found!");
     _root = _doc.RootElement();
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("TeXFormulaSettings.xml root: %s\n", _root->Name());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 }
 
 TeXFormulaSettingParser::TeXFormulaSettingParser(const string& file) throw(ex_res_parse)
@@ -587,9 +587,9 @@ TeXFormulaSettingParser::TeXFormulaSettingParser(const string& file) throw(ex_re
     int err = _doc.LoadFile(file.c_str());
     if (err != XML_NO_ERROR) throw ex_xml_parse(file + " not found!");
     _root = _doc.RootElement();
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("TeXFormulaSettings.xml root: %s\n", _root->Name());
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 }
 
 int TeXFormulaSettingParser::getUtf(const XMLElement* e, const char* attr) throw(ex_res_parse) {

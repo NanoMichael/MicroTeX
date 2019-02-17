@@ -956,10 +956,10 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_parse) 
          * Find from registered UNICODE-table
          */
         const UnicodeBlock& block = UnicodeBlock::of(c);
-#ifdef __DEBUG
+#ifdef HAVE_LOG
         int idx = indexOf(DefaultTeXFont::_loadedAlphabets, block);
         __log << "block of char: " << c << " is " << idx << endl;
-#endif  // __DEBUG
+#endif  // HAVE_LOG
         bool exist = (indexOf(DefaultTeXFont::_loadedAlphabets, block) != -1);
         if (!_isLoading && !exist) {
             auto it = DefaultTeXFont::_registeredAlphabets.find(block);

@@ -262,21 +262,21 @@ void SymbolAtom::_init_() {
         .set(TYPE_CLOSING)
         .set(TYPE_PUNCTUATION)
         .set(TYPE_ACCENT);
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __log << "elements in _symbols" << endl;
     for (auto i : _symbols)
         __log << "\t" << *(i.second) << endl;
     __log << endl;
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 }
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
 ostream& tex::operator<<(ostream& os, const SymbolAtom& s) {
     os << "SymbolAtom { "
        << "name:" << s._name << ", delimiter:" << s._delimiter << " }";
     return os;
 }
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 
 SymbolAtom::SymbolAtom(const string& name, int type, bool del) : _unicode(0) {
     _name = name;

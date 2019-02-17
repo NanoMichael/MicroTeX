@@ -19,9 +19,9 @@ map<UnicodeBlock, FontInfos*> TeXFormula::_externalFontMap;
 float TeXFormula::PIXELS_PER_POINT = 1.f;
 
 void TeXFormula::_init_() {
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __dbg("%s\n", "init formula");
-#endif  // __DEBUG
+#endif  // HAVE_LOG
     // Character-to-symbol and character-to-delimiter mappings
     TeXFormulaSettingParser parser;
     parser.parseSymbol(_symbolMappings, _symbolTextMappings);
@@ -29,7 +29,7 @@ void TeXFormula::_init_() {
     // Register external alphabet
     DefaultTeXFont::registerAlphabet(new CyrillicRegistration());
     DefaultTeXFont::registerAlphabet(new GreekRegistration());
-#ifdef __DEBUG
+#ifdef HAVE_LOG
     __log << "elements in _symbolMappings:" << endl;
     for (auto i : _symbolMappings)
         __log << "\t" << i.first << "->" << i.second << endl;
@@ -39,7 +39,7 @@ void TeXFormula::_init_() {
     __log << "elements in _symbolFormulaMappings:" << endl;
     for (auto i : _symbolFormulaMappings)
         __log << "\t" << i.first << "->" << i.second << endl;
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 }
 
 TeXFormula::TeXFormula(const TeXParser& tp)

@@ -44,10 +44,10 @@ using namespace std;
             __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
     }
 
-#ifdef __DEBUG
+#ifdef HAVE_LOG
 #include <iostream>
 #define __log std::cout
-#endif  // __DEBUG
+#endif  // HAVE_LOG
 
 #define __print printf
 
