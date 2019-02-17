@@ -644,6 +644,11 @@ public:
     explicit ex_invalid_state(const string& e) : ex_tex(e) {}
 };
 
+class ex_invalid_param : public ex_tex {
+public:
+    explicit ex_invalid_param(const string& e) : ex_tex(e) {}
+};
+
 /***************************************************************************************************
  *                                      TeXConstants                                               *
  ***************************************************************************************************/
