@@ -20,8 +20,8 @@
 #endif
 // Other platforms...
 
-// Flag for compile samples
-#if defined(__OS_Linux__) || defined(__OS_Windows__)
+// Flag for if compile samples
+#if defined(__OS_Linux__) || defined(__OS_Windows__) || defined(MEM_CHECK)
 #   define __USE_SAMPLES
 #endif
 

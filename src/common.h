@@ -51,15 +51,15 @@ using namespace std;
 
 #define __print printf
 
-// OUT parameter, that the parameter may be affected by this function
+// OUT parameter, the parameter may be affected by this function
 #define _out_
-// IN parameter, that the parameter will never be changed by this function
+// IN parameter, the parameter will never be changed by this function
 #define _in_
 
 namespace tex {
 
 /**
- * The root directory of the resources included (defined in latex.cpp)
+ * The root directory of the "TeX resources" (defined in latex.cpp)
  */
 extern string RES_BASE;
 

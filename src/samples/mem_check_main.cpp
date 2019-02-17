@@ -144,18 +144,22 @@ Font* Graphics2D_none::_default_font = new Font_none();
 
 }  // namespace tex
 
+#include "samples/samples.h"
+
 int main(int argc, char* argv[]) {
     LaTeX::init();
 
-    TeXRender* r = LaTeX::parse(L"\\text{What a beautiful day}", 720, 20, 20 / 3.f, 0xff000000);
-    Graphics2D_none g2;
-    r->draw(g2, 0, 0);
-    delete r;
+    tex::Samples samples;
+    for (int i = 0; i < samples.count(); i++) {
+        auto r = LaTeX::parse(samples.next(), 720, 20, 20 / 3.f, black);
+        Graphics2D_none g2;
+        r->draw(g2, 0, 0);
+        delete r;
+    }
 
     LaTeX::release();
     Graphics2D_none::release();
-
     return 0;
 }
 
-#endif
+#endif  // MEM_CHECK
