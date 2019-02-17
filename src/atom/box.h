@@ -582,21 +582,19 @@ public:
  */
 class LineBox : public Box {
 private:
-    float* _lines;
+    // Every 4 elements represent a line, thus (x1, y1, x2, y2)
+    vector<float> _lines;
     float _thickness;
     int _lineCount;
 
 public:
     LineBox() = delete;
 
-    LineBox(float* lines, int lineCount, float thickness)
-        : _lines(lines), _lineCount(lineCount), _thickness(thickness) {}
+    LineBox(const vector<float> lines, float thickness);
 
     void draw(Graphics2D& g2, float x, float y) override;
 
     int getLastFontId() override;
-
-    ~LineBox();
 };
 
 /**

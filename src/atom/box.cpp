@@ -873,11 +873,18 @@ vector<sptr<Box>> ShiftBox::getChildren() const {
     return {_base};
 }
 
+LineBox::LineBox(const vector<float> lines, float thickness) {
+    _thickness = thickness;
+    if (lines.size() % 4 != 0) throw ex_invalid_param("The vector not represent lines.");
+    _lines = lines;
+}
+
 void LineBox::draw(Graphics2D& g2, float x, float y) {
     const float oldThickness = g2.getStroke().lineWidth;
     g2.setStrokeWidth(_thickness);
     g2.translate(0, -_height);
-    for (int i = 0; i < _lineCount; i++) {
+    int count = _lines.size() / 4;
+    for (int i = 0; i < count; i++) {
         int j = i * 4;
         float x1 = _lines[j] + x, y1 = _lines[j + 1] + y;
         float x2 = _lines[j + 2] + x, y2 = _lines[j + 3] + y;
@@ -889,10 +896,6 @@ void LineBox::draw(Graphics2D& g2, float x, float y) {
 
 int LineBox::getLastFontId() {
     return 0;
-}
-
-LineBox::~LineBox() {
-    delete _lines;
 }
 
 void OverlappedBox::draw(Graphics2D& g2, float x, float y) {
