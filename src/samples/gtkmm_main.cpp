@@ -251,73 +251,88 @@ protected:
 };
 
 class Headless {
+private:
+    const int _padding = 10, _maxWidth = 720;
+
 public:
-    int run(
-        const string& dir,
-        const string& samplesFile,
-        const string& prefix,
-        const float textSize,
-        const color foreground,
-        const color background) {
-        Samples samples(samplesFile);
-        if (samples.count() == 0) return 1;
+    string _outputDir;
+    string _samplesFile;
+    string _prefix;
 
-        const int padding = 10, maxWidth = 720;
-        const float linespace = textSize / 3.f;
+    string _input;
+    string _outputFile;
 
-        for (int i = 0; i < samples.count(); i++) {
-            auto r = LaTeX::parse(samples.next(), maxWidth, textSize, linespace, foreground);
-            string file = dir + "/" + prefix + tostring(i) + ".svg";
-            const float w = r->getWidth() + padding * 2;
-            const float h = r->getHeight() + padding * 2;
-            auto surface = Cairo::SvgSurface::create(file, w, h);
-            auto context = Cairo::Context::create(surface);
-            Graphics2D_cairo g2(context);
-            if (!istrans(background)) {
-                g2.setColor(background);
-                g2.fillRect(0, 0, w, h);
-            }
-            r->draw(g2, padding, padding);
-            delete r;
+    float _textSize;
+    color _foreground;
+    color _background;
+
+    void generateSingle(const wstring& code, const string& file) {
+        auto r = LaTeX::parse(code, _maxWidth, _textSize, _textSize / 3.f, _foreground);
+        const float w = r->getWidth() + _padding * 2;
+        const float h = r->getHeight() + _padding * 2;
+        auto surface = Cairo::SvgSurface::create(file, w, h);
+        auto context = Cairo::Context::create(surface);
+        Graphics2D_cairo g2(context);
+        if (!istrans(_background)) {
+            g2.setColor(_background);
+            g2.fillRect(0, 0, w, h);
         }
+        r->draw(g2, _padding, _padding);
+        delete r;
+    }
 
+    int runBatch() {
+        Samples samples(_samplesFile);
+        if (samples.count() == 0) return 1;
+        for (int i = 0; i < samples.count(); i++) {
+            generateSingle(samples.next(), _outputDir + "/" + _prefix + tostring(i) + ".svg");
+        }
         return 0;
+    }
+
+    int runSingle() {
+        wstring code;
+        utf82wide(_input.c_str(), code);
+        generateSingle(code, _outputFile);
+        return 0;
+    }
+
+    int run() {
+        if (_textSize <= 0.f) _textSize = 20.f;
+        if (!_input.empty() && !_outputFile.empty()) return runSingle();
+        return runBatch();
     }
 };
 
 #include "atom/atom_basic.h"
 
 int runHeadless(const vector<string>& opts) {
-    string outputDir = "";
-    string samplesFile = "";
-    string prefix = "";
-    float textSize = 20.f;
-    color foreground = BLACK;
-    color background = TRANS;
+    Headless h;
     for (size_t i = 0; i < opts.size(); i++) {
         auto x = opts[i];
         if (startswith(x, "-outputdir")) {
-            outputDir = x.substr(x.find("=") + 1);
+            h._outputDir = x.substr(x.find("=") + 1);
         } else if (startswith(x, "-samples")) {
-            samplesFile = x.substr(x.find("=") + 1);
+            h._samplesFile = x.substr(x.find("=") + 1);
         } else if (startswith(x, "-prefix")) {
-            prefix = x.substr(x.find("=") + 1);
+            h._prefix = x.substr(x.find("=") + 1);
         } else if (startswith(x, "-textsize")) {
             auto str = x.substr(x.find("=") + 1);
-            valueof(str, textSize);
-            if (textSize <= 0.f) textSize = 20.f;
+            valueof(str, h._textSize);
         } else if (startswith(x, "-foreground")) {
             auto str = x.substr(x.find("=") + 1);
-            foreground = tex::ColorAtom::getColor(str);
+            h._foreground = tex::ColorAtom::getColor(str);
         } else if (startswith(x, "-background")) {
             auto str = x.substr(x.find("=") + 1);
-            background = tex::ColorAtom::getColor(str);
+            h._background = tex::ColorAtom::getColor(str);
+        } else if (startswith(x, "-input")) {
+            h._input = x.substr(x.find("=") + 1);
+        } else if (startswith(x, "-output")) {
+            h._outputFile = x.substr(x.find("=") + 1);
         }
     }
 
-    if (outputDir.empty()) return 1;
-    Headless().run(outputDir, samplesFile, prefix, textSize, foreground, background);
-    return 0;
+    return h.run();
 }
 
 int runWindow(int argc, char* argv[]) {
