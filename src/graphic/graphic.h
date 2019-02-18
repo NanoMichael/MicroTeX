@@ -18,8 +18,7 @@ enum TypefaceStyle {
 };
 
 /**
- * Abstract class represents font information. The methods Font#create and Font#_create must be
- * implemented in different platforms.
+ * Abstract class represents a font.
  */
 class Font {
 public:
@@ -29,21 +28,21 @@ public:
     virtual float getSize() const = 0;
 
     /**
-     * Derive font from current font with specified style
+     * Derive font from current font with given style
      *
      * @param style
-     *      required style, specified in enum TypefaceStyle,
-     *      we use int type to represents style
+     *      required style, defined in enum TypefaceStyle,
+     *      we use integer type to represents style here
      */
     virtual sptr<Font> deriveFont(int style) const = 0;
 
     /**
-     * Check if current font equals other
+     * Check if current font equals another
      */
     virtual bool operator==(const Font& f) const = 0;
 
     /**
-     * Check if current font not equals other
+     * Check if current font not equals another
      */
     virtual bool operator!=(const Font& f) const = 0;
 
@@ -51,14 +50,14 @@ public:
      * Create font from file
      * 
      * @param file
-     *      specified path of the font file
+     *      the path of the font file
      * @param size
      *      required font size
      */
     static Font* create(const string& file, float size);
 
     /**
-     * Create font with specified name, style and size
+     * Create font with given name, style and size
      *
      * @param name
      *      the font name
@@ -71,7 +70,7 @@ public:
 };
 
 /**
- * To layout text with no new line
+ * To layout text the program can not recognize.
  */
 class TextLayout {
 public:
@@ -99,7 +98,7 @@ public:
      * Create a TextLayout with given text and font
      *
      * @param src
-     *      the given text to layout
+     *      the text to layout
      * @param font
      *      the specified font
      * @return
@@ -109,9 +108,9 @@ public:
 };
 
 /**
- * Abstract class to represents a 2D graphics context, all the TeX drawing operations will on it.
- * It must have scale, translation, and rotation support. You should notice that scaling on
- * y-direction will be selected as the base if it is different on x and y-direction when drawing
+ * Abstract class to represents a graphics (2D) context, all the TeX drawing operations will on it.
+ * It must have scale, translation, and rotation support. You should notice that the scaling on
+ * y-direction will be selected as the base if they are different on x and y-direction when drawing
  * characters. In most cases, you should never use different scalings, unless you are really sure the
  * coordinates are correct (i.e. draw a hyphen).
  */
@@ -156,7 +155,7 @@ public:
     virtual void setFont(const Font* font) = 0;
 
     /**
-     * Translate the graphics context with distance dx, dy
+     * Translate the context with distance dx, dy
      *
      * @param dx
      *      distance in x-direction to translate
@@ -166,7 +165,7 @@ public:
     virtual void translate(float dx, float dy) = 0;
 
     /**
-     * Scale the graphics context with sx, sy
+     * Scale the context with sx, sy
      *
      * @param sx
      *      scale ratio in x-direction
@@ -176,7 +175,7 @@ public:
     virtual void scale(float sx, float sy) = 0;
 
     /**
-     * Rotate the graphics context with the given angle (in radian), with pivot (0, 0).
+     * Rotate the context with the given angle (in radian), with pivot (0, 0).
      *
      * @param angle
      *      angle (in radian) amount to rotate
@@ -184,7 +183,7 @@ public:
     virtual void rotate(float angle) = 0;
 
     /**
-     * Rotate the graphics context with the given angle (in radian), with pivot (px, py).
+     * Rotate the context with the given angle (in radian), with pivot (px, py).
      *
      * @param angle
      *      angle (in radian) amount to rotate
@@ -196,7 +195,7 @@ public:
     virtual void rotate(float angle, float px, float py) = 0;
 
     /**
-     * Reset transformations of the graphics context
+     * Reset transformations
      */
     virtual void reset() = 0;
 
