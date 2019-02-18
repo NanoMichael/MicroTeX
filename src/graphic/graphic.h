@@ -70,7 +70,7 @@ public:
 };
 
 /**
- * To layout text the program can not recognize.
+ * To layout the text that the program cannot recognize.
  */
 class TextLayout {
 public:

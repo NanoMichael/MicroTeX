@@ -39,8 +39,10 @@ bool UnicodeBlock::operator==(const UnicodeBlock& ub) const {
     return (ub._start == _start && ub._end == _end);
 }
 
-void UnicodeBlock::define(wchar_t codePointStart, wchar_t codePointEnd) {
-    _defined.push_back(new UnicodeBlock(codePointStart, codePointEnd));
+const UnicodeBlock& UnicodeBlock::define(wchar_t codePointStart, wchar_t codePointEnd) {
+    auto ub = new UnicodeBlock(codePointStart, codePointEnd);
+    _defined.push_back(ub);
+    return *ub;
 }
 
 const UnicodeBlock& UnicodeBlock::of(wchar_t c) {
@@ -73,6 +75,7 @@ const string CyrillicRegistration::getTeXFontFile() const {
 const vector<UnicodeBlock> GreekRegistration::_block = {
     UnicodeBlock::GREEK,
     UnicodeBlock::GREEK_EXTENDED};
+
 const string GreekRegistration::_package = "greek";
 const string GreekRegistration::_font = "greek/language_greek.xml";
 

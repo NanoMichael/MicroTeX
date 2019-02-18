@@ -33,7 +33,7 @@ public:
 
     bool operator>(const UnicodeBlock& ub) const;
 
-    static void define(wchar_t codePointStart, wchar_t codePointEnd);
+    static const UnicodeBlock& define(wchar_t codePointStart, wchar_t codePointEnd);
 
     static const UnicodeBlock& of(wchar_t c);
 };
