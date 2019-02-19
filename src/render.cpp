@@ -138,7 +138,7 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
         HorizontalBox* hb = nullptr;
         if (_lineSpaceUnit != -1 && _lineSpace != 0) {
             float il = _lineSpace * SpaceAtom::getFactor(_lineSpaceUnit, *te);
-            auto b = FormulaBreaker::split(box, te->getTextWidth(), il);
+            auto b = BoxSplitter::split(box, te->getTextWidth(), il);
             hb = new HorizontalBox(b, _isMaxWidth ? b->_width : te->getTextWidth(), _align);
         } else {
             hb = new HorizontalBox(box, _isMaxWidth ? box->_width : te->getTextWidth(), _align);

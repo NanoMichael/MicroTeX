@@ -19,25 +19,25 @@ class Box;
 void print_box(const sptr<Box>& box);
 #endif  // HAVE_LOG
 
-struct Position {
-    int _index;
-    sptr<HorizontalBox> _hbox;
-
-    Position() = delete;
-
-    Position(int index, const sptr<HorizontalBox>& hbox)
-        : _index(index), _hbox(hbox) {}
-};
-
-class FormulaBreaker {
+class BoxSplitter {
 public:
-    static sptr<Box> split(const sptr<Box>& box, float w, float interline);
+    struct Position {
+        int _index;
+        sptr<HorizontalBox> _box;
 
-    static sptr<Box> split(const sptr<HorizontalBox>& hb, float w, float interline);
+        Position(int index, const sptr<HorizontalBox>& box)
+            : _index(index), _box(box) {}
+    };
 
-    static float canBreak(_out_ stack<Position>& s, const sptr<HorizontalBox>& hbox, float w);
+private:
+    static float canBreak(_out_ stack<Position>& stack, const sptr<HorizontalBox>& hbox, float width);
 
-    static int getBreakPosition(const sptr<HorizontalBox>& hb, int i);
+    static int getBreakPosition(const sptr<HorizontalBox>& hb, int index);
+
+public:
+    static sptr<Box> split(const sptr<Box>& box, float width, float lineSpace);
+
+    static sptr<Box> split(const sptr<HorizontalBox>& hb, float width, float lineSpace);
 };
 
 /**
