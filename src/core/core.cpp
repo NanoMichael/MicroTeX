@@ -6,11 +6,10 @@
 using namespace std;
 using namespace tex;
 
+#ifdef HAVE_LOG
 void print_box(const sptr<Box>& b, int dep, vector<bool>& lines) {
     __print("%-4d", dep);
-    if (lines.size() < dep + 1) {
-        lines.resize(dep + 1, false);
-    }
+    if (lines.size() < dep + 1) lines.resize(dep + 1, false);
 
     for (int i = 0; i < dep - 1; i++) {
         if (lines[i]) {
@@ -54,6 +53,7 @@ void tex::print_box(const sptr<Box>& b) {
     ::print_box(b, 0, lines);
     __print("\n");
 }
+#endif  // HAVE_LOG
 
 sptr<Box> FormulaBreaker::split(const sptr<Box>& b, float width, float interline) {
 #ifdef HAVE_LOG

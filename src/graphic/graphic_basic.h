@@ -126,6 +126,14 @@ struct Insets {
         right = r;
         bottom = b;
     }
+
+    Insets& operator+=(const int offset) {
+        left += offset;
+        top += offset;
+        right += offset;
+        bottom += offset;
+        return *this;
+    }
 };
 
 enum Cap {

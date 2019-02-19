@@ -34,25 +34,15 @@ public:
     Metrics(float w, float h, float d, float i, float factor, float s)
         : _w(w * factor), _h(h * factor), _d(d * factor), _i(i * factor), _s(s) {}
 
-    inline float getWidth() const {
-        return _w;
-    }
+    inline float getWidth() const { return _w; }
 
-    inline float getHeight() const {
-        return _h;
-    }
+    inline float getHeight() const { return _h; }
 
-    inline float getDepth() const {
-        return _d;
-    }
+    inline float getDepth() const { return _d; }
 
-    inline float getItalic() const {
-        return _i;
-    }
+    inline float getItalic() const { return _i; }
 
-    inline float getSize() const {
-        return _s;
-    }
+    inline float getSize() const { return _s; }
 };
 
 /**
@@ -76,7 +66,7 @@ public:
 };
 
 /**
- * class represents a character together with its font, font id and metric information
+ * Class represents a character together with its font, font id and metric information
  */
 class Char {
 private:
@@ -91,41 +81,23 @@ public:
 
     Char(wchar_t c, const Font* f, int fc, const sptr<Metrics>& m);
 
-    sptr<CharFont> getCharFont() const {
-        return _cf;
-    }
+    sptr<CharFont> getCharFont() const { return _cf; }
 
-    inline wchar_t getChar() const {
-        return _c;
-    }
+    inline wchar_t getChar() const { return _c; }
 
-    inline const Font* getFont() const {
-        return _font;
-    }
+    inline const Font* getFont() const { return _font; }
 
-    inline int getFontCode() const {
-        return _font_code;
-    }
+    inline int getFontCode() const { return _font_code; }
 
-    inline float getWidth() const {
-        return _m->getWidth();
-    }
+    inline float getWidth() const { return _m->getWidth(); }
 
-    inline float getItalic() const {
-        return _m->getItalic();
-    }
+    inline float getItalic() const { return _m->getItalic(); }
 
-    inline float getHeight() const {
-        return _m->getHeight();
-    }
+    inline float getHeight() const { return _m->getHeight(); }
 
-    inline float getDepth() const {
-        return _m->getDepth();
-    }
+    inline float getDepth() const { return _m->getDepth(); }
 
-    inline float getSize() const {
-        return _m->getSize();
-    }
+    inline float getSize() const { return _m->getSize(); }
 };
 
 /**
@@ -147,37 +119,21 @@ public:
     Extension(Char* t, Char* m, Char* r, Char* b)
         : _top(t), _middle(m), _repeat(r), _bottom(b) {}
 
-    inline bool hasTop() const {
-        return _top != nullptr;
-    }
+    inline bool hasTop() const { return _top != nullptr; }
 
-    inline bool hasMiddle() const {
-        return _middle != nullptr;
-    }
+    inline bool hasMiddle() const { return _middle != nullptr; }
 
-    inline bool hasBottom() const {
-        return _bottom != nullptr;
-    }
+    inline bool hasBottom() const { return _bottom != nullptr; }
 
-    inline bool hasRepeat() const {
-        return _repeat != nullptr;
-    }
+    inline bool hasRepeat() const { return _repeat != nullptr; }
 
-    inline const Char& getTop() const {
-        return *_top;
-    }
+    inline const Char& getTop() const { return *_top; }
 
-    inline const Char& getMiddle() const {
-        return *_middle;
-    }
+    inline const Char& getMiddle() const { return *_middle; }
 
-    inline const Char& getRepeat() const {
-        return *_repeat;
-    }
+    inline const Char& getRepeat() const { return *_repeat; }
 
-    inline const Char& getBottom() const {
-        return *_bottom;
-    }
+    inline const Char& getBottom() const { return *_bottom; }
 
     ~Extension();
 };
@@ -334,34 +290,22 @@ public:
         return _metrics[_unicode[c]];
     }
 
-    inline bool hasNextLarger(wchar_t c) {
-        return getNextLarger(c) != nullptr;
-    }
+    inline bool hasNextLarger(wchar_t c) { return getNextLarger(c) != nullptr; }
 
     inline const CharFont* getNextLarger(wchar_t c) {
         if (_unicode_count == 0) return _nextLarger[c];
         return _nextLarger[_unicode[c]];
     }
 
-    inline float getQuad(float factor) const {
-        return _quad * factor;
-    }
+    inline float getQuad(float factor) const { return _quad * factor; }
 
-    inline wchar_t getSkewChar() const {
-        return _skewChar;
-    }
+    inline wchar_t getSkewChar() const { return _skewChar; }
 
-    inline float getSpace(float factor) const {
-        return _space * factor;
-    }
+    inline float getSpace(float factor) const { return _space * factor; }
 
-    inline float getXHeight(float factor) const {
-        return _xHeight * factor;
-    }
+    inline float getXHeight(float factor) const { return _xHeight * factor; }
 
-    inline bool hasSpace() const {
-        return _space > PREC;
-    }
+    inline bool hasSpace() const { return _space > PREC; }
 
     void setExtension(wchar_t ch, _in_ int* ext) {
         if (_unicode_count == 0) {
@@ -389,63 +333,35 @@ public:
 
     void setNextLarger(wchar_t c, wchar_t larger, int fontLarger);
 
-    inline void setSkewChar(wchar_t c) {
-        _skewChar = c;
-    }
+    inline void setSkewChar(wchar_t c) { _skewChar = c; }
 
-    inline int getId() const {
-        return _fontId;
-    }
+    inline int getId() const { return _fontId; }
 
-    inline int getBoldId() const {
-        return _boldId;
-    }
+    inline int getBoldId() const { return _boldId; }
 
-    inline int getRomanId() const {
-        return _romanId;
-    }
+    inline int getRomanId() const { return _romanId; }
 
-    inline int getTtId() const {
-        return _ttId;
-    }
+    inline int getTtId() const { return _ttId; }
 
-    inline int getItId() const {
-        return _itId;
-    }
+    inline int getItId() const { return _itId; }
 
-    inline int getSsId() const {
-        return _ssId;
-    }
+    inline int getSsId() const { return _ssId; }
 
-    inline void setSsId(int id) {
-        _ssId = id == -1 ? _fontId : id;
-    }
+    inline void setSsId(int id) { _ssId = id == -1 ? _fontId : id; }
 
-    inline void setTtId(int id) {
-        _ttId = id == -1 ? _fontId : id;
-    }
+    inline void setTtId(int id) { _ttId = id == -1 ? _fontId : id; }
 
-    inline void setItId(int id) {
-        _itId = id == -1 ? _fontId : id;
-    }
+    inline void setItId(int id) { _itId = id == -1 ? _fontId : id; }
 
-    inline void setRomanId(int id) {
-        _romanId = id == -1 ? _fontId : id;
-    }
+    inline void setRomanId(int id) { _romanId = id == -1 ? _fontId : id; }
 
-    inline void setBoldId(int id) {
-        _boldId = id == -1 ? _fontId : id;
-    }
+    inline void setBoldId(int id) { _boldId = id == -1 ? _fontId : id; }
 
-    inline const string& getPath() const {
-        return _path;
-    }
+    inline const string& getPath() const { return _path; }
 
     const Font* getFont();
 
-    inline static const Font* getFont(int id) {
-        return _fonts[id]->getFont();
-    }
+    inline static const Font* getFont(int id) { return _fonts[id]->getFont(); }
 
     ~FontInfo();
 
@@ -770,6 +686,10 @@ public:
         return _generalSettings["scriptscriptfactor"];
     }
 
+    inline float styleParam(const string& name, int style) {
+        return getParameter(name) * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
+    }
+
     /************************************ get char ************************************************/
 
     Char getDefaultChar(wchar_t c, int style) override;
@@ -795,46 +715,46 @@ public:
 
     inline sptr<TeXFont> copy() override;
 
-    inline float getScaleFactor() override {
-        return _factor;
-    }
+    inline float getScaleFactor() override { return _factor; }
 
-    inline float getAxisHeight(int style) override {
-        return getParameter("axisheight") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
-    }
+    inline float getAxisHeight(int style) override { return styleParam("axisheight", style); }
 
-    inline float getBigOpSpacing1(int style) override {
-        return getParameter("bigopspacing1") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
-    }
+    inline float getBigOpSpacing1(int style) override { return styleParam("bigopspacing1", style); }
 
-    inline float getBigOpSpacing2(int style) override {
-        return getParameter("bigopspacing2") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
-    }
+    inline float getBigOpSpacing2(int style) override { return styleParam("bigopspacing2", style); }
 
-    inline float getBigOpSpacing3(int style) override {
-        return getParameter("bigopspacing3") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
-    }
+    inline float getBigOpSpacing3(int style) override { return styleParam("bigopspacing3", style); }
 
-    inline float getBigOpSpacing4(int style) override {
-        return getParameter("bigopspacing4") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
-    }
+    inline float getBigOpSpacing4(int style) override { return styleParam("bigopspacing4", style); }
 
-    inline float getBigOpSpacing5(int style) override {
-        return getParameter("bigopspacing5") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
-    }
+    inline float getBigOpSpacing5(int style) override { return styleParam("bigopspacing5", style); }
 
-    int getMuFontId() override;
+    inline float getNum1(int style) override { return styleParam("num1", style); }
 
-    inline float getNum1(int style) override {
-        return getParameter("num1") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
-    }
+    inline float getNum2(int style) override { return styleParam("num2", style); }
 
-    inline float getNum2(int style) override {
-        return getParameter("num2") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
-    }
+    inline float getNum3(int style) override { return styleParam("num3", style); }
 
-    inline float getNum3(int style) override {
-        return getParameter("num3") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
+    inline float getSub1(int style) override { return styleParam("sub1", style); }
+
+    inline float getSub2(int style) override { return styleParam("sub2", style); }
+
+    inline float getSubDrop(int style) override { return styleParam("subdrop", style); }
+
+    inline float getSup1(int style) override { return styleParam("sup1", style); }
+
+    inline float getSup2(int style) override { return styleParam("sup2", style); }
+
+    inline float getSup3(int style) override { return styleParam("sup3", style); }
+
+    inline float getSupDrop(int style) override { return styleParam("supdrop", style); }
+
+    inline float getDenom1(int style) override { return styleParam("denom1", style); }
+
+    inline float getDenom2(int style) override { return styleParam("denom2", style); }
+
+    inline float getDefaultRuleThickness(int style) override {
+        return styleParam("defaultrulethickness", style);
     }
 
     inline float getQuad(int style, int fontCode) override {
@@ -842,9 +762,9 @@ public:
         return info->getQuad(getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT);
     }
 
-    inline float getSize() override {
-        return _size;
-    }
+    int getMuFontId() override;
+
+    inline float getSize() override { return _size; }
 
     inline float getSkew(_in_ const CharFont& cf, int style) override {
         FontInfo* info = _fontInfo[cf._fontId];
@@ -854,34 +774,6 @@ public:
     }
 
     inline float getSpace(int style) override;
-
-    inline float getSub1(int style) override {
-        return getParameter("sub1") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
-    }
-
-    inline float getSub2(int style) override {
-        return getParameter("sub2") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
-    }
-
-    inline float getSubDrop(int style) override {
-        return getParameter("subdrop") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
-    }
-
-    inline float getSup1(int style) override {
-        return getParameter("sup1") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
-    }
-
-    inline float getSup2(int style) override {
-        return getParameter("sup2") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
-    }
-
-    inline float getSup3(int style) override {
-        return getParameter("sup3") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
-    }
-
-    inline float getSupDrop(int style) override {
-        return getParameter("supdrop") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
-    }
 
     inline float getXHeight(int style, int fontCode) override {
         FontInfo* info = _fontInfo[fontCode];
@@ -897,45 +789,25 @@ public:
         return info->hasNextLarger(c.getChar());
     }
 
-    inline void setBold(bool bold) override {
-        _isBold = bold;
-    }
+    inline void setBold(bool bold) override { _isBold = bold; }
 
-    inline bool getBold() override {
-        return _isBold;
-    }
+    inline bool getBold() override { return _isBold; }
 
-    inline void setRoman(bool rm) override {
-        _isRoman = rm;
-    }
+    inline void setRoman(bool rm) override { _isRoman = rm; }
 
-    inline bool getRoman() override {
-        return _isRoman;
-    }
+    inline bool getRoman() override { return _isRoman; }
 
-    inline void setTt(bool tt) override {
-        _isTt = tt;
-    }
+    inline void setTt(bool tt) override { _isTt = tt; }
 
-    inline bool getTt() override {
-        return _isTt;
-    }
+    inline bool getTt() override { return _isTt; }
 
-    inline void setSs(bool ss) override {
-        _isSs = ss;
-    }
+    inline void setSs(bool ss) override { _isSs = ss; }
 
-    inline bool getSs() override {
-        return _isSs;
-    }
+    inline bool getSs() override { return _isSs; }
 
-    inline void setIt(bool it) override {
-        _isIt = it;
-    }
+    inline void setIt(bool it) override { _isIt = it; }
 
-    inline bool getIt() override {
-        return _isIt;
-    }
+    inline bool getIt() override { return _isIt; }
 
     inline bool hasSpace(int font) override {
         FontInfo* info = _fontInfo[font];
@@ -945,19 +817,6 @@ public:
     inline bool isExtensionChar(_in_ const Char& c) override {
         FontInfo* info = _fontInfo[c.getFontCode()];
         return info->isExtensionChar(c.getChar());
-    }
-
-    inline float getDefaultRuleThickness(int style) override {
-        return getParameter("defaultrulethickness") *
-               getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
-    }
-
-    inline float getDenom1(int style) override {
-        return getParameter("denom1") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
-    }
-
-    inline float getDenom2(int style) override {
-        return getParameter("denom2") * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
     }
 
     /**
@@ -1001,8 +860,7 @@ public:
 private:
     static vector<string> _fontId;
     static const map<string, int> _rangeTypeMappings;
-    static const map<string, void (*)(const XMLElement*, wchar_t, _out_ FontInfo&)>
-        _charChildParsers;
+    static const map<string, void (*)(const XMLElement*, wchar_t, FontInfo&)> _charChildParsers;
     // the xml-document we used
     XMLDocument _doc;
 
@@ -1095,14 +953,12 @@ private:
     }
 
 public:
-    DefaultTeXFontParser() throw(ex_res_parse)
-        : _doc(true, COLLAPSE_WHITESPACE) {
+    DefaultTeXFontParser() throw(ex_res_parse) : _doc(true, COLLAPSE_WHITESPACE) {
         string file = RES_BASE + "/" + RESOURCE_NAME;
         init(file);
     }
 
-    DefaultTeXFontParser(const string& file) throw(ex_xml_parse)
-        : _doc(true, COLLAPSE_WHITESPACE) {
+    DefaultTeXFontParser(const string& file) throw(ex_xml_parse) : _doc(true, COLLAPSE_WHITESPACE) {
         init(file);
     }
 
@@ -1114,7 +970,8 @@ public:
     void parseExtraPath() throw(ex_res_parse);
 
     void parseFontDescriptions(
-        _out_ vector<FontInfo*>& fin, const string& file) throw(ex_res_parse);
+        _out_ vector<FontInfo*>& fin,
+        const string& file) throw(ex_res_parse);
 
     void parseFontDescriptions(_out_ vector<FontInfo*>& fin) throw(ex_res_parse);
 

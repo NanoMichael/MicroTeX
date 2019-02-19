@@ -15,7 +15,9 @@ namespace tex {
 
 class Box;
 
+#ifdef HAVE_LOG
 void print_box(const sptr<Box>& box);
+#endif  // HAVE_LOG
 
 struct Position {
     int _index;
@@ -127,17 +129,11 @@ public:
 
     void setTextWidth(int widthUnit, float width);
 
-    inline float getTextWidth() const {
-        return _textWidth;
-    }
+    inline float getTextWidth() const { return _textWidth; }
 
-    inline void setScaleFactor(float f) {
-        _scaleFactor = f;
-    }
+    inline void setScaleFactor(float f) { _scaleFactor = f; }
 
-    inline float getScaleFactor() const {
-        return _scaleFactor;
-    }
+    inline float getScaleFactor() const { return _scaleFactor; }
 
     sptr<TeXEnvironment>& copy();
 
@@ -173,66 +169,38 @@ public:
      */
     sptr<TeXEnvironment>& supStyle();
 
-    inline void setBackground(color bg) {
-        _background = bg;
-    }
+    inline void setBackground(color bg) { _background = bg; }
 
-    inline void setColor(color c) {
-        _color = c;
-    }
+    inline void setColor(color c) { _color = c; }
 
-    inline color getBackground() const {
-        return _background;
-    }
+    inline color getBackground() const { return _background; }
 
-    inline color getColor() const {
-        return _color;
-    }
+    inline color getColor() const { return _color; }
 
-    inline float getSize() const {
-        return _tf->getSize();
-    }
+    inline float getSize() const { return _tf->getSize(); }
 
-    inline int getStyle() const {
-        return _style;
-    }
+    inline int getStyle() const { return _style; }
 
-    inline void setStyle(int style) {
-        _style = style;
-    }
+    inline void setStyle(int style) { _style = style; }
 
-    inline const string& getTextStyle() const {
-        return _textStyle;
-    }
+    inline const string& getTextStyle() const { return _textStyle; }
 
-    inline void setTextStyle(const string& style) {
-        _textStyle = style;
-    }
+    inline void setTextStyle(const string& style) { _textStyle = style; }
 
-    inline bool getSmallCap() const {
-        return _smallCap;
-    }
+    inline bool getSmallCap() const { return _smallCap; }
 
-    inline void setSmallCap(bool s) {
-        _smallCap = s;
-    }
+    inline void setSmallCap(bool s) { _smallCap = s; }
 
-    inline const sptr<TeXFont>& getTeXFont() const {
-        return _tf;
-    }
+    inline const sptr<TeXFont>& getTeXFont() const { return _tf; }
 
     inline void reset() {
         _color = trans;
         _background = trans;
     }
 
-    inline float getSpace() const {
-        return _tf->getSpace(_style) * _tf->getScaleFactor();
-    }
+    inline float getSpace() const { return _tf->getSpace(_style) * _tf->getScaleFactor(); }
 
-    inline void setLastFontId(int id) {
-        _lastFontId = id;
-    }
+    inline void setLastFontId(int id) { _lastFontId = id; }
 
     inline int getLastFontId() const {
         return (_lastFontId == TeXFont::NO_FONT ? _tf->getMuFontId() : _lastFontId);
