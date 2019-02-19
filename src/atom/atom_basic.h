@@ -718,6 +718,8 @@ private:
     static bitset<16> _init_();
 
 public:
+    static bool _breakEveywhere;
+
     bool _lookAtLastAtom;
 
     RowAtom() : _lookAtLastAtom(false), _canBreak(true) {}

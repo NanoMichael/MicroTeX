@@ -273,7 +273,7 @@ void SymbolAtom::_init_() {
 #ifdef HAVE_LOG
 ostream& tex::operator<<(ostream& os, const SymbolAtom& s) {
     os << "SymbolAtom { "
-       << "name:" << s._name << ", delimiter:" << s._delimiter << " }";
+       << "name: " << s._name << ", delimiter: " << s._delimiter << " }";
     return os;
 }
 #endif  // HAVE_LOG
@@ -364,6 +364,7 @@ sptr<Box> CharAtom::createBox(_out_ TeXEnvironment& env) {
 
 /************************************** row atom implementation ***********************************/
 
+bool RowAtom::_breakEveywhere = false;
 bitset<16> RowAtom::_binSet;
 bitset<16> RowAtom::_ligKernSet = RowAtom::_init_();
 
@@ -515,13 +516,18 @@ sptr<Box> RowAtom::createBox(_out_ TeXEnvironment& env) {
             // As an example: (TVY) looks crappy...
             cb->addItalicCorrectionToWidth();
         }
-        /**CharAtom* ca = dynamic_cast<CharAtom*>(at.get());
-        if (markAdded || (ca != nullptr && isdigit(ca->getCharacter()))) {
-            hbox->addBreakPosition(hbox->_children.size());
-        }*/
+
         if (_canBreak) {
-            hbox->addBreakPosition(hbox->_children.size());
+            if (_breakEveywhere) {
+                hbox->addBreakPosition(hbox->_children.size());
+            } else {
+                auto ca = dynamic_cast<CharAtom*>(at.get());
+                if (markAdded || (ca != nullptr && isdigit(ca->getCharacter()))) {
+                    hbox->addBreakPosition(hbox->_children.size());
+                }
+            }
         }
+
         hbox->add(b);
 
         // set last used font id (for next atom)

@@ -42,6 +42,11 @@ inline macro(fatalIfCmdConflict) {
     return nullptr;
 }
 
+inline macro(breakEverywhere) {
+    RowAtom::_breakEveywhere = args[1] == L"true";
+    return nullptr;
+}
+
 inline macro(multirow) {
     if (!tp.isArrayMode()) throw ex_parse("Command \\multirow must used in array environment!");
     int n = 0;
