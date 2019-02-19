@@ -56,25 +56,28 @@ void tex::print_box(const sptr<Box>& b) {
 #endif  // HAVE_LOG
 
 sptr<Box> BoxSplitter::split(const sptr<Box>& b, float width, float lineSpace) {
-#ifdef HAVE_LOG
-    __print("[BEFORE SPLIT]:\n");
-    print_box(b);
-#endif
-
     auto h = dynamic_pointer_cast<HorizontalBox>(b);
     sptr<Box> box;
     if (h != nullptr) {
-        box = split(h, width, lineSpace);
-    } else {
-        box = b;
-    }
-
+        auto box = split(h, width, lineSpace);
 #ifdef HAVE_LOG
-    __print("[AFTER SPLIT]:\n");
-    print_box(box);
+        if (box != b) {
+            __print("[BEFORE SPLIT]:\n");
+            print_box(b);
+            __print("[AFTER SPLIT]:\n");
+            print_box(box);
+        } else {
+            __print("[BOX TREE]:\n");
+            print_box(box);
+        }
 #endif
-
-    return box;
+        return box;
+    }
+#ifdef HAVE_LOG
+    __print("[BOX TREE]:\n");
+    print_box(b);
+#endif
+    return b;
 }
 
 sptr<Box> BoxSplitter::split(const sptr<HorizontalBox>& hb, float width, float lineSpace) {
