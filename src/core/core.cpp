@@ -55,7 +55,7 @@ void tex::print_box(const sptr<Box>& b) {
 }
 #endif  // HAVE_LOG
 
-sptr<Box> FormulaBreaker::split(const sptr<Box>& b, float width, float interline) {
+sptr<Box> BoxSplitter::split(const sptr<Box>& b, float width, float lineSpace) {
 #ifdef HAVE_LOG
     __print("[BEFORE SPLIT]:\n");
     print_box(b);
@@ -64,7 +64,7 @@ sptr<Box> FormulaBreaker::split(const sptr<Box>& b, float width, float interline
     auto h = dynamic_pointer_cast<HorizontalBox>(b);
     sptr<Box> box;
     if (h != nullptr) {
-        box = split(h, width, interline);
+        box = split(h, width, lineSpace);
     } else {
         box = b;
     }
@@ -77,80 +77,77 @@ sptr<Box> FormulaBreaker::split(const sptr<Box>& b, float width, float interline
     return box;
 }
 
-sptr<Box> FormulaBreaker::split(const sptr<HorizontalBox>& hb, float width, float interline) {
-    if (width == 0 || hb->_width <= width) {
-        return hb;
-    }
+sptr<Box> BoxSplitter::split(const sptr<HorizontalBox>& hb, float width, float lineSpace) {
+    if (width == 0 || hb->_width <= width) return hb;
 
     VerticalBox* vbox = new VerticalBox();
-    sptr<HorizontalBox> first(nullptr);
-    sptr<HorizontalBox> second(nullptr);
+    sptr<HorizontalBox> first, second;
     stack<Position> positions;
     sptr<HorizontalBox> hbox = hb;
 
     while (hbox->_width > width && canBreak(positions, hbox, width) != hbox->_width) {
         Position pos = positions.top();
         positions.pop();
-        auto hboxes = pos._hbox->split(pos._index - 1);
+        auto hboxes = pos._box->split(pos._index - 1);
         first = hboxes.first;
         second = hboxes.second;
         while (!positions.empty()) {
             pos = positions.top();
             positions.pop();
-            hboxes = pos._hbox->splitRemove(pos._index);
+            hboxes = pos._box->splitRemove(pos._index);
             hboxes.first->add(first);
             hboxes.second->add(0, second);
             first = hboxes.first;
             second = hboxes.second;
         }
-        vbox->add(first, interline);
+        vbox->add(first, lineSpace);
         hbox = second;
     }
 
     if (second != nullptr) {
-        vbox->add(second, interline);
+        vbox->add(second, lineSpace);
         return sptr<Box>(vbox);
     }
 
     return hbox;
 }
 
-float FormulaBreaker::canBreak(_out_ stack<Position>& s, const sptr<HorizontalBox>& hbox, float width) {
-    vector<sptr<Box>>& children = hbox->_children;
-    const int c = children.size();
-    float* cumWidth = new float[c + 1]();
+float BoxSplitter::canBreak(stack<Position>& s, const sptr<HorizontalBox>& hbox, const float width) {
+    const vector<sptr<Box>>& children = hbox->_children;
+    const int count = children.size();
+    // Cumulative width
+    float* cumWidth = new float[count + 1]();
     cumWidth[0] = 0;
-    for (int i = 0; i < c; i++) {
+    for (int i = 0; i < count; i++) {
         auto box = children[i];
         cumWidth[i + 1] = cumWidth[i] + box->_width;
-        if (cumWidth[i + 1] > width) {
-            int pos = getBreakPosition(hbox, i);
-            auto h = dynamic_pointer_cast<HorizontalBox>(box);
-            if (h != nullptr) {
-                stack<Position> sub;
-                float w = canBreak(sub, h, width - cumWidth[i]);
-                if (w != box->_width && (cumWidth[i] + w <= width || pos == -1)) {
-                    s.push(Position(i - 1, hbox));
-                    // add to stack
-                    vector<Position> p;
-                    while (!sub.empty()) {
-                        p.push_back(sub.top());
-                        sub.pop();
-                    }
-                    for (auto it = p.rbegin(); it != p.rend(); it++) s.push(*it);
-                    // release cum-width
-                    float x = cumWidth[i] + w;
-                    delete[] cumWidth;
-                    return x;
+        if (cumWidth[i + 1] <= width) continue;
+        int pos = getBreakPosition(hbox, i);
+        auto h = dynamic_pointer_cast<HorizontalBox>(box);
+        if (h != nullptr) {
+            stack<Position> sub;
+            float w = canBreak(sub, h, width - cumWidth[i]);
+            if (w != box->_width && (cumWidth[i] + w <= width || pos == -1)) {
+                s.push(Position(i - 1, hbox));
+                // add to stack
+                vector<Position> p;
+                while (!sub.empty()) {
+                    p.push_back(sub.top());
+                    sub.pop();
                 }
-            }
-
-            if (pos != -1) {
-                s.push(Position(pos, hbox));
-                float x = cumWidth[pos];
+                for (auto it = p.rbegin(); it != p.rend(); it++) s.push(*it);
+                // release cum-width
+                float x = cumWidth[i] + w;
                 delete[] cumWidth;
                 return x;
             }
+        }
+
+        if (pos != -1) {
+            s.push(Position(pos, hbox));
+            float x = cumWidth[pos];
+            delete[] cumWidth;
+            return x;
         }
     }
 
@@ -158,10 +155,7 @@ float FormulaBreaker::canBreak(_out_ stack<Position>& s, const sptr<HorizontalBo
     return hbox->_width;
 }
 
-int FormulaBreaker::getBreakPosition(const sptr<HorizontalBox>& hb, int i) {
-    /**if (i == 0)
-        return -1;
-    return i;*/
+int BoxSplitter::getBreakPosition(const sptr<HorizontalBox>& hb, int i) {
     if (hb->_breakPositions.empty()) return -1;
 
     if (hb->_breakPositions.size() == 1 && hb->_breakPositions[0] <= i)
