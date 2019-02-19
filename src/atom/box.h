@@ -114,8 +114,7 @@ private:
     void recalculateWidth(const Box& b);
 
 public:
-    VerticalBox() : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {
-    }
+    VerticalBox() : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {}
 
     VerticalBox(const sptr<Box>& b, float rest, int alignment);
 
