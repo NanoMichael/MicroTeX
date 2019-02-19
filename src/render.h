@@ -27,7 +27,7 @@ public:
     static float _magFactor;
     bool _iscolored;
 
-    TeXRender(const sptr<Box> b, float textSize, bool trueValues = false);
+    TeXRender(const sptr<Box> box, float textSize, bool trueValues = false);
 
     float getTextSize() const;
 
@@ -47,9 +47,9 @@ public:
 
     void setInsets(const Insets& insets, bool trueval = false);
 
-    void setWidth(int w, int align);
+    void setWidth(int width, int align);
 
-    void setHeight(int h, int align);
+    void setHeight(int height, int align);
 
     void draw(_out_ Graphics2D& g2, int x, int y);
 };
@@ -62,7 +62,7 @@ private:
     color _fg;
 
 public:
-    // TODO declaration conflict with graphic/graphic.h
+    // TODO declaration conflict with TypefaceStyle defined in graphic/graphic.h
     enum TeXFontStyle {
         SERIF = 0,
         SANSSERIF = 1,
@@ -83,8 +83,7 @@ public:
           _lineSpace(0),
           _trueValues(false),
           _isMaxWidth(false),
-          _fg(black) {
-    }
+          _fg(black) {}
 
     inline TeXRenderBuilder& setStyle(int style) {
         _style = style;
@@ -111,9 +110,9 @@ public:
         return *this;
     }
 
-    inline TeXRenderBuilder& setWidth(int wu, float w, int align) {
-        _widthUnit = wu;
-        _textWidth = w;
+    inline TeXRenderBuilder& setWidth(int unit, float width, int align) {
+        _widthUnit = unit;
+        _textWidth = width;
         _align = align;
         _trueValues = true;
         return *this;
@@ -165,7 +164,7 @@ public:
 
     TeXRender* build(TeXFormula& f);
 
-    static DefaultTeXFont* createFont(float s, int type);
+    static DefaultTeXFont* createFont(float size, int type);
 };
 
 }  // namespace tex

@@ -123,22 +123,31 @@ const int DefaultTeXFont::BOT = 3;
 bool DefaultTeXFont::_magnificationEnable = true;
 
 #ifdef HAVE_LOG
+#include <iomanip>
 ostream& tex::operator<<(ostream& os, const FontInfo& info) {
     // base information
-    os << "font id: " << info._fontId;
-    os << ", path: " << info._path << endl;
+    os << "\nID: " << info._fontId;
+    os << " path: " << info._path << endl;
     // font information
-    os << "\tx height: " << info._xHeight << ", space: " << info._space << endl;
-    os << "\tquad: " << info._quad << ", bold id: " << info._boldId << endl;
-    os << "\troman id: " << info._romanId << ", ss id: " << info._ssId << endl;
-    os << "\ttt id: " << info._ttId << ", it id: " << info._itId << endl;
+    os << "---------------------------------------------------" << endl;
+    os << "x height    space     quad  bold  roman  ss  tt  it" << endl;
+    os << setw(8) << info._xHeight << setw(9) << info._space;
+    os << setw(9) << info._quad << setw(6) << info._boldId;
+    os << setw(7) << info._romanId << setw(4) << info._ssId;
+    os << setw(4) << info._ttId << setw(4) << info._itId;
+    os << endl;
 
-    os << "\tligatures:" << endl;
-    for (auto x : info._lig) {
-        os << "\t\t[" << x.first._left << ", " << x.first._right << "] = "
-           << x.second << endl;
+    if (!info._lig.empty()) {
+        os << "ligatures:" << endl;
+        for (auto x : info._lig) {
+            os << "\t["
+               << setw(3) << x.first._left << ", "
+               << setw(3) << x.first._right << "] = "
+               << x.second << endl;
+        }
     }
 
+    os << "---------------------------------------------------" << endl;
     return os;
 }
 
@@ -750,16 +759,13 @@ Char DefaultTeXFont::getChar(const CharFont& c, int style) {
     CharFont cf = c;
     float fsize = getSizeFactor(style);
     int id = _isBold ? cf._boldFontId : cf._fontId;
-
-#ifdef HAVE_LOG
-    __dbg("\n\t{[char: %d], [font_id: %d]", cf._c, id);
-#endif  // HAVE_LOG
-
     FontInfo* info = _fontInfo[id];
 
 #ifdef HAVE_LOG
-    __log << ", [path: " << info->getPath() << "]}\n";
-#endif  // HAVE_LOG
+    __dbg(
+        ANSI_COLOR_GREEN "{ char: %d, font id: %d, path: %s}\n" ANSI_COLOR_RESET,
+        cf._c, id, info->getPath().c_str());
+#endif
 
     if (_isBold && cf._fontId == cf._boldFontId) {
         id = info->getBoldId();
@@ -908,7 +914,7 @@ void DefaultTeXFont::_init_() {
 
 #ifdef HAVE_LOG
     // check if text style mapping is correct
-    __log << "elements in _defaultTextStyleMappings: ";
+    __log << "\nelements in _defaultTextStyleMappings:\n";
     for (int i = 0; i < 4; i++) __log << _defaultTextStyleMappings[i] << "; ";
     __log << endl;
     // text style mappings

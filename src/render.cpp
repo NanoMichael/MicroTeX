@@ -9,22 +9,15 @@ const color TeXRender::_defaultcolor = black;
 float TeXRender::_defaultSize = -1;
 float TeXRender::_magFactor = 0;
 
-TeXRender::TeXRender(const sptr<Box> b, float textSize, bool trueValues) {
-    _box = b;
-    if (_defaultSize != -1) {
-        _textSize = _defaultSize;
-    }
+TeXRender::TeXRender(const sptr<Box> box, float textSize, bool trueValues) {
+    _box = box;
+    if (_defaultSize != -1) _textSize = _defaultSize;
     if (_magFactor != 0) {
         _textSize = textSize * abs(_magFactor);
     } else {
         _textSize = textSize;
     }
-    if (!trueValues) {
-        _insets.top += (int)(0.18f * textSize);
-        _insets.bottom += (int)(0.18f * textSize);
-        _insets.left += (int)(0.18f * textSize);
-        _insets.right += (int)(0.18f * textSize);
-    }
+    if (!trueValues) _insets += (int)(0.18f * textSize);
 }
 
 float TeXRender::getTextSize() const {
@@ -33,8 +26,8 @@ float TeXRender::getTextSize() const {
 
 int TeXRender::getHeight() const {
     return (int)(_box->_height * _textSize + 0.99f +
-                 _insets.top + _box->_depth * _textSize + 0.99f +
-                 _insets.bottom);
+                 _box->_depth * _textSize + 0.99f +
+                 _insets.top + _insets.bottom);
 }
 
 int TeXRender::getDepth() const {
@@ -64,25 +57,20 @@ Insets TeXRender::getInsets() {
 
 void TeXRender::setInsets(const Insets& insets, bool trueval) {
     _insets = insets;
-    if (!trueval) {
-        _insets.top += (int)(0.18f * _textSize);
-        _insets.bottom += (int)(0.18f * _textSize);
-        _insets.left += (int)(0.18f * _textSize);
-        _insets.right += (int)(0.18f * _textSize);
-    }
+    if (!trueval) _insets += (int)(0.18f * _textSize);
 }
 
-void TeXRender::setWidth(int w, int align) {
-    float diff = w - getWidth();
+void TeXRender::setWidth(int width, int align) {
+    float diff = width - getWidth();
     // FIXME
     // only care if new width larger than old
     if (diff > 0) {
-        _box = sptr<Box>(new HorizontalBox(_box, (float)w, align));
+        _box = sptr<Box>(new HorizontalBox(_box, (float)width, align));
     }
 }
 
-void TeXRender::setHeight(int h, int align) {
-    float diff = h - getHeight();
+void TeXRender::setHeight(int height, int align) {
+    float diff = height - getHeight();
     // FIXME
     // only care if new height larger than old
     if (diff > 0) {
@@ -107,8 +95,8 @@ void TeXRender::draw(_out_ Graphics2D& g2, int x, int y) {
     g2.setColor(old);
 }
 
-DefaultTeXFont* TeXRenderBuilder::createFont(float s, int type) {
-    DefaultTeXFont* tf = new DefaultTeXFont(s);
+DefaultTeXFont* TeXRenderBuilder::createFont(float size, int type) {
+    DefaultTeXFont* tf = new DefaultTeXFont(size);
     if (type == 0) tf->setSs(false);
     if ((type & ROMAN) != 0) tf->setRoman(true);
     if ((type & TYPEWRITER) != 0) tf->setTt(true);
@@ -124,9 +112,7 @@ TeXRender* TeXRenderBuilder::build(TeXFormula& f) {
 
 TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
     sptr<Atom> f = fc;
-    if (f == nullptr) {
-        f = sptr<Atom>(new EmptyAtom());
-    }
+    if (f == nullptr) f = sptr<Atom>(new EmptyAtom());
     if (_style == -1) {
         throw ex_invalid_state("A style is required, call function setStyle before build.");
     }
@@ -134,7 +120,8 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
         throw ex_invalid_state("A size is required, call function setSize before build.");
     }
 
-    DefaultTeXFont* font = (_type == -1) ? new DefaultTeXFont(_textSize) : createFont(_textSize, _type);
+    DefaultTeXFont* font = (_type == -1) ? new DefaultTeXFont(_textSize)
+                                         : createFont(_textSize, _type);
     sptr<TeXFont> tf(font);
     TeXEnvironment* te = nullptr;
     if (_widthUnit != -1 && _textWidth != 0) {
@@ -143,9 +130,7 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
         te = new TeXEnvironment(_style, tf);
     }
 
-    if (_lineSpaceUnit != -1) {
-        te->setInterline(_lineSpaceUnit, _lineSpace);
-    }
+    if (_lineSpaceUnit != -1) te->setInterline(_lineSpaceUnit, _lineSpace);
 
     auto box = f->createBox(*te);
     TeXRender* ti = nullptr;
@@ -162,9 +147,8 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
     } else {
         ti = new TeXRender(box, _textSize, _trueValues);
     }
-    if (!istrans(_fg)) {
-        ti->setForeground(_fg);
-    }
+
+    if (!istrans(_fg)) ti->setForeground(_fg);
     ti->_iscolored = te->_isColored;
 
     delete te;

@@ -37,21 +37,15 @@ void Font_cairo::loadFont(const string& file) {
     FcPattern* p = FcFreeTypeQuery(f, 0, blanks, &count);
     FcPatternGetString(p, FC_FAMILY, 0, &family);
 #ifdef HAVE_LOG
-    __log << "font count: " << count << "\n";
+    __dbg("Load font: %s, count: %d\n", file.c_str(), count);
     FcPatternPrint(p);
 #endif
 
     // load font to fontconfig
     FcBool status = FcConfigAppFontAddFile(NULL, f);
-    if (status) {
 #ifdef HAVE_LOG
-        __log << "load " << file << " successfully\n";
+    if (!status) __dbg(ANSI_COLOR_RED "Load %s failed\n" ANSI_COLOR_RESET, file.c_str());
 #endif
-    } else {
-#ifdef HAVE_LOG
-        __log << "load " << file << " failed\n";
-#endif
-    }
 
     _family = (const char*)family;
     _file_name_map[file] = _family;
