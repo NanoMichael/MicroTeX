@@ -130,6 +130,6 @@ map<wstring, wstring> TeXFormula::_predefinedTeXFormulasAsString = {
     {L"lVert", L"\\Vert"},
     {L"lvert", L"\\vert"},
     {L"rvert", L"\\vert"},
-    {L"Droid", L"\\Huge{\\droid}\\normalsize"},
-    {L"droidTeX", L"\\Droid\\large{\\dT\\dE\\dX}\\normalsize"},
+    {L"Android", L"\\Huge{\\android}\\normalsize"},
+    {L"AndroidTeX", L"\\Android\\large{\\dT\\dE\\dX}\\normalsize"},
     {L"TeX", L"\\large{\\dT\\dE\\dX}\\normalsize"}};
