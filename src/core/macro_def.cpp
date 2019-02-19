@@ -40,6 +40,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands = {
     mac(2, 2, macro_raisebox, "raisebox"),
     mac(1, 1, macro_dynamic, "dynamic"),
     mac(1, macro_fatalIfCmdConflict, "fatalIfCmdConflict"),
+    mac(1, macro_breakEverywhere, "breakEverywhere"),
     mac(3, macro_newenvironment, "newenvironment"),
     mac(3, macro_renewenvironment, "renewenvironment"),
     mac(0, macro_makeatletter, "makeatletter"),
