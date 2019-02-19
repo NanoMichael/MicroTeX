@@ -3,9 +3,9 @@
 
 #include "config.h"
 
-#ifdef __GNUC__
+#if defined(HAVE_LOG) && defined(__GNUC__)
 #include <cxxabi.h>
-#endif  // __GNUC__
+#endif
 
 #include <algorithm>
 #include <cctype>
@@ -81,6 +81,7 @@ static const float PREC = 0.0000001f;
 /**
  * Demangling name
  */
+#ifdef HAVE_LOG
 #ifdef __GNUC__
 inline string demangle_name(const char* name) {
     int status = -4;
@@ -97,6 +98,7 @@ inline string demangle_name(const char* name) {
     return name;
 }
 #endif  // __GNUC__
+#endif  // HAVE_LOG
 
 /**
  * Find the position of a value in the vector, return -1 if not found
