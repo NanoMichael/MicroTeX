@@ -27,9 +27,9 @@ class TeXEnvironment;
  * Box#draw(Graphics2D, float, float) method (that paints the box). <b>
  * This implementation must start with calling the method
  * Box#startDraw(Graphics2D, float, float) and end with calling the method
- * Box#endDraw(Graphics2D)} to set and restore the color's that must be used
- * for painting the box and to draw the background!</b> They must also implement
- * the abstract Box#getLastFontId() method (the last font that will be used
+ * Box#endDraw(Graphics2D)} to set and restore the colors that must be used
+ * for painting the box and to draw the background.</b> They must also implement
+ * the abstract Box#getLastFontId() method (the last font that will be used later
  * when this box will be painted).
  */
 class Box {
@@ -62,13 +62,11 @@ protected:
         } else {
             g2.setColor(_prevColor);
         }
-        drawDebug(g2, x, y);
+        if (DEBUG) drawDebug(g2, x, y);
     }
 
     void drawDebug(Graphics2D& g2, float x, float y, bool showDepth = true) {
-        if (!DEBUG) {
-            return;
-        }
+        if (!DEBUG) return;
         const Stroke& st = g2.getStroke();
         Stroke s(abs(1.f / g2.sx()), CAP_BUTT, JOIN_MITER);
         g2.setStroke(s);
@@ -103,12 +101,10 @@ protected:
      * @param g2
      *            the graphics (2D) context
      */
-    void endDraw(Graphics2D& g2) {
-        g2.setColor(_prevColor);
-    }
+    void endDraw(Graphics2D& g2) { g2.setColor(_prevColor); }
 
     /**
-     * Initialize box with default
+     * Initialize box with default options
      */
     void init() {
         _foreground = trans;
@@ -170,14 +166,12 @@ public:
     vector<sptr<Box>> _children;
 
     /**
-     * Create a new box with default
+     * Create a new box with default options
      */
-    Box() {
-        init();
-    }
+    Box() { init(); }
 
     /**
-     * Create a new box with foreground and background
+     * Create a new box with given foreground and background
      */
     Box(color fg, color bg) {
         init();
@@ -186,7 +180,7 @@ public:
     }
 
     /**
-     * Inserts the given box at the end of the list of child boxes.
+     * Append the given box at the end of the list of child boxes.
      *
      * @param b
      *      the box to be inserted
@@ -210,9 +204,7 @@ public:
     /**
      * Transform the width of box to negative
      */
-    inline void negWidth() {
-        _width = -_width;
-    }
+    inline void negWidth() { _width = -_width; }
 
     /**
      * Paints this box at the given coordinates using the given 2D graphics
@@ -228,10 +220,10 @@ public:
     virtual void draw(Graphics2D& g2, float x, float y) = 0;
 
     /**
-     * Get the id of the font that will be used the last when this box will be
+     * Get the id of the last font that will be used later when this box is to be
      * painted.
      *
-     * @return the id of the last font that will be used.
+     * @return the id of the last font that will be used later.
      */
     virtual int getLastFontId() = 0;
 
@@ -288,9 +280,7 @@ public:
      *
      * @return the type of the leftermost child atom
      */
-    virtual int getLeftType() const {
-        return _type;
-    }
+    virtual int getLeftType() const { return _type; }
 
     /**
      * Get the type of the rightermost child atom. Most atoms have no child
@@ -301,9 +291,7 @@ public:
      *
      * @return the type of the rightermost child atom
      */
-    virtual int getRightType() const {
-        return _type;
-    }
+    virtual int getRightType() const { return _type; }
 
     /**
      * Convert this atom into a {@link Box}, using properties set by "parent"
