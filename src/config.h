@@ -25,4 +25,9 @@
 #   define __USE_SAMPLES
 #endif
 
+// Disable log if not in debug mode
+#ifndef __DEBUG
+#   undef HAVE_LOG
+#endif
+
 #endif  // CONFIG_H_INCLUDED
