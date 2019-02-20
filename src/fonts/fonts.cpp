@@ -763,7 +763,7 @@ Char DefaultTeXFont::getChar(const CharFont& c, int style) {
 
 #ifdef HAVE_LOG
     __dbg(
-        ANSI_COLOR_GREEN "{ char: %d, font id: %d, path: %s}\n" ANSI_COLOR_RESET,
+        ANSI_COLOR_GREEN "{ char: %d, font id: %d, path: %s}\n" ANSI_RESET,
         cf._c, id, info->getPath().c_str());
 #endif
 

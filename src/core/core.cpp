@@ -28,7 +28,7 @@ void print_box(const sptr<Box>& b, int dep, vector<bool>& lines) {
     }
 
     if (b == nullptr) {
-        __print(ANSI_COLOR_RED " NULL\n" ANSI_COLOR_RESET);
+        __print(ANSI_COLOR_RED " NULL\n");
         return;
     }
 
@@ -37,7 +37,7 @@ void print_box(const sptr<Box>& b, int dep, vector<bool>& lines) {
     const string& str = demangle_name(typeid(*(b)).name());
     string name = str.substr(str.find_last_of("::") + 1);
     if (c > 0) {
-        __print(ANSI_COLOR_CYAN " %s\n" ANSI_COLOR_RESET, name.c_str());
+        __print(ANSI_COLOR_CYAN " %s\n" ANSI_RESET, name.c_str());
     } else {
         __print(" %s\n", name.c_str());
     }
