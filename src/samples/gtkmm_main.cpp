@@ -349,12 +349,12 @@ int runWindow(int argc, char* argv[]) {
 
 int runHelp() {
 #define B ANSI_BOLD
-#define R ANSI_COLOR_RESET
+#define R ANSI_RESET
     const char* msg =
         "Application to parse and display LaTeX code. The application will run with the headless "
         "mode if the option '-headless' is given, otherwise, it will run with the GUI mode.\n\n" B
         "NOTICE\n" R
-        "  If both '-outputdir' and '-input' are specified, the '-input' options wins.\n\n" B
+        "  If both '-outputdir' and '-input' are specified, the '-input' option wins.\n\n" B
         "COMMON OPTIONS\n\n"
         "  -h\n" R
         "      show usages and exit\n\n" B

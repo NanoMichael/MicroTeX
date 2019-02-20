@@ -44,7 +44,7 @@ void Font_cairo::loadFont(const string& file) {
     // load font to fontconfig
     FcBool status = FcConfigAppFontAddFile(NULL, f);
 #ifdef HAVE_LOG
-    if (!status) __dbg(ANSI_COLOR_RED "Load %s failed\n" ANSI_COLOR_RESET, file.c_str());
+    if (!status) __dbg(ANSI_COLOR_RED "Load %s failed\n" ANSI_RESET, file.c_str());
 #endif
 
     _family = (const char*)family;
