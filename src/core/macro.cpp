@@ -28,6 +28,7 @@ void NewCommandMacro::checkRenew(const wstring& name) throw(ex_parse) {
 
 void NewCommandMacro::addNewCommand(
     const wstring& name, const wstring& code, int nbargs) throw(ex_parse) {
+    checkNew(name);
     _macrocode[name] = code;
     MacroInfo::addMacro(name, new InflationMacroInfo(_instance, nbargs));
 }
