@@ -25,6 +25,7 @@
 
 using namespace std;
 
+#define ANSI_BOLD "\x1b[1m"
 #define ANSI_COLOR_CYAN "\x1b[36m"
 #define ANSI_COLOR_RED "\x1b[31m"
 #define ANSI_COLOR_GREEN "\x1b[32m"
