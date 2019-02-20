@@ -251,9 +251,6 @@ protected:
 };
 
 class Headless {
-private:
-    const int _padding = 10, _maxWidth = 720;
-
 public:
     string _outputDir;
     string _samplesFile;
@@ -265,6 +262,8 @@ public:
     float _textSize;
     color _foreground;
     color _background;
+    float _padding;
+    float _maxWidth;
 
     void generateSingle(const wstring& code, const string& file) {
         auto r = LaTeX::parse(code, _maxWidth, _textSize, _textSize / 3.f, _foreground);
@@ -329,6 +328,12 @@ int runHeadless(const vector<string>& opts) {
             h._input = x.substr(x.find("=") + 1);
         } else if (startswith(x, "-output")) {
             h._outputFile = x.substr(x.find("=") + 1);
+        } else if (startswith(x, "-padding")) {
+            auto str = x.substr(x.find("=") + 1);
+            valueof(str, h._padding);
+        } else if (startswith(x, "-maxwidth")) {
+            auto str = x.substr(x.find("=") + 1);
+            valueof(str, h._maxWidth);
         }
     }
 
