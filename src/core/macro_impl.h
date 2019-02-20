@@ -33,12 +33,7 @@ inline macro(undebug) {
 #endif  // GRAPHICS_DEBUG
 
 inline macro(fatalIfCmdConflict) {
-    int fatal = 1;
-    valueof(args[1], fatal);
-    if (fatal == 0)
-        NewCommandMacro::_errIfConflict = false;
-    else
-        NewCommandMacro::_errIfConflict = true;
+    NewCommandMacro::_errIfConflict = args[1] == L"true";
     return nullptr;
 }
 
