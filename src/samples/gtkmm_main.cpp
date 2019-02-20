@@ -259,11 +259,11 @@ public:
     string _input;
     string _outputFile;
 
-    float _textSize;
-    color _foreground;
-    color _background;
-    float _padding;
-    float _maxWidth;
+    float _textSize = 20.f;
+    color _foreground = BLACK;
+    color _background = TRANS;
+    float _padding = 10.f;
+    float _maxWidth = 720.f;
 
     void generateSingle(const wstring& code, const string& file) {
         auto r = LaTeX::parse(code, _maxWidth, _textSize, _textSize / 3.f, _foreground);
@@ -347,12 +347,65 @@ int runWindow(int argc, char* argv[]) {
     return result;
 }
 
+int runHelp() {
+#define B ANSI_BOLD
+#define R ANSI_COLOR_RESET
+    const char* msg =
+        "Application to parse and display LaTeX code. The application will run with the headless "
+        "mode if the option '-headless' is given, otherwise, it will run with the GUI mode.\n\n" B
+        "NOTICE\n" R
+        "  If both '-outputdir' and '-input' are specified, the '-input' options wins.\n\n" B
+        "COMMON OPTIONS\n\n"
+        "  -h\n" R
+        "      show usages and exit\n\n" B
+        "  -headless\n" R
+        "      run the application with the headless mode (no GUI), "
+        "that converts the input LaTeX code into SVG file\n\n" B
+        "  -textsize=[VALUE]\n" R
+        "      a float value (in point) to config the text size to display formulas, "
+        "the default is 20\n\n" B
+        "  -foreground=[COLOR]\n" R
+        "      config the foreground color to display formulas; "
+        "the value can be a color name or in the form of #AARRGGBB; default is black\n\n" B
+        "  -background=[COLOR]\n" R
+        "      config the background color to display formulas; "
+        "the value can be a color name or in the form of #AARRGGBB; default is transparent\n\n" B
+        "  -padding=[VALUE]\n" R
+        "      a float value (in pixel) to config spaces to add to the generated SVG images, "
+        "the default is 10\n\n" B
+        "  -maxwidth=[float value]\n" R
+        "      config the max width of the graphics context, the default is 720 pixels; "
+        "the application will use the width of the formula as the width of the generated SVG "
+        "image if it is not breakable\n\n" B
+        "BATCH MODE\n" R
+        "The application will save the SVG files produced by the LaTeX codes that parsed "
+        "from the given file (specified by the option '-samples') into the directory specified "
+        "by the option '-outputdir'.\n\n" B
+        "  -outputdir=[WHERE]\n" R
+        "      config the directory to save the SVG files\n\n" B
+        "  -samples=[FILE]\n" R
+        "      specifies the file that contains various LaTeX codes split by a line that contains "
+        "character '\%' only, the default is './res/SAMPLES.tex'\n\n" B
+        "  -prefix=[VALUE]\n" R
+        "      specifies the prefix of the generated SVG files' name, the default is ''\n\n" B
+        "SINGLE MODE\n\n"
+        "  -input=[CODE]\n" R
+        "      the source code that is written in LaTeX\n\n" B
+        "  -output=[FILE]\n" R
+        "      the output file to save the produced SVG file\n\n";
+    __print("%s", msg);
+    return 0;
+}
+
 int main(int argc, char* argv[]) {
+    vector<string> opts;
+    for (int i = 0; i < argc; i++) opts.push_back(argv[i]);
+
+    if (indexOf(opts, string("-h")) >= 0) return runHelp();
+
     Pango::init();
     LaTeX::init();
 
-    vector<string> opts;
-    for (int i = 0; i < argc; i++) opts.push_back(argv[i]);
     int result = 0;
     if (indexOf(opts, string("-headless")) >= 0) {
         result = runHeadless(opts);
