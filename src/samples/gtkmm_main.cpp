@@ -383,10 +383,10 @@ int runHelp() {
         "  -padding=[VALUE]\n" R
         "      a float value (in pixel) to config spaces to add to the generated SVG images, "
         "the default is 10\n\n" B
-        "  -maxwidth=[float value]\n" R
+        "  -maxwidth=[VALUE]\n" R
         "      config the max width of the graphics context, the default is 720 pixels; "
-        "the application will use the width of the formula as the width of the generated SVG "
-        "image if it is not breakable\n\n" B
+        "this value has weak limits on the generated SVG images, thus the width of the SVG "
+        "image will be used if it is wider than this value\n\n" B
         "BATCH MODE\n" R
         "The application will save the SVG files produced by the LaTeX codes that parsed "
         "from the given file (specified by the option '-samples') into the directory specified "
@@ -402,7 +402,8 @@ int runHelp() {
         "  -input=[CODE]\n" R
         "      the source code that is written in LaTeX\n\n" B
         "  -output=[FILE]\n" R
-        "      the output file to save the produced SVG file\n\n";
+        "      the output file to save the produced SVG file, only works if the option "
+        "'-input' has given\n\n";
     __print("%s", msg);
     return 0;
 }
