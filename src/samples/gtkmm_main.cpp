@@ -281,6 +281,10 @@ public:
     }
 
     int runBatch() {
+        if (_outputDir.empty()) {
+            __print(ANSI_COLOR_RED "Error: the option '-outputdir' must be specified\n" ANSI_RESET);
+            return 1;
+        }
         Samples samples(_samplesFile);
         if (samples.count() == 0) return 1;
         for (int i = 0; i < samples.count(); i++) {
@@ -290,6 +294,10 @@ public:
     }
 
     int runSingle() {
+        if (_outputFile.empty()) {
+            __print(ANSI_COLOR_RED "Error: the option '-output' must be specified\n" ANSI_RESET);
+            return 1;
+        }
         wstring code;
         utf82wide(_input.c_str(), code);
         generateSingle(code, _outputFile);
@@ -298,7 +306,9 @@ public:
 
     int run() {
         if (_textSize <= 0.f) _textSize = 20.f;
-        if (!_input.empty() && !_outputFile.empty()) return runSingle();
+        if (istrans(_foreground)) _foreground = BLACK;
+        if (_maxWidth <= 0.f) _maxWidth = 720.f;
+        if (!_input.empty()) return runSingle();
         return runBatch();
     }
 };
