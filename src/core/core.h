@@ -214,8 +214,10 @@ class Glue {
 private:
     // contains the different glue types
     static vector<Glue*> _glueTypes;
-    // the glue table representing the "glue rules"
-    static int*** _glueTable;
+#define TYPE_COUNT 8
+#define STYLE_COUNT 5
+    // the glue table represents the "glue rules"
+    static const char _table[TYPE_COUNT][TYPE_COUNT][STYLE_COUNT];
     // the glue components
     float _space;
     float _stretch;
@@ -227,6 +229,8 @@ private:
     float getFactor(const TeXEnvironment& env) const;
 
     static Glue* getGlue(int skipType);
+
+    static int getGlueIndex(int ltype, int rtype, const TeXEnvironment& env);
 
 public:
     Glue() = delete;
@@ -280,34 +284,6 @@ public:
 #ifdef HAVE_LOG
     friend ostream& operator<<(ostream& out, const Glue& glue);
 #endif  // HAVE_LOG
-};
-
-class GlueSettingParser {
-private:
-    static const string RESOURCE_NAME;
-    static const map<string, int> _typeMappings;
-    static const map<string, int> _styleMappings;
-    map<string, int> _glueTypeMappings;
-
-    XMLDocument _doc;
-    XMLElement* _root;
-
-    Glue* createGlue(const XMLElement* type, const string& name) throw(ex_res_parse);
-
-    inline static string getAttr(const char* attr, const XMLElement* e) throw(ex_res_parse) {
-        // find if attr is exists
-        const char* value = e->Attribute(attr);
-        if (value == nullptr || strlen(value) == 0)
-            throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping");
-        return value;
-    }
-
-public:
-    GlueSettingParser() throw(ex_res_parse);
-
-    void parseGlueTypes(_out_ vector<Glue*>& glueTypes) throw(ex_res_parse);
-
-    int*** createGlueTable() throw(ex_res_parse);
 };
 
 /**
