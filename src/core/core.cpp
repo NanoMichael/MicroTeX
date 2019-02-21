@@ -258,166 +258,17 @@ sptr<TeXEnvironment>& TeXEnvironment::supStyle() {
     return _sup;
 }
 
-/************************************ glue setting parser *****************************************/
-
-const string GlueSettingParser::RESOURCE_NAME = "GlueSettings.xml";
-const map<string, int> GlueSettingParser::_typeMappings = {
-    {"ord", TYPE_ORDINARY},
-    {"op", TYPE_BIG_OPERATOR},
-    {"bin", TYPE_BINARY_OPERATOR},
-    {"rel", TYPE_RELATION},
-    {"open", TYPE_OPENING},
-    {"close", TYPE_CLOSING},
-    {"punct", TYPE_PUNCTUATION},
-    {"inner", TYPE_INNER}};
-const map<string, int> GlueSettingParser::_styleMappings = {
-    {"display", STYLE_DISPLAY / 2},
-    {"text", STYLE_TEXT / 2},
-    {"script", STYLE_SCRIPT / 2},
-    {"script_script", STYLE_SCRIPT_SCRIPT / 2}};
-
-static int GLUE_TAB_DIM_1 = 0;
-static int GLUE_TAB_DIM_2 = 0;
-static int GLUE_TAB_DIM_3 = 0;
-
-GlueSettingParser::GlueSettingParser() throw(ex_res_parse) : _doc(true, COLLAPSE_WHITESPACE) {
-    string name = RES_BASE + "/" + RESOURCE_NAME;
-    int err = _doc.LoadFile(name.c_str());
-    if (err != XML_NO_ERROR) {
-#ifdef HAVE_LOG
-        __dbg("%s not found while parsing glue\n", name.c_str());
-#endif  // HAVE_LOG
-        throw ex_xml_parse(name + " not found!");
-    }
-    _root = _doc.RootElement();
-#ifdef HAVE_LOG
-    __dbg("root name: %s \n", _root->Name());
-#endif  // HAVE_LOG
-}
-
-void GlueSettingParser::parseGlueTypes(_out_ vector<Glue*>& glueTypes) throw(ex_res_parse) {
-    const XMLElement* types = _root->FirstChildElement("GlueTypes");
-#ifdef HAVE_LOG
-    __dbg("GlueTypes tag name: %s\n", types->Name());
-#endif  // HAVE_LOG
-    int defalutIndex = -1;
-    int index = 0;
-    const XMLElement* type = types->FirstChildElement("GlueType");
-#ifdef HAVE_LOG
-    __dbg("GlueType tag name: %s\n", type->Name());
-#endif  // HAVE_LOG
-    while (type != nullptr) {
-        // retrieve required attribute value, throw ex if not set
-        string name = getAttr("name", type);
-        Glue* glue = createGlue(type, name);
-        if (tolower(name) == "default") defalutIndex = index;
-        glueTypes.push_back(glue);
-        index++;
-        type = type->NextSiblingElement("GlueType");
-    }
-    if (defalutIndex < 0) {
-        // create a default glue object if missing
-        defalutIndex = index;
-        glueTypes.push_back(new Glue(0, 0, 0, "default"));
-    }
-    // make sure the default glue is at the front
-    if (defalutIndex > 0) {
-        Glue* tmp = glueTypes[defalutIndex];
-        glueTypes[defalutIndex] = glueTypes[0];
-        glueTypes[0] = tmp;
-    }
-    // make reverse map
-    for (size_t i = 0; i < glueTypes.size(); i++) {
-        _glueTypeMappings[glueTypes[i]->getName()] = i;
-    }
-}
-
-Glue* GlueSettingParser::createGlue(const XMLElement* type, const string& name) throw(ex_res_parse) {
-    string names[] = {"space", "stretch", "shrink"};
-    float values[3];
-    for (int i = 0; i < 3; i++) {
-        float v = 0;
-        int err = type->QueryFloatAttribute(names[i].c_str(), &v);
-        if (err != XML_NO_ERROR) {
-            throw ex_xml_parse(
-                RESOURCE_NAME,
-                "GlueType",
-                names[i],
-                "has an invalid real value!");
-        }
-        values[i] = v;
-    }
-    return new Glue(values[0], values[1], values[2], name);
-}
-
-int*** GlueSettingParser::createGlueTable() throw(ex_res_parse) {
-    const int s = _typeMappings.size();
-    const int t = _styleMappings.size();
-    int*** table = new int**[s];
-    for (int i = 0; i < s; i++) {
-        table[i] = new int*[s];
-        // make sure that all elements are 0 (default)
-        for (int j = 0; j < s; j++) table[i][j] = new int[t]();
-    }
-    // remember the count
-    GLUE_TAB_DIM_1 = GLUE_TAB_DIM_2 = s;
-    GLUE_TAB_DIM_3 = t;
-
-    const XMLElement* glueTable = _root->FirstChildElement("GlueTable");
-#ifdef HAVE_LOG
-    __dbg("GlueTable tag name: %s\n", glueTable->Name());
-#endif  // HAVE_LOG
-    const XMLElement* glue = glueTable->FirstChildElement("Glue");
-#ifdef HAVE_LOG
-    __dbg("Glue tag name: %s\n", glue->Name());
-#endif  // HAVE_LOG
-    while (glue != nullptr) {
-        // retrieve required attribute values
-        const string& left = getAttr("lefttype", glue);
-        const string& right = getAttr("righttype", glue);
-        const string& type = getAttr("gluetype", glue);
-        // find value
-        auto l = _typeMappings.find(left);
-        auto r = _typeMappings.find(right);
-        auto v = _glueTypeMappings.find(type);
-        if (l == _typeMappings.end() || r == _typeMappings.end() || v == _glueTypeMappings.end())
-            throw ex_res_parse("Failed to parse glue tables!");
-        int lv = l->second, rv = r->second, vv = v->second;
-        // iterate all style elements
-        const XMLElement* style = glue->FirstChildElement("Style");
-        while (style != nullptr) {
-            const string& styleName = getAttr("name", style);
-            // retrieve mappings
-            auto st = _styleMappings.find(styleName);
-            // check exists
-            if (st == _styleMappings.end())
-                throw ex_res_parse("Style: '" + styleName + "' not found when parsing glue tables!");
-            // put value in table
-            table[lv][rv][st->second] = vv;
-            style = style->NextSiblingElement("Style");
-        }
-        glue = glue->NextSiblingElement("Glue");
-    }
-    return table;
-}
-
 /************************************* Glue implementation ****************************************/
 
 #ifdef HAVE_LOG
 ostream& tex::operator<<(ostream& out, const Glue& glue) {
-    out << "glue: { space: " << glue._space << ", stretch: " << glue._stretch << ", shrink: ";
+    out << "Glue { space: " << glue._space << ", stretch: " << glue._stretch << ", shrink: ";
     out << glue._shrink << ", name: " << glue._name << " }";
     return out;
 }
 #endif  // HAVE_LOG
 
-vector<Glue*> Glue::_glueTypes;
-int*** Glue::_glueTable;
-
 void Glue::_init_() {
-    GlueSettingParser parser;
-    parser.parseGlueTypes(_glueTypes);
-    _glueTable = parser.createGlueTable();
 #ifdef HAVE_LOG
     // print glue types
     __log << "elements in _glueTypes" << endl;
@@ -433,12 +284,6 @@ void Glue::_free_() {
         delete g;
         _glueTypes[i] = nullptr;
     }
-    // delete glue-table
-    for (int i = 0; i < GLUE_TAB_DIM_1; i++) {
-        for (int j = 0; j < GLUE_TAB_DIM_2; j++) delete[] _glueTable[i][j];
-        delete[] _glueTable[i];
-    }
-    delete[] _glueTable;
 }
 
 float Glue::getFactor(const TeXEnvironment& env) const {
@@ -454,13 +299,16 @@ sptr<Box> Glue::createBox(const TeXEnvironment& env) const {
     return sptr<Box>(x);
 }
 
-sptr<Box> Glue::get(int ltype, int rtype, const TeXEnvironment& env) {
+int Glue::getGlueIndex(int ltype, int rtype, const TeXEnvironment& env) {
     // types > INNER are considered of type ORD for glue calculations
     int l = (ltype > TYPE_INNER ? TYPE_ORDINARY : ltype);
     int r = (rtype > TYPE_INNER ? TYPE_ORDINARY : rtype);
-    // search right glue-type in "glue-table"
-    int glue = _glueTable[l][r][env.getStyle() / 2];
-    return _glueTypes[glue]->createBox(env);
+    return _table[l][r][env.getStyle() / 2] - '0';
+}
+
+sptr<Box> Glue::get(int ltype, int rtype, const TeXEnvironment& env) {
+    int i = getGlueIndex(ltype, rtype, env);
+    return _glueTypes[i]->createBox(env);
 }
 
 Glue* Glue::getGlue(int skipType) {
@@ -492,10 +340,8 @@ sptr<Box> Glue::get(int skipType, const TeXEnvironment& env) {
 }
 
 float Glue::getSpace(int ltype, int rtype, const TeXEnvironment& env) {
-    int l = (ltype > TYPE_INNER ? TYPE_ORDINARY : ltype);
-    int r = (rtype > TYPE_INNER ? TYPE_ORDINARY : rtype);
-    int glue = _glueTable[l][r][env.getStyle() / 2];
-    auto glueType = _glueTypes[glue];
+    int i = getGlueIndex(ltype, rtype, env);
+    auto glueType = _glueTypes[i];
     return glueType->_space * glueType->getFactor(env);
 }
 
