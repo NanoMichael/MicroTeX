@@ -247,12 +247,9 @@ sptr<Box> FixedCharAtom::createBox(_out_ TeXEnvironment& env) {
     return sptr<Box>(new CharBox(c));
 }
 
-map<string, sptr<SymbolAtom>> SymbolAtom::_symbols;
 bitset<16> SymbolAtom::_validSymbolTypes;
 
 void SymbolAtom::_init_() {
-    TeXSymbolParser parser;
-    parser.readSymbols(_symbols);
     _validSymbolTypes
         .set(TYPE_ORDINARY)
         .set(TYPE_BIG_OPERATOR)

@@ -13,7 +13,8 @@ vector<Glue*> Glue::_glueTypes = {
     g("thick", 5, 0, 5)};
 
 /**
-                    GLUE TABLE
+ GLUE TABLE
+ Page 181 in [The TeXBook]
  ---------------------------------------------------
        ORD  OP   BIN  REL  OPEN  CLOSE  PUNCT  INNER
  ORD    0    1   (2)  (3)   0     0      0     (1)
