@@ -362,7 +362,7 @@ int runHelp() {
 #define R ANSI_RESET
     const char* msg =
         "Application to parse and display LaTeX code. The application will run with the headless "
-        "mode if the option '-headless' is given, otherwise, it will run with the GUI mode.\n\n" B
+        "mode if the option '-headless' has given, otherwise, it will run with the GUI mode.\n\n" B
         "NOTICE\n" R
         "  If both '-outputdir' and '-input' are specified, the '-input' option wins.\n\n" B
         "COMMON OPTIONS\n\n"
@@ -372,7 +372,7 @@ int runHelp() {
         "      run the application with the headless mode (no GUI), "
         "that converts the input LaTeX code into SVG file\n\n" B
         "  -textsize=[VALUE]\n" R
-        "      a float value (in point) to config the text size to display formulas, "
+        "      a float value to config the text size (in point) to display formulas, "
         "the default is 20\n\n" B
         "  -foreground=[COLOR]\n" R
         "      config the foreground color to display formulas; "
@@ -381,28 +381,30 @@ int runHelp() {
         "      config the background color to display formulas; "
         "the value can be a color name or in the form of #AARRGGBB; default is transparent\n\n" B
         "  -padding=[VALUE]\n" R
-        "      a float value (in pixel) to config spaces to add to the generated SVG images, "
+        "      a float value to config spaces (in pixel) to add to the SVG images, "
         "the default is 10\n\n" B
         "  -maxwidth=[VALUE]\n" R
         "      config the max width of the graphics context, the default is 720 pixels; "
-        "this value has weak limits on the generated SVG images, thus the width of the SVG "
-        "image will be used if it is wider than this value\n\n" B
+        "this option has weak limits on the SVG images, thus the width of the SVG image may be "
+        "wider than the value defined by this option\n\n" B
         "BATCH MODE\n" R
-        "The application will save the SVG files produced by the LaTeX codes that parsed "
+        "The application will save the SVG images produced by the LaTeX codes that parsed "
         "from the given file (specified by the option '-samples') into the directory specified "
         "by the option '-outputdir'.\n\n" B
         "  -outputdir=[WHERE]\n" R
-        "      config the directory to save the SVG files\n\n" B
+        "      indicates the directory to save the SVG images\n\n" B
         "  -samples=[FILE]\n" R
-        "      specifies the file that contains various LaTeX codes split by a line that contains "
-        "character '\%' only, the default is './res/SAMPLES.tex'\n\n" B
+        "      specifies the file that contains various LaTeX codes split by a line that consists "
+        "of the character '\%' only, the default is './res/SAMPLES.tex'\n\n" B
         "  -prefix=[VALUE]\n" R
-        "      specifies the prefix of the generated SVG files' name, the default is ''\n\n" B
+        "      specifies the prefix of the filename of the SVG images, the default is ''; "
+        "for example, if 2 pieces of code has given with the option '-prefix=a_', "
+        "the filename of the SVG images will be 'a_0.svg' and 'a_1.svg'\n\n" B
         "SINGLE MODE\n\n"
         "  -input=[CODE]\n" R
         "      the source code that is written in LaTeX\n\n" B
         "  -output=[FILE]\n" R
-        "      the output file to save the produced SVG file, only works if the option "
+        "      indicates where to save the produced SVG image, only works if the option "
         "'-input' has given\n\n";
     __print("%s", msg);
     return 0;
