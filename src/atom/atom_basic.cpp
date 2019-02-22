@@ -4,6 +4,7 @@
 #include "core/formula.h"
 #include "fonts/fonts.h"
 #include "graphic/graphic.h"
+#include "res/parser/formula_parser.h"
 
 #include <sstream>
 
