@@ -5,6 +5,7 @@
 #include "fonts/alphabet.h"
 #include "fonts/fonts.h"
 #include "graphic/graphic.h"
+#include "res/parser/formula_parser.h"
 
 using namespace std;
 using namespace tex;
