@@ -259,6 +259,12 @@ public:
         _fonts[_fontId] = this;
     }
 
+    void setExtension(wchar_t ch, _in_ int* ext);
+
+    void setMetrics(wchar_t c, _in_ float* arr);
+
+    void setNextLarger(wchar_t c, wchar_t larger, int fontLarger);
+
     inline void addKern(wchar_t left, wchar_t right, float k) {
         _kern[CharCouple(left, right)] = k;
     }
@@ -306,32 +312,6 @@ public:
     inline float getXHeight(float factor) const { return _xHeight * factor; }
 
     inline bool hasSpace() const { return _space > PREC; }
-
-    void setExtension(wchar_t ch, _in_ int* ext) {
-        if (_unicode_count == 0) {
-            _extensions[ch] = ext;
-        } else if (_unicode.find(ch) == _unicode.end()) {
-            wchar_t s = (wchar_t)_unicode.size();
-            _unicode[ch] = s;
-            _extensions[s] = ext;
-        } else {
-            _extensions[_unicode[ch]] = ext;
-        }
-    }
-
-    void setMetrics(wchar_t c, _in_ float* arr) {
-        if (_unicode_count == 0) {
-            _metrics[c] = arr;
-        } else if (_unicode.find(c) == _unicode.end()) {
-            wchar_t s = (wchar_t)_unicode.size();
-            _unicode[c] = s;
-            _metrics[s] = arr;
-        } else {
-            _metrics[_unicode[c]] = arr;
-        }
-    }
-
-    void setNextLarger(wchar_t c, wchar_t larger, int fontLarger);
 
     inline void setSkewChar(wchar_t c) { _skewChar = c; }
 

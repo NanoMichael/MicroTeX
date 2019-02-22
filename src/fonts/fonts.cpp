@@ -35,6 +35,30 @@ void FontInfo::init(int unicode) {
     _extensions = new int*[num]();
 }
 
+void FontInfo::setExtension(wchar_t ch, _in_ int* ext) {
+    if (_unicode_count == 0) {
+        _extensions[ch] = ext;
+    } else if (_unicode.find(ch) == _unicode.end()) {
+        wchar_t s = (wchar_t)_unicode.size();
+        _unicode[ch] = s;
+        _extensions[s] = ext;
+    } else {
+        _extensions[_unicode[ch]] = ext;
+    }
+}
+
+void FontInfo::setMetrics(wchar_t c, _in_ float* arr) {
+    if (_unicode_count == 0) {
+        _metrics[c] = arr;
+    } else if (_unicode.find(c) == _unicode.end()) {
+        wchar_t s = (wchar_t)_unicode.size();
+        _unicode[c] = s;
+        _metrics[s] = arr;
+    } else {
+        _metrics[_unicode[c]] = arr;
+    }
+}
+
 inline sptr<CharFont> FontInfo::getLigture(wchar_t left, wchar_t right) {
     CharCouple c(left, right);
     auto it = _lig.find(c);
