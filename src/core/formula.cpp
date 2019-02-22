@@ -11,9 +11,6 @@ using namespace tex;
 
 map<wstring, sptr<TeXFormula>> TeXFormula::_predefinedTeXFormulas;
 
-map<int, string> TeXFormula::_symbolMappings;
-map<int, string> TeXFormula::_symbolTextMappings;
-map<int, string> TeXFormula::_symbolFormulaMappings;
 map<UnicodeBlock, FontInfos*> TeXFormula::_externalFontMap;
 
 float TeXFormula::PIXELS_PER_POINT = 1.f;
@@ -22,10 +19,6 @@ void TeXFormula::_init_() {
 #ifdef HAVE_LOG
     __dbg("%s\n", "init formula");
 #endif  // HAVE_LOG
-    // Character-to-symbol and character-to-delimiter mappings
-    TeXFormulaSettingParser parser;
-    parser.parseSymbol(_symbolMappings, _symbolTextMappings);
-    parser.parseSymbol2Formula(_symbolFormulaMappings, _symbolTextMappings);
     // Register external alphabet
     DefaultTeXFont::registerAlphabet(new CyrillicRegistration());
     DefaultTeXFont::registerAlphabet(new GreekRegistration());
