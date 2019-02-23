@@ -4,8 +4,8 @@
 #include "common.h"
 #include "core/formula.h"
 #include "fonts/alphabet.h"
+#include "fonts/font_info.h"
 #include "graphic/graphic.h"
-#include "xml/tinyxml2.h"
 
 #include <cstring>
 #include <map>
@@ -15,340 +15,8 @@
 
 using namespace std;
 using namespace tex;
-using namespace tinyxml2;
 
 namespace tex {
-
-/**
- * Contains the metrics for 1 character: width, height, depth and italic correction
- */
-class Metrics {
-private:
-    float _w, _h, _d, _i, _s;
-
-public:
-    Metrics() = delete;
-
-    Metrics(const Metrics&) = delete;
-
-    Metrics(float w, float h, float d, float i, float factor, float s)
-        : _w(w * factor), _h(h * factor), _d(d * factor), _i(i * factor), _s(s) {}
-
-    inline float getWidth() const { return _w; }
-
-    inline float getHeight() const { return _h; }
-
-    inline float getDepth() const { return _d; }
-
-    inline float getItalic() const { return _i; }
-
-    inline float getSize() const { return _s; }
-};
-
-/**
- * Represents a specific character in a specific font (identified by its font id)
- */
-class CharFont {
-public:
-    wchar_t _c;
-    int _fontId;
-    int _boldFontId;
-
-    CharFont() : _c(0), _fontId(0), _boldFontId(0) {}
-
-    CharFont(wchar_t ch, int f) : _c(ch), _fontId(f), _boldFontId(f) {}
-
-    CharFont(wchar_t ch, int f, int bf) : _c(ch), _fontId(f), _boldFontId(bf) {}
-
-#ifdef HAVE_LOG
-    friend ostream& operator<<(ostream& os, const CharFont& info);
-#endif
-};
-
-/**
- * Class represents a character together with its font, font id and metric information
- */
-class Char {
-private:
-    wchar_t _c;
-    int _font_code;
-    const Font* _font;
-    sptr<CharFont> _cf;
-    sptr<Metrics> _m;
-
-public:
-    Char() = delete;
-
-    Char(wchar_t c, const Font* f, int fc, const sptr<Metrics>& m);
-
-    sptr<CharFont> getCharFont() const { return _cf; }
-
-    inline wchar_t getChar() const { return _c; }
-
-    inline const Font* getFont() const { return _font; }
-
-    inline int getFontCode() const { return _font_code; }
-
-    inline float getWidth() const { return _m->getWidth(); }
-
-    inline float getItalic() const { return _m->getItalic(); }
-
-    inline float getHeight() const { return _m->getHeight(); }
-
-    inline float getDepth() const { return _m->getDepth(); }
-
-    inline float getSize() const { return _m->getSize(); }
-};
-
-/**
- * Represents an extension character that is defined by Char-objects of it's 4
- * possible parts (null means part not present).
- */
-class Extension {
-private:
-    const Char* const _top;
-    const Char* const _middle;
-    const Char* const _bottom;
-    const Char* const _repeat;
-
-public:
-    Extension() = delete;
-
-    Extension(const Extension&) = delete;
-
-    Extension(Char* t, Char* m, Char* r, Char* b)
-        : _top(t), _middle(m), _repeat(r), _bottom(b) {}
-
-    inline bool hasTop() const { return _top != nullptr; }
-
-    inline bool hasMiddle() const { return _middle != nullptr; }
-
-    inline bool hasBottom() const { return _bottom != nullptr; }
-
-    inline bool hasRepeat() const { return _repeat != nullptr; }
-
-    inline const Char& getTop() const { return *_top; }
-
-    inline const Char& getMiddle() const { return *_middle; }
-
-    inline const Char& getRepeat() const { return *_repeat; }
-
-    inline const Char& getBottom() const { return *_bottom; }
-
-    ~Extension();
-};
-
-class CharCouple {
-public:
-    wchar_t _left, _right;
-
-    CharCouple(wchar_t l, wchar_t r) : _left(l), _right(r) {}
-
-    inline bool operator==(const CharCouple& c) const {
-        return (_left == c._left && _right == c._right);
-    }
-};
-
-/**
- * Function to check if two CharCouple is equal.
- */
-struct char_couple_eq {
-    bool operator()(const CharCouple& c1, const CharCouple& c2) const {
-        return c1 == c2;
-    }
-};
-
-/**
- * Function to generate hash code for one CharCouple.
- */
-struct char_couple_hash {
-    size_t operator()(const CharCouple& c) const {
-        return (c._left + c._right) % 128;
-    }
-};
-
-#define NUMBER_OF_CHAR_CODES 256
-
-/**
- * Class contains all the font information for 1 font
- */
-class FontInfo {
-private:
-    static map<int, FontInfo*> _fonts;
-    // The id of this font info
-    int _fontId;
-    const Font* _font;
-    // The path of the font file
-    string _path;
-
-    // ligatures
-    unordered_map<CharCouple, wchar_t, char_couple_hash, char_couple_eq> _lig;
-    // kerning
-    unordered_map<CharCouple, float, char_couple_hash, char_couple_eq> _kern;
-    // unicode mapping
-    map<wchar_t, wchar_t> _unicode;
-    int _unicode_count;
-    // font metrics
-    float** _metrics;
-    // the next larger font, e.g. sigma
-    CharFont** _nextLarger;
-    // extensions for big delimiter
-    int** _extensions;
-    // number of characters
-    int _char_count;
-    // skew character of the font (used for positioning accents)
-    wchar_t _skewChar;
-
-    // basic informations for this font
-    float _xHeight;
-    float _space;
-    float _quad;
-    // bold version font id
-    int _boldId;
-    // roman version font id
-    int _romanId;
-    // sans-serif version font id
-    int _ssId;
-    // typewriter version font id
-    int _ttId;
-    // italic version font id
-    int _itId;
-
-    void init(int unicode);
-
-public:
-    string _boldVersion;
-    string _romanVersion;
-    string _ssVersion;
-    string _ttVersion;
-    string _itVersion;
-
-    FontInfo() = delete;
-
-    FontInfo(const FontInfo&) = delete;
-
-    FontInfo(int fontId,
-             const string& path,
-             int unicode,
-             float xHeight,
-             float space,
-             float quad,
-             const string& boldVersion,
-             const string& romanVersion,
-             const string& ssVersion,
-             const string& ttVersion,
-             const string& itVersion)
-        : _fontId(fontId),
-          _path(path),
-          _xHeight(xHeight),
-          _space(space),
-          _quad(quad),
-          _boldVersion(boldVersion),
-          _romanVersion(romanVersion),
-          _ssVersion(ssVersion),
-          _ttVersion(ttVersion),
-          _itVersion(itVersion),
-          _skewChar((wchar_t)-1),
-          _font(nullptr),
-          _boldId(-1),
-          _ssId(-1),
-          _itId(-1),
-          _romanId(-1),
-          _ttId(-1) {
-        init(unicode);
-        _fonts[_fontId] = this;
-    }
-
-    void setExtension(wchar_t ch, _in_ int* ext);
-
-    void setMetrics(wchar_t c, _in_ float* arr);
-
-    void setNextLarger(wchar_t c, wchar_t larger, int fontLarger);
-
-    inline void addKern(wchar_t left, wchar_t right, float k) {
-        _kern[CharCouple(left, right)] = k;
-    }
-
-    inline void addLigture(wchar_t left, wchar_t right, wchar_t lig) {
-        _lig[CharCouple(left, right)] = lig;
-    }
-
-    inline bool isExtensionChar(wchar_t ch) {
-        return (getExtension(ch) != nullptr);
-    }
-
-    inline const int* const getExtension(wchar_t ch) {
-        if (_unicode_count == 0) return _extensions[ch];
-        return _extensions[_unicode[ch]];
-    }
-
-    inline float getkern(wchar_t left, wchar_t right, float factor) {
-        CharCouple c(left, right);
-        auto it = _kern.find(c);
-        if (it == _kern.end()) return 0;
-        return it->second * factor;
-    }
-
-    inline sptr<CharFont> getLigture(wchar_t left, wchar_t right);
-
-    inline const float* getMetrics(wchar_t c) {
-        if (_unicode_count == 0) return _metrics[c];
-        return _metrics[_unicode[c]];
-    }
-
-    inline bool hasNextLarger(wchar_t c) { return getNextLarger(c) != nullptr; }
-
-    inline const CharFont* getNextLarger(wchar_t c) {
-        if (_unicode_count == 0) return _nextLarger[c];
-        return _nextLarger[_unicode[c]];
-    }
-
-    inline float getQuad(float factor) const { return _quad * factor; }
-
-    inline wchar_t getSkewChar() const { return _skewChar; }
-
-    inline float getSpace(float factor) const { return _space * factor; }
-
-    inline float getXHeight(float factor) const { return _xHeight * factor; }
-
-    inline bool hasSpace() const { return _space > PREC; }
-
-    inline void setSkewChar(wchar_t c) { _skewChar = c; }
-
-    inline int getId() const { return _fontId; }
-
-    inline int getBoldId() const { return _boldId; }
-
-    inline int getRomanId() const { return _romanId; }
-
-    inline int getTtId() const { return _ttId; }
-
-    inline int getItId() const { return _itId; }
-
-    inline int getSsId() const { return _ssId; }
-
-    inline void setSsId(int id) { _ssId = id == -1 ? _fontId : id; }
-
-    inline void setTtId(int id) { _ttId = id == -1 ? _fontId : id; }
-
-    inline void setItId(int id) { _itId = id == -1 ? _fontId : id; }
-
-    inline void setRomanId(int id) { _romanId = id == -1 ? _fontId : id; }
-
-    inline void setBoldId(int id) { _boldId = id == -1 ? _fontId : id; }
-
-    inline const string& getPath() const { return _path; }
-
-    const Font* getFont();
-
-    inline static const Font* getFont(int id) { return _fonts[id]->getFont(); }
-
-    ~FontInfo();
-
-#ifdef HAVE_LOG
-    friend ostream& operator<<(ostream& os, const FontInfo& info);
-#endif
-};
 
 /**
  * An interface representing a "TeXFont", which is responsible for all the
@@ -586,8 +254,7 @@ private:
     static map<string, float> _generalSettings;
     static bool _magnificationEnable;
 
-    float _factor;
-    float _size;
+    float _factor, _size;
 
     Char getChar(wchar_t c, _in_ const vector<CharFont*>& cf, int style);
 
@@ -600,28 +267,13 @@ public:
     static const int NONE;
 
     // font type
-    static const int NUMBERS;
-    static const int CAPITAL;
-    static const int SMALL;
-    static const int UNICODE;
-
+    static const int NUMBERS, CAPITAL, SMALL, UNICODE;
     // font information
-    static const int WIDTH;
-    static const int HEIGHT;
-    static const int DEPTH;
-    static const int IT;
-
+    static const int WIDTH, HEIGHT, DEPTH, IT;
     // extensions
-    static const int TOP;
-    static const int MID;
-    static const int REP;
-    static const int BOT;
+    static const int TOP, MID, REP, BOT;
 
-    bool _isBold;
-    bool _isRoman;
-    bool _isSs;
-    bool _isTt;
-    bool _isIt;
+    bool _isBold, _isRoman, _isSs, _isTt, _isIt;
 
     DefaultTeXFont(
         float pointSize,

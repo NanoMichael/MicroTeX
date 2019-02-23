@@ -15,16 +15,16 @@ vector<Glue*> Glue::_glueTypes = {
 /**
  GLUE TABLE
  Page 181 in [The TeXBook]
- ---------------------------------------------------
-       ORD  OP   BIN  REL  OPEN  CLOSE  PUNCT  INNER
- ORD    0    1   (2)  (3)   0     0      0     (1)
- OP     1    1    *   (3)   0     0      0     (1)
- BIN   (2)  (2)   *    *   (2)    *      *     (2)
- REL   (3)  (3)   *    0   (3)    0      0     (3)
- OPEN  (0)   0    *    0    0     0      0      0
- CLOSE (0)   1   (2)  (3)   0     0      0     (1)
- PUNCT (1)  (1)   *   (1)  (1)   (1)    (1)    (1)
- INNER (1)   1   (2)  (3)  (1)    0     (1)    (1)
+ -------------------------------------------------------
+       ORD   OP    BIN   REL   OPEN  CLOSE  PUNCT  INNER
+ ORD    0     1    (2)   (3)    0     0      0     (1)
+ OP     1     1     *    (3)    0     0      0     (1)
+ BIN   (2)   (2)    *     *    (2)    *      *     (2)
+ REL   (3)   (3)    *     0    (3)    0      0     (3)
+ OPEN  (0)    0     *     0     0     0      0      0
+ CLOSE (0)    1    (2)   (3)    0     0      0     (1)
+ PUNCT (1)   (1)    *    (1)   (1)   (1)    (1)    (1)
+ INNER (1)    1    (2)   (3)   (1)    0     (1)    (1)
  */
 const char Glue::_table[TYPE_COUNT][TYPE_COUNT][STYLE_COUNT] = {
     {"0000", "1111", "2200", "3300", "0000", "0000", "0000", "1100"},

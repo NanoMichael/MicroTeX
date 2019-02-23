@@ -1,5 +1,7 @@
 #include "res/parser/font_parser.h"
 
+#define __id(x) FontInfo::__id(x)
+
 const string DefaultTeXFontParser::FONTS_RES_BASE = "fonts";
 /** document define  */
 const string DefaultTeXFontParser::RESOURCE_NAME = FONTS_RES_BASE + "/DefaultTeXFont.xml";
@@ -17,14 +19,11 @@ const map<string, int> DefaultTeXFontParser::_rangeTypeMappings(
      {"small", DefaultTeXFont::SMALL},
      {"unicode", DefaultTeXFont::UNICODE}});  // range mapping
 
-const map<string, void (*)(const XMLElement*, wchar_t c, FontInfo&)>
-    DefaultTeXFontParser::_charChildParsers(
-        {{"Kern", DefaultTeXFontParser::parse_kern},
-         {"Lig", DefaultTeXFontParser::parse_lig},
-         {"NextLarger", DefaultTeXFontParser::parse_larger},
-         {"Extension", DefaultTeXFontParser::parse_extension}});  // child parsers
-
-vector<string> DefaultTeXFontParser::_fontId;
+const map<string, ChildParser> DefaultTeXFontParser::_charChildParsers(
+    {{"Kern", DefaultTeXFontParser::parse_kern},
+     {"Lig", DefaultTeXFontParser::parse_lig},
+     {"NextLarger", DefaultTeXFontParser::parse_larger},
+     {"Extension", DefaultTeXFontParser::parse_extension}});  // child parsers
 
 /**************************************** child parsers *******************************************/
 
@@ -60,31 +59,13 @@ void DefaultTeXFontParser::parse_lig(
 
 void DefaultTeXFontParser::parse_larger(
     const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(tex::ex_xml_parse) {
-    const string fontid = getAttrValueAndCheckIfNotNull("fontId", e);
+    const string name = getAttrValueAndCheckIfNotNull("fontId", e);
     int code = getIntAndCheck("code", e);
-    f.setNextLarger(c, (wchar_t)code, indexOf(_fontId, fontid));
+    f.setNextLarger(c, (wchar_t)code, __id(name));
 }
 
 /**************************************** font information ****************************************/
 
-/**
- * xml structure
- * @code
- * <Char code="[r]<i>", width="[r]<f>", height="[r]<f>", depth="[o]<f>">
- *   <{child} fontId="[r]<s>", code="[r]<i>"/>
- *   ...
- * {child} contains following 4 types:
- *   NextLarger
- *   Extension
- *   Lig
- *   Kern
- * r = required
- * o = optional
- * f = float
- * s = string
- * i = int
- * @endcode
- */
 void DefaultTeXFontParser::processCharElement(
     const XMLElement* e, _out_ FontInfo& info) throw(tex::ex_res_parse) {
     // retrieve required integer value
@@ -100,32 +81,17 @@ void DefaultTeXFontParser::processCharElement(
     // process children (kerning, ligature...)
     const XMLElement* x = e->FirstChildElement();
     while (x != nullptr) {
-        // can't find
-        try {
-            auto parser = _charChildParsers.at(x->Name());
-            parser(x, ch, info);
-            x = x->NextSiblingElement();
-        } catch (out_of_range& ex) {
-            throw tex::ex_xml_parse(
+        auto it = _charChildParsers.find(x->Name());
+        if (it == _charChildParsers.end()) {
+            throw ex_xml_parse(
                 RESOURCE_NAME + ": a <Char-element> has an unknown child element '" +
                 x->Name() + "'!");
         }
+        it->second(x, ch, info);
+        x = x->NextSiblingElement();
     }
 }
 
-/**
- * xml structure
- * @code
- * <TextStyleMappings>
- *   <TextStyleMapping name="[r]" bold="[o]">
- *     <MapRange code="[r]" fontId="[r]" start="[r]"/>
- *     ...
- *   </TextStyleMapping>
- * ......
- * @endcode
- * r = required
- * o = optional
- */
 void DefaultTeXFontParser::parseStyleMappings(
     _out_ map<string, vector<CharFont*>>& res) throw(tex::ex_res_parse) {
     const XMLElement* mapping = _root->FirstChildElement("TextStyleMappings");
@@ -152,18 +118,18 @@ void DefaultTeXFontParser::parseStyleMappings(
             const string code = getAttrValueAndCheckIfNotNull("code", range);
             // find the code mapping
             auto it = _rangeTypeMappings.find(code);
-            if (it == _rangeTypeMappings.end())
+            if (it == _rangeTypeMappings.end()) {
                 throw tex::ex_xml_parse(
                     RESOURCE_NAME,
                     "MapRange", "code", "contains an unknown 'range name' '" + code + "'!");
-            int codeMapping = it->second;
-            if (boldFontId.empty()) {
-                charFonts[codeMapping] =
-                    new CharFont((wchar_t)ch, indexOf(_fontId, fontId));
-            } else {
-                charFonts[codeMapping] = new CharFont(
-                    (wchar_t)ch, indexOf(_fontId, fontId), indexOf(_fontId, boldFontId));
             }
+            CharFont* f = nullptr;
+            if (boldFontId.empty()) {
+                f = new CharFont((wchar_t)ch, __id(fontId));
+            } else {
+                f = new CharFont((wchar_t)ch, __id(fontId), __id(boldFontId));
+            }
+            charFonts[it->second] = f;
             range = range->NextSiblingElement("MapRange");
         }
         res[textStyleName] = charFonts;
@@ -171,12 +137,6 @@ void DefaultTeXFontParser::parseStyleMappings(
     }
 }
 
-/**
- * @code
- * xmL structure
- * <TeXSymbols include="[r]">
- * @endcode
- */
 void DefaultTeXFontParser::parseExtraPath() throw(tex::ex_res_parse) {
     const XMLElement* syms = _root->FirstChildElement("TeXSymbols");
     if (syms != nullptr) {  // element present
@@ -190,14 +150,6 @@ void DefaultTeXFontParser::parseExtraPath() throw(tex::ex_res_parse) {
     }
 }
 
-/**
- * @code
- * xml structure
- * <FontDescriptions>
- *   <Metrics include="[r]<s>"/>
- *   ...
- * @endcode
- */
 void DefaultTeXFontParser::parseFontDescriptions(
     _out_ vector<FontInfo*>& fi) throw(tex::ex_res_parse) {
     const XMLElement* des = _root->FirstChildElement("FontDescriptions");
@@ -227,32 +179,21 @@ void DefaultTeXFontParser::parseFontDescriptions(
     parseStyleMappings(_parsedTextStyles);
     // set font id
     for (size_t i = 0; i < fi.size(); i++) {
-        FontInfo* fin = fi[i];
-        fin->setBoldId(indexOf(_fontId, fin->_boldVersion));
-        fin->setRomanId(indexOf(_fontId, fin->_romanVersion));
-        fin->setSsId(indexOf(_fontId, fin->_ssVersion));
-        fin->setTtId(indexOf(_fontId, fin->_ttVersion));
-        fin->setItId(indexOf(_fontId, fin->_itVersion));
+        FontInfo* f = fi[i];
+        auto it = _variousVersion.find(f->getId());
+        if (it == _variousVersion.end()) continue;
+        auto v = it->second;
+        f->setVariousId(v.bold, v.roman, v.ss, v.tt, v.it);
     }
 }
 
-/**
- * @code
- * xml structure
- * <Font name="[r]<s>", id="[r]<s>]", space="[r][f]", xHeight="[r][f]", quad="[r][f]",
- *   skewChar="[o]<i>", unicode="[o]<i>", {and other versions of this font}>
- *   <Char .../>
- *   ...
- * </Font>
- * @endcode
- */
 void DefaultTeXFontParser::parseFontDescriptions(
     _out_ vector<FontInfo*>& fi, const string& file) throw(tex::ex_res_parse) {
     if (file.empty()) return;
 
     XMLDocument doc(true, COLLAPSE_WHITESPACE);
     int err = doc.LoadFile(file.c_str());
-    if (err != XML_NO_ERROR) throw ex_xml_parse("Cannot find file " + file + "!");
+    if (err != XML_NO_ERROR) throw ex_xml_parse("Cannot open file " + file + "!");
     // get root
     const XMLElement* font = doc.RootElement();
 
@@ -263,11 +204,13 @@ void DefaultTeXFontParser::parseFontDescriptions(
     // get required string attribute
     const string fontName = getAttrValueAndCheckIfNotNull("name", font);
     const string fontId = getAttrValueAndCheckIfNotNull("id", font);
-    if (tex::indexOf(_fontId, fontId) < 0) {
-        _fontId.push_back(fontId);
+    if (__id(fontId) < 0) {
+        FontInfo::__predefine_name(fontId);
     } else {
-        throw tex::ex_font_loaded("Font " + fontId + " is already loaded!");
+        throw ex_font_loaded("Font " + fontId + " is already loaded!");
     }
+
+    const int __id = __id(fontId);
     // get required real attributes
     const float space = getFloatAndCheck("space", font);
     const float xHeight = getFloatAndCheck("xHeight", font);
@@ -275,40 +218,22 @@ void DefaultTeXFontParser::parseFontDescriptions(
     // optional
     const int skewChar = getOptionalInt("skewChar", font, -1);
     const int unicode = getOptionalInt("unicode", font, 0);
-    // get different versions of a font
-    string bold = "";
-    obtainAttr("boldVersion", font, bold);
-    string roman = "";
-    obtainAttr("romanVersion", font, roman);
-    string ss = "";
-    obtainAttr("ssVersion", font, ss);
-    string tt = "";
-    obtainAttr("ttVersion", font, tt);
-    string it = "";
-    obtainAttr("itVersion", font, it);
+    // get various versions of the font
+    __Versions v;
+    obtainAttr("boldVersion", font, v.bold);
+    obtainAttr("romanVersion", font, v.roman);
+    obtainAttr("ssVersion", font, v.ss);
+    obtainAttr("ttVersion", font, v.tt);
+    obtainAttr("itVersion", font, v.it);
+    _variousVersion[__id] = v;
 
     /**
-     * @code
      * a name contains the file path relative to package "fonts",
      * "base/cmex10.xml" as an example, the font file is represents
      * with "base/cemx10.ttf"
-     * @endcode
      */
     string path = file.substr(0, file.find_last_of("/") + 1) + fontName;
-
-    // create FontInfo-object
-    FontInfo* info = new FontInfo(
-        indexOf(_fontId, fontId),
-        path,
-        unicode,
-        xHeight,
-        space,
-        quad,
-        bold,
-        roman,
-        ss,
-        tt,
-        it);
+    auto info = new FontInfo(__id, path, unicode, xHeight, space, quad);
 
     // attribute set
     if (skewChar != -1) info->setSkewChar((wchar_t)skewChar);
@@ -327,15 +252,6 @@ void DefaultTeXFontParser::parseFontDescriptions(
     fi.push_back(info);
 }
 
-/**
- * xml structure
- * @code
- * <SymbolMappings>
- *   <Mapping include="[r]<s>(path of the symbol mapping)" />
- *   ...
- * </SymbolMappings>
- * @endcode
- */
 void DefaultTeXFontParser::parseSymbolMappings(
     _out_ map<string, CharFont*>& res) throw(tex::ex_res_parse) {
     const XMLElement* mapping = _root->FirstChildElement("SymbolMappings");
@@ -363,7 +279,7 @@ void DefaultTeXFontParser::parseSymbolMappings(
 
         int err = doc.LoadFile(path.c_str());
         if (err != XML_NO_ERROR)
-            throw ex_xml_parse("Cannot find the file '" + path + "'!");
+            throw ex_xml_parse("Cannot open the file '" + path + "'!");
         const XMLElement* symbol = doc.RootElement()->FirstChildElement("SymbolMapping");
 
 #ifdef HAVE_LOG
@@ -371,33 +287,22 @@ void DefaultTeXFontParser::parseSymbolMappings(
 #endif  // HAVE_LOG
 
         while (symbol != nullptr) {
-            /**
-             * @code
-             * <SymbolMappings>
-             *   <Symbolmapping name="[r]<s>" ch="[r]<i>" fontId="[r]<s>" />
-             *   ...
-             * </SymbolMappings>
-             * @endcode
-             */
             const string name = getAttrValueAndCheckIfNotNull("name", symbol);
-            const int ch = getIntAndCheck("ch", symbol);
+            const wchar_t ch = (wchar_t)getIntAndCheck("ch", symbol);
             const string fontId = getAttrValueAndCheckIfNotNull("fontId", symbol);
             string boldFontId = "";
             obtainAttr("boldId", symbol, boldFontId);
 
             auto it = res.find(name);
-            if (it != res.end()) {
-                delete it->second;
-            }
+            if (it != res.end()) delete it->second;
 
+            CharFont* f = nullptr;
             if (boldFontId.empty()) {
-                res[name] = new CharFont(
-                    (wchar_t)ch, indexOf(_fontId, fontId));
+                f = new CharFont(ch, __id(fontId));
             } else {
-                res[name] = new CharFont(
-                    (wchar_t)ch, indexOf(_fontId, fontId), indexOf(_fontId, boldFontId));
+                f = new CharFont(ch, __id(fontId), __id(boldFontId));
             }
-            // parse next
+            res[name] = f;
             symbol = symbol->NextSiblingElement("SymbolMapping");
         }
         mapping = mapping->NextSiblingElement("Mapping");
@@ -418,23 +323,23 @@ string* DefaultTeXFontParser::parseDefaultTextStyleMappins() throw(tex::ex_res_p
     while (mapping != nullptr) {
         // get range name and check
         const string code = getAttrValueAndCheckIfNotNull("code", mapping);
-        int codeMapping = -1;
-        try {
-            codeMapping = _rangeTypeMappings.at(code);
-        } catch (out_of_range& ex) {
+        auto mit = _rangeTypeMappings.find(code);
+        if (mit == _rangeTypeMappings.end()) {
             throw ex_xml_parse(
                 RESOURCE_NAME,
                 "MapStyle", "code", "contains an unknown 'range name' '" + code + "'!");
         }
+        int codeMapping = mit->second;
         // get mapped style and check
         const string textStyleName = getAttrValueAndCheckIfNotNull("textStyle", mapping);
 
         const auto& it = _parsedTextStyles.find(textStyleName);
-        if (it == _parsedTextStyles.end())
+        if (it == _parsedTextStyles.end()) {
             throw ex_xml_parse(
                 RESOURCE_NAME,
                 "Mapstyle", "textStyle",
                 "contains an unknown 'range name' '" + textStyleName + "'!");
+        }
 
         const auto& charFonts = it->second;
         // now check if the range is defined within the mapped text style
@@ -475,11 +380,9 @@ void DefaultTeXFontParser::parseGeneralSettings(_out_ map<string, float>& res) t
 
     int index = 0;
     const string& v1 = getAttrValueAndCheckIfNotNull("mufontid", settings);
-    index = indexOf(_fontId, v1);
-    res["mufontid"] = index;
+    res["mufontid"] = __id(v1);
     const string& v2 = getAttrValueAndCheckIfNotNull("spacefontid", settings);
-    index = indexOf(_fontId, v2);
-    res["spacefontid"] = index;
+    res["spacefontid"] = __id(v2);
     res["scriptfactor"] = getFloatAndCheck("scriptfactor", settings);
     res["scriptscriptfactor"] = getFloatAndCheck("scriptscriptfactor", settings);
 }

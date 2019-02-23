@@ -7,114 +7,6 @@
 #include <cmath>
 
 using namespace tex;
-using namespace tinyxml2;
-
-/***************************************************************************************************
- *                               Font basic implementation                                         *
- ***************************************************************************************************/
-
-Char::Char(wchar_t c, const Font* f, int fc, const sptr<Metrics>& m)
-    : _c(c), _font_code(fc), _font(f), _m(m), _cf(new CharFont(_c, _font_code)) {}
-
-Extension::~Extension() {
-    if (hasTop()) delete _top;
-    if (hasMiddle()) delete _middle;
-    if (hasRepeat()) delete _repeat;
-    if (hasBottom()) delete _bottom;
-}
-
-map<int, FontInfo*> FontInfo::_fonts;
-
-void FontInfo::init(int unicode) {
-    int num = NUMBER_OF_CHAR_CODES;
-    _unicode_count = unicode;
-    if (unicode != 0) num = unicode;
-    _char_count = num;
-    _metrics = new float*[num]();
-    _nextLarger = new CharFont*[num]();
-    _extensions = new int*[num]();
-}
-
-void FontInfo::setExtension(wchar_t ch, _in_ int* ext) {
-    if (_unicode_count == 0) {
-        _extensions[ch] = ext;
-    } else if (_unicode.find(ch) == _unicode.end()) {
-        wchar_t s = (wchar_t)_unicode.size();
-        _unicode[ch] = s;
-        _extensions[s] = ext;
-    } else {
-        _extensions[_unicode[ch]] = ext;
-    }
-}
-
-void FontInfo::setMetrics(wchar_t c, _in_ float* arr) {
-    if (_unicode_count == 0) {
-        _metrics[c] = arr;
-    } else if (_unicode.find(c) == _unicode.end()) {
-        wchar_t s = (wchar_t)_unicode.size();
-        _unicode[c] = s;
-        _metrics[s] = arr;
-    } else {
-        _metrics[_unicode[c]] = arr;
-    }
-}
-
-inline sptr<CharFont> FontInfo::getLigture(wchar_t left, wchar_t right) {
-    CharCouple c(left, right);
-    auto it = _lig.find(c);
-    if (it == _lig.end()) return nullptr;
-    return sptr<CharFont>(new CharFont(it->second, _fontId));
-}
-
-void FontInfo::setNextLarger(wchar_t c, wchar_t larger, int fontLarger) {
-    if (_unicode_count == 0)
-        _nextLarger[c] = new CharFont(larger, fontLarger);
-    else if (_unicode.find(c) == _unicode.end()) {
-        wchar_t s = (wchar_t)_unicode.size();
-        _unicode[c] = s;
-        _nextLarger[s] = new CharFont(larger, fontLarger);
-    } else {
-        _nextLarger[_unicode[c]] = new CharFont(larger, fontLarger);
-    }
-}
-
-const Font* FontInfo::getFont() {
-    if (_font == nullptr) {
-        _font = Font::create(_path, TeXFormula::PIXELS_PER_POINT);
-    }
-    return _font;
-}
-
-FontInfo::~FontInfo() {
-    // delete metrics
-    for (int i = 0; i < _char_count; i++) {
-        if (_metrics[i] != nullptr) {
-            delete[] _metrics[i];
-        }
-        _metrics[i] = nullptr;
-    }
-    delete[] _metrics;
-    // delete extensions
-    for (int i = 0; i < _char_count; i++) {
-        if (_extensions[i] != nullptr) {
-            delete[] _extensions[i];
-        }
-        _extensions[i] = nullptr;
-    }
-    delete[] _extensions;
-    // delete next-larger
-    for (int i = 0; i < _char_count; i++) {
-        if (_nextLarger[i] != nullptr) {
-            delete _nextLarger[i];
-        }
-        _nextLarger[i] = nullptr;
-    }
-    delete[] _nextLarger;
-    // delete font
-    if (_font != nullptr) {
-        delete _font;
-    }
-}
 
 const int TeXFont::NO_FONT = -1;
 
@@ -147,51 +39,11 @@ const int DefaultTeXFont::BOT = 3;
 
 bool DefaultTeXFont::_magnificationEnable = true;
 
-#ifdef HAVE_LOG
-#include <iomanip>
-ostream& tex::operator<<(ostream& os, const FontInfo& info) {
-    // base information
-    os << "\nID: " << info._fontId;
-    os << " path: " << info._path << endl;
-    // font information
-    os << "---------------------------------------------------" << endl;
-    os << "x height    space     quad  bold  roman  ss  tt  it" << endl;
-    os << setw(8) << info._xHeight << setw(9) << info._space;
-    os << setw(9) << info._quad << setw(6) << info._boldId;
-    os << setw(7) << info._romanId << setw(4) << info._ssId;
-    os << setw(4) << info._ttId << setw(4) << info._itId;
-    os << endl;
-
-    if (!info._lig.empty()) {
-        os << "ligatures:" << endl;
-        for (auto x : info._lig) {
-            os << "\t["
-               << setw(3) << x.first._left << ", "
-               << setw(3) << x.first._right << "] = "
-               << x.second << endl;
-        }
-    }
-
-    os << "---------------------------------------------------" << endl;
-    return os;
-}
-
-ostream& tex::operator<<(ostream& os, const CharFont& font) {
-    os << "character: " << font._c << ", font id: " << font._fontId << ", bold id: "
-       << font._boldFontId;
-    return os;
-}
-#endif
-
 /***************************************************************************************************
  *                                  DefaultTeXFont implementation                                  *
  ***************************************************************************************************/
 
-TeXFont::~TeXFont() {
-#ifdef HAVE_LOG
-    __dbg("TeXFont destruct\n");
-#endif  // HAVE_LOG
-}
+TeXFont::~TeXFont() {}
 
 DefaultTeXFont::~DefaultTeXFont() {
 #ifdef HAVE_LOG
@@ -298,12 +150,6 @@ Char DefaultTeXFont::getChar(const CharFont& c, int style) {
     int id = _isBold ? cf._boldFontId : cf._fontId;
     FontInfo* info = _fontInfo[id];
 
-#ifdef HAVE_LOG
-    __dbg(
-        ANSI_COLOR_GREEN "{ char: %d, font id: %d, path: %s}\n" ANSI_RESET,
-        cf._c, id, info->getPath().c_str());
-#endif
-
     if (_isBold && cf._fontId == cf._boldFontId) {
         id = info->getBoldId();
         info = _fontInfo[id];
@@ -329,6 +175,13 @@ Char DefaultTeXFont::getChar(const CharFont& c, int style) {
         info = _fontInfo[id];
         cf = CharFont(cf._c, id, style);
     }
+
+#ifdef HAVE_LOG
+    __dbg(
+        ANSI_COLOR_GREEN "{ char: %c, font id: %d, path: %s }\n" ANSI_RESET,
+        cf._c, id, info->getPath().c_str());
+#endif
+
     return Char(cf._c, info->getFont(), id, getMetrics(cf, _factor * fsize));
 }
 
@@ -500,12 +353,8 @@ void DefaultTeXFont::_free_() {
             if (i != nullptr) delete i;
         }
     }
-    for (auto f : _symbolMappings) {
-        delete f.second;
-    }
-    for (auto f : _fontInfo) {
-        delete f;
-    }
+    for (auto f : _symbolMappings) delete f.second;
+    for (auto f : _fontInfo) delete f;
     // _registeredAlphabets :=> map<UnicodeBlock, AlphabetRegistration>
     // multi => one
     vector<AlphabetRegistration*> cleaned;
