@@ -9,8 +9,14 @@ using namespace tinyxml2;
 
 namespace tex {
 
+typedef void (*ChildParser)(const XMLElement*, wchar_t, FontInfo&);
+
+struct __Versions {
+    string bold, roman, ss, tt, it;
+};
+
 /**
- * Parses the font information from an xml-file
+ * Parses the font information from an XML-file
  */
 class DefaultTeXFontParser {
 public:
@@ -25,12 +31,13 @@ public:
     static const string SPACEFONTID_ATTR;
 
 private:
-    static vector<string> _fontId;
     static const map<string, int> _rangeTypeMappings;
-    static const map<string, void (*)(const XMLElement*, wchar_t, FontInfo&)> _charChildParsers;
+
+    static const map<string, ChildParser> _charChildParsers;
     // the xml-document we used
     XMLDocument _doc;
 
+    map<int, __Versions> _variousVersion;
     map<string, vector<CharFont*>> _parsedTextStyles;
     const XMLElement* _root;
     string _base;
