@@ -139,20 +139,20 @@ public:
 /**
  * Function to check if two CharCouple is equal.
  */
-struct char_couple_eq {
+typedef struct {
     bool operator()(const CharCouple& c1, const CharCouple& c2) const {
         return c1 == c2;
     }
-};
+} __char_couple_eq;
 
 /**
  * Function to generate hash code for one CharCouple.
  */
-struct char_couple_hash {
+typedef struct {
     size_t operator()(const CharCouple& c) const {
         return (c._left + c._right) % 128;
     }
-};
+} __char_couple_hash;
 
 #define NUMBER_OF_CHAR_CODES 256
 
@@ -161,7 +161,7 @@ struct char_couple_hash {
  */
 class FontInfo {
 private:
-    static map<int, FontInfo*> _fonts;
+    static vector<FontInfo*> _infos;
     static vector<string> _names;
     // The id of this font info
     int _id;
@@ -170,9 +170,9 @@ private:
     string _path;
 
     // ligatures
-    unordered_map<CharCouple, wchar_t, char_couple_hash, char_couple_eq> _lig;
+    unordered_map<CharCouple, wchar_t, __char_couple_hash, __char_couple_eq> _lig;
     // kerning
-    unordered_map<CharCouple, float, char_couple_hash, char_couple_eq> _kern;
+    unordered_map<CharCouple, float, __char_couple_hash, __char_couple_eq> _kern;
     // unicode mapping
     map<wchar_t, wchar_t> _unicode;
     int _unicodeCount;
@@ -195,19 +195,38 @@ private:
 
     void init(int unicode);
 
-public:
-    FontInfo() = delete;
+    FontInfo();
 
-    FontInfo(const FontInfo&) = delete;
-
-    FontInfo(int id, const string& path, int unicode);
+    FontInfo(const FontInfo&);
 
     FontInfo(int id, const string& path, int unicode, float xHeight, float space, float quad);
 
-    /**************************************** INTERNAL USE ****************************************/
+    static inline void __add(FontInfo* info) {
+        if (info->_id >= _infos.size()) _infos.resize(info->_id + 1);
+        _infos[info->_id] = info;
+    }
+
+public:
+    /************************************** INTERNAL USE ******************************************/
+    static inline FontInfo* __create(
+        int id, const string& path, int unicode,
+        float xHeight = 0, float space = 0, float quad = 0) {
+        auto i = new FontInfo(id, path, unicode, xHeight, space, quad);
+        __add(i);
+        return i;
+    }
+
     static inline void __predefine_name(const string& name) { _names.push_back(name); }
 
     static inline int __id(const string& name) { return indexOf(_names, name); }
+
+    static inline const vector<FontInfo*>& __infos() { return _infos; }
+
+    static inline FontInfo* __get(int id) { return _infos[id]; }
+
+    static void __init();
+
+    static void __free();
 
     void __push_extensions(const int* arr, int len);
 
@@ -295,7 +314,7 @@ public:
         const string& tt,
         const string& it);
 
-    inline static const Font* getFont(int id) { return _fonts[id]->getFont(); }
+    inline static const Font* getFont(int id) { return _infos[id]->getFont(); }
 
     ~FontInfo();
 

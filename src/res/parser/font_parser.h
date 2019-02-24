@@ -143,11 +143,9 @@ public:
 
     void parseExtraPath() throw(ex_res_parse);
 
-    void parseFontDescriptions(
-        _out_ vector<FontInfo*>& fin,
-        const string& file) throw(ex_res_parse);
+    void parseFontDescriptions(const string& file) throw(ex_res_parse);
 
-    void parseFontDescriptions(_out_ vector<FontInfo*>& fin) throw(ex_res_parse);
+    void parseFontDescriptions() throw(ex_res_parse);
 
     void parseSymbolMappings(_out_ map<string, CharFont*>& res) throw(ex_res_parse);
 

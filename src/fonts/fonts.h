@@ -249,7 +249,7 @@ private:
     static string* _defaultTextStyleMappings;
     static map<string, vector<CharFont*>> _textStyleMappings;
     static map<string, CharFont*> _symbolMappings;
-    static vector<FontInfo*> _fontInfo;
+    // static vector<FontInfo*> _fontInfo;
     static map<string, float> _parameters;
     static map<string, float> _generalSettings;
     static bool _magnificationEnable;
@@ -259,6 +259,8 @@ private:
     Char getChar(wchar_t c, _in_ const vector<CharFont*>& cf, int style);
 
     sptr<Metrics> getMetrics(_in_ const CharFont& cf, float size);
+
+    inline FontInfo* getInfo(int id) { return FontInfo::__get(id); }
 
 public:
     static vector<UnicodeBlock> _loadedAlphabets;
@@ -390,8 +392,7 @@ public:
     }
 
     inline float getQuad(int style, int fontCode) override {
-        FontInfo* info = _fontInfo[fontCode];
-        return info->getQuad(getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT);
+        return getInfo(fontCode)->getQuad(getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT);
     }
 
     int getMuFontId() override;
@@ -399,7 +400,7 @@ public:
     inline float getSize() override { return _size; }
 
     inline float getSkew(_in_ const CharFont& cf, int style) override {
-        FontInfo* info = _fontInfo[cf._fontId];
+        FontInfo* info = getInfo(cf._fontId);
         wchar_t skew = info->getSkewChar();
         if (skew == -1) return 0;
         return getKern(cf, CharFont(skew, cf._fontId), style);
@@ -408,7 +409,7 @@ public:
     inline float getSpace(int style) override;
 
     inline float getXHeight(int style, int fontCode) override {
-        FontInfo* info = _fontInfo[fontCode];
+        FontInfo* info = getInfo(fontCode);
         return info->getXHeight(getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT);
     }
 
@@ -417,7 +418,7 @@ public:
     }
 
     inline bool hasNextLarger(_in_ const Char& c) override {
-        FontInfo* info = _fontInfo[c.getFontCode()];
+        FontInfo* info = getInfo(c.getFontCode());
         return info->hasNextLarger(c.getChar());
     }
 
@@ -442,12 +443,12 @@ public:
     inline bool getIt() override { return _isIt; }
 
     inline bool hasSpace(int font) override {
-        FontInfo* info = _fontInfo[font];
+        FontInfo* info = getInfo(font);
         return info->hasSpace();
     }
 
     inline bool isExtensionChar(_in_ const Char& c) override {
-        FontInfo* info = _fontInfo[c.getFontCode()];
+        FontInfo* info = getInfo(c.getFontCode());
         return info->isExtensionChar(c.getChar());
     }
 
