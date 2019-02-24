@@ -13,7 +13,7 @@ const int TeXFont::NO_FONT = -1;
 string* DefaultTeXFont::_defaultTextStyleMappings;
 map<string, vector<CharFont*>> DefaultTeXFont::_textStyleMappings;
 map<string, CharFont*> DefaultTeXFont::_symbolMappings;
-vector<FontInfo*> DefaultTeXFont::_fontInfo;
+// vector<FontInfo*> DefaultTeXFont::_fontInfo;
 map<string, float> DefaultTeXFont::_parameters;
 map<string, float> DefaultTeXFont::_generalSettings;
 vector<UnicodeBlock> DefaultTeXFont::_loadedAlphabets;
@@ -54,7 +54,7 @@ DefaultTeXFont::~DefaultTeXFont() {
 void DefaultTeXFont::addTeXFontDescription(
     const string& base, const string& file) throw(ex_res_parse) {
     DefaultTeXFontParser parser(base, file);
-    parser.parseFontDescriptions(_fontInfo);
+    parser.parseFontDescriptions();
     parser.parseExtraPath();
     const auto x = parser.parseTextStyleMappings();
     _textStyleMappings.insert(x.begin(), x.end());
@@ -148,31 +148,31 @@ Char DefaultTeXFont::getChar(const CharFont& c, int style) {
     CharFont cf = c;
     float fsize = getSizeFactor(style);
     int id = _isBold ? cf._boldFontId : cf._fontId;
-    FontInfo* info = _fontInfo[id];
+    auto info = getInfo(id);
 
     if (_isBold && cf._fontId == cf._boldFontId) {
         id = info->getBoldId();
-        info = _fontInfo[id];
+        info = getInfo(id);
         cf = CharFont(cf._c, id, style);
     }
     if (_isRoman) {
         id = info->getRomanId();
-        info = _fontInfo[id];
+        info = getInfo(id);
         cf = CharFont(cf._c, id, style);
     }
     if (_isSs) {
         id = info->getSsId();
-        info = _fontInfo[id];
+        info = getInfo(id);
         cf = CharFont(cf._c, id, style);
     }
     if (_isTt) {
         id = info->getTtId();
-        info = _fontInfo[id];
+        info = getInfo(id);
         cf = CharFont(cf._c, id, style);
     }
     if (_isIt) {
         id = info->getItId();
-        info = _fontInfo[id];
+        info = getInfo(id);
         cf = CharFont(cf._c, id, style);
     }
 
@@ -195,7 +195,7 @@ Char DefaultTeXFont::getChar(
 }
 
 sptr<Metrics> DefaultTeXFont::getMetrics(_in_ const CharFont& cf, float size) {
-    FontInfo* info = _fontInfo[cf._fontId];
+    auto info = getInfo(cf._fontId);
     const float* m = info->getMetrics(cf._c);
     Metrics* met = new Metrics(
         m[WIDTH], m[HEIGHT], m[DEPTH], m[IT],
@@ -208,7 +208,7 @@ Extension* DefaultTeXFont::getExtension(_in_ const Char& c, int style) {
     int fc = c.getFontCode();
     float s = getSizeFactor(style);
     // construct Char for every part
-    FontInfo* info = _fontInfo[fc];
+    auto info = getInfo(fc);
     const int* ext = info->getExtension(c.getChar());
     // 4 parts of extensions, TOP, MID, REP, BOT
     Char* parts[4] = {nullptr};
@@ -225,7 +225,7 @@ Extension* DefaultTeXFont::getExtension(_in_ const Char& c, int style) {
 
 float DefaultTeXFont::getKern(_in_ const CharFont& left, _in_ const CharFont& right, int style) {
     if (left._fontId == right._fontId) {
-        FontInfo* info = _fontInfo[left._fontId];
+        auto info = getInfo(left._fontId);
         return info->getkern(
             left._c, right._c, getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT);
     }
@@ -234,7 +234,7 @@ float DefaultTeXFont::getKern(_in_ const CharFont& left, _in_ const CharFont& ri
 
 sptr<CharFont> DefaultTeXFont::getLigature(_in_ const CharFont& left, _in_ const CharFont& right) {
     if (left._fontId == right._fontId) {
-        FontInfo* info = _fontInfo[left._fontId];
+        auto info = getInfo(left._fontId);
         return info->getLigture(left._c, right._c);
     }
     return nullptr;
@@ -245,15 +245,15 @@ inline int DefaultTeXFont::getMuFontId() {
 }
 
 Char DefaultTeXFont::getNextLarger(_in_ const Char& c, int style) {
-    FontInfo* info = _fontInfo[c.getFontCode()];
+    auto info = getInfo(c.getFontCode());
     const CharFont* ch = info->getNextLarger(c.getChar());
-    FontInfo* newInfo = _fontInfo[ch->_fontId];
+    auto newInfo = getInfo(ch->_fontId);
     return Char(ch->_c, newInfo->getFont(), ch->_fontId, getMetrics(*ch, getSizeFactor(style)));
 }
 
 inline float DefaultTeXFont::getSpace(int style) {
     int spaceFontId = _generalSettings[DefaultTeXFontParser::SPACEFONTID_ATTR];
-    FontInfo* info = _fontInfo[spaceFontId];
+    auto info = getInfo(spaceFontId);
     return info->getSpace(getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT);
 }
 
@@ -279,7 +279,7 @@ void DefaultTeXFont::_init_() {
     // load LATIN unicode block
     _loadedAlphabets.push_back(UnicodeBlock::of('a'));
     // font + font descriptions
-    parser.parseFontDescriptions(_fontInfo);
+    parser.parseFontDescriptions();
     // general font parameters
     parser.parseParameters(_parameters);
     // text style mappings
@@ -294,7 +294,7 @@ void DefaultTeXFont::_init_() {
 
     // check if mufontid exists
     int muFontId = _generalSettings[DefaultTeXFontParser::MUFONTID_ATTR];
-    if (muFontId < 0 || (size_t)muFontId >= _fontInfo.size()) {
+    if (muFontId < 0 || (size_t)muFontId >= FontInfo::__infos().size()) {
         throw ex_xml_parse(
             DefaultTeXFontParser::RESOURCE_NAME,
             DefaultTeXFontParser::GEN_SET_EL,
@@ -319,7 +319,7 @@ void DefaultTeXFont::_init_() {
     __log << endl;
     // font information
     __log << "elements in _fontInfo: " << endl;
-    for (auto i : _fontInfo) __log << *i;
+    for (auto i : FontInfo::__infos()) __log << *i;
     __log << endl;
     // parameters
     __log << "elements in _parameters" << endl;
@@ -354,7 +354,7 @@ void DefaultTeXFont::_free_() {
         }
     }
     for (auto f : _symbolMappings) delete f.second;
-    for (auto f : _fontInfo) delete f;
+    FontInfo::__free();
     // _registeredAlphabets :=> map<UnicodeBlock, AlphabetRegistration>
     // multi => one
     vector<AlphabetRegistration*> cleaned;

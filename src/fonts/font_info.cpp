@@ -11,7 +11,17 @@ Extension::~Extension() {
     if (hasBottom()) delete _bottom;
 }
 
-map<int, FontInfo*> FontInfo::_fonts;
+vector<FontInfo*> FontInfo::_infos;
+vector<string> FontInfo::_names;
+
+void FontInfo::__init() {
+}
+
+void FontInfo::__free() {
+    for (auto f : _infos) {
+        delete f;
+    }
+}
 
 void FontInfo::init(int unicode) {
     int num = NUMBER_OF_CHAR_CODES;
@@ -25,11 +35,7 @@ void FontInfo::init(int unicode) {
     _boldId = _romanId = _ssId = _ttId = _itId = -1;
     _skewChar = (wchar_t)-1;
     _font = nullptr;
-    _fonts[_id] = this;
 }
-
-FontInfo::FontInfo(int id, const string& path, int unicode)
-    : _id(id), _path(path) { init(unicode); }
 
 FontInfo::FontInfo(int id, const string& path, int unicode, float xHeight, float space, float quad)
     : _id(id), _path(path), _xHeight(xHeight), _space(space), _quad(quad) { init(unicode); }
@@ -225,7 +231,7 @@ ostream& tex::operator<<(ostream& os, const CharFont& font) {
     os << "CharFont { char: " << font._c
        << ", font: " << font._fontId
        << ", bold font: " << font._boldFontId
-       << "}";
+       << " }";
     return os;
 }
 #endif

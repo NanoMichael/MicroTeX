@@ -3,13 +3,11 @@
 
 #include "common.h"
 #include "fonts/fonts.h"
-#include "xml/tinyxml2.h"
 
 #include <cstring>
 
 using namespace std;
 using namespace tex;
-using namespace tinyxml2;
 
 namespace tex {
 
