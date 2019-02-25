@@ -1,5 +1,6 @@
 #include "fonts/font_info.h"
 #include "core/formula.h"
+#include "fonts/font_reg.h"
 
 Char::Char(wchar_t c, const Font* f, int fc, const sptr<Metrics>& m)
     : _c(c), _fontCode(fc), _font(f), _m(m), _cf(new CharFont(_c, _fontCode)) {}
@@ -14,13 +15,16 @@ Extension::~Extension() {
 vector<FontInfo*> FontInfo::_infos;
 vector<string> FontInfo::_names;
 
-void FontInfo::__init() {
-}
-
 void FontInfo::__free() {
     for (auto f : _infos) {
         delete f;
     }
+}
+
+void FontInfo::__register(const FontSet& set) {
+    const vector<FontReg>& regs = set.regs();
+    for (auto r : regs) __predefine_name(r.name);
+    for (auto r : regs) r.reg();
 }
 
 void FontInfo::init(int unicode) {
@@ -32,23 +36,13 @@ void FontInfo::init(int unicode) {
     _nextLarger = new CharFont*[num]();
     _extensions = new int*[num]();
 
-    _boldId = _romanId = _ssId = _ttId = _itId = -1;
+    _boldId = _romanId = _ssId = _ttId = _itId = _id;
     _skewChar = (wchar_t)-1;
     _font = nullptr;
 }
 
 FontInfo::FontInfo(int id, const string& path, int unicode, float xHeight, float space, float quad)
     : _id(id), _path(path), _xHeight(xHeight), _space(space), _quad(quad) { init(unicode); }
-
-void FontInfo::__push_extensions(const int* arr, int len) {
-    const int count = len / 5;
-    for (int i = 0; i < count; i++) {
-        int j = i * 5;
-        setExtension(
-            (wchar_t)arr[j],
-            new int[4]{arr[j + 1], arr[j + 2], arr[j + 3], arr[j + 4]});
-    }
-}
 
 void FontInfo::__push_metrics(const float* arr, int len) {
     const int count = len / 5;
@@ -57,6 +51,16 @@ void FontInfo::__push_metrics(const float* arr, int len) {
         setMetrics(
             (wchar_t)arr[j],
             new float[4]{arr[j + 1], arr[j + 2], arr[j + 3], arr[j + 4]});
+    }
+}
+
+void FontInfo::__push_extensions(const int* arr, int len) {
+    const int count = len / 5;
+    for (int i = 0; i < count; i++) {
+        int j = i * 5;
+        setExtension(
+            (wchar_t)arr[j],
+            new int[4]{arr[j + 1], arr[j + 2], arr[j + 3], arr[j + 4]});
     }
 }
 

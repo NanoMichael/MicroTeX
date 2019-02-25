@@ -1,5 +1,6 @@
 #include "fonts/fonts.h"
 #include "common.h"
+#include "fonts/symbol_reg.h"
 #include "graphic/graphic.h"
 #include "render.h"
 #include "res/parser/font_parser.h"
@@ -13,8 +14,6 @@ const int TeXFont::NO_FONT = -1;
 string* DefaultTeXFont::_defaultTextStyleMappings;
 map<string, vector<CharFont*>> DefaultTeXFont::_textStyleMappings;
 map<string, CharFont*> DefaultTeXFont::_symbolMappings;
-// vector<FontInfo*> DefaultTeXFont::_fontInfo;
-map<string, float> DefaultTeXFont::_parameters;
 map<string, float> DefaultTeXFont::_generalSettings;
 vector<UnicodeBlock> DefaultTeXFont::_loadedAlphabets;
 map<UnicodeBlock, AlphabetRegistration*> DefaultTeXFont::_registeredAlphabets;
@@ -39,16 +38,23 @@ const int DefaultTeXFont::BOT = 3;
 
 bool DefaultTeXFont::_magnificationEnable = true;
 
-/***************************************************************************************************
- *                                  DefaultTeXFont implementation                                  *
- ***************************************************************************************************/
-
 TeXFont::~TeXFont() {}
 
 DefaultTeXFont::~DefaultTeXFont() {
 #ifdef HAVE_LOG
     __dbg("DefaultTeXFont destruct\n");
 #endif  // HAVE_LOG
+}
+
+void DefaultTeXFont::__register_symbols_set(const SymbolsSet& set) {
+    for (auto reg : set.regs()) reg();
+}
+
+void DefaultTeXFont::__push_symbols(const __symbol_component* symbols, const int len) {
+    for (int i = 0; i < len; i++) {
+        const __symbol_component& c = symbols[i];
+        _symbolMappings[c.name] = new CharFont(c.code, c.font);
+    }
 }
 
 void DefaultTeXFont::addTeXFontDescription(
@@ -274,75 +280,19 @@ void DefaultTeXFont::enableMagnification(bool b) {
     _magnificationEnable = b;
 }
 
-void DefaultTeXFont::_init_() {
-    DefaultTeXFontParser parser;
-    // load LATIN unicode block
-    _loadedAlphabets.push_back(UnicodeBlock::of('a'));
-    // font + font descriptions
-    parser.parseFontDescriptions();
-    // general font parameters
-    parser.parseParameters(_parameters);
-    // text style mappings
-    _textStyleMappings = parser.parseTextStyleMappings();
-    // default text style mappings
-    _defaultTextStyleMappings = parser.parseDefaultTextStyleMappins();
-    // symbol mappings
-    parser.parseSymbolMappings(_symbolMappings);
-    // general settings
-    parser.parseGeneralSettings(_generalSettings);
-    _generalSettings["textfactor"] = 1;
+#include "res/reg/builtin_font_reg.h"
+#include "res/reg/builtin_syms_reg.h"
 
-    // check if mufontid exists
-    int muFontId = _generalSettings[DefaultTeXFontParser::MUFONTID_ATTR];
-    if (muFontId < 0 || (size_t)muFontId >= FontInfo::__infos().size()) {
-        throw ex_xml_parse(
-            DefaultTeXFontParser::RESOURCE_NAME,
-            DefaultTeXFontParser::GEN_SET_EL,
-            DefaultTeXFontParser::MUFONTID_ATTR,
-            "contains an unknown font id");
-    }
+void DefaultTeXFont::_init_() {
+    _loadedAlphabets.push_back(UnicodeBlock::of('a'));
+    FontInfo::__register(FontSetBuiltin());
+    __default_general_settings();
+    __default_text_style_mapping();
+    __register_symbols_set(SymbolsSetBuiltin());
 
 #ifdef HAVE_LOG
-    // check if text style mapping is correct
-    __log << "\nelements in _defaultTextStyleMappings:\n";
-    for (int i = 0; i < 4; i++) __log << _defaultTextStyleMappings[i] << "; ";
-    __log << endl;
-    // text style mappings
-    __log << "elements in _textStyleMappings" << endl
-          << "\t";
-    for (auto i : _textStyleMappings) __log << i.first << "; ";
-    __log << endl;
-    // symbol mappings
-    __log << "elements in _symbolMappings" << endl
-          << "\t";
-    for (auto i : _symbolMappings) __log << i.first << "; ";
-    __log << endl;
-    // font information
-    __log << "elements in _fontInfo: " << endl;
-    for (auto i : FontInfo::__infos()) __log << *i;
-    __log << endl;
-    // parameters
-    __log << "elements in _parameters" << endl;
-    for (auto i : _parameters) __log << "\t" << i.first << ":" << i.second << endl;
-    __log << endl;
-    // general settings
-    __log << "elements in _generalSettings" << endl;
-    for (auto i : _generalSettings) __log << "\t" << i.first << ":" << i.second << endl;
-    __log << endl;
-    // text style mappings
-    __log << "elements in _textStyleMappings" << endl;
-    for (auto i : _textStyleMappings) {
-        __log << "\t" << i.first << ":" << endl;
-        for (auto j : i.second) {
-            if (j == nullptr)
-                __log << "\tnull" << endl;
-            else
-                __log << "\t" << *j << endl;
-        }
-        __log << endl;
-    }
-    __log << endl;
-#endif  // HAVE_LOG
+    log();
+#endif
 }
 
 void DefaultTeXFont::_free_() {
@@ -366,3 +316,43 @@ void DefaultTeXFont::_free_() {
         i.second = nullptr;
     }
 }
+
+#ifdef HAVE_LOG
+#include <iomanip>
+void DefaultTeXFont::log() {
+    // default text style mappings
+    __log << "\nDEFAULT TEXT STYLE MAPPINGS: { ";
+    for (int i = 0; i < 4; i++) __log << _defaultTextStyleMappings[i] << "; ";
+    __log << "}\n\n";
+    // text style mappings
+    __log << "TEXT STYLE MAPPINGS:" << endl;
+    for (auto i : _textStyleMappings) {
+        __log << "  " << i.first << ":" << endl;
+        for (auto j : i.second) {
+            if (j == nullptr)
+                __log << "\tnull" << endl;
+            else
+                __log << "\t" << *j << endl;
+        }
+        __log << endl;
+    }
+    __log << endl;
+    // parameters
+    __log << "PARAMETERS:" << endl;
+    for (auto i : _parameters) __log << setw(20) << i.first << " : " << i.second << endl;
+    __log << endl;
+    // general settings
+    __log << "GENERALSETTINGS:" << endl;
+    for (auto i : _generalSettings) __log << setw(20) << i.first << " : " << i.second << endl;
+    __log << endl;
+    // symbol mappings
+    __log << "SYMBOL MAPPINGS:" << endl
+          << "\t";
+    for (auto i : _symbolMappings) __log << i.first << "; ";
+    __log << "\n\n";
+    // font information
+    __log << "FONTINFOS:" << endl;
+    for (auto i : FontInfo::__infos()) __log << *i;
+    __log << endl;
+}
+#endif
