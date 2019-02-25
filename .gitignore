@@ -13,3 +13,4 @@ build/
 src/doc
 src/Doxyfile
 .vscode/
+prebuilt-scripts/
