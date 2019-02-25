@@ -239,9 +239,16 @@ public:
     virtual ~TeXFont();
 };
 
+typedef struct {
+    int font;
+    int code;
+    string name;
+} __symbol_component;
+
+class SymbolsSet;
+
 /**
- * The default implementation of the TeXFont-interface. All font information is
- * read from an xml-file
+ * The default implementation of the TeXFont-interface.
  */
 class DefaultTeXFont : public TeXFont {
 private:
@@ -249,7 +256,6 @@ private:
     static string* _defaultTextStyleMappings;
     static map<string, vector<CharFont*>> _textStyleMappings;
     static map<string, CharFont*> _symbolMappings;
-    // static vector<FontInfo*> _fontInfo;
     static map<string, float> _parameters;
     static map<string, float> _generalSettings;
     static bool _magnificationEnable;
@@ -261,6 +267,10 @@ private:
     sptr<Metrics> getMetrics(_in_ const CharFont& cf, float size);
 
     inline FontInfo* getInfo(int id) { return FontInfo::__get(id); }
+
+    static void __default_general_settings();
+
+    static void __default_text_style_mapping();
 
 public:
     static vector<UnicodeBlock> _loadedAlphabets;
@@ -292,6 +302,10 @@ public:
           _isSs(ss),
           _isTt(tt),
           _isIt(it) {}
+
+    static void __register_symbols_set(const SymbolsSet& set);
+
+    static void __push_symbols(const __symbol_component* symbols, const int len);
 
     static void addTeXFontDescription(const string& base, const string& file) throw(ex_res_parse);
 
@@ -473,6 +487,10 @@ public:
     static void _free_();
 
     virtual ~DefaultTeXFont();
+
+#ifdef HAVE_LOG
+    static void log();
+#endif
 };
 
 }  // namespace tex

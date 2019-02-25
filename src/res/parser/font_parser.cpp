@@ -352,6 +352,7 @@ string* DefaultTeXFontParser::parseDefaultTextStyleMappins() throw(ex_res_parse)
 }
 
 map<string, vector<CharFont*>> DefaultTeXFontParser::parseTextStyleMappings() {
+    if (_parsedTextStyles.empty()) parseStyleMappings(_parsedTextStyles);
     return _parsedTextStyles;
 }
 

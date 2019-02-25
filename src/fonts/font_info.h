@@ -1,9 +1,9 @@
 #ifndef FONT_INFO_H_INCLUDED
 #define FONT_INFO_H_INCLUDED
 
+#include <unordered_map>
 #include "common.h"
 #include "graphic/graphic.h"
-#include "unordered_map"
 
 namespace tex {
 /**
@@ -156,6 +156,8 @@ typedef struct {
 
 #define NUMBER_OF_CHAR_CODES 256
 
+class FontSet;
+
 /**
  * Class contains all the font information for 1 font
  */
@@ -224,13 +226,13 @@ public:
 
     static inline FontInfo* __get(int id) { return _infos[id]; }
 
-    static void __init();
-
     static void __free();
 
-    void __push_extensions(const int* arr, int len);
+    static void __register(const FontSet& set);
 
     void __push_metrics(const float* arr, int len);
+
+    void __push_extensions(const int* arr, int len);
 
     void __push_largers(const int* arr, int len);
 
