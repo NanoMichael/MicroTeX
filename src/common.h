@@ -23,65 +23,26 @@
 #include <string>
 #include <vector>
 
+#include "utils/log.h"
+#include "utils/nums.h"
+
 using namespace std;
 
-#define ANSI_BOLD "\x1b[1m"
-#define ANSI_COLOR_CYAN "\x1b[36m"
-#define ANSI_COLOR_RED "\x1b[31m"
-#define ANSI_COLOR_GREEN "\x1b[32m"
-#define ANSI_COLOR_UNDERLINE "\x1b[4m"
-#define ANSI_RESET "\x1b[0m"
-
-#define __dbg(format, ...)                                    \
-    {                                                         \
-        fprintf(                                              \
-            stdout,                                           \
-            "FILE: " ANSI_COLOR_UNDERLINE                     \
-            "%s" ANSI_RESET                                   \
-            ", LINE: " ANSI_COLOR_RED                         \
-            "%d" ANSI_RESET                                   \
-            ", FUNCTION: " ANSI_COLOR_CYAN                    \
-            "%s" ANSI_RESET                                   \
-            ", MSG: " format,                                 \
-            __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
-    }
-
-#ifdef HAVE_LOG
-#include <iostream>
-#define __log std::cout
-#endif  // HAVE_LOG
-
-#define __print printf
-
-// OUT parameter, the parameter may be affected by this function
+/** OUT parameter, declaring that the function may has side effect on this parameter. */
 #define _out_
-// IN parameter, the parameter will never be changed by this function
+/** IN parameter, declaring that the function will never has side effect on this parameter. */
 #define _in_
 
 namespace tex {
 
-/**
- * The root directory of the "TeX resources" (defined in latex.cpp)
- */
+/** The root directory of the "TeX resources" (defined in latex.cpp) */
 extern string RES_BASE;
 
-static const float POS_INF = numeric_limits<float>::infinity();
-static const float NEG_INF = -POS_INF;
-static const float F_MAX = numeric_limits<float>::max();
-static const float F_MIN = -F_MAX;
-static const double PI = atan(1.0) * 4;
-
+/** Type alias shared_ptr<T> to sptr<T> */
 template <typename T>
 using sptr = shared_ptr<T>;
 
-/**
- * For compare with 0.0f, if a value < PREC,  we trade it as 0.0f
- */
-static const float PREC = 0.0000001f;
-
-/**
- * Demangling name
- */
+/** Return the real name of the function, class or struct name. */
 #ifdef HAVE_LOG
 #ifdef __GNUC__
 inline string demangle_name(const char* name) {
