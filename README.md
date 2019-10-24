@@ -541,9 +541,12 @@ that will produce:
 
 # Plans to do next
 
-- make the use of XML configurable
-- make the built-in resources a loadable/unloadable dynamic plugin
-- eliminate the use of 'dynamic_cast'
-- rewrite the parsing algorithm, make it more efficient
-- support for dynamic parsing
-- implement the `\def` command
+- [ ] buitin resources
+- [ ] support for webassembly
+- [ ] native support for SVG
+- [ ] make the use of XML configurable
+- [ ] make the built-in resources a loadable/unloadable dynamic plugin
+- [ ] eliminate the use of 'dynamic_cast'
+- [ ] rewrite the parsing algorithm, make it more efficient
+- [ ] support for dynamic parsing
+- [ ] implement the `\def` command
