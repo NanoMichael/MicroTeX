@@ -50,18 +50,18 @@ using sptr = shared_ptr<T>;
 #ifdef HAVE_LOG
 #ifdef __GNUC__
 inline string demangle_name(const char* name) {
-    int status = -4;
-    char* res = abi::__cxa_demangle(name, 0, 0, &status);
-    const char* const real_name = status == 0 ? res : name;
-    string res_str(real_name);
-    if (res != nullptr) {
-        free(res);
-    }
-    return res_str;
+  int status = -4;
+  char* res = abi::__cxa_demangle(name, 0, 0, &status);
+  const char* const real_name = status == 0 ? res : name;
+  string res_str(real_name);
+  if (res != nullptr) {
+    free(res);
+  }
+  return res_str;
 }
 #else
 inline string demangle_name(const char* name) {
-    return name;
+  return name;
 }
 #endif  // __GNUC__
 #endif  // HAVE_LOG
@@ -69,9 +69,9 @@ inline string demangle_name(const char* name) {
 /** Find the position of a value in the vector, return -1 if not found */
 template <class T>
 inline int indexOf(const vector<T>& v, const T& x) {
-    auto it = find(v.begin(), v.end(), x);
-    int i = std::distance(v.begin(), it);
-    return (i >= v.size() ? -1 : i);
+  auto it = find(v.begin(), v.end(), x);
+  int i = std::distance(v.begin(), it);
+  return (i >= v.size() ? -1 : i);
 }
 
 }  // namespace tex

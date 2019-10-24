@@ -1,10 +1,10 @@
 #include "atom/atom_basic.h"
 
 #define sym(type, name) \
-    { #name, sptr < SymbolAtom > (new SymbolAtom(#name, type, false)) }
+  { #name, sptr < SymbolAtom > (new SymbolAtom(#name, type, false)) }
 
 #define del(type, name) \
-    { #name, sptr < SymbolAtom > (new SymbolAtom(#name, type, true)) }
+  { #name, sptr < SymbolAtom > (new SymbolAtom(#name, type, true)) }
 
 #define ord TYPE_ORDINARY
 #define rel TYPE_RELATION
