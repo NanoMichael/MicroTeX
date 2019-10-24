@@ -15,22 +15,22 @@ using namespace tex;
 namespace tex {
 
 inline static void parseMap(const string& options, _out_ map<string, string>& res) {
-    if (options.empty()) return;
+  if (options.empty()) return;
 
-    strtokenizer tokens(options, ",");
-    const int c = tokens.count_tokens();
-    for (int i = 0; i < c; i++) {
-        string tok = tokens.next_token();
-        trim(tok);
-        vector<string> optarg;
-        split(tok, '=', optarg);
-        if (!optarg.empty()) {
-            if (optarg.size() == 2)
-                res[trim(optarg[0])] = trim(optarg[1]);
-            else if (optarg.size() == 1)
-                res[trim(optarg[0])] = "";
-        }
+  strtokenizer tokens(options, ",");
+  const int c = tokens.count_tokens();
+  for (int i = 0; i < c; i++) {
+    string tok = tokens.next_token();
+    trim(tok);
+    vector<string> optarg;
+    split(tok, '=', optarg);
+    if (!optarg.empty()) {
+      if (optarg.size() == 2)
+        res[trim(optarg[0])] = trim(optarg[1]);
+      else if (optarg.size() == 1)
+        res[trim(optarg[0])] = "";
     }
+  }
 }
 
 /**
@@ -38,11 +38,11 @@ inline static void parseMap(const string& options, _out_ map<string, string>& re
  */
 class CellSpecifier : public Atom {
 public:
-    virtual void apply(const sptr<Box>& box) = 0;
+  virtual void apply(const sptr<Box>& box) = 0;
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        return sptr<Box>(new StrutBox(0, 0, 0, 0));
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    return sptr<Box>(new StrutBox(0, 0, 0, 0));
+  }
 };
 
 /**
@@ -50,18 +50,18 @@ public:
  */
 class CellColorAtom : public CellSpecifier {
 private:
-    color _color;
+  color _color;
 
 public:
-    CellColorAtom() = delete;
+  CellColorAtom() = delete;
 
-    CellColorAtom(color c) : _color(c) {}
+  CellColorAtom(color c) : _color(c) {}
 
-    void apply(const sptr<Box>& box) {
-        box->_background = _color;
-    }
+  void apply(const sptr<Box>& box) {
+    box->_background = _color;
+  }
 
-    __decl_clone(CellColorAtom)
+  __decl_clone(CellColorAtom)
 };
 
 /**
@@ -69,18 +69,18 @@ public:
  */
 class CellForegroundAtom : public CellSpecifier {
 private:
-    color _color;
+  color _color;
 
 public:
-    CellForegroundAtom() = delete;
+  CellForegroundAtom() = delete;
 
-    CellForegroundAtom(color c) : _color(c) {}
+  CellForegroundAtom(color c) : _color(c) {}
 
-    void apply(const sptr<Box>& box) {
-        box->_foreground = _color;
-    }
+  void apply(const sptr<Box>& box) {
+    box->_foreground = _color;
+  }
 
-    __decl_clone(CellForegroundAtom)
+  __decl_clone(CellForegroundAtom)
 };
 
 /**
@@ -88,30 +88,30 @@ public:
  */
 class MultiRowAtom : public Atom {
 private:
-    sptr<Atom> _rows;
+  sptr<Atom> _rows;
 
 public:
-    int _i, _j, _n;
+  int _i, _j, _n;
 
-    MultiRowAtom() = delete;
+  MultiRowAtom() = delete;
 
-    MultiRowAtom(int n, const wstring& option, const sptr<Atom> rows)
-        : _i(0), _j(0), _rows(rows) {
-        _n = n == 0 ? 1 : n;
-    }
+  MultiRowAtom(int n, const wstring& option, const sptr<Atom> rows)
+      : _i(0), _j(0), _rows(rows) {
+    _n = n == 0 ? 1 : n;
+  }
 
-    inline void setRowColumn(int r, int c) {
-        _i = r;
-        _j = c;
-    }
+  inline void setRowColumn(int r, int c) {
+    _i = r;
+    _j = c;
+  }
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        auto b = _rows->createBox(env);
-        b->_type = TYPE_MULTIROW;
-        return b;
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    auto b = _rows->createBox(env);
+    b->_type = TYPE_MULTIROW;
+    return b;
+  }
 
-    __decl_clone(MultiRowAtom)
+  __decl_clone(MultiRowAtom)
 };
 
 class VlineAtom;
@@ -120,14 +120,14 @@ class VlineAtom;
  * Enum specifies matrix type
  */
 enum MAT {
-    ARRAY = 0,
-    MATRIX,
-    ALIGN,
-    ALIGNAT,
-    FLALIGN,
-    SMALLMATRIX,
-    ALIGNED,
-    ALIGNEDAT
+  ARRAY = 0,
+  MATRIX,
+  ALIGN,
+  ALIGNAT,
+  FLALIGN,
+  SMALLMATRIX,
+  ALIGNED,
+  ALIGNEDAT
 };
 
 /**
@@ -135,74 +135,77 @@ enum MAT {
  */
 class MatrixAtom : public Atom {
 private:
-    static map<wstring, wstring> _colspeReplacement;
+  static map<wstring, wstring> _colspeReplacement;
 
-    static SpaceAtom _align;
+  static SpaceAtom _align;
 
-    sptr<ArrayOfAtoms> _matrix;
-    vector<int> _position;
-    map<int, sptr<VlineAtom>> _vlines;
-    map<int, sptr<Atom>> _columnSpecifiers;
+  sptr<ArrayOfAtoms> _matrix;
+  vector<int> _position;
+  map<int, sptr<VlineAtom>> _vlines;
+  map<int, sptr<Atom>> _columnSpecifiers;
 
-    int _ttype;
-    bool _ispartial;
-    bool _spaceAround;
+  int _ttype;
+  bool _ispartial;
+  bool _spaceAround;
 
-    void parsePositions(wstring opt, _out_ vector<int>& lpos);
+  void parsePositions(wstring opt, _out_ vector<int>& lpos);
 
-    sptr<Box> generateMulticolumn(
-        _out_ TeXEnvironment& env,
-        const sptr<Box>& b,
-        const float* hsep,
-        const float* colWidth,
-        int i, int j);
+  sptr<Box> generateMulticolumn(
+      _out_ TeXEnvironment& env,
+      const sptr<Box>& b,
+      const float* hsep,
+      const float* colWidth,
+      int i,
+      int j);
 
-    void recalculateLine(
-        const int rows,
-        sptr<Box>** boxarr,
-        vector<sptr<Atom>>& multiRows,
-        float* height, float* depth,
-        float drt, float vspace);
+  void recalculateLine(
+      const int rows,
+      sptr<Box>** boxarr,
+      vector<sptr<Atom>>& multiRows,
+      float* height,
+      float* depth,
+      float drt,
+      float vspace);
 
-    float* getColumnSep(_out_ TeXEnvironment& env, float width);
+  float* getColumnSep(_out_ TeXEnvironment& env, float width);
 
 public:
-    // The color to draw the rule of the matrix
-    static color LINE_COLOR;
+  // The color to draw the rule of the matrix
+  static color LINE_COLOR;
 
-    static SpaceAtom _hsep, _semihsep, _vsep_in, _vsep_ext_top, _vsep_ext_bot;
+  static SpaceAtom _hsep, _semihsep, _vsep_in, _vsep_ext_top, _vsep_ext_bot;
 
-    static sptr<Box> _nullbox;
+  static sptr<Box> _nullbox;
 
-    MatrixAtom() = delete;
+  MatrixAtom() = delete;
 
-    MatrixAtom(
-        bool ispar,
-        const sptr<ArrayOfAtoms>& arr,
-        const wstring& options,
-        bool spaceAround);
+  MatrixAtom(
+      bool ispar,
+      const sptr<ArrayOfAtoms>& arr,
+      const wstring& options,
+      bool spaceAround);
 
-    MatrixAtom(
-        bool ispar,
-        const sptr<ArrayOfAtoms>& arr,
-        const wstring& options);
+  MatrixAtom(
+      bool ispar,
+      const sptr<ArrayOfAtoms>& arr,
+      const wstring& options);
 
-    MatrixAtom(
-        bool ispar,
-        const sptr<ArrayOfAtoms>& arr,
-        int type);
+  MatrixAtom(
+      bool ispar,
+      const sptr<ArrayOfAtoms>& arr,
+      int type);
 
-    MatrixAtom(
-        bool ispar,
-        const sptr<ArrayOfAtoms>& arr,
-        int type,
-        int align);
+  MatrixAtom(
+      bool ispar,
+      const sptr<ArrayOfAtoms>& arr,
+      int type,
+      int align);
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
-    static void defineColumnSpecifier(const wstring& rep, const wstring& spe);
+  static void defineColumnSpecifier(const wstring& rep, const wstring& spe);
 
-    __decl_clone(MatrixAtom)
+  __decl_clone(MatrixAtom)
 };
 
 /**
@@ -210,48 +213,48 @@ public:
  */
 class VlineAtom : public Atom {
 private:
-    // Number of lines to draw
-    int _n;
+  // Number of lines to draw
+  int _n;
 
 public:
-    float _height, _shift;
+  float _height, _shift;
 
-    VlineAtom() = delete;
+  VlineAtom() = delete;
 
-    VlineAtom(int n) : _n(n), _height(0), _shift(0) {}
+  VlineAtom(int n) : _n(n), _height(0), _shift(0) {}
 
-    inline float getWidth(_in_ TeXEnvironment& env) {
-        if (_n != 0) {
-            float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-            return drt * (3 * _n - 2);
-        }
-        return 0;
+  inline float getWidth(_in_ TeXEnvironment& env) {
+    if (_n != 0) {
+      float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
+      return drt * (3 * _n - 2);
+    }
+    return 0;
+  }
+
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    if (_n == 0) return sptr<Box>(new StrutBox(0, 0, 0, 0));
+
+    float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
+    sptr<Box> b(new HorizontalRule(_height, drt, _shift, MatrixAtom::LINE_COLOR, true));
+    sptr<Box> sep(new StrutBox(2 * drt, 0, 0, 0));
+    HorizontalBox* hb = new HorizontalBox();
+    for (int i = 0; i < _n - 1; i++) {
+      hb->add(b);
+      hb->add(sep);
     }
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        if (_n == 0) return sptr<Box>(new StrutBox(0, 0, 0, 0));
+    if (_n > 0) hb->add(b);
 
-        float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-        sptr<Box> b(new HorizontalRule(_height, drt, _shift, MatrixAtom::LINE_COLOR, true));
-        sptr<Box> sep(new StrutBox(2 * drt, 0, 0, 0));
-        HorizontalBox* hb = new HorizontalBox();
-        for (int i = 0; i < _n - 1; i++) {
-            hb->add(b);
-            hb->add(sep);
-        }
+    return sptr<Box>(hb);
+  }
 
-        if (_n > 0) hb->add(b);
-
-        return sptr<Box>(hb);
-    }
-
-    __decl_clone(VlineAtom)
+  __decl_clone(VlineAtom)
 };
 
 enum MULTILINETYPE {
-    MULTILINE = 0,
-    GATHER,
-    GATHERED
+  MULTILINE = 0,
+  GATHER,
+  GATHERED
 };
 
 /**
@@ -259,29 +262,29 @@ enum MULTILINETYPE {
  */
 class MultlineAtom : public Atom {
 private:
-    static SpaceAtom _vsep_in;
-    sptr<ArrayOfAtoms> _column;
-    int _ttype;
-    bool _ispartial;
+  static SpaceAtom _vsep_in;
+  sptr<ArrayOfAtoms> _column;
+  int _ttype;
+  bool _ispartial;
 
 public:
-    MultlineAtom() = delete;
+  MultlineAtom() = delete;
 
-    MultlineAtom(bool ispar, const sptr<ArrayOfAtoms>& col, int type) {
-        _ispartial = ispar;
-        _ttype = type;
-        _column = col;
-    }
+  MultlineAtom(bool ispar, const sptr<ArrayOfAtoms>& col, int type) {
+    _ispartial = ispar;
+    _ttype = type;
+    _column = col;
+  }
 
-    MultlineAtom(const sptr<ArrayOfAtoms>& col, int type) {
-        _ispartial = false;
-        _ttype = type;
-        _column = col;
-    }
+  MultlineAtom(const sptr<ArrayOfAtoms>& col, int type) {
+    _ispartial = false;
+    _ttype = type;
+    _column = col;
+  }
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
-    __decl_clone(MultlineAtom)
+  __decl_clone(MultlineAtom)
 };
 
 /**
@@ -289,27 +292,27 @@ public:
  */
 class BigDelimiterAtom : public Atom {
 private:
-    int _size;
+  int _size;
 
 public:
-    sptr<SymbolAtom> _delim;
+  sptr<SymbolAtom> _delim;
 
-    BigDelimiterAtom() = delete;
+  BigDelimiterAtom() = delete;
 
-    BigDelimiterAtom(const sptr<SymbolAtom>& delim, int s) : _delim(delim), _size(s) {}
+  BigDelimiterAtom(const sptr<SymbolAtom>& delim, int s) : _delim(delim), _size(s) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        auto b = DelimiterFactory::create(*_delim, env, _size);
-        HorizontalBox* hb = new HorizontalBox();
-        float h = b->_height;
-        float total = h + b->_depth;
-        float axis = env.getTeXFont()->getAxisHeight(env.getStyle());
-        b->_shift = -total / 2 + h - axis;
-        hb->add(b);
-        return sptr<Box>(hb);
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    auto b = DelimiterFactory::create(*_delim, env, _size);
+    HorizontalBox* hb = new HorizontalBox();
+    float h = b->_height;
+    float total = h + b->_depth;
+    float axis = env.getTeXFont()->getAxisHeight(env.getStyle());
+    b->_shift = -total / 2 + h - axis;
+    hb->add(b);
+    return sptr<Box>(hb);
+  }
 
-    __decl_clone(BigDelimiterAtom)
+  __decl_clone(BigDelimiterAtom)
 };
 
 /**
@@ -317,23 +320,23 @@ public:
  */
 class BoldAtom : public Atom {
 private:
-    sptr<Atom> _base;
+  sptr<Atom> _base;
 
 public:
-    BoldAtom() = delete;
+  BoldAtom() = delete;
 
-    BoldAtom(const sptr<Atom>& base) : _base(base) {}
+  BoldAtom(const sptr<Atom>& base) : _base(base) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        if (_base != nullptr) {
-            TeXEnvironment& e = *(env.copy(env.getTeXFont()->copy()));
-            e.getTeXFont()->setBold(true);
-            return _base->createBox(e);
-        }
-        return sptr<Box>(new StrutBox(0, 0, 0, 0));
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    if (_base != nullptr) {
+      TeXEnvironment& e = *(env.copy(env.getTeXFont()->copy()));
+      e.getTeXFont()->setBold(true);
+      return _base->createBox(e);
     }
+    return sptr<Box>(new StrutBox(0, 0, 0, 0));
+  }
 
-    __decl_clone(BoldAtom)
+  __decl_clone(BoldAtom)
 };
 
 /**
@@ -341,39 +344,39 @@ public:
  */
 class CedillAtom : public Atom {
 private:
-    sptr<Atom> _base;
+  sptr<Atom> _base;
 
 public:
-    CedillAtom() = delete;
+  CedillAtom() = delete;
 
-    CedillAtom(const sptr<Atom>& base) : _base(base) {}
+  CedillAtom(const sptr<Atom>& base) : _base(base) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        auto b = _base->createBox(env);
-        VerticalBox* vb = new VerticalBox();
-        vb->add(b);
-        Char ch = env.getTeXFont()->getChar("mathcedilla", env.getStyle());
-        float italic = ch.getItalic();
-        Box* cedilla = new CharBox(ch);
-        Box* y;
-        if (abs(italic) > PREC) {
-            y = new HorizontalBox(sptr<Box>(new StrutBox(-italic, 0, 0, 0)));
-            y->add(sptr<Box>(cedilla));
-        } else {
-            y = cedilla;
-        }
-
-        Box* ce = new HorizontalBox(sptr<Box>(y), b->_width, ALIGN_CENTER);
-        float x = 0.4f * SpaceAtom::getFactor(UNIT_MU, env);
-        vb->add(sptr<Box>(new StrutBox(0, -x, 0, 0)));
-        vb->add(sptr<Box>(ce));
-        float f = vb->_height + vb->_depth;
-        vb->_height = b->_height;
-        vb->_depth = f - b->_height;
-        return sptr<Box>(vb);
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    auto b = _base->createBox(env);
+    VerticalBox* vb = new VerticalBox();
+    vb->add(b);
+    Char ch = env.getTeXFont()->getChar("mathcedilla", env.getStyle());
+    float italic = ch.getItalic();
+    Box* cedilla = new CharBox(ch);
+    Box* y;
+    if (abs(italic) > PREC) {
+      y = new HorizontalBox(sptr<Box>(new StrutBox(-italic, 0, 0, 0)));
+      y->add(sptr<Box>(cedilla));
+    } else {
+      y = cedilla;
     }
 
-    __decl_clone(CedillAtom)
+    Box* ce = new HorizontalBox(sptr<Box>(y), b->_width, ALIGN_CENTER);
+    float x = 0.4f * SpaceAtom::getFactor(UNIT_MU, env);
+    vb->add(sptr<Box>(new StrutBox(0, -x, 0, 0)));
+    vb->add(sptr<Box>(ce));
+    float f = vb->_height + vb->_depth;
+    vb->_height = b->_height;
+    vb->_depth = f - b->_height;
+    return sptr<Box>(vb);
+  }
+
+  __decl_clone(CedillAtom)
 };
 
 /**
@@ -381,28 +384,28 @@ public:
  */
 class DdtosAtom : public Atom {
 public:
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        auto ldots = TeXFormula::get(L"ldots")->_root->createBox(env);
-        float w = ldots->_width;
-        auto dot = SymbolAtom::get("ldotp")->createBox(env);
-        HorizontalBox* hb1 = new HorizontalBox(dot, w, ALIGN_LEFT);
-        HorizontalBox* hb2 = new HorizontalBox(dot, w, ALIGN_CENTER);
-        HorizontalBox* hb3 = new HorizontalBox(dot, w, ALIGN_RIGHT);
-        sptr<Box> pt4(SpaceAtom(UNIT_MU, 0, 4, 0).createBox(env));
-        VerticalBox* vb = new VerticalBox();
-        vb->add(sptr<Box>(hb1));
-        vb->add(pt4);
-        vb->add(sptr<Box>(hb2));
-        vb->add(pt4);
-        vb->add(sptr<Box>(hb3));
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    auto ldots = TeXFormula::get(L"ldots")->_root->createBox(env);
+    float w = ldots->_width;
+    auto dot = SymbolAtom::get("ldotp")->createBox(env);
+    HorizontalBox* hb1 = new HorizontalBox(dot, w, ALIGN_LEFT);
+    HorizontalBox* hb2 = new HorizontalBox(dot, w, ALIGN_CENTER);
+    HorizontalBox* hb3 = new HorizontalBox(dot, w, ALIGN_RIGHT);
+    sptr<Box> pt4(SpaceAtom(UNIT_MU, 0, 4, 0).createBox(env));
+    VerticalBox* vb = new VerticalBox();
+    vb->add(sptr<Box>(hb1));
+    vb->add(pt4);
+    vb->add(sptr<Box>(hb2));
+    vb->add(pt4);
+    vb->add(sptr<Box>(hb3));
 
-        float h = vb->_height + vb->_depth;
-        vb->_height = h;
-        vb->_depth = 0;
-        return sptr<Box>(vb);
-    }
+    float h = vb->_height + vb->_depth;
+    vb->_height = h;
+    vb->_depth = 0;
+    return sptr<Box>(vb);
+  }
 
-    __decl_clone(DdtosAtom)
+  __decl_clone(DdtosAtom)
 };
 
 /**
@@ -410,35 +413,35 @@ public:
  */
 class FBoxAtom : public Atom {
 protected:
-    sptr<Atom> _base;
-    color _bg, _line;
+  sptr<Atom> _base;
+  color _bg, _line;
 
 public:
-    static const float INTERSPACE;
+  static const float INTERSPACE;
 
-    FBoxAtom() = delete;
+  FBoxAtom() = delete;
 
-    FBoxAtom(const sptr<Atom>& base, color bg = TRANS, color line = TRANS) {
-        if (base == nullptr)
-            _base = sptr<Atom>(new RowAtom());
-        else {
-            _base = base;
-            _type = base->_type;
-        }
-        _bg = bg;
-        _line = line;
+  FBoxAtom(const sptr<Atom>& base, color bg = TRANS, color line = TRANS) {
+    if (base == nullptr)
+      _base = sptr<Atom>(new RowAtom());
+    else {
+      _base = base;
+      _type = base->_type;
     }
+    _bg = bg;
+    _line = line;
+  }
 
-    virtual sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        auto bbase = _base->createBox(env);
-        float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-        float space = INTERSPACE * SpaceAtom::getFactor(UNIT_EM, env);
-        if (istrans(_bg)) return sptr<Box>(new FramedBox(bbase, drt, space));
-        env._isColored = true;
-        return sptr<Box>(new FramedBox(bbase, drt, space, _line, _bg));
-    }
+  virtual sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    auto bbase = _base->createBox(env);
+    float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
+    float space = INTERSPACE * SpaceAtom::getFactor(UNIT_EM, env);
+    if (istrans(_bg)) return sptr<Box>(new FramedBox(bbase, drt, space));
+    env._isColored = true;
+    return sptr<Box>(new FramedBox(bbase, drt, space, _line, _bg));
+  }
 
-    __decl_clone(FBoxAtom)
+  __decl_clone(FBoxAtom)
 };
 
 /**
@@ -446,20 +449,20 @@ public:
  */
 class DoubleFramedAtom : public FBoxAtom {
 public:
-    DoubleFramedAtom() = delete;
+  DoubleFramedAtom() = delete;
 
-    DoubleFramedAtom(const sptr<Atom>& base) : FBoxAtom(base) {}
+  DoubleFramedAtom(const sptr<Atom>& base) : FBoxAtom(base) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        auto bbase = _base->createBox(env);
-        float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-        float space = INTERSPACE * SpaceAtom::getFactor(UNIT_EM, env);
-        float sspace = 1.5f * drt + 0.5f * SpaceAtom::getFactor(UNIT_POINT, env);
-        return sptr<Box>(new FramedBox(
-            sptr<Box>(new FramedBox(bbase, 0.75 * drt, space)), 1.5f * drt, sspace));
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    auto bbase = _base->createBox(env);
+    float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
+    float space = INTERSPACE * SpaceAtom::getFactor(UNIT_EM, env);
+    float sspace = 1.5f * drt + 0.5f * SpaceAtom::getFactor(UNIT_POINT, env);
+    return sptr<Box>(new FramedBox(
+        sptr<Box>(new FramedBox(bbase, 0.75 * drt, space)), 1.5f * drt, sspace));
+  }
 
-    __decl_clone(DoubleFramedAtom)
+  __decl_clone(DoubleFramedAtom)
 };
 
 /**
@@ -467,18 +470,18 @@ public:
  */
 class ShadowAtom : public FBoxAtom {
 public:
-    ShadowAtom() = delete;
+  ShadowAtom() = delete;
 
-    ShadowAtom(const sptr<Atom>& base) : FBoxAtom(base) {}
+  ShadowAtom(const sptr<Atom>& base) : FBoxAtom(base) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        auto x = FBoxAtom::createBox(env);
-        auto box = dynamic_pointer_cast<FramedBox>(x);
-        float t = env.getTeXFont()->getDefaultRuleThickness(env.getStyle()) * 4;
-        return sptr<Box>(new ShadowBox(box, t));
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    auto x = FBoxAtom::createBox(env);
+    auto box = dynamic_pointer_cast<FramedBox>(x);
+    float t = env.getTeXFont()->getDefaultRuleThickness(env.getStyle()) * 4;
+    return sptr<Box>(new ShadowBox(box, t));
+  }
 
-    __decl_clone(ShadowAtom)
+  __decl_clone(ShadowAtom)
 };
 
 /**
@@ -486,20 +489,20 @@ public:
  */
 class OvalAtom : public FBoxAtom {
 public:
-    static float _multiplier;
-    static float _diameter;
+  static float _multiplier;
+  static float _diameter;
 
-    OvalAtom() = delete;
+  OvalAtom() = delete;
 
-    OvalAtom(const sptr<Atom>& base) : FBoxAtom(base) {}
+  OvalAtom(const sptr<Atom>& base) : FBoxAtom(base) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        auto x = FBoxAtom::createBox(env);
-        auto box = dynamic_pointer_cast<FramedBox>(x);
-        return sptr<Box>(new OvalBox(box, _multiplier, _diameter));
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    auto x = FBoxAtom::createBox(env);
+    auto box = dynamic_pointer_cast<FramedBox>(x);
+    return sptr<Box>(new OvalBox(box, _multiplier, _diameter));
+  }
 
-    __decl_clone(OvalAtom)
+  __decl_clone(OvalAtom)
 };
 
 /**
@@ -508,44 +511,44 @@ public:
  */
 class FencedAtom : public Atom {
 private:
-    static const int DELIMITER_FACTOR;
-    static const float DELIMITER_SHORTFALL;
-    // base atom
-    sptr<Atom> _base;
-    // delimiters
-    sptr<SymbolAtom> _left;
-    sptr<SymbolAtom> _right;
-    list<sptr<MiddleAtom>> _middle;
+  static const int DELIMITER_FACTOR;
+  static const float DELIMITER_SHORTFALL;
+  // base atom
+  sptr<Atom> _base;
+  // delimiters
+  sptr<SymbolAtom> _left;
+  sptr<SymbolAtom> _right;
+  list<sptr<MiddleAtom>> _middle;
 
-    void init(const sptr<Atom>& b, const sptr<SymbolAtom>& l, const sptr<SymbolAtom>& r);
+  void init(const sptr<Atom>& b, const sptr<SymbolAtom>& l, const sptr<SymbolAtom>& r);
 
-    static void center(_out_ Box& b, float axis);
+  static void center(_out_ Box& b, float axis);
 
 public:
-    FencedAtom(const sptr<Atom>& b, const sptr<SymbolAtom>& l, const sptr<SymbolAtom>& r) {
-        init(b, l, r);
-    }
+  FencedAtom(const sptr<Atom>& b, const sptr<SymbolAtom>& l, const sptr<SymbolAtom>& r) {
+    init(b, l, r);
+  }
 
-    FencedAtom(
-        const sptr<Atom>& b,
-        const sptr<SymbolAtom>& l,
-        const list<sptr<MiddleAtom>>& m,
-        const sptr<SymbolAtom>& r) {
-        init(b, l, r);
-        _middle = m;
-    }
+  FencedAtom(
+      const sptr<Atom>& b,
+      const sptr<SymbolAtom>& l,
+      const list<sptr<MiddleAtom>>& m,
+      const sptr<SymbolAtom>& r) {
+    init(b, l, r);
+    _middle = m;
+  }
 
-    int getLeftType() const override {
-        return TYPE_INNER;
-    }
+  int getLeftType() const override {
+    return TYPE_INNER;
+  }
 
-    int getRightType() const override {
-        return TYPE_INNER;
-    }
+  int getRightType() const override {
+    return TYPE_INNER;
+  }
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
-    __decl_clone(FencedAtom)
+  __decl_clone(FencedAtom)
 };
 
 /**
@@ -553,86 +556,84 @@ public:
  */
 class FractionAtom : public Atom {
 private:
-    // whether the default thickness should not be used for fraction line
-    bool _nodefault;
-    // unit used for the thickness of the fraction line
-    int _unit;
-    // alignment settings for the numerator and denominator
-    int _numAlign, _denomAlign;
-    // the atoms representing the numerator and denominator
-    sptr<Atom> _numerator, _denominator;
-    // thickness of the fraction line
-    float _thickness;
-    // thickness of the fraction line relative to the default thickness
-    float _deffactor;
-    // whether the def-factor value should be used
-    bool _deffactorset;
+  // whether the default thickness should not be used for fraction line
+  bool _nodefault;
+  // unit used for the thickness of the fraction line
+  int _unit;
+  // alignment settings for the numerator and denominator
+  int _numAlign, _denomAlign;
+  // the atoms representing the numerator and denominator
+  sptr<Atom> _numerator, _denominator;
+  // thickness of the fraction line
+  float _thickness;
+  // thickness of the fraction line relative to the default thickness
+  float _deffactor;
+  // whether the def-factor value should be used
+  bool _deffactorset;
 
-    inline int checkAlign(int align) {
-        if (align == ALIGN_LEFT || align == ALIGN_RIGHT) return align;
-        return ALIGN_CENTER;
-    }
+  inline int checkAlign(int align) {
+    if (align == ALIGN_LEFT || align == ALIGN_RIGHT) return align;
+    return ALIGN_CENTER;
+  }
 
-    void init(
-        const sptr<Atom>& num,
-        const sptr<Atom>& den,
-        bool nodef, int unit, float t) throw(ex_invalid_unit);
+  void init(
+      const sptr<Atom>& num,
+      const sptr<Atom>& den,
+      bool nodef,
+      int unit,
+      float t) throw(ex_invalid_unit);
 
 public:
-    /**
+  /**
      * If add space to start and end of fraction, default is true
      */
-    bool _useKern;
+  bool _useKern;
 
-    FractionAtom() = delete;
+  FractionAtom() = delete;
 
-    FractionAtom(const sptr<Atom>& num, const sptr<Atom>& den) {
-        init(num, den, false, UNIT_PIXEL, 0.f);
-    }
+  FractionAtom(const sptr<Atom>& num, const sptr<Atom>& den) {
+    init(num, den, false, UNIT_PIXEL, 0.f);
+  }
 
-    FractionAtom(const sptr<Atom>& num, const sptr<Atom>& den, bool rule) {
-        init(num, den, !rule, UNIT_PIXEL, 0.f);
-    }
+  FractionAtom(const sptr<Atom>& num, const sptr<Atom>& den, bool rule) {
+    init(num, den, !rule, UNIT_PIXEL, 0.f);
+  }
 
-    FractionAtom(
-        const sptr<Atom>& num, const sptr<Atom>& den,
-        bool nodef, int unit, float t) throw(ex_invalid_unit) {
-        init(num, den, nodef, unit, t);
-    }
+  FractionAtom(
+      const sptr<Atom>& num, const sptr<Atom>& den, bool nodef, int unit, float t) throw(ex_invalid_unit) {
+    init(num, den, nodef, unit, t);
+  }
 
-    FractionAtom(
-        const sptr<Atom>& num, const sptr<Atom>& den,
-        bool rule, int numAlign, int denomAlign) {
-        init(num, den, !rule, UNIT_PIXEL, 0.f);
-        _numAlign = checkAlign(numAlign);
-        _denomAlign = checkAlign(denomAlign);
-    }
+  FractionAtom(
+      const sptr<Atom>& num, const sptr<Atom>& den, bool rule, int numAlign, int denomAlign) {
+    init(num, den, !rule, UNIT_PIXEL, 0.f);
+    _numAlign = checkAlign(numAlign);
+    _denomAlign = checkAlign(denomAlign);
+  }
 
-    FractionAtom(
-        const sptr<Atom>& num, const sptr<Atom>& den,
-        float deffactor, int numAlign, int denomAlign) {
-        init(num, den, false, UNIT_PIXEL, 0.f);
-        _numAlign = checkAlign(numAlign);
-        _denomAlign = checkAlign(denomAlign);
-        _deffactor = deffactor;
-        _deffactorset = true;
-    }
+  FractionAtom(
+      const sptr<Atom>& num, const sptr<Atom>& den, float deffactor, int numAlign, int denomAlign) {
+    init(num, den, false, UNIT_PIXEL, 0.f);
+    _numAlign = checkAlign(numAlign);
+    _denomAlign = checkAlign(denomAlign);
+    _deffactor = deffactor;
+    _deffactorset = true;
+  }
 
-    FractionAtom(
-        const sptr<Atom>& num, const sptr<Atom>& den,
-        int unit, float t, int numAlign, int denomAlign) {
-        init(num, den, true, unit, t);
-        _numAlign = checkAlign(numAlign);
-        _denomAlign = checkAlign(denomAlign);
-    }
+  FractionAtom(
+      const sptr<Atom>& num, const sptr<Atom>& den, int unit, float t, int numAlign, int denomAlign) {
+    init(num, den, true, unit, t);
+    _numAlign = checkAlign(numAlign);
+    _denomAlign = checkAlign(denomAlign);
+  }
 
-    FractionAtom(const sptr<Atom>& num, const sptr<Atom>& den, int unit, float t) {
-        init(num, den, true, unit, t);
-    }
+  FractionAtom(const sptr<Atom>& num, const sptr<Atom>& den, int unit, float t) {
+    init(num, den, true, unit, t);
+  }
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
-    __decl_clone(FractionAtom)
+  __decl_clone(FractionAtom)
 };
 
 /**
@@ -640,66 +641,66 @@ public:
  */
 class MulticolumnAtom : public Atom {
 protected:
-    // Number of columns across
-    int _n;
-    int _align;
-    float _w;
-    int _beforeVlines, _afterVlines;
-    int _row, _col;
-    sptr<Atom> _cols;
+  // Number of columns across
+  int _n;
+  int _align;
+  float _w;
+  int _beforeVlines, _afterVlines;
+  int _row, _col;
+  sptr<Atom> _cols;
 
-    int parseAlign(const string& str);
+  int parseAlign(const string& str);
 
 public:
-    MulticolumnAtom() = delete;
+  MulticolumnAtom() = delete;
 
-    MulticolumnAtom(int n, const string& align, const sptr<Atom> cols)
-        : _w(0), _beforeVlines(0), _afterVlines(0), _row(0), _col(0) {
-        _n = n >= 1 ? n : 1;
-        _cols = cols;
-        _align = parseAlign(align);
-    }
+  MulticolumnAtom(int n, const string& align, const sptr<Atom> cols)
+      : _w(0), _beforeVlines(0), _afterVlines(0), _row(0), _col(0) {
+    _n = n >= 1 ? n : 1;
+    _cols = cols;
+    _align = parseAlign(align);
+  }
 
-    virtual bool isNeedWidth() const {
-        return false;
-    }
+  virtual bool isNeedWidth() const {
+    return false;
+  }
 
-    inline void setColumnWidth(float w) {
-        _w = w;
-    }
+  inline void setColumnWidth(float w) {
+    _w = w;
+  }
 
-    inline float getColumnWidth() {
-        return _w;
-    }
+  inline float getColumnWidth() {
+    return _w;
+  }
 
-    inline int getSkipped() {
-        return _n;
-    }
+  inline int getSkipped() {
+    return _n;
+  }
 
-    inline bool hasRightVline() {
-        return _afterVlines != 0;
-    }
+  inline bool hasRightVline() {
+    return _afterVlines != 0;
+  }
 
-    inline void setRowColumn(int i, int j) {
-        _row = i;
-        _col = j;
-    }
+  inline void setRowColumn(int i, int j) {
+    _row = i;
+    _col = j;
+  }
 
-    inline int getAlign() {
-        return _align;
-    }
+  inline int getAlign() {
+    return _align;
+  }
 
-    inline int getRow() {
-        return _row;
-    }
+  inline int getRow() {
+    return _row;
+  }
 
-    inline int getCol() {
-        return _col;
-    }
+  inline int getCol() {
+    return _col;
+  }
 
-    virtual sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  virtual sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
-    __decl_clone(MulticolumnAtom)
+  __decl_clone(MulticolumnAtom)
 };
 
 /**
@@ -707,26 +708,26 @@ public:
  */
 class HdotsforAtom : public MulticolumnAtom {
 private:
-    float _coeff;
+  float _coeff;
 
-    sptr<Box> createBox(
-        float space,
-        const sptr<Box>& b,
-        _out_ TeXEnvironment& env);
+  sptr<Box> createBox(
+      float space,
+      const sptr<Box>& b,
+      _out_ TeXEnvironment& env);
 
 public:
-    HdotsforAtom() = delete;
+  HdotsforAtom() = delete;
 
-    HdotsforAtom(int n, float coeff)
-        : MulticolumnAtom(n, "c", SymbolAtom::get("ldotp")), _coeff(coeff) {}
+  HdotsforAtom(int n, float coeff)
+      : MulticolumnAtom(n, "c", SymbolAtom::get("ldotp")), _coeff(coeff) {}
 
-    bool isNeedWidth() const override {
-        return true;
-    }
+  bool isNeedWidth() const override {
+    return true;
+  }
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
-    __decl_clone(HdotsforAtom)
+  __decl_clone(HdotsforAtom)
 };
 
 /**
@@ -734,29 +735,29 @@ public:
  */
 class IddotsAtom : public Atom {
 public:
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        auto ldots = TeXFormula::get(L"ldots")->_root->createBox(env);
-        float w = ldots->_width;
-        auto dot = SymbolAtom::get("ldotp")->createBox(env);
-        sptr<Box> hb1(new HorizontalBox(dot, w, ALIGN_RIGHT));
-        sptr<Box> hb2(new HorizontalBox(dot, w, ALIGN_CENTER));
-        sptr<Box> hb3(new HorizontalBox(dot, w, ALIGN_LEFT));
-        sptr<Box> pt4 = SpaceAtom(UNIT_MU, 0, 4, 0).createBox(env);
-        VerticalBox* vb = new VerticalBox();
-        vb->add(hb1);
-        vb->add(pt4);
-        vb->add(hb2);
-        vb->add(pt4);
-        vb->add(hb3);
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    auto ldots = TeXFormula::get(L"ldots")->_root->createBox(env);
+    float w = ldots->_width;
+    auto dot = SymbolAtom::get("ldotp")->createBox(env);
+    sptr<Box> hb1(new HorizontalBox(dot, w, ALIGN_RIGHT));
+    sptr<Box> hb2(new HorizontalBox(dot, w, ALIGN_CENTER));
+    sptr<Box> hb3(new HorizontalBox(dot, w, ALIGN_LEFT));
+    sptr<Box> pt4 = SpaceAtom(UNIT_MU, 0, 4, 0).createBox(env);
+    VerticalBox* vb = new VerticalBox();
+    vb->add(hb1);
+    vb->add(pt4);
+    vb->add(hb2);
+    vb->add(pt4);
+    vb->add(hb3);
 
-        float h = vb->_height + vb->_depth;
-        vb->_height = h;
-        vb->_depth = 0;
+    float h = vb->_height + vb->_depth;
+    vb->_height = h;
+    vb->_depth = 0;
 
-        return sptr<Box>(vb);
-    }
+    return sptr<Box>(vb);
+  }
 
-    __decl_clone(IddotsAtom)
+  __decl_clone(IddotsAtom)
 };
 
 /**
@@ -764,25 +765,25 @@ public:
  */
 class IJAtom : public Atom {
 private:
-    bool _upper;
+  bool _upper;
 
 public:
-    IJAtom() = delete;
+  IJAtom() = delete;
 
-    IJAtom(bool upper) : _upper(upper) {}
+  IJAtom(bool upper) : _upper(upper) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        CharBox* I = new CharBox(
-            env.getTeXFont()->getChar(_upper ? 'I' : 'i', "mathnormal", env.getStyle()));
-        CharBox* J = new CharBox(
-            env.getTeXFont()->getChar(_upper ? 'J' : 'j', "mathnormal", env.getStyle()));
-        HorizontalBox* hb = new HorizontalBox(sptr<Box>(I));
-        hb->add(SpaceAtom(UNIT_EM, -0.065f, 0, 0).createBox(env));
-        hb->add(sptr<Box>(J));
-        return sptr<Box>(hb);
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    CharBox* I = new CharBox(
+        env.getTeXFont()->getChar(_upper ? 'I' : 'i', "mathnormal", env.getStyle()));
+    CharBox* J = new CharBox(
+        env.getTeXFont()->getChar(_upper ? 'J' : 'j', "mathnormal", env.getStyle()));
+    HorizontalBox* hb = new HorizontalBox(sptr<Box>(I));
+    hb->add(SpaceAtom(UNIT_EM, -0.065f, 0, 0).createBox(env));
+    hb->add(sptr<Box>(J));
+    return sptr<Box>(hb);
+  }
 
-    __decl_clone(IJAtom)
+  __decl_clone(IJAtom)
 };
 
 /**
@@ -790,27 +791,27 @@ public:
  */
 class ItAtom : public Atom {
 private:
-    sptr<Atom> _base;
+  sptr<Atom> _base;
 
 public:
-    ItAtom() = delete;
+  ItAtom() = delete;
 
-    ItAtom(const sptr<Atom> base) : _base(base) {}
+  ItAtom(const sptr<Atom> base) : _base(base) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        sptr<Box> box;
-        if (_base != nullptr) {
-            TeXEnvironment& e = *(env.copy(env.getTeXFont()->copy()));
-            e.getTeXFont()->setIt(true);
-            box = _base->createBox(e);
-        } else {
-            box = sptr<Box>(new StrutBox(0, 0, 0, 0));
-        }
-
-        return box;
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    sptr<Box> box;
+    if (_base != nullptr) {
+      TeXEnvironment& e = *(env.copy(env.getTeXFont()->copy()));
+      e.getTeXFont()->setIt(true);
+      box = _base->createBox(e);
+    } else {
+      box = sptr<Box>(new StrutBox(0, 0, 0, 0));
     }
 
-    __decl_clone(ItAtom)
+    return box;
+  }
+
+  __decl_clone(ItAtom)
 };
 
 /**
@@ -818,35 +819,35 @@ public:
  */
 class LapedAtom : public Atom {
 private:
-    sptr<Atom> _at;
-    wchar_t _type;
+  sptr<Atom> _at;
+  wchar_t _type;
 
 public:
-    LapedAtom() = delete;
+  LapedAtom() = delete;
 
-    LapedAtom(const sptr<Atom>& a, wchar_t type) : _at(a), _type(type) {}
+  LapedAtom(const sptr<Atom>& a, wchar_t type) : _at(a), _type(type) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        auto b = _at->createBox(env);
-        VerticalBox* vb = new VerticalBox();
-        vb->add(b);
-        vb->_width = 0;
-        switch (_type) {
-        case 'l':
-            b->_shift = -b->_width;
-            break;
-        case 'r':
-            b->_shift = 0;
-            break;
-        default:
-            b->_shift = -b->_width / 2;
-            break;
-        }
-
-        return sptr<Box>(vb);
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    auto b = _at->createBox(env);
+    VerticalBox* vb = new VerticalBox();
+    vb->add(b);
+    vb->_width = 0;
+    switch (_type) {
+      case 'l':
+        b->_shift = -b->_width;
+        break;
+      case 'r':
+        b->_shift = 0;
+        break;
+      default:
+        b->_shift = -b->_width / 2;
+        break;
     }
 
-    __decl_clone(LapedAtom)
+    return sptr<Box>(vb);
+  }
+
+  __decl_clone(LapedAtom)
 };
 
 /**
@@ -855,9 +856,9 @@ public:
  */
 class LaTeXAtom : public Atom {
 public:
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
-    __decl_clone(LaTeXAtom)
+  __decl_clone(LaTeXAtom)
 };
 
 /**
@@ -865,28 +866,28 @@ public:
  */
 class LCaronAtom : public Atom {
 private:
-    bool _upper;
+  bool _upper;
 
 public:
-    LCaronAtom() = delete;
+  LCaronAtom() = delete;
 
-    LCaronAtom(bool upper) : _upper(upper) {}
+  LCaronAtom(bool upper) : _upper(upper) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        CharBox* A = new CharBox(
-            env.getTeXFont()->getChar("textapos", env.getStyle()));
-        CharBox* L = new CharBox(
-            env.getTeXFont()->getChar(_upper ? 'L' : 'l', "mathnormal", env.getStyle()));
-        HorizontalBox* hb = new HorizontalBox(sptr<Box>(L));
-        if (_upper)
-            hb->add(SpaceAtom(UNIT_EM, -0.3f, 0, 0).createBox(env));
-        else
-            hb->add(SpaceAtom(UNIT_EM, -0.13f, 0, 0).createBox(env));
-        hb->add(sptr<Box>(A));
-        return sptr<Box>(hb);
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    CharBox* A = new CharBox(
+        env.getTeXFont()->getChar("textapos", env.getStyle()));
+    CharBox* L = new CharBox(
+        env.getTeXFont()->getChar(_upper ? 'L' : 'l', "mathnormal", env.getStyle()));
+    HorizontalBox* hb = new HorizontalBox(sptr<Box>(L));
+    if (_upper)
+      hb->add(SpaceAtom(UNIT_EM, -0.3f, 0, 0).createBox(env));
+    else
+      hb->add(SpaceAtom(UNIT_EM, -0.13f, 0, 0).createBox(env));
+    hb->add(sptr<Box>(A));
+    return sptr<Box>(hb);
+  }
 
-    __decl_clone(LCaronAtom)
+  __decl_clone(LCaronAtom)
 };
 
 /**
@@ -894,22 +895,22 @@ public:
  */
 class MonoScaleAtom : public ScaleAtom {
 private:
-    float _factor;
+  float _factor;
 
 public:
-    MonoScaleAtom() = delete;
+  MonoScaleAtom() = delete;
 
-    MonoScaleAtom(const sptr<Atom>& base, float factor)
-        : ScaleAtom(base, factor, factor), _factor(factor) {}
+  MonoScaleAtom(const sptr<Atom>& base, float factor)
+      : ScaleAtom(base, factor, factor), _factor(factor) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        TeXEnvironment& e = *(env.copy());
-        float f = e.getScaleFactor();
-        e.setScaleFactor(_factor);
-        return sptr<Box>(new ScaleBox(_base->createBox(e), _factor / f));
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    TeXEnvironment& e = *(env.copy());
+    float f = e.getScaleFactor();
+    e.setScaleFactor(_factor);
+    return sptr<Box>(new ScaleBox(_base->createBox(e), _factor / f));
+  }
 
-    __decl_clone(MonoScaleAtom)
+  __decl_clone(MonoScaleAtom)
 };
 
 /**
@@ -917,38 +918,38 @@ public:
  */
 class OgonekAtom : public Atom {
 private:
-    sptr<Atom> _base;
+  sptr<Atom> _base;
 
 public:
-    OgonekAtom() = delete;
+  OgonekAtom() = delete;
 
-    OgonekAtom(const sptr<Atom>& base) : _base(base) {}
+  OgonekAtom(const sptr<Atom>& base) : _base(base) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        auto b = _base->createBox(env);
-        VerticalBox* vb = new VerticalBox();
-        vb->add(b);
-        Char ch = env.getTeXFont()->getChar("ogonek", env.getStyle());
-        float italic = ch.getItalic();
-        Box* ogonek = new CharBox(ch);
-        Box* y = nullptr;
-        if (abs(italic) > PREC) {
-            y = new HorizontalBox(sptr<Box>(new StrutBox(-italic, 0, 0, 0)));
-            y->add(sptr<Box>(ogonek));
-        } else {
-            y = ogonek;
-        }
-
-        Box* og = new HorizontalBox(sptr<Box>(y), b->_width, ALIGN_RIGHT);
-        vb->add(sptr<Box>(new StrutBox(0, -ogonek->_height, 0, 0)));
-        vb->add(sptr<Box>(og));
-        float f = vb->_height + vb->_depth;
-        vb->_height = b->_height;
-        vb->_depth = f - b->_height;
-        return sptr<Box>(vb);
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    auto b = _base->createBox(env);
+    VerticalBox* vb = new VerticalBox();
+    vb->add(b);
+    Char ch = env.getTeXFont()->getChar("ogonek", env.getStyle());
+    float italic = ch.getItalic();
+    Box* ogonek = new CharBox(ch);
+    Box* y = nullptr;
+    if (abs(italic) > PREC) {
+      y = new HorizontalBox(sptr<Box>(new StrutBox(-italic, 0, 0, 0)));
+      y->add(sptr<Box>(ogonek));
+    } else {
+      y = ogonek;
     }
 
-    __decl_clone(OgonekAtom)
+    Box* og = new HorizontalBox(sptr<Box>(y), b->_width, ALIGN_RIGHT);
+    vb->add(sptr<Box>(new StrutBox(0, -ogonek->_height, 0, 0)));
+    vb->add(sptr<Box>(og));
+    float f = vb->_height + vb->_depth;
+    vb->_height = b->_height;
+    vb->_depth = f - b->_height;
+    return sptr<Box>(vb);
+  }
+
+  __decl_clone(OgonekAtom)
 };
 
 /**
@@ -956,73 +957,73 @@ public:
  */
 class OverlinedAtom : public Atom {
 private:
-    sptr<Atom> _base;
+  sptr<Atom> _base;
 
 public:
-    OverlinedAtom() = delete;
+  OverlinedAtom() = delete;
 
-    OverlinedAtom(const sptr<Atom>& f) : _base(f) {
-        _type = TYPE_ORDINARY;
-    }
+  OverlinedAtom(const sptr<Atom>& f) : _base(f) {
+    _type = TYPE_ORDINARY;
+  }
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-        // cramp the style of the formula to be overlined and create
-        // vertical box
-        auto b = _base == nullptr ? sptr<Box>(new StrutBox(0, 0, 0, 0))
-                                  : _base->createBox(*(env.crampStyle()));
-        OverBar* ob = new OverBar(b, 3 * drt, drt);
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
+    // cramp the style of the formula to be overlined and create
+    // vertical box
+    auto b = _base == nullptr ? sptr<Box>(new StrutBox(0, 0, 0, 0))
+                              : _base->createBox(*(env.crampStyle()));
+    OverBar* ob = new OverBar(b, 3 * drt, drt);
 
-        // baseline vertical box = baseline box b
-        ob->_depth = b->_depth;
-        ob->_height = b->_height + 5 * drt;
+    // baseline vertical box = baseline box b
+    ob->_depth = b->_depth;
+    ob->_height = b->_height + 5 * drt;
 
-        return sptr<Box>(ob);
-    }
+    return sptr<Box>(ob);
+  }
 
-    __decl_clone(OverlinedAtom)
+  __decl_clone(OverlinedAtom)
 };
 
 class RaiseAtom : public Atom {
 private:
-    sptr<Atom> _base;
-    int _ru, _hu, _du;
-    float _r, _h, _d;
+  sptr<Atom> _base;
+  int _ru, _hu, _du;
+  float _r, _h, _d;
 
 public:
-    RaiseAtom() = delete;
+  RaiseAtom() = delete;
 
-    RaiseAtom(const sptr<Atom>& base, int ru, float r, int hu, float h, int du, float d)
-        : _base(base), _ru(ru), _r(r), _hu(hu), _h(h), _du(du), _d(d) {}
+  RaiseAtom(const sptr<Atom>& base, int ru, float r, int hu, float h, int du, float d)
+      : _base(base), _ru(ru), _r(r), _hu(hu), _h(h), _du(du), _d(d) {}
 
-    int getLeftType() const override {
-        return _base->getLeftType();
-    }
+  int getLeftType() const override {
+    return _base->getLeftType();
+  }
 
-    int getRightType() const override {
-        return _base->getRightType();
-    }
+  int getRightType() const override {
+    return _base->getRightType();
+  }
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        auto bbox = _base->createBox(env);
-        if (_ru == -1)
-            bbox->_shift = 0;
-        else
-            bbox->_shift = -_r * SpaceAtom::getFactor(_ru, env);
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    auto bbox = _base->createBox(env);
+    if (_ru == -1)
+      bbox->_shift = 0;
+    else
+      bbox->_shift = -_r * SpaceAtom::getFactor(_ru, env);
 
-        if (_hu == -1) return bbox;
+    if (_hu == -1) return bbox;
 
-        HorizontalBox* hbox = new HorizontalBox(bbox);
-        hbox->_height = _h * SpaceAtom::getFactor(_hu, env);
-        if (_du == -1)
-            hbox->_depth = 0;
-        else
-            hbox->_depth = _d * SpaceAtom::getFactor(_du, env);
+    HorizontalBox* hbox = new HorizontalBox(bbox);
+    hbox->_height = _h * SpaceAtom::getFactor(_hu, env);
+    if (_du == -1)
+      hbox->_depth = 0;
+    else
+      hbox->_depth = _d * SpaceAtom::getFactor(_du, env);
 
-        return sptr<Box>(hbox);
-    }
+    return sptr<Box>(hbox);
+  }
 
-    __decl_clone(RaiseAtom)
+  __decl_clone(RaiseAtom)
 };
 
 /**
@@ -1030,20 +1031,20 @@ public:
  */
 class ReflectAtom : public Atom {
 private:
-    sptr<Atom> _base;
+  sptr<Atom> _base;
 
 public:
-    ReflectAtom() = delete;
+  ReflectAtom() = delete;
 
-    ReflectAtom(const sptr<Atom>& base) : _base(base) {
-        _type = _base->_type;
-    }
+  ReflectAtom(const sptr<Atom>& base) : _base(base) {
+    _type = _base->_type;
+  }
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        return sptr<Box>(new ReflectBox(_base->createBox(env)));
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    return sptr<Box>(new ReflectBox(_base->createBox(env)));
+  }
 
-    __decl_clone(ReflectAtom)
+  __decl_clone(ReflectAtom)
 };
 
 /**
@@ -1051,57 +1052,57 @@ public:
  */
 class ResizeAtom : public Atom {
 private:
-    sptr<Atom> _base;
-    int _wu, _hu;
-    float _w, _h;
-    bool _keep_aspect_ratio;
+  sptr<Atom> _base;
+  int _wu, _hu;
+  float _w, _h;
+  bool _keep_aspect_ratio;
 
 public:
-    ResizeAtom() = delete;
+  ResizeAtom() = delete;
 
-    ResizeAtom(const sptr<Atom>& base, const string& ws, const string& hs, bool keepAspectRatio) {
-        _type = base->_type;
-        _base = base;
-        _keep_aspect_ratio = keepAspectRatio;
-        auto w = SpaceAtom::getLength(ws);
-        auto h = SpaceAtom::getLength(hs);
-        _wu = (int)w.first;
-        _w = w.second;
-        _hu = (int)h.first;
-        _h = h.second;
+  ResizeAtom(const sptr<Atom>& base, const string& ws, const string& hs, bool keepAspectRatio) {
+    _type = base->_type;
+    _base = base;
+    _keep_aspect_ratio = keepAspectRatio;
+    auto w = SpaceAtom::getLength(ws);
+    auto h = SpaceAtom::getLength(hs);
+    _wu = (int)w.first;
+    _w = w.second;
+    _hu = (int)h.first;
+    _h = h.second;
+  }
+
+  int getLeftType() const override {
+    return _base->getLeftType();
+  }
+
+  int getRightType() const override {
+    return _base->getRightType();
+  }
+
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    auto bbox = _base->createBox(env);
+    if (_wu == -1 && _hu == -1) return bbox;
+    float sx = 1.f, sy = 1.f;
+    if (_wu != -1 && _hu != -1) {
+      sx = _w * SpaceAtom::getFactor(_wu, env) / bbox->_width;
+      sy = _h * SpaceAtom::getFactor(_hu, env) / bbox->_height;
+      if (_keep_aspect_ratio) {
+        sx = min(sx, sy);
+        sy = sx;
+      }
+    } else if (_wu != -1 && _hu == -1) {
+      sx = _w * SpaceAtom::getFactor(_wu, env) / bbox->_width;
+      sy = sx;
+    } else {
+      sx = _h * SpaceAtom::getFactor(_hu, env) / bbox->_height;
+      sy = sx;
     }
 
-    int getLeftType() const override {
-        return _base->getLeftType();
-    }
+    return sptr<Box>(new ScaleBox(bbox, sx, sy));
+  }
 
-    int getRightType() const override {
-        return _base->getRightType();
-    }
-
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        auto bbox = _base->createBox(env);
-        if (_wu == -1 && _hu == -1) return bbox;
-        float sx = 1.f, sy = 1.f;
-        if (_wu != -1 && _hu != -1) {
-            sx = _w * SpaceAtom::getFactor(_wu, env) / bbox->_width;
-            sy = _h * SpaceAtom::getFactor(_hu, env) / bbox->_height;
-            if (_keep_aspect_ratio) {
-                sx = min(sx, sy);
-                sy = sx;
-            }
-        } else if (_wu != -1 && _hu == -1) {
-            sx = _w * SpaceAtom::getFactor(_wu, env) / bbox->_width;
-            sy = sx;
-        } else {
-            sx = _h * SpaceAtom::getFactor(_hu, env) / bbox->_height;
-            sy = sx;
-        }
-
-        return sptr<Box>(new ScaleBox(bbox, sx, sy));
-    }
-
-    __decl_clone(ResizeAtom)
+  __decl_clone(ResizeAtom)
 };
 
 /**
@@ -1109,24 +1110,24 @@ public:
  */
 class NthRoot : public Atom {
 private:
-    static const string _sqrtSymbol;
-    static const float FACTOR;
-    // base atom to be put under the root sign
-    sptr<Atom> _base;
-    // root atom to be put in the upper left corner above the root sign
-    sptr<Atom> _root;
+  static const string _sqrtSymbol;
+  static const float FACTOR;
+  // base atom to be put under the root sign
+  sptr<Atom> _base;
+  // root atom to be put in the upper left corner above the root sign
+  sptr<Atom> _root;
 
 public:
-    NthRoot() = delete;
+  NthRoot() = delete;
 
-    NthRoot(const sptr<Atom>& base, const sptr<Atom>& root) {
-        _base = base == nullptr ? sptr<Atom>(new EmptyAtom()) : base;
-        _root = root == nullptr ? sptr<Atom>(new EmptyAtom()) : root;
-    }
+  NthRoot(const sptr<Atom>& base, const sptr<Atom>& root) {
+    _base = base == nullptr ? sptr<Atom>(new EmptyAtom()) : base;
+    _root = root == nullptr ? sptr<Atom>(new EmptyAtom()) : root;
+  }
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
-    __decl_clone(NthRoot)
+  __decl_clone(NthRoot)
 };
 
 /**
@@ -1134,43 +1135,43 @@ public:
  */
 class RotateAtom : public Atom {
 private:
-    sptr<Atom> _base;
-    float _angle;
-    int _option;
-    int _xunit, _yunit;
-    float _x, _y;
+  sptr<Atom> _base;
+  float _angle;
+  int _option;
+  int _xunit, _yunit;
+  float _x, _y;
 
 public:
-    RotateAtom() = delete;
+  RotateAtom() = delete;
 
-    RotateAtom(const sptr<Atom>& base, const wstring& angle, const wstring& option);
+  RotateAtom(const sptr<Atom>& base, const wstring& angle, const wstring& option);
 
-    RotateAtom(const sptr<Atom>& base, float angle, const wstring& option);
+  RotateAtom(const sptr<Atom>& base, float angle, const wstring& option);
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
-    __decl_clone(RotateAtom)
+  __decl_clone(RotateAtom)
 };
 
 class RuleAtom : public Atom {
 private:
-    int _wu, _hu, _ru;
-    float _w, _h, _r;
+  int _wu, _hu, _ru;
+  float _w, _h, _r;
 
 public:
-    RuleAtom() = delete;
+  RuleAtom() = delete;
 
-    RuleAtom(int wu, float w, int hu, float h, int ru, float r)
-        : _wu(wu), _hu(hu), _ru(ru), _w(w), _h(h), _r(r) {}
+  RuleAtom(int wu, float w, int hu, float h, int ru, float r)
+      : _wu(wu), _hu(hu), _ru(ru), _w(w), _h(h), _r(r) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        float w = SpaceAtom::getFactor(_wu, env) * _w;
-        float h = SpaceAtom::getFactor(_hu, env) * _h;
-        float r = SpaceAtom::getFactor(_ru, env) * _r;
-        return sptr<Box>(new HorizontalRule(h, w, r));
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    float w = SpaceAtom::getFactor(_wu, env) * _w;
+    float h = SpaceAtom::getFactor(_hu, env) * _h;
+    float r = SpaceAtom::getFactor(_ru, env) * _r;
+    return sptr<Box>(new HorizontalRule(h, w, r));
+  }
 
-    __decl_clone(RuleAtom)
+  __decl_clone(RuleAtom)
 };
 
 /**
@@ -1178,22 +1179,22 @@ public:
  */
 class SmallCpaAtom : public Atom {
 private:
-    sptr<Atom> _base;
+  sptr<Atom> _base;
 
 public:
-    SmallCpaAtom() = delete;
+  SmallCpaAtom() = delete;
 
-    SmallCpaAtom(const sptr<Atom>& base) : _base(base) {}
+  SmallCpaAtom(const sptr<Atom>& base) : _base(base) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        bool prev = env.getSmallCap();
-        env.setSmallCap(true);
-        auto box = _base->createBox(env);
-        env.setSmallCap(prev);
-        return box;
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    bool prev = env.getSmallCap();
+    env.setSmallCap(true);
+    auto box = _base->createBox(env);
+    env.setSmallCap(prev);
+    return box;
+  }
 
-    __decl_clone(SmallCpaAtom)
+  __decl_clone(SmallCpaAtom)
 };
 
 /**
@@ -1201,22 +1202,22 @@ public:
  */
 class SsAtom : public Atom {
 private:
-    sptr<Atom> _base;
+  sptr<Atom> _base;
 
 public:
-    SsAtom() = delete;
+  SsAtom() = delete;
 
-    SsAtom(const sptr<Atom>& base) : _base(base) {}
+  SsAtom(const sptr<Atom>& base) : _base(base) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        bool prev = env.getTeXFont()->getSs();
-        env.getTeXFont()->setSs(true);
-        auto box = _base->createBox(env);
-        env.getTeXFont()->setSs(prev);
-        return box;
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    bool prev = env.getTeXFont()->getSs();
+    env.getTeXFont()->setSs(true);
+    auto box = _base->createBox(env);
+    env.getTeXFont()->setSs(prev);
+    return box;
+  }
 
-    __decl_clone(SsAtom)
+  __decl_clone(SsAtom)
 };
 
 /**
@@ -1224,27 +1225,27 @@ public:
  */
 class StrikeThroughAtom : public Atom {
 private:
-    sptr<Atom> _at;
+  sptr<Atom> _at;
 
 public:
-    StrikeThroughAtom(const sptr<Atom>& a) : _at(a) {}
+  StrikeThroughAtom(const sptr<Atom>& a) : _at(a) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        TeXFont& tf = *(env.getTeXFont());
-        int style = env.getStyle();
-        float axis = tf.getAxisHeight(style);
-        float drt = tf.getDefaultRuleThickness(style);
-        auto b = _at->createBox(env);
-        HorizontalRule* rule = new HorizontalRule(drt, b->_width, -axis + drt, false);
-        HorizontalBox* hb = new HorizontalBox();
-        hb->add(b);
-        hb->add(sptr<Box>(new StrutBox(-b->_width, 0, 0, 0)));
-        hb->add(sptr<Box>(rule));
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    TeXFont& tf = *(env.getTeXFont());
+    int style = env.getStyle();
+    float axis = tf.getAxisHeight(style);
+    float drt = tf.getDefaultRuleThickness(style);
+    auto b = _at->createBox(env);
+    HorizontalRule* rule = new HorizontalRule(drt, b->_width, -axis + drt, false);
+    HorizontalBox* hb = new HorizontalBox();
+    hb->add(b);
+    hb->add(sptr<Box>(new StrutBox(-b->_width, 0, 0, 0)));
+    hb->add(sptr<Box>(rule));
 
-        return sptr<Box>(hb);
-    }
+    return sptr<Box>(hb);
+  }
 
-    __decl_clone(StrikeThroughAtom)
+  __decl_clone(StrikeThroughAtom)
 };
 
 /**
@@ -1253,27 +1254,27 @@ public:
  */
 class StyleAtom : public Atom {
 private:
-    int _style;
-    sptr<Atom> _at;
+  int _style;
+  sptr<Atom> _at;
 
 public:
-    StyleAtom() = delete;
+  StyleAtom() = delete;
 
-    StyleAtom(int style, const sptr<Atom>& a) {
-        _style = style;
-        _at = a;
-        _type = a->_type;
-    }
+  StyleAtom(int style, const sptr<Atom>& a) {
+    _style = style;
+    _at = a;
+    _type = a->_type;
+  }
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        int s = env.getStyle();
-        env.setStyle(_style);
-        auto box = _at->createBox(env);
-        env.setStyle(s);
-        return box;
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    int s = env.getStyle();
+    env.setStyle(_style);
+    auto box = _at->createBox(env);
+    env.setStyle(s);
+    return box;
+  }
 
-    __decl_clone(StyleAtom)
+  __decl_clone(StyleAtom)
 };
 
 /**
@@ -1281,40 +1282,40 @@ public:
  */
 class TCaronAtom : public Atom {
 public:
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        Char a = env.getTeXFont()->getChar("textapos", env.getStyle());
-        CharBox* A = new CharBox(a);
-        Char t = env.getTeXFont()->getChar('t', "mathnormal", env.getStyle());
-        CharBox* T = new CharBox(t);
-        HorizontalBox* hb = new HorizontalBox(sptr<Box>(T));
-        hb->add(SpaceAtom(UNIT_EM, -0.3f, 0, 0).createBox(env));
-        hb->add(sptr<Box>(A));
-        return sptr<Box>(hb);
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    Char a = env.getTeXFont()->getChar("textapos", env.getStyle());
+    CharBox* A = new CharBox(a);
+    Char t = env.getTeXFont()->getChar('t', "mathnormal", env.getStyle());
+    CharBox* T = new CharBox(t);
+    HorizontalBox* hb = new HorizontalBox(sptr<Box>(T));
+    hb->add(SpaceAtom(UNIT_EM, -0.3f, 0, 0).createBox(env));
+    hb->add(sptr<Box>(A));
+    return sptr<Box>(hb);
+  }
 
-    __decl_clone(TCaronAtom)
+  __decl_clone(TCaronAtom)
 };
 
 class TextCircledAtom : public Atom {
 private:
-    sptr<Atom> _at;
+  sptr<Atom> _at;
 
 public:
-    TextCircledAtom() = delete;
+  TextCircledAtom() = delete;
 
-    TextCircledAtom(const sptr<Atom>& a) : _at(a) {}
+  TextCircledAtom(const sptr<Atom>& a) : _at(a) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        auto circle = SymbolAtom::get("bigcirc")->createBox(env);
-        circle->_shift = -0.07f * SpaceAtom::getFactor(UNIT_EX, env);
-        auto box = _at->createBox(env);
-        HorizontalBox* hb = new HorizontalBox(box, circle->_width, ALIGN_CENTER);
-        hb->add(sptr<Box>(new StrutBox(-hb->_width, 0, 0, 0)));
-        hb->add(circle);
-        return sptr<Box>(hb);
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    auto circle = SymbolAtom::get("bigcirc")->createBox(env);
+    circle->_shift = -0.07f * SpaceAtom::getFactor(UNIT_EX, env);
+    auto box = _at->createBox(env);
+    HorizontalBox* hb = new HorizontalBox(box, circle->_width, ALIGN_CENTER);
+    hb->add(sptr<Box>(new StrutBox(-hb->_width, 0, 0, 0)));
+    hb->add(circle);
+    return sptr<Box>(hb);
+  }
 
-    __decl_clone(TextCircledAtom)
+  __decl_clone(TextCircledAtom)
 };
 
 /**
@@ -1322,24 +1323,24 @@ public:
  */
 class TextStyleAtom : public Atom {
 private:
-    string _style;
-    sptr<Atom> _at;
+  string _style;
+  sptr<Atom> _at;
 
 public:
-    TextStyleAtom() = delete;
+  TextStyleAtom() = delete;
 
-    TextStyleAtom(const sptr<Atom>& a, const string& style) : _style(style), _at(a) {
-    }
+  TextStyleAtom(const sptr<Atom>& a, const string& style) : _style(style), _at(a) {
+  }
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        string prev = env.getTextStyle();
-        env.setTextStyle(_style);
-        auto box = _at->createBox(env);
-        env.setTextStyle(prev);
-        return box;
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    string prev = env.getTextStyle();
+    env.setTextStyle(_style);
+    auto box = _at->createBox(env);
+    env.setTextStyle(prev);
+    return box;
+  }
 
-    __decl_clone(TextStyleAtom)
+  __decl_clone(TextStyleAtom)
 };
 
 /**
@@ -1347,35 +1348,35 @@ public:
  */
 class TStrokeAtom : public Atom {
 private:
-    bool _upper;
+  bool _upper;
 
 public:
-    TStrokeAtom() = delete;
+  TStrokeAtom() = delete;
 
-    TStrokeAtom(bool u) : _upper(u) {}
+  TStrokeAtom(bool u) : _upper(u) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        Char ch = env.getTeXFont()->getChar("bar", env.getStyle());
-        float italic = ch.getItalic();
-        Char t = env.getTeXFont()->getChar(_upper ? 'T' : 't', "mathnormal", env.getStyle());
-        CharBox* T = new CharBox(t);
-        CharBox* B = new CharBox(ch);
-        Box* y = nullptr;
-        if (abs(italic) > PREC) {
-            y = new HorizontalBox(sptr<Box>(new StrutBox(-italic, 0, 0, 0)));
-            y->add(sptr<Box>(B));
-        } else {
-            y = B;
-        }
-        Box* b = new HorizontalBox(sptr<Box>(y), T->_width, ALIGN_CENTER);
-        VerticalBox* vb = new VerticalBox();
-        vb->add(sptr<Box>(T));
-        vb->add(sptr<Box>(new StrutBox(0, -0.5f * T->_width, 0, 0)));
-        vb->add(sptr<Box>(b));
-        return sptr<Box>(vb);
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    Char ch = env.getTeXFont()->getChar("bar", env.getStyle());
+    float italic = ch.getItalic();
+    Char t = env.getTeXFont()->getChar(_upper ? 'T' : 't', "mathnormal", env.getStyle());
+    CharBox* T = new CharBox(t);
+    CharBox* B = new CharBox(ch);
+    Box* y = nullptr;
+    if (abs(italic) > PREC) {
+      y = new HorizontalBox(sptr<Box>(new StrutBox(-italic, 0, 0, 0)));
+      y->add(sptr<Box>(B));
+    } else {
+      y = B;
     }
+    Box* b = new HorizontalBox(sptr<Box>(y), T->_width, ALIGN_CENTER);
+    VerticalBox* vb = new VerticalBox();
+    vb->add(sptr<Box>(T));
+    vb->add(sptr<Box>(new StrutBox(0, -0.5f * T->_width, 0, 0)));
+    vb->add(sptr<Box>(b));
+    return sptr<Box>(vb);
+  }
 
-    __decl_clone(TStrokeAtom)
+  __decl_clone(TStrokeAtom)
 };
 
 /**
@@ -1383,22 +1384,22 @@ public:
  */
 class TtAtom : public Atom {
 private:
-    sptr<Atom> _base;
+  sptr<Atom> _base;
 
 public:
-    TtAtom() = delete;
+  TtAtom() = delete;
 
-    TtAtom(const sptr<Atom>& base) : _base(base) {}
+  TtAtom(const sptr<Atom>& base) : _base(base) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        bool prev = env.getTeXFont()->getTt();
-        env.getTeXFont()->setTt(true);
-        auto box = _base->createBox(env);
-        env.getTeXFont()->setTt(prev);
-        return box;
-    }
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    bool prev = env.getTeXFont()->getTt();
+    env.getTeXFont()->setTt(true);
+    auto box = _base->createBox(env);
+    env.getTeXFont()->setTt(prev);
+    return box;
+  }
 
-    __decl_clone(TtAtom)
+  __decl_clone(TtAtom)
 };
 
 /**
@@ -1406,36 +1407,36 @@ public:
  */
 class UnderlinedAtom : public Atom {
 private:
-    sptr<Atom> _base;
+  sptr<Atom> _base;
 
 public:
-    UnderlinedAtom() = delete;
+  UnderlinedAtom() = delete;
 
-    UnderlinedAtom(const sptr<Atom>& f) : _base(f) {
-        _type = TYPE_ORDINARY;
-    }
+  UnderlinedAtom(const sptr<Atom>& f) : _base(f) {
+    _type = TYPE_ORDINARY;
+  }
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
 
-        // create formula box in same style
-        auto b = _base == nullptr ? sptr<Box>(new StrutBox(0, 0, 0, 0)) : _base->createBox(env);
+    // create formula box in same style
+    auto b = _base == nullptr ? sptr<Box>(new StrutBox(0, 0, 0, 0)) : _base->createBox(env);
 
-        // create vertical box
-        VerticalBox* vb = new VerticalBox();
-        vb->add(b);
-        vb->add(sptr<Box>(new StrutBox(0, 3 * drt, 0, 0)));
-        vb->add(sptr<Box>(new HorizontalRule(drt, b->_width, 0)));
+    // create vertical box
+    VerticalBox* vb = new VerticalBox();
+    vb->add(b);
+    vb->add(sptr<Box>(new StrutBox(0, 3 * drt, 0, 0)));
+    vb->add(sptr<Box>(new HorizontalRule(drt, b->_width, 0)));
 
-        // baseline vertical box = baseline box b
-        // there's also an invisible strut of height drt under the rule
-        vb->_depth = b->_depth + 5 * drt;
-        vb->_height = b->_height;
+    // baseline vertical box = baseline box b
+    // there's also an invisible strut of height drt under the rule
+    vb->_depth = b->_depth + 5 * drt;
+    vb->_height = b->_height;
 
-        return sptr<Box>(vb);
-    }
+    return sptr<Box>(vb);
+  }
 
-    __decl_clone(UnderlinedAtom)
+  __decl_clone(UnderlinedAtom)
 };
 
 /**
@@ -1444,29 +1445,29 @@ public:
  */
 class UnderOverArrowAtom : public Atom {
 private:
-    sptr<Atom> _base;
-    bool _over, _left, _dble;
+  sptr<Atom> _base;
+  bool _over, _left, _dble;
 
 public:
-    UnderOverArrowAtom() = delete;
+  UnderOverArrowAtom() = delete;
 
-    UnderOverArrowAtom(const sptr<Atom>& base, bool left, bool over) {
-        _base = base;
-        _left = left;
-        _over = over;
-        _dble = false;
-    }
+  UnderOverArrowAtom(const sptr<Atom>& base, bool left, bool over) {
+    _base = base;
+    _left = left;
+    _over = over;
+    _dble = false;
+  }
 
-    UnderOverArrowAtom(const sptr<Atom>& base, bool over) {
-        _base = base;
-        _over = over;
-        _dble = true;
-        _left = false;
-    }
+  UnderOverArrowAtom(const sptr<Atom>& base, bool over) {
+    _base = base;
+    _over = over;
+    _dble = true;
+    _left = false;
+  }
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
-    __decl_clone(UnderOverArrowAtom)
+  __decl_clone(UnderOverArrowAtom)
 };
 
 /**
@@ -1475,26 +1476,26 @@ public:
  */
 class VCenteredAtom : public Atom {
 private:
-    sptr<Atom> _at;
+  sptr<Atom> _at;
 
 public:
-    VCenteredAtom() = delete;
+  VCenteredAtom() = delete;
 
-    VCenteredAtom(const sptr<Atom>& a) : _at(a) {}
+  VCenteredAtom(const sptr<Atom>& a) : _at(a) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        auto b = _at->createBox(env);
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    auto b = _at->createBox(env);
 
-        float total = b->_height + b->_depth;
-        float axis = env.getTeXFont()->getAxisHeight(env.getStyle());
+    float total = b->_height + b->_depth;
+    float axis = env.getTeXFont()->getAxisHeight(env.getStyle());
 
-        // center on axis
-        b->_shift = -(total / 2) - axis;
+    // center on axis
+    b->_shift = -(total / 2) - axis;
 
-        return sptr<Box>(new HorizontalBox(b));
-    }
+    return sptr<Box>(new HorizontalBox(b));
+  }
 
-    __decl_clone(VCenteredAtom)
+  __decl_clone(VCenteredAtom)
 };
 
 /**
@@ -1502,23 +1503,23 @@ public:
  */
 class VdotsAtom : public Atom {
 public:
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-        auto dot = SymbolAtom::get("ldotp")->createBox(env);
-        VerticalBox* vb = new VerticalBox(dot, 0, ALIGN_BOTTOM);
-        auto b = SpaceAtom(UNIT_MU, 0, 4, 0).createBox(env);
-        vb->add(b);
-        vb->add(dot);
-        vb->add(b);
-        vb->add(dot);
-        float d = vb->_depth;
-        float h = vb->_height;
-        vb->_depth = 0;
-        vb->_height = d + h;
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+    auto dot = SymbolAtom::get("ldotp")->createBox(env);
+    VerticalBox* vb = new VerticalBox(dot, 0, ALIGN_BOTTOM);
+    auto b = SpaceAtom(UNIT_MU, 0, 4, 0).createBox(env);
+    vb->add(b);
+    vb->add(dot);
+    vb->add(b);
+    vb->add(dot);
+    float d = vb->_depth;
+    float h = vb->_height;
+    vb->_depth = 0;
+    vb->_height = d + h;
 
-        return sptr<Box>(vb);
-    }
+    return sptr<Box>(vb);
+  }
 
-    __decl_clone(VdotsAtom)
+  __decl_clone(VdotsAtom)
 };
 
 /**
@@ -1527,21 +1528,21 @@ public:
  */
 class XArrowAtom : public Atom {
 private:
-    sptr<Atom> _over, _under;
-    bool _left;
+  sptr<Atom> _over, _under;
+  bool _left;
 
 public:
-    XArrowAtom() = delete;
+  XArrowAtom() = delete;
 
-    XArrowAtom(const sptr<Atom>& over, const sptr<Atom>& under, bool left) {
-        _over = over;
-        _under = under;
-        _left = left;
-    }
+  XArrowAtom(const sptr<Atom>& over, const sptr<Atom>& under, bool left) {
+    _over = over;
+    _under = under;
+    _left = left;
+  }
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
-    __decl_clone(XArrowAtom)
+  __decl_clone(XArrowAtom)
 };
 
 /**
@@ -1549,16 +1550,16 @@ public:
  */
 class LongDivAtom : public VRowAtom {
 private:
-    long _divisor, _dividend;
+  long _divisor, _dividend;
 
-    void calculate(_out_ vector<wstring>& results);
+  void calculate(_out_ vector<wstring>& results);
 
 public:
-    LongDivAtom() = delete;
+  LongDivAtom() = delete;
 
-    LongDivAtom(long divisor, long dividend);
+  LongDivAtom(long divisor, long dividend);
 
-    __decl_clone(LongDivAtom)
+  __decl_clone(LongDivAtom)
 };
 
 /**
@@ -1566,24 +1567,24 @@ public:
  */
 class CancelAtom : public Atom {
 private:
-    sptr<Atom> _base;
-    int _cancelType;
+  sptr<Atom> _base;
+  int _cancelType;
 
 public:
-    enum CancelType {
-        SLASH,
-        BACKSLASH,
-        CROSS
-    };
+  enum CancelType {
+    SLASH,
+    BACKSLASH,
+    CROSS
+  };
 
-    CancelAtom() = delete;
+  CancelAtom() = delete;
 
-    CancelAtom(const sptr<Atom>& base, int cancelType)
-        : _base(base), _cancelType(cancelType) {}
+  CancelAtom(const sptr<Atom>& base, int cancelType)
+      : _base(base), _cancelType(cancelType) {}
 
-    sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
-    __decl_clone(CancelAtom)
+  __decl_clone(CancelAtom)
 };
 
 }  // namespace tex

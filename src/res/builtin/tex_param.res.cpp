@@ -28,26 +28,26 @@ map<string, float> DefaultTeXFont::_parameters = {
 #define __id(name) FontInfo::__id(#name)
 
 void DefaultTeXFont::__default_general_settings() {
-    _generalSettings = {
-        {"mufontid", __id(cmsy10)},
-        {"spacefontid", __id(cmr10)},
-        {"textfactor", 1},
-        {"scriptfactor", 0.7},
-        {"scriptscriptfactor", 0.5}};
+  _generalSettings = {
+      {"mufontid", __id(cmsy10)},
+      {"spacefontid", __id(cmr10)},
+      {"textfactor", 1},
+      {"scriptfactor", 0.7},
+      {"scriptscriptfactor", 0.5}};
 }
 
 #define cf(c, f) new CharFont(c, __id(f))
 
 void DefaultTeXFont::__default_text_style_mapping() {
-    _textStyleMappings = {
-        {"mathnormal", {cf(48, cmr10), cf(65, cmmi10), cf(97, cmmi10), cf(0, cmmi10)}},
-        {"mathfrak", {cf(48, eufm10), cf(65, eufm10), cf(97, eufm10), nullptr}},
-        {"mathcal", {nullptr, cf(65, cmsy10), nullptr, nullptr}},
-        {"mathbb", {nullptr, cf(65, msbm10), nullptr, nullptr}},
-        {"mathscr", {nullptr, cf(65, rsfs10), nullptr, nullptr}},
-        {"mathds", {nullptr, cf(65, dsrom10), nullptr, nullptr}},
-        {"oldstylenums", {cf(48, cmmi10), nullptr, nullptr, nullptr}},
-    };
-    _defaultTextStyleMappings = new string[4];
-    for (int i = 0; i < 4; i++) _defaultTextStyleMappings[i] = "mathnormal";
+  _textStyleMappings = {
+      {"mathnormal", {cf(48, cmr10), cf(65, cmmi10), cf(97, cmmi10), cf(0, cmmi10)}},
+      {"mathfrak", {cf(48, eufm10), cf(65, eufm10), cf(97, eufm10), nullptr}},
+      {"mathcal", {nullptr, cf(65, cmsy10), nullptr, nullptr}},
+      {"mathbb", {nullptr, cf(65, msbm10), nullptr, nullptr}},
+      {"mathscr", {nullptr, cf(65, rsfs10), nullptr, nullptr}},
+      {"mathds", {nullptr, cf(65, dsrom10), nullptr, nullptr}},
+      {"oldstylenums", {cf(48, cmmi10), nullptr, nullptr, nullptr}},
+  };
+  _defaultTextStyleMappings = new string[4];
+  for (int i = 0; i < 4; i++) _defaultTextStyleMappings[i] = "mathnormal";
 }

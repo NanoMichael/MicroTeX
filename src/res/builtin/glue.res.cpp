@@ -3,7 +3,7 @@
 using namespace tex;
 
 inline static Glue* g(const string& name, float space, float stretch, float shrink) {
-    return new Glue(space, stretch, shrink, name);
+  return new Glue(space, stretch, shrink, name);
 }
 
 vector<Glue*> Glue::_glueTypes = {

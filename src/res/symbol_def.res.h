@@ -6,14 +6,14 @@
 
 #define __len(x) ((int)(sizeof(x) / sizeof((x)[0])))
 
-#define DEF_SYMBOLS(name)        \
-    void __symbols_reg(name)() { \
-        const __symbol_component x[] = {
-#define END_DEF_SYMBOLS                          \
-    }                                            \
-    ;                                            \
-    DefaultTeXFont::__push_symbols(x, __len(x)); \
-    }
+#define DEF_SYMBOLS(name)      \
+  void __symbols_reg(name)() { \
+    const __symbol_component x[] = {
+#define END_DEF_SYMBOLS                        \
+  }                                            \
+  ;                                            \
+  DefaultTeXFont::__push_symbols(x, __len(x)); \
+  }
 
 /**
  * Define a symbol mapping.
@@ -23,6 +23,6 @@
  *      [font-id, code, symbol-name]
  */
 #define E(fontId, code, name) \
-    {fontId, code, #name},
+  {fontId, code, #name},
 
 #endif

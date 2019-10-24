@@ -1,7 +1,7 @@
 #include "atom_basic.h"
 
 #define c(name, c, m, y, k) \
-    { name, cmyk(c, m, y, k) }
+  { name, cmyk(c, m, y, k) }
 
 map<string, color> tex::ColorAtom::_colors = {
     {"black", black},
