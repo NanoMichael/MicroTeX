@@ -361,7 +361,7 @@ public:
 
   Char getNextLarger(_in_ const Char& c, int style) override;
 
-  inline sptr<TeXFont> copy() override;
+  sptr<TeXFont> copy() override;
 
   inline float getScaleFactor() override { return _factor; }
 
@@ -420,7 +420,7 @@ public:
     return getKern(cf, CharFont(skew, cf._fontId), style);
   }
 
-  inline float getSpace(int style) override;
+  float getSpace(int style) override;
 
   inline float getXHeight(int style, int fontCode) override {
     FontInfo* info = getInfo(fontCode);

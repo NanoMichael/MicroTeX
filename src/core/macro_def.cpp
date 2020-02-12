@@ -23,6 +23,7 @@ inline static PredefMacroInfo* m(int nbargs, MacroDelegate del) {
 }
 
 map<wstring, MacroInfo*> MacroInfo::_commands = {
+#define mac mac4
     mac(2, 2, macro_newcommand, "newcommand"),
     mac(2, 2, macro_renewcommand, "renewcommand"),
     mac(2, 1, macro_rule, "rule"),
@@ -39,6 +40,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands = {
     mac(2, 2, macro_scalebox, "scalebox"),
     mac(2, 2, macro_raisebox, "raisebox"),
     mac(1, 1, macro_dynamic, "dynamic"),
+#define mac mac3
     mac(1, macro_fatalIfCmdConflict, "fatalIfCmdConflict"),
     mac(1, macro_breakEverywhere, "breakEverywhere"),
     mac(3, macro_newenvironment, "newenvironment"),

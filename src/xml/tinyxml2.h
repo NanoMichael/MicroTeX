@@ -125,7 +125,7 @@ static const int TIXML2_MAJOR_VERSION = 3;
 static const int TIXML2_MINOR_VERSION = 0;
 static const int TIXML2_PATCH_VERSION = 0;
 
-namespace tinyxml2 {
+namespace tex { namespace tinyxml2 {
 class XMLDocument;
 class XMLElement;
 class XMLAttribute;
@@ -2105,6 +2105,7 @@ private:
 
 
 }   // tinyxml2
+}
 
 #if defined(_MSC_VER)
 #   pragma warning(pop)
