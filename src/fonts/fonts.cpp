@@ -104,7 +104,7 @@ void DefaultTeXFont::registerAlphabet(AlphabetRegistration* reg) {
   }
 }
 
-inline sptr<TeXFont> DefaultTeXFont::copy() {
+sptr<TeXFont> DefaultTeXFont::copy() {
   return sptr<TeXFont>(new DefaultTeXFont(
       _size, _factor, _isBold, _isRoman, _isSs, _isTt, _isIt));
 }
@@ -247,7 +247,7 @@ sptr<CharFont> DefaultTeXFont::getLigature(_in_ const CharFont& left, _in_ const
   return nullptr;
 }
 
-inline int DefaultTeXFont::getMuFontId() {
+int DefaultTeXFont::getMuFontId() {
   return _generalSettings[DefaultTeXFontParser::MUFONTID_ATTR];
 }
 
@@ -258,7 +258,7 @@ Char DefaultTeXFont::getNextLarger(_in_ const Char& c, int style) {
   return Char(ch->_c, newInfo->getFont(), ch->_fontId, getMetrics(*ch, getSizeFactor(style)));
 }
 
-inline float DefaultTeXFont::getSpace(int style) {
+float DefaultTeXFont::getSpace(int style) {
   int spaceFontId = _generalSettings[DefaultTeXFontParser::SPACEFONTID_ATTR];
   auto info = getInfo(spaceFontId);
   return info->getSpace(getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT);
