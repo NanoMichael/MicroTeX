@@ -539,7 +539,7 @@ that will produce:
 
 ![custom symbols](readme/example_custom_symbols.svg)
 
-# Plans to do next
+# TODO
 
 - [ ] buitin resources
 - [ ] support for webassembly
@@ -550,3 +550,7 @@ that will produce:
 - [ ] rewrite the parsing algorithm, make it more efficient
 - [ ] support for dynamic parsing
 - [ ] implement the `\def` command
+
+# License
+
+Excluding the font resources (under the directory `res/font`) that under different licenses (check out `res/fonts/license`), this project is under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html) license.
