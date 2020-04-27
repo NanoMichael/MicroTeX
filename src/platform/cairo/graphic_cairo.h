@@ -22,6 +22,7 @@ private:
   int _style;
   double _size;
   string _family;
+  Cairo::RefPtr<Cairo::FtFontFace> _fface;
 
   void loadFont(const string& file);
 
@@ -33,6 +34,8 @@ public:
   string getFamily() const;
 
   int getStyle() const;
+
+  Cairo::RefPtr<Cairo::FtFontFace> getCairoFontFace() const;
 
   virtual float getSize() const override;
 
