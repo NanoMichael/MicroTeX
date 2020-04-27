@@ -50,12 +50,18 @@ void Font_cairo::loadFont(const string& file) {
   _family = (const char*)family;
   _file_name_map[file] = _family;
 
+  _fface = Cairo::FtFontFace::create(p);
+
   // release
   FcPatternDestroy(p);
 }
 
 string Font_cairo::getFamily() const {
   return _family;
+}
+
+Cairo::RefPtr<Cairo::FtFontFace> Font_cairo::getCairoFontFace() const {
+  return _fface;
 }
 
 int Font_cairo::getStyle() const {
@@ -275,21 +281,7 @@ void Graphics2D_cairo::drawChar(wchar_t c, float x, float y) {
 }
 
 void Graphics2D_cairo::drawText(const wstring& t, float x, float y) {
-  Cairo::FontSlant slant = Cairo::FONT_SLANT_NORMAL;
-  Cairo::FontWeight weight = Cairo::FONT_WEIGHT_NORMAL;
-  switch (_font->getStyle()) {
-    case BOLD:
-      weight = Cairo::FONT_WEIGHT_BOLD;
-      break;
-    case ITALIC:
-      slant = Cairo::FONT_SLANT_ITALIC;
-      break;
-    case BOLDITALIC:
-      slant = Cairo::FONT_SLANT_ITALIC;
-      weight = Cairo::FONT_WEIGHT_BOLD;
-      break;
-  }
-  _context->select_font_face(_font->getFamily(), slant, weight);
+  _context->set_font_face(_font->getCairoFontFace());
   _context->set_font_size(_font->getSize());
   _context->move_to(x, y);
   _context->show_text(wide2utf8(t.c_str()));
