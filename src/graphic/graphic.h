@@ -46,6 +46,8 @@ public:
    */
   virtual bool operator!=(const Font& f) const = 0;
 
+  virtual ~Font() {};
+
   /**
    * Create font from file
    * 

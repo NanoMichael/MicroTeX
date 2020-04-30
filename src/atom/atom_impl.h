@@ -57,7 +57,7 @@ public:
 
   CellColorAtom(color c) : _color(c) {}
 
-  void apply(const sptr<Box>& box) {
+  void apply(const sptr<Box>& box) override {
     box->_background = _color;
   }
 
@@ -76,7 +76,7 @@ public:
 
   CellForegroundAtom(color c) : _color(c) {}
 
-  void apply(const sptr<Box>& box) {
+  void apply(const sptr<Box>& box) override {
     box->_foreground = _color;
   }
 
