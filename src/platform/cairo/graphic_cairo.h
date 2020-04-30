@@ -44,6 +44,8 @@ public:
   virtual bool operator==(const Font& f) const override;
 
   virtual bool operator!=(const Font& f) const override;
+
+  virtual ~Font_cairo() {};
 };
 
 /**************************************************************************************************/
