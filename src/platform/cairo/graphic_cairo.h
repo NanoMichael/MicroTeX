@@ -1,6 +1,6 @@
 #include "config.h"
 
-#if defined(__OS_Linux__) && !defined(MEM_CHECK)
+#if defined(__OS_Unix_like_PC__) && !defined(MEM_CHECK)
 
 #ifndef GRAPHIC_CAIRO_H_INCLUDED
 #define GRAPHIC_CAIRO_H_INCLUDED
@@ -44,6 +44,8 @@ public:
   virtual bool operator==(const Font& f) const override;
 
   virtual bool operator!=(const Font& f) const override;
+
+  virtual ~Font_cairo() {};
 };
 
 /**************************************************************************************************/
@@ -127,4 +129,4 @@ public:
 }  // namespace tex
 
 #endif  // GRAPHIC_CAIRO_H_INCLUDED
-#endif  // __OS_Linux__ && !MEM_CHECK
+#endif  // __OS_Unix_like_PC__ && !MEM_CHECK

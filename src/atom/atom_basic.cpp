@@ -58,7 +58,7 @@ CumulativeScriptsAtom::CumulativeScriptsAtom(
     ca->_sub->add(sub);
     _sup = ca->_sup;
     _sub = ca->_sub;
-  } else if (sa = dynamic_cast<ScriptsAtom*>(base.get())) {
+  } else if ((sa = dynamic_cast<ScriptsAtom*>(base.get()))) {
     _base = sa->_base;
     _sup = sptr<RowAtom>(new RowAtom(sa->_sup));
     _sub = sptr<RowAtom>(new RowAtom(sa->_sub));

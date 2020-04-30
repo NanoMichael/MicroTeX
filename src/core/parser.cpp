@@ -579,7 +579,7 @@ sptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
        * the ScriptsAtom will handle it
        */
     return sptr<Atom>(new ScriptsAtom(nullptr, first, second));
-  } else if (rm = dynamic_cast<RowAtom*>(_formula->_root.get())) {
+  } else if ((rm = dynamic_cast<RowAtom*>(_formula->_root.get()))) {
     atom = rm->popLastAtom();
   } else {
     atom = _formula->_root;

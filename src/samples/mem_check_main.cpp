@@ -26,6 +26,8 @@ public:
   bool operator!=(const Font& f) const override {
     return !(*this == f);
   }
+
+  virtual ~Font_none() {}
 };
 
 Font* Font::create(const string& file, float size) {

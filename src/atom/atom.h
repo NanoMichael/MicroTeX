@@ -234,6 +234,8 @@ public:
   virtual vector<sptr<Box>> getChildren() const {
     return _children;
   }
+
+  virtual ~Box() {}
 };
 
 /**
@@ -307,6 +309,8 @@ public:
    * Shallow clone a atom from this atom.
    */
   virtual sptr<Atom> clone() const = 0;
+
+  virtual ~Atom() {}
 
 #ifndef __decl_clone
 #define __decl_clone(type) \
