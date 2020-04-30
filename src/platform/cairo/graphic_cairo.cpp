@@ -9,7 +9,8 @@
 using namespace tex;
 using namespace std;
 
-map<string, string> Font_cairo::_file_name_map;
+map<string, string> Font_cairo::_families;
+map<string, Cairo::RefPtr<Cairo::FtFontFace>> Font_cairo::_cairoFtFaces;
 
 Font_cairo::Font_cairo(const string& family, int style, float size)
     : _family(family), _style(style), _size((double)size) {}
@@ -19,15 +20,19 @@ Font_cairo::Font_cairo(const string& file, float size) : Font_cairo("", PLAIN, s
 }
 
 void Font_cairo::loadFont(const string& file) {
-  auto it = _file_name_map.find(file);
-  if (it != _file_name_map.end()) {
+  auto ffaceEntry = _cairoFtFaces.find(file);
+  auto familyEntry = _families.find(file);
+  if (ffaceEntry != _cairoFtFaces.end() && familyEntry != _families.end()) {
     // already loaded
-    _family = _file_name_map[file];
+    _family = familyEntry->second;
+    _fface = ffaceEntry->second;
 #ifdef HAVE_LOG
     __log << file << " already loaded, skip\n";
 #endif
     return;
   }
+
+  // query font via fontconfig
   const FcChar8* f = (const FcChar8*)file.c_str();
 
   // get font family from file first
@@ -48,9 +53,10 @@ void Font_cairo::loadFont(const string& file) {
 #endif
 
   _family = (const char*)family;
-  _file_name_map[file] = _family;
+  _families[file] = _family;
 
   _fface = Cairo::FtFontFace::create(p);
+  _cairoFtFaces[file] = _fface;
 
   // release
   FcPatternDestroy(p);

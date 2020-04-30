@@ -17,7 +17,8 @@ namespace tex {
 
 class Font_cairo : public Font {
 private:
-  static map<string, string> _file_name_map;
+  static map<string, Cairo::RefPtr<Cairo::FtFontFace>> _cairoFtFaces;
+  static map<string, string> _families;
 
   int _style;
   double _size;
