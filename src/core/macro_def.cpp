@@ -11,9 +11,6 @@ using namespace tex;
 #define mac4(nbargs, posOpts, name, code) \
   { L##code, m(nbargs, posOpts, name) }
 
-#define __mac__(_1, _2, _3, _4, name, ...) name
-#define mac(...) __mac__(__VA_ARGS__, mac4, mac3)(__VA_ARGS__)
-
 inline static PredefMacroInfo* m(int nbargs, int posOpts, MacroDelegate del) {
   return new PredefMacroInfo(nbargs, posOpts, del);
 }
