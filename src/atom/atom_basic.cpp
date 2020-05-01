@@ -23,7 +23,12 @@ sptr<Box> MathAtom::createBox(_out_ TeXEnvironment& env) {
   TeXEnvironment& e = *(env.copy(env.getTeXFont()->copy()));
   e.getTeXFont()->setRoman(false);
   int style = e.getStyle();
-  e.setStyle(_style);
+  // if parent style greater than "this style",
+  // that means the parent uses smaller font size,
+  // then uses parent style instead
+  if (_style > style) {
+    e.setStyle(_style);
+  }
   auto box = _base->createBox(e);
   e.setStyle(style);
   return box;
