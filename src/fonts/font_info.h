@@ -2,8 +2,10 @@
 #define FONT_INFO_H_INCLUDED
 
 #include <unordered_map>
+
 #include "common.h"
 #include "graphic/graphic.h"
+#include "utils/indexed_arr.h"
 
 namespace tex {
 /**
@@ -324,6 +326,74 @@ public:
   friend ostream& operator<<(ostream& os, const FontInfo& info);
 #endif
 };
+
+class FontInfo2 {
+private:
+  static vector<FontInfo2*> _infos;
+  static vector<string> _names;
+
+  const int _id;       // id of this font info
+  const Font* _font;   // font of this info
+  const string _path;  // font file path
+
+  IndexedArray<float, 5, 1>* _metrics;    // metrics
+  IndexedArray<int, 5, 1>* _extensions;   // extensions
+  IndexedArray<int, 3, 1>* _nextLargers;  // largers
+  IndexedArray<int, 3, 2>* _lig;          // ligatures
+  IndexedArray<float, 3, 2>* _kern;       // kerning
+
+  wchar_t _skewChar;
+  // basic informations
+  float _xHeight, _space, _quad;
+  // BOLD, ROMAN, SANS-SERIF, TYPE-WIRTER, ITALIC
+  // the default is -1 (no that version)
+  int _boldId, _romanId, _ssId, _ttId, _itId;
+
+public:
+  const float* const getMetrics(wchar_t ch) const;
+
+  const int* const getExtension(wchar_t ch) const;
+
+  sptr<CharFont> getNextLarger(wchar_t ch) const;
+
+  sptr<CharFont> getLigture(wchar_t left, wchar_t right) const;
+
+  float getKern(wchar_t left, wchar_t right, float factor) const;
+
+  void setVariousId(
+      const string& bold,
+      const string& roman,
+      const string& ss,
+      const string& tt,
+      const string& it);
+
+  const Font* getFont();
+
+  inline float getQuad(float factor) const { return _quad * factor; }
+
+  inline float getSpace(float factor) const { return _space * factor; }
+
+  inline float getXHeight(float factor) const { return _xHeight * factor; }
+
+  inline wchar_t getSkewChar() const { return _skewChar; }
+
+  inline bool hasSpace() const { return _space > PREC; }
+
+  inline void setSkewChar(wchar_t c) { _skewChar = c; }
+
+  inline int getId() const { return _id; }
+
+  inline int getBoldId() const { return _boldId; }
+
+  inline int getRomanId() const { return _romanId; }
+
+  inline int getTtId() const { return _ttId; }
+
+  inline int getItId() const { return _itId; }
+
+  inline int getSsId() const { return _ssId; }
+};
+
 }  // namespace tex
 
 #endif
