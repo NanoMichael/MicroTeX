@@ -8,8 +8,8 @@ const string DefaultTeXFontParser::RESOURCE_NAME = FONTS_RES_BASE + "/DefaultTeX
 /** element define  */
 const string DefaultTeXFontParser::STYLE_MAPPING_EL = "TextStyleMapping";
 /** attribute define */
-const string DefaultTeXFontParser::GEN_SET_EL = "GeneralSettings";
-const string DefaultTeXFontParser::MUFONTID_ATTR = "mufontid";
+const string DefaultTeXFontParser::GEN_SET_EL       = "GeneralSettings";
+const string DefaultTeXFontParser::MUFONTID_ATTR    = "mufontid";
 const string DefaultTeXFontParser::SPACEFONTID_ATTR = "spacefontid";
 
 /** static const member initialize */
@@ -53,14 +53,14 @@ void DefaultTeXFontParser::parse_kern(
 void DefaultTeXFontParser::parse_lig(
     const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(ex_xml_parse) {
   int code = getIntAndCheck("code", e);
-  int lig = getIntAndCheck("ligCode", e);
+  int lig  = getIntAndCheck("ligCode", e);
   f.addLigture(c, (wchar_t)code, (wchar_t)lig);
 }
 
 void DefaultTeXFontParser::parse_larger(
     const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(ex_xml_parse) {
   const string name = getAttrValueAndCheckIfNotNull("fontId", e);
-  int code = getIntAndCheck("code", e);
+  const int    code = getIntAndCheck("code", e);
   f.setNextLarger(c, (wchar_t)code, __id(name));
 }
 
@@ -69,13 +69,13 @@ void DefaultTeXFontParser::parse_larger(
 void DefaultTeXFontParser::processCharElement(
     const XMLElement* e, _out_ FontInfo& info) throw(ex_res_parse) {
   // retrieve required integer value
-  wchar_t ch = (wchar_t)getIntAndCheck("code", e);
+  wchar_t ch      = (wchar_t)getIntAndCheck("code", e);
+  float*  metrics = new float[4];
   // retrieve optional value
-  float* metrics = new float[4];
-  metrics[DefaultTeXFont::WIDTH] = getOptionalFloat("width", e, 0);
+  metrics[DefaultTeXFont::WIDTH]  = getOptionalFloat("width", e, 0);
   metrics[DefaultTeXFont::HEIGHT] = getOptionalFloat("height", e, 0);
-  metrics[DefaultTeXFont::DEPTH] = getOptionalFloat("depth", e, 0);
-  metrics[DefaultTeXFont::IT] = getOptionalFloat("italic", e, 0);
+  metrics[DefaultTeXFont::DEPTH]  = getOptionalFloat("depth", e, 0);
+  metrics[DefaultTeXFont::IT]     = getOptionalFloat("italic", e, 0);
   // set metrics
   info.setMetrics(ch, metrics);
   // process children (kerning, ligature...)
@@ -104,7 +104,7 @@ void DefaultTeXFontParser::parseStyleMappings(
   mapping = mapping->FirstChildElement("TextStyleMapping");
   while (mapping != nullptr) {
     const string textStyleName = getAttrValueAndCheckIfNotNull("name", mapping);
-    string boldFontId = "";
+    string       boldFontId    = "";
     obtainAttr("bold", mapping, boldFontId);
     // parse range
     const XMLElement* range = mapping->FirstChildElement("MapRange");
@@ -114,8 +114,8 @@ void DefaultTeXFontParser::parseStyleMappings(
     vector<CharFont*> charFonts(4);
     while (range != nullptr) {
       const string fontId = getAttrValueAndCheckIfNotNull("fontId", range);
-      int ch = getIntAndCheck("start", range);
-      const string code = getAttrValueAndCheckIfNotNull("code", range);
+      const int    ch     = getIntAndCheck("start", range);
+      const string code   = getAttrValueAndCheckIfNotNull("code", range);
       // find the code mapping
       auto it = _rangeTypeMappings.find(code);
       if (it == _rangeTypeMappings.end()) {
@@ -132,10 +132,10 @@ void DefaultTeXFontParser::parseStyleMappings(
         f = new CharFont((wchar_t)ch, __id(fontId), __id(boldFontId));
       }
       charFonts[it->second] = f;
-      range = range->NextSiblingElement("MapRange");
+      range                 = range->NextSiblingElement("MapRange");
     }
     res[textStyleName] = charFonts;
-    mapping = mapping->NextSiblingElement("TextStyleMapping");
+    mapping            = mapping->NextSiblingElement("TextStyleMapping");
   }
 }
 
@@ -163,7 +163,7 @@ void DefaultTeXFontParser::parseFontDescriptions() throw(ex_res_parse) {
   const XMLElement* met = des->FirstChildElement("Metrics");
   while (met != nullptr) {
     const string include = getAttrValueAndCheckIfNotNull("include", met);
-    string path = "";
+    string       path    = "";
     if (_base.empty()) {
       path = RES_BASE + "/" + FONTS_RES_BASE + "/" + include;
     } else {
@@ -191,7 +191,7 @@ void DefaultTeXFontParser::parseFontDescriptions(const string& file) throw(ex_re
   if (file.empty()) return;
 
   XMLDocument doc(true, COLLAPSE_WHITESPACE);
-  int err = doc.LoadFile(file.c_str());
+  const int   err = doc.LoadFile(file.c_str());
   if (err != XML_NO_ERROR) throw ex_xml_parse("Cannot open file " + file + "!");
   // get root
   const XMLElement* font = doc.RootElement();
@@ -202,7 +202,7 @@ void DefaultTeXFontParser::parseFontDescriptions(const string& file) throw(ex_re
 
   // get required string attribute
   const string fontName = getAttrValueAndCheckIfNotNull("name", font);
-  const string fontId = getAttrValueAndCheckIfNotNull("id", font);
+  const string fontId   = getAttrValueAndCheckIfNotNull("id", font);
   if (__id(fontId) < 0) {
     FontInfo::__predefine_name(fontId);
   } else {
@@ -211,12 +211,12 @@ void DefaultTeXFontParser::parseFontDescriptions(const string& file) throw(ex_re
 
   const int __id = __id(fontId);
   // get required real attributes
-  const float space = getFloatAndCheck("space", font);
+  const float space   = getFloatAndCheck("space", font);
   const float xHeight = getFloatAndCheck("xHeight", font);
-  const float quad = getFloatAndCheck("quad", font);
+  const float quad    = getFloatAndCheck("quad", font);
   // optional
   const int skewChar = getOptionalInt("skewChar", font, -1);
-  const int unicode = getOptionalInt("unicode", font, 0);
+  const int unicode  = getOptionalInt("unicode", font, 0);
   // get various versions of the font
   __Versions v;
   obtainAttr("boldVersion", font, v.bold);
@@ -227,12 +227,12 @@ void DefaultTeXFontParser::parseFontDescriptions(const string& file) throw(ex_re
   _variousVersion[__id] = v;
 
   /**
-     * a name contains the file path relative to package "fonts",
-     * "base/cmex10.xml" as an example, the font file is represents
-     * with "base/cemx10.ttf"
-     */
+   * a name contains the file path relative to package "fonts",
+   * "base/cmex10.xml" as an example, the font file is represents
+   * with "base/cemx10.ttf"
+   */
   string path = file.substr(0, file.find_last_of("/") + 1) + fontName;
-  auto info = FontInfo::__create(__id, path, unicode, xHeight, space, quad);
+  auto   info = FontInfo::__create(__id, path, unicode, xHeight, space, quad);
 
   // attribute set
   if (skewChar != -1) info->setSkewChar((wchar_t)skewChar);
@@ -263,7 +263,7 @@ void DefaultTeXFontParser::parseSymbolMappings(
   XMLDocument doc(true, COLLAPSE_WHITESPACE);
   while (mapping != nullptr) {
     const string include = getAttrValueAndCheckIfNotNull("include", mapping);
-    string path = "";
+    string       path    = "";
     if (_base.empty()) {
       path = RES_BASE + "/" + FONTS_RES_BASE + "/" + include;
     } else {
@@ -284,10 +284,10 @@ void DefaultTeXFontParser::parseSymbolMappings(
 #endif  // HAVE_LOG
 
     while (symbol != nullptr) {
-      const string name = getAttrValueAndCheckIfNotNull("name", symbol);
-      const wchar_t ch = (wchar_t)getIntAndCheck("ch", symbol);
-      const string fontId = getAttrValueAndCheckIfNotNull("fontId", symbol);
-      string boldFontId = "";
+      const string  name       = getAttrValueAndCheckIfNotNull("name", symbol);
+      const wchar_t ch         = (wchar_t)getIntAndCheck("ch", symbol);
+      const string  fontId     = getAttrValueAndCheckIfNotNull("fontId", symbol);
+      string        boldFontId = "";
       obtainAttr("boldId", symbol, boldFontId);
 
       auto it = res.find(name);
@@ -300,14 +300,14 @@ void DefaultTeXFontParser::parseSymbolMappings(
         f = new CharFont(ch, __id(fontId), __id(boldFontId));
       }
       res[name] = f;
-      symbol = symbol->NextSiblingElement("SymbolMapping");
+      symbol    = symbol->NextSiblingElement("SymbolMapping");
     }
     mapping = mapping->NextSiblingElement("Mapping");
   }
 }
 
 string* DefaultTeXFontParser::parseDefaultTextStyleMappins() throw(ex_res_parse) {
-  string* res = new string[4];
+  string*           res      = new string[4];
   const XMLElement* mappings = _root->FirstChildElement("DefaultTextStyleMapping");
   if (mappings == nullptr) return res;
 
@@ -320,7 +320,7 @@ string* DefaultTeXFontParser::parseDefaultTextStyleMappins() throw(ex_res_parse)
   while (mapping != nullptr) {
     // get range name and check
     const string code = getAttrValueAndCheckIfNotNull("code", mapping);
-    auto mit = _rangeTypeMappings.find(code);
+    auto         mit  = _rangeTypeMappings.find(code);
     if (mit == _rangeTypeMappings.end()) {
       throw ex_xml_parse(
           RESOURCE_NAME,
@@ -351,7 +351,7 @@ string* DefaultTeXFontParser::parseDefaultTextStyleMappins() throw(ex_res_parse)
           "' contains no mapping for that range!");
 
     res[index] = textStyleName;
-    mapping = mapping->NextSiblingElement("MapStyle");
+    mapping    = mapping->NextSiblingElement("MapStyle");
   }
   return res;
 }
@@ -368,22 +368,24 @@ void DefaultTeXFontParser::parseParameters(_out_ map<string, float>& res) throw(
   const XMLAttribute* attr = parameters->FirstAttribute();
   // iterate all attributes
   while (attr != nullptr) {
-    const string name = attr->Name();
-    float value = getFloatAndCheck(name.c_str(), parameters);
+    const string name  = attr->Name();
+    const float  value = getFloatAndCheck(name.c_str(), parameters);
+
     res[name] = value;
-    attr = attr->Next();
+    attr      = attr->Next();
   }
 }
 
 void DefaultTeXFontParser::parseGeneralSettings(_out_ map<string, float>& res) throw(ex_res_parse) {
   const XMLElement* settings = _root->FirstChildElement("GeneralSettings");
   if (settings == nullptr) throw ex_xml_parse(RESOURCE_NAME, "GeneralSettings");
-
   int index = 0;
+
   const string& v1 = getAttrValueAndCheckIfNotNull("mufontid", settings);
-  res["mufontid"] = __id(v1);
   const string& v2 = getAttrValueAndCheckIfNotNull("spacefontid", settings);
-  res["spacefontid"] = __id(v2);
-  res["scriptfactor"] = getFloatAndCheck("scriptfactor", settings);
+
+  res["mufontid"]           = __id(v1);
+  res["spacefontid"]        = __id(v2);
+  res["scriptfactor"]       = getFloatAndCheck("scriptfactor", settings);
   res["scriptscriptfactor"] = getFloatAndCheck("scriptscriptfactor", settings);
 }

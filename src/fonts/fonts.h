@@ -1,17 +1,17 @@
 #ifndef FONTS_H_INCLUDED
 #define FONTS_H_INCLUDED
 
-#include "common.h"
-#include "core/formula.h"
-#include "fonts/alphabet.h"
-#include "fonts/font_info.h"
-#include "graphic/graphic.h"
-
 #include <cstring>
 #include <map>
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+#include "common.h"
+#include "core/formula.h"
+#include "fonts/alphabet.h"
+#include "fonts/font_info.h"
+#include "graphic/graphic.h"
 
 using namespace std;
 using namespace tex;
@@ -55,9 +55,9 @@ public:
    *      if the text style mapping not found
    */
   virtual Char getChar(
-      wchar_t c,
+      wchar_t       c,
       const string& textStyle,
-      int style) throw(ex_text_style_mapping_not_found) = 0;
+      int           style) throw(ex_text_style_mapping_not_found) = 0;
 
   /**
    * Get a Char-object for this specific character containing the metric information
@@ -240,8 +240,8 @@ public:
 };
 
 typedef struct {
-  int font;
-  int code;
+  int    font;
+  int    code;
   string name;
 } __symbol_component;
 
@@ -253,12 +253,12 @@ class SymbolsSet;
 class DefaultTeXFont : public TeXFont {
 private:
   // font related
-  static string* _defaultTextStyleMappings;
+  static string*                        _defaultTextStyleMappings;
   static map<string, vector<CharFont*>> _textStyleMappings;
-  static map<string, CharFont*> _symbolMappings;
-  static map<string, float> _parameters;
-  static map<string, float> _generalSettings;
-  static bool _magnificationEnable;
+  static map<string, CharFont*>         _symbolMappings;
+  static map<string, float>             _parameters;
+  static map<string, float>             _generalSettings;
+  static bool                           _magnificationEnable;
 
   float _factor, _size;
 
@@ -273,7 +273,7 @@ private:
   static void __default_text_style_mapping();
 
 public:
-  static vector<UnicodeBlock> _loadedAlphabets;
+  static vector<UnicodeBlock>                     _loadedAlphabets;
   static map<UnicodeBlock, AlphabetRegistration*> _registeredAlphabets;
   // no extension part for that kind (TOP, MID, REP or BOT)
   static const int NONE;
@@ -289,12 +289,12 @@ public:
 
   DefaultTeXFont(
       float pointSize,
-      float f = 1,
-      bool b = false,
-      bool rm = false,
-      bool ss = false,
-      bool tt = false,
-      bool it = false)
+      float f  = 1,
+      bool  b  = false,
+      bool  rm = false,
+      bool  ss = false,
+      bool  tt = false,
+      bool  it = false)
       : _size(pointSize),
         _factor(f),
         _isBold(b),
@@ -312,9 +312,9 @@ public:
   static void addAlphabet(AlphabetRegistration* reg);
 
   static void addAlphabet(
-      const string& base,
+      const string&               base,
       const vector<UnicodeBlock>& alphabet,
-      const string& lang) throw(ex_res_parse);
+      const string&               lang) throw(ex_res_parse);
 
   static void registerAlphabet(AlphabetRegistration* reg);
 
@@ -343,9 +343,9 @@ public:
   Char getDefaultChar(wchar_t c, int style) override;
 
   Char getChar(
-      wchar_t c,
+      wchar_t       c,
       const string& textStyle,
-      int style) throw(ex_text_style_mapping_not_found) override;
+      int           style) throw(ex_text_style_mapping_not_found) override;
 
   Char getChar(const CharFont& cf, int style) override;
 
@@ -415,7 +415,7 @@ public:
 
   inline float getSkew(_in_ const CharFont& cf, int style) override {
     FontInfo* info = getInfo(cf._fontId);
-    wchar_t skew = info->getSkewChar();
+    wchar_t   skew = info->getSkewChar();
     if (skew == -1) return 0;
     return getKern(cf, CharFont(skew, cf._fontId), style);
   }
@@ -433,7 +433,7 @@ public:
 
   inline bool hasNextLarger(_in_ const Char& c) override {
     FontInfo* info = getInfo(c.getFontCode());
-    return info->hasNextLarger(c.getChar());
+    return info->getNextLarger(c.getChar()) != nullptr;
   }
 
   inline void setBold(bool bold) override { _isBold = bold; }
@@ -463,7 +463,7 @@ public:
 
   inline bool isExtensionChar(_in_ const Char& c) override {
     FontInfo* info = getInfo(c.getFontCode());
-    return info->isExtensionChar(c.getChar());
+    return info->getExtension(c.getChar()) != nullptr;
   }
 
   /**
