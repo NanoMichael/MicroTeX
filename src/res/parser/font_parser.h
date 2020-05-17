@@ -37,10 +37,10 @@ private:
   // the xml-document we used
   XMLDocument _doc;
 
-  map<int, __Versions> _variousVersion;
+  map<int, __Versions>           _variousVersion;
   map<string, vector<CharFont*>> _parsedTextStyles;
-  const XMLElement* _root;
-  string _base;
+  const XMLElement*              _root;
+  string                         _base;
 
   static void parse_extension(const XMLElement*, wchar_t, _out_ FontInfo&) throw(ex_xml_parse);
   static void parse_kern(const XMLElement*, wchar_t, _out_ FontInfo&) throw(ex_xml_parse);
@@ -75,8 +75,8 @@ private:
   inline static float getFloatAndCheck(
       const char* attr, const XMLElement* e) throw(ex_xml_parse) {
     // get value
-    float v = 0;
-    int err = e->QueryFloatAttribute(attr, &v);
+    float v   = 0;
+    int   err = e->QueryFloatAttribute(attr, &v);
     // no attribute mapped by attr
     if (err != XML_NO_ERROR)
       throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
@@ -86,7 +86,7 @@ private:
   inline static int getIntAndCheck(
       const char* attr, const XMLElement* e) throw(ex_xml_parse) {
     // get value
-    int v = 0;
+    int v   = 0;
     int err = e->QueryIntAttribute(attr, &v);
     if (err != XML_NO_ERROR)
       throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
@@ -98,7 +98,7 @@ private:
     // check exists
     if (!exists(attr, e)) return def;
     // get value
-    int v = 0;
+    int v   = 0;
     int err = e->QueryAttribute(attr, &v);
     if (err != XML_NO_ERROR)
       throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
@@ -110,8 +110,8 @@ private:
     // check exists
     if (!exists(attr, e)) return def;
     // get value
-    float v = 0;
-    int err = e->QueryFloatAttribute(attr, &v);
+    float v   = 0;
+    int   err = e->QueryFloatAttribute(attr, &v);
     if (err != XML_NO_ERROR)
       throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
     return v;
