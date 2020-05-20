@@ -207,7 +207,8 @@ sptr<Metrics> DefaultTeXFont::getMetrics(_in_ const CharFont& cf, float size) {
   auto         info = getInfo(cf._fontId);
   const float* m    = info->getMetrics(cf._c);
   Metrics*     met  = new Metrics(
-      m[WIDTH], m[HEIGHT], m[DEPTH], m[IT], size * TeXFormula::PIXELS_PER_POINT, size);
+      m[WIDTH], m[HEIGHT], m[DEPTH], m[IT],
+      size * TeXFormula::PIXELS_PER_POINT, size);
   return sptr<Metrics>(met);
 }
 

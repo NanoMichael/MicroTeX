@@ -1,5 +1,7 @@
 #include "res/parser/font_parser.h"
 
+#include <numeric>
+
 #define __id(x) FontInfo::__id(x)
 
 const string DefaultTeXFontParser::FONTS_RES_BASE = "fonts";
@@ -17,67 +19,69 @@ const map<string, int> DefaultTeXFontParser::_rangeTypeMappings = {
     {"numbers", DefaultTeXFont::NUMBERS},
     {"capitals", DefaultTeXFont::CAPITAL},
     {"small", DefaultTeXFont::SMALL},
-    {"unicode", DefaultTeXFont::UNICODE}};  // range mapping
+    {"unicode", DefaultTeXFont::UNICODE},
+};  // range mapping
 
 const map<string, ChildParser> DefaultTeXFontParser::_charChildParsers = {
     {"Kern", DefaultTeXFontParser::parse_kern},
     {"Lig", DefaultTeXFontParser::parse_lig},
     {"NextLarger", DefaultTeXFontParser::parse_larger},
-    {"Extension", DefaultTeXFontParser::parse_extension}};  // child parsers
+    {"Extension", DefaultTeXFontParser::parse_extension},
+};  // child parsers
 
 /**************************************** child parsers *******************************************/
 
-void DefaultTeXFontParser::parse_extension(
-    const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(ex_xml_parse) {
-  int* extensions = new int[4];
-  // get required integer attributes
-  extensions[DefaultTeXFont::REP] = getIntAndCheck("rep", e);
-  // get optional integer attributes
-  extensions[DefaultTeXFont::TOP] = getOptionalInt("top", e, DefaultTeXFont::NONE);
-  extensions[DefaultTeXFont::MID] = getOptionalInt("mid", e, DefaultTeXFont::NONE);
-  extensions[DefaultTeXFont::BOT] = getOptionalInt("bot", e, DefaultTeXFont::NONE);
-  // parsing OK, add extension info
-  f.setExtension(c, extensions);
+void DefaultTeXFontParser::parse_extension(const XMLElement* e, wchar_t c, __BasicInfo& f) {
+  const __Extension ex{
+      .ch  = c,
+      .rep = getIntAndCheck("rep", e),
+      .top = getOptionalInt("top", e, DefaultTeXFont::NONE),
+      .mid = getOptionalInt("mid", e, DefaultTeXFont::NONE),
+      .bot = getOptionalInt("bot", e, DefaultTeXFont::NONE),
+  };
+  f.extensions.push_back(ex);
 }
 
-void DefaultTeXFontParser::parse_kern(
-    const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(ex_xml_parse) {
-  // get required integer attributes
-  int code = getIntAndCheck("code", e);
-  // get required float attributes
-  float kern = getFloatAndCheck("val", e);
-  // parsing OK, add kern info
-  f.addKern(c, (wchar_t)code, kern);
+void DefaultTeXFontParser::parse_kern(const XMLElement* e, wchar_t c, __BasicInfo& f) {
+  const __Kern kern{
+      .left  = c,
+      .right = getIntAndCheck("code", e),
+      .kern  = getFloatAndCheck("val", e),
+  };
+  f.kerns.push_back(kern);
 }
 
-void DefaultTeXFontParser::parse_lig(
-    const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(ex_xml_parse) {
-  int code = getIntAndCheck("code", e);
-  int lig  = getIntAndCheck("ligCode", e);
-  f.addLigture(c, (wchar_t)code, (wchar_t)lig);
+void DefaultTeXFontParser::parse_lig(const XMLElement* e, wchar_t c, __BasicInfo& f) {
+  const __Lig lig{
+      .left  = c,
+      .right = getIntAndCheck("code", e),
+      .lig   = getIntAndCheck("ligCode", e),
+  };
+  f.ligs.push_back(lig);
 }
 
-void DefaultTeXFontParser::parse_larger(
-    const XMLElement* e, wchar_t c, _out_ FontInfo& f) throw(ex_xml_parse) {
-  const string name = getAttrValueAndCheckIfNotNull("fontId", e);
-  const int    code = getIntAndCheck("code", e);
-  f.setNextLarger(c, (wchar_t)code, __id(name));
+void DefaultTeXFontParser::parse_larger(const XMLElement* e, wchar_t c, __BasicInfo& f) {
+  const __Larger larger{
+      .code   = c,
+      .larger = getIntAndCheck("code", e),
+      .fontId = __id(getAttrValueAndCheckIfNotNull("fontId", e)),
+  };
+  f.largers.push_back(larger);
 }
 
 /**************************************** font information ****************************************/
 
-void DefaultTeXFontParser::processCharElement(
-    const XMLElement* e, _out_ FontInfo& info) throw(ex_res_parse) {
+void DefaultTeXFontParser::processCharElement(const XMLElement* e, __BasicInfo& info) {
   // retrieve required integer value
-  wchar_t ch      = (wchar_t)getIntAndCheck("code", e);
-  float*  metrics = new float[4];
-  // retrieve optional value
-  metrics[DefaultTeXFont::WIDTH]  = getOptionalFloat("width", e, 0);
-  metrics[DefaultTeXFont::HEIGHT] = getOptionalFloat("height", e, 0);
-  metrics[DefaultTeXFont::DEPTH]  = getOptionalFloat("depth", e, 0);
-  metrics[DefaultTeXFont::IT]     = getOptionalFloat("italic", e, 0);
-  // set metrics
-  info.setMetrics(ch, metrics);
+  const wchar_t   ch = (wchar_t)getIntAndCheck("code", e);
+  const __Metrics m{
+      .ch     = ch,
+      .width  = getOptionalFloat("width", e, 0),
+      .height = getOptionalFloat("height", e, 0),
+      .depth  = getOptionalFloat("depth", e, 0),
+      .italic = getOptionalFloat("italic", e, 0),
+  };
+  info.metrics.push_back(m);
   // process children (kerning, ligature...)
   const XMLElement* x = e->FirstChildElement();
   while (x != nullptr) {
@@ -232,10 +236,10 @@ void DefaultTeXFontParser::parseFontDescriptions(const string& file) throw(ex_re
    * with "base/cemx10.ttf"
    */
   string path = file.substr(0, file.find_last_of("/") + 1) + fontName;
-  auto   info = FontInfo::__create(__id, path, unicode, xHeight, space, quad);
+  auto   info = FontInfo::__create(__id, path, xHeight, space, quad);
 
   // attribute set
-  if (skewChar != -1) info->setSkewChar((wchar_t)skewChar);
+  if (skewChar != -1) info->__skewChar((wchar_t)skewChar);
   // process all "Char"-elements
   const XMLElement* e = font->FirstChildElement("Char");
 
@@ -243,10 +247,83 @@ void DefaultTeXFontParser::parseFontDescriptions(const string& file) throw(ex_re
   __dbg("parse Char, tag name: %s <should be Char>\n", e->Name());
 #endif  // HAVE_LOG
 
+  __BasicInfo bi;
   while (e != nullptr) {
-    processCharElement(e, *info);
+    processCharElement(e, bi);
     e = e->NextSiblingElement("Char");
   }
+  sortBasicInfo(bi);
+  setupFontInfo(bi, *info);
+}
+
+void DefaultTeXFontParser::setupFontInfo(__BasicInfo& bi, FontInfo& fi) {
+  float* const metrics = new float[bi.metrics.size() * 5];
+  accumulate(begin(bi.metrics), end(bi.metrics), 0, [&metrics](const int i, const __Metrics& m) {
+    const size_t r = i * 5;
+    metrics[r + 0] = m.ch;
+    metrics[r + 1] = m.width;
+    metrics[r + 2] = m.height;
+    metrics[r + 3] = m.depth;
+    metrics[r + 4] = m.italic;
+    return i + 1;
+  });
+  int* const exts = new int[bi.extensions.size() * 5];
+  accumulate(begin(bi.extensions), end(bi.extensions), 0, [&exts](const int i, const __Extension& e) {
+    const size_t r = i * 5;
+    exts[r + 0]    = e.ch;
+    exts[r + 1]    = e.top;
+    exts[r + 2]    = e.mid;
+    exts[r + 3]    = e.rep;
+    exts[r + 4]    = e.bot;
+    return i + 1;
+  });
+  int* const largers = new int[bi.largers.size() * 3];
+  accumulate(begin(bi.largers), end(bi.largers), 0, [&largers](const int i, const __Larger& l) {
+    const size_t r = i * 3;
+    largers[r + 0] = l.code;
+    largers[r + 1] = l.larger;
+    largers[r + 2] = l.fontId;
+    return i + 1;
+  });
+  wchar_t* const ligtures = new wchar_t[bi.ligs.size() * 3];
+  accumulate(begin(bi.ligs), end(bi.ligs), 0, [&ligtures](const int i, const __Lig& l) {
+    const size_t r  = i * 3;
+    ligtures[r + 0] = l.left;
+    ligtures[r + 1] = l.right;
+    ligtures[r + 2] = l.lig;
+    return i + 1;
+  });
+  float* const kerns = new float[bi.kerns.size() * 3];
+  accumulate(begin(bi.kerns), end(bi.kerns), 0, [&kerns](const int i, const __Kern& k) {
+    const size_t r = i * 3;
+    kerns[r + 0]   = k.left;
+    kerns[r + 1]   = k.right;
+    kerns[r + 2]   = k.kern;
+    return i + 1;
+  });
+  fi.__metrics(metrics, bi.metrics.size() * 5, true);
+  fi.__extensions(exts, bi.extensions.size() * 5, true);
+  fi.__largers(largers, bi.largers.size() * 3, true);
+  fi.__ligtures(ligtures, bi.ligs.size() * 3, true);
+  fi.__kerns(kerns, bi.kerns.size() * 3, true);
+}
+
+void DefaultTeXFontParser::sortBasicInfo(__BasicInfo& bi) {
+  sort(begin(bi.metrics), end(bi.metrics), [](const __Metrics& x, const __Metrics& y) {
+    return x.ch < y.ch;
+  });
+  sort(begin(bi.extensions), end(bi.extensions), [](const __Extension& x, const __Extension& y) {
+    return x.ch < y.ch;
+  });
+  sort(begin(bi.largers), end(bi.largers), [](const __Larger& x, const __Larger& y) {
+    return x.code < y.code;
+  });
+  sort(begin(bi.kerns), end(bi.kerns), [](const __Kern& x, const __Kern& y) {
+    return make_tuple(x.left, x.right) < make_tuple(y.left, y.right);
+  });
+  sort(begin(bi.ligs), end(bi.ligs), [](const __Lig& x, const __Lig& y) {
+    return make_tuple(x.left, x.right) < make_tuple(y.left, y.right);
+  });
 }
 
 void DefaultTeXFontParser::parseSymbolMappings(

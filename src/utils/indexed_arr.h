@@ -10,8 +10,9 @@ namespace tex {
 template <typename T, size_t N, size_t M>
 class IndexedArray {
 private:
-  const T* const _raw;
-  const size_t   _rows;
+  const T* _raw;
+  size_t   _rows;
+  bool     _auto_delete;
 
   int compare(const T a[M], const T b[M]) const {
     for (size_t i = 0; i < M; i++) {
@@ -22,18 +23,20 @@ private:
   }
 
 public:
-  IndexedArray() : _raw(nullptr), _rows(0) {}
+  IndexedArray() : _raw(nullptr), _rows(0), _auto_delete(false) {}
 
-  IndexedArray(const IndexedArray& arr) : _raw(arr._raw), _rows(arr._rows) {}
+  IndexedArray(const IndexedArray& arr) = delete;
 
-  IndexedArray(const T* arr, int len) : _raw(arr), _rows(len / N) {}
+  IndexedArray(const T* arr, int len, bool auto_delete = false)
+      : _raw(arr), _rows(len / N), _auto_delete(auto_delete) {}
 
-  void operator=(const IndexedArray& o) {
-    _raw  = o._raw;
-    _rows = o._rows;
+  void operator=(IndexedArray&& o) {
+    _raw         = o._raw;
+    _rows        = o._rows;
+    _auto_delete = o._auto_delete;
   }
 
-  /** Find the item by the given keys */
+  /** Find the item by the given keys, return nullptr if not found */
   template <typename... Ks>
   const T* operator()(const Ks&... keys) const {
     if (_raw == nullptr) return nullptr;
@@ -49,6 +52,12 @@ public:
     return nullptr;
   }
 
+  /** Get the item by the given index, return nullptr if index out of range */
+  const T* operator[](const size_t i) const {
+    if (_raw == nullptr || i < 0 || i >= _rows) return nullptr;
+    return _raw + (i * N);
+  }
+
   inline size_t columns() const {
     return N;
   }
@@ -57,8 +66,12 @@ public:
     return _rows;
   }
 
-  inline const T* raw() const {
-    return _raw;
+  inline bool isEmpty() const {
+    return _rows == 0;
+  }
+
+  ~IndexedArray() {
+    // if (_auto_delete && _raw != nullptr) delete[] _raw;
   }
 };
 
