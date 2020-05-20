@@ -13,11 +13,11 @@ void FontInfo::__register(const FontSet& set) {
 }
 
 const float* const FontInfo::getMetrics(wchar_t ch) const {
-  return _metrics(ch);
+  return _metrics((float)ch) + 1;
 }
 
 const int* const FontInfo::getExtension(wchar_t ch) const {
-  return _extensions(ch);
+  return _extensions((int)ch) + 1;
 }
 
 sptr<CharFont> FontInfo::getNextLarger(wchar_t ch) const {
@@ -81,12 +81,11 @@ ostream& tex::operator<<(ostream& os, const FontInfo& info) {
   os << setw(4) << info._ttId << setw(4) << info._itId;
   os << endl;
 
-  if (info._lig.raw() != nullptr) {
+  if (!info._lig.isEmpty()) {
     os << "ligatures:" << endl;
-    const wchar_t* raw  = info._lig.raw();
-    const int      rows = info._lig.rows();
+    const int rows = info._lig.rows();
     for (int i = 0; i < rows; i++) {
-      const wchar_t* t = raw + info._lig.columns() * i;
+      const wchar_t* t = info._lig[i];
       os << "\t["
          << setw(3) << t[0] << ", "
          << setw(3) << t[1] << "] = "

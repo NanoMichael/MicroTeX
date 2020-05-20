@@ -77,24 +77,24 @@ public:
 
   static void __free();
 
-  inline void __metrics(const float* arr, int len) {
-    _metrics = IndexedArray<float, 5, 1>(arr, len);
+  inline void __metrics(const float* arr, int len, bool autoDelete = false) {
+    _metrics = IndexedArray<float, 5, 1>(arr, len, autoDelete);
   }
 
-  inline void __extensions(const int* arr, int len) {
-    _extensions = IndexedArray<int, 5, 1>(arr, len);
+  inline void __extensions(const int* arr, int len, bool autoDelete = false) {
+    _extensions = IndexedArray<int, 5, 1>(arr, len, autoDelete);
   }
 
-  inline void __largers(const int* arr, int len) {
-    _nextLargers = IndexedArray<int, 3, 1>(arr, len);
+  inline void __largers(const int* arr, int len, bool autoDelete = false) {
+    _nextLargers = IndexedArray<int, 3, 1>(arr, len, autoDelete);
   }
 
-  inline void __ligtures(const wchar_t* arr, int len) {
-    _lig = IndexedArray<wchar_t, 3, 2>(arr, len);
+  inline void __ligtures(const wchar_t* arr, int len, bool autoDelete = false) {
+    _lig = IndexedArray<wchar_t, 3, 2>(arr, len, autoDelete);
   }
 
-  inline void __kerns(const float* arr, int len) {
-    _kern = IndexedArray<float, 3, 2>(arr, len);
+  inline void __kerns(const float* arr, int len, bool autoDelete = false) {
+    _kern = IndexedArray<float, 3, 2>(arr, len, autoDelete);
   }
 
   inline void __space(float s) { _space = s; }
@@ -102,6 +102,18 @@ public:
   inline void __xheight(float h) { _xHeight = h; }
 
   inline void __quad(float q) { _quad = q; }
+
+  inline void __ssId(int id) { _ssId = id == -1 ? _id : id; }
+
+  inline void __ttId(int id) { _ttId = id == -1 ? _id : id; }
+
+  inline void __itId(int id) { _itId = id == -1 ? _id : id; }
+
+  inline void __romanId(int id) { _romanId = id == -1 ? _id : id; }
+
+  inline void __boldId(int id) { _boldId = id == -1 ? _id : id; }
+
+  inline void __skewChar(wchar_t c) { _skewChar = c; }
 
   /**********************************************************************************************/
 
@@ -134,8 +146,6 @@ public:
 
   inline bool hasSpace() const { return _space > PREC; }
 
-  inline void setSkewChar(wchar_t c) { _skewChar = c; }
-
   inline int getId() const { return _id; }
 
   inline int getBoldId() const { return _boldId; }
@@ -147,16 +157,6 @@ public:
   inline int getItId() const { return _itId; }
 
   inline int getSsId() const { return _ssId; }
-
-  inline void setSsId(int id) { _ssId = id == -1 ? _id : id; }
-
-  inline void setTtId(int id) { _ttId = id == -1 ? _id : id; }
-
-  inline void setItId(int id) { _itId = id == -1 ? _id : id; }
-
-  inline void setRomanId(int id) { _romanId = id == -1 ? _id : id; }
-
-  inline void setBoldId(int id) { _boldId = id == -1 ? _id : id; }
 
   inline const string& getPath() const { return _path; }
 
