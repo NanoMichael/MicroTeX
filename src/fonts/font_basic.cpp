@@ -11,11 +11,13 @@ Extension::~Extension() {
 }
 
 #ifdef HAVE_LOG
-ostream& tex::operator<<(ostream& os, const CharFont& font) {
+namespace tex {
+ostream& operator<<(ostream& os, const CharFont& font) {
   os << "CharFont { char: " << font._c
      << ", font: " << font._fontId
      << ", bold font: " << font._boldFontId
      << " }";
   return os;
 }
+}  // namespace tex
 #endif
