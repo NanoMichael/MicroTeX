@@ -835,4 +835,5 @@ map<int, string> TeXFormula::_symbolFormulaMappings = {
     {9446, "\\textcircled{\\texttt w}"},
     {9447, "\\textcircled{\\texttt x}"},
     {9448, "\\textcircled{\\texttt y}"},
-    {9449, "\\textcircled{\\texttt z}"}};
+    {9449, "\\textcircled{\\texttt z}"},
+};

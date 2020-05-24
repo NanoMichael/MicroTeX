@@ -33,11 +33,11 @@ enum TeXConstants {
   ALIGN_NONE,  // =5
 
   /********************************** space size constants **************************************/
-  THINMUSKIP = 1,
-  MEDMUSKIP = 2,
-  THICKMUSKIP = 3,
+  THINMUSKIP    = 1,
+  MEDMUSKIP     = 2,
+  THICKMUSKIP   = 3,
   NEGTHINMUSKIP = -1,
-  NEGMEDMUSKIP = -2,
+  NEGMEDMUSKIP  = -2,
   NEGTHICKMUSKP = -3,
 
   QUAD = 3,
