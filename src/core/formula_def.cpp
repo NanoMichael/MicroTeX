@@ -132,4 +132,5 @@ map<wstring, wstring> TeXFormula::_predefinedTeXFormulasAsString = {
     {L"rvert", L"\\vert"},
     {L"Android", L"\\Huge{\\android}\\normalsize"},
     {L"AndroidTeX", L"\\Android\\large{\\dT\\dE\\dX}\\normalsize"},
-    {L"TeX", L"\\large{\\dT\\dE\\dX}\\normalsize"}};
+    {L"TeX", L"\\large{\\dT\\dE\\dX}\\normalsize"},
+};

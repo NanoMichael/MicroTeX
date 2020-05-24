@@ -15,7 +15,8 @@ vector<const UnicodeBlock*> UnicodeBlock::_defined = {
     &LATIN1_SUPPLEMENT,
     &CYRILLIC,
     &GREEK,
-    &GREEK_EXTENDED};
+    &GREEK_EXTENDED,
+};
 
 bool UnicodeBlock::contains(wchar_t c) const {
   // if this block is UNKNOWN, check others first
