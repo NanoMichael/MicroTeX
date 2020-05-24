@@ -13,9 +13,9 @@ Extension::~Extension() {
 #ifdef HAVE_LOG
 namespace tex {
 ostream& operator<<(ostream& os, const CharFont& font) {
-  os << "CharFont { char: " << font._c
-     << ", font: " << font._fontId
-     << ", bold font: " << font._boldFontId
+  os << "CharFont { char: " << font.chr
+     << ", font: " << font.fontId
+     << ", bold font: " << font.boldFontId
      << " }";
   return os;
 }

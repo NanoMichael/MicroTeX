@@ -414,10 +414,10 @@ public:
   inline float getSize() override { return _size; }
 
   inline float getSkew(_in_ const CharFont& cf, int style) override {
-    FontInfo* info = getInfo(cf._fontId);
+    FontInfo* info = getInfo(cf.fontId);
     wchar_t   skew = info->getSkewChar();
     if (skew == -1) return 0;
-    return getKern(cf, CharFont(skew, cf._fontId), style);
+    return getKern(cf, CharFont(skew, cf.fontId), style);
   }
 
   float getSpace(int style) override;

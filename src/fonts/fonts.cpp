@@ -128,7 +128,7 @@ Char DefaultTeXFont::getChar(wchar_t c, _in_ const vector<CharFont*>& cf, int st
   // if no mapping for the character's range, then use the default style
   auto x = cf[kind];
   if (x == nullptr) return getDefaultChar(c, style);
-  return getChar(CharFont(x->_c + offset, x->_fontId), style);
+  return getChar(CharFont(x->chr + offset, x->fontId), style);
 }
 
 Char DefaultTeXFont::getDefaultChar(wchar_t c, int style) {
@@ -154,44 +154,44 @@ Char DefaultTeXFont::getChar(
 Char DefaultTeXFont::getChar(const CharFont& c, int style) {
   CharFont cf    = c;
   float    fsize = getSizeFactor(style);
-  int      id    = _isBold ? cf._boldFontId : cf._fontId;
+  int      id    = _isBold ? cf.boldFontId : cf.fontId;
   auto     info  = getInfo(id);
 
-  if (_isBold && cf._fontId == cf._boldFontId) {
+  if (_isBold && cf.fontId == cf.boldFontId) {
     id   = info->getBoldId();
     info = getInfo(id);
-    cf   = CharFont(cf._c, id, style);
+    cf   = CharFont(cf.chr, id, style);
   }
   if (_isRoman) {
     id   = info->getRomanId();
     info = getInfo(id);
-    cf   = CharFont(cf._c, id, style);
+    cf   = CharFont(cf.chr, id, style);
   }
   if (_isSs) {
     id   = info->getSsId();
     info = getInfo(id);
-    cf   = CharFont(cf._c, id, style);
+    cf   = CharFont(cf.chr, id, style);
   }
   if (_isTt) {
     id   = info->getTtId();
     info = getInfo(id);
-    cf   = CharFont(cf._c, id, style);
+    cf   = CharFont(cf.chr, id, style);
   }
   if (_isIt) {
     id   = info->getItId();
     info = getInfo(id);
-    cf   = CharFont(cf._c, id, style);
+    cf   = CharFont(cf.chr, id, style);
   }
 
 #ifdef HAVE_LOG
   __dbg(
       ANSI_COLOR_GREEN "{ char: %c, font id: %d, path: %s }\n" ANSI_RESET,
-      cf._c,
+      cf.chr,
       id,
       info->getPath().c_str());
 #endif
 
-  return Char(cf._c, info->getFont(), id, getMetrics(cf, _factor * fsize));
+  return Char(cf.chr, info->getFont(), id, getMetrics(cf, _factor * fsize));
 }
 
 Char DefaultTeXFont::getChar(
@@ -204,11 +204,10 @@ Char DefaultTeXFont::getChar(
 }
 
 sptr<Metrics> DefaultTeXFont::getMetrics(_in_ const CharFont& cf, float size) {
-  auto         info = getInfo(cf._fontId);
-  const float* m    = info->getMetrics(cf._c);
+  auto         info = getInfo(cf.fontId);
+  const float* m    = info->getMetrics(cf.chr);
   Metrics*     met  = new Metrics(
-      m[WIDTH], m[HEIGHT], m[DEPTH], m[IT],
-      size * TeXFormula::PIXELS_PER_POINT, size);
+      m[WIDTH], m[HEIGHT], m[DEPTH], m[IT], size * TeXFormula::PIXELS_PER_POINT, size);
   return sptr<Metrics>(met);
 }
 
@@ -233,18 +232,17 @@ Extension* DefaultTeXFont::getExtension(_in_ const Char& c, int style) {
 }
 
 float DefaultTeXFont::getKern(_in_ const CharFont& left, _in_ const CharFont& right, int style) {
-  if (left._fontId == right._fontId) {
-    auto info = getInfo(left._fontId);
-    return info->getKern(
-        left._c, right._c, getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT);
+  if (left.fontId == right.fontId) {
+    auto info = getInfo(left.fontId);
+    return info->getKern(left.chr, right.chr, getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT);
   }
   return 0;
 }
 
 sptr<CharFont> DefaultTeXFont::getLigature(_in_ const CharFont& left, _in_ const CharFont& right) {
-  if (left._fontId == right._fontId) {
-    auto info = getInfo(left._fontId);
-    return info->getLigture(left._c, right._c);
+  if (left.fontId == right.fontId) {
+    auto info = getInfo(left.fontId);
+    return info->getLigture(left.chr, right.chr);
   }
   return nullptr;
 }
@@ -256,8 +254,8 @@ int DefaultTeXFont::getMuFontId() {
 Char DefaultTeXFont::getNextLarger(_in_ const Char& c, int style) {
   auto info    = getInfo(c.getFontCode());
   auto ch      = info->getNextLarger(c.getChar());
-  auto newInfo = getInfo(ch->_fontId);
-  return Char(ch->_c, newInfo->getFont(), ch->_fontId, getMetrics(*ch, getSizeFactor(style)));
+  auto newInfo = getInfo(ch->fontId);
+  return Char(ch->chr, newInfo->getFont(), ch->fontId, getMetrics(*ch, getSizeFactor(style)));
 }
 
 float DefaultTeXFont::getSpace(int style) {

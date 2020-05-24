@@ -1015,7 +1015,7 @@ sptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
     shiftUp = shiftDown = 0;
     sptr<CharFont> pcf = cs->getCharFont(*tf);
     CharFont& cf = *pcf;
-    if (!cs->isMarkedAsTextSymbol() || !tf->hasSpace(cf._fontId)) {
+    if (!cs->isMarkedAsTextSymbol() || !tf->hasSpace(cf.fontId)) {
       delta = tf->getChar(cf, style).getItalic();
     }
     if (delta > PREC && _sub == nullptr) {
