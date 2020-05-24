@@ -248,13 +248,9 @@ private:
   // thin-mu-skip, med-mu-skip, thick-mu-skip
   int _blankType;
   // dimensions
-  float _width;
-  float _height;
-  float _depth;
+  float _width, _height, _depth;
   // units of the dimensions
-  int _wUnit;
-  int _hUnit;
-  int _dUnit;
+  int _wUnit, _hUnit, _dUnit;
 
   void init() {
     _blankSpace = false;
@@ -322,8 +318,8 @@ public:
     return _unitConversions[unit](env);
   }
 
-  inline static float getSize(int unit, float s, _in_ const TeXEnvironment& env) {
-    return _unitConversions[unit](env) * s;
+  inline static float getSize(int unit, float size, _in_ const TeXEnvironment& env) {
+    return _unitConversions[unit](env) * size;
   }
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override;

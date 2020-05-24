@@ -23,7 +23,8 @@ map<string, float> DefaultTeXFont::_parameters = {
     {"bigopspacing2", 0.166667},
     {"bigopspacing3", 0.2},
     {"bigopspacing4", 0.6},
-    {"bigopspacing5", 0.1}};
+    {"bigopspacing5", 0.1},
+};
 
 #define __id(name) FontInfo::__id(#name)
 
@@ -33,7 +34,8 @@ void DefaultTeXFont::__default_general_settings() {
       {"spacefontid", __id(cmr10)},
       {"textfactor", 1},
       {"scriptfactor", 0.7},
-      {"scriptscriptfactor", 0.5}};
+      {"scriptscriptfactor", 0.5},
+  };
 }
 
 #define cf(c, f) new CharFont(c, __id(f))

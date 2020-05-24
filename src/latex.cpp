@@ -1,4 +1,5 @@
 #include "latex.h"
+
 #include "core/core.h"
 #include "core/formula.h"
 #include "core/macro.h"
@@ -9,7 +10,7 @@ using namespace tex;
 
 string tex::RES_BASE = "res";
 
-TeXFormula* LaTeX::_formula = nullptr;
+TeXFormula*       LaTeX::_formula = nullptr;
 TeXRenderBuilder* LaTeX::_builder = nullptr;
 
 void LaTeX::init(const string& res_root_path) {

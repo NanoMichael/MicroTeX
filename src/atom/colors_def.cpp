@@ -72,4 +72,5 @@ map<string, color> tex::ColorAtom::_colors = {
     c("sepia", 0.f, 0.83f, 1.f, 0.70f),
     c("brown", 0.f, 0.81f, 1.f, 0.60f),
     c("tan", 0.14f, 0.42f, 0.56f, 0.f),
-    c("gray", 0.f, 0.f, 0.f, 0.50f)};
+    c("gray", 0.f, 0.f, 0.f, 0.50f),
+};
