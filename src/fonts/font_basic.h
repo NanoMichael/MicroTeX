@@ -6,55 +6,35 @@
 
 namespace tex {
 
-/**
- * Contains the metrics for 1 character: width, height, depth and italic correction
- */
-class Metrics {
-private:
-  float _w, _h, _d, _i, _s;
+/** Contains the metrics for 1 character: width, height, depth and italic correction */
+struct Metrics {
+  float width, height, depth, italic, size;
 
-public:
   Metrics() = delete;
 
   Metrics(const Metrics&) = delete;
 
-  Metrics(float w, float h, float d, float i, float factor, float s)
-      : _w(w * factor), _h(h * factor), _d(d * factor), _i(i * factor), _s(s) {}
-
-  inline float getWidth() const { return _w; }
-
-  inline float getHeight() const { return _h; }
-
-  inline float getDepth() const { return _d; }
-
-  inline float getItalic() const { return _i; }
-
-  inline float getSize() const { return _s; }
+  explicit Metrics(float w, float h, float d, float i, float factor, float s)
+      : width(w * factor), height(h * factor), depth(d * factor), italic(i * factor), size(s) {}
 };
 
-/**
- * Represents a specific character in a specific font (identified by its font id)
- */
-class CharFont {
-public:
-  wchar_t _c;
-  int     _fontId;
-  int     _boldFontId;
+/** Represents a specific character in a specific font (identified by its font id) */
+struct CharFont {
+  wchar_t chr;
+  int     fontId, boldFontId;
 
-  CharFont() : _c(0), _fontId(0), _boldFontId(0) {}
+  CharFont() : chr(0), fontId(0), boldFontId(0) {}
 
-  CharFont(wchar_t ch, int f) : _c(ch), _fontId(f), _boldFontId(f) {}
+  CharFont(wchar_t c, int f) : chr(c), fontId(f), boldFontId(f) {}
 
-  CharFont(wchar_t ch, int f, int bf) : _c(ch), _fontId(f), _boldFontId(bf) {}
+  CharFont(wchar_t c, int f, int bf) : chr(c), fontId(f), boldFontId(bf) {}
 
 #ifdef HAVE_LOG
-  friend ostream& operator<<(ostream& os, const CharFont& info);
+  friend std::ostream& operator<<(ostream& os, const CharFont& info);
 #endif
 };
 
-/**
- * Class represents a character together with its font, font id and metric information
- */
+/** Class represents a character together with its font, font id and metric information */
 class Char {
 private:
   wchar_t        _c;
@@ -76,15 +56,15 @@ public:
 
   inline int getFontCode() const { return _fontCode; }
 
-  inline float getWidth() const { return _m->getWidth(); }
+  inline float getWidth() const { return _m->width; }
 
-  inline float getItalic() const { return _m->getItalic(); }
+  inline float getItalic() const { return _m->italic; }
 
-  inline float getHeight() const { return _m->getHeight(); }
+  inline float getHeight() const { return _m->height; }
 
-  inline float getDepth() const { return _m->getDepth(); }
+  inline float getDepth() const { return _m->depth; }
 
-  inline float getSize() const { return _m->getSize(); }
+  inline float getSize() const { return _m->size; }
 };
 
 /**
