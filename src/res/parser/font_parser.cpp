@@ -45,7 +45,7 @@ void DefaultTeXFontParser::parse_extension(const XMLElement* e, wchar_t c, __Bas
 void DefaultTeXFontParser::parse_kern(const XMLElement* e, wchar_t c, __BasicInfo& f) {
   const __Kern kern{
       .left  = c,
-      .right = getIntAndCheck("code", e),
+      .right = (wchar_t)getIntAndCheck("code", e),
       .kern  = getFloatAndCheck("val", e),
   };
   f.kerns.push_back(kern);
@@ -54,8 +54,8 @@ void DefaultTeXFontParser::parse_kern(const XMLElement* e, wchar_t c, __BasicInf
 void DefaultTeXFontParser::parse_lig(const XMLElement* e, wchar_t c, __BasicInfo& f) {
   const __Lig lig{
       .left  = c,
-      .right = getIntAndCheck("code", e),
-      .lig   = getIntAndCheck("ligCode", e),
+      .right = (wchar_t)getIntAndCheck("code", e),
+      .lig   = (wchar_t)getIntAndCheck("ligCode", e),
   };
   f.ligs.push_back(lig);
 }
@@ -63,7 +63,7 @@ void DefaultTeXFontParser::parse_lig(const XMLElement* e, wchar_t c, __BasicInfo
 void DefaultTeXFontParser::parse_larger(const XMLElement* e, wchar_t c, __BasicInfo& f) {
   const __Larger larger{
       .code   = c,
-      .larger = getIntAndCheck("code", e),
+      .larger = (wchar_t)getIntAndCheck("code", e),
       .fontId = __id(getAttrValueAndCheckIfNotNull("fontId", e)),
   };
   f.largers.push_back(larger);
