@@ -1210,7 +1210,7 @@ public:
   SsAtom(const sptr<Atom>& base) : _base(base) {}
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-    bool prev = env.getTeXFont()->getSs();
+    bool prev = env.getTeXFont()->isSs();
     env.getTeXFont()->setSs(true);
     auto box = _base->createBox(env);
     env.getTeXFont()->setSs(prev);
@@ -1392,7 +1392,7 @@ public:
   TtAtom(const sptr<Atom>& base) : _base(base) {}
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-    bool prev = env.getTeXFont()->getTt();
+    bool prev = env.getTeXFont()->isTt();
     env.getTeXFont()->setTt(true);
     auto box = _base->createBox(env);
     env.getTeXFont()->setTt(prev);
