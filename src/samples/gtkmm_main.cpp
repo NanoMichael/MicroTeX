@@ -113,7 +113,7 @@ public:
 
 protected:
   bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override {
-    cr->set_source_rgb(1, 1, 1)
+    cr->set_source_rgb(1, 1, 1);
     cr->rectangle(0, 0, get_width(), get_height());
     cr->fill();
     if (_render == nullptr) return true;
