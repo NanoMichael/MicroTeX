@@ -1,6 +1,6 @@
 # ![logo](readme/tex_logo.svg)
 
-It is a dynamic, cross-platform, and embeddable LaTeX rendering library. Its main purpose is to display mathematical formulas written in LaTeX. It can be embedded in applications on various platforms (Android, iOS, Windows, Linux...). The following pictures demonstrate the application run in Ubuntu and Windows.
+It is a dynamic, cross-platform, and embeddable LaTeX rendering library. Its main purpose is to display mathematical formulas written in LaTeX. It can be embedded in applications on various platforms (Android, iOS, Windows, Linux GTK, Qt...). The following pictures demonstrate the application run in Ubuntu (using GTK) and Windows.
 
 ![demo ubuntu](readme/example_ubuntu.png)
 
@@ -13,7 +13,8 @@ It is a dynamic, cross-platform, and embeddable LaTeX rendering library. Its mai
 First make sure you have a C++ compiler that supports `C++ 11` or `C++ 0x` standard. It uses CMake to build the demo, make sure you have it installed. Currently support Windows and Linux on PC, the version on Mac OS is in the plan, and you can find the Android version in [here](https://github.com/NanoMichael/AndroidLaTeXMath).
 
 - `CygWin` or `MinGW` is recommended to be installed on Windows, and `Gdiplus` is required.
-- `GTKMM` and `GSVMM` must be installed on Linux.
+- `GTKMM` and `GSVMM` must be installed on Linux for a GTK build.
+- Qt development packages must be installed for a Qt installation.
 
 After all the dependencies have been satisfied, run the following commands to build:
 
@@ -26,6 +27,8 @@ make -j32
 ```
 
 After all the works have done, run the executable file `LaTeX` in the directory `build` to check the demo.
+
+If you wish to build in Qt mode on your plaform add `-DQT=ON` to the cmake command above.
 
 ## Headless mode
 
