@@ -1,6 +1,6 @@
 #include "config.h"
 
-#if defined(__OS_Unix_like_PC__) && !defined(MEM_CHECK)
+#if defined(BUILD_GTK) && !defined(MEM_CHECK)
 
 #include "platform/cairo/graphic_cairo.h"
 

@@ -1,48 +1,42 @@
 #include "config.h"
 
-#if defined(BUILD_WIN32) && !defined(MEM_CHECK)
+#if defined(BUILD_QT) && !defined(MEM_CHECK)
 
-#ifndef GRAPHIC_WIN32_H_INCLUDED
-#define GRAPHIC_WIN32_H_INCLUDED
+#ifndef GRAPHIC_QT_H_INCLUDED
+#define GRAPHIC_QT_H_INCLUDED
 
-#include "common.h"
+#include <string>
 #include "graphic/graphic.h"
 
-using namespace std;
-using namespace tex;
-
-namespace Gdiplus {
-
-class Font;
-class FontFamily;
-class Graphics;
-class Pen;
-class Brush;
-class SolidBrush;
-class StringFormat;
-class Bitmap;
-
-}  // namespace Gdiplus
+#include <QBrush>
+#include <QFont>
+#include <QMap>
+#include <QPainter>
+#include <QString>
 
 namespace tex {
 
-class Font_win32 : public Font {
+// remove a null byte off end of QString
+QString wstring_to_QString(const std::wstring& ws);
+
+class Font_qt : public Font {
+
 private:
-  static const Gdiplus::FontFamily* _serif;
-  static const Gdiplus::FontFamily* _sansserif;
+  QFont _font;
 
-  float _size;
-
-  Font_win32();
+  static QMap<QString, QString> _loaded_families;
 
 public:
-  int _style;
-  sptr<Gdiplus::Font> _typeface;
-  const Gdiplus::FontFamily* _family;
 
-  Font_win32(const string& name, int style, float size);
+  Font_qt(const std::string& family = "", int style = PLAIN, float size = 1.f);
 
-  Font_win32(const string& file, float size);
+  Font_qt(const std::string& file, float size);
+
+  std::string getFamily() const;
+
+  int getStyle() const;
+
+  QFont getQFont() const;
 
   virtual float getSize() const override;
 
@@ -52,50 +46,46 @@ public:
 
   virtual bool operator!=(const Font& f) const override;
 
-  virtual ~Font_win32();
+  virtual ~Font_qt() {};
 
-  static int convertStyle(int style);
 };
+
 
 /**************************************************************************************************/
 
-class TextLayout_win32 : public TextLayout {
+class TextLayout_qt : public TextLayout {
 private:
-  sptr<Font_win32> _font;
-  wstring _txt;
+  QFont _font;
+  QString _text;
 
 public:
-  static const Gdiplus::StringFormat* _format;
-  static Gdiplus::Graphics* _g;
-  static Gdiplus::Bitmap* _img;
+  TextLayout_qt(const wstring& src, const sptr<Font_qt>& font);
 
-  TextLayout_win32(const wstring& src, const sptr<Font_win32>& font);
-
-  virtual void getBounds(_out_ Rect& bounds) override;
+  virtual void getBounds(_out_ Rect& r) override;
 
   virtual void draw(Graphics2D& g2, float x, float y) override;
 };
 
 /**************************************************************************************************/
 
-class Graphics2D_win32 : public Graphics2D {
+class Graphics2D_qt : public Graphics2D {
 private:
-  static const Gdiplus::StringFormat* _format;
-  static const Font* _defaultFont;
+  static Font_qt _default_font;
+
+  QPainter* _painter;
 
   color _color;
-  const Font* _font;
   Stroke _stroke;
-  Gdiplus::Graphics* _g;
-  Gdiplus::Pen* _pen;
-  Gdiplus::SolidBrush* _brush;
-
+  const Font_qt* _font;
   float _sx, _sy;
 
-public:
-  Graphics2D_win32(Gdiplus::Graphics* g);
+  void setPen();
+  QBrush getQBrush() const;
 
-  ~Graphics2D_win32();
+public:
+  Graphics2D_qt(QPainter* painter);
+
+  QPainter* getQPainter() const;
 
   virtual void setColor(color c) override;
 
@@ -127,9 +117,9 @@ public:
 
   virtual void drawChar(wchar_t c, float x, float y) override;
 
-  virtual void drawText(const wstring& c, float x, float y) override;
+  virtual void drawText(const wstring& t, float x, float y) override;
 
-  virtual void drawLine(float x1, float y1, float x2, float y2) override;
+  virtual void drawLine(float x, float y1, float x2, float y2) override;
 
   virtual void drawRect(float x, float y, float w, float h) override;
 
@@ -140,7 +130,7 @@ public:
   virtual void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
 };
 
-}  // namespace tex
+}
 
-#endif  // GRAPHIC_WIN32_H_INCLUDED
-#endif
+#endif   // GRAPHIC_QT_H_INCLUDED
+#endif   // defined(BUILD_QT) && !defined(MEM_CHECK)
