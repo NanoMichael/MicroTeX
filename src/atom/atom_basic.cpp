@@ -480,7 +480,7 @@ sptr<Box> RowAtom::createBox(_out_ TeXEnvironment& env) {
     // i.e. for formula: $+ e - f$, the plus sign should be traded as an ordinary type
     sptr<Atom> nextAtom(nullptr);
     if (i < e) nextAtom = _elements[i + 1];
-    change2Ord(&(*atom), &(*_previousAtom), &(*nextAtom));
+    change2Ord(atom.get(), _previousAtom.get(), nextAtom.get());
     // check for ligature or kerning
     float kern = 0;
     while (i < e && atom->getRightType() == TYPE_ORDINARY && atom->isCharSymbol()) {
