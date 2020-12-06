@@ -581,7 +581,7 @@ private:
       const sptr<Atom>& den,
       bool nodef,
       int unit,
-      float t) throw(ex_invalid_unit);
+      float t);
 
 public:
   /**
@@ -600,7 +600,7 @@ public:
   }
 
   FractionAtom(
-      const sptr<Atom>& num, const sptr<Atom>& den, bool nodef, int unit, float t) throw(ex_invalid_unit) {
+      const sptr<Atom>& num, const sptr<Atom>& den, bool nodef, int unit, float t) {
     init(num, den, nodef, unit, t);
   }
 

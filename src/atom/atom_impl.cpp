@@ -711,7 +711,7 @@ sptr<Box> FencedAtom::createBox(_out_ TeXEnvironment& env) {
 /****************************************** fraction atom *****************************************/
 
 void FractionAtom::init(
-    const sptr<Atom>& num, const sptr<Atom>& den, bool nodef, int unit, float t) throw(ex_invalid_unit) {
+    const sptr<Atom>& num, const sptr<Atom>& den, bool nodef, int unit, float t) {
   _numAlign = ALIGN_CENTER;
   _denomAlign = ALIGN_CENTER;
   _deffactor = 1.f;

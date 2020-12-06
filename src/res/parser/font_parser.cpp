@@ -97,7 +97,7 @@ void DefaultTeXFontParser::processCharElement(const XMLElement* e, __BasicInfo& 
 }
 
 void DefaultTeXFontParser::parseStyleMappings(
-    _out_ map<string, vector<CharFont*>>& res) throw(ex_res_parse) {
+    _out_ map<string, vector<CharFont*>>& res) {
   const XMLElement* mapping = _root->FirstChildElement("TextStyleMappings");
   // no defined style mappings
   if (mapping == nullptr) return;
@@ -143,7 +143,7 @@ void DefaultTeXFontParser::parseStyleMappings(
   }
 }
 
-void DefaultTeXFontParser::parseExtraPath() throw(ex_res_parse) {
+void DefaultTeXFontParser::parseExtraPath() {
   const XMLElement* syms = _root->FirstChildElement("TeXSymbols");
   if (syms != nullptr) {  // element present
     string include = getAttrValueAndCheckIfNotNull("include", syms);
@@ -156,7 +156,7 @@ void DefaultTeXFontParser::parseExtraPath() throw(ex_res_parse) {
   }
 }
 
-void DefaultTeXFontParser::parseFontDescriptions() throw(ex_res_parse) {
+void DefaultTeXFontParser::parseFontDescriptions() {
   const XMLElement* des = _root->FirstChildElement("FontDescriptions");
   if (des == nullptr) return;
 
@@ -191,7 +191,7 @@ void DefaultTeXFontParser::parseFontDescriptions() throw(ex_res_parse) {
   }
 }
 
-void DefaultTeXFontParser::parseFontDescriptions(const string& file) throw(ex_res_parse) {
+void DefaultTeXFontParser::parseFontDescriptions(const string& file) {
   if (file.empty()) return;
 
   XMLDocument doc(true, COLLAPSE_WHITESPACE);
@@ -327,7 +327,7 @@ void DefaultTeXFontParser::sortBasicInfo(__BasicInfo& bi) {
 }
 
 void DefaultTeXFontParser::parseSymbolMappings(
-    _out_ map<string, CharFont*>& res) throw(ex_res_parse) {
+    _out_ map<string, CharFont*>& res) {
   const XMLElement* mapping = _root->FirstChildElement("SymbolMappings");
   if (mapping == nullptr) throw ex_xml_parse(RESOURCE_NAME, "SymbolMappings");
 
@@ -383,7 +383,7 @@ void DefaultTeXFontParser::parseSymbolMappings(
   }
 }
 
-string* DefaultTeXFontParser::parseDefaultTextStyleMappins() throw(ex_res_parse) {
+string* DefaultTeXFontParser::parseDefaultTextStyleMappins() {
   string*           res      = new string[4];
   const XMLElement* mappings = _root->FirstChildElement("DefaultTextStyleMapping");
   if (mappings == nullptr) return res;
@@ -438,7 +438,7 @@ map<string, vector<CharFont*>> DefaultTeXFontParser::parseTextStyleMappings() {
   return _parsedTextStyles;
 }
 
-void DefaultTeXFontParser::parseParameters(_out_ map<string, float>& res) throw(ex_res_parse) {
+void DefaultTeXFontParser::parseParameters(_out_ map<string, float>& res) {
   const XMLElement* parameters = _root->FirstChildElement("Parameters");
   if (parameters == nullptr) throw ex_xml_parse(RESOURCE_NAME, "Parameter");
 
@@ -453,7 +453,7 @@ void DefaultTeXFontParser::parseParameters(_out_ map<string, float>& res) throw(
   }
 }
 
-void DefaultTeXFontParser::parseGeneralSettings(_out_ map<string, float>& res) throw(ex_res_parse) {
+void DefaultTeXFontParser::parseGeneralSettings(_out_ map<string, float>& res) {
   const XMLElement* settings = _root->FirstChildElement("GeneralSettings");
   if (settings == nullptr) throw ex_xml_parse(RESOURCE_NAME, "GeneralSettings");
   int index = 0;

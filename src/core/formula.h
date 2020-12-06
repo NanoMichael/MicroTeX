@@ -86,19 +86,19 @@ public:
      * @throw ex_parse
      *      if the string could not be parsed correctly
      */
-    TeXFormula(const TeXParser& tp, const wstring& s) throw(ex_parse);
+    TeXFormula(const TeXParser& tp, const wstring& s);
 
-    TeXFormula(const TeXParser& tp, const wstring& s, bool firstpass) throw(ex_parse);
+    TeXFormula(const TeXParser& tp, const wstring& s, bool firstpass);
 
     /**
      * Creates a TeXFormula by parsing the given string in the given text style.
      * Used when a text style command was found in the parse string.
      */
-    TeXFormula(const TeXParser& tp, const wstring& s, const string& textStyle) throw(ex_parse);
+    TeXFormula(const TeXParser& tp, const wstring& s, const string& textStyle);
 
     TeXFormula(
         const TeXParser& tp, const wstring& s,
-        const string& textStyle, bool firstpass, bool space) throw(ex_parse);
+        const string& textStyle, bool firstpass, bool space);
 
     /**
      * Create an empty TeXFormula
@@ -114,18 +114,18 @@ public:
      * @throw ex_parse
      *      if the string could not be parsed correctly
      */
-    TeXFormula(const wstring& s) throw(ex_parse);
+    TeXFormula(const wstring& s);
 
-    TeXFormula(const wstring& s, bool firstpass) throw(ex_parse);
+    TeXFormula(const wstring& s, bool firstpass);
 
     /**
      * Creates a TeXFormula by parsing the given string in the given text style.
      * Used when a text style command was found in the parse string.
      */
-    TeXFormula(const wstring& s, const string& textStyle) throw(ex_parse);
+    TeXFormula(const wstring& s, const string& textStyle);
 
     TeXFormula(
-        const wstring& s, const string& textStyle, bool firstpass, bool space) throw(ex_parse);
+        const wstring& s, const string& textStyle, bool firstpass, bool space);
 
     /**
      * Creates a new TeXFormula that is a copy of the given TeXFormula.
@@ -143,16 +143,16 @@ public:
      * @param latex
      *      the latex formula
      */
-    void setLaTeX(const wstring& latex) throw(ex_parse);
+    void setLaTeX(const wstring& latex);
 
     /**
      * Inserts an atom at the end of the current formula.
      */
     TeXFormula* add(const sptr<Atom>& el);
 
-    TeXFormula* append(const wstring& s) throw(ex_parse);
+    TeXFormula* append(const wstring& s);
 
-    TeXFormula* append(bool isPartial, const wstring& s) throw(ex_parse);
+    TeXFormula* append(bool isPartial, const wstring& s);
 
     /**
      * Convert this TeXFormula into a box, with the given style
@@ -202,7 +202,7 @@ public:
      * @throw ex_invalid_atom_type
      *      if the given value does not represent a valid atom type
      */
-    TeXFormula* setFixedTypes(int left, int right) throw(ex_invalid_atom_type);
+    TeXFormula* setFixedTypes(int left, int right);
 
     /**
      * Test if this formula is in array mode.
@@ -218,7 +218,7 @@ public:
      * @throw ex_formula_not_found
      *      if no predefined TeXFormula is found with the given name
      */
-    static sptr<TeXFormula> get(const wstring& name) throw(ex_formula_not_found);
+    static sptr<TeXFormula> get(const wstring& name);
 
     /**
      * Set the DPI of target
@@ -235,7 +235,7 @@ public:
 
     static FontInfos* getExternalFont(const UnicodeBlock& block);
 
-    static void addSymbolMappings(const string& file) throw(ex_res_parse);
+    static void addSymbolMappings(const string& file);
 
     /**
      * Enable or disable debug mode.

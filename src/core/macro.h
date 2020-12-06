@@ -27,9 +27,9 @@ protected:
   static map<wstring, wstring> _macroreplacement;
   static Macro* _instance;
 
-  static void checkNew(const wstring& name) throw(ex_parse);
+  static void checkNew(const wstring& name);
 
-  static void checkRenew(const wstring& name) throw(ex_parse);
+  static void checkRenew(const wstring& name);
 
 public:
   /**
@@ -44,24 +44,24 @@ public:
   static void addNewCommand(
       const wstring& name,
       const wstring& code,
-      int nbargs) throw(ex_parse);
+      int nbargs);
 
   static void addNewCommand(
       const wstring& name,
       const wstring& code,
       int nbargs,
-      const wstring& def) throw(ex_parse);
+      const wstring& def);
 
   static void addRenewCommand(
       const wstring& name,
       const wstring& code,
-      int nbargs) throw(ex_parse);
+      int nbargs);
 
   static void addRenewCommand(
       const wstring& name,
       const wstring& code,
       int nbargs,
-      const wstring& def) throw(ex_parse);
+      const wstring& def);
 
   static bool isMacro(const wstring& name);
 
@@ -78,13 +78,13 @@ public:
       const wstring& name,
       const wstring& begdef,
       const wstring& enddef,
-      int nbargs) throw(ex_parse);
+      int nbargs);
 
   static void addRenewEnvironment(
       const wstring& name,
       const wstring& begdef,
       const wstring& enddef,
-      int nbargs) throw(ex_parse);
+      int nbargs);
 };
 
 class MacroInfo {
@@ -118,7 +118,7 @@ public:
 
   virtual sptr<Atom> invoke(
       _out_ TeXParser& tp,
-      _out_ vector<wstring>& args) throw(ex_parse) {
+      _out_ vector<wstring>& args) {
     return nullptr;
   }
 
@@ -141,7 +141,7 @@ public:
 
   virtual sptr<Atom> invoke(
       _out_ TeXParser& tp,
-      _out_ vector<wstring>& args) throw(ex_parse) override {
+      _out_ vector<wstring>& args) override {
     _macro->execute(tp, args);
     return nullptr;
   }
@@ -166,7 +166,7 @@ public:
 
   sptr<Atom> invoke(
       _out_ TeXParser& tp,
-      _out_ vector<wstring>& args) throw(ex_parse) override;
+      _out_ vector<wstring>& args) override;
 };
 
 }  // namespace tex

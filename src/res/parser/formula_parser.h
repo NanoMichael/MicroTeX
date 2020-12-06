@@ -19,7 +19,7 @@ private:
   XMLDocument _doc;
   XMLElement* _root;
 
-  static string getAttr(const char* attr, const XMLElement* e) throw(ex_res_parse);
+  static string getAttr(const char* attr, const XMLElement* e);
 
 public:
   static const string RESOURCE_NAME;
@@ -28,9 +28,9 @@ public:
 
   TeXSymbolParser() = delete;
 
-  TeXSymbolParser(const string& file) throw(ex_res_parse);
+  TeXSymbolParser(const string& file);
 
-  void readSymbols(_out_ map<string, sptr<SymbolAtom>>& res) throw(ex_res_parse);
+  void readSymbols(_out_ map<string, sptr<SymbolAtom>>& res);
 };
 
 /**
@@ -41,32 +41,32 @@ private:
   XMLDocument _doc;
   XMLElement* _root;
 
-  static int getUtf(const XMLElement* e, const char* attr) throw(ex_res_parse);
+  static int getUtf(const XMLElement* e, const char* attr);
 
   static void add2map(
       const XMLElement* mapping,
       _out_ map<int, string>& tableMath,
-      _out_ map<int, string>& tableTxt) throw(ex_res_parse);
+      _out_ map<int, string>& tableTxt);
 
   static void addFormula2map(
       const XMLElement* mapping,
       _out_ map<int, string>& tableMath,
-      _out_ map<int, string>& tableTxt) throw(ex_res_parse);
+      _out_ map<int, string>& tableTxt);
 
 public:
   static const string RESOURCE_NAME;
 
   TeXFormulaSettingParser() = delete;
 
-  TeXFormulaSettingParser(const string& file) throw(ex_res_parse);
+  TeXFormulaSettingParser(const string& file);
 
   void parseSymbol2Formula(
       _out_ map<int, string>& mappings,
-      _out_ map<int, string>& textMappings) throw(ex_res_parse);
+      _out_ map<int, string>& textMappings);
 
   void parseSymbol(
       _out_ map<int, string>& mappings,
-      _out_ map<int, string>& textMappings) throw(ex_res_parse);
+      _out_ map<int, string>& textMappings);
 };
 }  // namespace tex
 

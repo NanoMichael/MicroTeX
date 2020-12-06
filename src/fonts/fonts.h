@@ -87,14 +87,14 @@ public:
 
   static void __push_symbols(const __symbol_component* symbols, const int len);
 
-  static void addTeXFontDescription(const string& base, const string& file) throw(ex_res_parse);
+  static void addTeXFontDescription(const string& base, const string& file);
 
   static void addAlphabet(AlphabetRegistration* reg);
 
   static void addAlphabet(
       const string&               base,
       const vector<UnicodeBlock>& alphabet,
-      const string&               lang) throw(ex_res_parse);
+      const string&               lang);
 
   static void registerAlphabet(AlphabetRegistration* reg);
 
@@ -125,11 +125,11 @@ public:
   Char getChar(
       wchar_t       c,
       const string& textStyle,
-      int           style) throw(ex_text_style_mapping_not_found) override;
+      int           style) override;
 
   Char getChar(const CharFont& cf, int style) override;
 
-  Char getChar(const string& symbolName, int style) throw(ex_symbol_mapping_not_found) override;
+  Char getChar(const string& symbolName, int style) override;
 
   /*********************************** font information *****************************************/
 

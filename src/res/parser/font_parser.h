@@ -79,24 +79,24 @@ private:
   static void parse_lig(const XMLElement*, wchar_t, __BasicInfo&);
   static void parse_larger(const XMLElement*, wchar_t, __BasicInfo&);
 
-  void parseStyleMappings(_out_ map<string, vector<CharFont*>>& styles) throw(ex_res_parse);
+  void parseStyleMappings(_out_ map<string, vector<CharFont*>>& styles);
 
   static void processCharElement(const XMLElement* e, __BasicInfo& info);
 
-  inline static bool exists(const char* attr, const XMLElement* e) throw() {
+  inline static bool exists(const char* attr, const XMLElement* e) {
     const XMLAttribute* value = e->FindAttribute(attr);
     return (value != nullptr);
   }
 
   inline static void obtainAttr(
-      const char* attr, const XMLElement* e, _out_ string& val) throw() {
+      const char* attr, const XMLElement* e, _out_ string& val) {
     const char* value = e->Attribute(attr);
     if (value == nullptr || strlen(value) == 0) return;
     val.assign(value);
   }
 
   inline static string getAttrValueAndCheckIfNotNull(
-      const char* attr, const XMLElement* e) throw(ex_xml_parse) {
+      const char* attr, const XMLElement* e) {
     // find if attr is exists
     const char* value = e->Attribute(attr);
     if (value == nullptr || strlen(value) == 0)
@@ -105,7 +105,7 @@ private:
   }
 
   inline static float getFloatAndCheck(
-      const char* attr, const XMLElement* e) throw(ex_xml_parse) {
+      const char* attr, const XMLElement* e) {
     // get value
     float v   = 0;
     int   err = e->QueryFloatAttribute(attr, &v);
@@ -116,7 +116,7 @@ private:
   }
 
   inline static int getIntAndCheck(
-      const char* attr, const XMLElement* e) throw(ex_xml_parse) {
+      const char* attr, const XMLElement* e) {
     // get value
     int v   = 0;
     int err = e->QueryIntAttribute(attr, &v);
@@ -126,7 +126,7 @@ private:
   }
 
   inline static int getOptionalInt(
-      const char* attr, const XMLElement* e, const int def) throw(ex_xml_parse) {
+      const char* attr, const XMLElement* e, const int def) {
     // check exists
     if (!exists(attr, e)) return def;
     // get value
@@ -138,7 +138,7 @@ private:
   }
 
   inline static float getOptionalFloat(
-      const char* attr, const XMLElement* e, const float def) throw(ex_xml_parse) {
+      const char* attr, const XMLElement* e, const float def) {
     // check exists
     if (!exists(attr, e)) return def;
     // get value
@@ -149,7 +149,7 @@ private:
     return v;
   }
 
-  void init(const string& file) throw(ex_xml_parse) {
+  void init(const string& file) {
     int err = _doc.LoadFile(file.c_str());
     if (err != XML_NO_ERROR) throw ex_xml_parse(file + " not found");
     _root = _doc.RootElement();
@@ -163,33 +163,33 @@ private:
   void setupFontInfo(__BasicInfo& bi, FontInfo& fi);
 
 public:
-  DefaultTeXFontParser() throw(ex_res_parse) : _doc(true, COLLAPSE_WHITESPACE) {
+  DefaultTeXFontParser() : _doc(true, COLLAPSE_WHITESPACE) {
     string file = RES_BASE + "/" + RESOURCE_NAME;
     init(file);
   }
 
-  DefaultTeXFontParser(const string& file) throw(ex_xml_parse) : _doc(true, COLLAPSE_WHITESPACE) {
+  DefaultTeXFontParser(const string& file) : _doc(true, COLLAPSE_WHITESPACE) {
     init(file);
   }
 
-  DefaultTeXFontParser(const string& base, const string& file) throw(ex_xml_parse)
+  DefaultTeXFontParser(const string& base, const string& file)
       : _doc(true, COLLAPSE_WHITESPACE), _base(base) {
     init(file);
   }
 
-  void parseExtraPath() throw(ex_res_parse);
+  void parseExtraPath();
 
-  void parseFontDescriptions(const string& file) throw(ex_res_parse);
+  void parseFontDescriptions(const string& file);
 
-  void parseFontDescriptions() throw(ex_res_parse);
+  void parseFontDescriptions();
 
-  void parseSymbolMappings(_out_ map<string, CharFont*>& res) throw(ex_res_parse);
+  void parseSymbolMappings(_out_ map<string, CharFont*>& res);
 
-  string* parseDefaultTextStyleMappins() throw(ex_res_parse);
+  string* parseDefaultTextStyleMappins();
 
-  void parseParameters(_out_ map<string, float>& res) throw(ex_res_parse);
+  void parseParameters(_out_ map<string, float>& res);
 
-  void parseGeneralSettings(_out_ map<string, float>& res) throw(ex_res_parse);
+  void parseGeneralSettings(_out_ map<string, float>& res);
 
   map<string, vector<CharFont*>> parseTextStyleMappings();
 };

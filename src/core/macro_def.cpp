@@ -332,14 +332,14 @@ inline static void e(
     int nbargs,
     const wstring& name,
     const wstring& begdef,
-    const wstring& enddef) throw(ex_parse) {
+    const wstring& enddef) {
   NewEnvironmentMacro::addNewEnvironment(name, begdef, enddef, nbargs);
 }
 
 inline static void c(
     int nbargs,
     const wstring& name,
-    const wstring& code) throw(ex_parse) {
+    const wstring& code) {
   NewCommandMacro::addNewCommand(name, code, nbargs);
 }
 

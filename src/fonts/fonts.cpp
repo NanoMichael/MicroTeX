@@ -59,7 +59,7 @@ void DefaultTeXFont::__push_symbols(const __symbol_component* symbols, const int
 }
 
 void DefaultTeXFont::addTeXFontDescription(
-    const string& base, const string& file) throw(ex_res_parse) {
+    const string& base, const string& file) {
   DefaultTeXFontParser parser(base, file);
   parser.parseFontDescriptions();
   parser.parseExtraPath();
@@ -71,7 +71,7 @@ void DefaultTeXFont::addTeXFontDescription(
 void DefaultTeXFont::addAlphabet(
     const string&               base,
     const vector<UnicodeBlock>& alphabet,
-    const string&               lang) throw(ex_res_parse) {
+    const string&               lang) {
   bool b = false;
   for (size_t i = 0; !b && i < alphabet.size(); i++) {
     b = (indexOf(_loadedAlphabets, alphabet[i]) != -1) || b;
@@ -144,7 +144,7 @@ Char DefaultTeXFont::getDefaultChar(wchar_t c, int style) {
 Char DefaultTeXFont::getChar(
     wchar_t       c,
     const string& textStyle,
-    int           style) throw(ex_text_style_mapping_not_found) {
+    int           style) {
   // find first
   auto i = _textStyleMappings.find(textStyle);
   if (i == _textStyleMappings.end()) throw ex_text_style_mapping_not_found(textStyle);
@@ -195,7 +195,7 @@ Char DefaultTeXFont::getChar(const CharFont& c, int style) {
 }
 
 Char DefaultTeXFont::getChar(
-    const string& symbolName, int style) throw(ex_symbol_mapping_not_found) {
+    const string& symbolName, int style) {
   // find first
   auto i = _symbolMappings.find(symbolName);
   // no symbol mapping found
