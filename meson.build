@@ -1,5 +1,5 @@
 project('clatexmath', 'cpp',
-	version : '0.0.1',
+	version : '0.0.2',
 	default_options : ['buildtype=release', 'warning_level=3', 'cpp_std=c++17']
 )
 
@@ -96,7 +96,7 @@ if get_option('TARGET_LIB')
 		include_directories: clatexmath_inc,
 		dependencies: deps,
 		version: meson.project_version(),
-		soversion: 1,
+		soversion: 0,
 		install: true
 	)
 	install_headers([
