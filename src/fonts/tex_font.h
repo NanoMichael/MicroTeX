@@ -47,7 +47,7 @@ public:
   virtual Char getChar(
       wchar_t       c,
       const string& textStyle,
-      int           style) throw(ex_text_style_mapping_not_found) = 0;
+      int           style) = 0;
 
   /**
    * Get a Char-object for this specific character containing the metric information
@@ -67,7 +67,7 @@ public:
    *      the style in which the atom should be drawn
    * @return a Char-object for this symbol with metric information
    */
-  virtual Char getChar(const string& name, int style) throw(ex_symbol_mapping_not_found) = 0;
+  virtual Char getChar(const string& name, int style) = 0;
 
   /**
    * Get a Char-object specifying the given character in the default text style

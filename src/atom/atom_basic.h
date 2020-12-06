@@ -271,7 +271,7 @@ public:
     _blankType = type;
   }
 
-  SpaceAtom(int unit, float width, float height, float depth) throw(ex_invalid_unit) {
+  SpaceAtom(int unit, float width, float height, float depth) {
     init();
     // check if the unit is valid
     checkUnit(unit);
@@ -282,7 +282,7 @@ public:
     _depth = depth;
   }
 
-  SpaceAtom(int wu, float w, int hu, float h, int du, float d) throw(ex_invalid_unit) {
+  SpaceAtom(int wu, float w, int hu, float h, int du, float d) {
     init();
     // check if the unit is valid
     checkUnit(wu);
@@ -304,7 +304,7 @@ public:
    * @throw ex_invalid_unit if the given integer value does not represent
    * a valid unit
    */
-  inline static void checkUnit(int unit) throw(ex_invalid_unit) {
+  inline static void checkUnit(int unit) {
     if (unit < 0 || unit >= _units_count) throw ex_invalid_unit();
   }
 
@@ -506,7 +506,7 @@ public:
    * @throw ex_symbol_not_found
    *      if no symbol with the given name was found
    */
-  static sptr<SymbolAtom> get(const string& name) throw(ex_symbol_not_found);
+  static sptr<SymbolAtom> get(const string& name);
 
   static void _init_();
 
@@ -848,7 +848,7 @@ public:
 
   ColorAtom(const sptr<Atom>& atom, color bg, color c);
 
-  ColorAtom(color bg, color c, const sptr<Atom>& old) throw(ex_invalid_atom_type) {
+  ColorAtom(color bg, color c, const sptr<Atom>& old) {
     ColorAtom* a = dynamic_cast<ColorAtom*>(old.get());
     if (a == nullptr) throw ex_invalid_atom_type("Should be a ColorAtom!");
     _elements = a->_elements;
@@ -988,19 +988,19 @@ public:
   // base atom
   sptr<Atom> _base, _underbase;
 
-  void init(const sptr<Atom>& base, const sptr<Atom>& acc) throw(ex_invalid_symbol_type);
+  void init(const sptr<Atom>& base, const sptr<Atom>& acc);
 
 public:
   AccentedAtom() = delete;
 
-  AccentedAtom(const sptr<Atom>& base, const sptr<Atom>& accent) throw(ex_invalid_symbol_type) {
+  AccentedAtom(const sptr<Atom>& base, const sptr<Atom>& accent) {
     init(base, accent);
   }
 
   AccentedAtom(
       const sptr<Atom>& base,
       const sptr<Atom>& accent,
-      bool changeSize) throw(ex_invalid_symbol_type) {
+      bool changeSize) {
     init(base, accent);
     _changeSize = changeSize;
   }
@@ -1020,7 +1020,7 @@ public:
    */
   AccentedAtom(
       const sptr<Atom>& base,
-      const string& name) throw(ex_invalid_symbol_type, ex_symbol_not_found);
+      const string& name);
 
   /**
    * Creates an AccentedAtom from a base atom and an accent symbol defined as
@@ -1038,7 +1038,7 @@ public:
    */
   AccentedAtom(
       const sptr<Atom>& base,
-      const sptr<TeXFormula>& acc) throw(ex_invalid_formula, ex_invalid_symbol_type);
+      const sptr<TeXFormula>& acc);
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
@@ -1079,7 +1079,7 @@ public:
       int unit,
       float space,
       bool small,
-      bool over) throw(ex_invalid_unit) {
+      bool over) {
     init();
     // check if unit is valid
     SpaceAtom::checkUnit(unit);
@@ -1114,7 +1114,7 @@ public:
       const sptr<Atom>& over,
       int overunit,
       float overspace,
-      bool oversmall) throw(ex_invalid_unit) {
+      bool oversmall) {
     // check unit
     SpaceAtom::checkUnit(underunit);
     SpaceAtom::checkUnit(overunit);
@@ -1306,7 +1306,7 @@ public:
       const sptr<SymbolAtom>& s,
       int kernunit,
       float kern,
-      bool over) throw(ex_invalid_unit) {
+      bool over) {
     _type = TYPE_INNER;
     _base = base;
     _script = script;

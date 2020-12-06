@@ -72,13 +72,13 @@ private:
   /**
    * Preprocess parse string
    */
-  void firstpass() throw(ex_parse);
+  void firstpass();
 
-  sptr<Atom> getScripts(wchar_t f) throw(ex_parse);
+  sptr<Atom> getScripts(wchar_t f);
 
   wstring getCommand();
 
-  sptr<Atom> processEscape() throw(ex_parse);
+  sptr<Atom> processEscape();
 
   void insert(int beg, int end, const wstring& formula);
 
@@ -95,7 +95,7 @@ private:
    * Process the given TeX command (by parsing following command
    * arguments in the parse string).
    */
-  sptr<Atom> processCommands(const wstring& cmd) throw(ex_parse);
+  sptr<Atom> processCommands(const wstring& cmd);
 
   void skipWhiteSpace();
 
@@ -104,19 +104,19 @@ private:
    */
   bool replaceScript();
 
-  void preprocess(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse);
+  void preprocess(wstring& cmd, vector<wstring>& args, int& pos);
 
-  void preprocessNewCmd(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse);
+  void preprocessNewCmd(wstring& cmd, vector<wstring>& args, int& pos);
 
-  void inflateNewCmd(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse);
+  void inflateNewCmd(wstring& cmd, vector<wstring>& args, int& pos);
 
-  void inflateEnv(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse);
+  void inflateEnv(wstring& cmd, vector<wstring>& args, int& pos);
 
   void init(
       bool ispartial,
       const wstring& parsestring,
       _out_ TeXFormula* formula,
-      bool firstpass) throw(ex_parse);
+      bool firstpass);
 
 public:
   static bool _isLoading;
@@ -136,7 +136,7 @@ public:
    * @throw ex_parse
    *      if the string could not be parsed correctly
    */
-  TeXParser(const wstring& latex, _out_ TeXFormula* formula) throw(ex_parse) {
+  TeXParser(const wstring& latex, _out_ TeXFormula* formula) {
     init(true, latex, formula, true);
   }
 
@@ -151,7 +151,7 @@ public:
    * @throw ex_parse
    *      if the string could not be parsed correctly
    */
-  TeXParser(bool isPartial, const wstring& latex, _out_ TeXFormula* formula) throw(ex_parse) {
+  TeXParser(bool isPartial, const wstring& latex, _out_ TeXFormula* formula) {
     init(isPartial, latex, formula, true);
   }
 
@@ -172,7 +172,7 @@ public:
       bool isPartial,
       const wstring& latex,
       _out_ TeXFormula* formula,
-      bool firstPass) throw(ex_parse) {
+      bool firstPass) {
     init(isPartial, latex, formula, firstPass);
   }
 
@@ -187,7 +187,7 @@ public:
    * @throw ex_parse
    *      if the string could not be parsed correctly
    */
-  TeXParser(const wstring& latex, _out_ TeXFormula* formula, bool firstPass) throw(ex_parse) {
+  TeXParser(const wstring& latex, _out_ TeXFormula* formula, bool firstPass) {
     init(true, latex, formula, firstPass);
   }
 
@@ -215,7 +215,7 @@ public:
       const wstring& latex,
       _out_ TeXFormula* formula,
       bool firstpass,
-      bool ignoreWhiteSpace) throw(ex_parse) {
+      bool ignoreWhiteSpace) {
     init(isPartial, latex, formula, firstpass);
     _ignoreWhiteSpace = ignoreWhiteSpace;
   }
@@ -241,7 +241,7 @@ public:
       const wstring& latex,
       _out_ TeXFormula* formula,
       bool firstpass,
-      bool ignoreWhiteSpace) throw(ex_parse) {
+      bool ignoreWhiteSpace) {
     init(true, latex, formula, firstpass);
     _ignoreWhiteSpace = ignoreWhiteSpace;
   }
@@ -364,7 +364,7 @@ public:
    * @throw ex_parse
    *      if the parser is not in array mode
    */
-  void addRow() throw(ex_parse);
+  void addRow();
 
   /**
    * Parse the input string
@@ -372,7 +372,7 @@ public:
    * @throw ex_parse
    *      if an error is encountered during parse
    */
-  void parse() throw(ex_parse);
+  void parse();
 
   /**
    * Get the contents between two delimiters
@@ -383,7 +383,7 @@ public:
    * @throw ex_parse
    *      if the contents are badly enclosed
    */
-  wstring getDollarGroup(wchar_t openClose) throw(ex_parse);
+  wstring getDollarGroup(wchar_t openClose);
 
   /**
    * Get the contents between two delimiters
@@ -396,7 +396,7 @@ public:
    * @throw ex_parse
    *      if the contents are badly enclosed
    */
-  wstring getGroup(wchar_t open, wchar_t close) throw(ex_parse);
+  wstring getGroup(wchar_t open, wchar_t close);
 
   /**
    * Get the contents between two strings as in \\begin{foo}... \\end{foo}
@@ -409,7 +409,7 @@ public:
    * @throw ex_parse
    *      if the contents are badly enclosed
    */
-  wstring getGroup(const wstring& open, const wstring& close) throw(ex_parse);
+  wstring getGroup(const wstring& open, const wstring& close);
 
   /**
    * Get the argument of a command in his atomic format
@@ -418,19 +418,19 @@ public:
    * @throw ex_parse
    *      if the argument is incorrect
    */
-  sptr<Atom> getArgument() throw(ex_parse);
+  sptr<Atom> getArgument();
 
   /**
    * Get the supscript argument
    */
-  wstring getOverArgument() throw(ex_parse);
+  wstring getOverArgument();
 
   /**
    * Get the unit and length from given string. The string must be in the format: a digital
    * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or a pair (UNIT_PIXEL, 0) will be
    * returned.
    */
-  pair<int, float> getLength() throw(ex_parse);
+  pair<int, float> getLength();
 
   /**
    * Convert a character in the corresponding atom in using the file
@@ -444,7 +444,7 @@ public:
    * @throw ex_parse
    *      if the character is unknown
    */
-  sptr<Atom> convertCharacter(wchar_t c, bool oneChar) throw(ex_parse);
+  sptr<Atom> convertCharacter(wchar_t c, bool oneChar);
 
   /**
    * Get the arguments and the options of a command

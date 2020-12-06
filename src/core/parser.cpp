@@ -74,7 +74,7 @@ bool TeXParser::_isLoading = false;
 void TeXParser::init(
     bool ispartial,
     const wstring& parsestring,
-    _out_ TeXFormula* formula, bool fp) throw(ex_parse) {
+    _out_ TeXFormula* formula, bool fp) {
   _pos = _spos = _len = 0;
   _line = _col = 0;
   _group = 0;
@@ -132,12 +132,12 @@ void TeXParser::addAtom(const sptr<Atom>& atom) {
   _formula->add(atom);
 }
 
-void TeXParser::addRow() throw(ex_parse) {
+void TeXParser::addRow() {
   if (!_arrayMode) throw ex_parse("Can not add row in none-array mode!");
   ((ArrayOfAtoms*)_formula)->addRow();
 }
 
-wstring TeXParser::getDollarGroup(wchar_t openclose) throw(ex_parse) {
+wstring TeXParser::getDollarGroup(wchar_t openclose) {
   int spos = _pos;
   wchar_t ch;
 
@@ -150,7 +150,7 @@ wstring TeXParser::getDollarGroup(wchar_t openclose) throw(ex_parse) {
   return _parseString.substr(spos, _pos - spos);
 }
 
-wstring TeXParser::getGroup(wchar_t open, wchar_t close) throw(ex_parse) {
+wstring TeXParser::getGroup(wchar_t open, wchar_t close) {
   if (_pos == _len) return L"";
 
   int group, spos;
@@ -178,7 +178,7 @@ wstring TeXParser::getGroup(wchar_t open, wchar_t close) throw(ex_parse) {
   throw ex_parse("Missing '" + tostring((char)open) + "'!");
 }
 
-wstring TeXParser::getGroup(const wstring& open, const wstring& close) throw(ex_parse) {
+wstring TeXParser::getGroup(const wstring& open, const wstring& close) {
   int group = 1;
   int ol = open.length();
   int cl = close.length();
@@ -250,7 +250,7 @@ wstring TeXParser::getGroup(const wstring& open, const wstring& close) throw(ex_
   return buf.substr(0, buf.length() - _pos + startC);
 }
 
-wstring TeXParser::getOverArgument() throw(ex_parse) {
+wstring TeXParser::getOverArgument() {
   if (_pos == _len) return L"";
 
   int ogroup = 1, spos;
@@ -493,7 +493,7 @@ bool TeXParser::isValidName(const wstring& com) {
   return isalpha(c);
 }
 
-sptr<Atom> TeXParser::processEscape() throw(ex_parse) {
+sptr<Atom> TeXParser::processEscape() {
   _spos = _pos;
   wstring command = getCommand();
 
@@ -519,7 +519,7 @@ sptr<Atom> TeXParser::processEscape() throw(ex_parse) {
   return sptr<Atom>(new ColorAtom(rm, TRANS, RED));
 }
 
-sptr<Atom> TeXParser::processCommands(const wstring& command) throw(ex_parse) {
+sptr<Atom> TeXParser::processCommands(const wstring& command) {
   MacroInfo* mac = MacroInfo::_commands[command];
   int opts = mac->_posOpts;
 
@@ -536,7 +536,7 @@ sptr<Atom> TeXParser::processCommands(const wstring& command) throw(ex_parse) {
   return mac->invoke(*this, args);
 }
 
-sptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
+sptr<Atom> TeXParser::getScripts(wchar_t f) {
   _pos++;
   // get the first script
   sptr<Atom> first = getArgument();
@@ -613,7 +613,7 @@ sptr<Atom> TeXParser::getScripts(wchar_t f) throw(ex_parse) {
   return sptr<Atom>(new ScriptsAtom(atom, first, second));
 }
 
-sptr<Atom> TeXParser::getArgument() throw(ex_parse) {
+sptr<Atom> TeXParser::getArgument() {
   skipWhiteSpace();
   wchar_t ch;
   if (_pos < _len)
@@ -651,7 +651,7 @@ sptr<Atom> TeXParser::getArgument() throw(ex_parse) {
   return atom;
 }
 
-pair<int, float> TeXParser::getLength() throw(ex_parse) {
+pair<int, float> TeXParser::getLength() {
   if (_pos == _len) return make_pair(-1.f, -1.f);
 
   int spos;
@@ -688,7 +688,7 @@ bool TeXParser::replaceScript() {
   return false;
 }
 
-void TeXParser::preprocess(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse) {
+void TeXParser::preprocess(wstring& cmd, vector<wstring>& args, int& pos) {
   if (cmd == L"newcommand" || cmd == L"renewcommand") {
     preprocessNewCmd(cmd, args, pos);
   } else if (cmd == L"newenvironment" || cmd == L"renewenvironment") {
@@ -706,7 +706,7 @@ void TeXParser::preprocess(wstring& cmd, vector<wstring>& args, int& pos) throw(
   }
 }
 
-void TeXParser::preprocessNewCmd(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse) {
+void TeXParser::preprocessNewCmd(wstring& cmd, vector<wstring>& args, int& pos) {
   MacroInfo* const mac = MacroInfo::_commands[cmd];
   getOptsArgs(mac->_nbArgs, mac->_posOpts, args);
   mac->invoke(*this, args);
@@ -715,7 +715,7 @@ void TeXParser::preprocessNewCmd(wstring& cmd, vector<wstring>& args, int& pos) 
   _pos = pos;
 }
 
-void TeXParser::inflateNewCmd(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse) {
+void TeXParser::inflateNewCmd(wstring& cmd, vector<wstring>& args, int& pos) {
   MacroInfo* const mac = MacroInfo::_commands[cmd];
   getOptsArgs(mac->_nbArgs, mac->_posOpts, args);
   args[0] = cmd;
@@ -731,7 +731,7 @@ void TeXParser::inflateNewCmd(wstring& cmd, vector<wstring>& args, int& pos) thr
   _pos = pos;
 }
 
-void TeXParser::inflateEnv(wstring& cmd, vector<wstring>& args, int& pos) throw(ex_parse) {
+void TeXParser::inflateEnv(wstring& cmd, vector<wstring>& args, int& pos) {
   getOptsArgs(1, 0, args);
   wstring env = args[1] + L"@env";
   auto it = MacroInfo::_commands.find(env);
@@ -753,7 +753,7 @@ void TeXParser::inflateEnv(wstring& cmd, vector<wstring>& args, int& pos) throw(
   _pos = pos;
 }
 
-void TeXParser::firstpass() throw(ex_parse) {
+void TeXParser::firstpass() {
   if (_len == 0) return;
 
   wchar_t ch;
@@ -800,7 +800,7 @@ void TeXParser::firstpass() throw(ex_parse) {
   _len = _parseString.length();
 }
 
-void TeXParser::parse() throw(ex_parse) {
+void TeXParser::parse() {
   if (_len == 0) {
     if (_formula->_root == nullptr && !_arrayMode)
       _formula->add(sptr<Atom>(new EmptyAtom()));
@@ -932,7 +932,7 @@ void TeXParser::parse() throw(ex_parse) {
   }
 }
 
-sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) throw(ex_parse) {
+sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
   if (_ignoreWhiteSpace) {
     // the unicode Greek Letters in math mode are not drawn with the Greek font
     if (c >= 945 && c <= 969) {

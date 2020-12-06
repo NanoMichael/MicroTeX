@@ -14,20 +14,20 @@ const map<string, int> TeXSymbolParser::_typeMappings = {
     {"punct", TYPE_PUNCTUATION},
     {"acc", TYPE_ACCENT}};
 
-string TeXSymbolParser::getAttr(const char* attr, const XMLElement* e) throw(ex_res_parse) {
+string TeXSymbolParser::getAttr(const char* attr, const XMLElement* e) {
   const char* x = e->Attribute(attr);
   if (x == nullptr || strlen(x) == 0) throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping!");
   return x;
 }
 
-TeXSymbolParser::TeXSymbolParser(const string& file) throw(ex_res_parse)
+TeXSymbolParser::TeXSymbolParser(const string& file)
     : _doc(true, COLLAPSE_WHITESPACE) {
   int err = _doc.LoadFile(file.c_str());
   if (err != XML_NO_ERROR) throw ex_res_parse(file + " not found!");
   _root = _doc.RootElement();
 }
 
-void TeXSymbolParser::readSymbols(_out_ map<string, sptr<SymbolAtom>>& res) throw(ex_res_parse) {
+void TeXSymbolParser::readSymbols(_out_ map<string, sptr<SymbolAtom>>& res) {
   const XMLElement* e = _root->FirstChildElement("Symbol");
   while (e != nullptr) {
     const string name = getAttr("name", e);
@@ -46,14 +46,14 @@ void TeXSymbolParser::readSymbols(_out_ map<string, sptr<SymbolAtom>>& res) thro
 
 const string TeXFormulaSettingParser::RESOURCE_NAME = "TeXFormulaSettings";
 
-TeXFormulaSettingParser::TeXFormulaSettingParser(const string& file) throw(ex_res_parse)
+TeXFormulaSettingParser::TeXFormulaSettingParser(const string& file)
     : _doc(true, COLLAPSE_WHITESPACE) {
   int err = _doc.LoadFile(file.c_str());
   if (err != XML_NO_ERROR) throw ex_xml_parse(file + " not found!");
   _root = _doc.RootElement();
 }
 
-int TeXFormulaSettingParser::getUtf(const XMLElement* e, const char* attr) throw(ex_res_parse) {
+int TeXFormulaSettingParser::getUtf(const XMLElement* e, const char* attr) {
   const char* val = e->Attribute(attr);
   if (val == nullptr || strlen(val) == 0) {
     throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping!");
@@ -69,7 +69,7 @@ int TeXFormulaSettingParser::getUtf(const XMLElement* e, const char* attr) throw
 void TeXFormulaSettingParser::add2map(
     const XMLElement* r,
     _out_ map<int, string>& math,
-    _out_ map<int, string>& txt) throw(ex_res_parse) {
+    _out_ map<int, string>& txt) {
   while (r != nullptr) {
     int ch = getUtf(r, "char");
     const char* symbol = r->Attribute("symbol");
@@ -87,7 +87,7 @@ void TeXFormulaSettingParser::add2map(
 void TeXFormulaSettingParser::addFormula2map(
     const XMLElement* r,
     _out_ map<int, string>& math,
-    _out_ map<int, string>& txt) throw(ex_res_parse) {
+    _out_ map<int, string>& txt) {
   while (r != nullptr) {
     int ch = getUtf(r, "char");
     const char* formula = r->Attribute("formula");
@@ -103,7 +103,7 @@ void TeXFormulaSettingParser::addFormula2map(
 }
 
 void TeXFormulaSettingParser::parseSymbol2Formula(
-    _out_ map<int, string>& mappings, _out_ map<int, string>& txt) throw(ex_res_parse) {
+    _out_ map<int, string>& mappings, _out_ map<int, string>& txt) {
   const XMLElement* e = _root->FirstChildElement("CharacterToFormulaMappings");
   if (e != nullptr) {
     e = e->FirstChildElement("Map");
@@ -112,7 +112,7 @@ void TeXFormulaSettingParser::parseSymbol2Formula(
 }
 
 void TeXFormulaSettingParser::parseSymbol(
-    _out_ map<int, string>& mappings, _out_ map<int, string>& txt) throw(ex_res_parse) {
+    _out_ map<int, string>& mappings, _out_ map<int, string>& txt) {
   const XMLElement* e = _root->FirstChildElement("CharacterToSymbolMappings");
   if (e != nullptr) {
     e = e->FirstChildElement("Map");

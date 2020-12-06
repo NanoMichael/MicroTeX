@@ -331,7 +331,7 @@ void SymbolAtom::addSymbolAtom(const sptr<SymbolAtom>& sym) {
   _symbols[sym->_name] = sym;
 }
 
-sptr<SymbolAtom> SymbolAtom::get(const string& name) throw(ex_symbol_not_found) {
+sptr<SymbolAtom> SymbolAtom::get(const string& name) {
   auto it = _symbols.find(name);
   if (it == _symbols.end()) throw ex_symbol_not_found(name);
   return it->second;
@@ -769,7 +769,7 @@ sptr<Box> PhantomAtom::createBox(_out_ TeXEnvironment& env) {
 /************************************ AccentedAtom implementation *********************************/
 
 void AccentedAtom::init(
-    const sptr<Atom>& base, const sptr<Atom>& accent) throw(ex_invalid_symbol_type) {
+    const sptr<Atom>& base, const sptr<Atom>& accent) {
   _base = base;
   AccentedAtom* a = dynamic_cast<AccentedAtom*>(base.get());
   if (a != nullptr)
@@ -785,7 +785,7 @@ void AccentedAtom::init(
 }
 
 AccentedAtom::AccentedAtom(
-    const sptr<Atom>& base, const string& name) throw(ex_invalid_symbol_type, ex_symbol_not_found) {
+    const sptr<Atom>& base, const string& name) {
   _accent = SymbolAtom::get(name);
   if (_accent->_type == TYPE_ACCENT) {
     _base = base;
@@ -807,7 +807,7 @@ AccentedAtom::AccentedAtom(
 
 AccentedAtom::AccentedAtom(
     const sptr<Atom>& base,
-    const sptr<TeXFormula>& acc) throw(ex_invalid_symbol_type, ex_invalid_formula) {
+    const sptr<TeXFormula>& acc) {
   if (acc == nullptr) throw ex_invalid_formula("the accent TeXFormula can't be null!");
   _changeSize = true;
   _acc = false;

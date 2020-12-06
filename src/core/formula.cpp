@@ -45,7 +45,7 @@ TeXFormula::TeXFormula(
     const TeXParser& tp,
     const wstring& s,
     const string& textStyle,
-    bool firstpass, bool space) throw(ex_parse)
+    bool firstpass, bool space)
     : _parser(tp.getIsPartial(), s, this, firstpass, space) {
   _textStyle = textStyle;
   _xmlMap = tp._formula->_xmlMap;
@@ -61,7 +61,7 @@ TeXFormula::TeXFormula(
 }
 
 TeXFormula::TeXFormula(
-    const TeXParser& tp, const wstring& s, const string& textStyle) throw(ex_parse)
+    const TeXParser& tp, const wstring& s, const string& textStyle)
     : _parser(tp.getIsPartial(), s, this) {
   _textStyle = textStyle;
   _xmlMap = tp._formula->_xmlMap;
@@ -76,7 +76,7 @@ TeXFormula::TeXFormula(
   }
 }
 
-TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s, bool firstpass) throw(ex_parse)
+TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s, bool firstpass)
     : _parser(tp.getIsPartial(), s, this, firstpass) {
   _textStyle = "";
   _xmlMap = tp._formula->_xmlMap;
@@ -89,7 +89,7 @@ TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s, bool firstpass) th
   }
 }
 
-TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s) throw(ex_parse)
+TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s)
     : _parser(tp.getIsPartial(), s, this) {
   _textStyle = "";
   _xmlMap = tp._formula->_xmlMap;
@@ -106,25 +106,25 @@ TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s) throw(ex_parse)
 
 TeXFormula::TeXFormula() : _parser(L"", this, false) {}
 
-TeXFormula::TeXFormula(const wstring& s) throw(ex_parse) : _parser(s, this) {
+TeXFormula::TeXFormula(const wstring& s) : _parser(s, this) {
   _textStyle = "";
   _parser.parse();
 }
 
-TeXFormula::TeXFormula(const wstring& s, bool firstpass) throw(ex_parse)
+TeXFormula::TeXFormula(const wstring& s, bool firstpass)
     : _parser(s, this, firstpass) {
   _textStyle = "";
   _parser.parse();
 }
 
-TeXFormula::TeXFormula(const wstring& s, const string& textStyle) throw(ex_parse)
+TeXFormula::TeXFormula(const wstring& s, const string& textStyle)
     : _parser(s, this) {
   _textStyle = textStyle;
   _parser.parse();
 }
 
 TeXFormula::TeXFormula(
-    const wstring& s, const string& textStyle, bool firstpass, bool space) throw(ex_parse)
+    const wstring& s, const string& textStyle, bool firstpass, bool space)
     : _parser(s, this, firstpass, space) {
   _textStyle = textStyle;
   _parser.parse();
@@ -134,7 +134,7 @@ TeXFormula::TeXFormula(const TeXFormula* f) {
   if (f != nullptr) addImpl(f);
 }
 
-void TeXFormula::setLaTeX(const wstring& latex) throw(ex_parse) {
+void TeXFormula::setLaTeX(const wstring& latex) {
   _parser.reset(latex);
   if (!latex.empty()) _parser.parse();
 }
@@ -160,7 +160,7 @@ TeXFormula* TeXFormula::add(const sptr<Atom>& el) {
   return this;
 }
 
-TeXFormula* TeXFormula::append(bool isPartial, const wstring& s) throw(ex_parse) {
+TeXFormula* TeXFormula::append(bool isPartial, const wstring& s) {
   if (!s.empty()) {
     TeXParser tp(isPartial, s, this);
     tp.parse();
@@ -168,7 +168,7 @@ TeXFormula* TeXFormula::append(bool isPartial, const wstring& s) throw(ex_parse)
   return this;
 }
 
-TeXFormula* TeXFormula::append(const wstring& s) throw(ex_parse) {
+TeXFormula* TeXFormula::append(const wstring& s) {
   return append(false, s);
 }
 
@@ -211,12 +211,12 @@ TeXFormula* TeXFormula::setColor(color c) {
   return this;
 }
 
-TeXFormula* TeXFormula::setFixedTypes(int left, int right) throw(ex_invalid_atom_type) {
+TeXFormula* TeXFormula::setFixedTypes(int left, int right) {
   _root = sptr<Atom>(new TypedAtom(left, right, _root));
   return this;
 }
 
-sptr<TeXFormula> TeXFormula::get(const wstring& name) throw(ex_formula_not_found) {
+sptr<TeXFormula> TeXFormula::get(const wstring& name) {
   auto it = _predefinedTeXFormulas.find(name);
   if (it == _predefinedTeXFormulas.end()) {
     auto i = _predefinedTeXFormulasAsString.find(name);
@@ -252,7 +252,7 @@ FontInfos* TeXFormula::getExternalFont(const UnicodeBlock& block) {
   return infos;
 }
 
-void TeXFormula::addSymbolMappings(const string& file) throw(ex_res_parse) {
+void TeXFormula::addSymbolMappings(const string& file) {
   TeXFormulaSettingParser parser(file);
   parser.parseSymbol(_symbolMappings, _symbolTextMappings);
   parser.parseSymbol2Formula(_symbolFormulaMappings, _symbolTextMappings);
