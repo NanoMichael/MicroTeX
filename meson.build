@@ -198,4 +198,4 @@ endif
 install_subdir('res/fonts', install_dir: get_option('datadir')/'clatexmath')
 install_subdir('res/greek', install_dir: get_option('datadir')/'clatexmath')
 install_subdir('res/cyrillic', install_dir: get_option('datadir')/'clatexmath')
-install_data(['res/RES_README', 'res/SAMPLES.tex'])
+install_data(['res/RES_README', 'res/SAMPLES.tex', '.clatexmath-res_root'])
