@@ -1,0 +1,2 @@
+option('TARGET_LIB', type : 'boolean', value : true)
+option('TARGET_DEMO', type : 'boolean', value : false)

@@ -1,6 +1,6 @@
 project('clatexmath', 'cpp',
 	version : '0.0.1',
-	default_options : ['buildtype=release', 'warning_level=3', 'cpp_std=c++11']
+	default_options : ['buildtype=release', 'warning_level=3', 'cpp_std=c++17']
 )
 
 deps = [
@@ -91,104 +91,111 @@ src = [
 	'src/xml/tinyxml2.cpp'
 ]
 clatexmath_inc = include_directories('src')
+if get_option('TARGET_LIB')
+	clatexmath_lib = library('clatexmath', src,
+		include_directories: clatexmath_inc,
+		dependencies: deps,
+		version: meson.project_version(),
+		soversion: 1,
+		install: true
+	)
+	install_headers([
+		'src/common.h',
+		'src/config.h',
+		'src/latex.h',
+		'src/render.h',
+	], subdir: 'clatexmath')
+	install_headers([
+		'src/atom/atom.h',
+		'src/atom/atom_basic.h',
+		'src/atom/atom_impl.h',
+		'src/atom/box.h',
+	], subdir: 'clatexmath/atom')
+	install_headers([
+		'src/core/core.h',
+		'src/core/formula.h',
+		'src/core/macro.h',
+		'src/core/macro_impl.h',
+		'src/core/parser.h',
+	], subdir: 'clatexmath/core')
+	install_headers([
+		'src/fonts/alphabet.h',
+		'src/fonts/font_basic.h',
+		'src/fonts/font_info.h',
+		'src/fonts/font_reg.h',
+		'src/fonts/fonts.h',
+		'src/fonts/symbol_reg.h',
+		'src/fonts/tex_font.h',
+	], subdir: 'clatexmath/fonts')
+	install_headers([
+		'src/graphic/graphic.h',
+		'src/graphic/graphic_basic.h',
+	], subdir: 'clatexmath/graphic')
+	install_headers([
+		'src/platform/cairo/graphic_cairo.h',
+	], subdir: 'clatexmath/platform/cairo')
+	install_headers([
+		'src/platform/gdi_win/graphic_win32.h',
+	], subdir: 'clatexmath/platform/gdi_win')
+	install_headers([
+		'src/platform/qt/graphic_qt.h',
+	], subdir: 'clatexmath/platform/qt')
+	install_headers([
+		'src/res/font_def.res.h',
+		'src/res/symbol_def.res.h',
+	], subdir: 'clatexmath/res')
+	install_headers([
+		'src/res/parser/font_parser.h',
+		'src/res/parser/formula_parser.h',
+	], subdir: 'clatexmath/res/parser')
+	install_headers([
+		'src/res/reg/builtin_font_reg.h',
+		'src/res/reg/builtin_syms_reg.h',
+	], subdir: 'clatexmath/res/reg')
+	install_headers([
+		'src/samples/qt_mainwindow.h',
+		'src/samples/qt_texwidget.h',
+		'src/samples/samples.h',
+	], subdir: 'clatexmath/samples')
+	install_headers([
+		'src/utils/constants.h',
+		'src/utils/exceptions.h',
+		'src/utils/indexed_arr.h',
+		'src/utils/log.h',
+		'src/utils/nums.h',
+		'src/utils/string_utils.h',
+		'src/utils/utf.h',
+	], subdir: 'clatexmath/utils')
+	install_headers([
+		'src/xml/tinyxml2.h',
+	], subdir: 'clatexmath/xml')
 
-clatexmath_lib = library('clatexmath', src,
-	include_directories: clatexmath_inc,
-	dependencies: deps,
-	version: meson.project_version(),
-	soversion: 0,
-	install: true
-)
+	import('pkgconfig').generate(
+		libraries : clatexmath_lib,
+		version : meson.project_version(),
+		name : 'clatexmath',
+		filebase : 'clatexmath',
+		subdirs: 'clatexmath',
+		description : 'A dynamic, cross-platform, and embeddable LaTeX rendering library'
+	)
+
+	latex_dep  = declare_dependency(
+		link_with : clatexmath_lib,
+		include_directories : clatexmath_inc,
+		version : meson.project_version()
+	)
+endif
+
+if get_option('TARGET_DEMO')
+	executable('clatexmath', src,
+		include_directories: clatexmath_inc,
+		dependencies: deps,
+		install: true
+	)
+endif
 
 
 install_subdir('res/fonts', install_dir: get_option('datadir')/'clatexmath')
 install_subdir('res/greek', install_dir: get_option('datadir')/'clatexmath')
 install_subdir('res/cyrillic', install_dir: get_option('datadir')/'clatexmath')
 install_data(['res/RES_README', 'res/SAMPLES.tex'])
-
-
-install_headers([
-	'src/common.h',
-	'src/config.h',
-	'src/latex.h',
-	'src/render.h',
-], subdir: 'clatexmath')
-install_headers([
-	'src/atom/atom.h',
-	'src/atom/atom_basic.h',
-	'src/atom/atom_impl.h',
-	'src/atom/box.h',
-], subdir: 'clatexmath/atom')
-install_headers([
-	'src/core/core.h',
-	'src/core/formula.h',
-	'src/core/macro.h',
-	'src/core/macro_impl.h',
-	'src/core/parser.h',
-], subdir: 'clatexmath/core')
-install_headers([
-	'src/fonts/alphabet.h',
-	'src/fonts/font_basic.h',
-	'src/fonts/font_info.h',
-	'src/fonts/font_reg.h',
-	'src/fonts/fonts.h',
-	'src/fonts/symbol_reg.h',
-	'src/fonts/tex_font.h',
-], subdir: 'clatexmath/fonts')
-install_headers([
-	'src/graphic/graphic.h',
-	'src/graphic/graphic_basic.h',
-], subdir: 'clatexmath/graphic')
-install_headers([
-	'src/platform/cairo/graphic_cairo.h',
-], subdir: 'clatexmath/platform/cairo')
-install_headers([
-	'src/platform/gdi_win/graphic_win32.h',
-], subdir: 'clatexmath/platform/gdi_win')
-install_headers([
-	'src/platform/qt/graphic_qt.h',
-], subdir: 'clatexmath/platform/qt')
-install_headers([
-	'src/res/font_def.res.h',
-	'src/res/symbol_def.res.h',
-], subdir: 'clatexmath/res')
-install_headers([
-	'src/res/parser/font_parser.h',
-	'src/res/parser/formula_parser.h',
-], subdir: 'clatexmath/res/parser')
-install_headers([
-	'src/res/reg/builtin_font_reg.h',
-	'src/res/reg/builtin_syms_reg.h',
-], subdir: 'clatexmath/res/reg')
-install_headers([
-	'src/samples/qt_mainwindow.h',
-	'src/samples/qt_texwidget.h',
-	'src/samples/samples.h',
-], subdir: 'clatexmath/samples')
-install_headers([
-	'src/utils/constants.h',
-	'src/utils/exceptions.h',
-	'src/utils/indexed_arr.h',
-	'src/utils/log.h',
-	'src/utils/nums.h',
-	'src/utils/string_utils.h',
-	'src/utils/utf.h',
-], subdir: 'clatexmath/utils')
-install_headers([
-	'src/xml/tinyxml2.h',
-], subdir: 'clatexmath/xml')
-
-import('pkgconfig').generate(
-	libraries : clatexmath_lib,
-	version : meson.project_version(),
-	name : 'clatexmath',
-	filebase : 'clatexmath',
-	subdirs: 'clatexmath',
-	description : 'A dynamic, cross-platform, and embeddable LaTeX rendering library'
-)
-
-latex_dep  = declare_dependency(
-	link_with : clatexmath_lib,
-	include_directories : clatexmath_inc,
-	version : meson.project_version()
-)
