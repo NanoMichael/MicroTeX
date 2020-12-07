@@ -1,0 +1,31 @@
+name: cLaTeXMath CI
+
+on: 
+  - push
+  - pull_request
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix: 
+        os: 
+          - ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Downloading dependencies 📥
+      run: sudo apt-get install build-essential meson libgtksourceviewmm-3.0-dev libgtkmm-3.0-dev
+    - name: Configure 🔧
+      run: meson _build -DTARGET_DEMO=true
+    - name: Compile 🎲
+      run: ninja -C _build
+    - name: Compress build artifacts 📦
+      run: |
+        pushd _build
+        tar -c * | zstd -o $GITHUB_WORKSPACE/artifacts.tar.zst
+        popd
+    - name: Upload build artifacts 📤
+      uses: actions/upload-artifact@v1
+      with:
+        name: Build artifacts
+        path: artifacts.tar.zst
