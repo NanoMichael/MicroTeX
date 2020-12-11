@@ -15,9 +15,9 @@ using namespace tex;
 
 namespace tex {
 
-class CharFont;
+struct CharFont;
 class TeXFont;
-class FontInfos;
+struct FontInfos;
 class TeXFormula;
 class Dummy;
 class RowAtom;
