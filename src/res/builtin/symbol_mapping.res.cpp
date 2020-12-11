@@ -65,7 +65,8 @@ map<int, string> TeXFormula::_symbolMappings = {
     {977, "vartheta"},
     {65288, "lbrack"},
     {65289, "rbrack"},
-    {65292, "comma"}};
+    {65292, "comma"},
+};
 
 map<int, string> TeXFormula::_symbolTextMappings = {
     {'-', "textminus"},
@@ -123,4 +124,5 @@ map<int, string> TeXFormula::_symbolTextMappings = {
     {977, "ϑ"},
     {65288, "lbrack"},
     {65289, "rbrack"},
-    {65292, "comma"}};
+    {65292, "comma"},
+};

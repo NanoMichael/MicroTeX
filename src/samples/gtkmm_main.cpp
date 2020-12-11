@@ -1,6 +1,6 @@
 #include "config.h"
 
-#if defined(__OS_Linux__) && !defined(MEM_CHECK)
+#if defined(BUILD_GTK) && !defined(MEM_CHECK)
 
 #include "latex.h"
 #include "platform/cairo/graphic_cairo.h"
@@ -113,6 +113,9 @@ public:
 
 protected:
   bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override {
+    cr->set_source_rgb(1, 1, 1);
+    cr->rectangle(0, 0, get_width(), get_height());
+    cr->fill();
     if (_render == nullptr) return true;
     Graphics2D_cairo g2(cr);
     _render->draw(g2, _padding, _padding);

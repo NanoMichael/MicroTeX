@@ -11,9 +11,6 @@ using namespace tex;
 #define mac4(nbargs, posOpts, name, code) \
   { L##code, m(nbargs, posOpts, name) }
 
-#define __mac__(_1, _2, _3, _4, name, ...) name
-#define mac(...) __mac__(__VA_ARGS__, mac4, mac3)(__VA_ARGS__)
-
 inline static PredefMacroInfo* m(int nbargs, int posOpts, MacroDelegate del) {
   return new PredefMacroInfo(nbargs, posOpts, del);
 }
@@ -335,14 +332,14 @@ inline static void e(
     int nbargs,
     const wstring& name,
     const wstring& begdef,
-    const wstring& enddef) throw(ex_parse) {
+    const wstring& enddef) {
   NewEnvironmentMacro::addNewEnvironment(name, begdef, enddef, nbargs);
 }
 
 inline static void c(
     int nbargs,
     const wstring& name,
-    const wstring& code) throw(ex_parse) {
+    const wstring& code) {
   NewCommandMacro::addNewCommand(name, code, nbargs);
 }
 

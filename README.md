@@ -1,6 +1,6 @@
 # ![logo](readme/tex_logo.svg)
 
-It is a dynamic, cross-platform, and embeddable LaTeX rendering library. Its main purpose is to display mathematical formulas written in LaTeX. It can be embedded in applications on various platforms (Android, iOS, Windows, Linux...). The following pictures demonstrate the application run in Ubuntu and Windows.
+It is a dynamic, cross-platform, and embeddable LaTeX rendering library. Its main purpose is to display mathematical formulas written in LaTeX. It can be embedded in applications on various platforms (Android, iOS, Windows, Linux GTK, Qt...). The following pictures demonstrate the application run in Ubuntu (using GTK) and Windows.
 
 ![demo ubuntu](readme/example_ubuntu.png)
 
@@ -10,10 +10,11 @@ It is a dynamic, cross-platform, and embeddable LaTeX rendering library. Its mai
 
 # Build demo
 
-First make sure you have a C++ compiler that supports `C++ 11` or `C++ 0x` standard. It uses CMake to build the demo, make sure you have it installed. Currently support Windows and Linux on PC, the version on Mac OS is in the plan, and you can find the Android version in [here](https://github.com/NanoMichael/AndroidLaTeXMath).
+First make sure you have a C++ compiler that supports `C++ 17` standard. It uses CMake to build the demo, make sure you have it installed. Currently support Windows and Linux on PC, the version on Mac OS is in the plan, and you can find the Android version in [here](https://github.com/NanoMichael/AndroidLaTeXMath).
 
 - `CygWin` or `MinGW` is recommended to be installed on Windows, and `Gdiplus` is required.
-- `GTKMM` and `GSVMM` must be installed on Linux.
+- `GTKMM` and `GSVMM` must be installed on Linux for a GTK build.
+- Qt development packages must be installed for a Qt installation.
 
 After all the dependencies have been satisfied, run the following commands to build:
 
@@ -26,6 +27,8 @@ make -j32
 ```
 
 After all the works have done, run the executable file `LaTeX` in the directory `build` to check the demo.
+
+If you wish to build in Qt mode on your plaform add `-DQT=ON` to the cmake command above.
 
 ## Headless mode
 
@@ -539,8 +542,9 @@ that will produce:
 
 ![custom symbols](readme/example_custom_symbols.svg)
 
-# Plans to do next
+# TODO
 
+- [ ] port Gtk+ 3 to Windows and macOS
 - [ ] buitin resources
 - [ ] support for webassembly
 - [ ] native support for SVG
@@ -550,3 +554,31 @@ that will produce:
 - [ ] rewrite the parsing algorithm, make it more efficient
 - [ ] support for dynamic parsing
 - [ ] implement the `\def` command
+
+# License
+
+Excluding the font resources (under the directory `res/font`) that under different licenses (check out `res/fonts/license`), this project is under the [MIT](https://opensource.org/licenses/MIT) license.
+
+```
+ The MIT License (MIT)
+
+ Copyright (c) 2020 Nano Michael
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+```

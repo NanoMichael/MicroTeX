@@ -1,6 +1,6 @@
 #include "config.h"
 
-#if defined(__OS_Linux__) && !defined(MEM_CHECK)
+#if defined(BUILD_GTK) && !defined(MEM_CHECK)
 
 #ifndef GRAPHIC_CAIRO_H_INCLUDED
 #define GRAPHIC_CAIRO_H_INCLUDED
@@ -17,11 +17,13 @@ namespace tex {
 
 class Font_cairo : public Font {
 private:
-  static map<string, string> _file_name_map;
+  static map<string, Cairo::RefPtr<Cairo::FtFontFace>> _cairoFtFaces;
+  static map<string, string> _families;
 
   int _style;
   double _size;
   string _family;
+  Cairo::RefPtr<Cairo::FtFontFace> _fface;
 
   void loadFont(const string& file);
 
@@ -34,6 +36,8 @@ public:
 
   int getStyle() const;
 
+  Cairo::RefPtr<Cairo::FtFontFace> getCairoFontFace() const;
+
   virtual float getSize() const override;
 
   virtual sptr<Font> deriveFont(int style) const override;
@@ -41,6 +45,8 @@ public:
   virtual bool operator==(const Font& f) const override;
 
   virtual bool operator!=(const Font& f) const override;
+
+  virtual ~Font_cairo() {};
 };
 
 /**************************************************************************************************/
@@ -124,4 +130,4 @@ public:
 }  // namespace tex
 
 #endif  // GRAPHIC_CAIRO_H_INCLUDED
-#endif  // __OS_Linux__ && !MEM_CHECK
+#endif  // BUILD_GTK && !MEM_CHECK

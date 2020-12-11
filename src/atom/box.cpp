@@ -1,11 +1,12 @@
 #include "atom/box.h"
+
+#include <utility>
+
 #include "atom/atom_basic.h"
 #include "common.h"
 #include "core/core.h"
 #include "fonts/fonts.h"
 #include "graphic/graphic.h"
-
-#include <utility>
 
 using namespace std;
 using namespace tex;
@@ -17,16 +18,16 @@ bool Box::DEBUG = false;
 sptr<Box> DelimiterFactory::create(_in_ SymbolAtom& symbol, _out_ TeXEnvironment& env, int size) {
   if (size > 4) return symbol.createBox(env);
 
-  TeXFont& tf = *(env.getTeXFont());
-  int style = env.getStyle();
-  Char c = tf.getChar(symbol.getName(), style);
-  int i = 0;
+  TeXFont& tf    = *(env.getTeXFont());
+  int      style = env.getStyle();
+  Char     c     = tf.getChar(symbol.getName(), style);
+  int      i     = 0;
 
   for (int i = 1; i <= size && tf.hasNextLarger(c); i++) c = tf.getNextLarger(c, style);
 
   if (i <= size && !tf.hasNextLarger(c)) {
     CharBox A(tf.getChar(L'A', "mathnormal", style));
-    auto b = create(symbol.getName(), env, size * (A._height + A._depth));
+    auto    b = create(symbol.getName(), env, size * (A._height + A._depth));
     return b;
   }
 
@@ -34,16 +35,16 @@ sptr<Box> DelimiterFactory::create(_in_ SymbolAtom& symbol, _out_ TeXEnvironment
 }
 
 sptr<Box> DelimiterFactory::create(const string& symbol, _out_ TeXEnvironment& env, float minHeight) {
-  TeXFont& tf = *(env.getTeXFont());
-  int style = env.getStyle();
-  Char c = tf.getChar(symbol, style);
+  TeXFont& tf    = *(env.getTeXFont());
+  int      style = env.getStyle();
+  Char     c     = tf.getChar(symbol, style);
 
   // start with smallest character
   float total = c.getHeight() + c.getDepth();
 
   // try larger versions of the same char until min-height has been reached
   while (total < minHeight && tf.hasNextLarger(c)) {
-    c = tf.getNextLarger(c, style);
+    c     = tf.getNextLarger(c, style);
     total = c.getHeight() + c.getDepth();
   }
   // tall enough char found
@@ -57,7 +58,7 @@ sptr<Box> DelimiterFactory::create(const string& symbol, _out_ TeXEnvironment& e
   } else if (tf.isExtensionChar(c)) {
     // construct vertical box
     VerticalBox* vBox = new VerticalBox();
-    Extension* ext = tf.getExtension(c, style);
+    Extension*   ext  = tf.getExtension(c, style);
 
     // insert top part
     if (ext->hasTop()) {
@@ -105,12 +106,12 @@ sptr<Box> XLeftRightArrowFactory::create(_out_ TeXEnvironment& env, float width)
   // initialize
   if (MINUS == nullptr) {
     MINUS = SymbolAtom::get("minus");
-    LEFT = SymbolAtom::get("leftarrow");
+    LEFT  = SymbolAtom::get("leftarrow");
     RIGHT = SymbolAtom::get("rightarrow");
   }
-  sptr<Box> left = LEFT->createBox(env);
-  sptr<Box> right = RIGHT->createBox(env);
-  float swidth = left->_width + right->_width;
+  sptr<Box> left   = LEFT->createBox(env);
+  sptr<Box> right  = RIGHT->createBox(env);
+  float     swidth = left->_width + right->_width;
 
   if (width < swidth) {
     HorizontalBox* hb = new HorizontalBox(left);
@@ -126,7 +127,7 @@ sptr<Box> XLeftRightArrowFactory::create(_out_ TeXEnvironment& env, float width)
   swidth += 2 * kern->_width;
 
   HorizontalBox* hb = new HorizontalBox();
-  float w = 0.f;
+  float          w  = 0.f;
   for (w = 0; w < width - swidth - mwidth; w += mwidth) {
     hb->add(minu);
     hb->add(kern);
@@ -146,12 +147,12 @@ sptr<Box> XLeftRightArrowFactory::create(bool left, _out_ TeXEnvironment& env, f
   // initialize
   if (MINUS == nullptr) {
     MINUS = SymbolAtom::get("minus");
-    LEFT = SymbolAtom::get("leftarrow");
+    LEFT  = SymbolAtom::get("leftarrow");
     RIGHT = SymbolAtom::get("rightarrow");
   }
-  auto arr = left ? LEFT->createBox(env) : RIGHT->createBox(env);
-  float h = arr->_height;
-  float d = arr->_depth;
+  auto  arr = left ? LEFT->createBox(env) : RIGHT->createBox(env);
+  float h   = arr->_height;
+  float d   = arr->_depth;
 
   float swidth = arr->_width;
   if (width <= swidth) {
@@ -159,12 +160,12 @@ sptr<Box> XLeftRightArrowFactory::create(bool left, _out_ TeXEnvironment& env, f
     return arr;
   }
 
-  sptr<Box> minu = SmashedAtom(MINUS, "").createBox(env);
-  sptr<Box> kern = SpaceAtom(UNIT_MU, -4.f, 0, 0).createBox(env);
-  float mwidth = minu->_width + kern->_width;
+  sptr<Box> minu   = SmashedAtom(MINUS, "").createBox(env);
+  sptr<Box> kern   = SpaceAtom(UNIT_MU, -4.f, 0, 0).createBox(env);
+  float     mwidth = minu->_width + kern->_width;
   swidth += kern->_width;
   HorizontalBox* hb = new HorizontalBox();
-  float w = 0.f;
+  float          w  = 0.f;
   for (w = 0; w < width - swidth - mwidth; w += mwidth) {
     hb->add(minu);
     hb->add(kern);
@@ -183,7 +184,7 @@ sptr<Box> XLeftRightArrowFactory::create(bool left, _out_ TeXEnvironment& env, f
     hb->add(arr);
   }
 
-  hb->_depth = d / 2;
+  hb->_depth  = d / 2;
   hb->_height = h;
 
   return sptr<Box>(hb);
@@ -233,13 +234,13 @@ void HorizontalBox::recalculate(const Box& b) {
   _width += b._width;
   float x = _children.empty() ? NEG_INF : _height;
   _height = max(x, b._height - b._shift);
-  x = _children.empty() ? NEG_INF : _depth;
-  _depth = max(x, b._depth + b._shift);
+  x       = _children.empty() ? NEG_INF : _depth;
+  _depth  = max(x, b._depth + b._shift);
 }
 
 sptr<HorizontalBox> HorizontalBox::cloneBox() {
   HorizontalBox* b = new HorizontalBox(_foreground, _background);
-  b->_shift = _shift;
+  b->_shift        = _shift;
 
   return sptr<HorizontalBox>(b);
 }
@@ -298,18 +299,18 @@ int HorizontalBox::getLastFontId() {
 HorizontalRule::HorizontalRule(float thickness, float width, float shift)
     : _color(trans), _speShift(0) {
   _height = thickness;
-  _width = width;
-  _shift = shift;
+  _width  = width;
+  _shift  = shift;
 }
 
 HorizontalRule::HorizontalRule(float thickness, float width, float shift, bool trueshift)
     : _color(trans), _speShift(0) {
   _height = thickness;
-  _width = width;
+  _width  = width;
   if (trueshift) {
     _shift = shift;
   } else {
-    _shift = 0;
+    _shift    = 0;
     _speShift = shift;
   }
 }
@@ -317,11 +318,11 @@ HorizontalRule::HorizontalRule(float thickness, float width, float shift, bool t
 HorizontalRule::HorizontalRule(float thickness, float width, float shift, color c, bool trueshift)
     : _color(c), _speShift(0) {
   _height = thickness;
-  _width = width;
+  _width  = width;
   if (trueshift) {
     _shift = shift;
   } else {
-    _shift = 0;
+    _shift    = 0;
     _speShift = shift;
   }
 }
@@ -364,16 +365,16 @@ VerticalBox::VerticalBox(const sptr<Box>& b, float rest, int alignment)
 }
 
 void VerticalBox::recalculateWidth(const Box& b) {
-  _leftMostPos = min(_leftMostPos, b._shift);
+  _leftMostPos  = min(_leftMostPos, b._shift);
   _rightMostPos = max(_rightMostPos, b._shift + (b._width > 0 ? b._width : 0));
-  _width = _rightMostPos - _leftMostPos;
+  _width        = _rightMostPos - _leftMostPos;
 }
 
 void VerticalBox::add(const sptr<Box>& b) {
   Box::add(b);
   if (_children.size() == 1) {
     _height = b->_height;
-    _depth = b->_depth;
+    _depth  = b->_depth;
   } else {
     _depth += b->_height + b->_depth;
   }
@@ -428,19 +429,19 @@ OverUnderBox::OverUnderBox(
     const sptr<Box>& b,
     const sptr<Box>& d,
     const sptr<Box>& script,
-    float kern,
-    bool over) {
-  _base = b;
-  _del = d;
+    float            kern,
+    bool             over) {
+  _base   = b;
+  _del    = d;
   _script = script;
-  _kern = kern;
-  _over = over;
+  _kern   = kern;
+  _over   = over;
   // calculate metrics of the box
-  _width = b->_width;
+  _width  = b->_width;
   float x = (over && script != nullptr ? script->_height + script->_depth + kern : 0);
   _height = b->_height + (over ? d->_width : 0) + x;
-  x = (!over && script != nullptr ? script->_height + script->_depth + kern : 0);
-  _depth = b->_depth + (over ? 0 : d->_width) + x;
+  x       = (!over && script != nullptr ? script->_height + script->_depth + kern : 0);
+  _depth  = b->_depth + (over ? 0 : d->_width) + x;
 }
 
 void OverUnderBox::draw(Graphics2D& g2, float x, float y) {
@@ -450,7 +451,7 @@ void OverUnderBox::draw(Graphics2D& g2, float x, float y) {
   float yVar = y - _base->_height - _del->_width;
   _del->_depth += _del->_height;
   _del->_height = 0;
-  float tx = x + (_del->_height + _del->_depth) * 0.75f;
+  float tx      = x + (_del->_height + _del->_depth) * 0.75f;
   // draw delimiter and script above base box
   if (_over) {
     float ty = yVar;
@@ -464,7 +465,7 @@ void OverUnderBox::draw(Graphics2D& g2, float x, float y) {
     if (_script != nullptr) _script->draw(g2, x, yVar - _kern - _script->_depth);
     return;
   }
-  yVar = y + _base->_depth;
+  yVar     = y + _base->_depth;
   float ty = yVar;
   g2.translate(tx, ty);
   g2.rotate(PI / 2);
@@ -489,13 +490,13 @@ vector<sptr<Box>> OverUnderBox::getChildren() const {
 
 void ScaleBox::init(const sptr<Box>& b, float sx, float sy) {
   _factor = 1;
-  _box = b;
-  _sx = (isnan(sx) || isinf(sx)) ? 1 : sx;
-  _sy = (isnan(sy) || isinf(sy)) ? 1 : sy;
-  _width = b->_width * abs(_sx);
+  _box    = b;
+  _sx     = (isnan(sx) || isinf(sx)) ? 1 : sx;
+  _sy     = (isnan(sy) || isinf(sy)) ? 1 : sy;
+  _width  = b->_width * abs(_sx);
   _height = _sy > 0 ? b->_height * _sy : -b->_depth * _sy;
-  _depth = _sy > 0 ? b->_depth * _sy : -b->_height * _sy;
-  _shift = b->_shift * _sy;
+  _depth  = _sy > 0 ? b->_depth * _sy : -b->_height * _sy;
+  _shift  = b->_shift * _sy;
 }
 
 void ScaleBox::draw(Graphics2D& g2, float x, float y) {
@@ -521,11 +522,11 @@ vector<sptr<Box>> ScaleBox::getChildren() const {
 /************************************** reflect box implementation ********************************/
 
 ReflectBox::ReflectBox(const sptr<Box>& b) {
-  _box = b;
-  _width = b->_width;
+  _box    = b;
+  _width  = b->_width;
   _height = b->_height;
-  _depth = b->_depth;
-  _shift = b->_shift;
+  _depth  = b->_depth;
+  _shift  = b->_shift;
 }
 
 void ReflectBox::draw(Graphics2D& g2, float x, float y) {
@@ -548,11 +549,11 @@ vector<sptr<Box>> ReflectBox::getChildren() const {
 /************************************** rotate box implementation *********************************/
 
 void RotateBox::init(const sptr<Box>& b, float angle, float x, float y) {
-  _box = b;
-  _angle = angle * PI / 180;
+  _box    = b;
+  _angle  = angle * PI / 180;
   _height = b->_height;
-  _depth = b->_depth;
-  _width = b->_width;
+  _depth  = b->_depth;
+  _width  = b->_width;
   float s = sin(_angle);
   float c = cos(_angle);
   _shiftX = x * (1 - c) + y * s;
@@ -574,9 +575,9 @@ void RotateBox::init(const sptr<Box>& b, float angle, float x, float y) {
       min(-_depth * c,
           min(_width * s - _depth * c, _width * s + _height * c)));
 
-  _width = _xmax - _xmin;
+  _width  = _xmax - _xmin;
   _height = _ymax + _shiftY;
-  _depth = -_ymin - _shiftY;
+  _depth  = -_ymin - _shiftY;
 }
 
 Point RotateBox::calculateShift(const Box& b, int option) {
@@ -675,16 +676,16 @@ vector<sptr<Box>> RotateBox::getChildren() const {
 /************************************* framed box implementation **********************************/
 
 void FramedBox::init(const sptr<Box>& box, float thickness, float space) {
-  _line = trans;
-  _bg = trans;
-  _box = box;
+  _line        = trans;
+  _bg          = trans;
+  _box         = box;
   const Box& b = *box;
-  _width = b._width + 2 * thickness + 2 * space;
-  _height = b._height + thickness + space;
-  _depth = b._depth + thickness + space;
-  _shift = b._shift;
-  _thickness = thickness;
-  _space = space;
+  _width       = b._width + 2 * thickness + 2 * space;
+  _height      = b._height + thickness + space;
+  _depth       = b._depth + thickness + space;
+  _shift       = b._shift;
+  _thickness   = thickness;
+  _space       = space;
 }
 
 void FramedBox::draw(Graphics2D& g2, float x, float y) {
@@ -722,7 +723,7 @@ void OvalBox::draw(Graphics2D& g2, float x, float y) {
   const Stroke& st = g2.getStroke();
   g2.setStroke(Stroke(_thickness, CAP_BUTT, JOIN_MITER));
   float th = _thickness / 2.f;
-  float r = 0.f;
+  float r  = 0.f;
   if (_diameter != 0)
     r = _diameter;
   else
@@ -773,11 +774,11 @@ int GlueBox::getLastFontId() {
 }
 
 CharBox::CharBox(const Char& c) {
-  _cf = c.getCharFont();
-  _size = c.getSize();
-  _width = c.getWidth();
+  _cf     = c.getCharFont();
+  _size   = c.getSize();
+  _width  = c.getWidth();
   _height = c.getHeight();
-  _depth = c.getDepth();
+  _depth  = c.getDepth();
   _italic = c.getItalic();
 }
 
@@ -789,10 +790,10 @@ void CharBox::addItalicCorrectionToWidth() {
 void CharBox::draw(Graphics2D& g2, float x, float y) {
   startDraw(g2, x, y);
   g2.translate(x, y);
-  const Font* font = FontInfo::getFont(_cf->_fontId);
+  const Font* font = FontInfo::getFont(_cf->fontId);
   if (_size != 1) g2.scale(_size, _size);
   if (g2.getFont() != font) g2.setFont(font);
-  g2.drawChar(_cf->_c, 0, 0);
+  g2.drawChar(_cf->chr, 0, 0);
   // reset
   if (_size != 1) g2.scale(1.f / _size, 1.f / _size);
   g2.translate(-x, -y);
@@ -800,7 +801,7 @@ void CharBox::draw(Graphics2D& g2, float x, float y) {
 }
 
 int CharBox::getLastFontId() {
-  return _cf->_fontId;
+  return _cf->fontId;
 }
 
 sptr<Font> TextRenderingBox::_font(nullptr);
@@ -821,13 +822,13 @@ void TextRenderingBox::setFont(const string& name) {
 
 void TextRenderingBox::init(
     const wstring& str, int type, float size, const sptr<Font>& f, bool kerning) {
-  _size = size;
+  _size   = size;
   _layout = TextLayout::create(str, f->deriveFont(type));
   Rect rect;
   _layout->getBounds(rect);
   _height = -rect.y * size / 10;
-  _depth = rect.h * size / 10 - _height;
-  _width = (rect.w + rect.x + 0.4f) * size / 10;
+  _depth  = rect.h * size / 10 - _height;
+  _width  = (rect.w + rect.x + 0.4f) * size / 10;
 }
 
 void TextRenderingBox::draw(Graphics2D& g2, float x, float y) {
@@ -889,7 +890,7 @@ void LineBox::draw(Graphics2D& g2, float x, float y) {
   g2.translate(0, -_height);
   int count = _lines.size() / 4;
   for (int i = 0; i < count; i++) {
-    int j = i * 4;
+    int   j  = i * 4;
     float x1 = _lines[j] + x, y1 = _lines[j + 1] + y;
     float x2 = _lines[j + 2] + x, y2 = _lines[j + 3] + y;
     g2.drawLine(x1, y1, x2, y2);

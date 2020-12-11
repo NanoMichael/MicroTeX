@@ -7,6 +7,9 @@
 #include "render.h"
 
 #include <string>
+#include <filesystem>
+#include <queue>
+#include <sstream>
 
 using namespace std;
 using namespace tex;
@@ -19,7 +22,8 @@ class LaTeX {
 private:
   static TeXFormula* _formula;
   static TeXRenderBuilder* _builder;
-
+protected:
+  static string queryResourceLocation(string& custom_path);
 public:
   /**
    * Initialize TeX context with given root path of the TeX resources
@@ -27,7 +31,8 @@ public:
    * @param res_root_path
    *      root path of the resources, default is 'res'
    */
-  static void init(const string& res_root_path = "res");
+
+  static void init(string res_root_path = "res");
 
   /**
    * Get the root path of the "TeX resources"

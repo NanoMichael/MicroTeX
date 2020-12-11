@@ -1,6 +1,6 @@
 #include "config.h"
 
-#if defined(__OS_Linux__) && !defined(MEM_CHECK)
+#if defined(BUILD_GTK) && !defined(MEM_CHECK)
 
 #include "platform/cairo/graphic_cairo.h"
 
@@ -9,7 +9,8 @@
 using namespace tex;
 using namespace std;
 
-map<string, string> Font_cairo::_file_name_map;
+map<string, string> Font_cairo::_families;
+map<string, Cairo::RefPtr<Cairo::FtFontFace>> Font_cairo::_cairoFtFaces;
 
 Font_cairo::Font_cairo(const string& family, int style, float size)
     : _family(family), _style(style), _size((double)size) {}
@@ -19,15 +20,19 @@ Font_cairo::Font_cairo(const string& file, float size) : Font_cairo("", PLAIN, s
 }
 
 void Font_cairo::loadFont(const string& file) {
-  auto it = _file_name_map.find(file);
-  if (it != _file_name_map.end()) {
+  auto ffaceEntry = _cairoFtFaces.find(file);
+  auto familyEntry = _families.find(file);
+  if (ffaceEntry != _cairoFtFaces.end() && familyEntry != _families.end()) {
     // already loaded
-    _family = _file_name_map[file];
+    _family = familyEntry->second;
+    _fface = ffaceEntry->second;
 #ifdef HAVE_LOG
     __log << file << " already loaded, skip\n";
 #endif
     return;
   }
+
+  // query font via fontconfig
   const FcChar8* f = (const FcChar8*)file.c_str();
 
   // get font family from file first
@@ -48,7 +53,10 @@ void Font_cairo::loadFont(const string& file) {
 #endif
 
   _family = (const char*)family;
-  _file_name_map[file] = _family;
+  _families[file] = _family;
+
+  _fface = Cairo::FtFontFace::create(p);
+  _cairoFtFaces[file] = _fface;
 
   // release
   FcPatternDestroy(p);
@@ -56,6 +64,10 @@ void Font_cairo::loadFont(const string& file) {
 
 string Font_cairo::getFamily() const {
   return _family;
+}
+
+Cairo::RefPtr<Cairo::FtFontFace> Font_cairo::getCairoFontFace() const {
+  return _fface;
 }
 
 int Font_cairo::getStyle() const {
@@ -275,21 +287,7 @@ void Graphics2D_cairo::drawChar(wchar_t c, float x, float y) {
 }
 
 void Graphics2D_cairo::drawText(const wstring& t, float x, float y) {
-  Cairo::FontSlant slant = Cairo::FONT_SLANT_NORMAL;
-  Cairo::FontWeight weight = Cairo::FONT_WEIGHT_NORMAL;
-  switch (_font->getStyle()) {
-    case BOLD:
-      weight = Cairo::FONT_WEIGHT_BOLD;
-      break;
-    case ITALIC:
-      slant = Cairo::FONT_SLANT_ITALIC;
-      break;
-    case BOLDITALIC:
-      slant = Cairo::FONT_SLANT_ITALIC;
-      weight = Cairo::FONT_WEIGHT_BOLD;
-      break;
-  }
-  _context->select_font_face(_font->getFamily(), slant, weight);
+  _context->set_font_face(_font->getCairoFontFace());
   _context->set_font_size(_font->getSize());
   _context->move_to(x, y);
   _context->show_text(wide2utf8(t.c_str()));

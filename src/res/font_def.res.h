@@ -6,26 +6,26 @@
 
 #define __len(x) ((int)(sizeof(x) / sizeof((x)[0])))
 
-#define DEF_FONT(name, path, unicode) \
-  void __font_reg(name)() {           \
-    int id = FontInfo::__id(#name);   \
-    auto info = FontInfo::__create(id, RES_BASE + "/" + #path, unicode);
+#define DEF_FONT(name, path, unicode)  \
+  void __font_reg(name)() {            \
+    int  id   = FontInfo::__id(#name); \
+    auto info = FontInfo::__create(id, RES_BASE + "/" + #path);
 
-#define space(x)   info->__set_space(x);
-#define xHeight(x) info->__set_xheight(x);
-#define quad(x)    info->__set_quad(x);
-#define skew(x)    info->setSkewChar(x);
+#define space(x)   info->__space(x);
+#define xHeight(x) info->__xheight(x);
+#define quad(x)    info->__quad(x);
+#define skew(x)    info->__skewChar(x);
 
 #define __ver(m, v) info->m(FontInfo::__id(#v));
-#define roman(x)    __ver(setRomanId, x)
-#define bold(x)     __ver(setBoldId, x)
-#define it(x)       __ver(setItId, x)
-#define ss(x)       __ver(setSsId, x)
-#define tt(x)       __ver(setTtId, x)
+#define roman(x)    __ver(__romanId, x)
+#define bold(x)     __ver(__boldId, x)
+#define it(x)       __ver(__itId, x)
+#define ss(x)       __ver(__ssId, x)
+#define tt(x)       __ver(__ttId, x)
 
 #define __start_def(type) \
   {                       \
-    const type x[] = {
+    static const type x[] = {
 #define __end_def(method)    \
   }                          \
   ;                          \
@@ -41,7 +41,7 @@
  *      [code, width, height, depth, italic-correction]
  */
 #define METRICS_START __start_def(float)
-#define METRICS_END __end_def(__push_metrics)
+#define METRICS_END   __end_def(__metrics)
 
 /**
  * Define the extensions of this font.
@@ -51,7 +51,7 @@
  *      [code, top, middle, repeat, bottom]
  */
 #define EXTENSIONS_START __start_def(int)
-#define EXTENSIONS_END __end_def(__push_extensions)
+#define EXTENSIONS_END   __end_def(__extensions)
 
 /**
  * Define the larger-version of a specific character.
@@ -61,7 +61,7 @@
  *      [code, larger-code, larger-font-id]
  */
 #define LARGERS_START __start_def(int)
-#define LARGERS_END __end_def(__push_largers)
+#define LARGERS_END   __end_def(__largers)
 
 /**
  * Define the ligtures for 2 characters.
@@ -71,7 +71,7 @@
  *      [left-code, right-code, lig-code]
  */
 #define LIGTURES_START __start_def(wchar_t)
-#define LIGTURES_END __end_def(__push_ligtures)
+#define LIGTURES_END   __end_def(__ligtures)
 
 /**
  * Define the kerning for 2 characters.
@@ -81,7 +81,7 @@
  *      [left-code, right-code, kerning]
  */
 #define KERNS_START __start_def(float)
-#define KERNS_END __end_def(__push_kerns)
+#define KERNS_END   __end_def(__kerns)
 
 #define END }
 

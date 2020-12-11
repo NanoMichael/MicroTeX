@@ -1,17 +1,17 @@
 #include "atom/atom_basic.h"
 
 #define sym(type, name) \
-  { #name, sptr < SymbolAtom > (new SymbolAtom(#name, type, false)) }
+  { #name, sptr < SymbolAtom>(new SymbolAtom(#name, type, false)) }
 
 #define del(type, name) \
-  { #name, sptr < SymbolAtom > (new SymbolAtom(#name, type, true)) }
+  { #name, sptr < SymbolAtom>(new SymbolAtom(#name, type, true)) }
 
-#define ord TYPE_ORDINARY
-#define rel TYPE_RELATION
-#define acc TYPE_ACCENT
-#define bin TYPE_BINARY_OPERATOR
-#define op TYPE_BIG_OPERATOR
-#define open TYPE_OPENING
+#define ord   TYPE_ORDINARY
+#define rel   TYPE_RELATION
+#define acc   TYPE_ACCENT
+#define bin   TYPE_BINARY_OPERATOR
+#define op    TYPE_BIG_OPERATOR
+#define open  TYPE_OPENING
 #define close TYPE_CLOSING
 #define punct TYPE_PUNCTUATION
 
@@ -661,4 +661,5 @@ map<string, sptr<SymbolAtom>> SymbolAtom::_symbols = {
     sym(ord, varparallel),
     sym(ord, nvarparallel),
     sym(ord, varparalleleq),
-    sym(ord, parallelogram)};
+    sym(ord, parallelogram),
+};
