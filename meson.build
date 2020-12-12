@@ -9,6 +9,13 @@ deps = [
 	dependency('gtksourceviewmm-3.0')
 ]
 
+# GCC versions earlier than 9 require linking with stdc++fs to use
+# std::filesystem functionality.
+cc = meson.get_compiler('cpp')
+if cc.get_id() == 'gcc' and cc.version().version_compare('<9')
+    deps += [ cc.find_library('stdc++fs') ]
+endif
+
 add_global_arguments('-DBUILD_GTK', language : 'cpp')
 
 src = [
