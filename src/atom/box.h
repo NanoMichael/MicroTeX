@@ -10,7 +10,7 @@ using namespace tex;
 namespace tex {
 
 class Char;
-class CharFont;
+struct CharFont;
 class TeXFont;
 class SymbolAtom;
 
