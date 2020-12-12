@@ -69,7 +69,7 @@ inline wstring& tolower(wstring& src) {
 /** Ignore left side whitespace in a string */
 inline string& ltrim(string& s) {
 #if (__cplusplus >= 201703L) || (defined(_HAS_CXX17) && _HAS_CXX17)
-  s.erase(s.begin(), find_if(s.begin(), s.end(), not_fn(isspace)));
+  s.erase(s.begin(), find_if(s.begin(), s.end(), not_fn<int(int)>(isspace)));
 #else
   s.erase(s.begin(), find_if(s.begin(), s.end(), not1(cref(isspace))));
 #endif
@@ -79,7 +79,7 @@ inline string& ltrim(string& s) {
 /** Ignore right side whitespace in a string */
 inline string& rtrim(string& s) {
 #if (__cplusplus >= 201703L) || (defined(_HAS_CXX17) && _HAS_CXX17)
-  s.erase(find_if(s.rbegin(), s.rend(), not_fn(isspace)).base(), s.end());
+  s.erase(find_if(s.rbegin(), s.rend(), not_fn<int(int)>(isspace)).base(), s.end());
 #else
   s.erase(find_if(s.rbegin(), s.rend(), not1(cref(isspace))).base(), s.end());
 #endif
