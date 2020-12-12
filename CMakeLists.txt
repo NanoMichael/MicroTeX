@@ -15,8 +15,20 @@ endif()
 # check for lstdc++fs
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-     set(CXX_FILESYSTEM_LIBRARIES "stdc++fs")
+	if ("${CMAKE_CXX_COMPILER_VERSION}" VERSION_LESS 9)
+    	set(CXX_FILESYSTEM_LIBRARIES "stdc++fs")
+	endif()
+    # check for older gcc
+    if ("${CMAKE_CXX_COMPILER_VERSION}" VERSION_LESS 8)
+		set("EXPERIMENTAL_FS" ON)
+    endif()
 endif()
+
+# configure
+configure_file(
+	"src/def.h.cmake.in"
+	"src/def.h"
+)
 
 # copy res dir
 
