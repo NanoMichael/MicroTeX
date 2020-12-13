@@ -21,7 +21,7 @@ if cc.get_id() == 'gcc' and cc.version().version_compare('<8')
     conf.set('EXPERIMENTAL_FS', true)
 endif
 
-configure_file(input : 'src/def.h.meson.in',
+def = configure_file(input : 'src/def.h.meson.in',
 	output : 'def.h',
 	configuration : conf
 )
@@ -119,6 +119,7 @@ if get_option('TARGET_LIB')
 	install_headers([
 		'src/common.h',
 		'src/config.h',
+		def,
 		'src/latex.h',
 		'src/render.h',
 	], subdir: 'clatexmath')
