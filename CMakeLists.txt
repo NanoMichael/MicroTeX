@@ -12,6 +12,12 @@ else()
     message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no c++17 support. Please use a different one that supports c++17.")
 endif()
 
+# check for lstdc++fs
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+     set(CXX_FILESYSTEM_LIBRARIES "stdc++fs")
+endif()
+
 # copy res dir
 
 file(COPY res DESTINATION .)
@@ -72,4 +78,4 @@ endif()
 option(QT "Compile using Qt instead of Win32/Gtk" OFF)
 
 add_executable(LaTeX ${SRC})
-target_link_libraries(LaTeX ${LINK_LIBS})
+target_link_libraries(LaTeX PUBLIC ${LINK_LIBS} ${CXX_FILESYSTEM_LIBRARIES})
