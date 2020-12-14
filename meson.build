@@ -116,7 +116,6 @@ if get_option('TARGET_LIB')
 	install_headers([
 		'src/common.h',
 		'src/config.h',
-		def,
 		'src/latex.h',
 		'src/render.h',
 	], subdir: 'clatexmath')
