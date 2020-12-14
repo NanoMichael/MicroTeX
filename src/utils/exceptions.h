@@ -19,7 +19,7 @@ public:
   explicit ex_tex(const std::string& msg, const exception& cause)
       : _msg(msg + "\n caused by: " + cause.what()) {}
 
-  const char* what() const override {
+  const char* what() const noexcept override {
     return _msg.c_str();
   }
 };
