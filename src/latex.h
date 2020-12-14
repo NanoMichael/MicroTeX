@@ -7,11 +7,19 @@
 #include "render.h"
 
 #include <string>
-#include <filesystem>
 #include <queue>
 #include <sstream>
 
 using namespace std;
+
+#include "def.h"
+#ifdef EXPERIMENTAL_FS
+#include <experimental/filesystem>
+namespace filesystem=experimental::filesystem;
+#else
+#include <filesystem>
+#endif
+
 using namespace tex;
 
 namespace tex {
