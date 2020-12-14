@@ -1,6 +1,6 @@
 project('clatexmath', 'cpp',
 	version : '0.0.2',
-	default_options : ['buildtype=release', 'warning_level=3', 'cpp_std=c++17']
+	default_options : ['buildtype=release', 'warning_level=3']
 )
 
 deps = [
@@ -9,8 +9,6 @@ deps = [
 	dependency('gtksourceviewmm-3.0')
 ]
 
-conf = configuration_data()
-
 # GCC versions earlier than 9 require linking with stdc++fs to use
 # std::filesystem functionality.
 cc = meson.get_compiler('cpp')
@@ -18,13 +16,12 @@ if cc.get_id() == 'gcc' and cc.version().version_compare('<9')
     deps += [ cc.find_library('stdc++fs') ]
 endif
 if cc.get_id() == 'gcc' and cc.version().version_compare('<8')
-    conf.set('EXPERIMENTAL_FS', true)
+	add_project_arguments('-std=c++11', language : 'cpp')
+elif cc.has_argument('--std=c++17')
+	add_project_arguments('-std=c++17', language : 'cpp')
+else
+	add_project_arguments('-std=c++11', language : 'cpp')
 endif
-
-configure_file(input : 'src/def.h.meson.in',
-	output : 'def.h',
-	configuration : conf
-)
 
 add_global_arguments('-DBUILD_GTK', language : 'cpp')
 

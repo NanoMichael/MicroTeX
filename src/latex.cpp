@@ -1,9 +1,11 @@
 #include "latex.h"
-
 #include "core/core.h"
 #include "core/formula.h"
 #include "core/macro.h"
 #include "fonts/fonts.h"
+#if CLATEX_CXX17
+#include <filesystem>
+#endif
 
 using namespace std;
 using namespace tex;
