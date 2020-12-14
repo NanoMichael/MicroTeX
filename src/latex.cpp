@@ -21,24 +21,23 @@ string LaTeX::queryResourceLocation(string& custom_path) {
 
 	// checks if XDG_DATA_HOME exists. If it does, it pushes it to potential paths.
 	char* userdata = getenv("XDG_DATA_HOME");
-	if (userdata != NULL && userdata != "") {
+	if (userdata != NULL && strcmp(userdata, "") != 0) {
 		paths.push(string(userdata));
 	}
 	delete userdata;
 
 	// checks if XDG_DATA_DIRS is set. If it is, it splits XDG_DATA_DIRS at : and pushes each part of it to potential paths.
 	char* xdg = getenv("XDG_DATA_DIRS");
-	if (xdg != NULL && xdg != "") {
+	if (xdg != NULL && strcmp(xdg, "") != 0) {
 		stringstream xdg_paths(xdg);
 		string xdg_path;
 		while (getline(xdg_paths, xdg_path, ':')) {
 			paths.push(xdg_path);
 		}
 	}
-
 	// checks if HOME env var is unset. if it isn't it pushes ~/.local/share/clatexmath to potential paths.
 	char* home = getenv("HOME");
-	if (home != NULL && home != "") {
+	if (home != NULL && strcmp(home, "") != 0) {
 		char* userdata_fallback;
 		asprintf(&userdata_fallback, "%s/.local/share/clatexmath/", home);
 		paths.push(string(userdata_fallback));
