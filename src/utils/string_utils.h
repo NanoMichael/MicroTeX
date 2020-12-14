@@ -72,7 +72,7 @@ inline string& ltrim(string& s) {
 #if CLATEX_CXX17
   s.erase(s.begin(), find_if(s.begin(), s.end(), not_fn<int(int)>(isspace)));
 #else
-  s.erase(s.begin(), find_if(s.begin(), s.end(), not1(cref(isspace))));
+  s.erase(s.begin(), find_if(s.begin(), s.end(), not1(cref<int(int)>(isspace))));
 #endif
   return s;
 }
@@ -82,7 +82,7 @@ inline string& rtrim(string& s) {
 #if CLATEX_CXX17
   s.erase(find_if(s.rbegin(), s.rend(), not_fn<int(int)>(isspace)).base(), s.end());
 #else
-  s.erase(find_if(s.rbegin(), s.rend(), not1(cref(isspace))).base(), s.end());
+  s.erase(find_if(s.rbegin(), s.rend(), not1(cref<int(int)>(isspace))).base(), s.end());
 #endif
   return s;
 }
