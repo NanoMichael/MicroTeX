@@ -6,9 +6,6 @@
 
 #include <cstring>
 
-using namespace std;
-using namespace tex;
-
 namespace tex {
 
 class Box;
@@ -28,7 +25,7 @@ public:
   };
 
 private:
-  static float canBreak(_out_ stack<Position>& stack, const sptr<HorizontalBox>& hbox, float width);
+  static float canBreak(_out_ std::stack<Position>& stack, const sptr<HorizontalBox>& hbox, float width);
 
   static int getBreakPosition(const sptr<HorizontalBox>& hb, int index);
 
@@ -57,7 +54,7 @@ private:
   float _textWidth;
 
   // The text style to use
-  string _textStyle;
+  std::string _textStyle;
   // If is small capital
   bool _smallCap;
   float _scaleFactor;
@@ -95,7 +92,7 @@ private:
   TeXEnvironment(
       int style, float scaleFactor,
       const sptr<TeXFont>& tf, color bg, color c,
-      const string& textstyle, bool smallCap) {
+      const std::string& textstyle, bool smallCap) {
     init();
     _style = style;
     _scaleFactor = scaleFactor;
@@ -182,9 +179,9 @@ public:
 
   inline void setStyle(int style) { _style = style; }
 
-  inline const string& getTextStyle() const { return _textStyle; }
+  inline const std::string& getTextStyle() const { return _textStyle; }
 
-  inline void setTextStyle(const string& style) { _textStyle = style; }
+  inline void setTextStyle(const std::string& style) { _textStyle = style; }
 
   inline bool getSmallCap() const { return _smallCap; }
 
@@ -212,7 +209,7 @@ public:
 class Glue {
 private:
   // contains the different glue types
-  static vector<Glue*> _glueTypes;
+  static std::vector<Glue*> _glueTypes;
 #define TYPE_COUNT 8
 #define STYLE_COUNT 5
   // the glue table represents the "glue rules"
@@ -221,7 +218,7 @@ private:
   float _space;
   float _stretch;
   float _shrink;
-  string _name;
+  std::string _name;
 
   sptr<Box> createBox(const TeXEnvironment& env) const;
 
@@ -234,14 +231,14 @@ private:
 public:
   Glue() = delete;
 
-  Glue(float space, float stretch, float shrink, const string& name) {
+  Glue(float space, float stretch, float shrink, const std::string& name) {
     _space = space;
     _stretch = stretch;
     _shrink = shrink;
     _name = name;
   }
 
-  inline const string& getName() const {
+  inline const std::string& getName() const {
     return _name;
   }
 

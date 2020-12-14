@@ -9,20 +9,17 @@
 #include "fonts/fonts.h"
 #include "graphic/graphic.h"
 
-using namespace std;
-using namespace tex;
-
 namespace tex {
 
-inline static void parseMap(const string& options, _out_ map<string, string>& res) {
+inline static void parseMap(const std::string& options, _out_ std::map<std::string, std::string>& res) {
   if (options.empty()) return;
 
   strtokenizer tokens(options, ",");
   const int c = tokens.count_tokens();
   for (int i = 0; i < c; i++) {
-    string tok = tokens.next_token();
+    std::string tok = tokens.next_token();
     trim(tok);
-    vector<string> optarg;
+    std::vector<std::string> optarg;
     split(tok, '=', optarg);
     if (!optarg.empty()) {
       if (optarg.size() == 2)
@@ -95,7 +92,7 @@ public:
 
   MultiRowAtom() = delete;
 
-  MultiRowAtom(int n, const wstring& option, const sptr<Atom> rows)
+  MultiRowAtom(int n, const std::wstring& option, const sptr<Atom> rows)
       : _i(0), _j(0), _rows(rows) {
     _n = n == 0 ? 1 : n;
   }
@@ -135,20 +132,20 @@ enum MAT {
  */
 class MatrixAtom : public Atom {
 private:
-  static map<wstring, wstring> _colspeReplacement;
+  static std::map<std::wstring, std::wstring> _colspeReplacement;
 
   static SpaceAtom _align;
 
   sptr<ArrayOfAtoms> _matrix;
-  vector<int> _position;
-  map<int, sptr<VlineAtom>> _vlines;
-  map<int, sptr<Atom>> _columnSpecifiers;
+  std::vector<int> _position;
+  std::map<int, sptr<VlineAtom>> _vlines;
+  std::map<int, sptr<Atom>> _columnSpecifiers;
 
   int _ttype;
   bool _ispartial;
   bool _spaceAround;
 
-  void parsePositions(wstring opt, _out_ vector<int>& lpos);
+  void parsePositions(std::wstring opt, _out_ std::vector<int>& lpos);
 
   sptr<Box> generateMulticolumn(
       _out_ TeXEnvironment& env,
@@ -161,7 +158,7 @@ private:
   void recalculateLine(
       const int rows,
       sptr<Box>** boxarr,
-      vector<sptr<Atom>>& multiRows,
+      std::vector<sptr<Atom>>& multiRows,
       float* height,
       float* depth,
       float drt,
@@ -182,13 +179,13 @@ public:
   MatrixAtom(
       bool ispar,
       const sptr<ArrayOfAtoms>& arr,
-      const wstring& options,
+      const std::wstring& options,
       bool spaceAround);
 
   MatrixAtom(
       bool ispar,
       const sptr<ArrayOfAtoms>& arr,
-      const wstring& options);
+      const std::wstring& options);
 
   MatrixAtom(
       bool ispar,
@@ -203,7 +200,7 @@ public:
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
-  static void defineColumnSpecifier(const wstring& rep, const wstring& spe);
+  static void defineColumnSpecifier(const std::wstring& rep, const std::wstring& spe);
 
   __decl_clone(MatrixAtom)
 };
@@ -476,7 +473,7 @@ public:
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override {
     auto x = FBoxAtom::createBox(env);
-    auto box = dynamic_pointer_cast<FramedBox>(x);
+    auto box = std::dynamic_pointer_cast<FramedBox>(x);
     float t = env.getTeXFont()->getDefaultRuleThickness(env.getStyle()) * 4;
     return sptr<Box>(new ShadowBox(box, t));
   }
@@ -498,7 +495,7 @@ public:
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override {
     auto x = FBoxAtom::createBox(env);
-    auto box = dynamic_pointer_cast<FramedBox>(x);
+    auto box = std::dynamic_pointer_cast<FramedBox>(x);
     return sptr<Box>(new OvalBox(box, _multiplier, _diameter));
   }
 
@@ -518,7 +515,7 @@ private:
   // delimiters
   sptr<SymbolAtom> _left;
   sptr<SymbolAtom> _right;
-  list<sptr<MiddleAtom>> _middle;
+  std::list<sptr<MiddleAtom>> _middle;
 
   void init(const sptr<Atom>& b, const sptr<SymbolAtom>& l, const sptr<SymbolAtom>& r);
 
@@ -532,7 +529,7 @@ public:
   FencedAtom(
       const sptr<Atom>& b,
       const sptr<SymbolAtom>& l,
-      const list<sptr<MiddleAtom>>& m,
+      const std::list<sptr<MiddleAtom>>& m,
       const sptr<SymbolAtom>& r) {
     init(b, l, r);
     _middle = m;
@@ -649,12 +646,12 @@ protected:
   int _row, _col;
   sptr<Atom> _cols;
 
-  int parseAlign(const string& str);
+  int parseAlign(const std::string& str);
 
 public:
   MulticolumnAtom() = delete;
 
-  MulticolumnAtom(int n, const string& align, const sptr<Atom> cols)
+  MulticolumnAtom(int n, const std::string& align, const sptr<Atom> cols)
       : _w(0), _beforeVlines(0), _afterVlines(0), _row(0), _col(0) {
     _n = n >= 1 ? n : 1;
     _cols = cols;
@@ -1060,7 +1057,7 @@ private:
 public:
   ResizeAtom() = delete;
 
-  ResizeAtom(const sptr<Atom>& base, const string& ws, const string& hs, bool keepAspectRatio) {
+  ResizeAtom(const sptr<Atom>& base, const std::string& ws, const std::string& hs, bool keepAspectRatio) {
     _type = base->_type;
     _base = base;
     _keep_aspect_ratio = keepAspectRatio;
@@ -1088,7 +1085,7 @@ public:
       sx = _w * SpaceAtom::getFactor(_wu, env) / bbox->_width;
       sy = _h * SpaceAtom::getFactor(_hu, env) / bbox->_height;
       if (_keep_aspect_ratio) {
-        sx = min(sx, sy);
+        sx = std::min(sx, sy);
         sy = sx;
       }
     } else if (_wu != -1 && _hu == -1) {
@@ -1110,7 +1107,7 @@ public:
  */
 class NthRoot : public Atom {
 private:
-  static const string _sqrtSymbol;
+  static const std::string _sqrtSymbol;
   static const float FACTOR;
   // base atom to be put under the root sign
   sptr<Atom> _base;
@@ -1144,9 +1141,9 @@ private:
 public:
   RotateAtom() = delete;
 
-  RotateAtom(const sptr<Atom>& base, const wstring& angle, const wstring& option);
+  RotateAtom(const sptr<Atom>& base, const std::wstring& angle, const std::wstring& option);
 
-  RotateAtom(const sptr<Atom>& base, float angle, const wstring& option);
+  RotateAtom(const sptr<Atom>& base, float angle, const std::wstring& option);
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
@@ -1323,17 +1320,17 @@ public:
  */
 class TextStyleAtom : public Atom {
 private:
-  string _style;
+  std::string _style;
   sptr<Atom> _at;
 
 public:
   TextStyleAtom() = delete;
 
-  TextStyleAtom(const sptr<Atom>& a, const string& style) : _style(style), _at(a) {
+  TextStyleAtom(const sptr<Atom>& a, const std::string& style) : _style(style), _at(a) {
   }
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override {
-    string prev = env.getTextStyle();
+    std::string prev = env.getTextStyle();
     env.setTextStyle(_style);
     auto box = _at->createBox(env);
     env.setTextStyle(prev);
@@ -1552,7 +1549,7 @@ class LongDivAtom : public VRowAtom {
 private:
   long _divisor, _dividend;
 
-  void calculate(_out_ vector<wstring>& results);
+  void calculate(_out_ std::vector<std::wstring>& results);
 
 public:
   LongDivAtom() = delete;

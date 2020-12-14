@@ -5,9 +5,6 @@
 #include <string>
 #include "common.h"
 
-using namespace std;
-using namespace tex;
-
 namespace tex {
 
 typedef unsigned int color;
@@ -79,10 +76,10 @@ inline bool istrans(color c) {
 /**
  * Convert #AARRGGBB or #RRGGBB formatted string into color.
  */
-inline color decode(const string& s) {
+inline color decode(const std::string& s) {
   if (s[0] == '#') {
-    const string x = s.substr(1);
-    stringstream ss;
+    const std::string x = s.substr(1);
+    std::stringstream ss;
     ss << std::hex << x;
     color c;
     ss >> c;

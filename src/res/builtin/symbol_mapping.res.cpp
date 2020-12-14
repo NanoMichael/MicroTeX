@@ -1,5 +1,8 @@
 #include "core/formula.h"
 
+using namespace std;
+using namespace tex;
+
 map<int, string> TeXFormula::_symbolMappings = {
     {'+', "plus"},
     {'*', "ast"},

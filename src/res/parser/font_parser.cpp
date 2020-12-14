@@ -4,6 +4,10 @@
 
 #define __id(x) FontInfo::__id(x)
 
+using namespace std;
+using namespace tex;
+using namespace tex::tinyxml2;
+
 const string DefaultTeXFontParser::FONTS_RES_BASE = "fonts";
 /** document define  */
 const string DefaultTeXFontParser::RESOURCE_NAME = FONTS_RES_BASE + "/DefaultTeXFont.xml";

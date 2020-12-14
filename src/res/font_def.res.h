@@ -8,15 +8,15 @@
 
 #define DEF_FONT(name, path, unicode)  \
   void __font_reg(name)() {            \
-    int  id   = FontInfo::__id(#name); \
-    auto info = FontInfo::__create(id, RES_BASE + "/" + #path);
+    int  id   = tex::FontInfo::__id(#name); \
+    auto info = tex::FontInfo::__create(id, tex::RES_BASE + "/" + #path);
 
 #define space(x)   info->__space(x);
 #define xHeight(x) info->__xheight(x);
 #define quad(x)    info->__quad(x);
 #define skew(x)    info->__skewChar(x);
 
-#define __ver(m, v) info->m(FontInfo::__id(#v));
+#define __ver(m, v) info->m(tex::FontInfo::__id(#v));
 #define roman(x)    __ver(__romanId, x)
 #define bold(x)     __ver(__boldId, x)
 #define it(x)       __ver(__itId, x)

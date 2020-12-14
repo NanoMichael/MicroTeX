@@ -3,9 +3,6 @@
 
 #include "graphic/graphic.h"
 
-using namespace std;
-using namespace tex;
-
 namespace tex {
 
 class DefaultTeXFont;

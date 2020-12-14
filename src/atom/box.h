@@ -5,8 +5,6 @@
 
 #include <stack>
 
-using namespace tex;
-
 namespace tex {
 
 class Char;
@@ -38,7 +36,7 @@ public:
    * @return the box representing the delimiter variant that fits best
    *      according to the required minimum size.
    */
-  static sptr<Box> create(const string& symbol, _out_ TeXEnvironment& env, float minHeight);
+  static sptr<Box> create(const std::string& symbol, _out_ TeXEnvironment& env, float minHeight);
 };
 
 /**
@@ -68,10 +66,10 @@ class HorizontalBox : public Box {
 private:
   void recalculate(const Box& b);
 
-  pair<sptr<HorizontalBox>, sptr<HorizontalBox>> split(int pos, int shift);
+  std::pair<sptr<HorizontalBox>, sptr<HorizontalBox>> split(int pos, int shift);
 
 public:
-  vector<int> _breakPositions;
+  std::vector<int> _breakPositions;
 
   HorizontalBox() {}
 
@@ -91,11 +89,11 @@ public:
     _breakPositions.push_back(pos);
   }
 
-  pair<sptr<HorizontalBox>, sptr<HorizontalBox>> split(int pos) {
+  std::pair<sptr<HorizontalBox>, sptr<HorizontalBox>> split(int pos) {
     return split(pos, 1);
   }
 
-  pair<sptr<HorizontalBox>, sptr<HorizontalBox>> splitRemove(int pos) {
+  std::pair<sptr<HorizontalBox>, sptr<HorizontalBox>> splitRemove(int pos) {
     return split(pos, 2);
   }
 
@@ -182,7 +180,7 @@ public:
 
   int getLastFontId() override;
 
-  vector<sptr<Box>> getChildren() const override;
+  std::vector<sptr<Box>> getChildren() const override;
 };
 
 /**
@@ -238,7 +236,7 @@ public:
 
   int getLastFontId() override;
 
-  vector<sptr<Box>> getChildren() const override;
+  std::vector<sptr<Box>> getChildren() const override;
 };
 
 /**
@@ -257,7 +255,7 @@ public:
 
   int getLastFontId() override;
 
-  vector<sptr<Box>> getChildren() const override;
+  std::vector<sptr<Box>> getChildren() const override;
 };
 
 /**
@@ -325,9 +323,9 @@ public:
 
   int getLastFontId() override;
 
-  vector<sptr<Box>> getChildren() const override;
+  std::vector<sptr<Box>> getChildren() const override;
 
-  static int getOrigin(string option);
+  static int getOrigin(std::string option);
 };
 
 /***************************************************************************************************
@@ -364,7 +362,7 @@ public:
 
   int getLastFontId() override;
 
-  vector<sptr<Box>> getChildren() const override;
+  std::vector<sptr<Box>> getChildren() const override;
 };
 
 /**
@@ -492,16 +490,16 @@ private:
   sptr<TextLayout> _layout;
   float _size;
 
-  void init(const wstring& str, int type, float size, const sptr<Font>& f, bool kerning);
+  void init(const std::wstring& str, int type, float size, const sptr<Font>& f, bool kerning);
 
 public:
   TextRenderingBox() = delete;
 
-  TextRenderingBox(const wstring& str, int type, float size, const sptr<Font>& f, bool kerning) {
+  TextRenderingBox(const std::wstring& str, int type, float size, const sptr<Font>& f, bool kerning) {
     init(str, type, size, f, kerning);
   }
 
-  TextRenderingBox(const wstring& str, int type, float size) {
+  TextRenderingBox(const std::wstring& str, int type, float size) {
     init(str, type, size, sptr<Font>(_font), true);
   }
 
@@ -509,7 +507,7 @@ public:
 
   int getLastFontId() override;
 
-  static void setFont(const string& name);
+  static void setFont(const std::string& name);
 
   static void _init_();
 
@@ -552,7 +550,7 @@ public:
 
   int getLastFontId() override;
 
-  vector<sptr<Box>> getChildren() const override;
+  std::vector<sptr<Box>> getChildren() const override;
 };
 
 /**
@@ -572,7 +570,7 @@ public:
 
   int getLastFontId() override;
 
-  vector<sptr<Box>> getChildren() const override;
+  std::vector<sptr<Box>> getChildren() const override;
 };
 
 /**
@@ -581,14 +579,14 @@ public:
 class LineBox : public Box {
 private:
   // Every 4 elements represent a line, thus (x1, y1, x2, y2)
-  vector<float> _lines;
+  std::vector<float> _lines;
   float _thickness;
   int _lineCount;
 
 public:
   LineBox() = delete;
 
-  LineBox(const vector<float> lines, float thickness);
+  LineBox(const std::vector<float> lines, float thickness);
 
   void draw(Graphics2D& g2, float x, float y) override;
 
@@ -619,7 +617,7 @@ public:
 
   int getLastFontId() override;
 
-  vector<sptr<Box>> getChildren() const override;
+  std::vector<sptr<Box>> getChildren() const override;
 };
 
 }  // namespace tex

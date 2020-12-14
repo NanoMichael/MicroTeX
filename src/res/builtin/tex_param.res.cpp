@@ -4,7 +4,7 @@
  * General parameters used in the TeX algorithms, 
  * specific for the computer modern font family
  */
-map<string, float> DefaultTeXFont::_parameters = {
+std::map<std::string, float> tex::DefaultTeXFont::_parameters = {
     {"num1", 0.676508},
     {"num2", 0.393732},
     {"num3", 0.443731},
@@ -28,8 +28,8 @@ map<string, float> DefaultTeXFont::_parameters = {
 
 #define __id(name) FontInfo::__id(#name)
 
-void DefaultTeXFont::__default_general_settings() {
-  _generalSettings = {
+void tex::DefaultTeXFont::__default_general_settings() {
+  tex::DefaultTeXFont::_generalSettings = {
       {"mufontid", __id(cmsy10)},
       {"spacefontid", __id(cmr10)},
       {"textfactor", 1},
@@ -40,8 +40,8 @@ void DefaultTeXFont::__default_general_settings() {
 
 #define cf(c, f) new CharFont(c, __id(f))
 
-void DefaultTeXFont::__default_text_style_mapping() {
-  _textStyleMappings = {
+void tex::DefaultTeXFont::__default_text_style_mapping() {
+  tex::DefaultTeXFont::_textStyleMappings = {
       {"mathnormal", {cf(48, cmr10), cf(65, cmmi10), cf(97, cmmi10), cf(0, cmmi10)}},
       {"mathfrak", {cf(48, eufm10), cf(65, eufm10), cf(97, eufm10), nullptr}},
       {"mathcal", {nullptr, cf(65, cmsy10), nullptr, nullptr}},
@@ -50,6 +50,7 @@ void DefaultTeXFont::__default_text_style_mapping() {
       {"mathds", {nullptr, cf(65, dsrom10), nullptr, nullptr}},
       {"oldstylenums", {cf(48, cmmi10), nullptr, nullptr, nullptr}},
   };
-  _defaultTextStyleMappings = new string[4];
-  for (int i = 0; i < 4; i++) _defaultTextStyleMappings[i] = "mathnormal";
+  tex::DefaultTeXFont::_defaultTextStyleMappings = new std::string[4];
+  for (int i = 0; i < 4; i++)
+    tex::DefaultTeXFont::_defaultTextStyleMappings[i] = "mathnormal";
 }

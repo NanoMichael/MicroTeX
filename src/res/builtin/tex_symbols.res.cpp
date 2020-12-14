@@ -15,6 +15,9 @@
 #define close TYPE_CLOSING
 #define punct TYPE_PUNCTUATION
 
+using namespace std;
+using namespace tex;
+
 /**
  * BUILTIN SYMBOLS
  * Page 445 in the [The TeXBook]

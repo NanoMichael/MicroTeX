@@ -10,9 +10,6 @@
 #include <map>
 #include <string>
 
-using namespace std;
-using namespace tex;
-
 namespace tex {
 
 struct CharFont;
@@ -57,16 +54,16 @@ public:
  */
 class TextRenderingAtom : public Atom {
 private:
-  wstring _str;
+  std::wstring _str;
   int _type;
   const FontInfos* _infos;
 
 public:
   TextRenderingAtom() = delete;
 
-  TextRenderingAtom(const wstring& str, int type) : _str(str), _type(type), _infos(nullptr) {}
+  TextRenderingAtom(const std::wstring& str, int type) : _str(str), _type(type), _infos(nullptr) {}
 
-  TextRenderingAtom(const wstring& str, const FontInfos* info)
+  TextRenderingAtom(const std::wstring& str, const FontInfos* info)
       : _str(str), _type(0), _infos(info) {}
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override;
@@ -85,7 +82,7 @@ private:
 public:
   SmashedAtom() = delete;
 
-  SmashedAtom(const sptr<Atom>& a, const string& opt) : _h(true), _d(true) {
+  SmashedAtom(const sptr<Atom>& a, const std::string& opt) : _h(true), _d(true) {
     _at = a;
     if (opt == "opt")
       _d = false;
@@ -241,8 +238,8 @@ public:
 class SpaceAtom : public Atom {
 private:
   static const int _units_count;
-  static const map<string, int> _units;
-  static const function<float(_in_ const TeXEnvironment&)> _unitConversions[];
+  static const std::map<std::string, int> _units;
+  static const std::function<float(_in_ const TeXEnvironment&)> _unitConversions[];
   // whether a hard space should be represented
   bool _blankSpace;
   // thin-mu-skip, med-mu-skip, thick-mu-skip
@@ -308,7 +305,7 @@ public:
     if (unit < 0 || unit >= _units_count) throw ex_invalid_unit();
   }
 
-  inline static int getUnit(const string& unit) {
+  inline static int getUnit(const std::string& unit) {
     auto i = _units.find(unit);
     if (i == _units.end()) return UNIT_PIXEL;
     return i->second;
@@ -328,13 +325,13 @@ public:
    * Get the unit and length from given string. The string must be in the format: a number
    * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or (UNIT_PIXEL, 0) will be returned.
    */
-  static pair<int, float> getLength(const string& lgth);
+  static std::pair<int, float> getLength(const std::string& lgth);
 
   /**
    * Get the unit and length from given string. The string must be in the format: a number
    * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or (UNIT_PIXEL, 0) will be returned.
    */
-  static pair<int, float> getLength(const wstring& lgth);
+  static std::pair<int, float> getLength(const std::wstring& lgth);
 
   __decl_clone(SpaceAtom)
 };
@@ -445,13 +442,13 @@ public:
 class SymbolAtom : public CharSymbol {
 private:
   // contains all defined symbols
-  static map<string, sptr<SymbolAtom>> _symbols;
+  static std::map<std::string, sptr<SymbolAtom>> _symbols;
   // contains all the possible valid symbol types
-  static bitset<16> _validSymbolTypes;
+  static std::bitset<16> _validSymbolTypes;
   // whether it's a delimiter symbol
   bool _delimiter;
   // symbol name
-  string _name;
+  std::string _name;
   wchar_t _unicode;
 
 public:
@@ -468,7 +465,7 @@ public:
    * @param del
    *      whether the symbol is a delimiter
    */
-  SymbolAtom(const string& name, int type, bool del);
+  SymbolAtom(const std::string& name, int type, bool del);
 
   inline SymbolAtom& setUnicode(wchar_t c) {
     _unicode = c;
@@ -484,7 +481,7 @@ public:
     return _delimiter;
   }
 
-  inline const string& getName() const {
+  inline const std::string& getName() const {
     return _name;
   }
 
@@ -492,7 +489,7 @@ public:
 
   sptr<CharFont> getCharFont(_in_ TeXFont& tf) override;
 
-  static void addSymbolAtom(const string& file);
+  static void addSymbolAtom(const std::string& file);
 
   static void addSymbolAtom(const sptr<SymbolAtom>& sym);
 
@@ -506,7 +503,7 @@ public:
    * @throw ex_symbol_not_found
    *      if no symbol with the given name was found
    */
-  static sptr<SymbolAtom> get(const string& name);
+  static sptr<SymbolAtom> get(const std::string& name);
 
   static void _init_();
 
@@ -526,7 +523,7 @@ private:
   // alphanumeric character
   wchar_t _c;
   // text style (empty means the default text style)
-  string _textStyle;
+  std::string _textStyle;
   bool _mathMode;
 
   /**
@@ -547,10 +544,10 @@ public:
    * @param textStyle
    *      the text style in which the character should be drawn
    */
-  CharAtom(wchar_t c, const string& textStyle)
+  CharAtom(wchar_t c, const std::string& textStyle)
       : _c(c), _textStyle(textStyle), _mathMode(false) {}
 
-  CharAtom(wchar_t c, const string& textStyle, bool mathMode)
+  CharAtom(wchar_t c, const std::string& textStyle, bool mathMode)
       : _c(c), _textStyle(textStyle), _mathMode(mathMode) {}
 
   inline wchar_t getCharacter() {
@@ -696,20 +693,20 @@ public:
 class RowAtom : public Atom, public Row {
 private:
   // set of atom types that make a previous bin atom change to ord
-  static bitset<16> _binSet;
+  static std::bitset<16> _binSet;
   // set of atom types that can possibly need a kern or, together
   // with the previous atom, be replaced by a ligature
-  static bitset<16> _ligKernSet;
+  static std::bitset<16> _ligKernSet;
   // whether the box generated can be broken
   bool _canBreak;
   // atoms to be displayed horizontally next to each-other
-  vector<sptr<Atom>> _elements;
+  std::vector<sptr<Atom>> _elements;
   // previous atom (for nested Row atoms)
   sptr<Dummy> _previousAtom;
 
   void change2Ord(_out_ Dummy* cur, _out_ Dummy* prev, _out_ Atom* next);
 
-  static bitset<16> _init_();
+  static std::bitset<16> _init_();
 
 public:
   static bool _breakEveywhere;
@@ -774,7 +771,7 @@ public:
  */
 class VRowAtom : public Atom {
 private:
-  vector<sptr<Atom>> _elements;
+  std::vector<sptr<Atom>> _elements;
   sptr<SpaceAtom> _raise;
   bool _addInterline;
   int _valign;
@@ -836,7 +833,7 @@ public:
  */
 class ColorAtom : public Atom, public Row {
 private:
-  static map<string, color> _colors;
+  static std::map<std::string, color> _colors;
   static const color _default;
 
   color _background, _color;
@@ -875,12 +872,12 @@ public:
    * [#AARRGGBB] or [AARRGGBB], [gray color], [c,m,y,k], [c;m;y;k], [r,g,b], [r;g;b]
    * or a predefined color name.  Return black if not found.
    */
-  static color getColor(string name);
+  static color getColor(std::string name);
 
   /**
    * Define a color with given name
    */
-  static void defineColor(const string& name, color c);
+  static void defineColor(const std::string& name, color c);
 
   __decl_clone(ColorAtom)
 };
@@ -1020,7 +1017,7 @@ public:
    */
   AccentedAtom(
       const sptr<Atom>& base,
-      const string& name);
+      const std::string& name);
 
   /**
    * Creates an AccentedAtom from a base atom and an accent symbol defined as

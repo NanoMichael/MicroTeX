@@ -2,11 +2,11 @@
 
 using namespace tex;
 
-inline static Glue* g(const string& name, float space, float stretch, float shrink) {
+inline static Glue* g(const std::string& name, float space, float stretch, float shrink) {
   return new Glue(space, stretch, shrink, name);
 }
 
-vector<Glue*> Glue::_glueTypes = {
+std::vector<Glue*> Glue::_glueTypes = {
     g("default", 0, 0, 0),
     g("thin", 3, 0, 0),
     g("med", 4, 4, 2),

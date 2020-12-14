@@ -11,13 +11,10 @@
 #include "fonts/alphabet.h"
 #include "graphic/graphic.h"
 
-using namespace std;
-using namespace tex;
-
 namespace tex {
 
 #ifndef macro
-#define macro(name) sptr<Atom> macro_##name(TeXParser& tp, vector<wstring>& args)
+#define macro(name) sptr<Atom> macro_##name(TeXParser& tp, std::vector<std::wstring>& args)
 #endif
 
 #ifdef GRAPHICS_DEBUG
@@ -108,13 +105,13 @@ inline macro(st) {
 }
 
 inline macro(Braket) {
-  wstring str(args[1]);
+  std::wstring str(args[1]);
   replaceall(str, L"\\|", L"\\middle\\vert ");
   return TeXFormula(tp, L"\\left\\langle " + str + L"\\right\\rangle")._root;
 }
 
 inline macro(Set) {
-  wstring str(args[1]);
+  std::wstring str(args[1]);
   replacefirst(str, L"\\|", L"\\middle\\vert ");
   return TeXFormula(tp, L"\\left\\{" + str + L"\\right\\}")._root;
 }
@@ -164,8 +161,8 @@ inline macro(atop) {
 }
 
 inline sptr<Atom> _macro_choose(
-    const string& left, const string& right,
-    _out_ TeXParser& tp, _out_ vector<wstring>& args) {
+    const std::string& left, const std::string& right,
+    _out_ TeXParser& tp, _out_ std::vector<std::wstring>& args) {
   auto num = tp.getFormulaAtom();
   auto den = TeXFormula(tp, tp.getOverArgument(), false)._root;
   if (num == nullptr || den == nullptr)
@@ -194,7 +191,7 @@ inline macro(brace) {
 
 inline sptr<Atom> _marco_cancel(
     int cancelType,
-    _out_ TeXParser& tp, _out_ vector<wstring>& args) {
+    _out_ TeXParser& tp, _out_ std::vector<std::wstring>& args) {
   auto base = TeXFormula(tp, args[1], false)._root;
   if (base == nullptr)
     throw ex_parse("Cancel content must not be empty!");
@@ -226,7 +223,7 @@ inline macro(binom) {
 
 inline macro(above) {
   auto num = tp.getFormulaAtom();
-  pair<int, float> dim = tp.getLength();
+  std::pair<int, float> dim = tp.getLength();
   auto den = TeXFormula(tp, tp.getOverArgument(), false)._root;
   if (num == nullptr || den == nullptr)
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
@@ -248,7 +245,7 @@ inline macro(underscore) {
 }
 
 inline macro(accents) {
-  string x;
+  std::string x;
   wide2utf8(args[0].c_str(), x);
   return sptr<Atom>(new AccentedAtom(TeXFormula(tp, args[1], false)._root, x));
 }
@@ -473,7 +470,7 @@ inline macro(joinrel) {
 }
 
 inline macro(smash) {
-  string x;
+  std::string x;
   wide2utf8(args[2].c_str(), x);
   return sptr<Atom>(new SmashedAtom(TeXFormula(tp, args[1], false)._root, x));
 }
@@ -493,12 +490,12 @@ inline macro(iddots) {
 }
 
 inline macro(leftparenthesis) {
-  wstring grp = tp.getGroup(L"\\(", L"\\)");
+  std::wstring grp = tp.getGroup(L"\\(", L"\\)");
   return sptr<Atom>(new MathAtom(TeXFormula(tp, grp, false)._root, STYLE_TEXT));
 }
 
 inline macro(leftbracket) {
-  wstring grp = tp.getGroup(L"\\[", L"\\]");
+  std::wstring grp = tp.getGroup(L"\\[", L"\\]");
   return sptr<Atom>(new MathAtom(TeXFormula(tp, grp, false)._root, STYLE_DISPLAY));
 }
 
@@ -548,7 +545,7 @@ inline macro(matrixATATenv) {
 inline macro(multicolumn) {
   int n = 0;
   valueof(args[1], n);
-  string x;
+  std::string x;
   wide2utf8(args[2].c_str(), x);
   tp.addAtom(sptr<Atom>(new MulticolumnAtom(n, x, TeXFormula(tp, args[3])._root)));
   ((ArrayOfAtoms*)tp._formula)->addCol(n);
@@ -859,9 +856,9 @@ inline macro(phantom) {
       new PhantomAtom(TeXFormula(tp, args[1], false)._root, true, true, true));
 }
 
-inline sptr<Atom> _macro_big(TeXParser& tp, vector<wstring>& args, int size, int type = -1) {
+inline sptr<Atom> _macro_big(TeXParser& tp, std::vector<std::wstring>& args, int size, int type = -1) {
   auto a = TeXFormula(tp, args[1], false)._root;
-  auto s = dynamic_pointer_cast<SymbolAtom>(a);
+  auto s = std::dynamic_pointer_cast<SymbolAtom>(a);
   if (s == nullptr) return a;
   sptr<Atom> t(new BigDelimiterAtom(s, size));
   if (type != -1) t->_type = type;
@@ -935,7 +932,7 @@ inline macro(scalebox) {
 }
 
 inline macro(resizebox) {
-  string ws, hs;
+  std::string ws, hs;
   wide2utf8(args[1].c_str(), ws);
   wide2utf8(args[2].c_str(), hs);
   return sptr<Atom>(new ResizeAtom(
@@ -965,32 +962,32 @@ inline macro(doublebox) {
 
 inline macro(fgcolor) {
   auto a = TeXFormula(tp, args[2])._root;
-  string x = wide2utf8(args[1].c_str());
+  std::string x = wide2utf8(args[1].c_str());
   return sptr<Atom>(new ColorAtom(a, TRANS, ColorAtom::getColor(x)));
 }
 
 inline macro(bgcolor) {
   auto a = TeXFormula(tp, args[2])._root;
-  string x = wide2utf8(args[1].c_str());
+  std::string x = wide2utf8(args[1].c_str());
   return sptr<Atom>(new ColorAtom(a, ColorAtom::getColor(x), TRANS));
 }
 
 inline macro(textcolor) {
   auto a = TeXFormula(tp, args[2])._root;
-  string x = wide2utf8(args[1].c_str());
+  std::string x = wide2utf8(args[1].c_str());
   return sptr<Atom>(new ColorAtom(a, TRANS, ColorAtom::getColor(x)));
 }
 
 inline macro(colorbox) {
-  string x = wide2utf8(args[1].c_str());
+  std::string x = wide2utf8(args[1].c_str());
   color c = ColorAtom::getColor(x);
   return sptr<Atom>(new FBoxAtom(TeXFormula(tp, args[2])._root, c, c));
 }
 
 inline macro(fcolorbox) {
-  string x = wide2utf8(args[2].c_str());
+  std::string x = wide2utf8(args[2].c_str());
   color f = ColorAtom::getColor(x);
-  string y = wide2utf8(args[1].c_str());
+  std::string y = wide2utf8(args[1].c_str());
   color b = ColorAtom::getColor(y);
   return sptr<Atom>(new FBoxAtom(TeXFormula(tp, args[3])._root, f, b));
 }
@@ -1011,7 +1008,7 @@ inline macro(doteq) {
 }
 
 inline macro(externalfont) {
-  string x = wide2utf8(args[1].c_str());
+  std::string x = wide2utf8(args[1].c_str());
   TextRenderingBox::setFont(x);
   return nullptr;
 }
@@ -1398,13 +1395,13 @@ inline macro(Dstrok) {
 }
 
 inline macro(kern) {
-  pair<int, float> info = SpaceAtom::getLength(args[1]);
+  std::pair<int, float> info = SpaceAtom::getLength(args[1]);
 
   return sptr<Atom>(new SpaceAtom(info.first, info.second, 0, 0));
 }
 
 inline macro(char) {
-  string x;
+  std::string x;
   wide2utf8(args[1].c_str(), x);
   int radix = 10;
   if (startswith(x, "0x") || startswith(x, "0X")) {
@@ -1536,7 +1533,7 @@ inline macro(insertBreakMark) {
 
 /**************************************** limits macros *******************************************/
 
-inline sptr<Atom> _macro_typelimits(_out_ TeXParser& tp, _out_ vector<wstring>& args, int type) {
+inline sptr<Atom> _macro_typelimits(_out_ TeXParser& tp, _out_ std::vector<std::wstring>& args, int type) {
   auto atom = tp.popLastAtom();
   auto copy = atom->clone();
   copy->_typelimits = type;
