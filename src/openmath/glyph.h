@@ -60,7 +60,9 @@ private:
   /** Array of glyph id in font to represents varints */
   uint16* _glyphs = nullptr;
 
-  Variants(uint16 count) : _count(count), _glyphs(count == 0 ? nullptr : new uint16[count]) {}
+  Variants(uint16 count)
+      : _count(count),
+        _glyphs(count == 0 ? nullptr : new uint16[count]) {}
 
 public:
   __no_copy_assign(Variants);
@@ -258,7 +260,7 @@ private:
   /** MUST NOT BE NULL, equals to &MathKernRecord::empty if absent */
   const MathKernRecord* _kernRecord;
 
-  Math() {}
+  Math(uint16 ignore);
 
 public:
   __no_copy_assign(Math);

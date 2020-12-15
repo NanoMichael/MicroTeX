@@ -5,7 +5,7 @@
 
 namespace tex {
 
-#define MATH_CONSTS_COUNT 56
+#define MATH_CONSTS_COUNT 57
 
 /** 
  * Defines a number of constants required to properly position elements of mathematical formulas.
@@ -96,13 +96,13 @@ public:
 
   inline int16 fractionNumeratorGapMin() const { return _fields[36]; }
 
-  inline int16 fractionNumDisplayStyleGapMin() const { return _fields[37]; }
+  inline int16 fractionNumeratorDisplayStyleGapMin() const { return _fields[37]; }
 
   inline int16 fractionRuleThickness() const { return _fields[38]; }
 
   inline int16 fractionDenominatorGapMin() const { return _fields[39]; }
 
-  inline int16 fractionDenomDisplayStyleGapMin() const { return _fields[40]; }
+  inline int16 fractionDenominatorDisplayStyleGapMin() const { return _fields[40]; }
 
   inline int16 skewedFractionHorizontalGap() const { return _fields[41]; }
 
@@ -133,6 +133,8 @@ public:
   inline int16 radicalKernAfterDegree() const { return _fields[54]; }
 
   inline int16 radicalDegreeBottomRaisePercent() const { return _fields[55]; }
+
+  inline int16 minConnectorOverlap() const { return _fields[56]; }
 };
 
 }  // namespace tex

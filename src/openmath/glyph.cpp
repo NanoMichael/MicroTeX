@@ -12,7 +12,7 @@ const MathKern MathKern::empty(0);
 
 const MathKernRecord MathKernRecord::empty(0);
 
-const Math Math::empty;
+const Math Math::empty(0);
 
 template <>
 const LigaTable LigaTable::empty(-1, -1, 0);
@@ -38,6 +38,16 @@ MathKernRecord::~MathKernRecord() {
   for (std::size_t i = 0; i < 4; i++) {
     if (_fields[i] != &MathKern::empty) delete _fields[i];
   }
+}
+
+Math::Math(uint16 ignore) {
+  _italicsCorrection = 0;
+  _topAccentAttachment = 0;
+  _horizontalVariants = &Variants::empty;
+  _verticalVariants = &Variants::empty;
+  _horizontalAssembly = &GlyphAssembly::empty;
+  _verticalAssembly = &GlyphAssembly::empty;
+  _kernRecord = &MathKernRecord::empty;
 }
 
 Math::~Math() {
