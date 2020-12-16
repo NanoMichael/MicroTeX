@@ -6,8 +6,6 @@
 
 namespace tex {
 
-using namespace std;
-
 /**
  * An interface representing a "TeXFont", which is responsible for all the
  * necessary fonts and font information.
@@ -46,7 +44,7 @@ public:
    */
   virtual Char getChar(
       wchar_t       c,
-      const string& textStyle,
+      const std::string& textStyle,
       int           style) = 0;
 
   /**
@@ -67,7 +65,7 @@ public:
    *      the style in which the atom should be drawn
    * @return a Char-object for this symbol with metric information
    */
-  virtual Char getChar(const string& name, int style) = 0;
+  virtual Char getChar(const std::string& name, int style) = 0;
 
   /**
    * Get a Char-object specifying the given character in the default text style

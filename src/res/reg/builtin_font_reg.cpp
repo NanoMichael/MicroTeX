@@ -1,5 +1,7 @@
 #include "res/reg/builtin_font_reg.h"
 
+using namespace tex;
+
 DEF_FONT_SET(Builtin)
 
 REG_FONT(msbm10)

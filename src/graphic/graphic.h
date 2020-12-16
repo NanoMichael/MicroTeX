@@ -3,9 +3,6 @@
 
 #include "graphic/graphic_basic.h"
 
-using namespace std;
-using namespace tex;
-
 namespace tex {
 
 class Graphics2D;
@@ -56,7 +53,7 @@ public:
    * @param size
    *      required font size
    */
-  static Font* create(const string& file, float size);
+  static Font* create(const std::string& file, float size);
 
   /**
    * Create font with given name, style and size
@@ -68,7 +65,7 @@ public:
    * @param size
    *      the font size
    */
-  static sptr<Font> _create(const string& name, int style, float size);
+  static sptr<Font> _create(const std::string& name, int style, float size);
 };
 
 /**
@@ -106,7 +103,7 @@ public:
    * @return
    *      new TextLayout
    */
-  static sptr<TextLayout> create(const wstring& src, const sptr<Font>& font);
+  static sptr<TextLayout> create(const std::wstring& src, const sptr<Font>& font);
 };
 
 /**
@@ -237,7 +234,7 @@ public:
    * @param y
    *      y-coordinate, is baseline aligned
    */
-  virtual void drawText(const wstring& c, float x, float y) = 0;
+  virtual void drawText(const std::wstring& c, float x, float y) = 0;
 
   /**
    * Draw line

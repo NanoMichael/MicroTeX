@@ -3,6 +3,9 @@
 #include "core/formula.h"
 #include "fonts/font_reg.h"
 
+using namespace std;
+using namespace tex;
+
 vector<FontInfo*> FontInfo::_infos;
 vector<string>    FontInfo::_names;
 

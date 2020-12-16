@@ -3,7 +3,9 @@
 #define c(name, c, m, y, k) \
   { name, cmyk(c, m, y, k) }
 
-map<string, color> tex::ColorAtom::_colors = {
+using namespace std;
+
+map<string, tex::color> tex::ColorAtom::_colors = {
     {"black", black},
     {"white", white},
     {"red", red},

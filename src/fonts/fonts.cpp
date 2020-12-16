@@ -8,6 +8,7 @@
 #include "render.h"
 #include "res/parser/font_parser.h"
 
+using namespace std;
 using namespace tex;
 
 const int TeXFont::NO_FONT = -1;

@@ -4,8 +4,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
-
 namespace tex {
 
 class FontInfo;
@@ -15,14 +13,14 @@ typedef void (*__reg_font_func)(void);
 
 /** Represents a font description registration */
 typedef struct {
-  string name;
+  std::string name;
   __reg_font_func reg;
 } FontReg;
 
 /** Represents a set of font descriptions */
 class FontSet {
 public:
-  virtual vector<FontReg> regs() const = 0;
+  virtual std::vector<FontReg> regs() const = 0;
 };
 
 }  // namespace tex
