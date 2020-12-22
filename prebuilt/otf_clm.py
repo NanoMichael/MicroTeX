@@ -302,25 +302,38 @@ def write_clm_kerning_class(f, kerning_classes, glyph_name_id_map):
     length = len(kerning_classes)
     f.write(struct.pack('!H', length))
 
-    def write_classes(glyph_names):
-        length = len(glyph_names) - 1  # first is None
-        if length <= 0:
-            return
-        f.write(struct.pack('!H', length))
-        write_ids = chain(
-            partial(map, lambda name: glyph_name_id_map[name]),
-            sorted,
-            partial(map, lambda glyph_id: struct.pack('!H', glyph_id)),
-            partial(do, lambda ids: f.write(struct.pack('!H', len(ids)))),
-            partial(do_loop, lambda bid: f.write(bid))
+    # map the names to (glyph, index_in_classes)
+    write_classes = chain(
+        partial(
+            map,
+            lambda (i, xs,): map(lambda x: (x, i,), xs)
+        ),
+        partial(fmap, lambda x: x),
+        partial(
+            map,
+            lambda (name, index,): (glyph_name_id_map[name], index,)
+        ),
+        partial(sorted, key=lambda x: x[0]),
+        partial(
+            do,
+            lambda xs: f.write(struct.pack('!H', len(xs)))
+        ),
+        partial(
+            map,
+            lambda (glyph, index,): struct.pack('!HH', glyph, index)
+        ),
+        partial(
+            do_loop,
+            lambda bs: f.write(bs)
         )
-        for i in glyph_names[1:]:
-            write_ids(i)
+    )
 
     for (left, right, value,) in kerning_classes:
-        write_classes(left)
-        write_classes(right)
+        write_classes(enumerate(left[1:]))
+        write_classes(enumerate(right[1:]))
+        row_count = len(left)
         column_count = len(right)
+        f.write(struct.pack('!H', (row_count - 1) * (column_count - 1)))
         for i, v in enumerate(value):
             if i < column_count or i % column_count == 0:
                 continue
