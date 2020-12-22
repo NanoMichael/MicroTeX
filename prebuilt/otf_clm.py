@@ -308,6 +308,10 @@ def write_clm_kerning_class(f, kerning_classes, glyph_name_id_map):
             map,
             lambda (i, xs,): map(lambda x: (x, i,), xs)
         ),
+        partial(
+            do,
+            lambda xs: f.write(struct.pack('!H', len(xs)))
+        ),
         partial(fmap, lambda x: x),
         partial(
             map,
@@ -331,9 +335,7 @@ def write_clm_kerning_class(f, kerning_classes, glyph_name_id_map):
     for (left, right, value,) in kerning_classes:
         write_classes(enumerate(left[1:]))
         write_classes(enumerate(right[1:]))
-        row_count = len(left)
         column_count = len(right)
-        f.write(struct.pack('!H', (row_count - 1) * (column_count - 1)))
         for i, v in enumerate(value):
             if i < column_count or i % column_count == 0:
                 continue
