@@ -3,9 +3,11 @@
 
 # Parse open-type font file and convert to `clm` format file
 
+import json
 import sys
 from functools import reduce, partial
 import fontforge
+import struct
 
 
 def chain(*fs):
@@ -16,6 +18,24 @@ def chain(*fs):
 
 def fmap(f, it):
     return [j for i in it for j in f(i)]
+
+
+def do(f, x):
+    f(x)
+    return x
+
+
+def do_loop(f, xs):
+    for x in xs:
+        f(x)
+    return xs
+
+
+def find_first(xs, predicate):
+    for x in xs:
+        if predicate(x):
+            return x
+    return None
 
 
 def read_math_consts(font):
@@ -242,11 +262,13 @@ def read_kerning_class(font):
     (
         # glyphs on left
         (
+            None, # first is None
             (glyph_name, glyph_name, ...),
             ...
         ),
         # glyphs on right
         (
+            None, # first is None
             (glyph_name, glyph_name, ...),
             ...
         ),
@@ -268,9 +290,151 @@ def read_kerning_class(font):
     return get_tables(font.gpos_lookups)
 
 
-def parse_otf():
-    font = fontforge.open(sys.argv[1])
-    is_math_font = sys.argv[2] == 'true'
+def write_clm_unicode_glyph_map(f, unicode_glyph_map):
+    length = len(unicode_glyph_map)
+    f.write(struct.pack('!H', length))
+    sort_map = sorted(unicode_glyph_map, key=lambda x: x[0])
+    for (codepoint, glyph_id,) in sort_map:
+        f.write(struct.pack('!IH', codepoint, glyph_id))
+
+
+def write_clm_kerning_class(f, kerning_classes, glyph_name_id_map):
+    length = len(kerning_classes)
+    f.write(struct.pack('!H', length))
+
+    def write_classes(glyph_names):
+        length = len(glyph_names) - 1  # first is None
+        if length <= 0:
+            return
+        f.write(struct.pack('!H', length))
+        write_ids = chain(
+            partial(map, lambda name: glyph_name_id_map[name]),
+            sorted,
+            partial(map, lambda glyph_id: struct.pack('!H', glyph_id)),
+            partial(do, lambda ids: f.write(struct.pack('!H', len(ids)))),
+            partial(do_loop, lambda bid: f.write(bid))
+        )
+        for i in glyph_names[1:]:
+            write_ids(i)
+
+    for (left, right, value,) in kerning_classes:
+        write_classes(left)
+        write_classes(right)
+        column_count = len(right)
+        for i, v in enumerate(value):
+            if i < column_count or i % column_count == 0:
+                continue
+            f.write(struct.pack('!h', v))
+
+
+def write_ligas(f, ligas, glyph_name_id_map):
+    forest = []
+
+    def add_node(glyphs, liga):
+        children = forest
+        child = None
+        for (glyph, char,) in glyphs:
+            child = find_first(children, lambda x: x['glyph'] == glyph)
+            if not child:
+                child = {'glyph': glyph, 'char': char,
+                         'liga': -1, 'children': []}
+                children.append(child)
+            children = child['children']
+        child['liga'] = liga
+
+    for (chars, liga,) in ligas:
+        add_node(
+            map(lambda char: (glyph_name_id_map[char], char,), chars), liga)
+
+    def sort_children(children):
+        for child in children:
+            child['children'] = sort_children(child['children'])
+        return sorted(children, key=lambda x: x['glyph'])
+
+    forest = sort_children(forest)
+
+    def write_node(node):
+        f.write(struct.pack('!H', node['glyph']))
+        f.write(struct.pack('!i', node['liga']))
+        f.write(struct.pack('!H', len(node['children'])))
+        for child in node['children']:
+            write_node(child)
+
+    root = {'glyph': 0, 'char': 0, 'liga': -1, 'children': forest}
+    write_node(root)
+
+
+def write_math_consts(f, consts):
+    for v in consts:
+        f.write(struct.pack('!h', v))
+
+
+def write_glyphs(f, glyphs, glyph_name_id_map, is_math_font):
+    f.write(struct.pack('!H', len(glyphs)))
+
+    def write_metrics(metrics):
+        for v in metrics:
+            f.write(struct.pack('!h', v))
+
+    def write_kerns(kerns):
+        if not kerns:
+            f.write(struct.pack('!H', 0))
+            return
+        sorted_kerns = chain(
+            partial(map, lambda x: (glyph_name_id_map[x[0]], x[1],)),
+            partial(sorted, key=lambda x: x[0])
+        )(kerns)
+        for (glyph, value,) in sorted_kerns:
+            f.write(struct.pack('!Hh', glyph, value))
+
+    def write_variants(variants):
+        length = 0 if not variants else len(variants)
+        f.write(struct.pack('!H', length))
+        if length == 0:
+            return
+        ids = map(lambda x: glyph_name_id_map[x], variants)
+        for i in ids:
+            f.write(struct.pack('!H', i))
+
+    def write_glyph_assembly(assembly):
+        if not assembly or not assembly[1]:
+            f.write(struct.pack('?', False))
+            return
+        f.write(struct.pack('?', True))
+        f.write(struct.pack('!h', assembly[0]))  # italics correction
+        f.write(struct.pack('!H', len(assembly[1])))
+        for part in assembly[1]:
+            f.write(struct.pack('!H', glyph_name_id_map[part[0]]))
+            for v in part[1:]:
+                f.write(struct.pack('!H', v))
+
+    def write_math_kern(math_kerns):
+        for i in math_kerns:
+            if not i:
+                f.write(struct.pack('!H', 0))
+                continue
+            f.write(struct.pack('!H', len(i)))
+            for (correction_height, value,) in i:
+                f.write(struct.pack('!hh', correction_height, value))
+
+    def write_math(math):
+        f.write(struct.pack('!h', math[0]))  # italics correction
+        f.write(struct.pack('!h', math[1]))  # topaccent attachment
+        write_variants(math[2])  # horizontal variants
+        write_variants(math[3])  # vertical variants
+        write_glyph_assembly(math[4])  # horizontal assembly
+        write_glyph_assembly(math[5])  # vertical assembly
+        write_math_kern(math[6])  # math kern
+
+    for glyph in glyphs:
+        write_metrics(glyph[0])
+        write_kerns(glyph[1])
+        if is_math_font:
+            write_math(glyph[2])
+
+
+def parse_otf(file_path, is_math_font, output_file_path):
+    font = fontforge.open(file_path)
 
     # read math constants
     math_consts = []
@@ -285,14 +449,20 @@ def parse_otf():
     kern_class_tables = read_kerning_class(font)
 
     unicode_glyph_map = []
+    glyph_name_id_map = {}
     glyphs = []
     ligas = []
 
     # read glyphs in GID order
     for glyph_name in font:
         glyph = font[glyph_name]
+
+        # unicode-glyph map
         if glyph.unicode != -1:
             unicode_glyph_map.append((glyph.unicode, glyph.originalgid,))
+
+        glyph_name_id_map[glyph_name] = glyph.originalgid
+        # glyph info
         glyphs.append(read_glyph(glyph, is_math_font, kern_subtable_names))
 
         # read ligature
@@ -300,11 +470,17 @@ def parse_otf():
         for l in liga_info:
             ligas.append(l)
 
-    for i in kern_class_tables:
-        print(i)
-
     font.close()
+
+    with open(output_file_path, 'wb') as f:
+        f.write(struct.pack('?', is_math_font))
+        write_clm_unicode_glyph_map(f, unicode_glyph_map)
+        write_clm_kerning_class(f, kern_class_tables, glyph_name_id_map)
+        write_ligas(f, ligas, glyph_name_id_map)
+        if is_math_font:
+            write_math_consts(f, math_consts)
+        write_glyphs(f, glyphs, glyph_name_id_map, is_math_font)
 
 
 if __name__ == "__main__":
-    parse_otf()
+    parse_otf(sys.argv[1], sys.argv[2] == 'true', sys.argv[3])
