@@ -14,9 +14,6 @@ const MathKernRecord MathKernRecord::empty(0);
 
 const Math Math::empty(0);
 
-template <>
-const LigaTable LigaTable::empty(-1, -1, 0);
-
 int16 KernRecord::operator[](uint16 glyph) const {
   const int i = binSearchIndex(_count, [&](int i) { return glyph - _fields[i << 1]; });
   return i < 0 ? 0 : _fields[i << 1 + 1];

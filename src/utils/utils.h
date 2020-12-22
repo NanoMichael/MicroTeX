@@ -10,6 +10,7 @@
 
 namespace tex {
 
+using uint8 = std::uint8_t;
 using int16 = std::int16_t;
 using uint16 = std::uint16_t;
 using int32 = std::int32_t;
@@ -24,9 +25,9 @@ using uint32 = std::uint32_t;
  *  default is false
  */
 static int binSearchIndex(
-    int count,
-    const std::function<int(int)>&& compare,
-    bool returnClosest = false) {
+  int count,
+  const std::function<int(int)>&& compare,
+  bool returnClosest = false) {
   if (count == 0) return -1;
   int l = 0, h = count - 1;
   while (l <= h) {

@@ -335,9 +335,6 @@ public:
   ~Glyph();
 };
 
-/** Table represents standard ligatures. */
-using LigaTable = SortedDictTree<int32, int32>;
-
 }  // namespace tex
 
 #endif
