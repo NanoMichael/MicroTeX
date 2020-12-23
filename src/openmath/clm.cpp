@@ -6,40 +6,53 @@
 
 namespace tex {
 
-BinaryFileReader::BinaryFileReader(const char* filePath) : _filePath(filePath) {
-  _file = fopen(filePath, "rb");
-  if (_file == nullptr) {
-    throw ex_file_not_found(std::string(filePath) + " cannot be opened.");
+class BinaryFileReader final {
+private:
+  constexpr static const uint32 CHUNK_SIZE = 10 * 1024;
+  FILE* _file;
+  uint8 _buff[CHUNK_SIZE];
+  uint32 _currentSize = 0;
+  uint32 _index = 0;
+  bool _eof = false;
+
+  void readChunk(uint32 remain = 0) {
+    if (_eof) return;
+    const auto size = CHUNK_SIZE - remain;
+    memcpy(_buff, _buff + size, remain);
+    auto read = fread(_buff + remain, 1, size, _file);
+    if (read < size) _eof = true;
+    _currentSize = read + remain;
+    _index = 0;
   }
-}
 
-void BinaryFileReader::readChunk(uint32 remain) {
-  if (_eof) return;
-  memcpy(_buff, _buff + CHUNK_SIZE - remain, remain);
-  const auto size = CHUNK_SIZE - remain;
-  auto read = fread(_buff + remain, 1, size, _file);
-  if (read < size) _eof = true;
-  _currentSize = read;
-  _index = 0;
-}
+public:
+  BinaryFileReader(const char* filePath) {
+    _file = fopen(filePath, "rb");
+    if (_file == nullptr) {
+      throw ex_file_not_found(std::string(filePath) + " cannot be opened.");
+    }
+  }
 
-const uint8* BinaryFileReader::read(uint32 count) {
-  const auto remain = _currentSize - _index;
-  if (remain < count) readChunk(remain);
-  if (_index >= _currentSize) throw ex_eof(_filePath);
-  const uint8* p = _buff + _index;
-  _index += count;
-  return p;
-}
+  template <typename T>
+  T read() {
+    const auto bytes = sizeof(T);
+    const auto remain = _currentSize - _index;
+    if (remain < bytes) readChunk(remain);
+    if (_index >= _currentSize) throw ex_eof("");
+    const uint8* p = _buff + _index;
+    _index += bytes;
+    auto shift = bytes - 1;
+    T t = 0;
+    for (int i = 0; i < bytes; i++) {
+      t |= (T)(*(p + i)) << ((shift - i) * 8);
+    }
+    return t;
+  }
 
-uint8 BinaryFileReader::readUInt8() {
-  return *read(1);
-}
-
-uint16 BinaryFileReader::readUInt16() {
-  const uint8* p = read(2);
-  return *p << 8 | *(p + 1);
-}
+  ~BinaryFileReader() {
+    if (_file != nullptr) fclose(_file);
+  }
+};
 
 OTFFont* CLMReader::read() const {
   OTFFont* ptrFont = new OTFFont();
