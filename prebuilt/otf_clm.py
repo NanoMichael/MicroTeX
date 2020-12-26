@@ -395,6 +395,7 @@ def write_glyphs(f, glyphs, glyph_name_id_map, is_math_font):
         if not kerns:
             f.write(struct.pack('!H', 0))
             return
+        f.write(struct.pack('!H', len(kerns)))
         sorted_kerns = chain(
             partial(map, lambda x: (glyph_name_id_map[x[0]], x[1],)),
             partial(sorted, key=lambda x: x[0])
@@ -416,8 +417,8 @@ def write_glyphs(f, glyphs, glyph_name_id_map, is_math_font):
             f.write(struct.pack('?', False))
             return
         f.write(struct.pack('?', True))
-        f.write(struct.pack('!h', assembly[0]))  # italics correction
         f.write(struct.pack('!H', len(assembly[1])))
+        f.write(struct.pack('!h', assembly[0]))  # italics correction
         for part in assembly[1]:
             f.write(struct.pack('!H', glyph_name_id_map[part[0]]))
             for v in part[1:]:

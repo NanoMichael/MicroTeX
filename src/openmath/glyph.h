@@ -6,12 +6,13 @@
 
 namespace tex {
 
+class CLMReader;
+class Glyph;
+
 /** Represents metrics for one glyph. */
 struct Metrics final {
 private:
-  int16 _width;
-  int16 _height;
-  int16 _depth;
+  int16 _width, _height, _depth;
 
   Metrics() {}
 
@@ -26,6 +27,9 @@ public:
 
   /** Distance below baseline (positive) */
   inline int16 depth() const { return _depth; }
+
+  friend CLMReader;
+  friend Glyph;
 };
 
 /** Represents standard kerning info for one glyph. */
@@ -51,6 +55,8 @@ public:
   ~KernRecord() {
     if (_fields != nullptr) delete[] _fields;
   }
+
+  friend CLMReader;
 };
 
 /** Defines variants for one glyph */
@@ -79,6 +85,8 @@ public:
   ~Variants() {
     if (_glyphs != nullptr) delete[] _glyphs;
   }
+
+  friend CLMReader;
 };
 
 struct GlyphAssembly;
@@ -127,6 +135,7 @@ public:
   inline bool isExtender() const { return _flags & 0x0001 == 1; }
 
   friend GlyphAssembly;
+  friend CLMReader;
 };
 
 /**
@@ -167,6 +176,8 @@ public:
   ~GlyphAssembly() {
     if (_parts != nullptr) delete[] _parts;
   }
+
+  friend CLMReader;
 };
 
 /**
@@ -211,6 +222,8 @@ public:
   ~MathKern() {
     if (_fields != nullptr) delete[] _fields;
   }
+
+  friend CLMReader;
 };
 
 /**
@@ -220,7 +233,12 @@ public:
 struct MathKernRecord final {
 private:
   /** Content MUST NOT BE NULL, equals &MathKern::empty if absent */
-  const MathKern* _fields[4];
+  const MathKern* _fields[4]{
+    &MathKern::empty,
+    &MathKern::empty,
+    &MathKern::empty,
+    &MathKern::empty,
+  };
 
   MathKernRecord(uint16 ignore);
 
@@ -238,6 +256,8 @@ public:
   inline const MathKern& bottomRight() const { return *_fields[3]; }
 
   ~MathKernRecord();
+
+  friend CLMReader;
 };
 
 /**
@@ -250,15 +270,15 @@ private:
   int16 _italicsCorrection;
   int16 _topAccentAttachment;
   /** MUST NOT BE NULL, equals to &Variants::empty if absent */
-  const Variants* _horizontalVariants;
+  const Variants* _horizontalVariants = &Variants::empty;
   /** MUST NOT BE NULL, equals to &Variants::empty if absent */
-  const Variants* _verticalVariants;
+  const Variants* _verticalVariants = &Variants::empty;
   /** MUST NOT BE NULL, equals to &GlyphAssembly::empty if absent */
-  const GlyphAssembly* _horizontalAssembly;
+  const GlyphAssembly* _horizontalAssembly = &GlyphAssembly::empty;
   /** MUST NOT BE NULL, equals to &GlyphAssembly::empty if absent */
-  const GlyphAssembly* _verticalAssembly;
+  const GlyphAssembly* _verticalAssembly = &GlyphAssembly::empty;
   /** MUST NOT BE NULL, equals to &MathKernRecord::empty if absent */
-  const MathKernRecord* _kernRecord;
+  const MathKernRecord* _kernRecord = &MathKernRecord::empty;
 
   Math(uint16 ignore);
 
@@ -312,6 +332,8 @@ public:
   inline const MathKernRecord& kernRecord() const { return *_kernRecord; }
 
   ~Math();
+
+  friend CLMReader;
 };
 
 /** Defines info for one glyph, divice-table is JUST IGNORED. */
@@ -319,9 +341,11 @@ struct Glyph final {
 private:
   Metrics _metrics;
   /** MUST NOT BE NULL, equals to &KernRecord::empty if absent */
-  const KernRecord* _kernRecord;
+  const KernRecord* _kernRecord = &KernRecord::empty;
   /** MUST NOT BE NULL, equals to &Math::empty if absent */
-  const Math* _math;
+  const Math* _math = &Math::empty;
+
+  Glyph() {}
 
 public:
   __no_copy_assign(Glyph);
@@ -333,6 +357,8 @@ public:
   inline const KernRecord& kernRecord() const { return *_kernRecord; }
 
   ~Glyph();
+
+  friend CLMReader;
 };
 
 }  // namespace tex
