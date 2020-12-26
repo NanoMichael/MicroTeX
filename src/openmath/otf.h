@@ -10,19 +10,28 @@ namespace tex {
 class CLMReader;
 
 /** Table represents standard ligatures. */
-using LigaTable = SortedDictTree<int32, int32>;
+using LigaTable = SortedDictTree<uint16, int32>;
 
 /** Represents classified kerning */
 struct ClassKerning final {
 private:
-  uint16 _leftCount;
-  uint16* _lefts;
-  uint16 _rightCount;
-  uint16* _rights;
-  uint16 _rowLength, _columnLength;
-  int16* _table;
+  uint16 _leftCount = 0;
+  /** left glyphs, in pair format (glyph, class_index) */
+  uint16* _lefts = nullptr;
+
+  uint16 _rightCount = 0;
+  /** right glyphs, in pair format (glyph, class_index) */
+  uint16* _rights = nullptr;
+
+  uint16 _rowLength = 0, _columnLength = 0;
+  /** kerning value table, size = (_rowLength * _columnLength) */
+  int16* _table = nullptr;
+
+  ClassKerning() {}
 
 public:
+  __no_copy_assign(ClassKerning);
+
   /** Get the kerning value for the given left and right glyph. */
   int16 operator()(uint16 left, uint16 right) const;
 
@@ -34,18 +43,23 @@ public:
 /** Class to represent a otf font */
 class OTFFont {
 private:
-  uint16 _unicodeCount;
-  uint32 _unicodes[];
-  uint32 _unicodeGlyphs[];
+  uint16 _unicodeCount = 0;
+  uint32* _unicodes;
+  uint16* _unicodeGlyphs;
 
-  bool _isMathFont;
-  MathConsts* _mathConsts;
+  bool _isMathFont = false;
+  MathConsts* _mathConsts = nullptr;
 
   uint16 _glyphCount;
-  Glyph* _glyphs[];
+  Glyph** _glyphs;
 
-  LigaTable* _ligatures;
-  ClassKerning* _classKerning;
+  LigaTable* _ligatures = nullptr;
+  ClassKerning** _classKernings = nullptr;
+
+  OTFFont() {}
+
+public:
+  __no_copy_assign(OTFFont);
 
   friend CLMReader;
 };

@@ -12,12 +12,32 @@ class BinaryFileReader;
 /** Read a OTFFont from `.clm` file. */
 class CLMReader final {
 private:
-  BinaryFileReader* _reader;
+  void readMeta(OTFFont& font, BinaryFileReader& reader) const;
+
+  void readClassKernings(OTFFont& font, BinaryFileReader& reader) const;
+
+  ClassKerning* readClassKerning(BinaryFileReader& reader) const;
+
+  std::pair<uint16, uint16*> readClassKerningGlyphs(BinaryFileReader& reader) const;
+
+  LigaTable* readLigatures(BinaryFileReader& reaader) const;
+
+  MathConsts* readMathConsts(BinaryFileReader& reader) const;
+
+  KernRecord* readKerns(BinaryFileReader& reader) const;
+
+  Variants* readVariants(BinaryFileReader& reader) const;
+
+  GlyphAssembly* readGlyphAssembly(BinaryFileReader& reader) const;
+
+  Math* readMath(BinaryFileReader& reader) const;
+
+  Glyph* readGlyph(bool isMathFont, BinaryFileReader& reader) const;
+
+  void readGlyphs(OTFFont& font, BinaryFileReader& reader) const;
 
 public:
-  CLMReader(const char* filePath);
-
-  OTFFont* read() const;
+  OTFFont* read(const char* clmFilePath) const;
 };
 
 }  // namespace tex

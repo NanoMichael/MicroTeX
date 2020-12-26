@@ -5,7 +5,9 @@
 
 namespace tex {
 
-#define MATH_CONSTS_COUNT 57
+#define TEX_MATH_CONSTS_COUNT 57
+
+class CLMReader;
 
 /** 
  * Defines a number of constants required to properly position elements of mathematical formulas.
@@ -17,7 +19,9 @@ namespace tex {
 struct MathConsts {
 private:
   /** Array to represents all constants */
-  int16 _fields[MATH_CONSTS_COUNT];
+  int16 _fields[TEX_MATH_CONSTS_COUNT];
+
+  MathConsts() {}
 
 public:
   __no_copy_assign(MathConsts);
@@ -135,6 +139,8 @@ public:
   inline int16 radicalDegreeBottomRaisePercent() const { return _fields[55]; }
 
   inline int16 minConnectorOverlap() const { return _fields[56]; }
+
+  friend CLMReader;
 };
 
 }  // namespace tex
