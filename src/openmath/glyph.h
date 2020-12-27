@@ -132,7 +132,7 @@ public:
   inline uint16 fullAdvance() const { return _fullAdvance; }
 
   /** Test if this part can be skipped or repeated. */
-  inline bool isExtender() const { return _flags & 0x0001 == 1; }
+  inline bool isExtender() const { return (_flags & 0x0001) == 1; }
 
   friend GlyphAssembly;
   friend CLMReader;
@@ -146,7 +146,7 @@ public:
  */
 struct GlyphAssembly final {
 private:
-  int16 _italicsCorrection;
+  int16 _italicsCorrection = 0;
   uint16 _partCount = 0;
   /**
    * Array of GlyphPart, from left to right (for assemblies that extend horizontally)
@@ -214,7 +214,7 @@ public:
 
   inline int16 correctionHeight(uint16 i) const { return _count == 0 ? 0 : _fields[i << 1]; }
 
-  inline int16 value(uint16 i) const { return _count == 0 ? 0 : _fields[i << 1 + 1]; }
+  inline int16 value(uint16 i) const { return _count == 0 ? 0 : _fields[(i << 1) + 1]; }
 
   /** Find the index of the kern values that its correction height closest to the given height. */
   uint16 indexOf(int32 height) const;
@@ -240,7 +240,7 @@ private:
     &MathKern::empty,
   };
 
-  MathKernRecord(uint16 ignore);
+  MathKernRecord(uint16 ignore) {}
 
 public:
   __no_copy_assign(MathKernRecord);

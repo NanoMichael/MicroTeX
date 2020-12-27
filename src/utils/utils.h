@@ -20,24 +20,17 @@ using uint32 = std::uint32_t;
  * Binary search for index of the given target.
  * 
  * @param count total count of the container
- * @param compare function to compare target value between the value at given index
- * @param returnClosest if not found, return the closest index if is true or -1 otherwise,
- *  default is false
+ * @param compare function to compare between the target value and the value at given index
+ * @param returnClosest if return the closest index while not found, default is false
+ *
+ * @return the index which the target value found at, or the closest index if returnClosest is true,
+ * or -1 otherwise
  */
-static int binSearchIndex(
+int binSearchIndex(
   int count,
   const std::function<int(int)>&& compare,
-  bool returnClosest = false) {
-  if (count == 0) return -1;
-  int l = 0, h = count - 1;
-  while (l <= h) {
-    const int m = l + ((h - l) >> 1);
-    const int cmp = compare(m);
-    if (cmp == 0) return m;
-    cmp < 0 ? h = m - 1 : l = m + 1;
-  }
-  return returnClosest ? std::max(0, l - 1) : -1;
-}
+  bool returnClosest = false  //
+);
 
 }  // namespace tex
 

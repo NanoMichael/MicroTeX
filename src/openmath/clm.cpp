@@ -43,7 +43,7 @@ public:
     _index += bytes;
     auto shift = bytes - 1;
     T t = 0;
-    for (int i = 0; i < bytes; i++) {
+    for (std::size_t i = 0; i < bytes; i++) {
       t |= (T)(*(p + i)) << ((shift - i) * 8);
     }
     return t;
@@ -73,7 +73,7 @@ std::pair<uint16, uint16*> CLMReader::readClassKerningGlyphs(BinaryFileReader& r
   uint16* glyphs = new uint16[count * 2];
   for (uint16 i = 0; i < count; i++) {
     glyphs[i << 1] = reader.read<uint16>();
-    glyphs[i << 1 + 1] = reader.read<uint16>();
+    glyphs[(i << 1) + 1] = reader.read<uint16>();
   }
   return std::make_pair(count, glyphs);
 }
@@ -103,6 +103,7 @@ ClassKerning* CLMReader::readClassKerning(BinaryFileReader& reader) const {
 
 void CLMReader::readClassKernings(OTFFont& font, BinaryFileReader& reader) const {
   const uint16 count = reader.read<uint16>();
+  font._classKerningCount = count;
   if (count == 0) {
     font._classKernings = nullptr;
     return;
@@ -138,7 +139,7 @@ KernRecord* CLMReader::readKerns(BinaryFileReader& reader) const {
   KernRecord* record = new KernRecord(count);
   for (uint16 i = 0; i < count; i++) {
     record->_fields[i << 1] = reader.read<uint16>();
-    record->_fields[i << 1 + 1] = reader.read<int16>();
+    record->_fields[(i << 1) + 1] = reader.read<int16>();
   }
   return record;
 }
@@ -196,7 +197,7 @@ Math* CLMReader::readMath(BinaryFileReader& reader) const {
     MathKern* kern = new MathKern(count);
     for (uint16 i = 0; i < count; i++) {
       kern->_fields[i << 1] = reader.read<int16>();
-      kern->_fields[i << 1 + 1] = reader.read<int16>();
+      kern->_fields[(i << 1) + 1] = reader.read<int16>();
     }
     record->_fields[i] = kern;
   }

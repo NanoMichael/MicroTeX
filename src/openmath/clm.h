@@ -37,6 +37,10 @@ private:
   void readGlyphs(OTFFont& font, BinaryFileReader& reader) const;
 
 public:
+  __no_copy_assign(CLMReader);
+
+  CLMReader() {}
+
   OTFFont* read(const char* clmFilePath) const;
 };
 

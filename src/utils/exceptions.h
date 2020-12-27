@@ -231,12 +231,12 @@ public:
 
 class ex_file_not_found : public ex_tex {
 public:
-  explicit ex_file_not_found(const string& e) : ex_tex(e) {}
+  explicit ex_file_not_found(const std::string& e) : ex_tex(e) {}
 };
 
 class ex_eof : public ex_tex {
 public:
-  explicit ex_eof(const string& filePath) : ex_tex("EOF of " + filePath) {}
+  explicit ex_eof(const std::string& filePath) : ex_tex("EOF of " + filePath) {}
 };
 
 }  // namespace tex

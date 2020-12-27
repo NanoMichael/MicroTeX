@@ -25,8 +25,6 @@ public:
         _childCount(childCount),
         _children(childCount == 0 ? nullptr : new SortedDictTree<K, V>*[childCount]) {}
 
-  static const SortedDictTree<K, V> empty;
-
   inline K key() const { return _key; }
 
   inline V value() const { return _value; }
@@ -39,13 +37,13 @@ public:
   }
 
   /**
-   * Get the child match the given key or [empty] if not found.
+   * Get the child match the given key or null if not found.
    * 
    * @param key the key to match
    */
-  const SortedDictTree<K, V>& operator[](const K& key) const {
+  const SortedDictTree<K, V>* operator[](const K& key) const {
     const int index = binSearchIndex(_childCount, [&](int i) { return key - _children[i]->_key; });
-    return index < 0 ? empty : *_children[index];
+    return index < 0 ? nullptr : _children[index];
   }
 
   bool operator==(const SortedDictTree<K, V>& b) const {

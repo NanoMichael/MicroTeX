@@ -30,7 +30,7 @@ struct CharFont {
   CharFont(wchar_t c, int f, int bf) : chr(c), fontId(f), boldFontId(bf) {}
 
 #ifdef HAVE_LOG
-  friend std::ostream& operator<<(ostream& os, const CharFont& info);
+  friend std::ostream& operator<<(std::ostream& os, const CharFont& info);
 #endif
 };
 
