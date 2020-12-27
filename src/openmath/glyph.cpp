@@ -16,7 +16,7 @@ const Math Math::empty(0);
 
 int16 KernRecord::operator[](uint16 glyph) const {
   const int i = binSearchIndex(_count, [&](int i) { return glyph - _fields[i << 1]; });
-  return i < 0 ? 0 : (int16)_fields[i << 1 + 1];
+  return i < 0 ? 0 : (int16)_fields[(i << 1) + 1];
 }
 
 uint16 MathKern::indexOf(int32 height) const {
@@ -24,11 +24,8 @@ uint16 MathKern::indexOf(int32 height) const {
   return binSearchIndex(
     _count,
     [&](int i) { return height - _fields[i << 1]; },
-    true);
-}
-
-MathKernRecord::MathKernRecord(uint16 ignore) {
-  for (std::size_t i = 0; i < 4; i++) _fields[i] = &MathKern::empty;
+    true  //
+  );
 }
 
 MathKernRecord::~MathKernRecord() {

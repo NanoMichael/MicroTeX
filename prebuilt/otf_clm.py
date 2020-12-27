@@ -477,6 +477,7 @@ def parse_otf(file_path, is_math_font, output_file_path):
         if glyph.unicode != -1:
             unicode_glyph_map.append((glyph.unicode, glyph.originalgid,))
 
+        print(glyph.originalgid, glyph_name)
         glyph_name_id_map[glyph_name] = glyph.originalgid
         # glyph info
         glyphs.append(read_glyph(glyph, is_math_font, kern_subtable_names))

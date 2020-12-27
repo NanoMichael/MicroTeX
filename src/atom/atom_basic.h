@@ -508,7 +508,7 @@ public:
   static void _init_();
 
 #ifdef HAVE_LOG
-  friend ostream& operator<<(ostream& os, const SymbolAtom& s);
+  friend std::ostream& operator<<(std::ostream& os, const SymbolAtom& s);
 #endif  // HAVE_LOG
 
   __decl_clone(SymbolAtom)
