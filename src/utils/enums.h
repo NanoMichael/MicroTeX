@@ -35,7 +35,7 @@ enum class SpaceSize : int8 {
 };
 
 /** Script display type */
-enum class LimitType : int8 {
+enum class LimitsType : int8 {
   normal,
   noLimits,
   limits
@@ -67,7 +67,9 @@ enum class AtomType : int8 {
   /** Horizontal line in matrix environment */
   hline,
   /** Multi-row in matrix environment */
-  multiRow
+  multiRow,
+  /** No type specified */
+  none = -1
 };
 
 /** Over and under delimiter type */

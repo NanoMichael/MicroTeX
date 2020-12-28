@@ -1,12 +1,13 @@
 #include "atom/atom_basic.h"
+
+#include <sstream>
+
 #include "atom/box.h"
 #include "core/core.h"
 #include "core/formula.h"
 #include "fonts/fonts.h"
 #include "graphic/graphic.h"
 #include "res/parser/formula_parser.h"
-
-#include <sstream>
 
 using namespace std;
 using namespace tex;
@@ -54,7 +55,7 @@ sptr<Box> UnderScoreAtom::createBox(_out_ TeXEnvironment& env) {
 }
 
 CumulativeScriptsAtom::CumulativeScriptsAtom(
-    const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup) {
+  const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup) {
   CumulativeScriptsAtom* ca = dynamic_cast<CumulativeScriptsAtom*>(base.get());
   ScriptsAtom* sa = nullptr;
   if (ca != nullptr) {
@@ -95,7 +96,7 @@ sptr<Box> CumulativeScriptsAtom::createBox(_out_ TeXEnvironment& env) {
 sptr<Box> TextRenderingAtom::createBox(_out_ TeXEnvironment& env) {
   if (_infos == nullptr) {
     return sptr<Box>(new TextRenderingBox(
-        _str, _type, DefaultTeXFont::getSizeFactor(env.getStyle())));
+      _str, _type, DefaultTeXFont::getSizeFactor(env.getStyle())));
   }
   DefaultTeXFont* tf = (DefaultTeXFont*)(env.getTeXFont().get());
   int type = tf->_isIt ? ITALIC : PLAIN;
@@ -117,90 +118,90 @@ sptr<Box> TextRenderingAtom::createBox(_out_ TeXEnvironment& env) {
     }
   }
   return sptr<Box>(new TextRenderingBox(
-      _str, type, DefaultTeXFont::getSizeFactor(env.getStyle()), font, kerning));
+    _str, type, DefaultTeXFont::getSizeFactor(env.getStyle()), font, kerning));
 }
 
 /***************************************************************************************************
  *                                     SpaceAtom implementation                                    *
  ***************************************************************************************************/
 const map<string, int> SpaceAtom::_units = {
-    {"em", UNIT_EM},
-    {"ex", UNIT_EX},
-    {"px", UNIT_PIXEL},
-    {"pix", UNIT_PIXEL},
-    {"pixel", UNIT_PIXEL},
-    {"pt", UNIT_PT},
-    {"bp", UNIT_POINT},
-    {"pica", UNIT_PICA},
-    {"pc", UNIT_PICA},
-    {"mu", UNIT_MU},
-    {"cm", UNIT_CM},
-    {"mm", UNIT_MM},
-    {"in", UNIT_IN},
-    {"sp", UNIT_SP},
-    {"dd", UNIT_DD},
-    {"cc", UNIT_CC}};
+  {"em", UNIT_EM},
+  {"ex", UNIT_EX},
+  {"px", UNIT_PIXEL},
+  {"pix", UNIT_PIXEL},
+  {"pixel", UNIT_PIXEL},
+  {"pt", UNIT_PT},
+  {"bp", UNIT_POINT},
+  {"pica", UNIT_PICA},
+  {"pc", UNIT_PICA},
+  {"mu", UNIT_MU},
+  {"cm", UNIT_CM},
+  {"mm", UNIT_MM},
+  {"in", UNIT_IN},
+  {"sp", UNIT_SP},
+  {"dd", UNIT_DD},
+  {"cc", UNIT_CC}};
 
 const int SpaceAtom::_units_count = 14;
 
 const function<float(_in_ const TeXEnvironment&)> SpaceAtom::_unitConversions[] = {
-    // EM
-    [](_in_ const TeXEnvironment& env) -> float {
-      return env.getTeXFont()->getEM(env.getStyle());
-    },
-    // EX
-    [](_in_ const TeXEnvironment& env) -> float {
-      return env.getTeXFont()->getXHeight(env.getStyle(), env.getLastFontId());
-    },
-    //PIXEL
-    [](_in_ const TeXEnvironment& env) -> float {
-      return 1.f / env.getSize();
-    },
-    // BP
-    [](_in_ const TeXEnvironment& env) -> float {
-      return TeXFormula::PIXELS_PER_POINT / env.getSize();
-    },
-    // PICA
-    [](_in_ const TeXEnvironment& env) -> float {
-      return (12 * TeXFormula::PIXELS_PER_POINT) / env.getSize();
-    },
-    // MU
-    [](_in_ const TeXEnvironment& env) -> float {
-      auto tf = env.getTeXFont();
-      return tf->getQuad(env.getStyle(), tf->getMuFontId()) / 18.f;
-    },
-    // CM
-    [](_in_ const TeXEnvironment& env) -> float {
-      return (28.346456693f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
-    },
-    // MM
-    [](_in_ const TeXEnvironment& env) -> float {
-      return (2.8346456693f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
-    },
-    // IN
-    [](_in_ const TeXEnvironment& env) -> float {
-      return (72.f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
-    },
-    // SP
-    [](_in_ const TeXEnvironment& env) -> float {
-      return (65536 * TeXFormula::PIXELS_PER_POINT) / env.getSize();
-    },
-    // PT
-    [](_in_ const TeXEnvironment& env) -> float {
-      return (.9962640099f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
-    },
-    // DD
-    [](_in_ const TeXEnvironment& env) -> float {
-      return (1.0660349422f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
-    },
-    // CC
-    [](_in_ const TeXEnvironment& env) -> float {
-      return (12.7924193070f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
-    },
-    // X8
-    [](_in_ const TeXEnvironment& env) -> float {
-      return env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-    }};
+  // EM
+  [](_in_ const TeXEnvironment& env) -> float {
+    return env.getTeXFont()->getEM(env.getStyle());
+  },
+  // EX
+  [](_in_ const TeXEnvironment& env) -> float {
+    return env.getTeXFont()->getXHeight(env.getStyle(), env.getLastFontId());
+  },
+  //PIXEL
+  [](_in_ const TeXEnvironment& env) -> float {
+    return 1.f / env.getSize();
+  },
+  // BP
+  [](_in_ const TeXEnvironment& env) -> float {
+    return TeXFormula::PIXELS_PER_POINT / env.getSize();
+  },
+  // PICA
+  [](_in_ const TeXEnvironment& env) -> float {
+    return (12 * TeXFormula::PIXELS_PER_POINT) / env.getSize();
+  },
+  // MU
+  [](_in_ const TeXEnvironment& env) -> float {
+    auto tf = env.getTeXFont();
+    return tf->getQuad(env.getStyle(), tf->getMuFontId()) / 18.f;
+  },
+  // CM
+  [](_in_ const TeXEnvironment& env) -> float {
+    return (28.346456693f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
+  },
+  // MM
+  [](_in_ const TeXEnvironment& env) -> float {
+    return (2.8346456693f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
+  },
+  // IN
+  [](_in_ const TeXEnvironment& env) -> float {
+    return (72.f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
+  },
+  // SP
+  [](_in_ const TeXEnvironment& env) -> float {
+    return (65536 * TeXFormula::PIXELS_PER_POINT) / env.getSize();
+  },
+  // PT
+  [](_in_ const TeXEnvironment& env) -> float {
+    return (.9962640099f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
+  },
+  // DD
+  [](_in_ const TeXEnvironment& env) -> float {
+    return (1.0660349422f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
+  },
+  // CC
+  [](_in_ const TeXEnvironment& env) -> float {
+    return (12.7924193070f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
+  },
+  // X8
+  [](_in_ const TeXEnvironment& env) -> float {
+    return env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
+  }};
 
 sptr<Box> SpaceAtom::createBox(_out_ TeXEnvironment& env) {
   if (!_blankSpace) {
@@ -253,18 +254,7 @@ sptr<Box> FixedCharAtom::createBox(_out_ TeXEnvironment& env) {
   return sptr<Box>(new CharBox(c));
 }
 
-bitset<16> SymbolAtom::_validSymbolTypes;
-
 void SymbolAtom::_init_() {
-  _validSymbolTypes
-      .set(TYPE_ORDINARY)
-      .set(TYPE_BIG_OPERATOR)
-      .set(TYPE_BINARY_OPERATOR)
-      .set(TYPE_RELATION)
-      .set(TYPE_OPENING)
-      .set(TYPE_CLOSING)
-      .set(TYPE_PUNCTUATION)
-      .set(TYPE_ACCENT);
 #ifdef HAVE_LOG
   __log << "elements in _symbols" << endl;
   for (auto i : _symbols)
@@ -281,12 +271,11 @@ ostream& tex::operator<<(ostream& os, const SymbolAtom& s) {
 }
 #endif  // HAVE_LOG
 
-SymbolAtom::SymbolAtom(const string& name, int type, bool del) : _unicode(0) {
+SymbolAtom::SymbolAtom(const string& name, AtomType type, bool del) : _unicode(0) {
   _name = name;
-  _type = type;
-  if (type == TYPE_BIG_OPERATOR) _typelimits = SCRIPT_NORMAL;
-
+  if (type == AtomType::bigOperator) limitsType = LimitsType::normal;
   _delimiter = del;
+  this->type = type;
 }
 
 sptr<Box> SymbolAtom::createBox(_out_ TeXEnvironment& env) {
@@ -306,7 +295,7 @@ sptr<Box> SymbolAtom::createBox(_out_ TeXEnvironment& env) {
       } catch (ex_symbol_mapping_not_found& e) {}
     }
   }
-  if (_type == TYPE_BIG_OPERATOR) {
+  if (type == AtomType::bigOperator) {
     if (style < STYLE_TEXT && tf.hasNextLarger(c)) c = tf.getNextLarger(c, style);
     cb = sptr<Box>(new CharBox(c));
     cb->_shift = -(cb->_height + cb->_depth) / 2.f - tf.getAxisHeight(style);
@@ -368,28 +357,31 @@ sptr<Box> CharAtom::createBox(_out_ TeXEnvironment& env) {
 /************************************** row atom implementation ***********************************/
 
 bool RowAtom::_breakEveywhere = false;
-bitset<16> RowAtom::_binSet;
-bitset<16> RowAtom::_ligKernSet = RowAtom::_init_();
+bitset<16> RowAtom::_binSet(_initBinset_());
+bitset<16> RowAtom::_ligKernSet(_initLigKernSet_());
 
-bitset<16> RowAtom::_init_() {
-  // fill bin-set
-  _binSet
-      .set(TYPE_BINARY_OPERATOR)
-      .set(TYPE_BIG_OPERATOR)
-      .set(TYPE_RELATION)
-      .set(TYPE_OPENING)
-      .set(TYPE_PUNCTUATION);
-  // fill lig-kern-set
-  bitset<16> ligkern;
-  ligkern
-      .set(TYPE_ORDINARY)
-      .set(TYPE_BIG_OPERATOR)
-      .set(TYPE_BINARY_OPERATOR)
-      .set(TYPE_RELATION)
-      .set(TYPE_OPENING)
-      .set(TYPE_CLOSING)
-      .set(TYPE_PUNCTUATION);
-  return ligkern;
+bitset<16> RowAtom::_initBinset_() {
+  bitset<16> binSet;
+  binSet
+    .set(static_cast<int8>(AtomType::binaryOperator))
+    .set(static_cast<int8>(AtomType::bigOperator))
+    .set(static_cast<int8>(AtomType::relation))
+    .set(static_cast<int8>(AtomType::opening))
+    .set(static_cast<int8>(AtomType::punctuation));
+  return binSet;
+}
+
+bitset<16> RowAtom::_initLigKernSet_() {
+  bitset<16> ligKern;
+  ligKern
+    .set(static_cast<int8>(AtomType::ordinary))
+    .set(static_cast<int8>(AtomType::bigOperator))
+    .set(static_cast<int8>(AtomType::binaryOperator))
+    .set(static_cast<int8>(AtomType::relation))
+    .set(static_cast<int8>(AtomType::opening))
+    .set(static_cast<int8>(AtomType::closing))
+    .set(static_cast<int8>(AtomType::punctuation));
+  return ligKern;
 }
 
 RowAtom::RowAtom(const sptr<Atom>& el)
@@ -429,28 +421,28 @@ void RowAtom::add(const sptr<Atom>& el) {
 }
 
 void RowAtom::change2Ord(_out_ Dummy* cur, _out_ Dummy* prev, _out_ Atom* next) {
-  int type = cur->getLeftType();
-  if ((type == TYPE_BINARY_OPERATOR) &&
-      ((prev == nullptr || _binSet[prev->getRightType()]) || next == nullptr)) {
-    cur->setType(TYPE_ORDINARY);
-  } else if (next != nullptr && cur->getRightType() == TYPE_BINARY_OPERATOR) {
-    int nextType = next->getLeftType();
-    if (nextType == TYPE_RELATION ||
-        nextType == TYPE_CLOSING ||
-        nextType == TYPE_PUNCTUATION) {
-      cur->setType(TYPE_ORDINARY);
+  AtomType type = cur->leftType();
+  if ((type == AtomType::binaryOperator) &&
+      ((prev == nullptr || _binSet[static_cast<int8>(prev->rightType())]) || next == nullptr)) {
+    cur->type = AtomType::ordinary;
+  } else if (next != nullptr && cur->rightType() == AtomType::binaryOperator) {
+    AtomType nextType = next->leftType();
+    if (nextType == AtomType::relation ||
+        nextType == AtomType::closing ||
+        nextType == AtomType::punctuation) {
+      cur->type = AtomType::ordinary;
     }
   }
 }
 
-int RowAtom::getLeftType() const {
-  if (_elements.empty()) return TYPE_ORDINARY;
-  return _elements.front()->getLeftType();
+AtomType RowAtom::leftType() const {
+  if (_elements.empty()) return AtomType::ordinary;
+  return _elements.front()->leftType();
 }
 
-int RowAtom::getRightType() const {
-  if (_elements.empty()) return TYPE_ORDINARY;
-  return _elements.back()->getRightType();
+AtomType RowAtom::rightType() const {
+  if (_elements.empty()) return AtomType::ordinary;
+  return _elements.back()->rightType();
 }
 
 sptr<Box> RowAtom::createBox(_out_ TeXEnvironment& env) {
@@ -483,10 +475,10 @@ sptr<Box> RowAtom::createBox(_out_ TeXEnvironment& env) {
     change2Ord(atom.get(), _previousAtom.get(), nextAtom.get());
     // check for ligature or kerning
     float kern = 0;
-    while (i < e && atom->getRightType() == TYPE_ORDINARY && atom->isCharSymbol()) {
+    while (i < e && atom->rightType() == AtomType::ordinary && atom->isCharSymbol()) {
       auto next = _elements[++i];
       CharSymbol* c = dynamic_cast<CharSymbol*>(next.get());
-      if (c != nullptr && _ligKernSet[next->getLeftType()]) {
+      if (c != nullptr && _ligKernSet[static_cast<int8>(next->leftType())]) {
         atom->markAsTextSymbol();
         auto l = atom->getCharFont(tf);
         auto r = c->getCharFont(tf);
@@ -508,7 +500,7 @@ sptr<Box> RowAtom::createBox(_out_ TeXEnvironment& env) {
     // insert glue, unless it's the first element of the row
     // or this element or the next is a kerning
     if (i != 0 && _previousAtom != nullptr && !_previousAtom->isKern() && !atom->isKern()) {
-      hbox->add(Glue::get(_previousAtom->getRightType(), atom->getLeftType(), env));
+      hbox->add(Glue::get(_previousAtom->rightType(), atom->leftType(), env));
     }
     // insert atom's box
     atom->setPreviousAtom(_previousAtom);
@@ -769,7 +761,7 @@ sptr<Box> PhantomAtom::createBox(_out_ TeXEnvironment& env) {
 /************************************ AccentedAtom implementation *********************************/
 
 void AccentedAtom::init(
-    const sptr<Atom>& base, const sptr<Atom>& accent) {
+  const sptr<Atom>& base, const sptr<Atom>& accent) {
   _base = base;
   AccentedAtom* a = dynamic_cast<AccentedAtom*>(base.get());
   if (a != nullptr)
@@ -785,9 +777,9 @@ void AccentedAtom::init(
 }
 
 AccentedAtom::AccentedAtom(
-    const sptr<Atom>& base, const string& name) {
+  const sptr<Atom>& base, const string& name) {
   _accent = SymbolAtom::get(name);
-  if (_accent->_type == TYPE_ACCENT) {
+  if (_accent->type == AtomType::accent) {
     _base = base;
     AccentedAtom* a = dynamic_cast<AccentedAtom*>(base.get());
     if (a != nullptr)
@@ -796,18 +788,18 @@ AccentedAtom::AccentedAtom(
       _underbase = base;
   } else {
     throw ex_invalid_symbol_type(
-        "The symbol with the name '" +
-        name + "' is not defined as an accent (" +
-        TeXSymbolParser::TYPE_ATTR + "='acc') in '" +
-        TeXSymbolParser::RESOURCE_NAME + "'!");
+      "The symbol with the name '" +
+      name + "' is not defined as an accent (" +
+      TeXSymbolParser::TYPE_ATTR + "='acc') in '" +
+      TeXSymbolParser::RESOURCE_NAME + "'!");
   }
   _changeSize = true;
   _acc = false;
 }
 
 AccentedAtom::AccentedAtom(
-    const sptr<Atom>& base,
-    const sptr<TeXFormula>& acc) {
+  const sptr<Atom>& base,
+  const sptr<TeXFormula>& acc) {
   if (acc == nullptr) throw ex_invalid_formula("the accent TeXFormula can't be null!");
   _changeSize = true;
   _acc = false;
@@ -815,14 +807,14 @@ AccentedAtom::AccentedAtom(
   _accent = dynamic_pointer_cast<SymbolAtom>(root);
   if (_accent == nullptr)
     throw ex_invalid_formula("The accent TeXFormula does not represet a single symbol!");
-  if (_accent->_type == TYPE_ACCENT) {
+  if (_accent->type == AtomType::accent) {
     _base = base;
   } else {
     throw ex_invalid_symbol_type(
-        "The accent TeXFormula represents a single symbol with the name '" +
-        _accent->getName() + "', but this symbol is not defined as accent (" +
-        TeXSymbolParser::TYPE_ATTR + "='acc') in '" +
-        TeXSymbolParser::RESOURCE_NAME + "'!");
+      "The accent TeXFormula represents a single symbol with the name '" +
+      _accent->getName() + "', but this symbol is not defined as accent (" +
+      TeXSymbolParser::TYPE_ATTR + "='acc') in '" +
+      TeXSymbolParser::RESOURCE_NAME + "'!");
   }
 }
 
@@ -968,8 +960,8 @@ sptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
   TeXFont* tf = env.getTeXFont().get();
   const int style = env.getStyle();
 
-  if (_base->_typelimits == SCRIPT_LIMITS ||
-      (_base->_typelimits == SCRIPT_NORMAL && style == STYLE_DISPLAY)) {
+  if (_base->limitsType == LimitsType::limits ||
+      (_base->limitsType == LimitsType::normal && style == STYLE_DISPLAY)) {
     sptr<Atom> in(new UnderOverAtom(_base, _sub, UNIT_POINT, 0.3f, true, false));
     return UnderOverAtom(in, _sup, UNIT_POINT, 3.f, true, true).createBox(env);
   }
@@ -993,7 +985,7 @@ sptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
     auto box = acc->_base->createBox(*(env.crampStyle()));
     shiftUp = box->_height - tf->getSupDrop(supStyle.getStyle());
     shiftDown = box->_depth + tf->getSubDrop(subStyle.getStyle());
-  } else if (sym != nullptr && _base->_type == TYPE_BIG_OPERATOR) {
+  } else if (sym != nullptr && _base->type == AtomType::bigOperator) {
     // single big operator symbol
     Char c = tf->getChar(sym->getName(), style);
     // display style
@@ -1032,8 +1024,9 @@ sptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
     auto x = _sub->createBox(subStyle);
     // calculate and set shift amount
     x->_shift = max(
-        max(shiftDown, tf->getSub1(style)),
-        x->_height - 0.8f * abs(tf->getXHeight(style, lastFontId)));
+      max(shiftDown, tf->getSub1(style)),
+      x->_height - 0.8f * abs(tf->getXHeight(style, lastFontId))  //
+    );
     hor->add(x);
     hor->add(deltaSymbol);
 
@@ -1106,13 +1099,13 @@ sptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
 /************************************ BigOperatorAtom implementation ******************************/
 
 void BigOperatorAtom::init(
-    const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over) {
+  const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over) {
   _base = base;
   _under = under;
   _over = over;
   _limits = false;
   _limitsSet = false;
-  _type = TYPE_BIG_OPERATOR;
+  type = AtomType::bigOperator;
 }
 
 sptr<Box> BigOperatorAtom::changeWidth(const sptr<Box>& b, float maxw) {
@@ -1131,8 +1124,8 @@ sptr<Box> BigOperatorAtom::createSideSets(_out_ TeXEnvironment& env) {
 
   auto opbox = sb->createBox(env);
   auto pa = sptr<Atom>(new PlaceholderAtom(0, opbox->_height, opbox->_depth, opbox->_shift));
-  pa->_typelimits = SCRIPT_NOLIMITS;
-  pa->_type = TYPE_BIG_OPERATOR;
+  pa->limitsType = LimitsType::noLimits;
+  pa->type = AtomType::bigOperator;
 
   ScriptsAtom* l = dynamic_cast<ScriptsAtom*>(sl.get());
   ScriptsAtom* r = dynamic_cast<ScriptsAtom*>(sr.get());
@@ -1157,7 +1150,7 @@ sptr<Box> BigOperatorAtom::createSideSets(_out_ TeXEnvironment& env) {
   const int style = env.getStyle();
 
   float delta = 0;
-  if (sb->_type == TYPE_BIG_OPERATOR) {
+  if (sb->type == AtomType::bigOperator) {
     SymbolAtom* sym = dynamic_cast<SymbolAtom*>(sb.get());
     if (sym != nullptr) {
       Char c = tf->getChar(sym->getName(), style);
@@ -1213,7 +1206,7 @@ sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
   if (ta != nullptr) {
     auto atom = ta->getBase();
     RowAtom* ra = dynamic_cast<RowAtom*>(atom.get());
-    if (ra != nullptr && ra->_lookAtLastAtom && _base->_typelimits != SCRIPT_LIMITS) {
+    if (ra != nullptr && ra->_lookAtLastAtom && _base->limitsType != LimitsType::limits) {
       _base = ra->popLastAtom();
       row = ra;
     } else {
@@ -1223,8 +1216,8 @@ sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
 
   if ((_limitsSet && !_limits) ||
       (!_limitsSet && style >= STYLE_TEXT) ||
-      (_base->_typelimits == SCRIPT_NOLIMITS) ||
-      (_base->_typelimits == SCRIPT_NORMAL && style >= STYLE_TEXT)) {
+      (_base->limitsType == LimitsType::noLimits) ||
+      (_base->limitsType == LimitsType::normal && style >= STYLE_TEXT)) {
     // if explicitly set to not display as limits or if not set and
     // style is not display, then attach over and under as regular sub or
     // super script
@@ -1243,7 +1236,7 @@ sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
   float delta;
 
   SymbolAtom* sym = dynamic_cast<SymbolAtom*>(_base.get());
-  if (sym != nullptr && _base->_type == TYPE_BIG_OPERATOR) {
+  if (sym != nullptr && _base->type == AtomType::bigOperator) {
     // single big operator symbol
     Char c = tf->getChar(sym->getName(), style);
     y = _base->createBox(env);
@@ -1263,8 +1256,8 @@ sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
 
   // make boxes equally wide
   float maxW = max(
-      max(x == nullptr ? 0 : x->_width, y->_width),
-      z == nullptr ? 0 : z->_width);
+    max(x == nullptr ? 0 : x->_width, y->_width),
+    z == nullptr ? 0 : z->_width);
   x = changeWidth(x, maxW);
   y = changeWidth(y, maxW);
   z = changeWidth(z, maxW);

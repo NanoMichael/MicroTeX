@@ -1,14 +1,14 @@
 #ifndef ATOM_BASIC_H_INCLUDED
 #define ATOM_BASIC_H_INCLUDED
 
+#include <bitset>
+#include <map>
+#include <string>
+
 #include "atom/atom.h"
 #include "atom/box.h"
 #include "common.h"
 #include "graphic/graphic.h"
-
-#include <bitset>
-#include <map>
-#include <string>
 
 namespace tex {
 
@@ -116,7 +116,7 @@ public:
   ScaleAtom() = delete;
 
   ScaleAtom(const sptr<Atom>& base, float sx, float sy) {
-    _type = base->_type;
+    type = base->type;
     _base = base;
     _sx = sx;
     _sy = sy;
@@ -125,13 +125,9 @@ public:
   ScaleAtom(const sptr<Atom>& base, float scale)
       : ScaleAtom(base, scale, scale) {}
 
-  int getLeftType() const override {
-    return _base->getLeftType();
-  }
+  AtomType leftType() const override { return _base->leftType(); }
 
-  int getRightType() const override {
-    return _base->getRightType();
-  }
+  AtomType rightType() const override { return _base->rightType(); }
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
@@ -443,8 +439,6 @@ class SymbolAtom : public CharSymbol {
 private:
   // contains all defined symbols
   static std::map<std::string, sptr<SymbolAtom>> _symbols;
-  // contains all the possible valid symbol types
-  static std::bitset<16> _validSymbolTypes;
   // whether it's a delimiter symbol
   bool _delimiter;
   // symbol name
@@ -465,7 +459,7 @@ public:
    * @param del
    *      whether the symbol is a delimiter
    */
-  SymbolAtom(const std::string& name, int type, bool del);
+  SymbolAtom(const std::string& name, AtomType type, bool del);
 
   inline SymbolAtom& setUnicode(wchar_t c) {
     _unicode = c;
@@ -585,85 +579,65 @@ public:
  */
 class Dummy {
 private:
-  sptr<Atom> _el;
-  bool _textSymbol;
-  int _type;
+  sptr<Atom> _atom;
+  bool _textSymbol = false;
 
 public:
+  AtomType type = AtomType::none;
+
   Dummy() = delete;
 
   /**
    * Create a new dummy for the given atom
-   * @param a
-   *      an atom
+   * @param atom an atom
    */
-  Dummy(const sptr<Atom>& a) {
+  Dummy(const sptr<Atom>& atom) {
     _textSymbol = false;
-    _type = -1;
-    _el = a;
+    _atom = atom;
+    type = AtomType::none;
   }
 
-  /**
-   * Changes the type of the atom
-   * @param t
-   *      the new type
-   */
-  inline void setType(int t) {
-    _type = t;
+  /** @return the changed type, or the old left type if it has not been changed */
+  inline AtomType leftType() const {
+    return (type != AtomType::none ? type : _atom->leftType());
   }
 
-  inline int getType() const {
-    return _type;
-  }
-
-  /**
-   * @return the changed type, or the old left type if it has not been changed
-   */
-  inline int getLeftType() const {
-    return (_type >= 0 ? _type : _el->getLeftType());
-  }
-
-  /**
-   * @return the changed type, or the old right type if it has not been changed
-   */
-  inline int getRightType() const {
-    return (_type >= 0 ? _type : _el->getRightType());
+  /** @return the changed type, or the old right type if it has not been changed */
+  inline AtomType rightType() const {
+    return (type != AtomType::none ? type : _atom->rightType());
   }
 
   inline bool isCharSymbol() const {
-    CharSymbol* x = dynamic_cast<CharSymbol*>(_el.get());
+    CharSymbol* x = dynamic_cast<CharSymbol*>(_atom.get());
     return (x != nullptr);
   }
 
   inline bool isCharInMathMode() const {
-    CharAtom* at = dynamic_cast<CharAtom*>(_el.get());
+    CharAtom* at = dynamic_cast<CharAtom*>(_atom.get());
     return at != nullptr && at->isMathMode();
   }
 
-  /**
-   * This method will only be called if isCharSymbol returns true.
-   */
+  /** This method will only be called if isCharSymbol returns true. */
   inline sptr<CharFont> getCharFont(_in_ TeXFont& tf) const {
-    return ((CharSymbol*)_el.get())->getCharFont(tf);
+    return ((CharSymbol*)_atom.get())->getCharFont(tf);
   }
 
   /**
    * Changes this atom into the given "ligature atom".
    *
-   * @param a
-   *      the ligature atom
+   * @param atom the ligature atom
    */
-  inline void changeAtom(const sptr<FixedCharAtom>& a) {
+  inline void changeAtom(const sptr<FixedCharAtom>& atom) {
     _textSymbol = false;
-    _type = -1;
-    _el = a;
+    _atom = atom;
+    type = AtomType::none;
   }
 
-  inline sptr<Box> createBox(_out_ TeXEnvironment& env) {
-    if (_textSymbol) ((CharSymbol*)_el.get())->markAsTextSymbol();
-    auto b = _el->createBox(env);
-    if (_textSymbol) ((CharSymbol*)_el.get())->removeMark();
-    return b;
+  inline sptr<Box> createBox(TeXEnvironment& env) {
+    if (_textSymbol) ((CharSymbol*)_atom.get())->markAsTextSymbol();
+    auto box = _atom->createBox(env);
+    if (_textSymbol) ((CharSymbol*)_atom.get())->removeMark();
+    return box;
   }
 
   inline void markAsTextSymbol() {
@@ -671,18 +645,14 @@ public:
   }
 
   inline bool isKern() const {
-    SpaceAtom* x = dynamic_cast<SpaceAtom*>(_el.get());
+    SpaceAtom* x = dynamic_cast<SpaceAtom*>(_atom.get());
     return (x != nullptr);
   }
 
-  /**
-   * Only for row-elements
-   */
+  /** Only for row-elements */
   inline void setPreviousAtom(const sptr<Dummy>& prev) {
-    Row* row = dynamic_cast<Row*>(_el.get());
-    if (row != nullptr) {
-      row->setPreviousAtom(prev);
-    }
+    Row* row = dynamic_cast<Row*>(_atom.get());
+    if (row != nullptr) row->setPreviousAtom(prev);
   }
 };
 
@@ -706,7 +676,9 @@ private:
 
   void change2Ord(_out_ Dummy* cur, _out_ Dummy* prev, _out_ Atom* next);
 
-  static std::bitset<16> _init_();
+  static std::bitset<16> _initBinset_();
+
+  static std::bitset<16> _initLigKernSet_();
 
 public:
   static bool _breakEveywhere;
@@ -759,9 +731,9 @@ public:
 
   void setPreviousAtom(const sptr<Dummy>& prev) override;
 
-  int getLeftType() const override;
+  AtomType leftType() const override;
 
-  int getRightType() const override;
+  AtomType rightType() const override;
 
   __decl_clone(RowAtom)
 };
@@ -855,12 +827,12 @@ public:
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
-  int getLeftType() const override {
-    return _elements->getLeftType();
+  AtomType leftType() const override {
+    return _elements->leftType();
   }
 
-  int getRightType() const override {
-    return _elements->getRightType();
+  AtomType rightType() const override {
+    return _elements->rightType();
   }
 
   void setPreviousAtom(const sptr<Dummy>& prev) override {
@@ -914,12 +886,12 @@ public:
 
   PhantomAtom(const sptr<Atom>& el, bool w, bool h, bool d);
 
-  int getLeftType() const override {
-    return _elements->getLeftType();
+  AtomType leftType() const override {
+    return _elements->leftType();
   }
 
-  int getRightType() const override {
-    return _elements->getRightType();
+  AtomType rightType() const override {
+    return _elements->rightType();
   }
 
   void setPreviousAtom(const sptr<Dummy>& prev) override {
@@ -938,22 +910,22 @@ public:
 class TypedAtom : public Atom {
 private:
   // override left-type and right-type
-  int _leftType, _rightType;
+  AtomType _leftType, _rightType;
   // atom for which new types are set
   sptr<Atom> _atom;
 
 public:
   TypedAtom() = delete;
 
-  TypedAtom(int lt, int rt, const sptr<Atom>& atom) {
+  TypedAtom(AtomType lt, AtomType rt, const sptr<Atom>& atom) {
     _leftType = lt;
     _rightType = rt;
     _atom = atom;
-    _typelimits = atom->_typelimits;
+    limitsType = atom->limitsType;
   }
 
   sptr<Atom> getBase() {
-    _atom->_typelimits = _typelimits;
+    _atom->limitsType = limitsType;
     return _atom;
   }
 
@@ -961,11 +933,11 @@ public:
     return _atom->createBox(env);
   }
 
-  int getLeftType() const override {
+  AtomType leftType() const override {
     return _leftType;
   }
 
-  int getRightType() const override {
+  AtomType rightType() const override {
     return _rightType;
   }
 
@@ -995,9 +967,9 @@ public:
   }
 
   AccentedAtom(
-      const sptr<Atom>& base,
-      const sptr<Atom>& accent,
-      bool changeSize) {
+    const sptr<Atom>& base,
+    const sptr<Atom>& accent,
+    bool changeSize) {
     init(base, accent);
     _changeSize = changeSize;
   }
@@ -1016,8 +988,8 @@ public:
    *      if there's no symbol defined with the given name
    */
   AccentedAtom(
-      const sptr<Atom>& base,
-      const std::string& name);
+    const sptr<Atom>& base,
+    const std::string& name);
 
   /**
    * Creates an AccentedAtom from a base atom and an accent symbol defined as
@@ -1034,8 +1006,8 @@ public:
    *      if the symbol is not defined as an accent ('acc')
    */
   AccentedAtom(
-      const sptr<Atom>& base,
-      const sptr<TeXFormula>& acc);
+    const sptr<Atom>& base,
+    const sptr<TeXFormula>& acc);
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
@@ -1071,12 +1043,12 @@ public:
   UnderOverAtom() = delete;
 
   UnderOverAtom(
-      const sptr<Atom>& base,
-      const sptr<Atom>& script,
-      int unit,
-      float space,
-      bool small,
-      bool over) {
+    const sptr<Atom>& base,
+    const sptr<Atom>& script,
+    int unit,
+    float space,
+    bool small,
+    bool over) {
     init();
     // check if unit is valid
     SpaceAtom::checkUnit(unit);
@@ -1103,15 +1075,15 @@ public:
   }
 
   UnderOverAtom(
-      const sptr<Atom>& base,
-      const sptr<Atom>& under,
-      int underunit,
-      float underspace,
-      bool undersmall,
-      const sptr<Atom>& over,
-      int overunit,
-      float overspace,
-      bool oversmall) {
+    const sptr<Atom>& base,
+    const sptr<Atom>& under,
+    int underunit,
+    float underspace,
+    bool undersmall,
+    const sptr<Atom>& over,
+    int overunit,
+    float overspace,
+    bool oversmall) {
     // check unit
     SpaceAtom::checkUnit(underunit);
     SpaceAtom::checkUnit(overunit);
@@ -1127,12 +1099,12 @@ public:
     _overSmall = oversmall;
   }
 
-  int getLeftType() const override {
-    return _base->getLeftType();
+  AtomType leftType() const override {
+    return _base->leftType();
   }
 
-  int getRightType() const override {
-    return _base->getRightType();
+  AtomType rightType() const override {
+    return _base->rightType();
   }
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override;
@@ -1173,14 +1145,12 @@ public:
     if (!left) _align = ALIGN_RIGHT;
   }
 
-  int getLeftType() const override {
-    if (_base == nullptr) return _type;
-    return _base->getLeftType();
+  AtomType leftType() const override {
+    return _base == nullptr ? type : _base->leftType();
   }
 
-  int getRightType() const override {
-    if (_base == nullptr) return _type;
-    return _base->getRightType();
+  AtomType rightType() const override {
+    return _base == nullptr ? type : _base->rightType();
   }
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override;
@@ -1246,7 +1216,7 @@ public:
    *      scripts)
    */
   BigOperatorAtom(
-      const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over, bool limits) {
+    const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over, bool limits) {
     init(base, under, over);
     _limits = limits;
     _limitsSet = true;
@@ -1268,8 +1238,8 @@ public:
 
   SideSetsAtom(const sptr<Atom>& base, const sptr<Atom>& left, const sptr<Atom>& right)
       : _base(base), _left(left), _right(right) {
-    _type = TYPE_BIG_OPERATOR;
-    _typelimits = SCRIPT_NOLIMITS;
+    type = AtomType::bigOperator;
+    limitsType = LimitsType::noLimits;
   }
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override;
@@ -1298,18 +1268,18 @@ public:
   OverUnderDelimiter() = delete;
 
   OverUnderDelimiter(
-      const sptr<Atom>& base,
-      const sptr<Atom>& script,
-      const sptr<SymbolAtom>& s,
-      int kernunit,
-      float kern,
-      bool over) {
-    _type = TYPE_INNER;
+    const sptr<Atom>& base,
+    const sptr<Atom>& script,
+    const sptr<SymbolAtom>& s,
+    int kernunit,
+    float kern,
+    bool over) {
     _base = base;
     _script = script;
     _symbol = s;
     _kern = SpaceAtom(kernunit, 0, kern, 0);
     _over = over;
+    type = AtomType::inner;
   }
 
   inline void addScript(const sptr<Atom>& script) {
