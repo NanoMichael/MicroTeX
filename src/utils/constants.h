@@ -42,65 +42,6 @@ enum TeXConstants {
 
   QUAD = 3,
 
-  /****************************** script display type constants *********************************/
-  SCRIPT_NORMAL = 0,
-  SCRIPT_NOLIMITS,
-  SCRIPT_LIMITS,
-
-  /*********************************** atom type constants **************************************/
-  /**
-   * Ordinary symbol, e.g. "slash"
-   */
-  TYPE_ORDINARY = 0,
-  /**
-   * Big operator, e.g. "sum"
-   */
-  TYPE_BIG_OPERATOR,  // =1
-  /**
-   * Binary operator, e.g. "plus"
-   */
-  TYPE_BINARY_OPERATOR,  // =2
-  /**
-   * Relation, e.g. "equals"
-   */
-  TYPE_RELATION,  // =3
-  /**
-   * Opening symbol, e.g. "lbrace"
-   */
-  TYPE_OPENING,  // =4
-  /**
-   * Closing symbol, e.g. "rbrace"
-   */
-  TYPE_CLOSING,  // =5
-  /**
-   * Punctuation symbol, e.g. "comma"
-   */
-  TYPE_PUNCTUATION,  // =6
-  /**
-   * Atom type: inner atom (NOT FOR SYMBOLS)
-   */
-  TYPE_INNER,  // =7
-  /**
-   * Accent, e.g. "hat"
-   */
-  TYPE_ACCENT = 10,
-  /**
-   * Inter-text in matrix environment
-   */
-  TYPE_INTERTEXT,  // =11
-  /**
-   * Multi-column in matrix envrionment
-   */
-  TYPE_MULTICOLUMN,  // =12
-  /**
-   * Horizontal line in matrix envrionment
-   */
-  TYPE_HLINE,  // =13
-  /**
-   * Multi-row in matrix envrionment
-   */
-  TYPE_MULTIROW,  // =14
-
   /****************************** over and under delimiter type constants ***********************/
   DELIM_BRACE = 0,
   DELIM_SQUARE_BRACKET,

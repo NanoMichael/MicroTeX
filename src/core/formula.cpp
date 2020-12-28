@@ -1,4 +1,5 @@
 #include "core/formula.h"
+
 #include "common.h"
 #include "core/core.h"
 #include "core/parser.h"
@@ -36,17 +37,16 @@ void TeXFormula::_init_() {
 #endif  // HAVE_LOG
 }
 
-TeXFormula::TeXFormula(const TeXParser& tp)
-    : _parser(tp.getIsPartial(), L"", this, false) {
+TeXFormula::TeXFormula(const TeXParser& tp) : _parser(tp.getIsPartial(), L"", this, false) {
   _xmlMap = tp._formula->_xmlMap;
 }
 
 TeXFormula::TeXFormula(
-    const TeXParser& tp,
-    const wstring& s,
-    const string& textStyle,
-    bool firstpass, bool space)
-    : _parser(tp.getIsPartial(), s, this, firstpass, space) {
+  const TeXParser& tp,
+  const wstring& latex,
+  const string& textStyle,
+  bool firstpass, bool ignoreWhiteSpace)
+    : _parser(tp.getIsPartial(), latex, this, firstpass, ignoreWhiteSpace) {
   _textStyle = textStyle;
   _xmlMap = tp._formula->_xmlMap;
   if (tp.getIsPartial()) {
@@ -60,9 +60,8 @@ TeXFormula::TeXFormula(
   }
 }
 
-TeXFormula::TeXFormula(
-    const TeXParser& tp, const wstring& s, const string& textStyle)
-    : _parser(tp.getIsPartial(), s, this) {
+TeXFormula::TeXFormula(const TeXParser& tp, const wstring& latex, const string& textStyle)
+    : _parser(tp.getIsPartial(), latex, this) {
   _textStyle = textStyle;
   _xmlMap = tp._formula->_xmlMap;
   if (tp.getIsPartial()) {
@@ -76,8 +75,8 @@ TeXFormula::TeXFormula(
   }
 }
 
-TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s, bool firstpass)
-    : _parser(tp.getIsPartial(), s, this, firstpass) {
+TeXFormula::TeXFormula(const TeXParser& tp, const wstring& latex, bool firstpass)
+    : _parser(tp.getIsPartial(), latex, this, firstpass) {
   _textStyle = "";
   _xmlMap = tp._formula->_xmlMap;
   if (tp.getIsPartial()) {
@@ -89,8 +88,8 @@ TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s, bool firstpass)
   }
 }
 
-TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s)
-    : _parser(tp.getIsPartial(), s, this) {
+TeXFormula::TeXFormula(const TeXParser& tp, const wstring& latex)
+    : _parser(tp.getIsPartial(), latex, this) {
   _textStyle = "";
   _xmlMap = tp._formula->_xmlMap;
   if (tp.getIsPartial()) {
@@ -106,26 +105,25 @@ TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s)
 
 TeXFormula::TeXFormula() : _parser(L"", this, false) {}
 
-TeXFormula::TeXFormula(const wstring& s) : _parser(s, this) {
+TeXFormula::TeXFormula(const wstring& latex) : _parser(latex, this) {
   _textStyle = "";
   _parser.parse();
 }
 
-TeXFormula::TeXFormula(const wstring& s, bool firstpass)
-    : _parser(s, this, firstpass) {
+TeXFormula::TeXFormula(const wstring& latex, bool firstpass) : _parser(latex, this, firstpass) {
   _textStyle = "";
   _parser.parse();
 }
 
-TeXFormula::TeXFormula(const wstring& s, const string& textStyle)
-    : _parser(s, this) {
+TeXFormula::TeXFormula(const wstring& latex, const string& textStyle) : _parser(latex, this) {
   _textStyle = textStyle;
   _parser.parse();
 }
 
 TeXFormula::TeXFormula(
-    const wstring& s, const string& textStyle, bool firstpass, bool space)
-    : _parser(s, this, firstpass, space) {
+  const wstring& latex, const string& textStyle,
+  bool firstpass, bool ignoreWhiteSpace)
+    : _parser(latex, this, firstpass, ignoreWhiteSpace) {
   _textStyle = textStyle;
   _parser.parse();
 }

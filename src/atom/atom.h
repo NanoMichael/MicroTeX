@@ -3,10 +3,11 @@
 
 #undef DEBUG
 
+#include <list>
+
 #include "common.h"
 #include "graphic/graphic.h"
-
-#include <list>
+#include "utils/enums.h"
 
 namespace tex {
 
@@ -252,23 +253,14 @@ public:
  */
 class Atom {
 public:
-  /**
-   * The type of the atom (default value: ordinary atom) @see TeXConstants
-   */
-  int _type;
-  /**
-   * The limits type of the atom (default value: nolimits) @see TeXConstants
-   */
-  int _typelimits;
-  /**
-   * The alignment type of the atom (default value: none) @see TeXConstants
-   */
-  int _alignment;
+  /** The type of the atom (default value: ordinary atom) */
+  AtomType type = AtomType::ordinary;
+  /** The limits type of the atom (default value: nolimits) */
+  LimitsType limitsType = LimitsType::noLimits;
+  /** The alignment type of the atom (default value: none) */
+  Alignment alignment = Alignment::none;
 
-  Atom()
-      : _type(TYPE_ORDINARY),
-        _typelimits(SCRIPT_NOLIMITS),
-        _alignment(-1) {}
+  Atom() {}
 
   /**
    * Get the type of the leftermost child atom. Most atoms have no child
@@ -279,7 +271,7 @@ public:
    *
    * @return the type of the leftermost child atom
    */
-  virtual int getLeftType() const { return _type; }
+  virtual AtomType leftType() const { return type; }
 
   /**
    * Get the type of the rightermost child atom. Most atoms have no child
@@ -290,21 +282,19 @@ public:
    *
    * @return the type of the rightermost child atom
    */
-  virtual int getRightType() const { return _type; }
+  virtual AtomType rightType() const { return type; }
 
   /**
    * Convert this atom into a {@link Box}, using properties set by "parent"
    * atoms, like the TeX style, the last used font, color settings, ...
    *
-   * @param env
-   *      the current environment settings
+   * @param env the current environment settings
+   *
    * @return the resulting box.
    */
-  virtual sptr<Box> createBox(_out_ TeXEnvironment& env) = 0;
+  virtual sptr<Box> createBox(TeXEnvironment& env) = 0;
 
-  /**
-   * Shallow clone a atom from this atom.
-   */
+  /** Shallow clone a atom from this atom. */
   virtual sptr<Atom> clone() const = 0;
 
   virtual ~Atom() {}
