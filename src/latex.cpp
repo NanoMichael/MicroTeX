@@ -126,7 +126,7 @@ TeXRender* LaTeX::parse(const wstring& latex, int width, float textSize, float l
   if (startswith(latex, L"$$") || startswith(latex, L"\\[")) {
     lined = false;
   }
-  int align = lined ? ALIGN_LEFT : ALIGN_CENTER;
+  Alignment align = lined ? Alignment::left : Alignment::center;
   _formula->setLaTeX(latex);
   TeXRender* render = _builder->setStyle(STYLE_DISPLAY)
                           .setTextSize(textSize)

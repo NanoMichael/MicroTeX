@@ -60,7 +60,7 @@ void TeXRender::setInsets(const Insets& insets, bool trueval) {
   if (!trueval) _insets += (int)(0.18f * _textSize);
 }
 
-void TeXRender::setWidth(int width, int align) {
+void TeXRender::setWidth(int width, Alignment align) {
   float diff = width - getWidth();
   // FIXME
   // only care if new width larger than old
@@ -69,7 +69,7 @@ void TeXRender::setWidth(int width, int align) {
   }
 }
 
-void TeXRender::setHeight(int height, int align) {
+void TeXRender::setHeight(int height, Alignment align) {
   float diff = height - getHeight();
   // FIXME
   // only care if new height larger than old

@@ -189,7 +189,7 @@ public:
    * @throw ex_invalid_atom_type
    *      if the given value does not represent a valid atom type
    */
-  TeXFormula* setFixedTypes(int left, int right);
+  TeXFormula* setFixedTypes(AtomType left, AtomType right);
 
   /** Test if this formula is in array mode. */
   virtual bool isArrayMode() const { return false; }

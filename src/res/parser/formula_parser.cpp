@@ -9,15 +9,16 @@ const std::string TeXSymbolParser::RESOURCE_NAME = "TeXSymbols";
 const std::string TeXSymbolParser::DELIMITER_ATTR = "del";
 const std::string TeXSymbolParser::TYPE_ATTR = "type";
 
-const std::map<std::string, int> TeXSymbolParser::_typeMappings = {
-    {"ord", AtomType::ordinary},
-    {"op", AtomType::bigOperator},
-    {"bin", AtomType::binaryOperator},
-    {"rel", AtomType::relation},
-    {"open", AtomType::opening},
-    {"close", AtomType::closing},
-    {"punct", AtomType::punctuation},
-    {"acc", AtomType::accent}};
+const std::map<std::string, tex::AtomType> TeXSymbolParser::_typeMappings = {
+  {"ord", AtomType::ordinary},
+  {"op", AtomType::bigOperator},
+  {"bin", AtomType::binaryOperator},
+  {"rel", AtomType::relation},
+  {"open", AtomType::opening},
+  {"close", AtomType::closing},
+  {"punct", AtomType::punctuation},
+  {"acc", AtomType::accent},
+};
 
 std::string TeXSymbolParser::getAttr(const char* attr, const XMLElement* e) {
   const char* x = e->Attribute(attr);
@@ -72,9 +73,10 @@ int TeXFormulaSettingParser::getUtf(const XMLElement* e, const char* attr) {
 }
 
 void TeXFormulaSettingParser::add2map(
-    const XMLElement* r,
-    _out_ std::map<int, std::string>& math,
-    _out_ std::map<int, std::string>& txt) {
+  const XMLElement* r,
+  _out_ std::map<int, std::string>& math,
+  _out_ std::map<int, std::string>& txt  //
+) {
   while (r != nullptr) {
     int ch = getUtf(r, "char");
     const char* symbol = r->Attribute("symbol");
@@ -90,9 +92,10 @@ void TeXFormulaSettingParser::add2map(
 }
 
 void TeXFormulaSettingParser::addFormula2map(
-    const XMLElement* r,
-    _out_ std::map<int, std::string>& math,
-    _out_ std::map<int, std::string>& txt) {
+  const XMLElement* r,
+  _out_ std::map<int, std::string>& math,
+  _out_ std::map<int, std::string>& txt  //
+) {
   while (r != nullptr) {
     int ch = getUtf(r, "char");
     const char* formula = r->Attribute("formula");
@@ -108,7 +111,8 @@ void TeXFormulaSettingParser::addFormula2map(
 }
 
 void TeXFormulaSettingParser::parseSymbol2Formula(
-    _out_ std::map<int, std::string>& mappings, _out_ std::map<int, std::string>& txt) {
+  _out_ std::map<int, std::string>& mappings, _out_ std::map<int, std::string>& txt  //
+) {
   const XMLElement* e = _root->FirstChildElement("CharacterToFormulaMappings");
   if (e != nullptr) {
     e = e->FirstChildElement("Map");
@@ -117,7 +121,8 @@ void TeXFormulaSettingParser::parseSymbol2Formula(
 }
 
 void TeXFormulaSettingParser::parseSymbol(
-    _out_ std::map<int, std::string>& mappings, _out_ std::map<int, std::string>& txt) {
+  _out_ std::map<int, std::string>& mappings, _out_ std::map<int, std::string>& txt  //
+) {
   const XMLElement* e = _root->FirstChildElement("CharacterToSymbolMappings");
   if (e != nullptr) {
     e = e->FirstChildElement("Map");

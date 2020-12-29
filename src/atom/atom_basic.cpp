@@ -547,15 +547,15 @@ void RowAtom::setPreviousAtom(const sptr<Dummy>& prev) {
 
 VRowAtom::VRowAtom() {
   _addInterline = false;
-  _valign = ALIGN_CENTER;
-  _halign = ALIGN_NONE;
+  _valign = Alignment::center;
+  _halign = Alignment::none;
   _raise = sptr<SpaceAtom>(new SpaceAtom(UNIT_EX, 0, 0, 0));
 }
 
 VRowAtom::VRowAtom(const sptr<Atom>& el) {
   _addInterline = false;
-  _valign = ALIGN_CENTER;
-  _halign = ALIGN_NONE;
+  _valign = Alignment::center;
+  _halign = Alignment::none;
   _raise = sptr<SpaceAtom>(new SpaceAtom(UNIT_EX, 0, 0, 0));
   if (el != nullptr) {
     VRowAtom* a = dynamic_cast<VRowAtom*>(el.get());
@@ -589,7 +589,7 @@ sptr<Box> VRowAtom::createBox(_out_ TeXEnvironment& env) {
   VerticalBox* vb = new VerticalBox();
   sptr<Box> interline(new StrutBox(0, env.getInterline(), 0, 0));
 
-  if (_halign != ALIGN_NONE) {
+  if (_halign != Alignment::none) {
     float maxWidth = F_MIN;
     vector<sptr<Box>> boxes;
     const int s = _elements.size();
@@ -616,11 +616,11 @@ sptr<Box> VRowAtom::createBox(_out_ TeXEnvironment& env) {
   }
 
   vb->_shift = -_raise->createBox(env)->_width;
-  if (_valign == ALIGN_TOP) {
+  if (_valign == Alignment::top) {
     float t = vb->getSize() == 0 ? 0 : vb->_children.front()->_height;
     vb->_height = t;
     vb->_depth = vb->_depth + vb->_height - t;
-  } else if (_valign == ALIGN_CENTER) {
+  } else if (_valign == Alignment::center) {
     float axis = env.getTeXFont()->getAxisHeight(env.getStyle());
     float h = vb->_height + vb->_depth;
     vb->_height = h / 2 + axis;
@@ -865,7 +865,7 @@ sptr<Box> AccentedAtom::createBox(_out_ TeXEnvironment& env) {
   // if diff > 0, center accent, otherwise center base
   float diff = (u - y->_width) / 2;
   y->_shift = s + (diff > 0 ? diff : 0);
-  if (diff < 0) b = sptr<Box>(new HorizontalBox(b, y->_width, ALIGN_CENTER));
+  if (diff < 0) b = sptr<Box>(new HorizontalBox(b, y->_width, Alignment::center));
   vBox->add(y);
 
   // kerning
@@ -892,7 +892,7 @@ sptr<Box> AccentedAtom::createBox(_out_ TeXEnvironment& env) {
 
 sptr<Box> UnderOverAtom::changeWidth(const sptr<Box>& b, float maxW) {
   if (b != nullptr && abs(maxW - b->_width) > PREC)
-    return sptr<Box>(new HorizontalBox(b, maxW, ALIGN_CENTER));
+    return sptr<Box>(new HorizontalBox(b, maxW, Alignment::center));
   return b;
 }
 
@@ -1035,7 +1035,7 @@ sptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
 
   auto x = _sup->createBox(supStyle);
   float msiz = x->_width;
-  if (_sub != nullptr && _align == ALIGN_RIGHT) {
+  if (_sub != nullptr && _align == Alignment::right) {
     msiz = max(msiz, _sub->createBox(subStyle)->_width);
   }
 
@@ -1110,7 +1110,7 @@ void BigOperatorAtom::init(
 
 sptr<Box> BigOperatorAtom::changeWidth(const sptr<Box>& b, float maxw) {
   if (b != nullptr && abs(maxw - b->_width) > PREC)
-    return sptr<Box>(new HorizontalBox(b, maxw, ALIGN_CENTER));
+    return sptr<Box>(new HorizontalBox(b, maxw, Alignment::center));
   return b;
 }
 
@@ -1132,7 +1132,7 @@ sptr<Box> BigOperatorAtom::createSideSets(_out_ TeXEnvironment& env) {
 
   if (l != nullptr && l->_base == nullptr) {
     l->_base = pa;
-    l->_align = ALIGN_RIGHT;
+    l->_align = Alignment::right;
   }
   if (r != nullptr && r->_base == nullptr) r->_base = pa;
 
@@ -1321,7 +1321,7 @@ sptr<Box> SideSetsAtom::createBox(_out_ TeXEnvironment& env) {
 
   if (l != nullptr && l->_base == nullptr) {
     l->_base = pa;
-    l->_align = ALIGN_RIGHT;
+    l->_align = Alignment::right;
   }
   if (r != nullptr && r->_base == nullptr) r->_base = pa;
 
@@ -1351,11 +1351,11 @@ sptr<Box> OverUnderDelimiter::createBox(_out_ TeXEnvironment& env) {
 
   // create centered horizontal box if smaller than maximum width
   float mx = getMaxWidth(b.get(), del.get(), sb.get());
-  if (mx - b->_width > PREC) b = sptr<Box>(new HorizontalBox(b, mx, ALIGN_CENTER));
+  if (mx - b->_width > PREC) b = sptr<Box>(new HorizontalBox(b, mx, Alignment::center));
 
-  del = sptr<Box>(new VerticalBox(del, mx, ALIGN_CENTER));
+  del = sptr<Box>(new VerticalBox(del, mx, Alignment::center));
   if (sb != nullptr && mx - sb->_width > PREC)
-    sb = sptr<Box>(new HorizontalBox(sb, mx, ALIGN_CENTER));
+    sb = sptr<Box>(new HorizontalBox(sb, mx, Alignment::center));
 
   return sptr<Box>(new OverUnderBox(b, del, sb, _kern.createBox(env)->_height, _over));
 }

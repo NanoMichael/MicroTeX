@@ -1,9 +1,9 @@
 #ifndef BOX_H_INCLUDED
 #define BOX_H_INCLUDED
 
-#include "atom/atom.h"
-
 #include <stack>
+
+#include "atom/atom.h"
 
 namespace tex {
 
@@ -75,7 +75,7 @@ public:
 
   HorizontalBox(color fg, color bg) : Box(fg, bg) {}
 
-  HorizontalBox(const sptr<Box>& b, float w, int alignment);
+  HorizontalBox(const sptr<Box>& b, float w, Alignment alignment);
 
   HorizontalBox(const sptr<Box>& b);
 
@@ -114,7 +114,7 @@ private:
 public:
   VerticalBox() : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {}
 
-  VerticalBox(const sptr<Box>& b, float rest, int alignment);
+  VerticalBox(const sptr<Box>& b, float rest, Alignment alignment);
 
   void add(const sptr<Box>& b) override;
 
@@ -174,7 +174,7 @@ public:
    *      false : under the base box
    */
   OverUnderBox(
-      const sptr<Box>& base, const sptr<Box>& del, const sptr<Box>& script, float kern, bool over);
+    const sptr<Box>& base, const sptr<Box>& del, const sptr<Box>& script, float kern, bool over);
 
   void draw(Graphics2D& g2, float x, float y) override;
 
@@ -376,9 +376,9 @@ public:
   OvalBox() = delete;
 
   OvalBox(
-      const sptr<FramedBox>& fbox,
-      float multiplier = 0.5f,
-      float diameter = 0.f)
+    const sptr<FramedBox>& fbox,
+    float multiplier = 0.5f,
+    float diameter = 0.f)
       : FramedBox(fbox->_box, fbox->_thickness, fbox->_space),
         _multiplier(multiplier),
         _diameter(diameter) {}
@@ -531,15 +531,15 @@ public:
     _width = _base->_width;
   }
 
-  WrapperBox(const sptr<Box>& base, float width, float rowheight, float rowdepth, float align)
+  WrapperBox(const sptr<Box>& base, float width, float rowheight, float rowdepth, Alignment align)
       : _base(base), _l(0) {
     _height = rowheight;
     _depth = rowdepth;
     _width = width;
     if (base->_width < 0) _width += base->_width;
-    if (align == ALIGN_RIGHT) {
+    if (align == Alignment::right) {
       _l = width - _base->_width;
-    } else if (align == ALIGN_CENTER) {
+    } else if (align == Alignment::center) {
       _l = (width - _base->_width) / 2.f;
     }
   }

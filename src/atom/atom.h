@@ -109,7 +109,7 @@ protected:
     _background = trans;
     _prevColor = trans;
     _width = _height = _depth = _shift = 0;
-    _type = -1;
+    _type = AtomType::none;
   }
 
 public:

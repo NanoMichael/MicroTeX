@@ -137,7 +137,7 @@ private:
   static SpaceAtom _align;
 
   sptr<ArrayOfAtoms> _matrix;
-  std::vector<int> _position;
+  std::vector<Alignment> _position;
   std::map<int, sptr<VlineAtom>> _vlines;
   std::map<int, sptr<Atom>> _columnSpecifiers;
 
@@ -145,7 +145,7 @@ private:
   bool _ispartial;
   bool _spaceAround;
 
-  void parsePositions(std::wstring opt, _out_ std::vector<int>& lpos);
+  void parsePositions(std::wstring opt, std::vector<Alignment>& lpos);
 
   sptr<Box> generateMulticolumn(
     _out_ TeXEnvironment& env,
@@ -196,9 +196,9 @@ public:
     bool ispar,
     const sptr<ArrayOfAtoms>& arr,
     int type,
-    int align);
+    Alignment align);
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   static void defineColumnSpecifier(const std::wstring& rep, const std::wstring& spe);
 
@@ -363,7 +363,7 @@ public:
       y = cedilla;
     }
 
-    Box* ce = new HorizontalBox(sptr<Box>(y), b->_width, ALIGN_CENTER);
+    Box* ce = new HorizontalBox(sptr<Box>(y), b->_width, Alignment::center);
     float x = 0.4f * SpaceAtom::getFactor(UNIT_MU, env);
     vb->add(sptr<Box>(new StrutBox(0, -x, 0, 0)));
     vb->add(sptr<Box>(ce));
@@ -385,9 +385,9 @@ public:
     auto ldots = TeXFormula::get(L"ldots")->_root->createBox(env);
     float w = ldots->_width;
     auto dot = SymbolAtom::get("ldotp")->createBox(env);
-    HorizontalBox* hb1 = new HorizontalBox(dot, w, ALIGN_LEFT);
-    HorizontalBox* hb2 = new HorizontalBox(dot, w, ALIGN_CENTER);
-    HorizontalBox* hb3 = new HorizontalBox(dot, w, ALIGN_RIGHT);
+    HorizontalBox* hb1 = new HorizontalBox(dot, w, Alignment::left);
+    HorizontalBox* hb2 = new HorizontalBox(dot, w, Alignment::center);
+    HorizontalBox* hb3 = new HorizontalBox(dot, w, Alignment::right);
     sptr<Box> pt4(SpaceAtom(UNIT_MU, 0, 4, 0).createBox(env));
     VerticalBox* vb = new VerticalBox();
     vb->add(sptr<Box>(hb1));
@@ -554,7 +554,7 @@ private:
   // unit used for the thickness of the fraction line
   int _unit;
   // alignment settings for the numerator and denominator
-  int _numAlign, _denomAlign;
+  Alignment _numAlign, _denomAlign;
   // the atoms representing the numerator and denominator
   sptr<Atom> _numerator, _denominator;
   // thickness of the fraction line
@@ -564,9 +564,9 @@ private:
   // whether the def-factor value should be used
   bool _deffactorset;
 
-  inline int checkAlign(int align) {
-    if (align == ALIGN_LEFT || align == ALIGN_RIGHT) return align;
-    return ALIGN_CENTER;
+  inline Alignment checkAlign(Alignment align) {
+    if (align == Alignment::left || align == Alignment::right) return align;
+    return Alignment::center;
   }
 
   void init(
@@ -598,14 +598,18 @@ public:
   }
 
   FractionAtom(
-    const sptr<Atom>& num, const sptr<Atom>& den, bool rule, int numAlign, int denomAlign) {
+    const sptr<Atom>& num, const sptr<Atom>& den, bool rule,
+    Alignment numAlign, Alignment denomAlign  //
+  ) {
     init(num, den, !rule, UNIT_PIXEL, 0.f);
     _numAlign = checkAlign(numAlign);
     _denomAlign = checkAlign(denomAlign);
   }
 
   FractionAtom(
-    const sptr<Atom>& num, const sptr<Atom>& den, float deffactor, int numAlign, int denomAlign) {
+    const sptr<Atom>& num, const sptr<Atom>& den, float deffactor,
+    Alignment numAlign, Alignment denomAlign  //
+  ) {
     init(num, den, false, UNIT_PIXEL, 0.f);
     _numAlign = checkAlign(numAlign);
     _denomAlign = checkAlign(denomAlign);
@@ -614,7 +618,9 @@ public:
   }
 
   FractionAtom(
-    const sptr<Atom>& num, const sptr<Atom>& den, int unit, float t, int numAlign, int denomAlign) {
+    const sptr<Atom>& num, const sptr<Atom>& den, int unit, float t,
+    Alignment numAlign, Alignment denomAlign  //
+  ) {
     init(num, den, true, unit, t);
     _numAlign = checkAlign(numAlign);
     _denomAlign = checkAlign(denomAlign);
@@ -636,13 +642,13 @@ class MulticolumnAtom : public Atom {
 protected:
   // Number of columns across
   int _n;
-  int _align;
+  Alignment _align;
   float _w;
   int _beforeVlines, _afterVlines;
   int _row, _col;
   sptr<Atom> _cols;
 
-  int parseAlign(const std::string& str);
+  Alignment parseAlign(const std::string& str);
 
 public:
   MulticolumnAtom() = delete;
@@ -679,7 +685,7 @@ public:
     _col = j;
   }
 
-  inline int getAlign() {
+  inline Alignment getAlign() {
     return _align;
   }
 
@@ -732,9 +738,9 @@ public:
     auto ldots = TeXFormula::get(L"ldots")->_root->createBox(env);
     float w = ldots->_width;
     auto dot = SymbolAtom::get("ldotp")->createBox(env);
-    sptr<Box> hb1(new HorizontalBox(dot, w, ALIGN_RIGHT));
-    sptr<Box> hb2(new HorizontalBox(dot, w, ALIGN_CENTER));
-    sptr<Box> hb3(new HorizontalBox(dot, w, ALIGN_LEFT));
+    sptr<Box> hb1(new HorizontalBox(dot, w, Alignment::right));
+    sptr<Box> hb2(new HorizontalBox(dot, w, Alignment::center));
+    sptr<Box> hb3(new HorizontalBox(dot, w, Alignment::left));
     sptr<Box> pt4 = SpaceAtom(UNIT_MU, 0, 4, 0).createBox(env);
     VerticalBox* vb = new VerticalBox();
     vb->add(hb1);
@@ -933,7 +939,7 @@ public:
       y = ogonek;
     }
 
-    Box* og = new HorizontalBox(sptr<Box>(y), b->_width, ALIGN_RIGHT);
+    Box* og = new HorizontalBox(sptr<Box>(y), b->_width, Alignment::right);
     vb->add(sptr<Box>(new StrutBox(0, -ogonek->_height, 0, 0)));
     vb->add(sptr<Box>(og));
     float f = vb->_height + vb->_depth;
@@ -1294,7 +1300,7 @@ public:
     auto circle = SymbolAtom::get("bigcirc")->createBox(env);
     circle->_shift = -0.07f * SpaceAtom::getFactor(UNIT_EX, env);
     auto box = _at->createBox(env);
-    HorizontalBox* hb = new HorizontalBox(box, circle->_width, ALIGN_CENTER);
+    HorizontalBox* hb = new HorizontalBox(box, circle->_width, Alignment::center);
     hb->add(sptr<Box>(new StrutBox(-hb->_width, 0, 0, 0)));
     hb->add(circle);
     return sptr<Box>(hb);
@@ -1353,7 +1359,7 @@ public:
     } else {
       y = B;
     }
-    Box* b = new HorizontalBox(sptr<Box>(y), T->_width, ALIGN_CENTER);
+    Box* b = new HorizontalBox(sptr<Box>(y), T->_width, Alignment::center);
     VerticalBox* vb = new VerticalBox();
     vb->add(sptr<Box>(T));
     vb->add(sptr<Box>(new StrutBox(0, -0.5f * T->_width, 0, 0)));
@@ -1490,7 +1496,7 @@ class VdotsAtom : public Atom {
 public:
   sptr<Box> createBox(_out_ TeXEnvironment& env) override {
     auto dot = SymbolAtom::get("ldotp")->createBox(env);
-    VerticalBox* vb = new VerticalBox(dot, 0, ALIGN_BOTTOM);
+    VerticalBox* vb = new VerticalBox(dot, 0, Alignment::bottom);
     auto b = SpaceAtom(UNIT_MU, 0, 4, 0).createBox(env);
     vb->add(b);
     vb->add(dot);
