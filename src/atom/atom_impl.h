@@ -104,7 +104,7 @@ public:
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override {
     auto b = _rows->createBox(env);
-    b->_type = TYPE_MULTIROW;
+    b->_type = AtomType::multiRow;
     return b;
   }
 
@@ -148,21 +148,21 @@ private:
   void parsePositions(std::wstring opt, _out_ std::vector<int>& lpos);
 
   sptr<Box> generateMulticolumn(
-      _out_ TeXEnvironment& env,
-      const sptr<Box>& b,
-      const float* hsep,
-      const float* colWidth,
-      int i,
-      int j);
+    _out_ TeXEnvironment& env,
+    const sptr<Box>& b,
+    const float* hsep,
+    const float* colWidth,
+    int i,
+    int j);
 
   void recalculateLine(
-      const int rows,
-      sptr<Box>** boxarr,
-      std::vector<sptr<Atom>>& multiRows,
-      float* height,
-      float* depth,
-      float drt,
-      float vspace);
+    const int rows,
+    sptr<Box>** boxarr,
+    std::vector<sptr<Atom>>& multiRows,
+    float* height,
+    float* depth,
+    float drt,
+    float vspace);
 
   float* getColumnSep(_out_ TeXEnvironment& env, float width);
 
@@ -177,26 +177,26 @@ public:
   MatrixAtom() = delete;
 
   MatrixAtom(
-      bool ispar,
-      const sptr<ArrayOfAtoms>& arr,
-      const std::wstring& options,
-      bool spaceAround);
+    bool ispar,
+    const sptr<ArrayOfAtoms>& arr,
+    const std::wstring& options,
+    bool spaceAround);
 
   MatrixAtom(
-      bool ispar,
-      const sptr<ArrayOfAtoms>& arr,
-      const std::wstring& options);
+    bool ispar,
+    const sptr<ArrayOfAtoms>& arr,
+    const std::wstring& options);
 
   MatrixAtom(
-      bool ispar,
-      const sptr<ArrayOfAtoms>& arr,
-      int type);
+    bool ispar,
+    const sptr<ArrayOfAtoms>& arr,
+    int type);
 
   MatrixAtom(
-      bool ispar,
-      const sptr<ArrayOfAtoms>& arr,
-      int type,
-      int align);
+    bool ispar,
+    const sptr<ArrayOfAtoms>& arr,
+    int type,
+    int align);
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
@@ -456,7 +456,7 @@ public:
     float space = INTERSPACE * SpaceAtom::getFactor(UNIT_EM, env);
     float sspace = 1.5f * drt + 0.5f * SpaceAtom::getFactor(UNIT_POINT, env);
     return sptr<Box>(new FramedBox(
-        sptr<Box>(new FramedBox(bbase, 0.75 * drt, space)), 1.5f * drt, sspace));
+      sptr<Box>(new FramedBox(bbase, 0.75 * drt, space)), 1.5f * drt, sspace));
   }
 
   __decl_clone(DoubleFramedAtom)
@@ -527,21 +527,17 @@ public:
   }
 
   FencedAtom(
-      const sptr<Atom>& b,
-      const sptr<SymbolAtom>& l,
-      const std::list<sptr<MiddleAtom>>& m,
-      const sptr<SymbolAtom>& r) {
+    const sptr<Atom>& b,
+    const sptr<SymbolAtom>& l,
+    const std::list<sptr<MiddleAtom>>& m,
+    const sptr<SymbolAtom>& r) {
     init(b, l, r);
     _middle = m;
   }
 
-  int getLeftType() const override {
-    return TYPE_INNER;
-  }
+  AtomType leftType() const override { return AtomType::inner; }
 
-  int getRightType() const override {
-    return TYPE_INNER;
-  }
+  AtomType rightType() const override { return AtomType::inner; }
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override;
 
@@ -574,11 +570,11 @@ private:
   }
 
   void init(
-      const sptr<Atom>& num,
-      const sptr<Atom>& den,
-      bool nodef,
-      int unit,
-      float t);
+    const sptr<Atom>& num,
+    const sptr<Atom>& den,
+    bool nodef,
+    int unit,
+    float t);
 
 public:
   /**
@@ -597,19 +593,19 @@ public:
   }
 
   FractionAtom(
-      const sptr<Atom>& num, const sptr<Atom>& den, bool nodef, int unit, float t) {
+    const sptr<Atom>& num, const sptr<Atom>& den, bool nodef, int unit, float t) {
     init(num, den, nodef, unit, t);
   }
 
   FractionAtom(
-      const sptr<Atom>& num, const sptr<Atom>& den, bool rule, int numAlign, int denomAlign) {
+    const sptr<Atom>& num, const sptr<Atom>& den, bool rule, int numAlign, int denomAlign) {
     init(num, den, !rule, UNIT_PIXEL, 0.f);
     _numAlign = checkAlign(numAlign);
     _denomAlign = checkAlign(denomAlign);
   }
 
   FractionAtom(
-      const sptr<Atom>& num, const sptr<Atom>& den, float deffactor, int numAlign, int denomAlign) {
+    const sptr<Atom>& num, const sptr<Atom>& den, float deffactor, int numAlign, int denomAlign) {
     init(num, den, false, UNIT_PIXEL, 0.f);
     _numAlign = checkAlign(numAlign);
     _denomAlign = checkAlign(denomAlign);
@@ -618,7 +614,7 @@ public:
   }
 
   FractionAtom(
-      const sptr<Atom>& num, const sptr<Atom>& den, int unit, float t, int numAlign, int denomAlign) {
+    const sptr<Atom>& num, const sptr<Atom>& den, int unit, float t, int numAlign, int denomAlign) {
     init(num, den, true, unit, t);
     _numAlign = checkAlign(numAlign);
     _denomAlign = checkAlign(denomAlign);
@@ -708,9 +704,9 @@ private:
   float _coeff;
 
   sptr<Box> createBox(
-      float space,
-      const sptr<Box>& b,
-      _out_ TeXEnvironment& env);
+    float space,
+    const sptr<Box>& b,
+    _out_ TeXEnvironment& env);
 
 public:
   HdotsforAtom() = delete;
@@ -771,9 +767,9 @@ public:
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override {
     CharBox* I = new CharBox(
-        env.getTeXFont()->getChar(_upper ? 'I' : 'i', "mathnormal", env.getStyle()));
+      env.getTeXFont()->getChar(_upper ? 'I' : 'i', "mathnormal", env.getStyle()));
     CharBox* J = new CharBox(
-        env.getTeXFont()->getChar(_upper ? 'J' : 'j', "mathnormal", env.getStyle()));
+      env.getTeXFont()->getChar(_upper ? 'J' : 'j', "mathnormal", env.getStyle()));
     HorizontalBox* hb = new HorizontalBox(sptr<Box>(I));
     hb->add(SpaceAtom(UNIT_EM, -0.065f, 0, 0).createBox(env));
     hb->add(sptr<Box>(J));
@@ -872,9 +868,9 @@ public:
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override {
     CharBox* A = new CharBox(
-        env.getTeXFont()->getChar("textapos", env.getStyle()));
+      env.getTeXFont()->getChar("textapos", env.getStyle()));
     CharBox* L = new CharBox(
-        env.getTeXFont()->getChar(_upper ? 'L' : 'l', "mathnormal", env.getStyle()));
+      env.getTeXFont()->getChar(_upper ? 'L' : 'l', "mathnormal", env.getStyle()));
     HorizontalBox* hb = new HorizontalBox(sptr<Box>(L));
     if (_upper)
       hb->add(SpaceAtom(UNIT_EM, -0.3f, 0, 0).createBox(env));
@@ -960,7 +956,7 @@ public:
   OverlinedAtom() = delete;
 
   OverlinedAtom(const sptr<Atom>& f) : _base(f) {
-    _type = TYPE_ORDINARY;
+    _type = AtomType::ordinary;
   }
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override {
@@ -993,13 +989,9 @@ public:
   RaiseAtom(const sptr<Atom>& base, int ru, float r, int hu, float h, int du, float d)
       : _base(base), _ru(ru), _r(r), _hu(hu), _h(h), _du(du), _d(d) {}
 
-  int getLeftType() const override {
-    return _base->getLeftType();
-  }
+  AtomType leftType() const override { return _base->leftType(); }
 
-  int getRightType() const override {
-    return _base->getRightType();
-  }
+  AtomType rightType() const override { return _base->rightType(); }
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override {
     auto bbox = _base->createBox(env);
@@ -1069,13 +1061,9 @@ public:
     _h = h.second;
   }
 
-  int getLeftType() const override {
-    return _base->getLeftType();
-  }
+  AtomType leftType() const override { return _base->leftType(); }
 
-  int getRightType() const override {
-    return _base->getRightType();
-  }
+  AtomType rightType() const override { return _base->rightType(); }
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override {
     auto bbox = _base->createBox(env);
@@ -1410,7 +1398,7 @@ public:
   UnderlinedAtom() = delete;
 
   UnderlinedAtom(const sptr<Atom>& f) : _base(f) {
-    _type = TYPE_ORDINARY;
+    _type = AtomType::ordinary;
   }
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override {

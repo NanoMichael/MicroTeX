@@ -602,7 +602,7 @@ sptr<Atom> TeXParser::getScripts(wchar_t f) {
     return atom;
   }
 
-  if (atom->getRightType() == TYPE_BIG_OPERATOR)
+  if (atom->getRightType() == AtomType::bigOperator)
     return sptr<Atom>(new BigOperatorAtom(atom, first, second));
 
   OverUnderDelimiter* del = dynamic_cast<OverUnderDelimiter*>(atom.get());
@@ -867,7 +867,7 @@ void TeXParser::parse() {
       } break;
       case L_GROUP: {
         auto atom = getArgument();
-        if (atom != nullptr) atom->_type = TYPE_ORDINARY;
+        if (atom != nullptr) atom->_type = AtomType::ordinary;
         _formula->add(atom);
       } break;
       case R_GROUP: {

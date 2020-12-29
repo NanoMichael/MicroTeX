@@ -156,7 +156,7 @@ public:
   /**
    * The box type (default = -1, no type)
    */
-  int _type;
+  AtomType _type = AtomType::none;
 
   /**
    * Children of this box
@@ -254,11 +254,11 @@ public:
 class Atom {
 public:
   /** The type of the atom (default value: ordinary atom) */
-  AtomType type = AtomType::ordinary;
+  AtomType _type = AtomType::ordinary;
   /** The limits type of the atom (default value: nolimits) */
-  LimitsType limitsType = LimitsType::noLimits;
+  LimitsType _limitsType = LimitsType::noLimits;
   /** The alignment type of the atom (default value: none) */
-  Alignment alignment = Alignment::none;
+  Alignment _alignment = Alignment::none;
 
   Atom() {}
 
@@ -271,7 +271,7 @@ public:
    *
    * @return the type of the leftermost child atom
    */
-  virtual AtomType leftType() const { return type; }
+  virtual AtomType leftType() const { return _type; }
 
   /**
    * Get the type of the rightermost child atom. Most atoms have no child
@@ -282,7 +282,7 @@ public:
    *
    * @return the type of the rightermost child atom
    */
-  virtual AtomType rightType() const { return type; }
+  virtual AtomType rightType() const { return _type; }
 
   /**
    * Convert this atom into a {@link Box}, using properties set by "parent"

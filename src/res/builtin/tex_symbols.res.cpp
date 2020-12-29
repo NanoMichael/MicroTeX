@@ -6,14 +6,14 @@
 #define del(type, name) \
   { #name, sptr < SymbolAtom>(new SymbolAtom(#name, type, true)) }
 
-#define ord   TYPE_ORDINARY
-#define rel   TYPE_RELATION
-#define acc   TYPE_ACCENT
-#define bin   TYPE_BINARY_OPERATOR
-#define op    TYPE_BIG_OPERATOR
-#define open  TYPE_OPENING
-#define close TYPE_CLOSING
-#define punct TYPE_PUNCTUATION
+#define ord   AtomType::ordinary
+#define rel   AtomType::relation
+#define acc   AtomType::accent
+#define bin   AtomType::binaryOperator
+#define op    AtomType::bigOperator
+#define open  AtomType::opening
+#define close AtomType::closing
+#define punct AtomType::punctuation
 
 using namespace std;
 using namespace tex;

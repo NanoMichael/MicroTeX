@@ -42,6 +42,11 @@ enum TeXConstants {
 
   QUAD = 3,
 
+  /****************************** script display type constants *********************************/
+  SCRIPT_NORMAL = 0,
+  SCRIPT_NOLIMITS,
+  SCRIPT_LIMITS,
+
   /****************************** over and under delimiter type constants ***********************/
   DELIM_BRACE = 0,
   DELIM_SQUARE_BRACKET,

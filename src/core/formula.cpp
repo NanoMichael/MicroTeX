@@ -152,7 +152,7 @@ TeXFormula* TeXFormula::add(const sptr<Atom>& el) {
   TypedAtom* ta = dynamic_cast<TypedAtom*>(el.get());
   if (ta != nullptr) {
     int rt = ta->getRightType();
-    if (rt == TYPE_BINARY_OPERATOR || rt == TYPE_RELATION)
+    if (rt == AtomType::binaryOperator || rt == AtomType::relation)
       rm->add(sptr<Atom>(new BreakMarkAtom()));
   }
   return this;
@@ -344,7 +344,7 @@ void ArrayOfAtoms::checkDimensions() {
     size_t j = _array[i].size();
     if (j != _col &&
         _array[i][0] != nullptr &&
-        _array[i][0]->_type != TYPE_INTERTEXT) {
+        _array[i][0]->_type != AtomType::interText) {
       // Fill the row with null atom
       vector<sptr<Atom>>& r = _array[i];
       for (; j < _col; j++) r.push_back(nullptr);
