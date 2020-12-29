@@ -10,14 +10,14 @@ const std::string TeXSymbolParser::DELIMITER_ATTR = "del";
 const std::string TeXSymbolParser::TYPE_ATTR = "type";
 
 const std::map<std::string, int> TeXSymbolParser::_typeMappings = {
-    {"ord", TYPE_ORDINARY},
-    {"op", TYPE_BIG_OPERATOR},
-    {"bin", TYPE_BINARY_OPERATOR},
-    {"rel", TYPE_RELATION},
-    {"open", TYPE_OPENING},
-    {"close", TYPE_CLOSING},
-    {"punct", TYPE_PUNCTUATION},
-    {"acc", TYPE_ACCENT}};
+    {"ord", AtomType::ordinary},
+    {"op", AtomType::bigOperator},
+    {"bin", AtomType::binaryOperator},
+    {"rel", AtomType::relation},
+    {"open", AtomType::opening},
+    {"close", AtomType::closing},
+    {"punct", AtomType::punctuation},
+    {"acc", AtomType::accent}};
 
 std::string TeXSymbolParser::getAttr(const char* attr, const XMLElement* e) {
   const char* x = e->Attribute(attr);

@@ -168,8 +168,8 @@ inline sptr<Atom> _macro_choose(
   if (num == nullptr || den == nullptr)
     throw ex_parse("Both numerator and denominator of choos can't be empty!");
   sptr<Atom> f(new FractionAtom(num, den, false));
-  sptr<SymbolAtom> l(new SymbolAtom(left, TYPE_OPENING, true));
-  sptr<SymbolAtom> r(new SymbolAtom(right, TYPE_CLOSING, true));
+  sptr<SymbolAtom> l(new SymbolAtom(left, AtomType::opening, true));
+  sptr<SymbolAtom> r(new SymbolAtom(right, AtomType::closing, true));
   return sptr<Atom>(new FencedAtom(f, l, r));
 }
 
@@ -216,8 +216,8 @@ inline macro(binom) {
   if (num._root == nullptr || den._root == nullptr)
     throw ex_parse("Both binomial coefficients must be not empty!");
   sptr<Atom> f(new FractionAtom(num._root, den._root, false));
-  sptr<SymbolAtom> s1(new SymbolAtom("lbrack", TYPE_OPENING, true));
-  sptr<SymbolAtom> s2(new SymbolAtom("rbrack", TYPE_CLOSING, true));
+  sptr<SymbolAtom> s1(new SymbolAtom("lbrack", AtomType::opening, true));
+  sptr<SymbolAtom> s2(new SymbolAtom("rbrack", AtomType::closing, true));
   return sptr<Atom>(new FencedAtom(f, s1, s2));
 }
 
@@ -351,7 +351,7 @@ inline macro(prescript) {
       p, TeXFormula(tp, args[2])._root, TeXFormula(tp, args[1])._root, false));
   tp.addAtom(s);
   tp.addAtom(sptr<Atom>(new SpaceAtom(UNIT_MU, -0.3f, 0, 0)));
-  return sptr<Atom>(new TypedAtom(TYPE_ORDINARY, TYPE_ORDINARY, base));
+  return sptr<Atom>(new TypedAtom(AtomType::ordinary, AtomType::ordinary, base));
 }
 
 inline macro(underbrace) {
@@ -424,49 +424,49 @@ inline macro(underline) {
 
 inline macro(mathop) {
   sptr<TypedAtom> a(new TypedAtom(
-      TYPE_BIG_OPERATOR, TYPE_BIG_OPERATOR, TeXFormula(tp, args[1], false)._root));
+      AtomType::bigOperator, AtomType::bigOperator, TeXFormula(tp, args[1], false)._root));
   a->_typelimits = SCRIPT_NORMAL;
   return a;
 }
 
 inline macro(mathpunct) {
   return sptr<Atom>(new TypedAtom(
-      TYPE_PUNCTUATION, TYPE_PUNCTUATION, TeXFormula(tp, args[1], false)._root));
+      AtomType::punctuation, AtomType::punctuation, TeXFormula(tp, args[1], false)._root));
 }
 
 inline macro(mathord) {
   return sptr<Atom>(new TypedAtom(
-      TYPE_ORDINARY, TYPE_ORDINARY, TeXFormula(tp, args[1], false)._root));
+      AtomType::ordinary, AtomType::ordinary, TeXFormula(tp, args[1], false)._root));
 }
 
 inline macro(mathrel) {
   return sptr<Atom>(new TypedAtom(
-      TYPE_RELATION, TYPE_RELATION, TeXFormula(tp, args[1], false)._root));
+      AtomType::relation, AtomType::relation, TeXFormula(tp, args[1], false)._root));
 }
 
 inline macro(mathinner) {
   return sptr<Atom>(new TypedAtom(
-      TYPE_INNER, TYPE_INNER, TeXFormula(tp, args[1], false)._root));
+      AtomType::inner, AtomType::inner, TeXFormula(tp, args[1], false)._root));
 }
 
 inline macro(mathbin) {
   return sptr<Atom>(new TypedAtom(
-      TYPE_BINARY_OPERATOR, TYPE_BINARY_OPERATOR, TeXFormula(tp, args[1], false)._root));
+      AtomType::binaryOperator, AtomType::binaryOperator, TeXFormula(tp, args[1], false)._root));
 }
 
 inline macro(mathopen) {
   return sptr<Atom>(new TypedAtom(
-      TYPE_OPENING, TYPE_OPENING, TeXFormula(tp, args[1], false)._root));
+      AtomType::opening, AtomType::opening, TeXFormula(tp, args[1], false)._root));
 }
 
 inline macro(mathclose) {
   return sptr<Atom>(new TypedAtom(
-      TYPE_CLOSING, TYPE_CLOSING, TeXFormula(tp, args[1], false)._root));
+      AtomType::closing, AtomType::closing, TeXFormula(tp, args[1], false)._root));
 }
 
 inline macro(joinrel) {
   return sptr<Atom>(new TypedAtom(
-      TYPE_RELATION, TYPE_RELATION, sptr<Atom>(new SpaceAtom(UNIT_MU, -2.6f, 0, 0))));
+      AtomType::relation, AtomType::relation, sptr<Atom>(new SpaceAtom(UNIT_MU, -2.6f, 0, 0))));
 }
 
 inline macro(smash) {
@@ -481,12 +481,12 @@ inline macro(vdots) {
 
 inline macro(ddots) {
   return sptr<Atom>(new TypedAtom(
-      TYPE_INNER, TYPE_INNER, sptr<Atom>(new DdtosAtom())));
+      AtomType::inner, AtomType::inner, sptr<Atom>(new DdtosAtom())));
 }
 
 inline macro(iddots) {
   return sptr<Atom>(new TypedAtom(
-      TYPE_INNER, TYPE_INNER, sptr<Atom>(new IddotsAtom())));
+      AtomType::inner, AtomType::inner, sptr<Atom>(new IddotsAtom())));
 }
 
 inline macro(leftparenthesis) {
@@ -712,7 +712,7 @@ inline macro(questeq) {
   auto quest = SymbolAtom::get(TeXFormula::_symbolMappings['?']);
   auto sq = sptr<Atom>(new ScaleAtom(quest, 0.75f));
   auto at = sptr<Atom>(new UnderOverAtom(eq, sq, UNIT_MU, 2.5f, true, true));
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, at));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, at));
 }
 
 inline macro(stackrel) {
@@ -726,7 +726,7 @@ inline macro(stackrel) {
       UNIT_MU,
       2.5f,
       true));
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, a));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, a));
 }
 
 inline macro(stackbin) {
@@ -740,7 +740,7 @@ inline macro(stackbin) {
       UNIT_MU,
       2.5f,
       true));
-  return sptr<Atom>(new TypedAtom(TYPE_BINARY_OPERATOR, TYPE_BINARY_OPERATOR, a));
+  return sptr<Atom>(new TypedAtom(AtomType::binaryOperator, AtomType::binaryOperator, a));
 }
 
 inline macro(overset) {
@@ -751,7 +751,7 @@ inline macro(overset) {
       2.5f,
       true,
       true));
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, a));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, a));
 }
 
 inline macro(underset) {
@@ -762,7 +762,7 @@ inline macro(underset) {
       0.5f,
       true,
       false));
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, a));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, a));
 }
 
 inline macro(accentset) {
@@ -873,21 +873,21 @@ inline macro(bigg) { return _macro_big(tp, args, 3); }
 
 inline macro(Bigg) { return _macro_big(tp, args, 4); }
 
-inline macro(bigl) { return _macro_big(tp, args, 1, TYPE_OPENING); }
+inline macro(bigl) { return _macro_big(tp, args, 1, AtomType::opening); }
 
-inline macro(Bigl) { return _macro_big(tp, args, 2, TYPE_OPENING); }
+inline macro(Bigl) { return _macro_big(tp, args, 2, AtomType::opening); }
 
-inline macro(biggl) { return _macro_big(tp, args, 3, TYPE_OPENING); }
+inline macro(biggl) { return _macro_big(tp, args, 3, AtomType::opening); }
 
-inline macro(Biggl) { return _macro_big(tp, args, 4, TYPE_OPENING); }
+inline macro(Biggl) { return _macro_big(tp, args, 4, AtomType::opening); }
 
-inline macro(bigr) { return _macro_big(tp, args, 1, TYPE_CLOSING); }
+inline macro(bigr) { return _macro_big(tp, args, 1, AtomType::closing); }
 
-inline macro(Bigr) { return _macro_big(tp, args, 2, TYPE_CLOSING); }
+inline macro(Bigr) { return _macro_big(tp, args, 2, AtomType::closing); }
 
-inline macro(biggr) { return _macro_big(tp, args, 3, TYPE_CLOSING); }
+inline macro(biggr) { return _macro_big(tp, args, 3, AtomType::closing); }
 
-inline macro(Biggr) { return _macro_big(tp, args, 4, TYPE_CLOSING); }
+inline macro(Biggr) { return _macro_big(tp, args, 4, AtomType::closing); }
 
 inline macro(displaystyle) {
   auto g = TeXFormula(tp, tp.getOverArgument(), false)._root;
@@ -997,14 +997,14 @@ inline macro(cong) {
   vra->add(sptr<Atom>(new SpaceAtom(UNIT_MU, 0, 1.5f, 0)));
   vra->add(SymbolAtom::get("sim"));
   vra->setRaise(UNIT_MU, -1);
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(vra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(vra)));
 }
 
 inline macro(doteq) {
   auto e = SymbolAtom::get("equals");
   auto l = SymbolAtom::get("ldotp");
   sptr<Atom> u(new UnderOverAtom(e, l, UNIT_MU, 3.7f, false, true));
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, u));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, u));
 }
 
 inline macro(externalfont) {
@@ -1067,7 +1067,7 @@ inline macro(dotminus) {
       -3.3f,
       false,
       true));
-  return sptr<Atom>(new TypedAtom(TYPE_BINARY_OPERATOR, TYPE_BINARY_OPERATOR, a));
+  return sptr<Atom>(new TypedAtom(AtomType::binaryOperator, AtomType::binaryOperator, a));
 }
 
 inline macro(ratio) {
@@ -1078,7 +1078,7 @@ inline macro(ratio) {
       5.2f,
       false,
       true));
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, a));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, a));
 }
 
 inline macro(geoprop) {
@@ -1095,7 +1095,7 @@ inline macro(geoprop) {
       UNIT_MU,
       -3.4f,
       false));
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, a));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, a));
 }
 
 inline macro(minuscolon) {
@@ -1109,7 +1109,7 @@ inline macro(minuscolon) {
       false,
       true));
   ra->add(colon);
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(ra)));
 }
 
 inline macro(minuscoloncolon) {
@@ -1124,7 +1124,7 @@ inline macro(minuscoloncolon) {
       true));
   ra->add(colon);
   ra->add(colon);
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(ra)));
 }
 
 inline macro(simcolon) {
@@ -1138,7 +1138,7 @@ inline macro(simcolon) {
       false,
       true));
   ra->add(colon);
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(ra)));
 }
 
 inline macro(simcoloncolon) {
@@ -1153,7 +1153,7 @@ inline macro(simcoloncolon) {
       true));
   ra->add(colon);
   ra->add(colon);
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(ra)));
 }
 
 inline macro(approxcolon) {
@@ -1167,7 +1167,7 @@ inline macro(approxcolon) {
       false,
       true));
   ra->add(colon);
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(ra)));
 }
 
 inline macro(approxcoloncolon) {
@@ -1182,7 +1182,7 @@ inline macro(approxcoloncolon) {
       true));
   ra->add(colon);
   ra->add(colon);
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(ra)));
 }
 
 inline macro(equalscolon) {
@@ -1196,7 +1196,7 @@ inline macro(equalscolon) {
       false,
       true));
   ra->add(colon);
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(ra)));
 }
 
 inline macro(equalscoloncolon) {
@@ -1211,7 +1211,7 @@ inline macro(equalscoloncolon) {
       true));
   ra->add(colon);
   ra->add(colon);
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(ra)));
 }
 
 inline macro(colonminus) {
@@ -1225,7 +1225,7 @@ inline macro(colonminus) {
   RowAtom* ra = new RowAtom(u);
   ra->add(sptr<Atom>(new SpaceAtom(UNIT_EM, -0.32f, 0, 0)));
   ra->add(SymbolAtom::get("minus"));
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(ra)));
 }
 
 inline macro(coloncolonminus) {
@@ -1240,7 +1240,7 @@ inline macro(coloncolonminus) {
   ra->add(u);
   ra->add(sptr<Atom>(new SpaceAtom(UNIT_EM, -0.32f, 0, 0)));
   ra->add(SymbolAtom::get("minus"));
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(ra)));
 }
 
 inline macro(colonequals) {
@@ -1254,7 +1254,7 @@ inline macro(colonequals) {
   RowAtom* ra = new RowAtom(u);
   ra->add(sptr<Atom>(new SpaceAtom(UNIT_EM, -0.32f, 0, 0)));
   ra->add(SymbolAtom::get("equals"));
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(ra)));
 }
 
 inline macro(coloncolonequals) {
@@ -1269,7 +1269,7 @@ inline macro(coloncolonequals) {
   ra->add(u);
   ra->add(sptr<Atom>(new SpaceAtom(UNIT_EM, -0.32f, 0, 0)));
   ra->add(SymbolAtom::get("equals"));
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(ra)));
 }
 
 inline macro(coloncolon) {
@@ -1282,7 +1282,7 @@ inline macro(coloncolon) {
       true));
   RowAtom* ra = new RowAtom(u);
   ra->add(u);
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(ra)));
 }
 
 inline macro(colonsim) {
@@ -1296,7 +1296,7 @@ inline macro(colonsim) {
   RowAtom* ra = new RowAtom(u);
   ra->add(sptr<Atom>(new SpaceAtom(UNIT_EM, -0.32f, 0, 0)));
   ra->add(SymbolAtom::get("sim"));
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(ra)));
 }
 
 inline macro(coloncolonsim) {
@@ -1311,7 +1311,7 @@ inline macro(coloncolonsim) {
   ra->add(u);
   ra->add(sptr<Atom>(new SpaceAtom(UNIT_EM, -0.32f, 0, 0)));
   ra->add(SymbolAtom::get("sim"));
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(ra)));
 }
 
 inline macro(colonapprox) {
@@ -1325,7 +1325,7 @@ inline macro(colonapprox) {
   RowAtom* ra = new RowAtom(u);
   ra->add(sptr<Atom>(new SpaceAtom(UNIT_EM, -0.32f, 0, 0)));
   ra->add(SymbolAtom::get("approx"));
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(ra)));
 }
 
 inline macro(coloncolonapprox) {
@@ -1340,7 +1340,7 @@ inline macro(coloncolonapprox) {
   ra->add(u);
   ra->add(sptr<Atom>(new SpaceAtom(UNIT_EM, -0.32f, 0, 0)));
   ra->add(SymbolAtom::get("approx"));
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, sptr<Atom>(ra)));
 }
 
 inline macro(smallfrowneq) {
@@ -1351,7 +1351,7 @@ inline macro(smallfrowneq) {
       -2,
       true,
       true));
-  return sptr<Atom>(new TypedAtom(TYPE_RELATION, TYPE_RELATION, u));
+  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, u));
 }
 
 inline macro(hstrok) {
@@ -1465,7 +1465,7 @@ inline macro(iint) {
   ra->add(sptr<Atom>(new SpaceAtom(UNIT_MU, -8.f, 0, 0)));
   ra->add(i);
   ra->_lookAtLastAtom = true;
-  return sptr<Atom>(new TypedAtom(TYPE_BIG_OPERATOR, TYPE_BIG_OPERATOR, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::bigOperator, AtomType::bigOperator, sptr<Atom>(ra)));
 }
 
 inline macro(iiint) {
@@ -1478,7 +1478,7 @@ inline macro(iiint) {
   ra->add(sptr<Atom>(new SpaceAtom(UNIT_MU, -8.f, 0, 0)));
   ra->add(i);
   ra->_lookAtLastAtom = true;
-  return sptr<Atom>(new TypedAtom(TYPE_BIG_OPERATOR, TYPE_BIG_OPERATOR, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::bigOperator, AtomType::bigOperator, sptr<Atom>(ra)));
 }
 
 inline macro(iiiint) {
@@ -1493,7 +1493,7 @@ inline macro(iiiint) {
   ra->add(sptr<Atom>(new SpaceAtom(UNIT_MU, -8.f, 0, 0)));
   ra->add(i);
   ra->_lookAtLastAtom = true;
-  return sptr<Atom>(new TypedAtom(TYPE_BIG_OPERATOR, TYPE_BIG_OPERATOR, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::bigOperator, AtomType::bigOperator, sptr<Atom>(ra)));
 }
 
 inline macro(idotsint) {
@@ -1506,24 +1506,24 @@ inline macro(idotsint) {
   RowAtom* cdots = new RowAtom(cdotp);
   cdots->add(cdotp);
   cdots->add(cdotp);
-  ra->add(sptr<Atom>(new TypedAtom(TYPE_INNER, TYPE_INNER, sptr<Atom>(cdots))));
+  ra->add(sptr<Atom>(new TypedAtom(AtomType::inner, AtomType::inner, sptr<Atom>(cdots))));
   ra->add(sptr<Atom>(new SpaceAtom(UNIT_MU, -1.f, 0, 0)));
   ra->add(i);
   ra->_lookAtLastAtom = true;
-  return sptr<Atom>(new TypedAtom(TYPE_BIG_OPERATOR, TYPE_BIG_OPERATOR, sptr<Atom>(ra)));
+  return sptr<Atom>(new TypedAtom(AtomType::bigOperator, AtomType::bigOperator, sptr<Atom>(ra)));
 }
 
 inline macro(lmoustache) {
   SymbolAtom* s = new SymbolAtom(*(SymbolAtom::get("lmoustache")));
   sptr<Atom> b(new BigDelimiterAtom(sptr<SymbolAtom>(s), 1));
-  b->_type = TYPE_OPENING;
+  b->_type = AtomType::opening;
   return b;
 }
 
 inline macro(rmoustache) {
   SymbolAtom* s = new SymbolAtom(*(SymbolAtom::get("rmoustache")));
   sptr<Atom> b(new BigDelimiterAtom(sptr<SymbolAtom>(s), 1));
-  b->_type = TYPE_CLOSING;
+  b->_type = AtomType::closing;
   return b;
 }
 

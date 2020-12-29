@@ -301,8 +301,8 @@ sptr<Box> Glue::createBox(const TeXEnvironment& env) const {
 
 int Glue::getGlueIndex(int ltype, int rtype, const TeXEnvironment& env) {
   // types > INNER are considered of type ORD for glue calculations
-  int l = (ltype > TYPE_INNER ? TYPE_ORDINARY : ltype);
-  int r = (rtype > TYPE_INNER ? TYPE_ORDINARY : rtype);
+  int l = (ltype > AtomType::inner ? AtomType::ordinary : ltype);
+  int r = (rtype > AtomType::inner ? AtomType::ordinary : rtype);
   return _table[l][r][env.getStyle() / 2] - '0';
 }
 

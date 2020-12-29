@@ -40,7 +40,7 @@ sptr<Box> HlineAtom::createBox(_out_ TeXEnvironment& env) {
   Box* b = new HorizontalRule(drt, _width, _shift, _color, false);
   VerticalBox* vb = new VerticalBox();
   vb->add(sptr<Box>(b));
-  vb->_type = TYPE_HLINE;
+  vb->_type = AtomType::hline;
   return sptr<Box>(vb);
 }
 
@@ -273,9 +273,9 @@ ostream& tex::operator<<(ostream& os, const SymbolAtom& s) {
 
 SymbolAtom::SymbolAtom(const string& name, AtomType type, bool del) : _unicode(0) {
   _name = name;
-  if (type == AtomType::bigOperator) limitsType = LimitsType::normal;
+  if (type == AtomType::bigOperator) _limitsType = LimitsType::normal;
   _delimiter = del;
-  this->type = type;
+  this->_type = type;
 }
 
 sptr<Box> SymbolAtom::createBox(_out_ TeXEnvironment& env) {
@@ -295,7 +295,7 @@ sptr<Box> SymbolAtom::createBox(_out_ TeXEnvironment& env) {
       } catch (ex_symbol_mapping_not_found& e) {}
     }
   }
-  if (type == AtomType::bigOperator) {
+  if (_type == AtomType::bigOperator) {
     if (style < STYLE_TEXT && tf.hasNextLarger(c)) c = tf.getNextLarger(c, style);
     cb = sptr<Box>(new CharBox(c));
     cb->_shift = -(cb->_height + cb->_depth) / 2.f - tf.getAxisHeight(style);
@@ -779,7 +779,7 @@ void AccentedAtom::init(
 AccentedAtom::AccentedAtom(
   const sptr<Atom>& base, const string& name) {
   _accent = SymbolAtom::get(name);
-  if (_accent->type == AtomType::accent) {
+  if (_accent->_type == AtomType::accent) {
     _base = base;
     AccentedAtom* a = dynamic_cast<AccentedAtom*>(base.get());
     if (a != nullptr)
@@ -807,7 +807,7 @@ AccentedAtom::AccentedAtom(
   _accent = dynamic_pointer_cast<SymbolAtom>(root);
   if (_accent == nullptr)
     throw ex_invalid_formula("The accent TeXFormula does not represet a single symbol!");
-  if (_accent->type == AtomType::accent) {
+  if (_accent->_type == AtomType::accent) {
     _base = base;
   } else {
     throw ex_invalid_symbol_type(
@@ -960,8 +960,8 @@ sptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
   TeXFont* tf = env.getTeXFont().get();
   const int style = env.getStyle();
 
-  if (_base->limitsType == LimitsType::limits ||
-      (_base->limitsType == LimitsType::normal && style == STYLE_DISPLAY)) {
+  if (_base->_limitsType == LimitsType::limits ||
+      (_base->_limitsType == LimitsType::normal && style == STYLE_DISPLAY)) {
     sptr<Atom> in(new UnderOverAtom(_base, _sub, UNIT_POINT, 0.3f, true, false));
     return UnderOverAtom(in, _sup, UNIT_POINT, 3.f, true, true).createBox(env);
   }
@@ -985,7 +985,7 @@ sptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
     auto box = acc->_base->createBox(*(env.crampStyle()));
     shiftUp = box->_height - tf->getSupDrop(supStyle.getStyle());
     shiftDown = box->_depth + tf->getSubDrop(subStyle.getStyle());
-  } else if (sym != nullptr && _base->type == AtomType::bigOperator) {
+  } else if (sym != nullptr && _base->_type == AtomType::bigOperator) {
     // single big operator symbol
     Char c = tf->getChar(sym->getName(), style);
     // display style
@@ -1105,7 +1105,7 @@ void BigOperatorAtom::init(
   _over = over;
   _limits = false;
   _limitsSet = false;
-  type = AtomType::bigOperator;
+  _type = AtomType::bigOperator;
 }
 
 sptr<Box> BigOperatorAtom::changeWidth(const sptr<Box>& b, float maxw) {
@@ -1124,8 +1124,8 @@ sptr<Box> BigOperatorAtom::createSideSets(_out_ TeXEnvironment& env) {
 
   auto opbox = sb->createBox(env);
   auto pa = sptr<Atom>(new PlaceholderAtom(0, opbox->_height, opbox->_depth, opbox->_shift));
-  pa->limitsType = LimitsType::noLimits;
-  pa->type = AtomType::bigOperator;
+  pa->_limitsType = LimitsType::noLimits;
+  pa->_type = AtomType::bigOperator;
 
   ScriptsAtom* l = dynamic_cast<ScriptsAtom*>(sl.get());
   ScriptsAtom* r = dynamic_cast<ScriptsAtom*>(sr.get());
@@ -1150,7 +1150,7 @@ sptr<Box> BigOperatorAtom::createSideSets(_out_ TeXEnvironment& env) {
   const int style = env.getStyle();
 
   float delta = 0;
-  if (sb->type == AtomType::bigOperator) {
+  if (sb->_type == AtomType::bigOperator) {
     SymbolAtom* sym = dynamic_cast<SymbolAtom*>(sb.get());
     if (sym != nullptr) {
       Char c = tf->getChar(sym->getName(), style);
@@ -1206,7 +1206,7 @@ sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
   if (ta != nullptr) {
     auto atom = ta->getBase();
     RowAtom* ra = dynamic_cast<RowAtom*>(atom.get());
-    if (ra != nullptr && ra->_lookAtLastAtom && _base->limitsType != LimitsType::limits) {
+    if (ra != nullptr && ra->_lookAtLastAtom && _base->_limitsType != LimitsType::limits) {
       _base = ra->popLastAtom();
       row = ra;
     } else {
@@ -1216,8 +1216,8 @@ sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
 
   if ((_limitsSet && !_limits) ||
       (!_limitsSet && style >= STYLE_TEXT) ||
-      (_base->limitsType == LimitsType::noLimits) ||
-      (_base->limitsType == LimitsType::normal && style >= STYLE_TEXT)) {
+      (_base->_limitsType == LimitsType::noLimits) ||
+      (_base->_limitsType == LimitsType::normal && style >= STYLE_TEXT)) {
     // if explicitly set to not display as limits or if not set and
     // style is not display, then attach over and under as regular sub or
     // super script
@@ -1236,7 +1236,7 @@ sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
   float delta;
 
   SymbolAtom* sym = dynamic_cast<SymbolAtom*>(_base.get());
-  if (sym != nullptr && _base->type == AtomType::bigOperator) {
+  if (sym != nullptr && _base->_type == AtomType::bigOperator) {
     // single big operator symbol
     Char c = tf->getChar(sym->getName(), style);
     y = _base->createBox(env);

@@ -53,7 +53,7 @@ macro(cfrac) {
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
   sptr<FractionAtom> f(new FractionAtom(num._root, denom._root, true, numAlign, ALIGN_CENTER));
   f->_useKern = false;
-  f->_type = TYPE_INNER;
+  f->_type = AtomType::inner;
   RowAtom* r = new RowAtom();
   r->add(sptr<Atom>(new StyleAtom(STYLE_DISPLAY, f)));
   return sptr<Atom>(r);
@@ -317,7 +317,7 @@ macro(intertext) {
   replaceall(str, L"^{\\prime\\prime}", L"\'\'");
 
   sptr<RomanAtom> ra(new RomanAtom(TeXFormula(tp, str, "mathnormal", false, false)._root));
-  ra->_type = TYPE_INTERTEXT;
+  ra->_type = AtomType::interText;
   tp.addAtom(ra);
   tp.addRow();
 

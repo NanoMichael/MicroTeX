@@ -116,7 +116,7 @@ public:
   ScaleAtom() = delete;
 
   ScaleAtom(const sptr<Atom>& base, float sx, float sy) {
-    type = base->type;
+    _type = base->_type;
     _base = base;
     _sx = sx;
     _sy = sy;
@@ -921,11 +921,11 @@ public:
     _leftType = lt;
     _rightType = rt;
     _atom = atom;
-    limitsType = atom->limitsType;
+    _limitsType = atom->_limitsType;
   }
 
   sptr<Atom> getBase() {
-    _atom->limitsType = limitsType;
+    _atom->_limitsType = _limitsType;
     return _atom;
   }
 
@@ -1001,7 +1001,7 @@ public:
    *      TeXFormula representing an accent (SymbolAtom)
    * @throw ex_invalid_formula
    *      if the given TeXFormula does not represent a single
-   *      SymbolAtom (type "TeXConstants.TYPE_ACCENT")
+   *      SymbolAtom (type "TeXConstants.AtomType::accent")
    * @throw ex_invalid_symbol_type
    *      if the symbol is not defined as an accent ('acc')
    */
@@ -1146,11 +1146,11 @@ public:
   }
 
   AtomType leftType() const override {
-    return _base == nullptr ? type : _base->leftType();
+    return _base == nullptr ? _type : _base->leftType();
   }
 
   AtomType rightType() const override {
-    return _base == nullptr ? type : _base->rightType();
+    return _base == nullptr ? _type : _base->rightType();
   }
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override;
@@ -1238,8 +1238,8 @@ public:
 
   SideSetsAtom(const sptr<Atom>& base, const sptr<Atom>& left, const sptr<Atom>& right)
       : _base(base), _left(left), _right(right) {
-    type = AtomType::bigOperator;
-    limitsType = LimitsType::noLimits;
+    _type = AtomType::bigOperator;
+    _limitsType = LimitsType::noLimits;
   }
 
   sptr<Box> createBox(_out_ TeXEnvironment& env) override;
@@ -1279,7 +1279,7 @@ public:
     _symbol = s;
     _kern = SpaceAtom(kernunit, 0, kern, 0);
     _over = over;
-    type = AtomType::inner;
+    _type = AtomType::inner;
   }
 
   inline void addScript(const sptr<Atom>& script) {
