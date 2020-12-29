@@ -192,7 +192,7 @@ sptr<Box> XLeftRightArrowFactory::create(bool left, _out_ TeXEnvironment& env, f
 
 /************************************* horizontal box implementation ******************************/
 
-HorizontalBox::HorizontalBox(const sptr<Box>& b, float w, int aligment) {
+HorizontalBox::HorizontalBox(const sptr<Box>& b, float w, Alignment aligment) {
   if (w == POS_INF) {
     add(b);
     return;
@@ -202,16 +202,16 @@ HorizontalBox::HorizontalBox(const sptr<Box>& b, float w, int aligment) {
     add(b);
     return;
   }
-  if (aligment == ALIGN_CENTER || aligment == ALIGN_NONE) {
+  if (aligment == Alignment::center || aligment == Alignment::none) {
     sptr<Box> s(new StrutBox(rest / 2, 0, 0, 0));
     add(s);
     add(b);
     add(s);
-  } else if (aligment == ALIGN_LEFT) {
+  } else if (aligment == Alignment::left) {
     add(b);
     sptr<Box> s(new StrutBox(rest, 0, 0, 0));
     add(s);
-  } else if (aligment == ALIGN_RIGHT) {
+  } else if (aligment == Alignment::right) {
     sptr<Box> s(new StrutBox(rest, 0, 0, 0));
     add(s);
     add(b);
@@ -344,20 +344,20 @@ int HorizontalRule::getLastFontId() {
 
 /************************************* vertical box implementation ********************************/
 
-VerticalBox::VerticalBox(const sptr<Box>& b, float rest, int alignment)
+VerticalBox::VerticalBox(const sptr<Box>& b, float rest, Alignment alignment)
     : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {
   add(b);
-  if (alignment == ALIGN_CENTER) {
+  if (alignment == Alignment::center) {
     sptr<Box> s(new StrutBox(0, rest / 2, 0, 0));
     Box::add(0, s);
     _height += rest / 2.f;
     _depth += rest / 2.f;
     Box::add(s);
-  } else if (alignment == ALIGN_TOP) {
+  } else if (alignment == Alignment::top) {
     _depth += rest;
     sptr<Box> s(new StrutBox(0, rest, 0, 0));
     Box::add(s);
-  } else if (alignment == ALIGN_BOTTOM) {
+  } else if (alignment == Alignment::bottom) {
     _height += rest;
     sptr<Box> s(new StrutBox(0, rest, 0, 0));
     Box::add(0, s);

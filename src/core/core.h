@@ -1,10 +1,10 @@
 #ifndef CORE_H_INCLUDED
 #define CORE_H_INCLUDED
 
+#include <cstring>
+
 #include "common.h"
 #include "fonts/fonts.h"
-
-#include <cstring>
 
 namespace tex {
 
@@ -90,9 +90,9 @@ private:
   }
 
   TeXEnvironment(
-      int style, float scaleFactor,
-      const sptr<TeXFont>& tf, color bg, color c,
-      const std::string& textstyle, bool smallCap) {
+    int style, float scaleFactor,
+    const sptr<TeXFont>& tf, color bg, color c,
+    const std::string& textstyle, bool smallCap) {
     init();
     _style = style;
     _scaleFactor = scaleFactor;
@@ -210,7 +210,7 @@ class Glue {
 private:
   // contains the different glue types
   static std::vector<Glue*> _glueTypes;
-#define TYPE_COUNT 8
+#define TYPE_COUNT  8
 #define STYLE_COUNT 5
   // the glue table represents the "glue rules"
   static const char _table[TYPE_COUNT][TYPE_COUNT][STYLE_COUNT];
@@ -226,7 +226,7 @@ private:
 
   static Glue* getGlue(int skipType);
 
-  static int getGlueIndex(int ltype, int rtype, const TeXEnvironment& env);
+  static int getGlueIndex(AtomType ltype, AtomType rtype, const TeXEnvironment& env);
 
 public:
   Glue() = delete;
@@ -254,7 +254,7 @@ public:
    *      the TeXEnvironment
    * @return a box containing representing the glue
    */
-  static sptr<Box> get(int ltype, int rtype, const TeXEnvironment& env);
+  static sptr<Box> get(AtomType ltype, AtomType rtype, const TeXEnvironment& env);
 
   /**
    * Creates a box representing the glue type according to the "glue rules" based
@@ -266,7 +266,7 @@ public:
    * Get the space amount from the given left-type and right-type of atoms
    * according to the "glue rules".
    */
-  static float getSpace(int ltype, int rtype, const TeXEnvironment& env);
+  static float getSpace(AtomType ltype, AtomType rtype, const TeXEnvironment& env);
 
   /**
    * Get the space amount from the given skip-type according to the "glue rules"

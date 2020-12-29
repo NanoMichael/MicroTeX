@@ -2,6 +2,7 @@
 #define RENDER_H_INCLUDED
 
 #include "graphic/graphic.h"
+#include "utils/enums.h"
 
 namespace tex {
 
@@ -44,19 +45,20 @@ public:
 
   void setInsets(const Insets& insets, bool trueval = false);
 
-  void setWidth(int width, int align);
+  void setWidth(int width, Alignment align);
 
-  void setHeight(int height, int align);
+  void setHeight(int height, Alignment align);
 
   void draw(_out_ Graphics2D& g2, int x, int y);
 };
 
 class TeXRenderBuilder {
 private:
-  int _style, _type, _widthUnit, _align, _lineSpaceUnit;
+  int _style, _type, _widthUnit, _lineSpaceUnit;
   float _textSize, _textWidth, _lineSpace;
   bool _trueValues, _isMaxWidth;
   color _fg;
+  Alignment _align;
 
 public:
   // TODO declaration conflict with TypefaceStyle defined in graphic/graphic.h
@@ -73,7 +75,7 @@ public:
       : _style(-1),
         _type(-1),
         _widthUnit(-1),
-        _align(-1),
+        _align(Alignment::none),
         _lineSpaceUnit(-1),
         _textSize(0),
         _textWidth(0),
@@ -107,7 +109,7 @@ public:
     return *this;
   }
 
-  inline TeXRenderBuilder& setWidth(int unit, float width, int align) {
+  inline TeXRenderBuilder& setWidth(int unit, float width, Alignment align) {
     _widthUnit = unit;
     _textWidth = width;
     _align = align;
@@ -120,12 +122,12 @@ public:
       throw ex_invalid_state("Cannot set 'isMaxWidth' without having specified a width!");
     if (i) {
       // Currently isMaxWidth==true does not work with
-      // ALIGN_CENTER or ALIGN_RIGHT (see HorizontalBox constructor)
+      // Alignment::center or Alignment::right (see HorizontalBox constructor)
       //
-      // The case (1) we don't support by setting align := ALIGN_LEFT
+      // The case (1) we don't support by setting align := Alignment::left
       // here is this:
-      //      \text{hello world\\hello} with align=ALIGN_CENTER (but forced
-      //      to ALIGN_LEFT) and isMaxWidth==true results in:
+      //      \text{hello world\\hello} with align=Alignment::center (but forced
+      //      to Alignment::left) and isMaxWidth==true results in:
       //      [hello world]
       //      [hello ]
       // and NOT:
@@ -133,7 +135,7 @@ public:
       //      [ hello ]
       //
       // However, this case (2) is currently not supported anyway
-      // (ALIGN_CENTER with isMaxWidth==false):
+      // (Alignment::center with isMaxWidth==false):
       //      [ hello world ]
       //      [ hello ]
       // and NOT:
@@ -141,8 +143,8 @@ public:
       //      [ hello ]
       //
       // => until (2) is solved, we stick with the hack to set align
-      // := ALIGN_LEFT!
-      _align = ALIGN_LEFT;
+      // := Alignment::left!
+      _align = Alignment::left;
     }
     _isMaxWidth = i;
     return *this;

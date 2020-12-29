@@ -1,4 +1,5 @@
 #include "core/macro_impl.h"
+
 #include "graphic/graphic.h"
 
 using namespace tex;
@@ -42,16 +43,17 @@ macro(rule) {
 }
 
 macro(cfrac) {
-  int numAlign = ALIGN_CENTER;
-  if (args[3] == L"r")
-    numAlign = ALIGN_RIGHT;
-  else if (args[3] == L"l")
-    numAlign = ALIGN_LEFT;
+  Alignment numAlign = Alignment::center;
+  if (args[3] == L"r") {
+    numAlign = Alignment::right;
+  } else if (args[3] == L"l") {
+    numAlign = Alignment::left;
+  }
   TeXFormula num(tp, args[1], false);
   TeXFormula denom(tp, args[2], false);
   if (num._root == nullptr || denom._root == nullptr)
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
-  sptr<FractionAtom> f(new FractionAtom(num._root, denom._root, true, numAlign, ALIGN_CENTER));
+  sptr<FractionAtom> f(new FractionAtom(num._root, denom._root, true, numAlign, Alignment::center));
   f->_useKern = false;
   f->_type = AtomType::inner;
   RowAtom* r = new RowAtom();
@@ -364,13 +366,13 @@ macro(raisebox) {
   pair<int, float> d = SpaceAtom::getLength(args[4]);
 
   return sptr<Atom>(new RaiseAtom(
-      TeXFormula(tp, args[2])._root,
-      r.first,
-      r.second,
-      h.first,
-      h.second,
-      d.first,
-      d.second));
+    TeXFormula(tp, args[2])._root,
+    r.first,
+    r.second,
+    h.first,
+    h.second,
+    d.first,
+    d.second));
 }
 
 macro(definecolor) {

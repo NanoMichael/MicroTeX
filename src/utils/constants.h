@@ -5,47 +5,15 @@ namespace tex {
 
 enum TeXConstants {
 
-  /********************************* alignment constants ****************************************/
-  /**
-   * Extra space will be added to the right of the formula
-   */
-  ALIGN_LEFT = 0,
-  /**
-   * Extra space will be added to the left of the formula
-   */
-  ALIGN_RIGHT,  // =1
-  /**
-   * The formula will be centered in the middle. this constant
-   * can be used for both horizontal and vertical alignment
-   */
-  ALIGN_CENTER,  // =2
-  /**
-   * Extra space will be added under the formula
-   */
-  ALIGN_TOP,  // =3
-  /**
-   * Extra space will be added above the formula
-   */
-  ALIGN_BOTTOM,  // =4
-  /**
-   * None
-   */
-  ALIGN_NONE,  // =5
-
   /********************************** space size constants **************************************/
-  THINMUSKIP    = 1,
-  MEDMUSKIP     = 2,
-  THICKMUSKIP   = 3,
+  THINMUSKIP = 1,
+  MEDMUSKIP = 2,
+  THICKMUSKIP = 3,
   NEGTHINMUSKIP = -1,
-  NEGMEDMUSKIP  = -2,
+  NEGMEDMUSKIP = -2,
   NEGTHICKMUSKP = -3,
 
   QUAD = 3,
-
-  /****************************** script display type constants *********************************/
-  SCRIPT_NORMAL = 0,
-  SCRIPT_NOLIMITS,
-  SCRIPT_LIMITS,
 
   /****************************** over and under delimiter type constants ***********************/
   DELIM_BRACE = 0,

@@ -22,7 +22,7 @@ void MatrixAtom::defineColumnSpecifier(const wstring& rep, const wstring& spe) {
   _colspeReplacement[rep] = spe;
 }
 
-void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
+void MatrixAtom::parsePositions(wstring opt, vector<Alignment>& lpos) {
   int len = opt.length();
   int pos = 0;
   wchar_t ch;
@@ -34,13 +34,13 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
     ch = opt[pos];
     switch (ch) {
       case 'l':
-        lpos.push_back(ALIGN_LEFT);
+        lpos.push_back(Alignment::left);
         break;
       case 'r':
-        lpos.push_back(ALIGN_RIGHT);
+        lpos.push_back(Alignment::right);
         break;
       case 'c':
-        lpos.push_back(ALIGN_CENTER);
+        lpos.push_back(Alignment::center);
         break;
       case '|': {
         int nb = 1;
@@ -64,7 +64,7 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
         if (lpos.size() > _matrix->cols()) lpos.resize(_matrix->cols());
         _matrix->insertAtomIntoCol(lpos.size(), atom);
 
-        lpos.push_back(ALIGN_NONE);
+        lpos.push_back(Alignment::none);
         pos += tp->getPos();
         pos--;
       } break;
@@ -108,15 +108,15 @@ void MatrixAtom::parsePositions(wstring opt, _out_ vector<int>& lpos) {
             break;
           }
         }
-        if (!hasrep) lpos.push_back(ALIGN_CENTER);
+        if (!hasrep) lpos.push_back(Alignment::center);
       } break;
     }
     pos++;
   }
 
-  for (size_t j = lpos.size(); j < _matrix->cols(); j++) lpos.push_back(ALIGN_CENTER);
+  for (size_t j = lpos.size(); j < _matrix->cols(); j++) lpos.push_back(Alignment::center);
 
-  if (lpos.size() == 0) lpos.push_back(ALIGN_CENTER);
+  if (lpos.size() == 0) lpos.push_back(Alignment::center);
 }
 
 float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
@@ -133,7 +133,7 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
       // Array: (hsep_col/2 or 0) elem hsep_col elem hsep_col ... hsep_col elem (hsep_col/2 or 0)
       Hsep = _hsep.createBox(env);
       for (int i = 0; i < cols; i++) {
-        if (_position[i] == ALIGN_NONE) {
+        if (_position[i] == Alignment::none) {
           arr[i] = arr[i + 1] = 0;
           i++;
         } else {
@@ -142,8 +142,8 @@ float* MatrixAtom::getColumnSep(_out_ TeXEnvironment& env, float width) {
       }
       if (_spaceAround) {
         const auto half = Hsep->_width / 2;
-        if (_position.front() != ALIGN_NONE) arr[0] = half;
-        if (_position.back() != ALIGN_NONE) arr[cols] = half;
+        if (_position.front() != Alignment::none) arr[0] = half;
+        if (_position.back() != Alignment::none) arr[cols] = half;
       }
       return arr;
     }
@@ -347,16 +347,16 @@ MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, int type) {
   if (type != MATRIX && type != SMALLMATRIX) {
     _position.resize(cols);
     for (size_t i = 0; i < cols; i += 2) {
-      _position[i] = ALIGN_RIGHT;
-      if (i + 1 < cols) _position[i + 1] = ALIGN_LEFT;
+      _position[i] = Alignment::right;
+      if (i + 1 < cols) _position[i + 1] = Alignment::left;
     }
   } else {
     _position.resize(cols);
-    for (size_t i = 0; i < cols; i++) _position[i] = ALIGN_CENTER;
+    for (size_t i = 0; i < cols; i++) _position[i] = Alignment::center;
   }
 }
 
-MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, int type, int align) {
+MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, int type, Alignment align) {
   _ispartial = ispar;
   _matrix = arr;
   _ttype = type;
@@ -489,14 +489,15 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
           WrapperBox* wb = nullptr;
           int tj = j;
           float l = j == 0 ? Hsep[j] : Hsep[j] / 2;
-          if (boxarr[i][j]->_type == -1) {
+          if (boxarr[i][j]->_type == AtomType::none) {
             wb = new WrapperBox(
-              boxarr[i][j], colWidth[j], lineHeight[i], lineDepth[i], _position[j]);
+              boxarr[i][j], colWidth[j], lineHeight[i], lineDepth[i], _position[j]  //
+            );
           } else {
             auto b = generateMulticolumn(env, boxarr[i][j], Hsep, colWidth, i, j);
             MulticolumnAtom* matom = (MulticolumnAtom*)_matrix->_array[i][j].get();
             j += matom->getSkipped() - 1;
-            wb = new WrapperBox(b, b->_width, lineHeight[i], lineDepth[i], ALIGN_LEFT);
+            wb = new WrapperBox(b, b->_width, lineHeight[i], lineDepth[i], Alignment::left);
             isLastVline = matom->hasRightVline();
           }
           float r = j == cols - 1 ? Hsep[j + 1] : Hsep[j + 1] / 2;
@@ -517,7 +518,7 @@ sptr<Box> MatrixAtom::createBox(_out_ TeXEnvironment& e) {
         case AtomType::interText: {
           float f = env.getTextWidth();
           f = f == POS_INF ? colWidth[j] : f;
-          hb = sptr<HorizontalBox>(new HorizontalBox(boxarr[i][j], f, ALIGN_LEFT));
+          hb = sptr<HorizontalBox>(new HorizontalBox(boxarr[i][j], f, Alignment::left));
           j = cols;
         } break;
 
@@ -611,23 +612,23 @@ sptr<Box> MultlineAtom::createBox(_out_ TeXEnvironment& env) {
 
   VerticalBox* vb = new VerticalBox();
   auto atom = _column->_array[0][0];
-  int alignment = _ttype == GATHER ? ALIGN_CENTER : ALIGN_LEFT;
-  if (atom->_alignment != -1) alignment = atom->_alignment;
+  Alignment alignment = _ttype == GATHER ? Alignment::center : Alignment::left;
+  if (atom->_alignment != Alignment::none) alignment = atom->_alignment;
 
   vb->add(sptr<Box>(new HorizontalBox(atom->createBox(env), tw, alignment)));
   auto Vsep = _vsep_in.createBox(env);
   for (size_t i = 1; i < _column->rows() - 1; i++) {
     atom = _column->_array[i][0];
-    alignment = ALIGN_CENTER;
-    if (atom->_alignment != -1) alignment = atom->_alignment;
+    alignment = Alignment::center;
+    if (atom->_alignment != Alignment::none) alignment = atom->_alignment;
     vb->add(Vsep);
     vb->add(sptr<Box>(new HorizontalBox(atom->createBox(env), tw, alignment)));
   }
 
   if (_column->rows() > 1) {
     atom = _column->_array[_column->rows() - 1][0];
-    alignment = _ttype == GATHER ? ALIGN_CENTER : ALIGN_RIGHT;
-    if (atom->_alignment != -1) alignment = atom->_alignment;
+    alignment = _ttype == GATHER ? Alignment::center : Alignment::right;
+    if (atom->_alignment != Alignment::none) alignment = atom->_alignment;
     vb->add(Vsep);
     vb->add(sptr<Box>(new HorizontalBox(atom->createBox(env), tw, alignment)));
   }
@@ -694,13 +695,13 @@ sptr<Box> FencedAtom::createBox(_out_ TeXEnvironment& env) {
 
   // glue between left delimiter and content (if not whitespace)
   SpaceAtom* sp = dynamic_cast<SpaceAtom*>(_base.get());
-  if (sp == nullptr) hb->add(Glue::get(AtomType::opening, _base->getLeftType(), env));
+  if (sp == nullptr) hb->add(Glue::get(AtomType::opening, _base->leftType(), env));
 
   // add content
   hb->add(content);
 
   // glue between right delimiter and content (if not whitespace)
-  if (sp == nullptr) hb->add(Glue::get(_base->getRightType(), AtomType::closing, env));
+  if (sp == nullptr) hb->add(Glue::get(_base->rightType(), AtomType::closing, env));
 
   // right delimiter
   if (_right != nullptr) {
@@ -716,8 +717,8 @@ sptr<Box> FencedAtom::createBox(_out_ TeXEnvironment& env) {
 
 void FractionAtom::init(
   const sptr<Atom>& num, const sptr<Atom>& den, bool nodef, int unit, float t) {
-  _numAlign = ALIGN_CENTER;
-  _denomAlign = ALIGN_CENTER;
+  _numAlign = Alignment::center;
+  _denomAlign = Alignment::center;
   _deffactor = 1.f;
 
   SpaceAtom::checkUnit(unit);
@@ -830,29 +831,29 @@ sptr<Box> FractionAtom::createBox(_out_ TeXEnvironment& env) {
   // \nulldelimiterspace is set by default to 1.2pt = 0.12em
   float f = SpaceAtom::getSize(UNIT_EM, 0.12f, env);
 
-  return sptr<Box>(new HorizontalBox(sptr<Box>(vb), vb->_width + 2 * f, ALIGN_CENTER));
+  return sptr<Box>(new HorizontalBox(sptr<Box>(vb), vb->_width + 2 * f, Alignment::center));
 }
 
 /*************************************** multicolumn atoms ****************************************/
 
-int MulticolumnAtom::parseAlign(const string& str) {
+Alignment MulticolumnAtom::parseAlign(const string& str) {
   int pos = 0;
   int len = str.length();
-  int align = ALIGN_CENTER;
+  Alignment align = Alignment::center;
   bool first = true;
   while (pos < len) {
     char c = str[pos];
     switch (c) {
       case 'l': {
-        align = ALIGN_LEFT;
+        align = Alignment::left;
         first = false;
       } break;
       case 'r': {
-        align = ALIGN_RIGHT;
+        align = Alignment::right;
         first = false;
       } break;
       case 'c': {
-        align = ALIGN_CENTER;
+        align = Alignment::center;
         first = false;
       } break;
       case '|': {
@@ -912,7 +913,7 @@ sptr<Box> HdotsforAtom::createBox(_out_ TeXEnvironment& env) {
 
   // Only one dot can be placed in
   if (count == 0) {
-    auto b = sptr<Box>(new HorizontalBox(dot, _w, ALIGN_CENTER));
+    auto b = sptr<Box>(new HorizontalBox(dot, _w, Alignment::center));
     return createBox(space, b, env);
   }
 
@@ -926,7 +927,7 @@ sptr<Box> HdotsforAtom::createBox(_out_ TeXEnvironment& env) {
   }
   b->add(dot);
 
-  auto hb = sptr<Box>(new HorizontalBox(b, _w, ALIGN_CENTER));
+  auto hb = sptr<Box>(new HorizontalBox(b, _w, Alignment::center));
   return createBox(space, hb, env);
 }
 
@@ -1101,12 +1102,12 @@ sptr<Box> UnderOverArrowAtom::createBox(_out_ TeXEnvironment& env) {
   if (_over) {
     vb->add(arrow);
     if (_dble) vb->add(sptr<Box>(new StrutBox(0, -sep, 0, 0)));
-    vb->add(sptr<Box>(new HorizontalBox(b, arrow->_width, ALIGN_CENTER)));
+    vb->add(sptr<Box>(new HorizontalBox(b, arrow->_width, Alignment::center)));
     float h = vb->_depth + vb->_height;
     vb->_depth = b->_depth;
     vb->_height = h - b->_depth;
   } else {
-    vb->add(sptr<Box>(new HorizontalBox(b, arrow->_width, ALIGN_CENTER)));
+    vb->add(sptr<Box>(new HorizontalBox(b, arrow->_width, Alignment::center)));
     vb->add(sptr<Box>(new StrutBox(0, sep, 0, 0)));
     vb->add(arrow);
     float h = vb->_depth + vb->_height;
@@ -1128,8 +1129,8 @@ sptr<Box> XArrowAtom::createBox(_out_ TeXEnvironment& env) {
   float width = max(O->_width + 2 * oside->_width, U->_width + 2 * uside->_width);
   auto arrow = XLeftRightArrowFactory::create(_left, env, width);
 
-  sptr<Box> ohb(new HorizontalBox(O, width, ALIGN_CENTER));
-  sptr<Box> uhb(new HorizontalBox(U, width, ALIGN_CENTER));
+  sptr<Box> ohb(new HorizontalBox(O, width, Alignment::center));
+  sptr<Box> uhb(new HorizontalBox(U, width, Alignment::center));
 
   sptr<VerticalBox> vb(new VerticalBox());
   vb->add(ohb);
@@ -1143,7 +1144,7 @@ sptr<Box> XArrowAtom::createBox(_out_ TeXEnvironment& env) {
   vb->_depth = d;
   vb->_height = h - d;
 
-  HorizontalBox* hb = new HorizontalBox(vb, vb->_width + 2 * sep->_height, ALIGN_CENTER);
+  HorizontalBox* hb = new HorizontalBox(vb, vb->_width + 2 * sep->_height, Alignment::center);
 
   return sptr<Box>(hb);
 }
@@ -1166,13 +1167,12 @@ void LongDivAtom::calculate(_out_ vector<wstring>& results) {
 
 LongDivAtom::LongDivAtom(long divisor, long dividend)
     : _divisor(divisor), _dividend(dividend) {
-  setHalign(ALIGN_RIGHT);
+  _halign = Alignment::right;
   setVtop(true);
   vector<wstring> results;
   calculate(results);
 
-  auto rule = sptr<Atom>(new RuleAtom(
-    UNIT_EX, 0.f, UNIT_EX, 2.6f, UNIT_EX, 0.5f));
+  auto rule = sptr<Atom>(new RuleAtom(UNIT_EX, 0.f, UNIT_EX, 2.6f, UNIT_EX, 0.5f));
 
   const int s = results.size();
   for (int i = 0; i < s; i++) {

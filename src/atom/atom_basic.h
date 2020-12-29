@@ -746,10 +746,11 @@ private:
   std::vector<sptr<Atom>> _elements;
   sptr<SpaceAtom> _raise;
   bool _addInterline;
-  int _valign;
-  int _halign;
 
 public:
+  Alignment _valign = Alignment::none;
+  Alignment _halign = Alignment::none;
+
   VRowAtom();
 
   VRowAtom(const sptr<Atom>& el);
@@ -762,23 +763,12 @@ public:
     return _addInterline;
   }
 
-  /**
-   * Set the horizontal alignment
-   */
-  inline void setHalign(int halign) {
-    _halign = halign;
-  }
-
-  inline bool getHalign() const {
-    return _halign;
-  }
-
   inline void setVtop(bool vtop) {
-    _valign = ALIGN_TOP;
+    _valign = Alignment::top;
   }
 
   inline bool getVtop() const {
-    return _valign == ALIGN_TOP;
+    return _valign == Alignment::top;
   }
 
   void setRaise(int unit, float r);
@@ -1126,7 +1116,7 @@ public:
   sptr<Atom> _sub;
   sptr<Atom> _sup;
   // scripts alignment
-  int _align;
+  Alignment _align = Alignment::none;
 
   ScriptsAtom() = delete;
 
@@ -1134,15 +1124,15 @@ public:
     _base = base;
     _sub = sub;
     _sup = sup;
-    _align = ALIGN_LEFT;
+    _align = Alignment::left;
   }
 
   ScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup, bool left) {
     _base = base;
     _sub = sub;
     _sup = sup;
-    _align = ALIGN_LEFT;
-    if (!left) _align = ALIGN_RIGHT;
+    _align = Alignment::left;
+    if (!left) _align = Alignment::right;
   }
 
   AtomType leftType() const override {

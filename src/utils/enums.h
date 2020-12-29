@@ -20,7 +20,7 @@ enum class Alignment : int8 {
   top,
   /** Extra space will be added above the formula. */
   bottom,
-  none
+  none = -1
 };
 
 /** Space amount between formulas. */

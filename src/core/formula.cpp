@@ -151,9 +151,10 @@ TeXFormula* TeXFormula::add(const sptr<Atom>& el) {
   rm->add(el);
   TypedAtom* ta = dynamic_cast<TypedAtom*>(el.get());
   if (ta != nullptr) {
-    int rt = ta->getRightType();
-    if (rt == AtomType::binaryOperator || rt == AtomType::relation)
+    AtomType rt = ta->rightType();
+    if (rt == AtomType::binaryOperator || rt == AtomType::relation) {
       rm->add(sptr<Atom>(new BreakMarkAtom()));
+    }
   }
   return this;
 }
@@ -209,7 +210,7 @@ TeXFormula* TeXFormula::setColor(color c) {
   return this;
 }
 
-TeXFormula* TeXFormula::setFixedTypes(int left, int right) {
+TeXFormula* TeXFormula::setFixedTypes(AtomType left, AtomType right) {
   _root = sptr<Atom>(new TypedAtom(left, right, _root));
   return this;
 }

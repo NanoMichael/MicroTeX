@@ -12,7 +12,7 @@ namespace tex {
  */
 class TeXSymbolParser {
 private:
-  static const std::map<std::string, int> _typeMappings;
+  static const std::map<std::string, AtomType> _typeMappings;
   tinyxml2::XMLDocument _doc;
   tinyxml2::XMLElement* _root;
 
