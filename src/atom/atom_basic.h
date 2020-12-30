@@ -239,7 +239,7 @@ private:
   // whether a hard space should be represented
   bool _blankSpace;
   // thin-mu-skip, med-mu-skip, thick-mu-skip
-  int _blankType;
+  SpaceType _blankType;
   // dimensions
   float _width, _height, _depth;
   // units of the dimensions
@@ -247,7 +247,7 @@ private:
 
   void init() {
     _blankSpace = false;
-    _blankType = 0;
+    _blankType = SpaceType::none;
     _width = _height = _depth = 0;
     _wUnit = _hUnit = _dUnit = 0;
   }
@@ -258,7 +258,7 @@ public:
     _blankSpace = true;
   }
 
-  SpaceAtom(int type) {
+  SpaceAtom(SpaceType type) {
     init();
     _blankSpace = true;
     _blankType = type;

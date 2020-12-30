@@ -24,14 +24,15 @@ enum class Alignment : int8 {
 };
 
 /** Space amount between formulas. */
-enum class SpaceSize : int8 {
+enum class SpaceType : int8 {
   thinMuSkip = 1,
   medMuSkip = 2,
   thickMuSkip = 3,
   negThinMuSkip = -1,
   negMedMuSkip = -2,
   negThickMuSkip = -3,
-  quad = 3
+  quad = 3,
+  none = 0
 };
 
 /** Script display type */

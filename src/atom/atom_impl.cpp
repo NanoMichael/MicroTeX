@@ -14,7 +14,7 @@ SpaceAtom MatrixAtom::_semihsep(UNIT_EM, 0.5f, 0.f, 0.f);
 SpaceAtom MatrixAtom::_vsep_in(UNIT_EX, 0.f, 1.f, 0.f);
 SpaceAtom MatrixAtom::_vsep_ext_top(UNIT_EX, 0.f, 0.5f, 0.f);
 SpaceAtom MatrixAtom::_vsep_ext_bot(UNIT_EX, 0.f, 0.5f, 0.f);
-SpaceAtom MatrixAtom::_align(MEDMUSKIP);
+SpaceAtom MatrixAtom::_align(SpaceType::medMuSkip);
 
 sptr<Box> MatrixAtom::_nullbox(new StrutBox(0, 0, 0, 0));
 
@@ -903,7 +903,7 @@ sptr<Box> HdotsforAtom::createBox(
 
 sptr<Box> HdotsforAtom::createBox(_out_ TeXEnvironment& env) {
   auto dot = _cols->createBox(env);
-  float space = Glue::getSpace(THINMUSKIP, env) * _coeff * 2;
+  float space = Glue::getSpace(SpaceType::thinMuSkip, env) * _coeff * 2;
 
   // If no width specified, create a box with one dot
   if (_w == 0) return createBox(space, dot, env);
@@ -1195,7 +1195,7 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
       ra->add(num);
       auto oa = sptr<Atom>(new OverlinedAtom(ra));
       auto row = sptr<RowAtom>(new RowAtom(TeXFormula(divisor)._root));
-      row->add(sptr<Atom>(new SpaceAtom(THINMUSKIP)));
+      row->add(sptr<Atom>(new SpaceAtom(SpaceType::thinMuSkip)));
       row->add(oa);
       append(row);
       continue;

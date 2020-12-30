@@ -5,16 +5,6 @@ namespace tex {
 
 enum TeXConstants {
 
-  /********************************** space size constants **************************************/
-  THINMUSKIP = 1,
-  MEDMUSKIP = 2,
-  THICKMUSKIP = 3,
-  NEGTHINMUSKIP = -1,
-  NEGMEDMUSKIP = -2,
-  NEGTHICKMUSKP = -3,
-
-  QUAD = 3,
-
   /****************************** over and under delimiter type constants ***********************/
   DELIM_BRACE = 0,
   DELIM_SQUARE_BRACKET,

@@ -465,27 +465,27 @@ macro(romannumeral) {
 }
 
 macro(muskips) {
-  int type = 0;
+  SpaceType type = SpaceType::none;
   if (args[0] == L",")
-    type = THINMUSKIP;
+    type = SpaceType::thinMuSkip;
   else if (args[0] == L":")
-    type = MEDMUSKIP;
+    type = SpaceType::medMuSkip;
   else if (args[0] == L";")
-    type = THICKMUSKIP;
+    type = SpaceType::thickMuSkip;
   else if (args[0] == L"thinspace")
-    type = THINMUSKIP;
+    type = SpaceType::thinMuSkip;
   else if (args[0] == L"medspace")
-    type = MEDMUSKIP;
+    type = SpaceType::medMuSkip;
   else if (args[0] == L"thickspace")
-    type = THICKMUSKIP;
+    type = SpaceType::thickMuSkip;
   else if (args[0] == L"!")
-    type = NEGTHINMUSKIP;
+    type = SpaceType::negThinMuSkip;
   else if (args[0] == L"negthinspace")
-    type = NEGTHINMUSKIP;
+    type = SpaceType::negThinMuSkip;
   else if (args[0] == L"negmedspace")
-    type = NEGMEDMUSKIP;
+    type = SpaceType::negMedMuSkip;
   else if (args[0] == L"negthickspace")
-    type = NEGTHICKMUSKP;
+    type = SpaceType::negThickMuSkip;
 
   return sptr<Atom>(new SpaceAtom(type));
 }
