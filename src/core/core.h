@@ -224,7 +224,7 @@ private:
 
   float getFactor(const TeXEnvironment& env) const;
 
-  static Glue* getGlue(int skipType);
+  static Glue* getGlue(SpaceType skipType);
 
   static int getGlueIndex(AtomType ltype, AtomType rtype, const TeXEnvironment& env);
 
@@ -260,7 +260,7 @@ public:
    * Creates a box representing the glue type according to the "glue rules" based
    * on the skip-type
    */
-  static sptr<Box> get(int skipType, const TeXEnvironment& env);
+  static sptr<Box> get(SpaceType skipType, const TeXEnvironment& env);
 
   /**
    * Get the space amount from the given left-type and right-type of atoms
@@ -271,7 +271,7 @@ public:
   /**
    * Get the space amount from the given skip-type according to the "glue rules"
    */
-  static float getSpace(int skipType, const TeXEnvironment& env);
+  static float getSpace(SpaceType skipType, const TeXEnvironment& env);
 
   static void _init_();
 

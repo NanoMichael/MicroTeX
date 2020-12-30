@@ -312,14 +312,15 @@ sptr<Box> Glue::get(AtomType ltype, AtomType rtype, const TeXEnvironment& env) {
   return _glueTypes[i]->createBox(env);
 }
 
-Glue* Glue::getGlue(int skipType) {
-  int st = skipType < 0 ? -skipType : skipType;
+Glue* Glue::getGlue(SpaceType skipType) {
+  const int8 i = static_cast<int8>(skipType);
+  SpaceType st = static_cast<SpaceType>(i < 0 ? -i : i);
   string name;
   switch (st) {
-    case THINMUSKIP:
+    case SpaceType::thinMuSkip:
       name = "thin";
       break;
-    case MEDMUSKIP:
+    case SpaceType::medMuSkip:
       name = "med";
       break;
     default:
@@ -332,11 +333,11 @@ Glue* Glue::getGlue(int skipType) {
   return *it;
 }
 
-sptr<Box> Glue::get(int skipType, const TeXEnvironment& env) {
+sptr<Box> Glue::get(SpaceType skipType, const TeXEnvironment& env) {
   auto glue = getGlue(skipType);
   if (glue == nullptr) return sptr<Box>(new GlueBox(0, 0, 0));
   auto b = glue->createBox(env);
-  if (skipType < 0) b->negWidth();
+  if (static_cast<int8>(skipType) < 0) b->negWidth();
   return b;
 }
 
@@ -346,7 +347,7 @@ float Glue::getSpace(AtomType ltype, AtomType rtype, const TeXEnvironment& env) 
   return glueType->_space * glueType->getFactor(env);
 }
 
-float Glue::getSpace(int skipType, const TeXEnvironment& env) {
+float Glue::getSpace(SpaceType skipType, const TeXEnvironment& env) {
   auto glue = getGlue(skipType);
   if (glue == nullptr) return 0;
   return glue->_space * glue->getFactor(env);

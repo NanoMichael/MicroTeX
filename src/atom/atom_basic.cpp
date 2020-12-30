@@ -210,7 +210,7 @@ sptr<Box> SpaceAtom::createBox(_out_ TeXEnvironment& env) {
     float d = _depth * getFactor(_dUnit, env);
     return sptr<Box>(new StrutBox(w, h, d, 0));
   }
-  if (_blankType == 0) return sptr<Box>(new StrutBox(env.getSpace(), 0, 0, 0));
+  if (_blankType == SpaceType::none) return sptr<Box>(new StrutBox(env.getSpace(), 0, 0, 0));
   return Glue::get(_blankType, env);
 }
 
@@ -998,7 +998,7 @@ sptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
 
     // include delta in width or not?
     delta = c.getItalic();
-    deltaSymbol = SpaceAtom(MEDMUSKIP).createBox(env);
+    deltaSymbol = SpaceAtom(SpaceType::medMuSkip).createBox(env);
     if (delta > PREC && _sub == nullptr) hor->add(sptr<Box>(new StrutBox(delta, 0, 0, 0)));
 
     shiftUp = hor->_height - tf->getSupDrop(supStyle.getStyle());
