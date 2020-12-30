@@ -24,7 +24,7 @@ class RowAtom;
  */
 class EmptyAtom : public Atom {
 public:
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+  sptr<Box> createBox(TeXEnvironment& env) override {
     return sptr<Box>(new StrutBox(0, 0, 0, 0));
   }
 
@@ -42,7 +42,7 @@ public:
   PlaceholderAtom(float w, float h, float d, float s)
       : _w(w), _h(h), _d(d), _s(s) {}
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+  sptr<Box> createBox(TeXEnvironment& env) override {
     return sptr<Box>(new StrutBox(_w, _h, _d, _s));
   }
 
@@ -66,7 +66,7 @@ public:
   TextRenderingAtom(const std::wstring& str, const FontInfos* info)
       : _str(str), _type(0), _infos(info) {}
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   __decl_clone(TextRenderingAtom)
 };
@@ -92,7 +92,7 @@ public:
 
   SmashedAtom(const sptr<Atom>& a) : _at(a), _h(true), _d(true) {}
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+  sptr<Box> createBox(TeXEnvironment& env) override {
     sptr<Box> b = _at->createBox(env);
     if (_h) b->_height = 0;
     if (_d) b->_depth = 0;
@@ -129,7 +129,7 @@ public:
 
   AtomType rightType() const override { return _base->rightType(); }
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   __decl_clone(ScaleAtom)
 };
@@ -150,7 +150,7 @@ public:
     _style = style;
   }
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   __decl_clone(MathAtom)
 };
@@ -178,7 +178,7 @@ public:
     _color = c;
   }
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   __decl_clone(HlineAtom)
 };
@@ -202,7 +202,7 @@ public:
 
   sptr<Atom> getScriptsAtom() const;
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   __decl_clone(CumulativeScriptsAtom)
 };
@@ -235,7 +235,7 @@ class SpaceAtom : public Atom {
 private:
   static const int _units_count;
   static const std::map<std::string, int> _units;
-  static const std::function<float(_in_ const TeXEnvironment&)> _unitConversions[];
+  static const std::function<float(const TeXEnvironment&)> _unitConversions[];
   // whether a hard space should be represented
   bool _blankSpace;
   // thin-mu-skip, med-mu-skip, thick-mu-skip
@@ -307,15 +307,15 @@ public:
     return i->second;
   }
 
-  inline static float getFactor(int unit, _in_ const TeXEnvironment& env) {
+  inline static float getFactor(int unit, const TeXEnvironment& env) {
     return _unitConversions[unit](env);
   }
 
-  inline static float getSize(int unit, float size, _in_ const TeXEnvironment& env) {
+  inline static float getSize(int unit, float size, const TeXEnvironment& env) {
     return _unitConversions[unit](env) * size;
   }
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   /**
    * Get the unit and length from given string. The string must be in the format: a number
@@ -341,7 +341,7 @@ public:
 
   UnderScoreAtom() {}
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   __decl_clone(UnderScoreAtom)
 };
@@ -360,7 +360,7 @@ public:
   MiddleAtom(const sptr<Atom>& a)
       : _base(a), _box(new StrutBox(0, 0, 0, 0)) {}
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+  sptr<Box> createBox(TeXEnvironment& env) override {
     return _box;
   }
 
@@ -413,7 +413,7 @@ public:
    *       the TeXFont containing all font related information
    * @return a CharFont
    */
-  virtual sptr<CharFont> getCharFont(_in_ TeXFont& tf) = 0;
+  virtual sptr<CharFont> getCharFont(TeXFont& tf) = 0;
 };
 
 /**
@@ -428,9 +428,9 @@ public:
 
   FixedCharAtom(const sptr<CharFont>& c) : _cf(c) {}
 
-  sptr<CharFont> getCharFont(_in_ TeXFont& tf) override;
+  sptr<CharFont> getCharFont(TeXFont& tf) override;
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   __decl_clone(FixedCharAtom)
 };
@@ -479,9 +479,9 @@ public:
     return _name;
   }
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
-  sptr<CharFont> getCharFont(_in_ TeXFont& tf) override;
+  sptr<CharFont> getCharFont(TeXFont& tf) override;
 
   static void addSymbolAtom(const std::string& file);
 
@@ -524,7 +524,7 @@ private:
    * Get the Char-object representing this character ("c") in the right text
    * style
    */
-  Char getChar(_in_ TeXFont& tf, int style, bool smallCap);
+  Char getChar(TeXFont& tf, int style, bool smallCap);
 
 public:
   CharAtom() = delete;
@@ -552,9 +552,9 @@ public:
     return _mathMode;
   }
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
-  sptr<CharFont> getCharFont(_in_ TeXFont& tf) override;
+  sptr<CharFont> getCharFont(TeXFont& tf) override;
 
   __decl_clone(CharAtom)
 };
@@ -564,7 +564,7 @@ public:
  */
 class BreakMarkAtom : public Atom {
 public:
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   __decl_clone(BreakMarkAtom)
 };
@@ -618,7 +618,7 @@ public:
   }
 
   /** This method will only be called if isCharSymbol returns true. */
-  inline sptr<CharFont> getCharFont(_in_ TeXFont& tf) const {
+  inline sptr<CharFont> getCharFont(TeXFont& tf) const {
     return ((CharSymbol*)_atom.get())->getCharFont(tf);
   }
 
@@ -674,7 +674,7 @@ private:
   // previous atom (for nested Row atoms)
   sptr<Dummy> _previousAtom;
 
-  void change2Ord(_out_ Dummy* cur, _out_ Dummy* prev, _out_ Atom* next);
+  void change2Ord(Dummy* cur, Dummy* prev, Atom* next);
 
   static std::bitset<16> _initBinset_();
 
@@ -727,7 +727,7 @@ public:
    */
   void add(const sptr<Atom>& el);
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   void setPreviousAtom(const sptr<Dummy>& prev) override;
 
@@ -785,7 +785,7 @@ public:
    */
   void append(const sptr<Atom>& el);
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   __decl_clone(VRowAtom)
 };
@@ -815,7 +815,7 @@ public:
     _color = istrans(c) ? a->_color : c;
   }
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   AtomType leftType() const override {
     return _elements->leftType();
@@ -855,7 +855,7 @@ public:
 
   RomanAtom(const sptr<Atom>& base) : _base(base) {}
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   __decl_clone(RomanAtom)
 };
@@ -888,7 +888,7 @@ public:
     _elements->setPreviousAtom(prev);
   }
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   __decl_clone(PhantomAtom)
 };
@@ -919,7 +919,7 @@ public:
     return _atom;
   }
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override {
+  sptr<Box> createBox(TeXEnvironment& env) override {
     return _atom->createBox(env);
   }
 
@@ -999,7 +999,7 @@ public:
     const sptr<Atom>& base,
     const sptr<TeXFormula>& acc);
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   __decl_clone(AccentedAtom)
 };
@@ -1097,7 +1097,7 @@ public:
     return _base->rightType();
   }
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   __decl_clone(UnderOverAtom)
 };
@@ -1143,7 +1143,7 @@ public:
     return _base == nullptr ? _type : _base->rightType();
   }
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   __decl_clone(ScriptsAtom)
 };
@@ -1166,7 +1166,7 @@ private:
 
   void init(const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over);
 
-  sptr<Box> createSideSets(_out_ TeXEnvironment& env);
+  sptr<Box> createSideSets(TeXEnvironment& env);
 
   /**
    * Center the given box in a new box that has the given width
@@ -1212,7 +1212,7 @@ public:
     _limitsSet = true;
   }
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   __decl_clone(BigOperatorAtom)
 };
@@ -1232,7 +1232,7 @@ public:
     _limitsType = LimitsType::noLimits;
   }
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   __decl_clone(SideSetsAtom)
 };
@@ -1280,7 +1280,7 @@ public:
     return _over;
   }
 
-  sptr<Box> createBox(_out_ TeXEnvironment& env) override;
+  sptr<Box> createBox(TeXEnvironment& env) override;
 
   __decl_clone(OverUnderDelimiter)
 };

@@ -136,7 +136,7 @@ TextLayout_cairo::TextLayout_cairo(const wstring& src, const sptr<Font_cairo>& f
   _ascent = (float)(_layout->get_baseline() / Pango::SCALE);
 }
 
-void TextLayout_cairo::getBounds(_out_ Rect& r) {
+void TextLayout_cairo::getBounds(Rect& r) {
   int w, h;
   _layout->get_pixel_size(w, h);
   r.x = 0;

@@ -162,7 +162,7 @@ inline macro(atop) {
 
 inline sptr<Atom> _macro_choose(
   const std::string& left, const std::string& right,
-  _out_ TeXParser& tp, _out_ std::vector<std::wstring>& args  //
+  TeXParser& tp, std::vector<std::wstring>& args  //
 ) {
   auto num = tp.getFormulaAtom();
   auto den = TeXFormula(tp, tp.getOverArgument(), false)._root;
@@ -192,7 +192,7 @@ inline macro(brace) {
 
 inline sptr<Atom> _marco_cancel(
   int cancelType,
-  _out_ TeXParser& tp, _out_ std::vector<std::wstring>& args) {
+  TeXParser& tp, std::vector<std::wstring>& args) {
   auto base = TeXFormula(tp, args[1], false)._root;
   if (base == nullptr)
     throw ex_parse("Cancel content must not be empty!");

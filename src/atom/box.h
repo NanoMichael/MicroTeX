@@ -22,7 +22,7 @@ class SymbolAtom;
  */
 class DelimiterFactory {
 public:
-  static sptr<Box> create(_in_ SymbolAtom& symbol, _out_ TeXEnvironment& env, int size);
+  static sptr<Box> create(SymbolAtom& symbol, TeXEnvironment& env, int size);
 
   /**
    * Create a delimiter with specified symbol name and min height
@@ -36,7 +36,7 @@ public:
    * @return the box representing the delimiter variant that fits best
    *      according to the required minimum size.
    */
-  static sptr<Box> create(const std::string& symbol, _out_ TeXEnvironment& env, float minHeight);
+  static sptr<Box> create(const std::string& symbol, TeXEnvironment& env, float minHeight);
 };
 
 /**
@@ -50,9 +50,9 @@ private:
   static sptr<Atom> RIGHT;
 
 public:
-  static sptr<Box> create(bool left, _out_ TeXEnvironment& env, float width);
+  static sptr<Box> create(bool left, TeXEnvironment& env, float width);
 
-  static sptr<Box> create(_out_ TeXEnvironment& env, float width);
+  static sptr<Box> create(TeXEnvironment& env, float width);
 };
 
 /***************************************************************************************************

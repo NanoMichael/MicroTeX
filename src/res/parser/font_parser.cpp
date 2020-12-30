@@ -96,7 +96,7 @@ void DefaultTeXFontParser::processCharElement(const XMLElement* e, __BasicInfo& 
 }
 
 void DefaultTeXFontParser::parseStyleMappings(
-    _out_ map<string, vector<CharFont*>>& res) {
+    map<string, vector<CharFont*>>& res) {
   const XMLElement* mapping = _root->FirstChildElement("TextStyleMappings");
   // no defined style mappings
   if (mapping == nullptr) return;
@@ -326,7 +326,7 @@ void DefaultTeXFontParser::sortBasicInfo(__BasicInfo& bi) {
 }
 
 void DefaultTeXFontParser::parseSymbolMappings(
-    _out_ map<string, CharFont*>& res) {
+    map<string, CharFont*>& res) {
   const XMLElement* mapping = _root->FirstChildElement("SymbolMappings");
   if (mapping == nullptr) throw ex_xml_parse(RESOURCE_NAME, "SymbolMappings");
 
@@ -437,7 +437,7 @@ map<string, vector<CharFont*>> DefaultTeXFontParser::parseTextStyleMappings() {
   return _parsedTextStyles;
 }
 
-void DefaultTeXFontParser::parseParameters(_out_ map<string, float>& res) {
+void DefaultTeXFontParser::parseParameters(map<string, float>& res) {
   const XMLElement* parameters = _root->FirstChildElement("Parameters");
   if (parameters == nullptr) throw ex_xml_parse(RESOURCE_NAME, "Parameter");
 
@@ -452,7 +452,7 @@ void DefaultTeXFontParser::parseParameters(_out_ map<string, float>& res) {
   }
 }
 
-void DefaultTeXFontParser::parseGeneralSettings(_out_ map<string, float>& res) {
+void DefaultTeXFontParser::parseGeneralSettings(map<string, float>& res) {
   const XMLElement* settings = _root->FirstChildElement("GeneralSettings");
   if (settings == nullptr) throw ex_xml_parse(RESOURCE_NAME, "GeneralSettings");
   int index = 0;

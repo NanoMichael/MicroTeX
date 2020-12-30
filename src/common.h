@@ -30,11 +30,6 @@
 #include "utils/string_utils.h"
 #include "utils/utf.h"
 
-/** OUT parameter, declaring that the function may has side effect on this parameter. */
-#define _out_
-/** IN parameter, declaring that the function will never has side effect on this parameter. */
-#define _in_
-
 namespace tex {
 
 /** The root directory of the "TeX resources" (defined in latex.cpp) */

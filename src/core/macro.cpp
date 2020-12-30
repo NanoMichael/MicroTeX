@@ -62,7 +62,7 @@ void NewCommandMacro::addRenewCommand(
   MacroInfo::addMacro(name, new InflationMacroInfo(_instance, nbargs, 1));
 }
 
-void NewCommandMacro::execute(_out_ TeXParser& tp, _out_ vector<wstring>& args) {
+void NewCommandMacro::execute(TeXParser& tp, vector<wstring>& args) {
   wstring code = _macrocode[args[0]];
   wstring rep;
   int nbargs = args.size() - 12;
@@ -132,8 +132,8 @@ void MacroInfo::_free_() {
 }
 
 sptr<Atom> PredefMacroInfo::invoke(
-    _out_ TeXParser& tp,
-    _out_ vector<wstring>& args) {
+    TeXParser& tp,
+    vector<wstring>& args) {
   try {
     return _delegate(tp, args);
   } catch (ex_parse& e) {

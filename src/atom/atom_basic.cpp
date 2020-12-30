@@ -16,11 +16,11 @@ using namespace tex;
  *                                     basic atom implementation                                   *
  ***************************************************************************************************/
 
-sptr<Box> ScaleAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> ScaleAtom::createBox(TeXEnvironment& env) {
   return sptr<Box>(new ScaleBox(_base->createBox(env), _sx, _sy));
 }
 
-sptr<Box> MathAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> MathAtom::createBox(TeXEnvironment& env) {
   TeXEnvironment& e = *(env.copy(env.getTeXFont()->copy()));
   e.getTeXFont()->setRoman(false);
   int style = e.getStyle();
@@ -35,7 +35,7 @@ sptr<Box> MathAtom::createBox(_out_ TeXEnvironment& env) {
   return box;
 }
 
-sptr<Box> HlineAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> HlineAtom::createBox(TeXEnvironment& env) {
   float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
   Box* b = new HorizontalRule(drt, _width, _shift, _color, false);
   VerticalBox* vb = new VerticalBox();
@@ -47,7 +47,7 @@ sptr<Box> HlineAtom::createBox(_out_ TeXEnvironment& env) {
 SpaceAtom UnderScoreAtom::_w(UNIT_EM, 0.7f, 0, 0);
 SpaceAtom UnderScoreAtom::_s(UNIT_EM, 0.06f, 0, 0);
 
-sptr<Box> UnderScoreAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> UnderScoreAtom::createBox(TeXEnvironment& env) {
   float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
   HorizontalBox* hb = new HorizontalBox(_s.createBox(env));
   hb->add(sptr<Box>(new HorizontalRule(drt, _w.createBox(env)->_width, 0)));
@@ -89,11 +89,11 @@ sptr<Atom> CumulativeScriptsAtom::getScriptsAtom() const {
   return sptr<Atom>(new ScriptsAtom(_base, _sub, _sup));
 }
 
-sptr<Box> CumulativeScriptsAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> CumulativeScriptsAtom::createBox(TeXEnvironment& env) {
   return ScriptsAtom(_base, _sub, _sup).createBox(env);
 }
 
-sptr<Box> TextRenderingAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> TextRenderingAtom::createBox(TeXEnvironment& env) {
   if (_infos == nullptr) {
     return sptr<Box>(new TextRenderingBox(
       _str, _type, DefaultTeXFont::getSizeFactor(env.getStyle())));
@@ -144,66 +144,66 @@ const map<string, int> SpaceAtom::_units = {
 
 const int SpaceAtom::_units_count = 14;
 
-const function<float(_in_ const TeXEnvironment&)> SpaceAtom::_unitConversions[] = {
+const function<float(const TeXEnvironment&)> SpaceAtom::_unitConversions[] = {
   // EM
-  [](_in_ const TeXEnvironment& env) -> float {
+  [](const TeXEnvironment& env) -> float {
     return env.getTeXFont()->getEM(env.getStyle());
   },
   // EX
-  [](_in_ const TeXEnvironment& env) -> float {
+  [](const TeXEnvironment& env) -> float {
     return env.getTeXFont()->getXHeight(env.getStyle(), env.getLastFontId());
   },
   //PIXEL
-  [](_in_ const TeXEnvironment& env) -> float {
+  [](const TeXEnvironment& env) -> float {
     return 1.f / env.getSize();
   },
   // BP
-  [](_in_ const TeXEnvironment& env) -> float {
+  [](const TeXEnvironment& env) -> float {
     return TeXFormula::PIXELS_PER_POINT / env.getSize();
   },
   // PICA
-  [](_in_ const TeXEnvironment& env) -> float {
+  [](const TeXEnvironment& env) -> float {
     return (12 * TeXFormula::PIXELS_PER_POINT) / env.getSize();
   },
   // MU
-  [](_in_ const TeXEnvironment& env) -> float {
+  [](const TeXEnvironment& env) -> float {
     auto tf = env.getTeXFont();
     return tf->getQuad(env.getStyle(), tf->getMuFontId()) / 18.f;
   },
   // CM
-  [](_in_ const TeXEnvironment& env) -> float {
+  [](const TeXEnvironment& env) -> float {
     return (28.346456693f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
   },
   // MM
-  [](_in_ const TeXEnvironment& env) -> float {
+  [](const TeXEnvironment& env) -> float {
     return (2.8346456693f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
   },
   // IN
-  [](_in_ const TeXEnvironment& env) -> float {
+  [](const TeXEnvironment& env) -> float {
     return (72.f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
   },
   // SP
-  [](_in_ const TeXEnvironment& env) -> float {
+  [](const TeXEnvironment& env) -> float {
     return (65536 * TeXFormula::PIXELS_PER_POINT) / env.getSize();
   },
   // PT
-  [](_in_ const TeXEnvironment& env) -> float {
+  [](const TeXEnvironment& env) -> float {
     return (.9962640099f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
   },
   // DD
-  [](_in_ const TeXEnvironment& env) -> float {
+  [](const TeXEnvironment& env) -> float {
     return (1.0660349422f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
   },
   // CC
-  [](_in_ const TeXEnvironment& env) -> float {
+  [](const TeXEnvironment& env) -> float {
     return (12.7924193070f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
   },
   // X8
-  [](_in_ const TeXEnvironment& env) -> float {
+  [](const TeXEnvironment& env) -> float {
     return env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
   }};
 
-sptr<Box> SpaceAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> SpaceAtom::createBox(TeXEnvironment& env) {
   if (!_blankSpace) {
     float w = _width * getFactor(_wUnit, env);
     float h = _height * getFactor(_hUnit, env);
@@ -237,17 +237,17 @@ pair<int, float> SpaceAtom::getLength(const wstring& lgth) {
   return getLength(s);
 }
 
-sptr<Box> BreakMarkAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> BreakMarkAtom::createBox(TeXEnvironment& env) {
   return sptr<Box>(new StrutBox(0, 0, 0, 0));
 }
 
 /********************************** char symbol atoms implementation ******************************/
 
-sptr<CharFont> FixedCharAtom::getCharFont(_in_ TeXFont& tf) {
+sptr<CharFont> FixedCharAtom::getCharFont(TeXFont& tf) {
   return _cf;
 }
 
-sptr<Box> FixedCharAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> FixedCharAtom::createBox(TeXEnvironment& env) {
   auto i = env.getTeXFont();
   TeXFont& tf = *i;
   Char c = tf.getChar(*_cf, env.getStyle());
@@ -278,7 +278,7 @@ SymbolAtom::SymbolAtom(const string& name, AtomType type, bool del) : _unicode(0
   this->_type = type;
 }
 
-sptr<Box> SymbolAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> SymbolAtom::createBox(TeXEnvironment& env) {
   auto i = env.getTeXFont();
   TeXFont& tf = *i;
   int style = env.getStyle();
@@ -307,7 +307,7 @@ sptr<Box> SymbolAtom::createBox(_out_ TeXEnvironment& env) {
   return cb;
 }
 
-sptr<CharFont> SymbolAtom::getCharFont(_in_ TeXFont& tf) {
+sptr<CharFont> SymbolAtom::getCharFont(TeXFont& tf) {
   return tf.getChar(_name, STYLE_DISPLAY).getCharFont();
 }
 
@@ -326,7 +326,7 @@ sptr<SymbolAtom> SymbolAtom::get(const string& name) {
   return it->second;
 }
 
-Char CharAtom::getChar(_in_ TeXFont& tf, int style, bool smallCap) {
+Char CharAtom::getChar(TeXFont& tf, int style, bool smallCap) {
   wchar_t chr = _c;
   if (smallCap) {
     if (islower(_c)) chr = toupper(_c);
@@ -335,11 +335,11 @@ Char CharAtom::getChar(_in_ TeXFont& tf, int style, bool smallCap) {
   return tf.getChar(chr, _textStyle, style);
 }
 
-sptr<CharFont> CharAtom::getCharFont(_in_ TeXFont& tf) {
+sptr<CharFont> CharAtom::getCharFont(TeXFont& tf) {
   return getChar(tf, STYLE_DISPLAY, false).getCharFont();
 }
 
-sptr<Box> CharAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> CharAtom::createBox(TeXEnvironment& env) {
   if (_textStyle.empty()) {
     const string& ts = env.getTextStyle();
     if (!ts.empty()) _textStyle = ts;
@@ -420,7 +420,7 @@ void RowAtom::add(const sptr<Atom>& el) {
   if (el != nullptr) _elements.push_back(el);
 }
 
-void RowAtom::change2Ord(_out_ Dummy* cur, _out_ Dummy* prev, _out_ Atom* next) {
+void RowAtom::change2Ord(Dummy* cur, Dummy* prev, Atom* next) {
   AtomType type = cur->leftType();
   if ((type == AtomType::binaryOperator) &&
       ((prev == nullptr || _binSet[static_cast<int8>(prev->rightType())]) || next == nullptr)) {
@@ -445,7 +445,7 @@ AtomType RowAtom::rightType() const {
   return _elements.back()->rightType();
 }
 
-sptr<Box> RowAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> RowAtom::createBox(TeXEnvironment& env) {
   auto x = env.getTeXFont();
   TeXFont& tf = *x;
   HorizontalBox* hbox = new HorizontalBox(env.getColor(), env.getBackground());
@@ -585,7 +585,7 @@ void VRowAtom::append(const sptr<Atom>& el) {
   if (el != nullptr) _elements.push_back(el);
 }
 
-sptr<Box> VRowAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> VRowAtom::createBox(TeXEnvironment& env) {
   VerticalBox* vb = new VerticalBox();
   sptr<Box> interline(new StrutBox(0, env.getInterline(), 0, 0));
 
@@ -718,7 +718,7 @@ color ColorAtom::getColor(string s) {
   return _default;
 }
 
-sptr<Box> ColorAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> ColorAtom::createBox(TeXEnvironment& env) {
   env._isColored = true;
   TeXEnvironment& c = *(env.copy());
   if (!istrans(_background)) c.setBackground(_background);
@@ -726,7 +726,7 @@ sptr<Box> ColorAtom::createBox(_out_ TeXEnvironment& env) {
   return _elements->createBox(c);
 }
 
-sptr<Box> RomanAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> RomanAtom::createBox(TeXEnvironment& env) {
   if (_base == nullptr) return sptr<Box>(new StrutBox(0, 0, 0, 0));
   TeXEnvironment& c = *(env.copy(env.getTeXFont()->copy()));
   c.getTeXFont()->setRoman(true);
@@ -749,7 +749,7 @@ PhantomAtom::PhantomAtom(const sptr<Atom>& el, bool w, bool h, bool d) {
   _w = w, _h = h, _d = d;
 }
 
-sptr<Box> PhantomAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> PhantomAtom::createBox(TeXEnvironment& env) {
   auto res = _elements->createBox(env);
   float w = (_w ? res->_width : 0);
   float h = (_h ? res->_height : 0);
@@ -818,7 +818,7 @@ AccentedAtom::AccentedAtom(
   }
 }
 
-sptr<Box> AccentedAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> AccentedAtom::createBox(TeXEnvironment& env) {
   TeXFont* tf = env.getTeXFont().get();
   int style = env.getStyle();
 
@@ -896,7 +896,7 @@ sptr<Box> UnderOverAtom::changeWidth(const sptr<Box>& b, float maxW) {
   return b;
 }
 
-sptr<Box> UnderOverAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> UnderOverAtom::createBox(TeXEnvironment& env) {
   // create boxes in right style and calculate maximum width
   auto b = (_base == nullptr ? sptr<Box>(new StrutBox(0, 0, 0, 0)) : _base->createBox(env));
   sptr<Box> o(nullptr);
@@ -947,7 +947,7 @@ sptr<Box> UnderOverAtom::createBox(_out_ TeXEnvironment& env) {
 
 SpaceAtom ScriptsAtom::SCRIPT_SPACE(UNIT_POINT, 0.5f, 0, 0);
 
-sptr<Box> ScriptsAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> ScriptsAtom::createBox(TeXEnvironment& env) {
   if (_base == nullptr) {
     sptr<Atom> in(new CharAtom(L'M', "mathnormal"));
     _base = sptr<Atom>(new PhantomAtom(in, false, true, true));
@@ -1114,7 +1114,7 @@ sptr<Box> BigOperatorAtom::changeWidth(const sptr<Box>& b, float maxw) {
   return b;
 }
 
-sptr<Box> BigOperatorAtom::createSideSets(_out_ TeXEnvironment& env) {
+sptr<Box> BigOperatorAtom::createSideSets(TeXEnvironment& env) {
   SideSetsAtom* sa = static_cast<SideSetsAtom*>(_base.get());
   auto sl = sa->_left, sr = sa->_right, sb = sa->_base;
   if (sb == nullptr) {
@@ -1193,7 +1193,7 @@ sptr<Box> BigOperatorAtom::createSideSets(_out_ TeXEnvironment& env) {
   return sptr<Box>(vbox);
 }
 
-sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> BigOperatorAtom::createBox(TeXEnvironment& env) {
   if (dynamic_cast<SideSetsAtom*>(_base.get())) return createSideSets(env);
 
   TeXFont* tf = env.getTeXFont().get();
@@ -1306,7 +1306,7 @@ sptr<Box> BigOperatorAtom::createBox(_out_ TeXEnvironment& env) {
 
 /*********************************** SideSetsAtom implementation **********************************/
 
-sptr<Box> SideSetsAtom::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> SideSetsAtom::createBox(TeXEnvironment& env) {
   if (_base == nullptr) {
     // create a phatom to place side-sets
     sptr<Atom> in(new CharAtom(L'M', "mathnormal"));
@@ -1341,7 +1341,7 @@ float OverUnderDelimiter::getMaxWidth(const Box* b, const Box* del, const Box* s
   return mx;
 }
 
-sptr<Box> OverUnderDelimiter::createBox(_out_ TeXEnvironment& env) {
+sptr<Box> OverUnderDelimiter::createBox(TeXEnvironment& env) {
   auto b = (_base == nullptr ? sptr<Box>(new StrutBox(0, 0, 0, 0)) : _base->createBox(env));
   sptr<Box> del = DelimiterFactory::create(_symbol->getName(), env, b->_width);
 

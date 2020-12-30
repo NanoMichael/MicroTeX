@@ -181,7 +181,7 @@ void TeXFormula::addImpl(const TeXFormula* f) {
   }
 }
 
-sptr<Box> TeXFormula::createBox(_out_ TeXEnvironment& style) {
+sptr<Box> TeXFormula::createBox(TeXEnvironment& style) {
   if (_root == nullptr) return sptr<Box>(new StrutBox(0, 0, 0, 0));
   return _root->createBox(style);
 }

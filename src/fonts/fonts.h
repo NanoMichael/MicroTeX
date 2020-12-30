@@ -39,9 +39,9 @@ private:
 
   float _factor, _size;
 
-  Char getChar(wchar_t c, _in_ const std::vector<CharFont*>& cf, int style);
+  Char getChar(wchar_t c, const std::vector<CharFont*>& cf, int style);
 
-  sptr<Metrics> getMetrics(_in_ const CharFont& cf, float size);
+  sptr<Metrics> getMetrics(const CharFont& cf, float size);
 
   inline FontInfo* getInfo(int id) { return FontInfo::__get(id); }
 
@@ -130,13 +130,13 @@ public:
 
   /*********************************** font information *****************************************/
 
-  Extension* getExtension(_in_ const Char& c, int style) override;
+  Extension* getExtension(const Char& c, int style) override;
 
-  float getKern(_in_ const CharFont& left, _in_ const CharFont& right, int style) override;
+  float getKern(const CharFont& left, const CharFont& right, int style) override;
 
-  sptr<CharFont> getLigature(_in_ const CharFont& left, _in_ const CharFont& right) override;
+  sptr<CharFont> getLigature(const CharFont& left, const CharFont& right) override;
 
-  Char getNextLarger(_in_ const Char& c, int style) override;
+  Char getNextLarger(const Char& c, int style) override;
 
   sptr<TeXFont> copy() override;
 
@@ -190,7 +190,7 @@ public:
 
   inline float getSize() override { return _size; }
 
-  inline float getSkew(_in_ const CharFont& cf, int style) override {
+  inline float getSkew(const CharFont& cf, int style) override {
     FontInfo* info = getInfo(cf.fontId);
     wchar_t   skew = info->getSkewChar();
     if (skew == -1) return 0;
@@ -208,7 +208,7 @@ public:
     return getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
   }
 
-  inline bool hasNextLarger(_in_ const Char& c) override {
+  inline bool hasNextLarger(const Char& c) override {
     FontInfo* info = getInfo(c.getFontCode());
     return info->getNextLarger(c.getChar()) != nullptr;
   }
@@ -238,7 +238,7 @@ public:
     return info->hasSpace();
   }
 
-  inline bool isExtensionChar(_in_ const Char& c) override {
+  inline bool isExtensionChar(const Char& c) override {
     FontInfo* info = getInfo(c.getFontCode());
     return info->getExtension(c.getChar()) != nullptr;
   }
