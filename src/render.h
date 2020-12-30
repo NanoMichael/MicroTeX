@@ -54,7 +54,8 @@ public:
 
 class TeXRenderBuilder {
 private:
-  int _style, _type, _widthUnit, _lineSpaceUnit;
+  int _style, _type;
+  UnitType _widthUnit, _lineSpaceUnit;
   float _textSize, _textWidth, _lineSpace;
   bool _trueValues, _isMaxWidth;
   color _fg;
@@ -74,9 +75,9 @@ public:
   TeXRenderBuilder()
       : _style(-1),
         _type(-1),
-        _widthUnit(-1),
+        _widthUnit(UnitType::none),
         _align(Alignment::none),
-        _lineSpaceUnit(-1),
+        _lineSpaceUnit(UnitType::none),
         _textSize(0),
         _textWidth(0),
         _lineSpace(0),
@@ -109,7 +110,7 @@ public:
     return *this;
   }
 
-  inline TeXRenderBuilder& setWidth(int unit, float width, Alignment align) {
+  inline TeXRenderBuilder& setWidth(UnitType unit, float width, Alignment align) {
     _widthUnit = unit;
     _textWidth = width;
     _align = align;
@@ -118,8 +119,9 @@ public:
   }
 
   inline TeXRenderBuilder& setIsMaxWidth(bool i) {
-    if (_widthUnit == -1)
+    if (_widthUnit == UnitType::none) {
       throw ex_invalid_state("Cannot set 'isMaxWidth' without having specified a width!");
+    }
     if (i) {
       // Currently isMaxWidth==true does not work with
       // Alignment::center or Alignment::right (see HorizontalBox constructor)
@@ -150,8 +152,8 @@ public:
     return *this;
   }
 
-  inline TeXRenderBuilder& setLineSpace(int unit, float space) {
-    if (_widthUnit == -1) {
+  inline TeXRenderBuilder& setLineSpace(UnitType unit, float space) {
+    if (_widthUnit == UnitType::none) {
       throw ex_invalid_state("Cannot set line space without having specified a width!");
     }
     _lineSpace = space;

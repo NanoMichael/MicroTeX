@@ -59,7 +59,7 @@ private:
   bool _smallCap;
   float _scaleFactor;
   // The unit of inter-line space
-  int _interlineUnit;
+  UnitType _interlineUnit;
   // The inter line space
   float _interline;
 
@@ -75,7 +75,7 @@ private:
     _textWidth = POS_INF;
     _smallCap = false;
     _scaleFactor = 1.f;
-    _interlineUnit = 0;
+    _interlineUnit = UnitType::em;
     _interline = 0;
     _isColored = false;
   }
@@ -86,13 +86,14 @@ private:
     _tf = tf;
     _background = bg;
     _color = c;
-    setInterline(UNIT_EX, 1.f);
+    setInterline(UnitType::ex, 1.f);
   }
 
   TeXEnvironment(
     int style, float scaleFactor,
     const sptr<TeXFont>& tf, color bg, color c,
-    const std::string& textstyle, bool smallCap) {
+    const std::string& textstyle, bool smallCap  //
+  ) {
     init();
     _style = style;
     _scaleFactor = scaleFactor;
@@ -101,7 +102,7 @@ private:
     _smallCap = smallCap;
     _background = bg;
     _color = c;
-    setInterline(UNIT_EX, 1.f);
+    setInterline(UnitType::ex, 1.f);
   }
 
 public:
@@ -111,19 +112,19 @@ public:
     init();
     _style = style;
     _tf = tf;
-    setInterline(UNIT_EX, 1.f);
+    setInterline(UnitType::ex, 1.f);
   }
 
-  TeXEnvironment(int style, const sptr<TeXFont>& tf, int widthUnit, float textWidth);
+  TeXEnvironment(int style, const sptr<TeXFont>& tf, UnitType widthUnit, float textWidth);
 
-  inline void setInterline(int unit, float len) {
+  inline void setInterline(UnitType unit, float len) {
     _interline = len;
     _interlineUnit = unit;
   }
 
   float getInterline() const;
 
-  void setTextWidth(int widthUnit, float width);
+  void setTextWidth(UnitType widthUnit, float width);
 
   inline float getTextWidth() const { return _textWidth; }
 

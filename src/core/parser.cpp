@@ -660,8 +660,8 @@ sptr<Atom> TeXParser::getArgument() {
   return atom;
 }
 
-pair<int, float> TeXParser::getLength() {
-  if (_pos == _len) return make_pair(-1.f, -1.f);
+pair<UnitType, float> TeXParser::getLength() {
+  if (_pos == _len) return make_pair(UnitType::none, -1.f);
 
   int spos;
   wchar_t ch = L'\0';

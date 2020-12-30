@@ -44,8 +44,8 @@ sptr<Box> HlineAtom::createBox(TeXEnvironment& env) {
   return sptr<Box>(vb);
 }
 
-SpaceAtom UnderScoreAtom::_w(UNIT_EM, 0.7f, 0, 0);
-SpaceAtom UnderScoreAtom::_s(UNIT_EM, 0.06f, 0, 0);
+SpaceAtom UnderScoreAtom::_w(UnitType::em, 0.7f, 0, 0);
+SpaceAtom UnderScoreAtom::_s(UnitType::em, 0.06f, 0, 0);
 
 sptr<Box> UnderScoreAtom::createBox(TeXEnvironment& env) {
   float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
@@ -124,84 +124,6 @@ sptr<Box> TextRenderingAtom::createBox(TeXEnvironment& env) {
 /***************************************************************************************************
  *                                     SpaceAtom implementation                                    *
  ***************************************************************************************************/
-const map<string, int> SpaceAtom::_units = {
-  {"em", UNIT_EM},
-  {"ex", UNIT_EX},
-  {"px", UNIT_PIXEL},
-  {"pix", UNIT_PIXEL},
-  {"pixel", UNIT_PIXEL},
-  {"pt", UNIT_PT},
-  {"bp", UNIT_POINT},
-  {"pica", UNIT_PICA},
-  {"pc", UNIT_PICA},
-  {"mu", UNIT_MU},
-  {"cm", UNIT_CM},
-  {"mm", UNIT_MM},
-  {"in", UNIT_IN},
-  {"sp", UNIT_SP},
-  {"dd", UNIT_DD},
-  {"cc", UNIT_CC}};
-
-const int SpaceAtom::_units_count = 14;
-
-const function<float(const TeXEnvironment&)> SpaceAtom::_unitConversions[] = {
-  // EM
-  [](const TeXEnvironment& env) -> float {
-    return env.getTeXFont()->getEM(env.getStyle());
-  },
-  // EX
-  [](const TeXEnvironment& env) -> float {
-    return env.getTeXFont()->getXHeight(env.getStyle(), env.getLastFontId());
-  },
-  //PIXEL
-  [](const TeXEnvironment& env) -> float {
-    return 1.f / env.getSize();
-  },
-  // BP
-  [](const TeXEnvironment& env) -> float {
-    return TeXFormula::PIXELS_PER_POINT / env.getSize();
-  },
-  // PICA
-  [](const TeXEnvironment& env) -> float {
-    return (12 * TeXFormula::PIXELS_PER_POINT) / env.getSize();
-  },
-  // MU
-  [](const TeXEnvironment& env) -> float {
-    auto tf = env.getTeXFont();
-    return tf->getQuad(env.getStyle(), tf->getMuFontId()) / 18.f;
-  },
-  // CM
-  [](const TeXEnvironment& env) -> float {
-    return (28.346456693f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
-  },
-  // MM
-  [](const TeXEnvironment& env) -> float {
-    return (2.8346456693f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
-  },
-  // IN
-  [](const TeXEnvironment& env) -> float {
-    return (72.f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
-  },
-  // SP
-  [](const TeXEnvironment& env) -> float {
-    return (65536 * TeXFormula::PIXELS_PER_POINT) / env.getSize();
-  },
-  // PT
-  [](const TeXEnvironment& env) -> float {
-    return (.9962640099f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
-  },
-  // DD
-  [](const TeXEnvironment& env) -> float {
-    return (1.0660349422f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
-  },
-  // CC
-  [](const TeXEnvironment& env) -> float {
-    return (12.7924193070f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
-  },
-  // X8
-  [](const TeXEnvironment& env) -> float {
-    return env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-  }};
 
 sptr<Box> SpaceAtom::createBox(TeXEnvironment& env) {
   if (!_blankSpace) {
@@ -214,8 +136,8 @@ sptr<Box> SpaceAtom::createBox(TeXEnvironment& env) {
   return Glue::get(_blankType, env);
 }
 
-pair<int, float> SpaceAtom::getLength(const string& lgth) {
-  if (lgth.empty()) return pair<int, float>({UNIT_PIXEL, 0.f});
+pair<UnitType, float> SpaceAtom::getLength(const string& lgth) {
+  if (lgth.empty()) return {UnitType::pixel, 0.f};
 
   size_t i = 0;
   for (; i < lgth.size() && !isalpha(lgth[i]); i++)
@@ -223,15 +145,15 @@ pair<int, float> SpaceAtom::getLength(const string& lgth) {
   float f = 0;
   valueof(lgth.substr(0, i), f);
 
-  int unit = UNIT_PIXEL;
+  UnitType unit = UnitType::pixel;
   string x = lgth.substr(i);
   tolower(x);
   if (i != lgth.size()) unit = getUnit(x);
 
-  return pair<int, float>({unit, f});
+  return {unit, f};
 }
 
-pair<int, float> SpaceAtom::getLength(const wstring& lgth) {
+pair<UnitType, float> SpaceAtom::getLength(const wstring& lgth) {
   string s;
   wide2utf8(lgth.c_str(), s);
   return getLength(s);
@@ -408,11 +330,11 @@ sptr<Atom> RowAtom::popLastAtom() {
     _elements.pop_back();
     return x;
   }
-  return sptr<Atom>(new SpaceAtom(UNIT_POINT, 0.f, 0.f, 0.f));
+  return sptr<Atom>(new SpaceAtom(UnitType::point, 0.f, 0.f, 0.f));
 }
 
 sptr<Atom> RowAtom::get(size_t pos) {
-  if (pos > _elements.size()) return sptr<Atom>(new SpaceAtom(UNIT_POINT, 0, 0, 0));
+  if (pos > _elements.size()) return sptr<Atom>(new SpaceAtom(UnitType::point, 0, 0, 0));
   return _elements[pos];
 }
 
@@ -549,14 +471,14 @@ VRowAtom::VRowAtom() {
   _addInterline = false;
   _valign = Alignment::center;
   _halign = Alignment::none;
-  _raise = sptr<SpaceAtom>(new SpaceAtom(UNIT_EX, 0, 0, 0));
+  _raise = sptr<SpaceAtom>(new SpaceAtom(UnitType::ex, 0, 0, 0));
 }
 
 VRowAtom::VRowAtom(const sptr<Atom>& el) {
   _addInterline = false;
   _valign = Alignment::center;
   _halign = Alignment::none;
-  _raise = sptr<SpaceAtom>(new SpaceAtom(UNIT_EX, 0, 0, 0));
+  _raise = sptr<SpaceAtom>(new SpaceAtom(UnitType::ex, 0, 0, 0));
   if (el != nullptr) {
     VRowAtom* a = dynamic_cast<VRowAtom*>(el.get());
     if (a != nullptr) {
@@ -567,7 +489,7 @@ VRowAtom::VRowAtom(const sptr<Atom>& el) {
   }
 }
 
-void VRowAtom::setRaise(int unit, float r) {
+void VRowAtom::setRaise(UnitType unit, float r) {
   _raise = sptr<SpaceAtom>(new SpaceAtom(unit, r, 0, 0));
 }
 
@@ -843,7 +765,7 @@ sptr<Box> AccentedAtom::createBox(TeXEnvironment& env) {
   }
 
   // calculate delta
-  float ec = -SpaceAtom::getFactor(UNIT_MU, env);
+  float ec = -SpaceAtom::getFactor(UnitType::mu, env);
   float delta = _acc ? ec : min(b->_height, tf->getXHeight(style, ch.getFontCode()));
 
   // create vertical box
@@ -945,7 +867,7 @@ sptr<Box> UnderOverAtom::createBox(TeXEnvironment& env) {
 
 /************************************ ScriptsAtom implementation **********************************/
 
-SpaceAtom ScriptsAtom::SCRIPT_SPACE(UNIT_POINT, 0.5f, 0, 0);
+SpaceAtom ScriptsAtom::SCRIPT_SPACE(UnitType::point, 0.5f, 0, 0);
 
 sptr<Box> ScriptsAtom::createBox(TeXEnvironment& env) {
   if (_base == nullptr) {
@@ -962,8 +884,8 @@ sptr<Box> ScriptsAtom::createBox(TeXEnvironment& env) {
 
   if (_base->_limitsType == LimitsType::limits ||
       (_base->_limitsType == LimitsType::normal && style == STYLE_DISPLAY)) {
-    sptr<Atom> in(new UnderOverAtom(_base, _sub, UNIT_POINT, 0.3f, true, false));
-    return UnderOverAtom(in, _sup, UNIT_POINT, 3.f, true, true).createBox(env);
+    sptr<Atom> in(new UnderOverAtom(_base, _sub, UnitType::point, 0.3f, true, false));
+    return UnderOverAtom(in, _sup, UnitType::point, 3.f, true, true).createBox(env);
   }
 
   sptr<HorizontalBox> hor(new HorizontalBox(b));

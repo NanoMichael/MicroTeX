@@ -234,7 +234,7 @@ public:
 class SpaceAtom : public Atom {
 private:
   static const int _units_count;
-  static const std::map<std::string, int> _units;
+  static const std::map<std::string, UnitType> _units;
   static const std::function<float(const TeXEnvironment&)> _unitConversions[];
   // whether a hard space should be represented
   bool _blankSpace;
@@ -243,13 +243,13 @@ private:
   // dimensions
   float _width, _height, _depth;
   // units of the dimensions
-  int _wUnit, _hUnit, _dUnit;
+  UnitType _wUnit, _hUnit, _dUnit;
 
   void init() {
     _blankSpace = false;
     _blankType = SpaceType::none;
     _width = _height = _depth = 0;
-    _wUnit = _hUnit = _dUnit = 0;
+    _wUnit = _hUnit = _dUnit = UnitType::em;
   }
 
 public:
@@ -264,70 +264,47 @@ public:
     _blankType = type;
   }
 
-  SpaceAtom(int unit, float width, float height, float depth) {
+  SpaceAtom(UnitType unit, float width, float height, float depth) {
     init();
-    // check if the unit is valid
-    checkUnit(unit);
-
     _wUnit = _hUnit = _dUnit = unit;
     _width = width;
     _height = height;
     _depth = depth;
   }
 
-  SpaceAtom(int wu, float w, int hu, float h, int du, float d) {
+  SpaceAtom(UnitType wu, float w, UnitType hu, float h, UnitType du, float d) {
     init();
-    // check if the unit is valid
-    checkUnit(wu);
-    checkUnit(hu);
-    checkUnit(du);
-
-    _wUnit = wu;
-    _hUnit = hu;
-    _dUnit = du;
-    _width = w;
-    _height = h;
-    _depth = d;
+    _wUnit = wu, _hUnit = hu, _dUnit = du;
+    _width = w, _height = h, _depth = d;
   }
 
-  /**
-   * Check if the given unit is valid
-   *
-   * @param unit the unit's integer representation (a constant)
-   * @throw ex_invalid_unit if the given integer value does not represent
-   * a valid unit
-   */
-  inline static void checkUnit(int unit) {
-    if (unit < 0 || unit >= _units_count) throw ex_invalid_unit();
-  }
-
-  inline static int getUnit(const std::string& unit) {
+  inline static UnitType getUnit(const std::string& unit) {
     auto i = _units.find(unit);
-    if (i == _units.end()) return UNIT_PIXEL;
+    if (i == _units.end()) return UnitType::pixel;
     return i->second;
   }
 
-  inline static float getFactor(int unit, const TeXEnvironment& env) {
-    return _unitConversions[unit](env);
+  inline static float getFactor(UnitType unit, const TeXEnvironment& env) {
+    return _unitConversions[static_cast<int8>(unit)](env);
   }
 
-  inline static float getSize(int unit, float size, const TeXEnvironment& env) {
-    return _unitConversions[unit](env) * size;
+  inline static float getSize(UnitType unit, float size, const TeXEnvironment& env) {
+    return _unitConversions[static_cast<int8>(unit)](env) * size;
   }
 
   sptr<Box> createBox(TeXEnvironment& env) override;
 
   /**
    * Get the unit and length from given string. The string must be in the format: a number
-   * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or (UNIT_PIXEL, 0) will be returned.
+   * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or (UnitType::pixel, 0) will be returned.
    */
-  static std::pair<int, float> getLength(const std::string& lgth);
+  static std::pair<UnitType, float> getLength(const std::string& lgth);
 
   /**
    * Get the unit and length from given string. The string must be in the format: a number
-   * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or (UNIT_PIXEL, 0) will be returned.
+   * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or (UnitType::pixel, 0) will be returned.
    */
-  static std::pair<int, float> getLength(const std::wstring& lgth);
+  static std::pair<UnitType, float> getLength(const std::wstring& lgth);
 
   __decl_clone(SpaceAtom)
 };
@@ -771,7 +748,7 @@ public:
     return _valign == Alignment::top;
   }
 
-  void setRaise(int unit, float r);
+  void setRaise(UnitType unit, float r);
 
   sptr<Atom> popLastAtom();
 
@@ -1017,7 +994,7 @@ private:
   // kerning between base and under and over script
   float _underSpace, _overSpace;
   // unit
-  int _underUnit, _overUnit;
+  UnitType _underUnit, _overUnit;
   // whether the under over should be drawn in a smaller size
   bool _underSmall, _overSmall;
 
@@ -1025,7 +1002,7 @@ private:
 
   inline void init() {
     _underSpace = _overSpace = 0;
-    _underUnit = _overUnit = 0;
+    _underUnit = _overUnit = UnitType::em;
     _underSmall = _overSmall = false;
   }
 
@@ -1033,20 +1010,15 @@ public:
   UnderOverAtom() = delete;
 
   UnderOverAtom(
-    const sptr<Atom>& base,
-    const sptr<Atom>& script,
-    int unit,
-    float space,
-    bool small,
-    bool over) {
+    const sptr<Atom>& base, const sptr<Atom>& script,
+    UnitType unit, float space, bool small, bool over  //
+  ) {
     init();
-    // check if unit is valid
-    SpaceAtom::checkUnit(unit);
     _base = base;
     if (over) {
       _under = nullptr;
       _underSpace = 0.f;
-      _underUnit = 0;
+      _underUnit = UnitType::em;
       _underSmall = false;
       _over = script;
       _overUnit = unit;
@@ -1059,25 +1031,16 @@ public:
       _underSmall = small;
       _overSpace = 0.f;
       _over = nullptr;
-      _overUnit = 0;
+      _overUnit = UnitType::em;
       _overSmall = false;
     }
   }
 
   UnderOverAtom(
     const sptr<Atom>& base,
-    const sptr<Atom>& under,
-    int underunit,
-    float underspace,
-    bool undersmall,
-    const sptr<Atom>& over,
-    int overunit,
-    float overspace,
-    bool oversmall) {
-    // check unit
-    SpaceAtom::checkUnit(underunit);
-    SpaceAtom::checkUnit(overunit);
-
+    const sptr<Atom>& under, UnitType underunit, float underspace, bool undersmall,
+    const sptr<Atom>& over, UnitType overunit, float overspace, bool oversmall  //
+  ) {
     _base = base;
     _under = under;
     _underUnit = underunit;
@@ -1260,13 +1223,11 @@ public:
   OverUnderDelimiter(
     const sptr<Atom>& base,
     const sptr<Atom>& script,
-    const sptr<SymbolAtom>& s,
-    int kernunit,
-    float kern,
-    bool over) {
+    const sptr<SymbolAtom>& symbol, UnitType kernunit, float kern, bool over  //
+  ) {
     _base = base;
     _script = script;
-    _symbol = s;
+    _symbol = symbol;
     _kern = SpaceAtom(kernunit, 0, kern, 0);
     _over = over;
     _type = AtomType::inner;

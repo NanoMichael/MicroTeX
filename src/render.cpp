@@ -1,4 +1,5 @@
 #include "render.h"
+
 #include "atom/atom.h"
 #include "core/core.h"
 #include "core/formula.h"
@@ -124,19 +125,19 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
                                        : createFont(_textSize, _type);
   sptr<TeXFont> tf(font);
   TeXEnvironment* te = nullptr;
-  if (_widthUnit != -1 && _textWidth != 0) {
+  if (_widthUnit != UnitType::none && _textWidth != 0) {
     te = new TeXEnvironment(_style, tf, _widthUnit, _textWidth);
   } else {
     te = new TeXEnvironment(_style, tf);
   }
 
-  if (_lineSpaceUnit != -1) te->setInterline(_lineSpaceUnit, _lineSpace);
+  if (_lineSpaceUnit != UnitType::none) te->setInterline(_lineSpaceUnit, _lineSpace);
 
   auto box = f->createBox(*te);
   TeXRender* ti = nullptr;
-  if (_widthUnit != -1 && _textWidth != 0) {
+  if (_widthUnit != UnitType::none && _textWidth != 0) {
     HorizontalBox* hb = nullptr;
-    if (_lineSpaceUnit != -1 && _lineSpace != 0) {
+    if (_lineSpaceUnit != UnitType::none && _lineSpace != 0) {
       float il = _lineSpace * SpaceAtom::getFactor(_lineSpaceUnit, *te);
       auto b = BoxSplitter::split(box, te->getTextWidth(), il);
       hb = new HorizontalBox(b, _isMaxWidth ? b->_width : te->getTextWidth(), _align);

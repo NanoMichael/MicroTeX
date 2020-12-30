@@ -178,11 +178,11 @@ int BoxSplitter::getBreakPosition(const sptr<HorizontalBox>& hb, int i) {
 
 /************************************* TeXEnvironment implementation ******************************/
 
-TeXEnvironment::TeXEnvironment(int style, const sptr<TeXFont>& tf, int wu, float tw) {
+TeXEnvironment::TeXEnvironment(int style, const sptr<TeXFont>& tf, UnitType wu, float tw) {
   init();
   _style = style;
   _tf = tf;
-  setInterline(TeXConstants::UNIT_EX, 1.f);
+  setInterline(UnitType::ex, 1.f);
   _textWidth = tw * SpaceAtom::getFactor(wu, *this);
 }
 
@@ -190,7 +190,7 @@ float TeXEnvironment::getInterline() const {
   return _interline * SpaceAtom::getFactor(_interlineUnit, *this);
 }
 
-void TeXEnvironment::setTextWidth(int wu, float w) {
+void TeXEnvironment::setTextWidth(UnitType wu, float w) {
   _textWidth = w * SpaceAtom::getFactor(wu, *this);
 }
 

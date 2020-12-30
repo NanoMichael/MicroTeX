@@ -9,11 +9,11 @@ color MatrixAtom::LINE_COLOR = trans;
 
 map<wstring, wstring> MatrixAtom::_colspeReplacement;
 
-SpaceAtom MatrixAtom::_hsep(UNIT_EM, 1.f, 0.f, 0.f);
-SpaceAtom MatrixAtom::_semihsep(UNIT_EM, 0.5f, 0.f, 0.f);
-SpaceAtom MatrixAtom::_vsep_in(UNIT_EX, 0.f, 1.f, 0.f);
-SpaceAtom MatrixAtom::_vsep_ext_top(UNIT_EX, 0.f, 0.5f, 0.f);
-SpaceAtom MatrixAtom::_vsep_ext_bot(UNIT_EX, 0.f, 0.5f, 0.f);
+SpaceAtom MatrixAtom::_hsep(UnitType::em, 1.f, 0.f, 0.f);
+SpaceAtom MatrixAtom::_semihsep(UnitType::em, 0.5f, 0.f, 0.f);
+SpaceAtom MatrixAtom::_vsep_in(UnitType::ex, 0.f, 1.f, 0.f);
+SpaceAtom MatrixAtom::_vsep_ext_top(UnitType::ex, 0.f, 0.5f, 0.f);
+SpaceAtom MatrixAtom::_vsep_ext_bot(UnitType::ex, 0.f, 0.5f, 0.f);
 SpaceAtom MatrixAtom::_align(SpaceType::medMuSkip);
 
 sptr<Box> MatrixAtom::_nullbox(new StrutBox(0, 0, 0, 0));
@@ -603,7 +603,7 @@ sptr<Box> MatrixAtom::createBox(TeXEnvironment& e) {
 
 /**************************************** small atoms *********************************************/
 
-SpaceAtom MultlineAtom::_vsep_in(UNIT_EX, 0.f, 1.f, 0.f);
+SpaceAtom MultlineAtom::_vsep_in(UnitType::ex, 0.f, 1.f, 0.f);
 
 sptr<Box> MultlineAtom::createBox(TeXEnvironment& env) {
   float tw = env.getTextWidth();
@@ -667,7 +667,7 @@ sptr<Box> FencedAtom::createBox(TeXEnvironment& env) {
   RowAtom* ra = dynamic_cast<RowAtom*>(_base.get());
   if (ra != nullptr) ra->setCanBreak(false);
   auto content = _base->createBox(env);
-  float shortfall = DELIMITER_SHORTFALL * SpaceAtom::getFactor(UNIT_POINT, env);
+  float shortfall = DELIMITER_SHORTFALL * SpaceAtom::getFactor(UnitType::point, env);
   float axis = tf.getAxisHeight(env.getStyle());
   float delta = max(content->_height - axis, content->_depth + axis);
   float minh = max(delta / 500.f * DELIMITER_FACTOR, 2 * delta - shortfall);
@@ -716,12 +716,10 @@ sptr<Box> FencedAtom::createBox(TeXEnvironment& env) {
 /****************************************** fraction atom *****************************************/
 
 void FractionAtom::init(
-  const sptr<Atom>& num, const sptr<Atom>& den, bool nodef, int unit, float t) {
+  const sptr<Atom>& num, const sptr<Atom>& den, bool nodef, UnitType unit, float t) {
   _numAlign = Alignment::center;
   _denomAlign = Alignment::center;
   _deffactor = 1.f;
-
-  SpaceAtom::checkUnit(unit);
 
   _numerator = num;
   _denominator = den;
@@ -829,7 +827,7 @@ sptr<Box> FractionAtom::createBox(TeXEnvironment& env) {
   if (!_useKern) return sptr<Box>(vb);
 
   // \nulldelimiterspace is set by default to 1.2pt = 0.12em
-  float f = SpaceAtom::getSize(UNIT_EM, 0.12f, env);
+  float f = SpaceAtom::getSize(UnitType::em, 0.12f, env);
 
   return sptr<Box>(new HorizontalBox(sptr<Box>(vb), vb->_width + 2 * f, Alignment::center));
 }
@@ -950,26 +948,26 @@ sptr<Box> LaTeXAtom::createBox(TeXEnvironment& en) {
 
   // L
   HorizontalBox* hb = new HorizontalBox(rm->popLastAtom()->createBox(env));
-  hb->add(SpaceAtom(UNIT_EM, -0.35f * sc, 0, 0).createBox(env));
-  float f = SpaceAtom(UNIT_EX, 0.45f * sc, 0, 0).createBox(env)->_width;
-  float f1 = SpaceAtom(UNIT_EX, 0.5f * sc, 0, 0).createBox(env)->_width;
+  hb->add(SpaceAtom(UnitType::em, -0.35f * sc, 0, 0).createBox(env));
+  float f = SpaceAtom(UnitType::ex, 0.45f * sc, 0, 0).createBox(env)->_width;
+  float f1 = SpaceAtom(UnitType::ex, 0.5f * sc, 0, 0).createBox(env)->_width;
 
   // A
   CharBox* A = new CharBox(
     env.getTeXFont()->getChar('A', "mathnormal", env.supStyle()->getStyle()));
   A->_shift = -f;
   hb->add(sptr<Box>(A));
-  hb->add(SpaceAtom(UNIT_EM, -0.15f * sc, 0, 0).createBox(env));
+  hb->add(SpaceAtom(UnitType::em, -0.15f * sc, 0, 0).createBox(env));
 
   // T
   hb->add(rm->popLastAtom()->createBox(env));
-  hb->add(SpaceAtom(UNIT_EM, -0.15f * sc, 0, 0).createBox(env));
+  hb->add(SpaceAtom(UnitType::em, -0.15f * sc, 0, 0).createBox(env));
 
   // E
   auto E = rm->popLastAtom()->createBox(env);
   E->_shift = f1;
   hb->add(E);
-  hb->add(SpaceAtom(UNIT_EM, -0.15f * sc, 0, 0).createBox(env));
+  hb->add(SpaceAtom(UnitType::em, -0.15f * sc, 0, 0).createBox(env));
 
   // X
   hb->add(rm->popLastAtom()->createBox(env));
@@ -995,7 +993,7 @@ sptr<Box> NthRoot::createBox(TeXEnvironment& env) {
   TeXEnvironment& cramped = *(env.crampStyle());
   auto bs = _base->createBox(cramped);
   sptr<HorizontalBox> b(new HorizontalBox(bs));
-  b->add(sptr<Box>(SpaceAtom(UNIT_MU, 1, 0, 0).createBox(cramped)));
+  b->add(sptr<Box>(SpaceAtom(UnitType::mu, 1, 0, 0).createBox(cramped)));
   // create root sign
   float totalH = b->_height + b->_depth;
   auto rootSign = DelimiterFactory::create(_sqrtSymbol, env, totalH + clr + drt);
@@ -1021,7 +1019,7 @@ sptr<Box> NthRoot::createBox(TeXEnvironment& env) {
   r->_shift = squareRoot->_depth - r->_depth - bottomShift;
 
   // negative kerning
-  sptr<Box> negkern = SpaceAtom(UNIT_MU, -10.f, 0, 0).createBox(env);
+  sptr<Box> negkern = SpaceAtom(UnitType::mu, -10.f, 0, 0).createBox(env);
 
   // arrange both boxes together with the negative kerning
   sptr<Box> res(new HorizontalBox());
@@ -1035,7 +1033,7 @@ sptr<Box> NthRoot::createBox(TeXEnvironment& env) {
 }
 
 RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const wstring& option)
-    : _angle(0), _option(-1), _xunit(0), _yunit(0), _x(0), _y(0) {
+    : _angle(0), _option(-1), _xunit(UnitType::em), _yunit(UnitType::em), _x(0), _y(0) {
   _type = base->_type;
   _base = base;
   _angle = angle;
@@ -1050,26 +1048,22 @@ RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const wstring& optio
   }
   it = opt.find("x");
   if (it != opt.end()) {
-    auto xinfo = SpaceAtom::getLength(it->second);
-    _xunit = (int)xinfo.first;
-    _x = xinfo.second;
+    auto [u, x] = SpaceAtom::getLength(it->second);
+    _xunit = u, _x = x;
   } else {
-    _xunit = UNIT_POINT;
-    _x = 0;
+    _xunit = UnitType::point, _x = 0;
   }
   it = opt.find("y");
   if (it != opt.end()) {
-    auto yinfo = SpaceAtom::getLength(it->second);
-    _yunit = (int)yinfo.first;
-    _y = yinfo.second;
+    auto [u, y] = SpaceAtom::getLength(it->second);
+    _yunit = u, _y = y;
   } else {
-    _yunit = UNIT_POINT;
-    _y = 0;
+    _yunit = UnitType::point, _y = 0;
   }
 }
 
 RotateAtom::RotateAtom(const sptr<Atom>& base, const wstring& angle, const wstring& option)
-    : _angle(0), _option(-1), _xunit(0), _yunit(0), _x(0), _y(0) {
+    : _angle(0), _option(-1), _xunit(UnitType::em), _yunit(UnitType::em), _x(0), _y(0) {
   _type = base->_type;
   _base = base;
   valueof(angle, _angle);
@@ -1088,7 +1082,7 @@ sptr<Box> RotateAtom::createBox(TeXEnvironment& env) {
 
 sptr<Box> UnderOverArrowAtom::createBox(TeXEnvironment& env) {
   auto b = _base != nullptr ? _base->createBox(env) : sptr<Box>(new StrutBox(0, 0, 0, 0));
-  float sep = SpaceAtom::getSize(UNIT_MU, 1, env);
+  float sep = SpaceAtom::getSize(UnitType::mu, 1, env);
 
   sptr<Box> arrow;
 
@@ -1123,9 +1117,9 @@ sptr<Box> XArrowAtom::createBox(TeXEnvironment& env) {
                             : sptr<Box>(new StrutBox(0, 0, 0, 0));
   auto U = _under != nullptr ? _under->createBox(*(env.subStyle()))
                              : sptr<Box>(new StrutBox(0, 0, 0, 0));
-  auto oside = SpaceAtom(UNIT_EM, 1.5f, 0, 0).createBox(*(env.supStyle()));
-  auto uside = SpaceAtom(UNIT_EM, 1.5f, 0, 0).createBox(*(env.subStyle()));
-  auto sep = SpaceAtom(UNIT_MU, 0, 2.f, 0).createBox(env);
+  auto oside = SpaceAtom(UnitType::em, 1.5f, 0, 0).createBox(*(env.supStyle()));
+  auto uside = SpaceAtom(UnitType::em, 1.5f, 0, 0).createBox(*(env.subStyle()));
+  auto sep = SpaceAtom(UnitType::mu, 0, 2.f, 0).createBox(env);
   float width = max(O->_width + 2 * oside->_width, U->_width + 2 * uside->_width);
   auto arrow = XLeftRightArrowFactory::create(_left, env, width);
 
@@ -1172,7 +1166,7 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
   vector<wstring> results;
   calculate(results);
 
-  auto rule = sptr<Atom>(new RuleAtom(UNIT_EX, 0.f, UNIT_EX, 2.6f, UNIT_EX, 0.5f));
+  auto rule = sptr<Atom>(new RuleAtom(UnitType::ex, 0.f, UnitType::ex, 2.6f, UnitType::ex, 0.5f));
 
   const int s = results.size();
   for (int i = 0; i < s; i++) {
@@ -1185,12 +1179,13 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
       auto ra = sptr<RowAtom>(new RowAtom(ph));
       auto raised = sptr<Atom>(new RaiseAtom(
         big,
-        UNIT_X8,
+        UnitType::x8,
         3.5f,
-        UNIT_X8,
+        UnitType::x8,
         0.f,
-        UNIT_X8,
-        0.f));
+        UnitType::x8,
+        0.f)  //
+      );
       ra->add(sptr<Atom>(new SmashedAtom(raised)));
       ra->add(num);
       auto oa = sptr<Atom>(new OverlinedAtom(ra));
@@ -1219,11 +1214,9 @@ sptr<Box> CancelAtom::createBox(TeXEnvironment& env) {
   auto box = _base->createBox(env);
   vector<float> lines;
   if (_cancelType == SLASH) {
-    lines = {
-      0, 0, box->_width, box->_height + box->_depth};
+    lines = {0, 0, box->_width, box->_height + box->_depth};
   } else if (_cancelType == BACKSLASH) {
-    lines = {
-      box->_width, 0, 0, box->_height + box->_depth};
+    lines = {box->_width, 0, 0, box->_height + box->_depth};
   } else if (_cancelType == CROSS) {
     lines = {
       0, 0, box->_width, box->_height + box->_depth, box->_width, 0, 0, box->_height + box->_depth};

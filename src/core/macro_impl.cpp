@@ -14,7 +14,7 @@ macro(hvspace) {
   float f = 0;
   valueof(args[1].substr(0, i), f);
 
-  int unit;
+  UnitType unit;
   if (i != args[1].length()) {
     wstring s = args[1].substr(i);
     string str;
@@ -22,9 +22,9 @@ macro(hvspace) {
     tolower(str);
     unit = SpaceAtom::getUnit(str);
   } else {
-    unit = UNIT_POINT;
+    unit = UnitType::point;
   }
-  if (unit == -1) {
+  if (unit == UnitType::none) {
     string str;
     wide2utf8(args[1].c_str(), str);
     throw ex_parse("Unknown unit '" + str + "'!");
@@ -78,16 +78,16 @@ macro(sfrac) {
     sR = -0.24f;
     auto in = sptr<Atom>(new ScaleAtom(SymbolAtom::get("textfractionsolidus"), 1.25f, 0.65f));
     VRowAtom* vr = new VRowAtom(in);
-    vr->setRaise(UNIT_EX, 0.4f);
+    vr->setRaise(UnitType::ex, 0.4f);
     slash = sptr<Atom>(vr);
   }
 
   VRowAtom* snum = new VRowAtom(sptr<Atom>(new ScaleAtom(num._root, sx, sy)));
-  snum->setRaise(UNIT_EX, r);
+  snum->setRaise(UnitType::ex, r);
   RowAtom* ra = new RowAtom(sptr<Atom>(snum));
-  ra->add(sptr<Atom>(new SpaceAtom(UNIT_EM, sL, 0, 0)));
+  ra->add(sptr<Atom>(new SpaceAtom(UnitType::em, sL, 0, 0)));
   ra->add(slash);
-  ra->add(sptr<Atom>(new SpaceAtom(UNIT_EM, sR, 0, 0)));
+  ra->add(sptr<Atom>(new SpaceAtom(UnitType::em, sR, 0, 0)));
   ra->add(sptr<Atom>(new ScaleAtom(den._root, sx, sy)));
 
   return sptr<Atom>(ra);
@@ -103,9 +103,10 @@ macro(genfrac) {
   R = dynamic_pointer_cast<SymbolAtom>(right._root);
 
   bool rule = true;
-  pair<int, float> ths = SpaceAtom::getLength(args[3]);
+  auto [unit, value] = SpaceAtom::getLength(args[3]);
   if (args[3].empty()) {
-    ths = make_pair(0, 0.f);
+    unit = UnitType::em;
+    value = 0.f;
     rule = false;
   }
 
@@ -114,9 +115,10 @@ macro(genfrac) {
 
   TeXFormula num(tp, args[5], false);
   TeXFormula den(tp, args[6], false);
-  if (num._root == nullptr || den._root == nullptr)
+  if (num._root == nullptr || den._root == nullptr) {
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
-  sptr<Atom> fa(new FractionAtom(num._root, den._root, rule, ths.first, ths.second));
+  }
+  sptr<Atom> fa(new FractionAtom(num._root, den._root, rule, unit, value));
   RowAtom* ra = new RowAtom();
   ra->add(sptr<Atom>(new StyleAtom(style * 2, sptr<Atom>(new FencedAtom(fa, L, R)))));
 
@@ -183,10 +185,11 @@ macro(atopwithdelims) {
 
 macro(abovewithdelims) {
   auto num = tp.getFormulaAtom();
-  pair<int, float> dim = tp.getLength();
+  auto [du, dv] = tp.getLength();
   auto den = TeXFormula(tp, tp.getOverArgument(), false)._root;
-  if (num == nullptr || den == nullptr)
+  if (num == nullptr || den == nullptr) {
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
+  }
 
   auto left = TeXFormula(tp, args[1], false)._root;
   BigDelimiterAtom* big = dynamic_cast<BigDelimiterAtom*>(left.get());
@@ -199,7 +202,7 @@ macro(abovewithdelims) {
   auto sl = dynamic_pointer_cast<SymbolAtom>(left);
   auto sr = dynamic_pointer_cast<SymbolAtom>(right);
   if (sl != nullptr && sr != nullptr) {
-    sptr<Atom> f(new FractionAtom(num, den, dim.first, dim.second));
+    sptr<Atom> f(new FractionAtom(num, den, du, dv));
     return sptr<Atom>(new FencedAtom(f, sl, sr));
   }
 
@@ -361,18 +364,11 @@ macro(renewcommand) {
 }
 
 macro(raisebox) {
-  pair<int, float> r = SpaceAtom::getLength(args[1]);
-  pair<int, float> h = SpaceAtom::getLength(args[3]);
-  pair<int, float> d = SpaceAtom::getLength(args[4]);
+  auto [ru, r] = SpaceAtom::getLength(args[1]);
+  auto [hu, h] = SpaceAtom::getLength(args[3]);
+  auto [du, d] = SpaceAtom::getLength(args[4]);
 
-  return sptr<Atom>(new RaiseAtom(
-    TeXFormula(tp, args[2])._root,
-    r.first,
-    r.second,
-    h.first,
-    h.second,
-    d.first,
-    d.second));
+  return sptr<Atom>(new RaiseAtom(TeXFormula(tp, args[2])._root, ru, r, hu, h, du, d));
 }
 
 macro(definecolor) {

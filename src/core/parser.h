@@ -324,10 +324,10 @@ public:
 
   /**
    * Get the unit and length from given string. The string must be in the format: a digital
-   * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or a pair (UNIT_PIXEL, 0) will be
+   * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or a pair (UnitType::pixel, 0) will be
    * returned.
    */
-  std::pair<int, float> getLength();
+  std::pair<UnitType, float> getLength();
 
   /**
    * Convert a character in the corresponding atom in using the file
