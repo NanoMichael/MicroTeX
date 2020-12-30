@@ -25,7 +25,7 @@ public:
   };
 
 private:
-  static float canBreak(_out_ std::stack<Position>& stack, const sptr<HorizontalBox>& hbox, float width);
+  static float canBreak(std::stack<Position>& stack, const sptr<HorizontalBox>& hbox, float width);
 
   static int getBreakPosition(const sptr<HorizontalBox>& hb, int index);
 

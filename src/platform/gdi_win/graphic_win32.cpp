@@ -159,7 +159,7 @@ TextLayout_win32::TextLayout_win32(const wstring& src, const sptr<Font_win32>& f
   }
 }
 
-void TextLayout_win32::getBounds(_out_ Rect& r) {
+void TextLayout_win32::getBounds(Rect& r) {
   int em = _font->_family->GetEmHeight(_font->_style);
   int ascent = _font->_family->GetCellAscent(_font->_style);
   float ap = _font->getSize() * ascent / em;

@@ -44,7 +44,7 @@ class TextLayout_none : public TextLayout {
 public:
   TextLayout_none() {}
 
-  void getBounds(_out_ Rect& bounds) override {
+  void getBounds(Rect& bounds) override {
     bounds.x = bounds.y = bounds.w = bounds.h = 0.f;
   }
 

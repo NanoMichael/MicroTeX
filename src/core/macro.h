@@ -13,7 +13,7 @@ class TeXParser;
 
 class Macro {
 public:
-  virtual void execute(_out_ TeXParser& tp, _out_ std::vector<std::wstring>& args) = 0;
+  virtual void execute(TeXParser& tp, std::vector<std::wstring>& args) = 0;
 
   virtual ~Macro() {}
 };
@@ -36,7 +36,7 @@ public:
    */
   static bool _errIfConflict;
 
-  virtual void execute(_out_ TeXParser& tp, _out_ std::vector<std::wstring>& args) override;
+  virtual void execute(TeXParser& tp, std::vector<std::wstring>& args) override;
 
   static void addNewCommand(
       const std::wstring& name,
@@ -114,8 +114,8 @@ public:
   }
 
   virtual sptr<Atom> invoke(
-      _out_ TeXParser& tp,
-      _out_ std::vector<std::wstring>& args) {
+      TeXParser& tp,
+      std::vector<std::wstring>& args) {
     return nullptr;
   }
 
@@ -137,16 +137,16 @@ public:
       : _macro(macro), MacroInfo(nbargs, posOpts) {}
 
   virtual sptr<Atom> invoke(
-      _out_ TeXParser& tp,
-      _out_ std::vector<std::wstring>& args) override {
+      TeXParser& tp,
+      std::vector<std::wstring>& args) override {
     _macro->execute(tp, args);
     return nullptr;
   }
 };
 
 typedef sptr<Atom> (*MacroDelegate)(
-    _out_ TeXParser& tp,
-    _out_ std::vector<std::wstring>& args);
+    TeXParser& tp,
+    std::vector<std::wstring>& args);
 
 class PredefMacroInfo : public MacroInfo {
 private:
@@ -162,8 +162,8 @@ public:
       : MacroInfo(nbargs), _delegate(delegate) {}
 
   sptr<Atom> invoke(
-      _out_ TeXParser& tp,
-      _out_ std::vector<std::wstring>& args) override;
+      TeXParser& tp,
+      std::vector<std::wstring>& args) override;
 };
 
 }  // namespace tex

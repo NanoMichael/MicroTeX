@@ -79,7 +79,7 @@ public:
    * @param bounds
    *      rectangle to retrieve the bounds
    */
-  virtual void getBounds(_out_ Rect& bounds) = 0;
+  virtual void getBounds(Rect& bounds) = 0;
 
   /**
    * Draw the layout

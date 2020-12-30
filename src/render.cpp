@@ -78,7 +78,7 @@ void TeXRender::setHeight(int height, Alignment align) {
   }
 }
 
-void TeXRender::draw(_out_ Graphics2D& g2, int x, int y) {
+void TeXRender::draw(Graphics2D& g2, int x, int y) {
   color old = g2.getColor();
   g2.scale(_textSize, _textSize);
   if (!istrans(_fg)) {

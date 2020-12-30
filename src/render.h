@@ -49,7 +49,7 @@ public:
 
   void setHeight(int height, Alignment align);
 
-  void draw(_out_ Graphics2D& g2, int x, int y);
+  void draw(Graphics2D& g2, int x, int y);
 };
 
 class TeXRenderBuilder {

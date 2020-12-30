@@ -33,7 +33,7 @@ TeXSymbolParser::TeXSymbolParser(const std::string& file)
   _root = _doc.RootElement();
 }
 
-void TeXSymbolParser::readSymbols(_out_ std::map<std::string, sptr<SymbolAtom>>& res) {
+void TeXSymbolParser::readSymbols(std::map<std::string, sptr<SymbolAtom>>& res) {
   const XMLElement* e = _root->FirstChildElement("Symbol");
   while (e != nullptr) {
     const std::string name = getAttr("name", e);
@@ -74,8 +74,8 @@ int TeXFormulaSettingParser::getUtf(const XMLElement* e, const char* attr) {
 
 void TeXFormulaSettingParser::add2map(
   const XMLElement* r,
-  _out_ std::map<int, std::string>& math,
-  _out_ std::map<int, std::string>& txt  //
+  std::map<int, std::string>& math,
+  std::map<int, std::string>& txt  //
 ) {
   while (r != nullptr) {
     int ch = getUtf(r, "char");
@@ -93,8 +93,8 @@ void TeXFormulaSettingParser::add2map(
 
 void TeXFormulaSettingParser::addFormula2map(
   const XMLElement* r,
-  _out_ std::map<int, std::string>& math,
-  _out_ std::map<int, std::string>& txt  //
+  std::map<int, std::string>& math,
+  std::map<int, std::string>& txt  //
 ) {
   while (r != nullptr) {
     int ch = getUtf(r, "char");
@@ -111,7 +111,7 @@ void TeXFormulaSettingParser::addFormula2map(
 }
 
 void TeXFormulaSettingParser::parseSymbol2Formula(
-  _out_ std::map<int, std::string>& mappings, _out_ std::map<int, std::string>& txt  //
+  std::map<int, std::string>& mappings, std::map<int, std::string>& txt  //
 ) {
   const XMLElement* e = _root->FirstChildElement("CharacterToFormulaMappings");
   if (e != nullptr) {
@@ -121,7 +121,7 @@ void TeXFormulaSettingParser::parseSymbol2Formula(
 }
 
 void TeXFormulaSettingParser::parseSymbol(
-  _out_ std::map<int, std::string>& mappings, _out_ std::map<int, std::string>& txt  //
+  std::map<int, std::string>& mappings, std::map<int, std::string>& txt  //
 ) {
   const XMLElement* e = _root->FirstChildElement("CharacterToSymbolMappings");
   if (e != nullptr) {

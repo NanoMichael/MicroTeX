@@ -77,7 +77,7 @@ private:
   static void parse_lig(const tinyxml2::XMLElement*, wchar_t, __BasicInfo&);
   static void parse_larger(const tinyxml2::XMLElement*, wchar_t, __BasicInfo&);
 
-  void parseStyleMappings(_out_ std::map<std::string, std::vector<CharFont*>>& styles);
+  void parseStyleMappings(std::map<std::string, std::vector<CharFont*>>& styles);
 
   static void processCharElement(const tinyxml2::XMLElement* e, __BasicInfo& info);
 
@@ -87,7 +87,7 @@ private:
   }
 
   inline static void obtainAttr(
-      const char* attr, const tinyxml2::XMLElement* e, _out_ std::string& val) {
+      const char* attr, const tinyxml2::XMLElement* e, std::string& val) {
     const char* value = e->Attribute(attr);
     if (value == nullptr || strlen(value) == 0) return;
     val.assign(value);
@@ -181,13 +181,13 @@ public:
 
   void parseFontDescriptions();
 
-  void parseSymbolMappings(_out_ std::map<std::string, CharFont*>& res);
+  void parseSymbolMappings(std::map<std::string, CharFont*>& res);
 
   std::string* parseDefaultTextStyleMappins();
 
-  void parseParameters(_out_ std::map<std::string, float>& res);
+  void parseParameters(std::map<std::string, float>& res);
 
-  void parseGeneralSettings(_out_ std::map<std::string, float>& res);
+  void parseGeneralSettings(std::map<std::string, float>& res);
 
   std::map<std::string, std::vector<CharFont*>> parseTextStyleMappings();
 };

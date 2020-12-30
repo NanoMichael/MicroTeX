@@ -77,7 +77,7 @@ bool TeXParser::_isLoading = false;
 void TeXParser::init(
   bool ispartial,
   const wstring& parsestring,
-  _out_ TeXFormula* formula,
+  TeXFormula* formula,
   bool fp  //
 ) {
   _pos = _spos = _len = 0;
@@ -419,7 +419,7 @@ wstring TeXParser::forwardFromCurrentPos() {
   return sub;
 }
 
-void TeXParser::getOptsArgs(int nbArgs, int opts, _out_ vector<wstring>& args) {
+void TeXParser::getOptsArgs(int nbArgs, int opts, vector<wstring>& args) {
   /*
    * A maximum of 10 options can be passed to a command,
    * the value will be added at the tail of the args if found any

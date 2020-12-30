@@ -136,7 +136,7 @@ TextLayout_qt::TextLayout_qt(const wstring& src, const sptr<Font_qt>& f) :
 {
 }
 
-void TextLayout_qt::getBounds(_out_ Rect& r) {
+void TextLayout_qt::getBounds(Rect& r) {
   QFontMetricsF fm(_font);
   QRectF br(fm.boundingRect(_text));
 

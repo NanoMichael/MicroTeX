@@ -111,7 +111,7 @@ sptr<TeXFont> DefaultTeXFont::copy() {
       _size, _factor, _isBold, _isRoman, _isSs, _isTt, _isIt));
 }
 
-Char DefaultTeXFont::getChar(wchar_t c, _in_ const vector<CharFont*>& cf, int style) {
+Char DefaultTeXFont::getChar(wchar_t c, const vector<CharFont*>& cf, int style) {
   int kind, offset;
   if (c >= '0' && c <= '9') {
     kind   = NUMBERS;
@@ -204,7 +204,7 @@ Char DefaultTeXFont::getChar(
   return getChar(*(i->second), style);
 }
 
-sptr<Metrics> DefaultTeXFont::getMetrics(_in_ const CharFont& cf, float size) {
+sptr<Metrics> DefaultTeXFont::getMetrics(const CharFont& cf, float size) {
   auto         info = getInfo(cf.fontId);
   const float* m    = info->getMetrics(cf.chr);
   Metrics*     met  = new Metrics(
@@ -212,7 +212,7 @@ sptr<Metrics> DefaultTeXFont::getMetrics(_in_ const CharFont& cf, float size) {
   return sptr<Metrics>(met);
 }
 
-Extension* DefaultTeXFont::getExtension(_in_ const Char& c, int style) {
+Extension* DefaultTeXFont::getExtension(const Char& c, int style) {
   const Font* f  = c.getFont();
   int         fc = c.getFontCode();
   float       s  = getSizeFactor(style);
@@ -232,7 +232,7 @@ Extension* DefaultTeXFont::getExtension(_in_ const Char& c, int style) {
   return new Extension(parts[TOP], parts[MID], parts[REP], parts[BOT]);
 }
 
-float DefaultTeXFont::getKern(_in_ const CharFont& left, _in_ const CharFont& right, int style) {
+float DefaultTeXFont::getKern(const CharFont& left, const CharFont& right, int style) {
   if (left.fontId == right.fontId) {
     auto info = getInfo(left.fontId);
     return info->getKern(left.chr, right.chr, getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT);
@@ -240,7 +240,7 @@ float DefaultTeXFont::getKern(_in_ const CharFont& left, _in_ const CharFont& ri
   return 0;
 }
 
-sptr<CharFont> DefaultTeXFont::getLigature(_in_ const CharFont& left, _in_ const CharFont& right) {
+sptr<CharFont> DefaultTeXFont::getLigature(const CharFont& left, const CharFont& right) {
   if (left.fontId == right.fontId) {
     auto info = getInfo(left.fontId);
     return info->getLigture(left.chr, right.chr);
@@ -252,7 +252,7 @@ int DefaultTeXFont::getMuFontId() {
   return _generalSettings[DefaultTeXFontParser::MUFONTID_ATTR];
 }
 
-Char DefaultTeXFont::getNextLarger(_in_ const Char& c, int style) {
+Char DefaultTeXFont::getNextLarger(const Char& c, int style) {
   auto info    = getInfo(c.getFontCode());
   auto ch      = info->getNextLarger(c.getChar());
   auto newInfo = getInfo(ch->fontId);
