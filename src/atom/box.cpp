@@ -121,7 +121,7 @@ sptr<Box> XLeftRightArrowFactory::create(TeXEnvironment& env, float width) {
   }
 
   sptr<Box> minu = SmashedAtom(MINUS, "").createBox(env);
-  sptr<Box> kern = SpaceAtom(UNIT_MU, -3.4f, 0, 0).createBox(env);
+  sptr<Box> kern = SpaceAtom(UnitType::mu, -3.4f, 0, 0).createBox(env);
 
   float mwidth = minu->_width + kern->_width;
   swidth += 2 * kern->_width;
@@ -161,7 +161,7 @@ sptr<Box> XLeftRightArrowFactory::create(bool left, TeXEnvironment& env, float w
   }
 
   sptr<Box> minu = SmashedAtom(MINUS, "").createBox(env);
-  sptr<Box> kern = SpaceAtom(UNIT_MU, -4.f, 0, 0).createBox(env);
+  sptr<Box> kern = SpaceAtom(UnitType::mu, -4.f, 0, 0).createBox(env);
   float mwidth = minu->_width + kern->_width;
   swidth += kern->_width;
   HorizontalBox* hb = new HorizontalBox();
@@ -173,14 +173,14 @@ sptr<Box> XLeftRightArrowFactory::create(bool left, TeXEnvironment& env, float w
 
   float sf = (width - swidth - w) / minu->_width;
 
-  hb->add(SpaceAtom(UNIT_MU, -2.f * sf, 0, 0).createBox(env));
+  hb->add(SpaceAtom(UnitType::mu, -2.f * sf, 0, 0).createBox(env));
   hb->add(ScaleAtom(MINUS, sf, 1).createBox(env));
 
   if (left) {
-    hb->add(0, SpaceAtom(UNIT_MU, -3.5f, 0, 0).createBox(env));
+    hb->add(0, SpaceAtom(UnitType::mu, -3.5f, 0, 0).createBox(env));
     hb->add(0, arr);
   } else {
-    hb->add(SpaceAtom(UNIT_MU, -2.f * sf - 2.f, 0, 0).createBox(env));
+    hb->add(SpaceAtom(UnitType::mu, -2.f * sf - 2.f, 0, 0).createBox(env));
     hb->add(arr);
   }
 

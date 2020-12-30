@@ -138,7 +138,8 @@ enum class UnitType {
   dd,
   cc,
   /** 1 x8 = 1 default rule thickness */
-  x8
+  x8,
+  none = -1
 };
 
 }  // namespace tex

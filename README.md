@@ -319,7 +319,7 @@ auto r = builder
     // text size (in point)
     .setSize(20)
     // the logical width and the alignment of the graphics context
-    .setWidth(UNIT_PIXEL, 720, Alignment::left)
+    .setWidth(UnitType::pixel, 720, Alignment::left)
     // set if the logical width of the graphics context specified
     // above is the max width to display the formula, the formula
     // will be centered if set to true; you must call this method
@@ -327,7 +327,7 @@ auto r = builder
     // exception will be thrown
     .setIsMaxWidth(false)
     // space between 2 lines
-    .setLineSpace(UNIT_PIXEL, 10)
+    .setLineSpace(UnitType::pixel, 10)
     .setForground(tex::BLACK)
     // convert the formula to a paintable object (TeXRender)
     .build(formula);

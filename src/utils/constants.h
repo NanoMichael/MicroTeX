@@ -46,53 +46,7 @@ enum TeXConstants {
    * @par
    * The same as the script style, but symbols are rendered in a smaller size.
    */
-  STYLE_SCRIPT_SCRIPT = 6,
-
-  /************************************ TeX unit constants **************************************/
-  /**
-   * 1 em = the width of the capital 'M' in the current font
-   */
-  UNIT_EM = 0,
-  /**
-   * 1 ex = the height of the character 'x' in the current font
-   */
-  UNIT_EX,
-  UNIT_PIXEL,
-  /**
-   * postscript point
-   */
-  UNIT_POINT,
-  /**
-   * 1 pica = 12 point
-   */
-  UNIT_PICA,
-  /**
-   * 1 mu = 1/18 em (em taken from the "mufont")
-   */
-  UNIT_MU,
-  /**
-   * 1 cm = 28.346456693 point
-   */
-  UNIT_CM,
-  /**
-   * 1 mm = 2.8346456693 point
-   */
-  UNIT_MM,
-  /**
-   * 1 in = 72 point
-   */
-  UNIT_IN,
-  /**
-   * 1 sp = 65536 point
-   */
-  UNIT_SP,
-  UNIT_PT,
-  UNIT_DD,
-  UNIT_CC,
-  /**
-   * 1 x8 = 1 default rule thickness
-   */
-  UNIT_X8
+  STYLE_SCRIPT_SCRIPT = 6
 };
 }
 

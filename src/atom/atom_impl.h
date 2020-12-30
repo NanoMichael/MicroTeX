@@ -364,7 +364,7 @@ public:
     }
 
     Box* ce = new HorizontalBox(sptr<Box>(y), b->_width, Alignment::center);
-    float x = 0.4f * SpaceAtom::getFactor(UNIT_MU, env);
+    float x = 0.4f * SpaceAtom::getFactor(UnitType::mu, env);
     vb->add(sptr<Box>(new StrutBox(0, -x, 0, 0)));
     vb->add(sptr<Box>(ce));
     float f = vb->_height + vb->_depth;
@@ -388,7 +388,7 @@ public:
     HorizontalBox* hb1 = new HorizontalBox(dot, w, Alignment::left);
     HorizontalBox* hb2 = new HorizontalBox(dot, w, Alignment::center);
     HorizontalBox* hb3 = new HorizontalBox(dot, w, Alignment::right);
-    sptr<Box> pt4(SpaceAtom(UNIT_MU, 0, 4, 0).createBox(env));
+    sptr<Box> pt4(SpaceAtom(UnitType::mu, 0, 4, 0).createBox(env));
     VerticalBox* vb = new VerticalBox();
     vb->add(sptr<Box>(hb1));
     vb->add(pt4);
@@ -432,7 +432,7 @@ public:
   virtual sptr<Box> createBox(TeXEnvironment& env) override {
     auto bbase = _base->createBox(env);
     float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-    float space = INTERSPACE * SpaceAtom::getFactor(UNIT_EM, env);
+    float space = INTERSPACE * SpaceAtom::getFactor(UnitType::em, env);
     if (istrans(_bg)) return sptr<Box>(new FramedBox(bbase, drt, space));
     env._isColored = true;
     return sptr<Box>(new FramedBox(bbase, drt, space, _line, _bg));
@@ -453,8 +453,8 @@ public:
   sptr<Box> createBox(TeXEnvironment& env) override {
     auto bbase = _base->createBox(env);
     float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-    float space = INTERSPACE * SpaceAtom::getFactor(UNIT_EM, env);
-    float sspace = 1.5f * drt + 0.5f * SpaceAtom::getFactor(UNIT_POINT, env);
+    float space = INTERSPACE * SpaceAtom::getFactor(UnitType::em, env);
+    float sspace = 1.5f * drt + 0.5f * SpaceAtom::getFactor(UnitType::point, env);
     return sptr<Box>(new FramedBox(
       sptr<Box>(new FramedBox(bbase, 0.75 * drt, space)), 1.5f * drt, sspace));
   }
@@ -552,7 +552,7 @@ private:
   // whether the default thickness should not be used for fraction line
   bool _nodefault;
   // unit used for the thickness of the fraction line
-  int _unit;
+  UnitType _unit;
   // alignment settings for the numerator and denominator
   Alignment _numAlign, _denomAlign;
   // the atoms representing the numerator and denominator
@@ -573,8 +573,9 @@ private:
     const sptr<Atom>& num,
     const sptr<Atom>& den,
     bool nodef,
-    int unit,
-    float t);
+    UnitType unit,
+    float t  //
+  );
 
 public:
   /**
@@ -585,15 +586,16 @@ public:
   FractionAtom() = delete;
 
   FractionAtom(const sptr<Atom>& num, const sptr<Atom>& den) {
-    init(num, den, false, UNIT_PIXEL, 0.f);
+    init(num, den, false, UnitType::pixel, 0.f);
   }
 
   FractionAtom(const sptr<Atom>& num, const sptr<Atom>& den, bool rule) {
-    init(num, den, !rule, UNIT_PIXEL, 0.f);
+    init(num, den, !rule, UnitType::pixel, 0.f);
   }
 
   FractionAtom(
-    const sptr<Atom>& num, const sptr<Atom>& den, bool nodef, int unit, float t) {
+    const sptr<Atom>& num, const sptr<Atom>& den, bool nodef, UnitType unit, float t  //
+  ) {
     init(num, den, nodef, unit, t);
   }
 
@@ -601,7 +603,7 @@ public:
     const sptr<Atom>& num, const sptr<Atom>& den, bool rule,
     Alignment numAlign, Alignment denomAlign  //
   ) {
-    init(num, den, !rule, UNIT_PIXEL, 0.f);
+    init(num, den, !rule, UnitType::pixel, 0.f);
     _numAlign = checkAlign(numAlign);
     _denomAlign = checkAlign(denomAlign);
   }
@@ -610,7 +612,7 @@ public:
     const sptr<Atom>& num, const sptr<Atom>& den, float deffactor,
     Alignment numAlign, Alignment denomAlign  //
   ) {
-    init(num, den, false, UNIT_PIXEL, 0.f);
+    init(num, den, false, UnitType::pixel, 0.f);
     _numAlign = checkAlign(numAlign);
     _denomAlign = checkAlign(denomAlign);
     _deffactor = deffactor;
@@ -618,7 +620,7 @@ public:
   }
 
   FractionAtom(
-    const sptr<Atom>& num, const sptr<Atom>& den, int unit, float t,
+    const sptr<Atom>& num, const sptr<Atom>& den, UnitType unit, float t,
     Alignment numAlign, Alignment denomAlign  //
   ) {
     init(num, den, true, unit, t);
@@ -626,7 +628,7 @@ public:
     _denomAlign = checkAlign(denomAlign);
   }
 
-  FractionAtom(const sptr<Atom>& num, const sptr<Atom>& den, int unit, float t) {
+  FractionAtom(const sptr<Atom>& num, const sptr<Atom>& den, UnitType unit, float t) {
     init(num, den, true, unit, t);
   }
 
@@ -741,7 +743,7 @@ public:
     sptr<Box> hb1(new HorizontalBox(dot, w, Alignment::right));
     sptr<Box> hb2(new HorizontalBox(dot, w, Alignment::center));
     sptr<Box> hb3(new HorizontalBox(dot, w, Alignment::left));
-    sptr<Box> pt4 = SpaceAtom(UNIT_MU, 0, 4, 0).createBox(env);
+    sptr<Box> pt4 = SpaceAtom(UnitType::mu, 0, 4, 0).createBox(env);
     VerticalBox* vb = new VerticalBox();
     vb->add(hb1);
     vb->add(pt4);
@@ -777,7 +779,7 @@ public:
     CharBox* J = new CharBox(
       env.getTeXFont()->getChar(_upper ? 'J' : 'j', "mathnormal", env.getStyle()));
     HorizontalBox* hb = new HorizontalBox(sptr<Box>(I));
-    hb->add(SpaceAtom(UNIT_EM, -0.065f, 0, 0).createBox(env));
+    hb->add(SpaceAtom(UnitType::em, -0.065f, 0, 0).createBox(env));
     hb->add(sptr<Box>(J));
     return sptr<Box>(hb);
   }
@@ -879,9 +881,9 @@ public:
       env.getTeXFont()->getChar(_upper ? 'L' : 'l', "mathnormal", env.getStyle()));
     HorizontalBox* hb = new HorizontalBox(sptr<Box>(L));
     if (_upper)
-      hb->add(SpaceAtom(UNIT_EM, -0.3f, 0, 0).createBox(env));
+      hb->add(SpaceAtom(UnitType::em, -0.3f, 0, 0).createBox(env));
     else
-      hb->add(SpaceAtom(UNIT_EM, -0.13f, 0, 0).createBox(env));
+      hb->add(SpaceAtom(UnitType::em, -0.13f, 0, 0).createBox(env));
     hb->add(sptr<Box>(A));
     return sptr<Box>(hb);
   }
@@ -986,14 +988,18 @@ public:
 class RaiseAtom : public Atom {
 private:
   sptr<Atom> _base;
-  int _ru, _hu, _du;
+  UnitType _ru, _hu, _du;
   float _r, _h, _d;
 
 public:
   RaiseAtom() = delete;
 
-  RaiseAtom(const sptr<Atom>& base, int ru, float r, int hu, float h, int du, float d)
-      : _base(base), _ru(ru), _r(r), _hu(hu), _h(h), _du(du), _d(d) {}
+  RaiseAtom(
+    const sptr<Atom>& base,
+    UnitType ru, float r,
+    UnitType hu, float h,
+    UnitType du, float d  //
+    ) : _base(base), _ru(ru), _r(r), _hu(hu), _h(h), _du(du), _d(d) {}
 
   AtomType leftType() const override { return _base->leftType(); }
 
@@ -1001,19 +1007,13 @@ public:
 
   sptr<Box> createBox(TeXEnvironment& env) override {
     auto bbox = _base->createBox(env);
-    if (_ru == -1)
-      bbox->_shift = 0;
-    else
-      bbox->_shift = -_r * SpaceAtom::getFactor(_ru, env);
+    bbox->_shift = _ru == UnitType::none ? 0 : -_r * SpaceAtom::getFactor(_ru, env);
 
-    if (_hu == -1) return bbox;
+    if (_hu == UnitType::none) return bbox;
 
     HorizontalBox* hbox = new HorizontalBox(bbox);
     hbox->_height = _h * SpaceAtom::getFactor(_hu, env);
-    if (_du == -1)
-      hbox->_depth = 0;
-    else
-      hbox->_depth = _d * SpaceAtom::getFactor(_du, env);
+    hbox->_depth = _du == UnitType::none ? 0 : _d * SpaceAtom::getFactor(_du, env);
 
     return sptr<Box>(hbox);
   }
@@ -1048,7 +1048,7 @@ public:
 class ResizeAtom : public Atom {
 private:
   sptr<Atom> _base;
-  int _wu, _hu;
+  UnitType _wu, _hu;
   float _w, _h;
   bool _keep_aspect_ratio;
 
@@ -1059,12 +1059,10 @@ public:
     _type = base->_type;
     _base = base;
     _keep_aspect_ratio = keepAspectRatio;
-    auto w = SpaceAtom::getLength(ws);
-    auto h = SpaceAtom::getLength(hs);
-    _wu = (int)w.first;
-    _w = w.second;
-    _hu = (int)h.first;
-    _h = h.second;
+    auto [wu, w] = SpaceAtom::getLength(ws);
+    auto [hu, h] = SpaceAtom::getLength(hs);
+    _wu = wu, _w = w;
+    _hu = hu, _h = h;
   }
 
   AtomType leftType() const override { return _base->leftType(); }
@@ -1073,16 +1071,16 @@ public:
 
   sptr<Box> createBox(TeXEnvironment& env) override {
     auto bbox = _base->createBox(env);
-    if (_wu == -1 && _hu == -1) return bbox;
+    if (_wu == UnitType::none && _hu == UnitType::none) return bbox;
     float sx = 1.f, sy = 1.f;
-    if (_wu != -1 && _hu != -1) {
+    if (_wu != UnitType::none && _hu != UnitType::none) {
       sx = _w * SpaceAtom::getFactor(_wu, env) / bbox->_width;
       sy = _h * SpaceAtom::getFactor(_hu, env) / bbox->_height;
       if (_keep_aspect_ratio) {
         sx = std::min(sx, sy);
         sy = sx;
       }
-    } else if (_wu != -1 && _hu == -1) {
+    } else if (_wu != UnitType::none && _hu == UnitType::none) {
       sx = _w * SpaceAtom::getFactor(_wu, env) / bbox->_width;
       sy = sx;
     } else {
@@ -1129,7 +1127,7 @@ private:
   sptr<Atom> _base;
   float _angle;
   int _option;
-  int _xunit, _yunit;
+  UnitType _xunit, _yunit;
   float _x, _y;
 
 public:
@@ -1146,13 +1144,13 @@ public:
 
 class RuleAtom : public Atom {
 private:
-  int _wu, _hu, _ru;
+  UnitType _wu, _hu, _ru;
   float _w, _h, _r;
 
 public:
   RuleAtom() = delete;
 
-  RuleAtom(int wu, float w, int hu, float h, int ru, float r)
+  RuleAtom(UnitType wu, float w, UnitType hu, float h, UnitType ru, float r)
       : _wu(wu), _hu(hu), _ru(ru), _w(w), _h(h), _r(r) {}
 
   sptr<Box> createBox(TeXEnvironment& env) override {
@@ -1279,7 +1277,7 @@ public:
     Char t = env.getTeXFont()->getChar('t', "mathnormal", env.getStyle());
     CharBox* T = new CharBox(t);
     HorizontalBox* hb = new HorizontalBox(sptr<Box>(T));
-    hb->add(SpaceAtom(UNIT_EM, -0.3f, 0, 0).createBox(env));
+    hb->add(SpaceAtom(UnitType::em, -0.3f, 0, 0).createBox(env));
     hb->add(sptr<Box>(A));
     return sptr<Box>(hb);
   }
@@ -1298,7 +1296,7 @@ public:
 
   sptr<Box> createBox(TeXEnvironment& env) override {
     auto circle = SymbolAtom::get("bigcirc")->createBox(env);
-    circle->_shift = -0.07f * SpaceAtom::getFactor(UNIT_EX, env);
+    circle->_shift = -0.07f * SpaceAtom::getFactor(UnitType::ex, env);
     auto box = _at->createBox(env);
     HorizontalBox* hb = new HorizontalBox(box, circle->_width, Alignment::center);
     hb->add(sptr<Box>(new StrutBox(-hb->_width, 0, 0, 0)));
@@ -1497,7 +1495,7 @@ public:
   sptr<Box> createBox(TeXEnvironment& env) override {
     auto dot = SymbolAtom::get("ldotp")->createBox(env);
     VerticalBox* vb = new VerticalBox(dot, 0, Alignment::bottom);
-    auto b = SpaceAtom(UNIT_MU, 0, 4, 0).createBox(env);
+    auto b = SpaceAtom(UnitType::mu, 0, 4, 0).createBox(env);
     vb->add(b);
     vb->add(dot);
     vb->add(b);
