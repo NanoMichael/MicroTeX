@@ -17,8 +17,8 @@
 namespace tex {
 
 typedef struct {
-  int    font;
-  int    code;
+  int font;
+  int code;
   std::string name;
 } __symbol_component;
 
@@ -30,12 +30,12 @@ class SymbolsSet;
 class DefaultTeXFont : public TeXFont {
 private:
   // font related
-  static std::string*                        _defaultTextStyleMappings;
+  static std::string* _defaultTextStyleMappings;
   static std::map<std::string, std::vector<CharFont*>> _textStyleMappings;
-  static std::map<std::string, CharFont*>         _symbolMappings;
-  static std::map<std::string, float>             _parameters;
-  static std::map<std::string, float>             _generalSettings;
-  static bool                           _magnificationEnable;
+  static std::map<std::string, CharFont*> _symbolMappings;
+  static std::map<std::string, float> _parameters;
+  static std::map<std::string, float> _generalSettings;
+  static bool _magnificationEnable;
 
   float _factor, _size;
 
@@ -50,7 +50,7 @@ private:
   static void __default_text_style_mapping();
 
 public:
-  static std::vector<UnicodeBlock>                     _loadedAlphabets;
+  static std::vector<UnicodeBlock> _loadedAlphabets;
   static std::map<UnicodeBlock, AlphabetRegistration*> _registeredAlphabets;
   // no extension part for that kind (TOP, MID, REP or BOT)
   static const int NONE;
@@ -65,13 +65,13 @@ public:
   bool _isBold, _isRoman, _isSs, _isTt, _isIt;
 
   DefaultTeXFont(
-      float pointSize,
-      float f  = 1,
-      bool  b  = false,
-      bool  rm = false,
-      bool  ss = false,
-      bool  tt = false,
-      bool  it = false)
+    float pointSize,
+    float f = 1,
+    bool b = false,
+    bool rm = false,
+    bool ss = false,
+    bool tt = false,
+    bool it = false)
       : _size(pointSize),
         _factor(f),
         _isBold(b),
@@ -89,9 +89,9 @@ public:
   static void addAlphabet(AlphabetRegistration* reg);
 
   static void addAlphabet(
-      const std::string&               base,
-      const std::vector<UnicodeBlock>& alphabet,
-      const std::string&               lang);
+    const std::string& base,
+    const std::vector<UnicodeBlock>& alphabet,
+    const std::string& lang);
 
   static void registerAlphabet(AlphabetRegistration* reg);
 
@@ -120,9 +120,9 @@ public:
   Char getDefaultChar(wchar_t c, int style) override;
 
   Char getChar(
-      wchar_t       c,
-      const std::string& textStyle,
-      int           style) override;
+    wchar_t c,
+    const std::string& textStyle,
+    int style) override;
 
   Char getChar(const CharFont& cf, int style) override;
 
@@ -192,7 +192,7 @@ public:
 
   inline float getSkew(const CharFont& cf, int style) override {
     FontInfo* info = getInfo(cf.fontId);
-    wchar_t   skew = info->getSkewChar();
+    wchar_t skew = info->getSkewChar();
     if (skew == -1) return 0;
     return getKern(cf, CharFont(skew, cf.fontId), style);
   }
@@ -247,10 +247,10 @@ public:
    * Set the various sizes of the envrionment
    */
   static void setMathSizes(
-      float defaultSize,
-      float textStyleSize,
-      float scriptStyleSize,
-      float scriptsScriptStyleSize);
+    float defaultSize,
+    float textStyleSize,
+    float scriptStyleSize,
+    float scriptsScriptStyleSize);
 
   static void setMagnification(float mag);
 

@@ -20,7 +20,7 @@ class TeXEnvironment;
  * can be composed of other child boxes that can possibly be shifted (up, down,
  * left or right). Child boxes can also be positioned outside their parent's box
  * (defined by it's dimensions).
- * @par
+ *
  * Subclasses must implement the abstract
  * Box#draw(Graphics2D, float, float) method (that paints the box). <b>
  * This implementation must start with calling the method
@@ -32,82 +32,10 @@ class TeXEnvironment;
  */
 class Box {
 protected:
-  /**
-   * the color previously used
-   */
-  color _prevColor;
-
-  /**
-   * Stores the old color setting, draws the background of the box (if any)
-   * and sets the foreground color (if any).
-   *
-   * @param g2
-   *            the graphics (2D) context
-   * @param x
-   *            the x-coordinate
-   * @param y
-   *            the y-coordinate
-   */
-  void startDraw(Graphics2D& g2, float x, float y) {
-    // old color
-    _prevColor = g2.getColor();
-    if (!istrans(_background)) {
-      g2.setColor(_background);
-      g2.fillRect(x, y - _height, _width, _height + _depth);
-    }
-    if (!istrans(_foreground)) {
-      g2.setColor(_foreground);
-    } else {
-      g2.setColor(_prevColor);
-    }
-    if (DEBUG) drawDebug(g2, x, y);
-  }
-
-  void drawDebug(Graphics2D& g2, float x, float y, bool showDepth = true) {
-    if (!DEBUG) return;
-    const Stroke& st = g2.getStroke();
-    Stroke s(abs(1.f / g2.sx()), CAP_BUTT, JOIN_MITER);
-    g2.setStroke(s);
-    if (_width < 0) {
-      x += _width;
-      _width = -_width;
-    }
-    // draw box outline
-    g2.drawRect(x, y - _height, _width, _height + _depth);
-    // draw depth
-    if (showDepth) {
-      color c = g2.getColor();
-      g2.setColor(RED);
-      if (_depth > 0) {
-        g2.fillRect(x, y, _width, _depth);
-        g2.setColor(c);
-        g2.drawRect(x, y, _width, _depth);
-      } else if (_depth < 0) {
-        g2.fillRect(x, y + _depth, _width, -_depth);
-        g2.setColor(c);
-        g2.drawRect(x, y + _depth, _width, -_depth);
-      } else {
-        g2.setColor(c);
-      }
-    }
-    g2.setStroke(st);
-  }
-
-  /**
-   * Restores the previous graphic context setting.
-   *
-   * @param g2
-   *            the graphics (2D) context
-   */
-  void endDraw(Graphics2D& g2) { g2.setColor(_prevColor); }
-
-  /**
-   * Initialize box with default options
-   */
+  /** Initialize box with default options */
   void init() {
     _foreground = trans;
     _background = trans;
-    _prevColor = trans;
     _width = _height = _depth = _shift = 0;
     _type = AtomType::none;
   }
@@ -121,37 +49,37 @@ public:
    * parent will be used. If it has no parent, the foreground color of the
    * component on which it will be painted, will be used.
    */
-  color _foreground;
+  color _foreground = trans;
 
   /**
    * The background color of the whole box. Child boxes can paint a background
    * on top of this background. If it's transparent, no background will be painted.
    */
-  color _background;
+  color _background = trans;
 
   /**
    * The width of this box, i.e. the value that will be used for further
    * calculations.
    */
-  float _width;
+  float _width = 0;
 
   /**
    * The height of this box, i.e. the value that will be used for further
    * calculations.
    */
-  float _height;
+  float _height = 0;
 
   /**
    * The depth of this box, i.e. the value that will be used for further
    * calculations.
    */
-  float _depth;
+  float _depth = 0;
 
   /**
     * The shift amount: the meaning depends on the particular kind of box (up,
     * down, left, right)
     */
-  float _shift;
+  float _shift = 0;
 
   /**
    * The box type (default = -1, no type)
@@ -180,40 +108,32 @@ public:
   /**
    * Append the given box at the end of the list of child boxes.
    *
-   * @param b
-   *      the box to be inserted
+   * @param box the box to be inserted
    */
-  virtual void add(const sptr<Box>& b) {
-    _children.push_back(b);
+  virtual void add(const sptr<Box>& box) {
+    _children.push_back(box);
   }
 
   /**
    * Inserts the given box at the given position in the list of child boxes.
    *
-   * @param pos
-   *      the position at which to insert the given box
-   * @param b
-   *      the box to be inserted
+   * @param pos the position at which to insert the given box
+   * @param box the box to be inserted
    */
-  virtual void add(int pos, const sptr<Box>& b) {
-    _children.insert(_children.begin() + pos, b);
+  virtual void add(int pos, const sptr<Box>& box) {
+    _children.insert(_children.begin() + pos, box);
   }
 
-  /**
-   * Transform the width of box to negative
-   */
+  /** Transform the width of box to negative */
   inline void negWidth() { _width = -_width; }
 
   /**
    * Paints this box at the given coordinates using the given 2D graphics
    * context.
    *
-   * @param g2
-   *      the graphics (2D) context to use for painting
-   * @param x
-   *      the x-coordinate
-   * @param y
-   *      the y-coordinate
+   * @param g2 the graphics (2D) context to use for painting
+   * @param x the x-coordinate
+   * @param y the y-coordinate
    */
   virtual void draw(Graphics2D& g2, float x, float y) = 0;
 
@@ -245,11 +165,10 @@ public:
  * "row construction". That can be one single type by assigning one of the type
  * constants to the #_type field. But they can also be defined as having
  * two types: a "left type" and a "right type". This can be done by implementing
- * the methods Atom#getLeftType() and Atom#getRightType(). The left type
+ * the methods Atom#leftType() and Atom#rightType(). The left type
  * will then be used for determining the glue between this atom and the previous
  * one (in a row, if any) and the right type for the glue between this atom and
  * the following one (in a row, if any).
- *
  */
 class Atom {
 public:

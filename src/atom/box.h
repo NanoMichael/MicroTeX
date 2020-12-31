@@ -27,22 +27,17 @@ public:
   /**
    * Create a delimiter with specified symbol name and min height
    *
-   * @param symbol
-   *      the name of the delimiter symbol
-   * @param env
-   *      the TeXEnvironment in which to create the delimiter box
-   * @param minHeight
-   *      the minimum required total height of the box (height + depth).
+   * @param symbol the name of the delimiter symbol
+   * @param env the TeXEnvironment in which to create the delimiter box
+   * @param minHeight the minimum required total height of the box (height + depth).
+   *
    * @return the box representing the delimiter variant that fits best
-   *      according to the required minimum size.
+   *     according to the required minimum size.
    */
   static sptr<Box> create(const std::string& symbol, TeXEnvironment& env, float minHeight);
 };
 
-/**
- * Responsible for creating a box containing a delimiter symbol that exists in
- * different sizes.
- */
+/** Responsible for creating a box containing a delimiter symbol that exists in different sizes. */
 class XLeftRightArrowFactory {
 private:
   static sptr<Atom> MINUS;
@@ -59,9 +54,7 @@ public:
  *                                        rule boxes                                             *
  ***************************************************************************************************/
 
-/**
- * A box composed of a horizontal row of child boxes
- */
+/** A box composed of a horizontal row of child boxes */
 class HorizontalBox : public Box {
 private:
   void recalculate(const Box& b);
@@ -102,9 +95,7 @@ public:
   int getLastFontId() override;
 };
 
-/**
- * A box composed of other boxes, put one above the other
- */
+/** A box composed of other boxes, put one above the other */
 class VerticalBox : public Box {
 private:
   float _leftMostPos, _rightMostPos;
@@ -161,20 +152,18 @@ public:
   /**
    * The parameter boxes must have an equal width!!
    *
-   * @param base
-   *      base box to be drawn on the baseline
-   * @param del
-   *      delimiter box
-   * @param script
-   *      subscript or superscript box
-   * @param kern
-   *      the kerning amount to draw
+   * @param base base box to be drawn on the baseline
+   * @param del delimiter box
+   * @param script subscript or superscript box
+   * @param kern the kerning amount to draw
    * @param over
-   *      true : draws delimiter and script box above the base box,
-   *      false : under the base box
+   *     true : draws delimiter and script box above the base box,
+   *     false : under the base box
    */
   OverUnderBox(
-    const sptr<Box>& base, const sptr<Box>& del, const sptr<Box>& script, float kern, bool over);
+    const sptr<Box>& base, const sptr<Box>& del, const sptr<Box>& script,
+    float kern, bool over  //
+  );
 
   void draw(Graphics2D& g2, float x, float y) override;
 
@@ -183,9 +172,7 @@ public:
   std::vector<sptr<Box>> getChildren() const override;
 };
 
-/**
- * A box representing a horizontal line.
- */
+/** A box representing a horizontal line. */
 class HorizontalRule : public Box {
 private:
   color _color;
@@ -209,9 +196,7 @@ public:
  *                                   operation boxes                                               *
  ***************************************************************************************************/
 
-/**
- * A box representing a scale operation
- */
+/** A box representing a scale operation */
 class ScaleBox : public Box {
 private:
   sptr<Box> _box;
@@ -239,9 +224,7 @@ public:
   std::vector<sptr<Box>> getChildren() const override;
 };
 
-/**
- * A box representing a reflected box
- */
+/** A box representing a reflected box */
 class ReflectBox : public Box {
 private:
   sptr<Box> _box;
@@ -258,9 +241,7 @@ public:
   std::vector<sptr<Box>> getChildren() const override;
 };
 
-/**
- * Enumeration representing rotation origin
- */
+/** Enumeration representing rotation origin */
 enum Rotation {
   // Bottom Left
   BL,
@@ -288,9 +269,7 @@ enum Rotation {
   CR
 };
 
-/**
- * A box representing a rotate operation
- */
+/** A box representing a rotate operation */
 class RotateBox : public Box {
 private:
   sptr<Box> _box;
@@ -332,9 +311,7 @@ public:
  *                                  wrapped boxes                                                  *
  ***************************************************************************************************/
 
-/**
- * A box representing a wrapped box by square frame
- */
+/** A box representing a wrapped box by square frame */
 class FramedBox : public Box {
 public:
   sptr<Box> _box;
@@ -365,9 +342,7 @@ public:
   std::vector<sptr<Box>> getChildren() const override;
 };
 
-/**
- * A box representing a wrapped box by oval frame
- */
+/** A box representing a wrapped box by oval frame */
 class OvalBox : public FramedBox {
 private:
   float _multiplier, _diameter;
@@ -378,8 +353,8 @@ public:
   OvalBox(
     const sptr<FramedBox>& fbox,
     float multiplier = 0.5f,
-    float diameter = 0.f)
-      : FramedBox(fbox->_box, fbox->_thickness, fbox->_space),
+    float diameter = 0.f  //
+    ) : FramedBox(fbox->_box, fbox->_thickness, fbox->_space),
         _multiplier(multiplier),
         _diameter(diameter) {}
 
@@ -417,11 +392,11 @@ class StrutBox : public Box {
 public:
   StrutBox() = delete;
 
-  StrutBox(float w, float h, float d, float s) {
-    _width = w;
-    _height = h;
-    _depth = d;
-    _shift = s;
+  StrutBox(float width, float height, float depth, float shift) {
+    _width = width;
+    _height = height;
+    _depth = depth;
+    _shift = shift;
   }
 
   void draw(Graphics2D& g2, float x, float y) override {
@@ -469,10 +444,9 @@ public:
    * Create a new CharBox that will represent the character defined by the
    * given Char-object.
    *
-   * @param c
-   *      a Char-object containing the character's font information.
+   * @param chr a Char-object containing the character's font information.
    */
-  CharBox(const Char& c);
+  CharBox(const Char& chr);
 
   void addItalicCorrectionToWidth();
 
@@ -481,22 +455,23 @@ public:
   int getLastFontId() override;
 };
 
-/**
- * A box representing a text rendering box
- */
+/** A box representing a text rendering box */
 class TextRenderingBox : public Box {
 private:
   static sptr<Font> _font;
   sptr<TextLayout> _layout;
   float _size;
 
-  void init(const std::wstring& str, int type, float size, const sptr<Font>& f, bool kerning);
+  void init(const std::wstring& str, int type, float size, const sptr<Font>& font, bool kerning);
 
 public:
   TextRenderingBox() = delete;
 
-  TextRenderingBox(const std::wstring& str, int type, float size, const sptr<Font>& f, bool kerning) {
-    init(str, type, size, f, kerning);
+  TextRenderingBox(
+    const std::wstring& str, int type, float size,
+    const sptr<Font>& font, bool kerning  //
+  ) {
+    init(str, type, size, font, kerning);
   }
 
   TextRenderingBox(const std::wstring& str, int type, float size) {
@@ -514,9 +489,7 @@ public:
   static void _free_();
 };
 
-/**
- * A box representing 'wrapper' that with insets in left, top, right and bottom
- */
+/** A box representing 'wrapper' that with insets in left, top, right and bottom */
 class WrapperBox : public Box {
 private:
   sptr<Box> _base;
@@ -553,9 +526,7 @@ public:
   std::vector<sptr<Box>> getChildren() const override;
 };
 
-/**
- * Class representing a box that shifted up or down (when shift is negative)
- */
+/** Class representing a box that shifted up or down (when shift is negative) */
 class ShiftBox : public Box {
 private:
   float _sf;
@@ -573,9 +544,7 @@ public:
   std::vector<sptr<Box>> getChildren() const override;
 };
 
-/**
- * Class represents several lines
- */
+/** Class represents several lines */
 class LineBox : public Box {
 private:
   // Every 4 elements represent a line, thus (x1, y1, x2, y2)
