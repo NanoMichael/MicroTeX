@@ -15,7 +15,7 @@ bool Box::DEBUG = false;
 
 /************************************** factory implementation ************************************/
 
-sptr<Box> DelimiterFactory::create(SymbolAtom& symbol, TeXEnvironment& env, int size) {
+sptr<Box> DelimiterFactory::create(SymbolAtom& symbol, Environment& env, int size) {
   if (size > 4) return symbol.createBox(env);
 
   TeXFont& tf = *(env.getTeXFont());
@@ -34,7 +34,7 @@ sptr<Box> DelimiterFactory::create(SymbolAtom& symbol, TeXEnvironment& env, int 
   return sptr<Box>(new CharBox(c));
 }
 
-sptr<Box> DelimiterFactory::create(const string& symbol, TeXEnvironment& env, float minHeight) {
+sptr<Box> DelimiterFactory::create(const string& symbol, Environment& env, float minHeight) {
   TeXFont& tf = *(env.getTeXFont());
   int style = env.getStyle();
   Char c = tf.getChar(symbol, style);
@@ -102,7 +102,7 @@ sptr<Atom> XLeftRightArrowFactory::MINUS;
 sptr<Atom> XLeftRightArrowFactory::LEFT;
 sptr<Atom> XLeftRightArrowFactory::RIGHT;
 
-sptr<Box> XLeftRightArrowFactory::create(TeXEnvironment& env, float width) {
+sptr<Box> XLeftRightArrowFactory::create(Environment& env, float width) {
   // initialize
   if (MINUS == nullptr) {
     MINUS = SymbolAtom::get("minus");
@@ -143,7 +143,7 @@ sptr<Box> XLeftRightArrowFactory::create(TeXEnvironment& env, float width) {
   return sptr<Box>(hb);
 }
 
-sptr<Box> XLeftRightArrowFactory::create(bool left, TeXEnvironment& env, float width) {
+sptr<Box> XLeftRightArrowFactory::create(bool left, Environment& env, float width) {
   // initialize
   if (MINUS == nullptr) {
     MINUS = SymbolAtom::get("minus");

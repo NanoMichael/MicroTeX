@@ -147,7 +147,7 @@ public:
   TeXFormula* append(bool isPartial, const std::wstring& latex);
 
   /** Convert this TeXFormula into a box, with the given style */
-  sptr<Box> createBox(TeXEnvironment& style);
+  sptr<Box> createBox(Environment& style);
 
   /**
    * Changes the background color of the <i>current</i> TeXFormula into the

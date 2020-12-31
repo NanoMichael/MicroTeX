@@ -176,9 +176,9 @@ int BoxSplitter::getBreakPosition(const sptr<HorizontalBox>& hb, int i) {
   return hb->_breakPositions[pos - 1];
 }
 
-/************************************* TeXEnvironment implementation ******************************/
+/************************************* Environment implementation ******************************/
 
-TeXEnvironment::TeXEnvironment(int style, const sptr<TeXFont>& tf, UnitType wu, float tw) {
+Environment::Environment(int style, const sptr<TeXFont>& tf, UnitType wu, float tw) {
   init();
   _style = style;
   _tf = tf;
@@ -186,75 +186,75 @@ TeXEnvironment::TeXEnvironment(int style, const sptr<TeXFont>& tf, UnitType wu, 
   _textWidth = tw * SpaceAtom::getFactor(wu, *this);
 }
 
-float TeXEnvironment::getInterline() const {
+float Environment::getInterline() const {
   return _interline * SpaceAtom::getFactor(_interlineUnit, *this);
 }
 
-void TeXEnvironment::setTextWidth(UnitType wu, float w) {
+void Environment::setTextWidth(UnitType wu, float w) {
   _textWidth = w * SpaceAtom::getFactor(wu, *this);
 }
 
-sptr<TeXEnvironment>& TeXEnvironment::copy() {
-  TeXEnvironment* t = new TeXEnvironment(
+sptr<Environment>& Environment::copy() {
+  Environment* t = new Environment(
     _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
-  _copy = sptr<TeXEnvironment>(t);
+  _copy = sptr<Environment>(t);
   return _copy;
 }
 
-sptr<TeXEnvironment>& TeXEnvironment::copy(const sptr<TeXFont>& tf) {
-  TeXEnvironment* te = new TeXEnvironment(
+sptr<Environment>& Environment::copy(const sptr<TeXFont>& tf) {
+  Environment* te = new Environment(
     _style, _scaleFactor, tf, _background, _color, _textStyle, _smallCap);
   te->_textWidth = _textWidth;
   te->_interline = _interline;
   te->_interlineUnit = _interlineUnit;
-  _copytf = sptr<TeXEnvironment>(te);
+  _copytf = sptr<Environment>(te);
   return _copytf;
 }
 
-sptr<TeXEnvironment>& TeXEnvironment::crampStyle() {
-  TeXEnvironment* t = new TeXEnvironment(
+sptr<Environment>& Environment::crampStyle() {
+  Environment* t = new Environment(
     _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
-  _cramp = sptr<TeXEnvironment>(t);
+  _cramp = sptr<Environment>(t);
   _cramp->_style = (_style % 2 == 1 ? _style : _style + 1);
   return _cramp;
 }
 
-sptr<TeXEnvironment>& TeXEnvironment::dnomStyle() {
-  TeXEnvironment* t = new TeXEnvironment(
+sptr<Environment>& Environment::dnomStyle() {
+  Environment* t = new Environment(
     _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
-  _dnom = sptr<TeXEnvironment>(t);
+  _dnom = sptr<Environment>(t);
   _dnom->_style = 2 * (_style / 2) + 1 + 2 - 2 * (_style / 6);
   return _dnom;
 }
 
-sptr<TeXEnvironment>& TeXEnvironment::numStyle() {
-  TeXEnvironment* t = new TeXEnvironment(
+sptr<Environment>& Environment::numStyle() {
+  Environment* t = new Environment(
     _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
-  _num = sptr<TeXEnvironment>(t);
+  _num = sptr<Environment>(t);
   _num->_style = _style + 2 - 2 * (_style / 6);
   return _num;
 }
 
-sptr<TeXEnvironment>& TeXEnvironment::rootStyle() {
-  TeXEnvironment* t = new TeXEnvironment(
+sptr<Environment>& Environment::rootStyle() {
+  Environment* t = new Environment(
     _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
-  _root = sptr<TeXEnvironment>(t);
+  _root = sptr<Environment>(t);
   _root->_style = STYLE_SCRIPT_SCRIPT;
   return _root;
 }
 
-sptr<TeXEnvironment>& TeXEnvironment::subStyle() {
-  TeXEnvironment* t = new TeXEnvironment(
+sptr<Environment>& Environment::subStyle() {
+  Environment* t = new Environment(
     _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
-  _sub = sptr<TeXEnvironment>(t);
+  _sub = sptr<Environment>(t);
   _sub->_style = 2 * (_style / 4) + 4 + 1;
   return _sub;
 }
 
-sptr<TeXEnvironment>& TeXEnvironment::supStyle() {
-  TeXEnvironment* t = new TeXEnvironment(
+sptr<Environment>& Environment::supStyle() {
+  Environment* t = new Environment(
     _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
-  _sup = sptr<TeXEnvironment>(t);
+  _sup = sptr<Environment>(t);
   _sup->_style = 2 * (_style / 4) + 4 + (_style % 2);
   return _sup;
 }
@@ -287,27 +287,27 @@ void Glue::_free_() {
   }
 }
 
-float Glue::getFactor(const TeXEnvironment& env) const {
+float Glue::getFactor(const Environment& env) const {
   auto tf = env.getTeXFont();
   // use "quad" from a font marked as an "mu font"
   float quad = tf->getQuad(env.getStyle(), tf->getMuFontId());
   return quad / 18.f;
 }
 
-sptr<Box> Glue::createBox(const TeXEnvironment& env) const {
+sptr<Box> Glue::createBox(const Environment& env) const {
   float factor = getFactor(env);
   auto x = new GlueBox(_space * factor, _stretch * factor, _shrink * factor);
   return sptr<Box>(x);
 }
 
-int Glue::getGlueIndex(AtomType ltype, AtomType rtype, const TeXEnvironment& env) {
+int Glue::getGlueIndex(AtomType ltype, AtomType rtype, const Environment& env) {
   // types > INNER are considered of type ORD for glue calculations
   AtomType l = (ltype > AtomType::inner ? AtomType::ordinary : ltype);
   AtomType r = (rtype > AtomType::inner ? AtomType::ordinary : rtype);
   return _table[static_cast<uint8>(l)][static_cast<uint8>(r)][env.getStyle() / 2] - '0';
 }
 
-sptr<Box> Glue::get(AtomType ltype, AtomType rtype, const TeXEnvironment& env) {
+sptr<Box> Glue::get(AtomType ltype, AtomType rtype, const Environment& env) {
   int i = getGlueIndex(ltype, rtype, env);
   return _glueTypes[i]->createBox(env);
 }
@@ -333,7 +333,7 @@ Glue* Glue::getGlue(SpaceType skipType) {
   return *it;
 }
 
-sptr<Box> Glue::get(SpaceType skipType, const TeXEnvironment& env) {
+sptr<Box> Glue::get(SpaceType skipType, const Environment& env) {
   auto glue = getGlue(skipType);
   if (glue == nullptr) return sptr<Box>(new GlueBox(0, 0, 0));
   auto b = glue->createBox(env);
@@ -341,13 +341,13 @@ sptr<Box> Glue::get(SpaceType skipType, const TeXEnvironment& env) {
   return b;
 }
 
-float Glue::getSpace(AtomType ltype, AtomType rtype, const TeXEnvironment& env) {
+float Glue::getSpace(AtomType ltype, AtomType rtype, const Environment& env) {
   int i = getGlueIndex(ltype, rtype, env);
   auto glueType = _glueTypes[i];
   return glueType->_space * glueType->getFactor(env);
 }
 
-float Glue::getSpace(SpaceType skipType, const TeXEnvironment& env) {
+float Glue::getSpace(SpaceType skipType, const Environment& env) {
   auto glue = getGlue(skipType);
   if (glue == nullptr) return 0;
   return glue->_space * glue->getFactor(env);

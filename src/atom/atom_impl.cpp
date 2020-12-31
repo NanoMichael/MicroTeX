@@ -119,7 +119,7 @@ void MatrixAtom::parsePositions(wstring opt, vector<Alignment>& lpos) {
   if (lpos.size() == 0) lpos.push_back(Alignment::center);
 }
 
-float* MatrixAtom::getColumnSep(TeXEnvironment& env, float width) {
+float* MatrixAtom::getColumnSep(Environment& env, float width) {
   const int cols = _matrix->cols();
   float* arr = new float[cols + 1]();
   sptr<Box> Align, AlignSep, Hsep;
@@ -293,7 +293,7 @@ void MatrixAtom::recalculateLine(
 }
 
 sptr<Box> MatrixAtom::generateMulticolumn(
-  TeXEnvironment& env,
+  Environment& env,
   const sptr<Box>& b,
   const float* hsep,
   const float* colWidth,
@@ -366,8 +366,8 @@ MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, int type, Alig
   for (size_t i = 0; i < arr->cols(); i++) _position[i] = align;
 }
 
-sptr<Box> MatrixAtom::createBox(TeXEnvironment& e) {
-  TeXEnvironment& env = e;
+sptr<Box> MatrixAtom::createBox(Environment& e) {
+  Environment& env = e;
   const int rows = _matrix->rows();
   const int cols = _matrix->cols();
 
@@ -605,7 +605,7 @@ sptr<Box> MatrixAtom::createBox(TeXEnvironment& e) {
 
 SpaceAtom MultlineAtom::_vsep_in(UnitType::ex, 0.f, 1.f, 0.f);
 
-sptr<Box> MultlineAtom::createBox(TeXEnvironment& env) {
+sptr<Box> MultlineAtom::createBox(Environment& env) {
   float tw = env.getTextWidth();
   if (tw == POS_INF || _ttype == GATHERED)
     return MatrixAtom(_ispartial, _column, L"").createBox(env);
@@ -661,7 +661,7 @@ void FencedAtom::center(Box& b, float axis) {
   b._shift = -(total / 2 - h) - axis;
 }
 
-sptr<Box> FencedAtom::createBox(TeXEnvironment& env) {
+sptr<Box> FencedAtom::createBox(Environment& env) {
   TeXFont& tf = *(env.getTeXFont());
   // can not break
   RowAtom* ra = dynamic_cast<RowAtom*>(_base.get());
@@ -731,7 +731,7 @@ void FractionAtom::init(
   _deffactorset = false;
 }
 
-sptr<Box> FractionAtom::createBox(TeXEnvironment& env) {
+sptr<Box> FractionAtom::createBox(Environment& env) {
   TeXFont& tf = *(env.getTeXFont());
   int style = env.getStyle();
   // set thickness to default if default value should be use
@@ -878,7 +878,7 @@ Alignment MulticolumnAtom::parseAlign(const string& str) {
   return align;
 }
 
-sptr<Box> MulticolumnAtom::createBox(TeXEnvironment& env) {
+sptr<Box> MulticolumnAtom::createBox(Environment& env) {
   sptr<Box> b;
   if (_w == 0)
     b = _cols->createBox(env);
@@ -889,7 +889,7 @@ sptr<Box> MulticolumnAtom::createBox(TeXEnvironment& env) {
 }
 
 sptr<Box> HdotsforAtom::createBox(
-  float space, const sptr<Box>& b, TeXEnvironment& env) {
+  float space, const sptr<Box>& b, Environment& env) {
   auto sb = sptr<Box>(new StrutBox(0, space, 0, 0));
   auto vb = sptr<Box>(new VerticalBox());
   vb->add(sb);
@@ -899,7 +899,7 @@ sptr<Box> HdotsforAtom::createBox(
   return vb;
 }
 
-sptr<Box> HdotsforAtom::createBox(TeXEnvironment& env) {
+sptr<Box> HdotsforAtom::createBox(Environment& env) {
   auto dot = _cols->createBox(env);
   float space = Glue::getSpace(SpaceType::thinMuSkip, env) * _coeff * 2;
 
@@ -929,8 +929,8 @@ sptr<Box> HdotsforAtom::createBox(TeXEnvironment& env) {
   return createBox(space, hb, env);
 }
 
-sptr<Box> LaTeXAtom::createBox(TeXEnvironment& en) {
-  TeXEnvironment& env = *(en.copy(en.getTeXFont()->copy()));
+sptr<Box> LaTeXAtom::createBox(Environment& en) {
+  Environment& env = *(en.copy(en.getTeXFont()->copy()));
   env.getTeXFont()->setRoman(true);
   float sc = env.getTeXFont()->getScaleFactor();
 
@@ -977,7 +977,7 @@ sptr<Box> LaTeXAtom::createBox(TeXEnvironment& en) {
 const string NthRoot::_sqrtSymbol = "sqrt";
 const float NthRoot::FACTOR = 0.55f;
 
-sptr<Box> NthRoot::createBox(TeXEnvironment& env) {
+sptr<Box> NthRoot::createBox(Environment& env) {
   // first create a simple square root construction
   TeXFont& tf = *(env.getTeXFont());
   int style = env.getStyle();
@@ -990,7 +990,7 @@ sptr<Box> NthRoot::createBox(TeXEnvironment& env) {
   clr = drt + abs(clr) / 4.f;
 
   // cramped style for the formula under the root sign
-  TeXEnvironment& cramped = *(env.crampStyle());
+  Environment& cramped = *(env.crampStyle());
   auto bs = _base->createBox(cramped);
   sptr<HorizontalBox> b(new HorizontalBox(bs));
   b->add(sptr<Box>(SpaceAtom(UnitType::mu, 1, 0, 0).createBox(cramped)));
@@ -1072,7 +1072,7 @@ RotateAtom::RotateAtom(const sptr<Atom>& base, const wstring& angle, const wstri
   _option = RotateBox::getOrigin(x);
 }
 
-sptr<Box> RotateAtom::createBox(TeXEnvironment& env) {
+sptr<Box> RotateAtom::createBox(Environment& env) {
   if (_option != -1) return sptr<Box>(new RotateBox(_base->createBox(env), _angle, _option));
 
   float x = _x * SpaceAtom::getFactor(_xunit, env);
@@ -1080,7 +1080,7 @@ sptr<Box> RotateAtom::createBox(TeXEnvironment& env) {
   return sptr<Box>(new RotateBox(_base->createBox(env), _angle, x, y));
 }
 
-sptr<Box> UnderOverArrowAtom::createBox(TeXEnvironment& env) {
+sptr<Box> UnderOverArrowAtom::createBox(Environment& env) {
   auto b = _base != nullptr ? _base->createBox(env) : sptr<Box>(new StrutBox(0, 0, 0, 0));
   float sep = SpaceAtom::getSize(UnitType::mu, 1, env);
 
@@ -1112,7 +1112,7 @@ sptr<Box> UnderOverArrowAtom::createBox(TeXEnvironment& env) {
   return sptr<Box>(vb);
 }
 
-sptr<Box> XArrowAtom::createBox(TeXEnvironment& env) {
+sptr<Box> XArrowAtom::createBox(Environment& env) {
   auto O = _over != nullptr ? _over->createBox(*(env.supStyle()))
                             : sptr<Box>(new StrutBox(0, 0, 0, 0));
   auto U = _under != nullptr ? _under->createBox(*(env.subStyle()))
@@ -1210,7 +1210,7 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
   }
 }
 
-sptr<Box> CancelAtom::createBox(TeXEnvironment& env) {
+sptr<Box> CancelAtom::createBox(Environment& env) {
   auto box = _base->createBox(env);
   vector<float> lines;
   if (_cancelType == SLASH) {
