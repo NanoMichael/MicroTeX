@@ -43,9 +43,9 @@ public:
    *      if the text style mapping not found
    */
   virtual Char getChar(
-      wchar_t       c,
-      const std::string& textStyle,
-      int           style) = 0;
+    wchar_t c,
+    const std::string& textStyle,
+    int style) = 0;
 
   /**
    * Get a Char-object for this specific character containing the metric information

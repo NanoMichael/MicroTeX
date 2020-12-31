@@ -241,7 +241,6 @@ void HorizontalBox::recalculate(const Box& b) {
 sptr<HorizontalBox> HorizontalBox::cloneBox() {
   HorizontalBox* b = new HorizontalBox(_foreground, _background);
   b->_shift = _shift;
-
   return sptr<HorizontalBox>(b);
 }
 
@@ -278,13 +277,11 @@ pair<sptr<HorizontalBox>, sptr<HorizontalBox>> HorizontalBox::split(int pos, int
 }
 
 void HorizontalBox::draw(Graphics2D& g2, float x, float y) {
-  startDraw(g2, x, y);
   float xPos = x;
   for (auto box : _children) {
     box->draw(g2, xPos, y + box->_shift);
     xPos += box->_width;
   }
-  endDraw(g2);
 }
 
 int HorizontalBox::getLastFontId() {
@@ -328,7 +325,7 @@ HorizontalRule::HorizontalRule(float thickness, float width, float shift, color 
 }
 
 void HorizontalRule::draw(Graphics2D& g2, float x, float y) {
-  color oldColor = g2.getColor();
+  const color oldColor = g2.getColor();
   if (!istrans(_color)) g2.setColor(_color);
   const Stroke& oldStroke = g2.getStroke();
   g2.setStroke(Stroke(_height, CAP_BUTT, JOIN_BEVEL));
@@ -411,8 +408,9 @@ void VerticalBox::draw(Graphics2D& g2, float x, float y) {
 
 int VerticalBox::getLastFontId() {
   int id = TeXFont::NO_FONT;
-  for (int i = _children.size() - 1; i >= 0 && id == TeXFont::NO_FONT; i--)
+  for (int i = _children.size() - 1; i >= 0 && id == TeXFont::NO_FONT; i--) {
     id = _children[i]->getLastFontId();
+  }
   return id;
 }
 
@@ -426,26 +424,24 @@ OverBar::OverBar(const sptr<Box>& b, float kern, float thickness) : VerticalBox(
 /************************************ over-under box implementation *******************************/
 
 OverUnderBox::OverUnderBox(
-  const sptr<Box>& b,
-  const sptr<Box>& d,
+  const sptr<Box>& base,
+  const sptr<Box>& del,
   const sptr<Box>& script,
   float kern,
-  bool over) {
-  _base = b;
-  _del = d;
-  _script = script;
+  bool over  //
+) {
+  _base = base, _del = del, _script = script;
   _kern = kern;
   _over = over;
   // calculate metrics of the box
-  _width = b->_width;
+  _width = base->_width;
   float x = (over && script != nullptr ? script->_height + script->_depth + kern : 0);
-  _height = b->_height + (over ? d->_width : 0) + x;
+  _height = base->_height + (over ? del->_width : 0) + x;
   x = (!over && script != nullptr ? script->_height + script->_depth + kern : 0);
-  _depth = b->_depth + (over ? 0 : d->_width) + x;
+  _depth = base->_depth + (over ? 0 : del->_width) + x;
 }
 
 void OverUnderBox::draw(Graphics2D& g2, float x, float y) {
-  drawDebug(g2, x, y);
   _base->draw(g2, x, y);
 
   float yVar = y - _base->_height - _del->_width;
@@ -500,7 +496,6 @@ void ScaleBox::init(const sptr<Box>& b, float sx, float sy) {
 }
 
 void ScaleBox::draw(Graphics2D& g2, float x, float y) {
-  drawDebug(g2, x, y);
   if (_sx != 0 && _sy != 0) {
     float dec = _sx < 0 ? _width : 0;
     g2.translate(x + dec, y);
@@ -530,7 +525,6 @@ ReflectBox::ReflectBox(const sptr<Box>& b) {
 }
 
 void ReflectBox::draw(Graphics2D& g2, float x, float y) {
-  drawDebug(g2, x, y);
   g2.translate(x, y);
   g2.scale(-1, 1);
   _box->draw(g2, -_width, 0);
@@ -559,17 +553,19 @@ void RotateBox::init(const sptr<Box>& b, float angle, float x, float y) {
   _shiftX = x * (1 - c) + y * s;
   _shiftY = y * (1 - c) - x * s;
 
-  _xmax = max(-_height * s,
-            max(_depth * s,
-              max(_width * c + _depth * s, _width * c - _height * s))) +
+  _xmax = max(
+            -_height * s,
+            max(_depth * s, max(_width * c + _depth * s, _width * c - _height * s))) +
           _shiftX;
   _xmin = min(-_height * s,
             min(_depth * s,
               min(_width * c + _depth * s, _width * c - _height * s))) +
           _shiftX;
 
-  _ymax = max(_height * c,
-    max(-_depth * c,
+  _ymax = max(
+    _height * c,
+    max(
+      -_depth * c,
       max(_width * s - _depth * c, _width * s + _height * c)));
   _ymin = min(_height * c,
     min(-_depth * c,
@@ -657,7 +653,6 @@ int RotateBox::getOrigin(string option) {
 }
 
 void RotateBox::draw(Graphics2D& g2, float x, float y) {
-  drawDebug(g2, x, y);
   y -= _shiftY;
   x += _shiftX - _xmin;
   g2.rotate(-_angle, x, y);
@@ -724,17 +719,19 @@ void OvalBox::draw(Graphics2D& g2, float x, float y) {
   g2.setStroke(Stroke(_thickness, CAP_BUTT, JOIN_MITER));
   float th = _thickness / 2.f;
   float r = 0.f;
-  if (_diameter != 0)
+  if (_diameter != 0) {
     r = _diameter;
-  else
+  } else {
     r = _multiplier * min(_width - _thickness, _height + _depth - _thickness);
+  }
   g2.drawRoundRect(
     x + th,
     y - _height + th,
     _width - _thickness,
     _height + _depth - _thickness,
     r,
-    r);
+    r  //
+  );
   g2.setStroke(st);
 }
 
@@ -747,19 +744,22 @@ void ShadowBox::draw(Graphics2D& g2, float x, float y) {
     x + th,
     y - _height + th,
     _width - _shadowRule - _thickness,
-    _height + _depth - _shadowRule - _thickness);
+    _height + _depth - _shadowRule - _thickness  //
+  );
   float penth = abs(1.f / g2.sx());
   g2.setStroke(Stroke(penth, CAP_BUTT, JOIN_MITER));
   g2.fillRect(
     x + _shadowRule - penth,
     y + _depth - _shadowRule - penth,
     _width - _shadowRule,
-    _shadowRule);
+    _shadowRule  //
+  );
   g2.fillRect(
     x + _width - _shadowRule - penth,
     y - _height + th + _shadowRule,
     _shadowRule,
-    _depth + _height - 2 * _shadowRule - th);
+    _depth + _height - 2 * _shadowRule - th  //
+  );
   g2.setStroke(st);
 }
 
@@ -788,7 +788,6 @@ void CharBox::addItalicCorrectionToWidth() {
 }
 
 void CharBox::draw(Graphics2D& g2, float x, float y) {
-  startDraw(g2, x, y);
   g2.translate(x, y);
   const Font* font = FontInfo::getFont(_cf->fontId);
   if (_size != 1) g2.scale(_size, _size);
@@ -797,7 +796,6 @@ void CharBox::draw(Graphics2D& g2, float x, float y) {
   // reset
   if (_size != 1) g2.scale(1.f / _size, 1.f / _size);
   g2.translate(-x, -y);
-  endDraw(g2);
 }
 
 int CharBox::getLastFontId() {
@@ -832,7 +830,6 @@ void TextRenderingBox::init(
 }
 
 void TextRenderingBox::draw(Graphics2D& g2, float x, float y) {
-  drawDebug(g2, x, y);
   g2.translate(x, y);
   g2.scale(0.1f * _size, 0.1f * _size);
   _layout->draw(g2, 0, 0);
@@ -852,9 +849,7 @@ void WrapperBox::setInsets(float l, float t, float r, float b) {
 }
 
 void WrapperBox::draw(Graphics2D& g2, float x, float y) {
-  startDraw(g2, x, y);
   _base->draw(g2, x + _l, y + _base->_shift);
-  endDraw(g2);
 }
 
 int WrapperBox::getLastFontId() {
@@ -866,7 +861,6 @@ vector<sptr<Box>> WrapperBox::getChildren() const {
 }
 
 void ShiftBox::draw(Graphics2D& g2, float x, float y) {
-  drawDebug(g2, x, y);
   _base->draw(g2, x, y + _sf);
 }
 
