@@ -40,7 +40,7 @@ public:
  * which a formula must be drawn. It's used in the createBox-methods. Contains
  * methods that apply the style changing rules for subformula's.
  */
-class TeXEnvironment {
+class Environment {
 private:
   // colors
   color _background, _color;
@@ -64,8 +64,8 @@ private:
   float _interline;
 
   // Member to store copies to prevent destruct
-  sptr<TeXEnvironment> _copy, _copytf, _cramp, _dnom;
-  sptr<TeXEnvironment> _num, _root, _sub, _sup;
+  sptr<Environment> _copy, _copytf, _cramp, _dnom;
+  sptr<Environment> _num, _root, _sub, _sup;
 
   inline void init() {
     _background = trans;
@@ -80,7 +80,7 @@ private:
     _isColored = false;
   }
 
-  TeXEnvironment(int style, const sptr<TeXFont>& tf, color bg, const color c) {
+  Environment(int style, const sptr<TeXFont>& tf, color bg, const color c) {
     init();
     _style = style;
     _tf = tf;
@@ -89,7 +89,7 @@ private:
     setInterline(UnitType::ex, 1.f);
   }
 
-  TeXEnvironment(
+  Environment(
     int style, float scaleFactor,
     const sptr<TeXFont>& tf, color bg, color c,
     const std::string& textstyle, bool smallCap  //
@@ -108,14 +108,14 @@ private:
 public:
   bool _isColored;
 
-  TeXEnvironment(int style, const sptr<TeXFont>& tf) {
+  Environment(int style, const sptr<TeXFont>& tf) {
     init();
     _style = style;
     _tf = tf;
     setInterline(UnitType::ex, 1.f);
   }
 
-  TeXEnvironment(int style, const sptr<TeXFont>& tf, UnitType widthUnit, float textWidth);
+  Environment(int style, const sptr<TeXFont>& tf, UnitType widthUnit, float textWidth);
 
   inline void setInterline(UnitType unit, float len) {
     _interline = len;
@@ -132,39 +132,39 @@ public:
 
   inline float getScaleFactor() const { return _scaleFactor; }
 
-  sptr<TeXEnvironment>& copy();
+  sptr<Environment>& copy();
 
-  sptr<TeXEnvironment>& copy(const sptr<TeXFont>& tf);
+  sptr<Environment>& copy(const sptr<TeXFont>& tf);
 
   /**
    * Copy of this envrionment in cramped style.
    */
-  sptr<TeXEnvironment>& crampStyle();
+  sptr<Environment>& crampStyle();
 
   /**
    * Style to display denominator.
    */
-  sptr<TeXEnvironment>& dnomStyle();
+  sptr<Environment>& dnomStyle();
 
   /**
    * Style to display numerator.
    */
-  sptr<TeXEnvironment>& numStyle();
+  sptr<Environment>& numStyle();
 
   /**
    * Style to display roots.
    */
-  sptr<TeXEnvironment>& rootStyle();
+  sptr<Environment>& rootStyle();
 
   /**
    * Style to display subscripts.
    */
-  sptr<TeXEnvironment>& subStyle();
+  sptr<Environment>& subStyle();
 
   /**
    * Style to display superscripts.
    */
-  sptr<TeXEnvironment>& supStyle();
+  sptr<Environment>& supStyle();
 
   inline void setBackground(color bg) { _background = bg; }
 
@@ -221,13 +221,13 @@ private:
   float _shrink;
   std::string _name;
 
-  sptr<Box> createBox(const TeXEnvironment& env) const;
+  sptr<Box> createBox(const Environment& env) const;
 
-  float getFactor(const TeXEnvironment& env) const;
+  float getFactor(const Environment& env) const;
 
   static Glue* getGlue(SpaceType skipType);
 
-  static int getGlueIndex(AtomType ltype, AtomType rtype, const TeXEnvironment& env);
+  static int getGlueIndex(AtomType ltype, AtomType rtype, const Environment& env);
 
 public:
   Glue() = delete;
@@ -252,27 +252,27 @@ public:
    * @param rtype
    *      right atom type
    * @param env
-   *      the TeXEnvironment
+   *      the Environment
    * @return a box containing representing the glue
    */
-  static sptr<Box> get(AtomType ltype, AtomType rtype, const TeXEnvironment& env);
+  static sptr<Box> get(AtomType ltype, AtomType rtype, const Environment& env);
 
   /**
    * Creates a box representing the glue type according to the "glue rules" based
    * on the skip-type
    */
-  static sptr<Box> get(SpaceType skipType, const TeXEnvironment& env);
+  static sptr<Box> get(SpaceType skipType, const Environment& env);
 
   /**
    * Get the space amount from the given left-type and right-type of atoms
    * according to the "glue rules".
    */
-  static float getSpace(AtomType ltype, AtomType rtype, const TeXEnvironment& env);
+  static float getSpace(AtomType ltype, AtomType rtype, const Environment& env);
 
   /**
    * Get the space amount from the given skip-type according to the "glue rules"
    */
-  static float getSpace(SpaceType skipType, const TeXEnvironment& env);
+  static float getSpace(SpaceType skipType, const Environment& env);
 
   static void _init_();
 

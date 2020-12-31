@@ -124,11 +124,11 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
   DefaultTeXFont* font = (_type == -1) ? new DefaultTeXFont(_textSize)
                                        : createFont(_textSize, _type);
   sptr<TeXFont> tf(font);
-  TeXEnvironment* te = nullptr;
+  Environment* te = nullptr;
   if (_widthUnit != UnitType::none && _textWidth != 0) {
-    te = new TeXEnvironment(_style, tf, _widthUnit, _textWidth);
+    te = new Environment(_style, tf, _widthUnit, _textWidth);
   } else {
-    te = new TeXEnvironment(_style, tf);
+    te = new Environment(_style, tf);
   }
 
   if (_lineSpaceUnit != UnitType::none) te->setInterline(_lineSpaceUnit, _lineSpace);

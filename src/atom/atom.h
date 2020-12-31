@@ -11,7 +11,7 @@
 
 namespace tex {
 
-class TeXEnvironment;
+class Environment;
 
 /**
  * An abstract graphical representation of a formula, that can be painted. All
@@ -159,7 +159,7 @@ public:
 /**
  * An abstract superclass for all logical mathematical constructions that can be
  * a part of a TeXFormula. All subclasses must implement the abstract
- * Atom#createBox(TeXEnvironment) method that transforms this logical unit
+ * Atom#createBox(Environment) method that transforms this logical unit
  * into a concrete box (that can be painted). They also must define their type,
  * used for determining what glue to use between adjacent atoms in a
  * "row construction". That can be one single type by assigning one of the type
@@ -211,7 +211,7 @@ public:
    *
    * @return the resulting box.
    */
-  virtual sptr<Box> createBox(TeXEnvironment& env) = 0;
+  virtual sptr<Box> createBox(Environment& env) = 0;
 
   /** Shallow clone a atom from this atom. */
   virtual sptr<Atom> clone() const = 0;
