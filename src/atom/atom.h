@@ -22,13 +22,10 @@ class Environment;
  * (defined by it's dimensions).
  *
  * Subclasses must implement the abstract
- * Box#draw(Graphics2D, float, float) method (that paints the box). <b>
- * This implementation must start with calling the method
- * Box#startDraw(Graphics2D, float, float) and end with calling the method
- * Box#endDraw(Graphics2D)} to set and restore the colors that must be used
- * for painting the box and to draw the background.</b> They must also implement
- * the abstract Box#getLastFontId() method (the last font that will be used later
- * when this box will be painted).
+ * Box#draw(Graphics2D, float, float) method (that paints the box).
+ * 
+ * They must also implement the abstract Box#getLastFontId() method (the last font 
+ * that will be used later when this box will be painted).
  */
 class Box {
 protected:
