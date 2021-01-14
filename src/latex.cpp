@@ -13,7 +13,7 @@ using namespace tex;
 string tex::RES_BASE = "res";
 static string CHECK_FILE = ".clatexmath-res_root";
 
-TeXFormula*       LaTeX::_formula = nullptr;
+Formula*       LaTeX::_formula = nullptr;
 TeXRenderBuilder* LaTeX::_builder = nullptr;
 
 string LaTeX::queryResourceLocation(string& custom_path) {
@@ -94,17 +94,17 @@ void LaTeX::init(string res_root_path) {
   DefaultTeXFont::_init_();
   SymbolAtom::_init_();
   Glue::_init_();
-  TeXFormula::_init_();
+  Formula::_init_();
   TextRenderingBox::_init_();
 
-  _formula = new TeXFormula();
+  _formula = new Formula();
   _builder = new TeXRenderBuilder();
 }
 
 void LaTeX::release() {
   Glue::_free_();
   DefaultTeXFont::_free_();
-  TeXFormula::_free_();
+  Formula::_free_();
   MacroInfo::_free_();
   NewCommandMacro::_free_();
   TextRenderingBox::_free_();
@@ -118,7 +118,7 @@ const string& LaTeX::getResRootPath() {
 }
 
 void LaTeX::setDebug(bool debug) {
-  TeXFormula::setDEBUG(debug);
+  Formula::setDEBUG(debug);
 }
 
 TeXRender* LaTeX::parse(const wstring& latex, int width, float textSize, float lineSpace, color fg) {

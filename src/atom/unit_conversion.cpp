@@ -41,11 +41,11 @@ const function<float(const Environment&)> SpaceAtom::_unitConversions[] = {
   },
   // BP
   [](const Environment& env) -> float {
-    return TeXFormula::PIXELS_PER_POINT / env.getSize();
+    return Formula::PIXELS_PER_POINT / env.getSize();
   },
   // PICA
   [](const Environment& env) -> float {
-    return (12 * TeXFormula::PIXELS_PER_POINT) / env.getSize();
+    return (12 * Formula::PIXELS_PER_POINT) / env.getSize();
   },
   // MU
   [](const Environment& env) -> float {
@@ -54,31 +54,31 @@ const function<float(const Environment&)> SpaceAtom::_unitConversions[] = {
   },
   // CM
   [](const Environment& env) -> float {
-    return (28.346456693f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
+    return (28.346456693f * Formula::PIXELS_PER_POINT) / env.getSize();
   },
   // MM
   [](const Environment& env) -> float {
-    return (2.8346456693f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
+    return (2.8346456693f * Formula::PIXELS_PER_POINT) / env.getSize();
   },
   // IN
   [](const Environment& env) -> float {
-    return (72.f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
+    return (72.f * Formula::PIXELS_PER_POINT) / env.getSize();
   },
   // SP
   [](const Environment& env) -> float {
-    return (65536 * TeXFormula::PIXELS_PER_POINT) / env.getSize();
+    return (65536 * Formula::PIXELS_PER_POINT) / env.getSize();
   },
   // PT
   [](const Environment& env) -> float {
-    return (.9962640099f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
+    return (.9962640099f * Formula::PIXELS_PER_POINT) / env.getSize();
   },
   // DD
   [](const Environment& env) -> float {
-    return (1.0660349422f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
+    return (1.0660349422f * Formula::PIXELS_PER_POINT) / env.getSize();
   },
   // CC
   [](const Environment& env) -> float {
-    return (12.7924193070f * TeXFormula::PIXELS_PER_POINT) / env.getSize();
+    return (12.7924193070f * Formula::PIXELS_PER_POINT) / env.getSize();
   },
   // X8
   [](const Environment& env) -> float {

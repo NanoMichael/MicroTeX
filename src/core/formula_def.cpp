@@ -3,7 +3,7 @@
 using namespace std;
 using namespace tex;
 
-map<wstring, wstring> TeXFormula::_predefinedTeXFormulasAsString = {
+map<wstring, wstring> Formula::_predefinedTeXFormulasAsString = {
     {L"qquad", L"\\quad\\quad"},
     {L" ", L"\\nbsp"},
     {L"ne", L"\\not\\equals"},

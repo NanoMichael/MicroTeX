@@ -208,7 +208,7 @@ sptr<Metrics> DefaultTeXFont::getMetrics(const CharFont& cf, float size) {
   auto         info = getInfo(cf.fontId);
   const float* m    = info->getMetrics(cf.chr);
   Metrics*     met  = new Metrics(
-      m[WIDTH], m[HEIGHT], m[DEPTH], m[IT], size * TeXFormula::PIXELS_PER_POINT, size);
+      m[WIDTH], m[HEIGHT], m[DEPTH], m[IT], size * Formula::PIXELS_PER_POINT, size);
   return sptr<Metrics>(met);
 }
 
@@ -235,7 +235,7 @@ Extension* DefaultTeXFont::getExtension(const Char& c, int style) {
 float DefaultTeXFont::getKern(const CharFont& left, const CharFont& right, int style) {
   if (left.fontId == right.fontId) {
     auto info = getInfo(left.fontId);
-    return info->getKern(left.chr, right.chr, getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT);
+    return info->getKern(left.chr, right.chr, getSizeFactor(style) * Formula::PIXELS_PER_POINT);
   }
   return 0;
 }
@@ -262,7 +262,7 @@ Char DefaultTeXFont::getNextLarger(const Char& c, int style) {
 float DefaultTeXFont::getSpace(int style) {
   int  spaceFontId = _generalSettings[DefaultTeXFontParser::SPACEFONTID_ATTR];
   auto info        = getInfo(spaceFontId);
-  return info->getSpace(getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT);
+  return info->getSpace(getSizeFactor(style) * Formula::PIXELS_PER_POINT);
 }
 
 void DefaultTeXFont::setMathSizes(float ds, float ts, float ss, float sss) {

@@ -55,7 +55,7 @@ void FontInfo::setVariousId(
 }
 
 const Font* FontInfo::getFont() {
-  if (_font == nullptr) _font = Font::create(_path, TeXFormula::PIXELS_PER_POINT);
+  if (_font == nullptr) _font = Font::create(_path, Formula::PIXELS_PER_POINT);
   return _font;
 }
 

@@ -130,7 +130,7 @@ public:
 
 /**
  * An abstract superclass for all logical mathematical constructions that can be
- * a part of a TeXFormula. All subclasses must implement the abstract
+ * a part of a Formula. All subclasses must implement the abstract
  * Atom#createBox(Environment) method that transforms this logical unit
  * into a concrete box (that can be painted). They also must define their type,
  * used for determining what glue to use between adjacent atoms in a

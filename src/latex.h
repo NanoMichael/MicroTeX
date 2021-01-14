@@ -12,11 +12,11 @@
 
 namespace tex {
 
-class TeXFormula;
+class Formula;
 
 class LaTeX {
 private:
-  static TeXFormula* _formula;
+  static Formula* _formula;
   static TeXRenderBuilder* _builder;
 protected:
   static std::string queryResourceLocation(std::string& custom_path);

@@ -208,8 +208,8 @@ sptr<Box> SymbolAtom::createBox(Environment& env) {
   sptr<Box> cb(new CharBox(c));
   if (env.getSmallCap() && _unicode != 0 && islower(_unicode)) {
     // find if exists in mapping
-    auto it = TeXFormula::_symbolTextMappings.find(toupper(_unicode));
-    if (it != TeXFormula::_symbolFormulaMappings.end()) {
+    auto it = Formula::_symbolTextMappings.find(toupper(_unicode));
+    if (it != Formula::_symbolFormulaMappings.end()) {
       const string& name = it->second;
       try {
         sptr<Box> cx(new CharBox(tf.getChar(name, style)));
@@ -717,19 +717,19 @@ AccentedAtom::AccentedAtom(
 
 AccentedAtom::AccentedAtom(
   const sptr<Atom>& base,
-  const sptr<TeXFormula>& acc) {
-  if (acc == nullptr) throw ex_invalid_formula("the accent TeXFormula can't be null!");
+  const sptr<Formula>& acc) {
+  if (acc == nullptr) throw ex_invalid_formula("the accent Formula can't be null!");
   _changeSize = true;
   _acc = false;
   auto root = acc->_root;
   _accent = dynamic_pointer_cast<SymbolAtom>(root);
   if (_accent == nullptr)
-    throw ex_invalid_formula("The accent TeXFormula does not represet a single symbol!");
+    throw ex_invalid_formula("The accent Formula does not represet a single symbol!");
   if (_accent->_type == AtomType::accent) {
     _base = base;
   } else {
     throw ex_invalid_symbol_type(
-      "The accent TeXFormula represents a single symbol with the name '" +
+      "The accent Formula represents a single symbol with the name '" +
       _accent->getName() + "', but this symbol is not defined as accent (" +
       TeXSymbolParser::TYPE_ATTR + "='acc') in '" +
       TeXSymbolParser::RESOURCE_NAME + "'!");

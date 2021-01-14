@@ -24,7 +24,7 @@ void MatrixAtom::parsePositions(wstring opt, vector<Alignment>& lpos) {
   int len = opt.length();
   int pos = 0;
   wchar_t ch;
-  sptr<TeXFormula> tf;
+  sptr<Formula> tf;
   sptr<TeXParser> tp;
   // clear first
   lpos.clear();
@@ -55,7 +55,7 @@ void MatrixAtom::parsePositions(wstring opt, vector<Alignment>& lpos) {
       } break;
       case '@': {
         pos++;
-        tf = sptr<TeXFormula>(new TeXFormula());
+        tf = sptr<Formula>(new Formula());
         tp = sptr<TeXParser>(new TeXParser(_ispartial, opt.substr(pos), &(*tf), false));
         auto atom = tp->getArgument();
         // Keep columns same with the matrix
@@ -68,7 +68,7 @@ void MatrixAtom::parsePositions(wstring opt, vector<Alignment>& lpos) {
       } break;
       case '*': {
         pos++;
-        tf = sptr<TeXFormula>(new TeXFormula());
+        tf = sptr<Formula>(new Formula());
         tp = sptr<TeXParser>(new TeXParser(_ispartial, opt.substr(pos), &(*tf), false));
         vector<wstring> args;
         tp->getOptsArgs(2, 0, args);
@@ -83,7 +83,7 @@ void MatrixAtom::parsePositions(wstring opt, vector<Alignment>& lpos) {
       } break;
       case '>': {
         pos++;
-        tf = sptr<TeXFormula>(new ArrayOfAtoms());
+        tf = sptr<Formula>(new ArrayOfAtoms());
         tp = sptr<TeXParser>(new TeXParser(_ispartial, opt.substr(pos), &(*tf), false));
         sptr<Atom> cs = tp->getArgument();
         _columnSpecifiers[lpos.size()] = cs;

@@ -15,7 +15,7 @@ namespace tex {
  */
 wchar_t convertToRomanNumber(wchar_t c);
 
-class TeXFormula;
+class Formula;
 
 /** This class implements a parser for latex formulas */
 class TeXParser {
@@ -96,14 +96,14 @@ private:
   void init(
     bool ispartial,
     const std::wstring& parsestring,
-    TeXFormula* formula,
+    Formula* formula,
     bool firstpass  //
   );
 
 public:
   static bool _isLoading;
 
-  TeXFormula* _formula;
+  Formula* _formula;
 
   TeXParser() {
     init(true, L"", nullptr, false);
@@ -115,7 +115,7 @@ public:
    * @param formula the formula where to put the atoms
    * @throw ex_parse if the string could not be parsed correctly
    */
-  TeXParser(const std::wstring& latex, TeXFormula* formula) {
+  TeXParser(const std::wstring& latex, Formula* formula) {
     init(true, latex, formula, true);
   }
 
@@ -126,7 +126,7 @@ public:
    * @param formula the formula where to put the atoms
    * @throw ex_parse if the string could not be parsed correctly
    */
-  TeXParser(bool isPartial, const std::wstring& latex, TeXFormula* formula) {
+  TeXParser(bool isPartial, const std::wstring& latex, Formula* formula) {
     init(isPartial, latex, formula, true);
   }
 
@@ -142,7 +142,7 @@ public:
   TeXParser(
     bool isPartial,
     const std::wstring& latex,
-    TeXFormula* formula,
+    Formula* formula,
     bool firstPass) {
     init(isPartial, latex, formula, firstPass);
   }
@@ -155,7 +155,7 @@ public:
    *
    * @throw ex_parse if the string could not be parsed correctly
    */
-  TeXParser(const std::wstring& latex, TeXFormula* formula, bool firstPass) {
+  TeXParser(const std::wstring& latex, Formula* formula, bool firstPass) {
     init(true, latex, formula, firstPass);
   }
 
@@ -174,7 +174,7 @@ public:
   TeXParser(
     bool isPartial,
     const std::wstring& latex,
-    TeXFormula* formula,
+    Formula* formula,
     bool firstpass,
     bool ignoreWhiteSpace  //
   ) {
@@ -195,7 +195,7 @@ public:
    */
   TeXParser(
     const std::wstring& latex,
-    TeXFormula* formula,
+    Formula* formula,
     bool firstpass,
     bool ignoreWhiteSpace  //
   ) {

@@ -15,7 +15,7 @@ namespace tex {
 struct CharFont;
 class TeXFont;
 struct FontInfos;
-class TeXFormula;
+class Formula;
 class Dummy;
 class RowAtom;
 
@@ -550,7 +550,7 @@ public:
  * Used by RowAtom. The "textSymbol"-property and the type of An atom can change
  * (according to the TeX-algorithms used). Or this atom can be replaced by a
  * ligature, (if it was a CharAtom). But atoms cannot be changed, otherwise
- * different boxes could be made from the same TeXFormula, and that is not
+ * different boxes could be made from the same Formula, and that is not
  * desired! This "dummy atom" makes sure that changes to an atom (during the
  * createBox-method of a RowAtom) will be reset.
  */
@@ -960,21 +960,21 @@ public:
 
   /**
    * Creates an AccentedAtom from a base atom and an accent symbol defined as
-   * a TeXFormula. This is used for parsing MathML.
+   * a Formula. This is used for parsing MathML.
    *
    * @param base
    *      base atom
    * @param acc
-   *      TeXFormula representing an accent (SymbolAtom)
+   *      Formula representing an accent (SymbolAtom)
    * @throw ex_invalid_formula
-   *      if the given TeXFormula does not represent a single
+   *      if the given Formula does not represent a single
    *      SymbolAtom (type "TeXConstants.AtomType::accent")
    * @throw ex_invalid_symbol_type
    *      if the symbol is not defined as an accent ('acc')
    */
   AccentedAtom(
     const sptr<Atom>& base,
-    const sptr<TeXFormula>& acc);
+    const sptr<Formula>& acc);
 
   sptr<Box> createBox(Environment& env) override;
 
