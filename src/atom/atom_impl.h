@@ -211,7 +211,7 @@ private:
 
   static SpaceAtom _align;
 
-  sptr<ArrayOfAtoms> _matrix;
+  sptr<ArrayFormula> _matrix;
   std::vector<Alignment> _position;
   std::map<int, sptr<VlineAtom>> _vlines;
   std::map<int, sptr<Atom>> _columnSpecifiers;
@@ -255,23 +255,23 @@ public:
 
   MatrixAtom(
     bool ispar,
-    const sptr<ArrayOfAtoms>& arr,
+    const sptr<ArrayFormula>& arr,
     const std::wstring& options,
     bool spaceAround);
 
   MatrixAtom(
     bool ispar,
-    const sptr<ArrayOfAtoms>& arr,
+    const sptr<ArrayFormula>& arr,
     const std::wstring& options);
 
   MatrixAtom(
     bool ispar,
-    const sptr<ArrayOfAtoms>& arr,
+    const sptr<ArrayFormula>& arr,
     MatrixType type);
 
   MatrixAtom(
     bool ispar,
-    const sptr<ArrayOfAtoms>& arr,
+    const sptr<ArrayFormula>& arr,
     MatrixType type,
     Alignment align);
 
@@ -337,20 +337,20 @@ enum class MultiLineType {
 class MultlineAtom : public Atom {
 private:
   static SpaceAtom _vsep_in;
-  sptr<ArrayOfAtoms> _column;
+  sptr<ArrayFormula> _column;
   MultiLineType _lineType;
   bool _ispartial;
 
 public:
   MultlineAtom() = delete;
 
-  MultlineAtom(bool ispar, const sptr<ArrayOfAtoms>& col, MultiLineType type) {
+  MultlineAtom(bool ispar, const sptr<ArrayFormula>& col, MultiLineType type) {
     _ispartial = ispar;
     _lineType = type;
     _column = col;
   }
 
-  MultlineAtom(const sptr<ArrayOfAtoms>& col, MultiLineType type) {
+  MultlineAtom(const sptr<ArrayFormula>& col, MultiLineType type) {
     _ispartial = false;
     _lineType = type;
     _column = col;

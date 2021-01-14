@@ -261,19 +261,19 @@ void Formula::_free_() {
   for (auto i : _externalFontMap) delete i.second;
 }
 
-/*************************************** ArrayOfAtoms implementation ******************************/
+/*************************************** ArrayFormula implementation ******************************/
 
-ArrayOfAtoms::ArrayOfAtoms() : _row(0), _col(0) {
+ArrayFormula::ArrayFormula() : _row(0), _col(0) {
   _array.push_back(vector<sptr<Atom>>());
 }
 
-void ArrayOfAtoms::addCol() {
+void ArrayFormula::addCol() {
   _array[_row].push_back(_root);
   _root = nullptr;
   _col++;
 }
 
-void ArrayOfAtoms::addCol(int n) {
+void ArrayFormula::addCol(int n) {
   _array[_row].push_back(_root);
   for (int i = 1; i < n - 1; i++) {
     _array[_row].push_back(nullptr);
@@ -282,7 +282,7 @@ void ArrayOfAtoms::addCol(int n) {
   _col += n;
 }
 
-void ArrayOfAtoms::insertAtomIntoCol(int col, const sptr<Atom>& atom) {
+void ArrayFormula::insertAtomIntoCol(int col, const sptr<Atom>& atom) {
   _col++;
   for (size_t j = 0; j < _row; j++) {
     auto it = _array[j].begin();
@@ -290,21 +290,21 @@ void ArrayOfAtoms::insertAtomIntoCol(int col, const sptr<Atom>& atom) {
   }
 }
 
-void ArrayOfAtoms::addRow() {
+void ArrayFormula::addRow() {
   addCol();
   _array.push_back(vector<sptr<Atom>>());
   _row++;
   _col = 0;
 }
 
-void ArrayOfAtoms::addRowSpecifier(const sptr<CellSpecifier>& spe) {
+void ArrayFormula::addRowSpecifier(const sptr<CellSpecifier>& spe) {
   auto it = _rowSpecifiers.find(_row);
   if (it == _rowSpecifiers.end())
     _rowSpecifiers[_row] = vector<sptr<CellSpecifier>>();
   _rowSpecifiers[_row].push_back(spe);
 }
 
-void ArrayOfAtoms::addCellSpecifier(const sptr<CellSpecifier>& spe) {
+void ArrayFormula::addCellSpecifier(const sptr<CellSpecifier>& spe) {
   string str = tostring(_row) + tostring(_col);
   auto it = _cellSpecifiers.find(str);
   if (it == _cellSpecifiers.end())
@@ -312,15 +312,15 @@ void ArrayOfAtoms::addCellSpecifier(const sptr<CellSpecifier>& spe) {
   _cellSpecifiers[str].push_back(spe);
 }
 
-int ArrayOfAtoms::rows() const {
+int ArrayFormula::rows() const {
   return _row;
 }
 
-int ArrayOfAtoms::cols() const {
+int ArrayFormula::cols() const {
   return _col;
 }
 
-sptr<VRowAtom> ArrayOfAtoms::getAsVRow() {
+sptr<VRowAtom> ArrayFormula::getAsVRow() {
   VRowAtom* vr = new VRowAtom();
   vr->setAddInterline(true);
   for (size_t i = 0; i < _array.size(); i++) {
@@ -330,7 +330,7 @@ sptr<VRowAtom> ArrayOfAtoms::getAsVRow() {
   return sptr<VRowAtom>(vr);
 }
 
-void ArrayOfAtoms::checkDimensions() {
+void ArrayFormula::checkDimensions() {
   if (_array.back().size() != 0 || _root != nullptr) addRow();
 
   _row = _array.size() - 1;
