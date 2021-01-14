@@ -150,7 +150,6 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
   }
 
   if (!istrans(_fg)) ti->setForeground(_fg);
-  ti->_iscolored = te->_isColored;
 
   delete te;
   return ti;

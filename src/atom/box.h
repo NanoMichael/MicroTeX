@@ -66,8 +66,6 @@ public:
 
   HorizontalBox() {}
 
-  HorizontalBox(color fg, color bg) : Box(fg, bg) {}
-
   HorizontalBox(const sptr<Box>& b, float w, Alignment alignment);
 
   HorizontalBox(const sptr<Box>& b);
@@ -195,6 +193,24 @@ public:
 /***************************************************************************************************
  *                                   operation boxes                                               *
  ***************************************************************************************************/
+
+class ColorBox : public Box {
+private:
+  sptr<Box> _box;
+  color _foreground = trans;
+  color _background = trans;
+
+public:
+  ColorBox() = delete;
+
+  ColorBox(const sptr<Box>& box, color fg = trans, color bg = trans);
+
+  void draw(Graphics2D& g2, float x, float y) override;
+
+  int getLastFontId() override;
+
+  std::vector<sptr<Box>> getChildren() const override;
+};
 
 /** A box representing a scale operation */
 class ScaleBox : public Box {
@@ -494,6 +510,7 @@ class WrapperBox : public Box {
 private:
   sptr<Box> _base;
   float _l;
+  color _fg = 0, _bg = 0;
 
 public:
   WrapperBox() = delete;
@@ -516,6 +533,10 @@ public:
       _l = (width - _base->_width) / 2.f;
     }
   }
+
+  inline void setForeground(color fg) { _fg = fg; }
+
+  inline void setBackground(color bg) { _bg = bg; }
 
   void setInsets(float l, float t, float r, float b);
 

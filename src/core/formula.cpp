@@ -37,7 +37,7 @@ void TeXFormula::_init_() {
 #endif  // HAVE_LOG
 }
 
-TeXFormula::TeXFormula(const TeXParser& tp) : _parser(tp.getIsPartial(), L"", this, false) {
+TeXFormula::TeXFormula(const TeXParser& tp) : _parser(tp.isPartial(), L"", this, false) {
   _xmlMap = tp._formula->_xmlMap;
 }
 
@@ -46,10 +46,10 @@ TeXFormula::TeXFormula(
   const wstring& latex,
   const string& textStyle,
   bool firstpass, bool ignoreWhiteSpace)
-    : _parser(tp.getIsPartial(), latex, this, firstpass, ignoreWhiteSpace) {
+    : _parser(tp.isPartial(), latex, this, firstpass, ignoreWhiteSpace) {
   _textStyle = textStyle;
   _xmlMap = tp._formula->_xmlMap;
-  if (tp.getIsPartial()) {
+  if (tp.isPartial()) {
     try {
       _parser.parse();
     } catch (exception& e) {
@@ -61,10 +61,10 @@ TeXFormula::TeXFormula(
 }
 
 TeXFormula::TeXFormula(const TeXParser& tp, const wstring& latex, const string& textStyle)
-    : _parser(tp.getIsPartial(), latex, this) {
+    : _parser(tp.isPartial(), latex, this) {
   _textStyle = textStyle;
   _xmlMap = tp._formula->_xmlMap;
-  if (tp.getIsPartial()) {
+  if (tp.isPartial()) {
     try {
       _parser.parse();
     } catch (exception& e) {
@@ -76,10 +76,10 @@ TeXFormula::TeXFormula(const TeXParser& tp, const wstring& latex, const string& 
 }
 
 TeXFormula::TeXFormula(const TeXParser& tp, const wstring& latex, bool firstpass)
-    : _parser(tp.getIsPartial(), latex, this, firstpass) {
+    : _parser(tp.isPartial(), latex, this, firstpass) {
   _textStyle = "";
   _xmlMap = tp._formula->_xmlMap;
-  if (tp.getIsPartial()) {
+  if (tp.isPartial()) {
     try {
       _parser.parse();
     } catch (exception& e) {}
@@ -89,10 +89,10 @@ TeXFormula::TeXFormula(const TeXParser& tp, const wstring& latex, bool firstpass
 }
 
 TeXFormula::TeXFormula(const TeXParser& tp, const wstring& latex)
-    : _parser(tp.getIsPartial(), latex, this) {
+    : _parser(tp.isPartial(), latex, this) {
   _textStyle = "";
   _xmlMap = tp._formula->_xmlMap;
-  if (tp.getIsPartial()) {
+  if (tp.isPartial()) {
     try {
       _parser.parse();
     } catch (exception& e) {

@@ -42,8 +42,6 @@ public:
  */
 class Environment {
 private:
-  // colors
-  color _background, _color;
   // current style
   int _style;
   // TeXFont used
@@ -68,8 +66,6 @@ private:
   sptr<Environment> _num, _root, _sub, _sup;
 
   inline void init() {
-    _background = trans;
-    _color = trans;
     _style = STYLE_DISPLAY;
     _lastFontId = TeXFont::NO_FONT;
     _textWidth = POS_INF;
@@ -77,21 +73,18 @@ private:
     _scaleFactor = 1.f;
     _interlineUnit = UnitType::em;
     _interline = 0;
-    _isColored = false;
   }
 
   Environment(int style, const sptr<TeXFont>& tf, color bg, const color c) {
     init();
     _style = style;
     _tf = tf;
-    _background = bg;
-    _color = c;
     setInterline(UnitType::ex, 1.f);
   }
 
   Environment(
     int style, float scaleFactor,
-    const sptr<TeXFont>& tf, color bg, color c,
+    const sptr<TeXFont>& tf,
     const std::string& textstyle, bool smallCap  //
   ) {
     init();
@@ -100,14 +93,10 @@ private:
     _tf = tf;
     _textStyle = textstyle;
     _smallCap = smallCap;
-    _background = bg;
-    _color = c;
     setInterline(UnitType::ex, 1.f);
   }
 
 public:
-  bool _isColored;
-
   Environment(int style, const sptr<TeXFont>& tf) {
     init();
     _style = style;
@@ -166,14 +155,6 @@ public:
    */
   sptr<Environment>& supStyle();
 
-  inline void setBackground(color bg) { _background = bg; }
-
-  inline void setColor(color c) { _color = c; }
-
-  inline color getBackground() const { return _background; }
-
-  inline color getColor() const { return _color; }
-
   inline float getSize() const { return _tf->getSize(); }
 
   inline int getStyle() const { return _style; }
@@ -189,11 +170,6 @@ public:
   inline void setSmallCap(bool s) { _smallCap = s; }
 
   inline const sptr<TeXFont>& getTeXFont() const { return _tf; }
-
-  inline void reset() {
-    _color = trans;
-    _background = trans;
-  }
 
   inline float getSpace() const { return _tf->getSpace(_style) * _tf->getScaleFactor(); }
 

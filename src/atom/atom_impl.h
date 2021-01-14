@@ -35,7 +35,7 @@ inline static void parseMap(const std::string& options, std::map<std::string, st
  */
 class CellSpecifier : public Atom {
 public:
-  virtual void apply(const sptr<Box>& box) = 0;
+  virtual void apply(WrapperBox& box) = 0;
 
   sptr<Box> createBox(Environment& env) override {
     return sptr<Box>(new StrutBox(0, 0, 0, 0));
@@ -54,8 +54,8 @@ public:
 
   CellColorAtom(color c) : _color(c) {}
 
-  void apply(const sptr<Box>& box) override {
-    box->_background = _color;
+  void apply(WrapperBox& box) override {
+    box.setBackground(_color);
   }
 
   __decl_clone(CellColorAtom)
@@ -73,11 +73,89 @@ public:
 
   CellForegroundAtom(color c) : _color(c) {}
 
-  void apply(const sptr<Box>& box) override {
-    box->_foreground = _color;
+  void apply(WrapperBox& box) override {
+    box.setForeground(_color);
   }
 
   __decl_clone(CellForegroundAtom)
+};
+
+/**
+ * An atom used in array mode that across several columns
+ */
+class MulticolumnAtom : public Atom {
+protected:
+  // Number of columns across
+  int _n;
+  Alignment _align;
+  float _w;
+  int _beforeVlines, _afterVlines;
+  int _row, _col;
+  sptr<Atom> _cols;
+
+  Alignment parseAlign(const std::string& str);
+
+public:
+  MulticolumnAtom() = delete;
+
+  MulticolumnAtom(int n, const std::string& align, const sptr<Atom> cols)
+      : _w(0), _beforeVlines(0), _afterVlines(0), _row(0), _col(0) {
+    _n = n >= 1 ? n : 1;
+    _cols = cols;
+    _align = parseAlign(align);
+  }
+
+  virtual bool isNeedWidth() const { return false; }
+
+  inline void setColWidth(float w) { _w = w; }
+
+  inline float colWidth() { return _w; }
+
+  inline int skipped() { return _n; }
+
+  inline bool hasRightVline() { return _afterVlines != 0; }
+
+  inline void setRowColumn(int i, int j) {
+    _row = i;
+    _col = j;
+  }
+
+  inline Alignment align() { return _align; }
+
+  inline int row() { return _row; }
+
+  inline int col() { return _col; }
+
+  virtual sptr<Box> createBox(Environment& env) override;
+
+  __decl_clone(MulticolumnAtom)
+};
+
+/**
+ * An atom used in array mode representing "dots"
+ */
+class HdotsforAtom : public MulticolumnAtom {
+private:
+  float _coeff;
+
+  sptr<Box> createBox(
+    float space,
+    const sptr<Box>& b,
+    Environment& env);
+
+public:
+  HdotsforAtom() = delete;
+
+  HdotsforAtom(int n, float coeff)
+      : MulticolumnAtom(n, "c", SymbolAtom::get("ldotp")), _coeff(coeff) {}
+
+  bool isNeedWidth() const override {
+    return true;
+  }
+
+  sptr<Box> createBox(Environment& env) override;
+
+  __decl_clone(HdotsforAtom)
 };
 
 /**
@@ -113,18 +191,15 @@ public:
 
 class VlineAtom;
 
-/**
- * Enum specifies matrix type
- */
-enum MAT {
-  ARRAY = 0,
-  MATRIX,
-  ALIGN,
-  ALIGNAT,
-  FLALIGN,
-  SMALLMATRIX,
-  ALIGNED,
-  ALIGNEDAT
+enum class MatrixType : int8 {
+  array,
+  matrix,
+  align,
+  alignAt,
+  flAlign,
+  smallMatrix,
+  aligned,
+  alignedAt
 };
 
 /**
@@ -141,7 +216,7 @@ private:
   std::map<int, sptr<VlineAtom>> _vlines;
   std::map<int, sptr<Atom>> _columnSpecifiers;
 
-  int _ttype;
+  MatrixType _matType;
   bool _ispartial;
   bool _spaceAround;
 
@@ -165,6 +240,8 @@ private:
     float vspace);
 
   float* getColumnSep(Environment& env, float width);
+
+  void applyCell(WrapperBox& box, int i, int j);
 
 public:
   // The color to draw the rule of the matrix
@@ -190,12 +267,12 @@ public:
   MatrixAtom(
     bool ispar,
     const sptr<ArrayOfAtoms>& arr,
-    int type);
+    MatrixType type);
 
   MatrixAtom(
     bool ispar,
     const sptr<ArrayOfAtoms>& arr,
-    int type,
+    MatrixType type,
     Alignment align);
 
   sptr<Box> createBox(Environment& env) override;
@@ -248,10 +325,10 @@ public:
   __decl_clone(VlineAtom)
 };
 
-enum MULTILINETYPE {
-  MULTILINE = 0,
-  GATHER,
-  GATHERED
+enum class MultiLineType {
+  multiline,
+  gather,
+  gathered
 };
 
 /**
@@ -261,21 +338,21 @@ class MultlineAtom : public Atom {
 private:
   static SpaceAtom _vsep_in;
   sptr<ArrayOfAtoms> _column;
-  int _ttype;
+  MultiLineType _lineType;
   bool _ispartial;
 
 public:
   MultlineAtom() = delete;
 
-  MultlineAtom(bool ispar, const sptr<ArrayOfAtoms>& col, int type) {
+  MultlineAtom(bool ispar, const sptr<ArrayOfAtoms>& col, MultiLineType type) {
     _ispartial = ispar;
-    _ttype = type;
+    _lineType = type;
     _column = col;
   }
 
-  MultlineAtom(const sptr<ArrayOfAtoms>& col, int type) {
+  MultlineAtom(const sptr<ArrayOfAtoms>& col, MultiLineType type) {
     _ispartial = false;
-    _ttype = type;
+    _lineType = type;
     _column = col;
   }
 
@@ -434,7 +511,6 @@ public:
     float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
     float space = INTERSPACE * SpaceAtom::getFactor(UnitType::em, env);
     if (istrans(_bg)) return sptr<Box>(new FramedBox(bbase, drt, space));
-    env._isColored = true;
     return sptr<Box>(new FramedBox(bbase, drt, space, _line, _bg));
   }
 
@@ -635,100 +711,6 @@ public:
   sptr<Box> createBox(Environment& env) override;
 
   __decl_clone(FractionAtom)
-};
-
-/**
- * An atom used in array mode that across several columns
- */
-class MulticolumnAtom : public Atom {
-protected:
-  // Number of columns across
-  int _n;
-  Alignment _align;
-  float _w;
-  int _beforeVlines, _afterVlines;
-  int _row, _col;
-  sptr<Atom> _cols;
-
-  Alignment parseAlign(const std::string& str);
-
-public:
-  MulticolumnAtom() = delete;
-
-  MulticolumnAtom(int n, const std::string& align, const sptr<Atom> cols)
-      : _w(0), _beforeVlines(0), _afterVlines(0), _row(0), _col(0) {
-    _n = n >= 1 ? n : 1;
-    _cols = cols;
-    _align = parseAlign(align);
-  }
-
-  virtual bool isNeedWidth() const {
-    return false;
-  }
-
-  inline void setColumnWidth(float w) {
-    _w = w;
-  }
-
-  inline float getColumnWidth() {
-    return _w;
-  }
-
-  inline int getSkipped() {
-    return _n;
-  }
-
-  inline bool hasRightVline() {
-    return _afterVlines != 0;
-  }
-
-  inline void setRowColumn(int i, int j) {
-    _row = i;
-    _col = j;
-  }
-
-  inline Alignment getAlign() {
-    return _align;
-  }
-
-  inline int getRow() {
-    return _row;
-  }
-
-  inline int getCol() {
-    return _col;
-  }
-
-  virtual sptr<Box> createBox(Environment& env) override;
-
-  __decl_clone(MulticolumnAtom)
-};
-
-/**
- * An atom used in array mode representing "dots"
- */
-class HdotsforAtom : public MulticolumnAtom {
-private:
-  float _coeff;
-
-  sptr<Box> createBox(
-    float space,
-    const sptr<Box>& b,
-    Environment& env);
-
-public:
-  HdotsforAtom() = delete;
-
-  HdotsforAtom(int n, float coeff)
-      : MulticolumnAtom(n, "c", SymbolAtom::get("ldotp")), _coeff(coeff) {}
-
-  bool isNeedWidth() const override {
-    return true;
-  }
-
-  sptr<Box> createBox(Environment& env) override;
-
-  __decl_clone(HdotsforAtom)
 };
 
 /**

@@ -195,15 +195,13 @@ void Environment::setTextWidth(UnitType wu, float w) {
 }
 
 sptr<Environment>& Environment::copy() {
-  Environment* t = new Environment(
-    _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
+  Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
   _copy = sptr<Environment>(t);
   return _copy;
 }
 
 sptr<Environment>& Environment::copy(const sptr<TeXFont>& tf) {
-  Environment* te = new Environment(
-    _style, _scaleFactor, tf, _background, _color, _textStyle, _smallCap);
+  Environment* te = new Environment(_style, _scaleFactor, tf, _textStyle, _smallCap);
   te->_textWidth = _textWidth;
   te->_interline = _interline;
   te->_interlineUnit = _interlineUnit;
@@ -212,48 +210,42 @@ sptr<Environment>& Environment::copy(const sptr<TeXFont>& tf) {
 }
 
 sptr<Environment>& Environment::crampStyle() {
-  Environment* t = new Environment(
-    _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
+  Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
   _cramp = sptr<Environment>(t);
   _cramp->_style = (_style % 2 == 1 ? _style : _style + 1);
   return _cramp;
 }
 
 sptr<Environment>& Environment::dnomStyle() {
-  Environment* t = new Environment(
-    _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
+  Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
   _dnom = sptr<Environment>(t);
   _dnom->_style = 2 * (_style / 2) + 1 + 2 - 2 * (_style / 6);
   return _dnom;
 }
 
 sptr<Environment>& Environment::numStyle() {
-  Environment* t = new Environment(
-    _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
+  Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
   _num = sptr<Environment>(t);
   _num->_style = _style + 2 - 2 * (_style / 6);
   return _num;
 }
 
 sptr<Environment>& Environment::rootStyle() {
-  Environment* t = new Environment(
-    _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
+  Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
   _root = sptr<Environment>(t);
   _root->_style = STYLE_SCRIPT_SCRIPT;
   return _root;
 }
 
 sptr<Environment>& Environment::subStyle() {
-  Environment* t = new Environment(
-    _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
+  Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
   _sub = sptr<Environment>(t);
   _sub->_style = 2 * (_style / 4) + 4 + 1;
   return _sub;
 }
 
 sptr<Environment>& Environment::supStyle() {
-  Environment* t = new Environment(
-    _style, _scaleFactor, _tf, _background, _color, _textStyle, _smallCap);
+  Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
   _sup = sptr<Environment>(t);
   _sup->_style = 2 * (_style / 4) + 4 + (_style % 2);
   return _sup;
