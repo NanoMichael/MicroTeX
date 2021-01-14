@@ -207,7 +207,7 @@ public:
   void reset(const std::wstring& latex);
 
   /** Return true if we get a partial formula */
-  inline bool getIsPartial() const { return _isPartial; }
+  inline bool isPartial() const { return _isPartial; }
 
   /** Get the number of the current line */
   inline int getLine() const { return _line; }

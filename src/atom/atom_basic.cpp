@@ -334,7 +334,7 @@ sptr<Atom> RowAtom::popLastAtom() {
 }
 
 sptr<Atom> RowAtom::get(size_t pos) {
-  if (pos > _elements.size()) return sptr<Atom>(new SpaceAtom(UnitType::point, 0, 0, 0));
+  if (pos >= _elements.size()) return sptr<Atom>(new SpaceAtom(UnitType::point, 0, 0, 0));
   return _elements[pos];
 }
 
@@ -370,8 +370,7 @@ AtomType RowAtom::rightType() const {
 sptr<Box> RowAtom::createBox(Environment& env) {
   auto x = env.getTeXFont();
   TeXFont& tf = *x;
-  HorizontalBox* hbox = new HorizontalBox(env.getColor(), env.getBackground());
-  env.reset();
+  HorizontalBox* hbox = new HorizontalBox();
 
   // convert atoms to boxes and add to the horizontal box
   int e = _elements.size() - 1;
@@ -641,11 +640,8 @@ color ColorAtom::getColor(string s) {
 }
 
 sptr<Box> ColorAtom::createBox(Environment& env) {
-  env._isColored = true;
-  Environment& c = *(env.copy());
-  if (!istrans(_background)) c.setBackground(_background);
-  if (!istrans(_color)) c.setColor(_color);
-  return _elements->createBox(c);
+  const auto box = _elements->createBox(env);
+  return sptr<Box>(new ColorBox(box, _color, _background));
 }
 
 sptr<Box> RomanAtom::createBox(Environment& env) {

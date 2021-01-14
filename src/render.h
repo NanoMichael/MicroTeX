@@ -23,7 +23,6 @@ private:
 public:
   static float _defaultSize;
   static float _magFactor;
-  bool _iscolored;
 
   TeXRender(const sptr<Box> box, float textSize, bool trueValues = false);
 

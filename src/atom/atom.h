@@ -31,28 +31,12 @@ class Box {
 protected:
   /** Initialize box with default options */
   void init() {
-    _foreground = trans;
-    _background = trans;
     _width = _height = _depth = _shift = 0;
     _type = AtomType::none;
   }
 
 public:
   static bool DEBUG;
-
-  /**
-   * The foreground color of the whole box. Child boxes can override this
-   * color. If it's transparent and it has a parent box, the foreground color of the
-   * parent will be used. If it has no parent, the foreground color of the
-   * component on which it will be painted, will be used.
-   */
-  color _foreground = trans;
-
-  /**
-   * The background color of the whole box. Child boxes can paint a background
-   * on top of this background. If it's transparent, no background will be painted.
-   */
-  color _background = trans;
 
   /**
    * The width of this box, i.e. the value that will be used for further
@@ -92,15 +76,6 @@ public:
    * Create a new box with default options
    */
   Box() { init(); }
-
-  /**
-   * Create a new box with given foreground and background
-   */
-  Box(color fg, color bg) {
-    init();
-    _background = bg;
-    _foreground = fg;
-  }
 
   /**
    * Append the given box at the end of the list of child boxes.

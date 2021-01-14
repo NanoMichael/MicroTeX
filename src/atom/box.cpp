@@ -239,7 +239,7 @@ void HorizontalBox::recalculate(const Box& b) {
 }
 
 sptr<HorizontalBox> HorizontalBox::cloneBox() {
-  HorizontalBox* b = new HorizontalBox(_foreground, _background);
+  HorizontalBox* b = new HorizontalBox();
   b->_shift = _shift;
   return sptr<HorizontalBox>(b);
 }
@@ -480,6 +480,33 @@ int OverUnderBox::getLastFontId() {
 
 vector<sptr<Box>> OverUnderBox::getChildren() const {
   return {_base, _del, _script};
+}
+
+ColorBox::ColorBox(const sptr<Box>& box, color fg, color bg) {
+  _box = box;
+  _foreground = fg;
+  _background = bg;
+  _width = box->_width, _height = box->_height, _depth = box->_depth;
+  _type = box->_type;
+}
+
+void ColorBox::draw(Graphics2D& g2, float x, float y) {
+  const color prev = g2.getColor();
+  if (!istrans(_background)) {
+    g2.setColor(_background);
+    g2.fillRect(x, y - _height, _width, _height + _depth);
+  }
+  g2.setColor(istrans(_foreground) ? prev : _foreground);
+  _box->draw(g2, x, y);
+  g2.setColor(prev);
+}
+
+int ColorBox::getLastFontId() {
+  return _box->getLastFontId();
+}
+
+vector<sptr<Box>> ColorBox::getChildren() const {
+  return {_box};
 }
 
 /*************************************** scale box implementation *********************************/
@@ -849,7 +876,14 @@ void WrapperBox::setInsets(float l, float t, float r, float b) {
 }
 
 void WrapperBox::draw(Graphics2D& g2, float x, float y) {
+  const color prev = g2.getColor();
+  if (!istrans(_bg)) {
+    g2.setColor(_bg);
+    g2.fillRect(x, y - _height, _width, _height + _depth);
+  }
+  g2.setColor(istrans(_fg) ? prev : _fg);
   _base->draw(g2, x + _l, y + _base->_shift);
+  g2.setColor(prev);
 }
 
 int WrapperBox::getLastFontId() {
