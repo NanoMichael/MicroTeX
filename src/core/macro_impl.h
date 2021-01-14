@@ -19,12 +19,12 @@ namespace tex {
 
 #ifdef GRAPHICS_DEBUG
 inline macro(debug) {
-  TeXFormula::setDEBUG(true);
+  Formula::setDEBUG(true);
   return nullptr;
 }
 
 inline macro(undebug) {
-  TeXFormula::setDEBUG(false);
+  Formula::setDEBUG(false);
   return nullptr;
 }
 #endif  // GRAPHICS_DEBUG
@@ -43,7 +43,7 @@ inline macro(multirow) {
   if (!tp.isArrayMode()) throw ex_parse("Command \\multirow must used in array environment!");
   int n = 0;
   valueof(args[1], n);
-  tp.addAtom(sptr<Atom>(new MultiRowAtom(n, args[2], TeXFormula(tp, args[3])._root)));
+  tp.addAtom(sptr<Atom>(new MultiRowAtom(n, args[2], Formula(tp, args[3])._root)));
   return nullptr;
 }
 
@@ -100,45 +100,45 @@ inline macro(rowcolor) {
 }
 
 inline macro(st) {
-  auto base = TeXFormula(tp, args[1], false)._root;
+  auto base = Formula(tp, args[1], false)._root;
   return sptr<Atom>(new StrikeThroughAtom(base));
 }
 
 inline macro(Braket) {
   std::wstring str(args[1]);
   replaceall(str, L"\\|", L"\\middle\\vert ");
-  return TeXFormula(tp, L"\\left\\langle " + str + L"\\right\\rangle")._root;
+  return Formula(tp, L"\\left\\langle " + str + L"\\right\\rangle")._root;
 }
 
 inline macro(Set) {
   std::wstring str(args[1]);
   replacefirst(str, L"\\|", L"\\middle\\vert ");
-  return TeXFormula(tp, L"\\left\\{" + str + L"\\right\\}")._root;
+  return Formula(tp, L"\\left\\{" + str + L"\\right\\}")._root;
 }
 
 inline macro(spATbreve) {
-  VRowAtom* vra = new VRowAtom(TeXFormula(L"\\displaystyle\\!\\breve{}")._root);
+  VRowAtom* vra = new VRowAtom(Formula(L"\\displaystyle\\!\\breve{}")._root);
   vra->setRaise(UnitType::ex, 0.6f);
   return sptr<Atom>(new SmashedAtom(sptr<Atom>(vra), ""));
 }
 
 inline macro(spAThat) {
-  VRowAtom* vra = new VRowAtom(TeXFormula(L"\\displaystyle\\widehat{}")._root);
+  VRowAtom* vra = new VRowAtom(Formula(L"\\displaystyle\\widehat{}")._root);
   vra->setRaise(UnitType::ex, 0.6f);
   return sptr<Atom>(new SmashedAtom(sptr<Atom>(vra), ""));
 }
 
 inline macro(clrlap) {
-  return sptr<Atom>(new LapedAtom(TeXFormula(tp, args[1])._root, args[0][0]));
+  return sptr<Atom>(new LapedAtom(Formula(tp, args[1])._root, args[0][0]));
 }
 
 inline macro(mathclrlap) {
-  return sptr<Atom>(new LapedAtom(TeXFormula(tp, args[1])._root, args[0][4]));
+  return sptr<Atom>(new LapedAtom(Formula(tp, args[1])._root, args[0][4]));
 }
 
 inline macro(frac) {
-  TeXFormula num(tp, args[1], false);
-  TeXFormula den(tp, args[2], false);
+  Formula num(tp, args[1], false);
+  Formula den(tp, args[2], false);
   if (num._root == nullptr || den._root == nullptr)
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
   return sptr<Atom>(new FractionAtom(num._root, den._root, true));
@@ -146,7 +146,7 @@ inline macro(frac) {
 
 inline macro(over) {
   auto num = tp.getFormulaAtom();
-  auto den = TeXFormula(tp, tp.getOverArgument(), false)._root;
+  auto den = Formula(tp, tp.getOverArgument(), false)._root;
   if (num == nullptr || den == nullptr)
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
   return sptr<Atom>(new FractionAtom(num, den, true));
@@ -154,7 +154,7 @@ inline macro(over) {
 
 inline macro(atop) {
   auto num = tp.getFormulaAtom();
-  auto den = TeXFormula(tp, tp.getOverArgument(), false)._root;
+  auto den = Formula(tp, tp.getOverArgument(), false)._root;
   if (num == nullptr || den == nullptr)
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
   return sptr<Atom>(new FractionAtom(num, den, false));
@@ -165,7 +165,7 @@ inline sptr<Atom> _macro_choose(
   TeXParser& tp, std::vector<std::wstring>& args  //
 ) {
   auto num = tp.getFormulaAtom();
-  auto den = TeXFormula(tp, tp.getOverArgument(), false)._root;
+  auto den = Formula(tp, tp.getOverArgument(), false)._root;
   if (num == nullptr || den == nullptr)
     throw ex_parse("Both numerator and denominator of choos can't be empty!");
   sptr<Atom> f(new FractionAtom(num, den, false));
@@ -193,7 +193,7 @@ inline macro(brace) {
 inline sptr<Atom> _marco_cancel(
   int cancelType,
   TeXParser& tp, std::vector<std::wstring>& args) {
-  auto base = TeXFormula(tp, args[1], false)._root;
+  auto base = Formula(tp, args[1], false)._root;
   if (base == nullptr)
     throw ex_parse("Cancel content must not be empty!");
   return sptr<Atom>(new CancelAtom(base, cancelType));
@@ -212,8 +212,8 @@ inline macro(xcancel) {
 }
 
 inline macro(binom) {
-  TeXFormula num(tp, args[1], false);
-  TeXFormula den(tp, args[2], false);
+  Formula num(tp, args[1], false);
+  Formula den(tp, args[2], false);
   if (num._root == nullptr || den._root == nullptr)
     throw ex_parse("Both binomial coefficients must be not empty!");
   sptr<Atom> f(new FractionAtom(num._root, den._root, false));
@@ -225,7 +225,7 @@ inline macro(binom) {
 inline macro(above) {
   auto num = tp.getFormulaAtom();
   auto [unit, value] = tp.getLength();
-  auto den = TeXFormula(tp, tp.getOverArgument(), false)._root;
+  auto den = Formula(tp, tp.getOverArgument(), false)._root;
   if (num == nullptr || den == nullptr)
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
 
@@ -233,12 +233,12 @@ inline macro(above) {
 }
 
 inline macro(mbox) {
-  sptr<Atom> group(new RomanAtom(TeXFormula(tp, args[1], "mathnormal", false, false)._root));
+  sptr<Atom> group(new RomanAtom(Formula(tp, args[1], "mathnormal", false, false)._root));
   return sptr<Atom>(new StyleAtom(STYLE_TEXT, group));
 }
 
 inline macro(text) {
-  return sptr<Atom>(new RomanAtom(TeXFormula(tp, args[1], "mathnormal", false, false)._root));
+  return sptr<Atom>(new RomanAtom(Formula(tp, args[1], "mathnormal", false, false)._root));
 }
 
 inline macro(underscore) {
@@ -248,21 +248,21 @@ inline macro(underscore) {
 inline macro(accents) {
   std::string x;
   wide2utf8(args[0].c_str(), x);
-  return sptr<Atom>(new AccentedAtom(TeXFormula(tp, args[1], false)._root, x));
+  return sptr<Atom>(new AccentedAtom(Formula(tp, args[1], false)._root, x));
 }
 
 inline macro(grkaccent) {
   return sptr<Atom>(new AccentedAtom(
-    TeXFormula(tp, args[2], false)._root, TeXFormula(tp, args[1], false)._root, false));
+    Formula(tp, args[2], false)._root, Formula(tp, args[1], false)._root, false));
 }
 
 inline macro(accent) {
   return sptr<Atom>(new AccentedAtom(
-    TeXFormula(tp, args[2], false)._root, TeXFormula(tp, args[1], false)._root));
+    Formula(tp, args[2], false)._root, Formula(tp, args[1], false)._root));
 }
 
 inline macro(cedilla) {
-  return sptr<Atom>(new CedillAtom(TeXFormula(tp, args[1])._root));
+  return sptr<Atom>(new CedillAtom(Formula(tp, args[1])._root));
 }
 
 inline macro(IJ) {
@@ -282,7 +282,7 @@ inline macro(tcaron) {
 }
 
 inline macro(ogonek) {
-  return sptr<Atom>(new OgonekAtom(TeXFormula(tp, args[1])._root));
+  return sptr<Atom>(new OgonekAtom(Formula(tp, args[1])._root));
 }
 
 inline macro(nbsp) {
@@ -291,49 +291,49 @@ inline macro(nbsp) {
 
 inline macro(sqrt) {
   if (args[2].empty())
-    return sptr<Atom>(new NthRoot(TeXFormula(tp, args[1], false)._root, nullptr));
+    return sptr<Atom>(new NthRoot(Formula(tp, args[1], false)._root, nullptr));
   return sptr<Atom>(new NthRoot(
-    TeXFormula(tp, args[1], false)._root, TeXFormula(tp, args[2], false)._root));
+    Formula(tp, args[1], false)._root, Formula(tp, args[2], false)._root));
 }
 
 inline macro(overrightarrow) {
-  return sptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, false, true));
+  return sptr<Atom>(new UnderOverArrowAtom(Formula(tp, args[1], false)._root, false, true));
 }
 
 inline macro(overleftarrow) {
-  return sptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, true, true));
+  return sptr<Atom>(new UnderOverArrowAtom(Formula(tp, args[1], false)._root, true, true));
 }
 
 inline macro(overleftrightarrow) {
-  return sptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, true));
+  return sptr<Atom>(new UnderOverArrowAtom(Formula(tp, args[1], false)._root, true));
 }
 
 inline macro(underrightarrow) {
-  return sptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, false, false));
+  return sptr<Atom>(new UnderOverArrowAtom(Formula(tp, args[1], false)._root, false, false));
 }
 
 inline macro(underleftarrow) {
-  return sptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, true, false));
+  return sptr<Atom>(new UnderOverArrowAtom(Formula(tp, args[1], false)._root, true, false));
 }
 
 inline macro(underleftrightarrow) {
-  return sptr<Atom>(new UnderOverArrowAtom(TeXFormula(tp, args[1], false)._root, false));
+  return sptr<Atom>(new UnderOverArrowAtom(Formula(tp, args[1], false)._root, false));
 }
 
 inline macro(xleftarrow) {
   return sptr<Atom>(new XArrowAtom(
-    TeXFormula(tp, args[1], false)._root, TeXFormula(tp, args[2])._root, true));
+    Formula(tp, args[1], false)._root, Formula(tp, args[2])._root, true));
 }
 
 inline macro(xrightarrow) {
   return sptr<Atom>(new XArrowAtom(
-    TeXFormula(tp, args[1], false)._root, TeXFormula(tp, args[2])._root, false));
+    Formula(tp, args[1], false)._root, Formula(tp, args[2])._root, false));
 }
 
 inline macro(sideset) {
-  auto l = TeXFormula(tp, args[1])._root;
-  auto r = TeXFormula(tp, args[2])._root;
-  auto op = TeXFormula(tp, args[3])._root;
+  auto l = Formula(tp, args[1])._root;
+  auto r = Formula(tp, args[2])._root;
+  auto op = Formula(tp, args[3])._root;
   if (op == nullptr) {
     sptr<Atom> in(new CharAtom(L'M', "mathnormal"));
     op = sptr<Atom>(new PhantomAtom(in, false, true, true));
@@ -346,10 +346,10 @@ inline macro(sideset) {
 }
 
 inline macro(prescript) {
-  auto base = TeXFormula(tp, args[3])._root;
+  auto base = Formula(tp, args[3])._root;
   sptr<Atom> p(new PhantomAtom(base, false, true, true));
   sptr<Atom> s(new ScriptsAtom(
-    p, TeXFormula(tp, args[2])._root, TeXFormula(tp, args[1])._root, false));
+    p, Formula(tp, args[2])._root, Formula(tp, args[1])._root, false));
   tp.addAtom(s);
   tp.addAtom(sptr<Atom>(new SpaceAtom(UnitType::mu, -0.3f, 0, 0)));
   return sptr<Atom>(new TypedAtom(AtomType::ordinary, AtomType::ordinary, base));
@@ -357,7 +357,7 @@ inline macro(prescript) {
 
 inline macro(underbrace) {
   return sptr<Atom>(new OverUnderDelimiter(
-    TeXFormula(tp, args[1], false)._root,
+    Formula(tp, args[1], false)._root,
     nullptr,
     SymbolAtom::get("rbrace"),
     UnitType::ex,
@@ -367,7 +367,7 @@ inline macro(underbrace) {
 
 inline macro(overbrace) {
   return sptr<Atom>(new OverUnderDelimiter(
-    TeXFormula(tp, args[1], false)._root,
+    Formula(tp, args[1], false)._root,
     nullptr,
     SymbolAtom::get("lbrace"),
     UnitType::ex,
@@ -377,7 +377,7 @@ inline macro(overbrace) {
 
 inline macro(underbrack) {
   return sptr<Atom>(new OverUnderDelimiter(
-    TeXFormula(tp, args[1], false)._root,
+    Formula(tp, args[1], false)._root,
     nullptr,
     SymbolAtom::get("rsqbrack"),
     UnitType::ex,
@@ -387,7 +387,7 @@ inline macro(underbrack) {
 
 inline macro(overbrack) {
   return sptr<Atom>(new OverUnderDelimiter(
-    TeXFormula(tp, args[1], false)._root,
+    Formula(tp, args[1], false)._root,
     nullptr,
     SymbolAtom::get("lsqbrack"),
     UnitType::ex,
@@ -397,7 +397,7 @@ inline macro(overbrack) {
 
 inline macro(underparen) {
   return sptr<Atom>(new OverUnderDelimiter(
-    TeXFormula(tp, args[1], false)._root,
+    Formula(tp, args[1], false)._root,
     nullptr,
     SymbolAtom::get("rbrack"),
     UnitType::ex,
@@ -407,7 +407,7 @@ inline macro(underparen) {
 
 inline macro(overparen) {
   return sptr<Atom>(new OverUnderDelimiter(
-    TeXFormula(tp, args[1], false)._root,
+    Formula(tp, args[1], false)._root,
     nullptr,
     SymbolAtom::get("lbrack"),
     UnitType::ex,
@@ -416,53 +416,53 @@ inline macro(overparen) {
 }
 
 inline macro(overline) {
-  return sptr<Atom>(new OverlinedAtom(TeXFormula(tp, args[1], false)._root));
+  return sptr<Atom>(new OverlinedAtom(Formula(tp, args[1], false)._root));
 }
 
 inline macro(underline) {
-  return sptr<Atom>(new UnderlinedAtom(TeXFormula(tp, args[1], false)._root));
+  return sptr<Atom>(new UnderlinedAtom(Formula(tp, args[1], false)._root));
 }
 
 inline macro(mathop) {
   sptr<TypedAtom> a(new TypedAtom(
-    AtomType::bigOperator, AtomType::bigOperator, TeXFormula(tp, args[1], false)._root));
+    AtomType::bigOperator, AtomType::bigOperator, Formula(tp, args[1], false)._root));
   a->_limitsType = LimitsType::noLimits;
   return a;
 }
 
 inline macro(mathpunct) {
   return sptr<Atom>(new TypedAtom(
-    AtomType::punctuation, AtomType::punctuation, TeXFormula(tp, args[1], false)._root));
+    AtomType::punctuation, AtomType::punctuation, Formula(tp, args[1], false)._root));
 }
 
 inline macro(mathord) {
   return sptr<Atom>(new TypedAtom(
-    AtomType::ordinary, AtomType::ordinary, TeXFormula(tp, args[1], false)._root));
+    AtomType::ordinary, AtomType::ordinary, Formula(tp, args[1], false)._root));
 }
 
 inline macro(mathrel) {
   return sptr<Atom>(new TypedAtom(
-    AtomType::relation, AtomType::relation, TeXFormula(tp, args[1], false)._root));
+    AtomType::relation, AtomType::relation, Formula(tp, args[1], false)._root));
 }
 
 inline macro(mathinner) {
   return sptr<Atom>(new TypedAtom(
-    AtomType::inner, AtomType::inner, TeXFormula(tp, args[1], false)._root));
+    AtomType::inner, AtomType::inner, Formula(tp, args[1], false)._root));
 }
 
 inline macro(mathbin) {
   return sptr<Atom>(new TypedAtom(
-    AtomType::binaryOperator, AtomType::binaryOperator, TeXFormula(tp, args[1], false)._root));
+    AtomType::binaryOperator, AtomType::binaryOperator, Formula(tp, args[1], false)._root));
 }
 
 inline macro(mathopen) {
   return sptr<Atom>(new TypedAtom(
-    AtomType::opening, AtomType::opening, TeXFormula(tp, args[1], false)._root));
+    AtomType::opening, AtomType::opening, Formula(tp, args[1], false)._root));
 }
 
 inline macro(mathclose) {
   return sptr<Atom>(new TypedAtom(
-    AtomType::closing, AtomType::closing, TeXFormula(tp, args[1], false)._root));
+    AtomType::closing, AtomType::closing, Formula(tp, args[1], false)._root));
 }
 
 inline macro(joinrel) {
@@ -473,7 +473,7 @@ inline macro(joinrel) {
 inline macro(smash) {
   std::string x;
   wide2utf8(args[2].c_str(), x);
-  return sptr<Atom>(new SmashedAtom(TeXFormula(tp, args[1], false)._root, x));
+  return sptr<Atom>(new SmashedAtom(Formula(tp, args[1], false)._root, x));
 }
 
 inline macro(vdots) {
@@ -492,16 +492,16 @@ inline macro(iddots) {
 
 inline macro(leftparenthesis) {
   std::wstring grp = tp.getGroup(L"\\(", L"\\)");
-  return sptr<Atom>(new MathAtom(TeXFormula(tp, grp, false)._root, STYLE_TEXT));
+  return sptr<Atom>(new MathAtom(Formula(tp, grp, false)._root, STYLE_TEXT));
 }
 
 inline macro(leftbracket) {
   std::wstring grp = tp.getGroup(L"\\[", L"\\]");
-  return sptr<Atom>(new MathAtom(TeXFormula(tp, grp, false)._root, STYLE_DISPLAY));
+  return sptr<Atom>(new MathAtom(Formula(tp, grp, false)._root, STYLE_DISPLAY));
 }
 
 inline macro(middle) {
-  return sptr<Atom>(new MiddleAtom(TeXFormula(tp, args[1])._root));
+  return sptr<Atom>(new MiddleAtom(Formula(tp, args[1])._root));
 }
 
 inline macro(cr) {
@@ -546,7 +546,7 @@ inline macro(multicolumn) {
   valueof(args[1], n);
   std::string x;
   wide2utf8(args[2].c_str(), x);
-  tp.addAtom(sptr<Atom>(new MulticolumnAtom(n, x, TeXFormula(tp, args[3])._root)));
+  tp.addAtom(sptr<Atom>(new MulticolumnAtom(n, x, Formula(tp, args[3])._root)));
   ((ArrayOfAtoms*)tp._formula)->addCol(n);
   return nullptr;
 }
@@ -658,13 +658,13 @@ inline macro(gatheredATATenv) {
 }
 
 inline macro(shoveright) {
-  auto a = TeXFormula(tp, args[1])._root;
+  auto a = Formula(tp, args[1])._root;
   a->_alignment = Alignment::right;
   return a;
 }
 
 inline macro(shoveleft) {
-  auto a = TeXFormula(tp, args[1])._root;
+  auto a = Formula(tp, args[1])._root;
   a->_alignment = Alignment::left;
   return a;
 }
@@ -696,12 +696,12 @@ inline macro(renewenvironment) {
 }
 
 inline macro(fbox) {
-  return sptr<Atom>(new FBoxAtom(TeXFormula(tp, args[1], false)._root));
+  return sptr<Atom>(new FBoxAtom(Formula(tp, args[1], false)._root));
 }
 
 inline macro(questeq) {
-  auto eq = SymbolAtom::get(TeXFormula::_symbolMappings['=']);
-  auto quest = SymbolAtom::get(TeXFormula::_symbolMappings['?']);
+  auto eq = SymbolAtom::get(Formula::_symbolMappings['=']);
+  auto quest = SymbolAtom::get(Formula::_symbolMappings['?']);
   auto sq = sptr<Atom>(new ScaleAtom(quest, 0.75f));
   auto at = sptr<Atom>(new UnderOverAtom(eq, sq, UnitType::mu, 2.5f, true, true));
   return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, at));
@@ -709,12 +709,12 @@ inline macro(questeq) {
 
 inline macro(stackrel) {
   sptr<Atom> a(new UnderOverAtom(
-    TeXFormula(tp, args[2], false)._root,
-    TeXFormula(tp, args[3], false)._root,
+    Formula(tp, args[2], false)._root,
+    Formula(tp, args[3], false)._root,
     UnitType::mu,
     0.5f,
     true,
-    TeXFormula(tp, args[1], false)._root,
+    Formula(tp, args[1], false)._root,
     UnitType::mu,
     2.5f,
     true));
@@ -723,12 +723,12 @@ inline macro(stackrel) {
 
 inline macro(stackbin) {
   sptr<Atom> a(new UnderOverAtom(
-    TeXFormula(tp, args[2], false)._root,
-    TeXFormula(tp, args[3], false)._root,
+    Formula(tp, args[2], false)._root,
+    Formula(tp, args[3], false)._root,
     UnitType::mu,
     0.5f,
     true,
-    TeXFormula(tp, args[1], false)._root,
+    Formula(tp, args[1], false)._root,
     UnitType::mu,
     2.5f,
     true));
@@ -737,8 +737,8 @@ inline macro(stackbin) {
 
 inline macro(overset) {
   sptr<Atom> a(new UnderOverAtom(
-    TeXFormula(tp, args[2], false)._root,
-    TeXFormula(tp, args[1], false)._root,
+    Formula(tp, args[2], false)._root,
+    Formula(tp, args[1], false)._root,
     UnitType::mu,
     2.5f,
     true,
@@ -748,8 +748,8 @@ inline macro(overset) {
 
 inline macro(underset) {
   sptr<Atom> a(new UnderOverAtom(
-    TeXFormula(tp, args[2], false)._root,
-    TeXFormula(tp, args[1], false)._root,
+    Formula(tp, args[2], false)._root,
+    Formula(tp, args[1], false)._root,
     UnitType::mu,
     0.5f,
     true,
@@ -759,13 +759,13 @@ inline macro(underset) {
 
 inline macro(accentset) {
   return sptr<Atom>(new AccentedAtom(
-    TeXFormula(tp, args[2], false)._root, TeXFormula(tp, args[1], false)._root));
+    Formula(tp, args[2], false)._root, Formula(tp, args[1], false)._root));
 }
 
 inline macro(underaccent) {
   return sptr<Atom>(new UnderOverAtom(
-    TeXFormula(tp, args[2], false)._root,
-    TeXFormula(tp, args[1], false)._root,
+    Formula(tp, args[2], false)._root,
+    Formula(tp, args[1], false)._root,
     UnitType::mu,
     0.3f,
     true,
@@ -773,60 +773,60 @@ inline macro(underaccent) {
 }
 
 inline macro(undertilde) {
-  auto a = TeXFormula(tp, args[1], false)._root;
+  auto a = Formula(tp, args[1], false)._root;
   sptr<PhantomAtom> p(new PhantomAtom(a, true, false, false));
   sptr<AccentedAtom> acc(new AccentedAtom(p, "widetilde"));
   return sptr<Atom>(new UnderOverAtom(a, acc, UnitType::mu, 0.3f, true, false));
 }
 
 inline macro(boldsymbol) {
-  return sptr<Atom>(new BoldAtom(TeXFormula(tp, args[1], false)._root));
+  return sptr<Atom>(new BoldAtom(Formula(tp, args[1], false)._root));
 }
 
 inline macro(mathrm) {
-  return sptr<Atom>(new RomanAtom(TeXFormula(tp, args[1], false)._root));
+  return sptr<Atom>(new RomanAtom(Formula(tp, args[1], false)._root));
 }
 
 inline macro(rm) {
   return sptr<Atom>(new RomanAtom(
-    TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
+    Formula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
 }
 
 inline macro(mathbf) {
   return sptr<Atom>(new BoldAtom(
-    sptr<Atom>(new RomanAtom(TeXFormula(tp, args[1], false)._root))));
+    sptr<Atom>(new RomanAtom(Formula(tp, args[1], false)._root))));
 }
 
 inline macro(bf) {
   return sptr<Atom>(new BoldAtom(sptr<Atom>(new RomanAtom(
-    TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root))));
+    Formula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root))));
 }
 
 inline macro(mathtt) {
-  return sptr<Atom>(new TtAtom(TeXFormula(tp, args[1], false)._root));
+  return sptr<Atom>(new TtAtom(Formula(tp, args[1], false)._root));
 }
 
 inline macro(tt) {
   return sptr<Atom>(new TtAtom(
-    TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
+    Formula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
 }
 
 inline macro(mathit) {
-  return sptr<Atom>(new ItAtom(TeXFormula(tp, args[1], false)._root));
+  return sptr<Atom>(new ItAtom(Formula(tp, args[1], false)._root));
 }
 
 inline macro(it) {
   return sptr<Atom>(new ItAtom(
-    TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
+    Formula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
 }
 
 inline macro(mathsf) {
-  return sptr<Atom>(new SsAtom(TeXFormula(tp, args[1], false)._root));
+  return sptr<Atom>(new SsAtom(Formula(tp, args[1], false)._root));
 }
 
 inline macro(sf) {
   return sptr<Atom>(new SsAtom(
-    TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
+    Formula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
 }
 
 inline macro(LaTeX) {
@@ -835,23 +835,23 @@ inline macro(LaTeX) {
 
 inline macro(hphantom) {
   return sptr<Atom>(
-    new PhantomAtom(TeXFormula(tp, args[1], false)._root, true, false, false));
+    new PhantomAtom(Formula(tp, args[1], false)._root, true, false, false));
 }
 
 inline macro(vphantom) {
   return sptr<Atom>(
-    new PhantomAtom(TeXFormula(tp, args[1], false)._root, false, true, true));
+    new PhantomAtom(Formula(tp, args[1], false)._root, false, true, true));
 }
 
 inline macro(phantom) {
   return sptr<Atom>(
-    new PhantomAtom(TeXFormula(tp, args[1], false)._root, true, true, true));
+    new PhantomAtom(Formula(tp, args[1], false)._root, true, true, true));
 }
 
 inline sptr<Atom> _macro_big(
   TeXParser& tp, std::vector<std::wstring>& args, int size, AtomType type = AtomType::none  //
 ) {
-  auto a = TeXFormula(tp, args[1], false)._root;
+  auto a = Formula(tp, args[1], false)._root;
   auto s = std::dynamic_pointer_cast<SymbolAtom>(a);
   if (s == nullptr) return a;
   sptr<Atom> t(new BigDelimiterAtom(s, size));
@@ -884,33 +884,33 @@ inline macro(biggr) { return _macro_big(tp, args, 3, AtomType::closing); }
 inline macro(Biggr) { return _macro_big(tp, args, 4, AtomType::closing); }
 
 inline macro(displaystyle) {
-  auto g = TeXFormula(tp, tp.getOverArgument(), false)._root;
+  auto g = Formula(tp, tp.getOverArgument(), false)._root;
   return sptr<Atom>(new StyleAtom(STYLE_DISPLAY, g));
 }
 
 inline macro(scriptstyle) {
-  auto g = TeXFormula(tp, tp.getOverArgument(), false)._root;
+  auto g = Formula(tp, tp.getOverArgument(), false)._root;
   return sptr<Atom>(new StyleAtom(STYLE_SCRIPT, g));
 }
 
 inline macro(textstyle) {
-  auto g = TeXFormula(tp, tp.getOverArgument(), false)._root;
+  auto g = Formula(tp, tp.getOverArgument(), false)._root;
   return sptr<Atom>(new StyleAtom(STYLE_TEXT, g));
 }
 
 inline macro(scriptscriptstyle) {
-  auto g = TeXFormula(tp, tp.getOverArgument(), false)._root;
+  auto g = Formula(tp, tp.getOverArgument(), false)._root;
   return sptr<Atom>(new StyleAtom(STYLE_SCRIPT_SCRIPT, g));
 }
 
 inline macro(rotatebox) {
   float x = 0;
   if (!args[1].empty()) valueof(args[1], x);
-  return sptr<Atom>(new RotateAtom(TeXFormula(tp, args[2])._root, x, args[3]));
+  return sptr<Atom>(new RotateAtom(Formula(tp, args[2])._root, x, args[3]));
 }
 
 inline macro(reflectbox) {
-  return sptr<Atom>(new ReflectAtom(TeXFormula(tp, args[1])._root));
+  return sptr<Atom>(new ReflectAtom(Formula(tp, args[1])._root));
 }
 
 inline macro(scalebox) {
@@ -922,7 +922,7 @@ inline macro(scalebox) {
     valueof(args[3], sy);
   if (sx == 0) sx = 1;
   if (sy == 0) sy = 1;
-  return sptr<Atom>(new ScaleAtom(TeXFormula(tp, args[2])._root, sx, sy));
+  return sptr<Atom>(new ScaleAtom(Formula(tp, args[2])._root, sx, sy));
 }
 
 inline macro(resizebox) {
@@ -930,15 +930,15 @@ inline macro(resizebox) {
   wide2utf8(args[1].c_str(), ws);
   wide2utf8(args[2].c_str(), hs);
   return sptr<Atom>(new ResizeAtom(
-    TeXFormula(tp, args[3])._root, ws, hs, ws == "!" || hs == "!"));
+    Formula(tp, args[3])._root, ws, hs, ws == "!" || hs == "!"));
 }
 
 inline macro(shadowbox) {
-  return sptr<Atom>(new ShadowAtom(TeXFormula(tp, args[1])._root));
+  return sptr<Atom>(new ShadowAtom(Formula(tp, args[1])._root));
 }
 
 inline macro(ovalbox) {
-  return sptr<Atom>(new OvalAtom(TeXFormula(tp, args[1])._root));
+  return sptr<Atom>(new OvalAtom(Formula(tp, args[1])._root));
 }
 
 inline macro(cornersize) {
@@ -951,23 +951,23 @@ inline macro(cornersize) {
 }
 
 inline macro(doublebox) {
-  return sptr<Atom>(new DoubleFramedAtom(TeXFormula(tp, args[1])._root));
+  return sptr<Atom>(new DoubleFramedAtom(Formula(tp, args[1])._root));
 }
 
 inline macro(fgcolor) {
-  auto a = TeXFormula(tp, args[2])._root;
+  auto a = Formula(tp, args[2])._root;
   std::string x = wide2utf8(args[1].c_str());
   return sptr<Atom>(new ColorAtom(a, TRANS, ColorAtom::getColor(x)));
 }
 
 inline macro(bgcolor) {
-  auto a = TeXFormula(tp, args[2])._root;
+  auto a = Formula(tp, args[2])._root;
   std::string x = wide2utf8(args[1].c_str());
   return sptr<Atom>(new ColorAtom(a, ColorAtom::getColor(x), TRANS));
 }
 
 inline macro(textcolor) {
-  auto a = TeXFormula(tp, args[2])._root;
+  auto a = Formula(tp, args[2])._root;
   std::string x = wide2utf8(args[1].c_str());
   return sptr<Atom>(new ColorAtom(a, TRANS, ColorAtom::getColor(x)));
 }
@@ -975,7 +975,7 @@ inline macro(textcolor) {
 inline macro(colorbox) {
   std::string x = wide2utf8(args[1].c_str());
   color c = ColorAtom::getColor(x);
-  return sptr<Atom>(new FBoxAtom(TeXFormula(tp, args[2])._root, c, c));
+  return sptr<Atom>(new FBoxAtom(Formula(tp, args[2])._root, c, c));
 }
 
 inline macro(fcolorbox) {
@@ -983,7 +983,7 @@ inline macro(fcolorbox) {
   color f = ColorAtom::getColor(x);
   std::string y = wide2utf8(args[1].c_str());
   color b = ColorAtom::getColor(y);
-  return sptr<Atom>(new FBoxAtom(TeXFormula(tp, args[3])._root, f, b));
+  return sptr<Atom>(new FBoxAtom(Formula(tp, args[3])._root, f, b));
 }
 
 inline macro(cong) {
@@ -1045,12 +1045,12 @@ inline macro(hline) {
 
 inline macro(mathcumsup) {
   return sptr<Atom>(new CumulativeScriptsAtom(
-    tp.popLastAtom(), nullptr, TeXFormula(tp, args[1])._root));
+    tp.popLastAtom(), nullptr, Formula(tp, args[1])._root));
 }
 
 inline macro(mathcumsub) {
   return sptr<Atom>(new CumulativeScriptsAtom(
-    tp.popLastAtom(), TeXFormula(tp, args[1])._root, nullptr));
+    tp.popLastAtom(), Formula(tp, args[1])._root, nullptr));
 }
 
 inline macro(dotminus) {
@@ -1413,21 +1413,21 @@ inline macro(char) {
 }
 
 inline macro(T) {
-  return sptr<Atom>(new RotateAtom(TeXFormula(tp, args[1])._root, 180, L"origin=cc"));
+  return sptr<Atom>(new RotateAtom(Formula(tp, args[1])._root, 180, L"origin=cc"));
 }
 
 inline macro(textcircled) {
   return sptr<Atom>(new TextCircledAtom(
-    sptr<Atom>(new RomanAtom(TeXFormula(tp, args[1])._root))));
+    sptr<Atom>(new RomanAtom(Formula(tp, args[1])._root))));
 }
 
 inline macro(textsc) {
-  return sptr<Atom>(new SmallCpaAtom(TeXFormula(tp, args[1], false)._root));
+  return sptr<Atom>(new SmallCpaAtom(Formula(tp, args[1], false)._root));
 }
 
 inline macro(sc) {
   return sptr<Atom>(new SmallCpaAtom(
-    TeXFormula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
+    Formula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
 }
 
 inline macro(quad) {

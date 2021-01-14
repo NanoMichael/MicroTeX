@@ -11,13 +11,13 @@
 using namespace std;
 using namespace tex;
 
-map<wstring, sptr<TeXFormula>> TeXFormula::_predefinedTeXFormulas;
+map<wstring, sptr<Formula>> Formula::_predefinedTeXFormulas;
 
-map<UnicodeBlock, FontInfos*> TeXFormula::_externalFontMap;
+map<UnicodeBlock, FontInfos*> Formula::_externalFontMap;
 
-float TeXFormula::PIXELS_PER_POINT = 1.f;
+float Formula::PIXELS_PER_POINT = 1.f;
 
-void TeXFormula::_init_() {
+void Formula::_init_() {
 #ifdef HAVE_LOG
   __dbg("%s\n", "init formula");
 #endif  // HAVE_LOG
@@ -37,11 +37,11 @@ void TeXFormula::_init_() {
 #endif  // HAVE_LOG
 }
 
-TeXFormula::TeXFormula(const TeXParser& tp) : _parser(tp.isPartial(), L"", this, false) {
+Formula::Formula(const TeXParser& tp) : _parser(tp.isPartial(), L"", this, false) {
   _xmlMap = tp._formula->_xmlMap;
 }
 
-TeXFormula::TeXFormula(
+Formula::Formula(
   const TeXParser& tp,
   const wstring& latex,
   const string& textStyle,
@@ -60,7 +60,7 @@ TeXFormula::TeXFormula(
   }
 }
 
-TeXFormula::TeXFormula(const TeXParser& tp, const wstring& latex, const string& textStyle)
+Formula::Formula(const TeXParser& tp, const wstring& latex, const string& textStyle)
     : _parser(tp.isPartial(), latex, this) {
   _textStyle = textStyle;
   _xmlMap = tp._formula->_xmlMap;
@@ -75,7 +75,7 @@ TeXFormula::TeXFormula(const TeXParser& tp, const wstring& latex, const string& 
   }
 }
 
-TeXFormula::TeXFormula(const TeXParser& tp, const wstring& latex, bool firstpass)
+Formula::Formula(const TeXParser& tp, const wstring& latex, bool firstpass)
     : _parser(tp.isPartial(), latex, this, firstpass) {
   _textStyle = "";
   _xmlMap = tp._formula->_xmlMap;
@@ -88,7 +88,7 @@ TeXFormula::TeXFormula(const TeXParser& tp, const wstring& latex, bool firstpass
   }
 }
 
-TeXFormula::TeXFormula(const TeXParser& tp, const wstring& latex)
+Formula::Formula(const TeXParser& tp, const wstring& latex)
     : _parser(tp.isPartial(), latex, this) {
   _textStyle = "";
   _xmlMap = tp._formula->_xmlMap;
@@ -103,24 +103,24 @@ TeXFormula::TeXFormula(const TeXParser& tp, const wstring& latex)
   }
 }
 
-TeXFormula::TeXFormula() : _parser(L"", this, false) {}
+Formula::Formula() : _parser(L"", this, false) {}
 
-TeXFormula::TeXFormula(const wstring& latex) : _parser(latex, this) {
+Formula::Formula(const wstring& latex) : _parser(latex, this) {
   _textStyle = "";
   _parser.parse();
 }
 
-TeXFormula::TeXFormula(const wstring& latex, bool firstpass) : _parser(latex, this, firstpass) {
+Formula::Formula(const wstring& latex, bool firstpass) : _parser(latex, this, firstpass) {
   _textStyle = "";
   _parser.parse();
 }
 
-TeXFormula::TeXFormula(const wstring& latex, const string& textStyle) : _parser(latex, this) {
+Formula::Formula(const wstring& latex, const string& textStyle) : _parser(latex, this) {
   _textStyle = textStyle;
   _parser.parse();
 }
 
-TeXFormula::TeXFormula(
+Formula::Formula(
   const wstring& latex, const string& textStyle,
   bool firstpass, bool ignoreWhiteSpace)
     : _parser(latex, this, firstpass, ignoreWhiteSpace) {
@@ -128,16 +128,16 @@ TeXFormula::TeXFormula(
   _parser.parse();
 }
 
-TeXFormula::TeXFormula(const TeXFormula* f) {
+Formula::Formula(const Formula* f) {
   if (f != nullptr) addImpl(f);
 }
 
-void TeXFormula::setLaTeX(const wstring& latex) {
+void Formula::setLaTeX(const wstring& latex) {
   _parser.reset(latex);
   if (!latex.empty()) _parser.parse();
 }
 
-TeXFormula* TeXFormula::add(const sptr<Atom>& el) {
+Formula* Formula::add(const sptr<Atom>& el) {
   if (el == nullptr) return this;
   auto atom = dynamic_pointer_cast<MiddleAtom>(el);
   if (atom != nullptr) _middle.push_back(atom);
@@ -159,7 +159,7 @@ TeXFormula* TeXFormula::add(const sptr<Atom>& el) {
   return this;
 }
 
-TeXFormula* TeXFormula::append(bool isPartial, const wstring& s) {
+Formula* Formula::append(bool isPartial, const wstring& s) {
   if (!s.empty()) {
     TeXParser tp(isPartial, s, this);
     tp.parse();
@@ -167,11 +167,11 @@ TeXFormula* TeXFormula::append(bool isPartial, const wstring& s) {
   return this;
 }
 
-TeXFormula* TeXFormula::append(const wstring& s) {
+Formula* Formula::append(const wstring& s) {
   return append(false, s);
 }
 
-void TeXFormula::addImpl(const TeXFormula* f) {
+void Formula::addImpl(const Formula* f) {
   if (f != nullptr) {
     RowAtom* rm = dynamic_cast<RowAtom*>(f->_root.get());
     if (rm != nullptr)
@@ -181,16 +181,16 @@ void TeXFormula::addImpl(const TeXFormula* f) {
   }
 }
 
-sptr<Box> TeXFormula::createBox(Environment& style) {
+sptr<Box> Formula::createBox(Environment& style) {
   if (_root == nullptr) return sptr<Box>(new StrutBox(0, 0, 0, 0));
   return _root->createBox(style);
 }
 
-void TeXFormula::setDEBUG(bool b) {
+void Formula::setDEBUG(bool b) {
   Box::DEBUG = b;
 }
 
-TeXFormula* TeXFormula::setBackground(color c) {
+Formula* Formula::setBackground(color c) {
   if (istrans(c)) return this;
   ColorAtom* ca = dynamic_cast<ColorAtom*>(_root.get());
   if (ca != nullptr)
@@ -200,7 +200,7 @@ TeXFormula* TeXFormula::setBackground(color c) {
   return this;
 }
 
-TeXFormula* TeXFormula::setColor(color c) {
+Formula* Formula::setColor(color c) {
   if (istrans(c)) return this;
   ColorAtom* ca = dynamic_cast<ColorAtom*>(_root.get());
   if (ca != nullptr)
@@ -210,18 +210,18 @@ TeXFormula* TeXFormula::setColor(color c) {
   return this;
 }
 
-TeXFormula* TeXFormula::setFixedTypes(AtomType left, AtomType right) {
+Formula* Formula::setFixedTypes(AtomType left, AtomType right) {
   _root = sptr<Atom>(new TypedAtom(left, right, _root));
   return this;
 }
 
-sptr<TeXFormula> TeXFormula::get(const wstring& name) {
+sptr<Formula> Formula::get(const wstring& name) {
   auto it = _predefinedTeXFormulas.find(name);
   if (it == _predefinedTeXFormulas.end()) {
     auto i = _predefinedTeXFormulasAsString.find(name);
     if (i == _predefinedTeXFormulasAsString.end())
       throw ex_formula_not_found(wide2utf8(name.c_str()));
-    sptr<TeXFormula> tf(new TeXFormula(i->second));
+    sptr<Formula> tf(new Formula(i->second));
     RowAtom* ra = dynamic_cast<RowAtom*>(tf->_root.get());
     if (ra == nullptr) {
       _predefinedTeXFormulas[name] = tf;
@@ -231,15 +231,15 @@ sptr<TeXFormula> TeXFormula::get(const wstring& name) {
   return it->second;
 }
 
-void TeXFormula::setDPITarget(float dpi) {
+void Formula::setDPITarget(float dpi) {
   PIXELS_PER_POINT = dpi / 72.f;
 }
 
-bool TeXFormula::isRegisteredBlock(const UnicodeBlock& block) {
+bool Formula::isRegisteredBlock(const UnicodeBlock& block) {
   return _externalFontMap.find(block) != _externalFontMap.end();
 }
 
-FontInfos* TeXFormula::getExternalFont(const UnicodeBlock& block) {
+FontInfos* Formula::getExternalFont(const UnicodeBlock& block) {
   auto it = _externalFontMap.find(block);
   FontInfos* infos = nullptr;
   if (it == _externalFontMap.end()) {
@@ -251,13 +251,13 @@ FontInfos* TeXFormula::getExternalFont(const UnicodeBlock& block) {
   return infos;
 }
 
-void TeXFormula::addSymbolMappings(const string& file) {
+void Formula::addSymbolMappings(const string& file) {
   TeXFormulaSettingParser parser(file);
   parser.parseSymbol(_symbolMappings, _symbolTextMappings);
   parser.parseSymbol2Formula(_symbolFormulaMappings, _symbolTextMappings);
 }
 
-void TeXFormula::_free_() {
+void Formula::_free_() {
   for (auto i : _externalFontMap) delete i.second;
 }
 

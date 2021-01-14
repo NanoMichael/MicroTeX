@@ -7,7 +7,7 @@
 namespace tex {
 
 class DefaultTeXFont;
-class TeXFormula;
+class Formula;
 class Box;
 class Atom;
 
@@ -162,7 +162,7 @@ public:
 
   TeXRender* build(const sptr<Atom>& f);
 
-  TeXRender* build(TeXFormula& f);
+  TeXRender* build(Formula& f);
 
   static DefaultTeXFont* createFont(float size, int type);
 };

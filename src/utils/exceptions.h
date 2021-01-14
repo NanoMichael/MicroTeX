@@ -110,7 +110,7 @@ public:
 };
 
 /**
- * Unknown predefined TeXFormula name was used
+ * Unknown predefined Formula name was used
  */
 class ex_formula_not_found : public ex_tex {
 public:
@@ -166,7 +166,7 @@ public:
 };
 
 /**
- * Invalid TeXFormula
+ * Invalid Formula
  */
 class ex_invalid_formula : public ex_tex {
 public:

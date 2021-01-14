@@ -77,7 +77,7 @@ bool TeXParser::_isLoading = false;
 void TeXParser::init(
   bool ispartial,
   const wstring& parsestring,
-  TeXFormula* formula,
+  Formula* formula,
   bool fp  //
 ) {
   _pos = _spos = _len = 0;
@@ -513,17 +513,17 @@ sptr<Atom> TeXParser::processEscape() {
   if (it != MacroInfo::_commands.end()) return processCommands(command);
 
   try {
-    return TeXFormula::get(command)->_root;
+    return Formula::get(command)->_root;
   } catch (ex_formula_not_found& e) {
     try {
       return SymbolAtom::get(cmd);
     } catch (ex_symbol_not_found& ex) {}
   }
 
-  // not a valid command or symbol or predefined TeXFormula found
+  // not a valid command or symbol or predefined Formula found
   if (!_isPartial)
-    throw ex_parse("Unknown symbol or command or predefined TeXFormula: '" + cmd + "'");
-  sptr<Atom> rm(new RomanAtom(TeXFormula(L"\\backslash " + command)._root));
+    throw ex_parse("Unknown symbol or command or predefined Formula: '" + cmd + "'");
+  sptr<Atom> rm(new RomanAtom(Formula(L"\\backslash " + command)._root));
   return sptr<Atom>(new ColorAtom(rm, TRANS, RED));
 }
 
@@ -631,8 +631,8 @@ sptr<Atom> TeXParser::getArgument() {
     return sptr<Atom>(new EmptyAtom());
 
   if (ch == L_GROUP) {
-    TeXFormula tf;
-    TeXFormula* tmp = _formula;
+    Formula tf;
+    Formula* tmp = _formula;
     _formula = &tf;
     _pos++;
     _group++;
@@ -852,7 +852,7 @@ void TeXParser::parse() {
           }
 
           _formula->add(sptr<Atom>(
-            new MathAtom(TeXFormula(*this, getDollarGroup(DOLLAR), false)._root, style))  //
+            new MathAtom(Formula(*this, getDollarGroup(DOLLAR), false)._root, style))  //
           );
           if (doubleDollar) {
             if (_parseString[_pos] == DOLLAR) _pos++;
@@ -951,12 +951,12 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
     // the unicode Greek Letters in math mode are not drawn with the Greek font
     if (c >= 945 && c <= 969) {
       // Greek small letter
-      return SymbolAtom::get(TeXFormula::_symbolMappings[c]);
+      return SymbolAtom::get(Formula::_symbolMappings[c]);
     } else if (c >= 913 && c <= 937) {
       // Greek capital letter
       wstring ltx;
-      utf82wide(TeXFormula::_symbolFormulaMappings[c].c_str(), ltx);
-      return TeXFormula(ltx)._root;
+      utf82wide(Formula::_symbolFormulaMappings[c].c_str(), ltx);
+      return Formula(ltx)._root;
     }
   }
 
@@ -981,19 +981,19 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
         DefaultTeXFont::addAlphabet(DefaultTeXFont::_registeredAlphabets[block]);
     }
 
-    auto sit = TeXFormula::_symbolMappings.find(c);
-    auto fit = TeXFormula::_symbolFormulaMappings.find(c);
+    auto sit = Formula::_symbolMappings.find(c);
+    auto fit = Formula::_symbolFormulaMappings.find(c);
 
     /*
        * Character not in the symbol-mapping and not in the formula-mapping, find from
        * external font-mapping
        */
-    if (sit == TeXFormula::_symbolMappings.end() &&
-        fit == TeXFormula::_symbolFormulaMappings.end()) {
+    if (sit == Formula::_symbolMappings.end() &&
+        fit == Formula::_symbolFormulaMappings.end()) {
       FontInfos* fontInfos = nullptr;
       bool isLatin = UnicodeBlock::BASIC_LATIN == block;
-      if ((isLatin && TeXFormula::isRegisteredBlock(UnicodeBlock::BASIC_LATIN)) || !isLatin) {
-        fontInfos = TeXFormula::getExternalFont(block);
+      if ((isLatin && Formula::isRegisteredBlock(UnicodeBlock::BASIC_LATIN)) || !isLatin) {
+        fontInfos = Formula::getExternalFont(block);
       }
       if (fontInfos != nullptr) {
         if (oneChar) return sptr<Atom>(new TextRenderingAtom(towstring(c), fontInfos));
@@ -1016,7 +1016,7 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
       else {
         if (_hideUnknownChar) return nullptr;
         sptr<Atom> rm(new RomanAtom(
-          TeXFormula(L"\\text{(unknown char " + towstring((int)c) + L")}")._root));
+          Formula(L"\\text{(unknown char " + towstring((int)c) + L")}")._root));
         return sptr<Atom>(new ColorAtom(rm, TRANS, RED));
       }
     } else {
@@ -1024,21 +1024,21 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
            * In text mode (with command \text{})
            */
       if (!_ignoreWhiteSpace) {
-        auto it = TeXFormula::_symbolTextMappings.find(c);
-        if (it != TeXFormula::_symbolTextMappings.end()) {
+        auto it = Formula::_symbolTextMappings.find(c);
+        if (it != Formula::_symbolTextMappings.end()) {
           auto atom = SymbolAtom::get(it->second);
           atom->setUnicode(c);
           return atom;
         }
       }
-      auto it = TeXFormula::_symbolFormulaMappings.find(c);
-      if (it != TeXFormula::_symbolFormulaMappings.end()) {
+      auto it = Formula::_symbolFormulaMappings.find(c);
+      if (it != Formula::_symbolFormulaMappings.end()) {
         wstring wstr;
         utf82wide(it->second.c_str(), wstr);
-        return TeXFormula(wstr)._root;
+        return Formula(wstr)._root;
       }
 
-      if (sit != TeXFormula::_symbolMappings.end()) {
+      if (sit != Formula::_symbolMappings.end()) {
         string symbolName = sit->second;
         try {
           return SymbolAtom::get(symbolName);
@@ -1055,8 +1055,8 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
        * Alphanumeric character
        */
     FontInfos* infos = nullptr;
-    auto it = TeXFormula::_externalFontMap.find(UnicodeBlock::BASIC_LATIN);
-    if (it != TeXFormula::_externalFontMap.end()) {
+    auto it = Formula::_externalFontMap.find(UnicodeBlock::BASIC_LATIN);
+    if (it != Formula::_externalFontMap.end()) {
       infos = it->second;
       if (oneChar) return sptr<Atom>(new TextRenderingAtom(towstring(c), infos));
 

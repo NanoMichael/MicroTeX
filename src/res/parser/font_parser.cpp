@@ -151,7 +151,7 @@ void DefaultTeXFontParser::parseExtraPath() {
   const XMLElement* settings = _root->FirstChildElement("FormulaSettings");
   if (settings != nullptr) {
     string include = getAttrValueAndCheckIfNotNull("include", settings);
-    TeXFormula::addSymbolMappings(_base + "/" + include);
+    Formula::addSymbolMappings(_base + "/" + include);
   }
 }
 

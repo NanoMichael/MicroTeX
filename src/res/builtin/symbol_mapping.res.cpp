@@ -3,7 +3,7 @@
 using namespace std;
 using namespace tex;
 
-map<int, string> TeXFormula::_symbolMappings = {
+map<int, string> Formula::_symbolMappings = {
     {'+', "plus"},
     {'*', "ast"},
     {'(', "lbrack"},
@@ -71,7 +71,7 @@ map<int, string> TeXFormula::_symbolMappings = {
     {65292, "comma"},
 };
 
-map<int, string> TeXFormula::_symbolTextMappings = {
+map<int, string> Formula::_symbolTextMappings = {
     {'-', "textminus"},
     {'/', "textfractionsolidus"},
     {'.', "textnormaldot"},

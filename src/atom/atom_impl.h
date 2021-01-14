@@ -459,7 +459,7 @@ public:
 class DdtosAtom : public Atom {
 public:
   sptr<Box> createBox(Environment& env) override {
-    auto ldots = TeXFormula::get(L"ldots")->_root->createBox(env);
+    auto ldots = Formula::get(L"ldots")->_root->createBox(env);
     float w = ldots->_width;
     auto dot = SymbolAtom::get("ldotp")->createBox(env);
     HorizontalBox* hb1 = new HorizontalBox(dot, w, Alignment::left);
@@ -719,7 +719,7 @@ public:
 class IddotsAtom : public Atom {
 public:
   sptr<Box> createBox(Environment& env) override {
-    auto ldots = TeXFormula::get(L"ldots")->_root->createBox(env);
+    auto ldots = Formula::get(L"ldots")->_root->createBox(env);
     float w = ldots->_width;
     auto dot = SymbolAtom::get("ldotp")->createBox(env);
     sptr<Box> hb1(new HorizontalBox(dot, w, Alignment::right));

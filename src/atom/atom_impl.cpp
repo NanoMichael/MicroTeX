@@ -240,16 +240,16 @@ sptr<Box> LaTeXAtom::createBox(Environment& en) {
   float sc = env.getTeXFont()->getScaleFactor();
 
   FontInfos* fontInfos = nullptr;
-  auto it = TeXFormula::_externalFontMap.find(UnicodeBlock::BASIC_LATIN);
-  if (it != TeXFormula::_externalFontMap.end()) {
+  auto it = Formula::_externalFontMap.find(UnicodeBlock::BASIC_LATIN);
+  if (it != Formula::_externalFontMap.end()) {
     fontInfos = it->second;
-    TeXFormula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = nullptr;
+    Formula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = nullptr;
   }
-  sptr<Atom> root = TeXFormula(L"\\mathrm{XETL}")._root;
+  sptr<Atom> root = Formula(L"\\mathrm{XETL}")._root;
   sptr<Atom> atom = ((RomanAtom*)root.get())->_base;
   RowAtom* rm = (RowAtom*)(atom.get());
   if (fontInfos != nullptr)
-    TeXFormula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = fontInfos;
+    Formula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = fontInfos;
 
   // L
   HorizontalBox* hb = new HorizontalBox(rm->popLastAtom()->createBox(env));
@@ -475,10 +475,10 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
 
   const int s = results.size();
   for (int i = 0; i < s; i++) {
-    auto num = TeXFormula(results[i])._root;
+    auto num = Formula(results[i])._root;
     if (i == 1) {
       wstring divisor = towstring(_divisor);
-      auto rparen = SymbolAtom::get(TeXFormula::_symbolMappings[')']);
+      auto rparen = SymbolAtom::get(Formula::_symbolMappings[')']);
       auto big = sptr<Atom>(new BigDelimiterAtom(rparen, 1));
       auto ph = sptr<Atom>(new PhantomAtom(big, false, true, true));
       auto ra = sptr<RowAtom>(new RowAtom(ph));
@@ -494,7 +494,7 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
       ra->add(sptr<Atom>(new SmashedAtom(raised)));
       ra->add(num);
       auto oa = sptr<Atom>(new OverlinedAtom(ra));
-      auto row = sptr<RowAtom>(new RowAtom(TeXFormula(divisor)._root));
+      auto row = sptr<RowAtom>(new RowAtom(Formula(divisor)._root));
       row->add(sptr<Atom>(new SpaceAtom(SpaceType::thinMuSkip)));
       row->add(oa);
       append(row);

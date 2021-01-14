@@ -2,7 +2,7 @@
 
 using namespace std;
 
-map<int, string> tex::TeXFormula::_symbolFormulaMappings = {
+map<int, string> tex::Formula::_symbolFormulaMappings = {
     {160, "\\ "},
     {161, "!`"},
     {169, "\\copyright"},

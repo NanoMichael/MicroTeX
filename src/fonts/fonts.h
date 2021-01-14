@@ -112,7 +112,7 @@ public:
   }
 
   inline float styleParam(const std::string& name, int style) {
-    return getParameter(name) * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
+    return getParameter(name) * getSizeFactor(style) * Formula::PIXELS_PER_POINT;
   }
 
   /************************************ get char ************************************************/
@@ -183,7 +183,7 @@ public:
   }
 
   inline float getQuad(int style, int fontCode) override {
-    return getInfo(fontCode)->getQuad(getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT);
+    return getInfo(fontCode)->getQuad(getSizeFactor(style) * Formula::PIXELS_PER_POINT);
   }
 
   int getMuFontId() override;
@@ -201,11 +201,11 @@ public:
 
   inline float getXHeight(int style, int fontCode) override {
     FontInfo* info = getInfo(fontCode);
-    return info->getXHeight(getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT);
+    return info->getXHeight(getSizeFactor(style) * Formula::PIXELS_PER_POINT);
   }
 
   inline float getEM(int style) override {
-    return getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
+    return getSizeFactor(style) * Formula::PIXELS_PER_POINT;
   }
 
   inline bool hasNextLarger(const Char& c) override {

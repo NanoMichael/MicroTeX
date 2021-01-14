@@ -107,7 +107,7 @@ DefaultTeXFont* TeXRenderBuilder::createFont(float size, int type) {
   return tf;
 }
 
-TeXRender* TeXRenderBuilder::build(TeXFormula& f) {
+TeXRender* TeXRenderBuilder::build(Formula& f) {
   return build(f._root);
 }
 
