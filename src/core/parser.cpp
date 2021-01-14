@@ -139,7 +139,7 @@ void TeXParser::addAtom(const sptr<Atom>& atom) {
 
 void TeXParser::addRow() {
   if (!_arrayMode) throw ex_parse("Can not add row in none-array mode!");
-  ((ArrayOfAtoms*)_formula)->addRow();
+  ((ArrayFormula*)_formula)->addRow();
 }
 
 wstring TeXParser::getDollarGroup(wchar_t openclose) {
@@ -863,7 +863,7 @@ void TeXParser::parse() {
         sptr<Atom> atom = processEscape();
         _formula->add(atom);
         HlineAtom* h = dynamic_cast<HlineAtom*>(atom.get());
-        if (_arrayMode && h != nullptr) ((ArrayOfAtoms*)_formula)->addRow();
+        if (_arrayMode && h != nullptr) ((ArrayFormula*)_formula)->addRow();
         if (_insertion) _insertion = false;
       } break;
       case L_GROUP: {
@@ -896,7 +896,7 @@ void TeXParser::parse() {
       } break;
       case '&': {
         if (!_arrayMode) throw ex_parse("Character '&' is only available in array mode!");
-        ((ArrayOfAtoms*)_formula)->addCol();
+        ((ArrayFormula*)_formula)->addCol();
         _pos++;
       } break;
       case '~': {

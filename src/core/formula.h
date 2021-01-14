@@ -229,7 +229,7 @@ public:
   virtual ~Formula() {}
 };
 
-class ArrayOfAtoms : public Formula {
+class ArrayFormula : public Formula {
 private:
   size_t _row, _col;
 
@@ -238,7 +238,7 @@ public:
   std::map<int, std::vector<sptr<CellSpecifier>>> _rowSpecifiers;
   std::map<std::string, std::vector<sptr<CellSpecifier>>> _cellSpecifiers;
 
-  ArrayOfAtoms();
+  ArrayFormula();
 
   void addCol();
 
@@ -262,7 +262,7 @@ public:
 
   virtual bool isArrayMode() const override { return true; }
 
-  virtual ~ArrayOfAtoms() {}
+  virtual ~ArrayFormula() {}
 };
 
 }  // namespace tex

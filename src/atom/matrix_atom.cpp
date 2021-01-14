@@ -83,7 +83,7 @@ void MatrixAtom::parsePositions(wstring opt, vector<Alignment>& lpos) {
       } break;
       case '>': {
         pos++;
-        tf = sptr<Formula>(new ArrayOfAtoms());
+        tf = sptr<Formula>(new ArrayFormula());
         tp = sptr<TeXParser>(new TeXParser(_ispartial, opt.substr(pos), &(*tf), false));
         sptr<Atom> cs = tp->getArgument();
         _columnSpecifiers[lpos.size()] = cs;
@@ -319,7 +319,7 @@ sptr<Box> MatrixAtom::generateMulticolumn(
 }
 
 MatrixAtom::MatrixAtom(
-  bool ispar, const sptr<ArrayOfAtoms>& arr, const wstring& options, bool spaceAround) {
+  bool ispar, const sptr<ArrayFormula>& arr, const wstring& options, bool spaceAround) {
   _matrix = arr;
   _matType = MatrixType::array;
   _ispartial = ispar;
@@ -327,7 +327,7 @@ MatrixAtom::MatrixAtom(
   parsePositions(wstring(options), _position);
 }
 
-MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, const wstring& options) {
+MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayFormula>& arr, const wstring& options) {
   _matrix = arr;
   _matType = MatrixType::array;
   _ispartial = ispar;
@@ -335,7 +335,7 @@ MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, const wstring&
   parsePositions(wstring(options), _position);
 }
 
-MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, MatrixType type) {
+MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayFormula>& arr, MatrixType type) {
   _matrix = arr;
   _matType = type;
   _ispartial = ispar;
@@ -354,7 +354,7 @@ MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, MatrixType typ
   }
 }
 
-MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayOfAtoms>& arr, MatrixType type, Alignment align) {
+MatrixAtom::MatrixAtom(bool ispar, const sptr<ArrayFormula>& arr, MatrixType type, Alignment align) {
   _ispartial = ispar;
   _matrix = arr;
   _matType = type;
