@@ -1,5 +1,7 @@
 #include "fonts/font_basic.h"
 
+using namespace tex;
+
 Char::Char(wchar_t c, const Font* f, int fc, const sptr<Metrics>& m)
     : _c(c), _fontCode(fc), _font(f), _m(m), _cf(new CharFont(_c, _fontCode)) {}
 

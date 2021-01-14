@@ -8,9 +8,6 @@
 
 #include <list>
 
-using namespace std;
-using namespace tex;
-
 namespace tex {
 
 class TeXEnvironment;
@@ -163,7 +160,7 @@ public:
   /**
    * Children of this box
    */
-  vector<sptr<Box>> _children;
+  std::vector<sptr<Box>> _children;
 
   /**
    * Create a new box with default options
@@ -231,7 +228,7 @@ public:
    * Get child boxes of this box, modification on the returned value by this function
    * will not effect this box's children
    */
-  virtual vector<sptr<Box>> getChildren() const {
+  virtual std::vector<sptr<Box>> getChildren() const {
     return _children;
   }
 

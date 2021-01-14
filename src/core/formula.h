@@ -8,9 +8,6 @@
 
 #include <string>
 
-using namespace std;
-using namespace tex;
-
 namespace tex {
 
 class TeXFont;
@@ -18,10 +15,10 @@ class CellSpecifier;
 class TeXParser;
 
 struct FontInfos {
-    const string _sansserif;
-    const string _serif;
+    const std::string _sansserif;
+    const std::string _serif;
 
-    FontInfos(const string& ss, const string& s) : _sansserif(ss), _serif(s) {}
+    FontInfos(const std::string& ss, const std::string& s) : _sansserif(ss), _serif(s) {}
 };
 
 /**
@@ -53,25 +50,25 @@ private:
     void addImpl(const TeXFormula* f);
 
 public:
-    map<string, string> _xmlMap;
+    std::map<std::string, std::string> _xmlMap;
     // point-to-pixel conversion
     static float PIXELS_PER_POINT;
 
     // predefined TeX formulas
-    static map<wstring, sptr<TeXFormula>> _predefinedTeXFormulas;
-    static map<wstring, wstring> _predefinedTeXFormulasAsString;
+    static std::map<std::wstring, sptr<TeXFormula>> _predefinedTeXFormulas;
+    static std::map<std::wstring, std::wstring> _predefinedTeXFormulasAsString;
 
     // character-to-symbol and character-to-delimiter mappings
-    static map<int, string> _symbolMappings;
-    static map<int, string> _symbolTextMappings;
-    static map<int, string> _symbolFormulaMappings;
-    static map<UnicodeBlock, FontInfos*> _externalFontMap;
+    static std::map<int, std::string> _symbolMappings;
+    static std::map<int, std::string> _symbolTextMappings;
+    static std::map<int, std::string> _symbolFormulaMappings;
+    static std::map<UnicodeBlock, FontInfos*> _externalFontMap;
 
-    list<sptr<MiddleAtom>> _middle;
+    std::list<sptr<MiddleAtom>> _middle;
     // the root atom of the "atom tree" that represents the formula
     sptr<Atom> _root;
     // the current text style
-    string _textStyle;
+    std::string _textStyle;
 
     TeXFormula(const TeXParser& tp);
 
@@ -86,19 +83,19 @@ public:
      * @throw ex_parse
      *      if the string could not be parsed correctly
      */
-    TeXFormula(const TeXParser& tp, const wstring& s);
+    TeXFormula(const TeXParser& tp, const std::wstring& s);
 
-    TeXFormula(const TeXParser& tp, const wstring& s, bool firstpass);
+    TeXFormula(const TeXParser& tp, const std::wstring& s, bool firstpass);
 
     /**
      * Creates a TeXFormula by parsing the given string in the given text style.
      * Used when a text style command was found in the parse string.
      */
-    TeXFormula(const TeXParser& tp, const wstring& s, const string& textStyle);
+    TeXFormula(const TeXParser& tp, const std::wstring& s, const std::string& textStyle);
 
     TeXFormula(
-        const TeXParser& tp, const wstring& s,
-        const string& textStyle, bool firstpass, bool space);
+        const TeXParser& tp, const std::wstring& s,
+        const std::string& textStyle, bool firstpass, bool space);
 
     /**
      * Create an empty TeXFormula
@@ -114,18 +111,18 @@ public:
      * @throw ex_parse
      *      if the string could not be parsed correctly
      */
-    TeXFormula(const wstring& s);
+    TeXFormula(const std::wstring& s);
 
-    TeXFormula(const wstring& s, bool firstpass);
+    TeXFormula(const std::wstring& s, bool firstpass);
 
     /**
      * Creates a TeXFormula by parsing the given string in the given text style.
      * Used when a text style command was found in the parse string.
      */
-    TeXFormula(const wstring& s, const string& textStyle);
+    TeXFormula(const std::wstring& s, const std::string& textStyle);
 
     TeXFormula(
-        const wstring& s, const string& textStyle, bool firstpass, bool space);
+        const std::wstring& s, const std::string& textStyle, bool firstpass, bool space);
 
     /**
      * Creates a new TeXFormula that is a copy of the given TeXFormula.
@@ -143,16 +140,16 @@ public:
      * @param latex
      *      the latex formula
      */
-    void setLaTeX(const wstring& latex);
+    void setLaTeX(const std::wstring& latex);
 
     /**
      * Inserts an atom at the end of the current formula.
      */
     TeXFormula* add(const sptr<Atom>& el);
 
-    TeXFormula* append(const wstring& s);
+    TeXFormula* append(const std::wstring& s);
 
-    TeXFormula* append(bool isPartial, const wstring& s);
+    TeXFormula* append(bool isPartial, const std::wstring& s);
 
     /**
      * Convert this TeXFormula into a box, with the given style
@@ -218,7 +215,7 @@ public:
      * @throw ex_formula_not_found
      *      if no predefined TeXFormula is found with the given name
      */
-    static sptr<TeXFormula> get(const wstring& name);
+    static sptr<TeXFormula> get(const std::wstring& name);
 
     /**
      * Set the DPI of target
@@ -235,7 +232,7 @@ public:
 
     static FontInfos* getExternalFont(const UnicodeBlock& block);
 
-    static void addSymbolMappings(const string& file);
+    static void addSymbolMappings(const std::string& file);
 
     /**
      * Enable or disable debug mode.
@@ -254,9 +251,9 @@ private:
     size_t _row, _col;
 
 public:
-    vector<vector<sptr<Atom>>> _array;
-    map<int, vector<sptr<CellSpecifier>>> _rowSpecifiers;
-    map<string, vector<sptr<CellSpecifier>>> _cellSpecifiers;
+    std::vector<std::vector<sptr<Atom>>> _array;
+    std::map<int, std::vector<sptr<CellSpecifier>>> _rowSpecifiers;
+    std::map<std::string, std::vector<sptr<CellSpecifier>>> _cellSpecifiers;
 
     ArrayOfAtoms();
 

@@ -3,8 +3,6 @@
 
 #include "fonts/symbol_reg.h"
 
-using namespace tex;
-
 DECL_SYMBOLS_REG(base);
 DECL_SYMBOLS_REG(amssymb);
 DECL_SYMBOLS_REG(amsfonts);

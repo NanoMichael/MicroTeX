@@ -5,12 +5,10 @@
 #include "fonts/fonts.h"
 #include "xml/tinyxml2.h"
 
-using namespace tinyxml2;
-
 namespace tex {
 
 struct __Versions {
-  string bold, roman, ss, tt, it;
+    std::string bold, roman, ss, tt, it;
 };
 
 struct __Metrics {
@@ -38,65 +36,65 @@ struct __Larger {
 };
 
 struct __BasicInfo {
-  vector<__Metrics>   metrics;
-  vector<__Extension> extensions;
-  vector<__Larger>    largers;
-  vector<__Kern>      kerns;
-  vector<__Lig>       ligs;
+  std::vector<__Metrics>   metrics;
+  std::vector<__Extension> extensions;
+  std::vector<__Larger>    largers;
+  std::vector<__Kern>      kerns;
+  std::vector<__Lig>       ligs;
 };
 
-typedef void (*ChildParser)(const XMLElement*, wchar_t, __BasicInfo&);
+typedef void (*ChildParser)(const tinyxml2::XMLElement*, wchar_t, __BasicInfo&);
 
 /**
  * Parses the font information from an XML-file
  */
 class DefaultTeXFontParser {
 public:
-  static const string FONTS_RES_BASE;
+  static const std::string FONTS_RES_BASE;
   // document define
-  static const string RESOURCE_NAME;
+  static const std::string RESOURCE_NAME;
   // element define
-  static const string STYLE_MAPPING_EL;
-  static const string GEN_SET_EL;
+  static const std::string STYLE_MAPPING_EL;
+  static const std::string GEN_SET_EL;
   // attribute define
-  static const string MUFONTID_ATTR;
-  static const string SPACEFONTID_ATTR;
+  static const std::string MUFONTID_ATTR;
+  static const std::string SPACEFONTID_ATTR;
 
 private:
-  static const map<string, int> _rangeTypeMappings;
+  static const std::map<std::string, int> _rangeTypeMappings;
 
-  static const map<string, ChildParser> _charChildParsers;
+  static const std::map<std::string, ChildParser> _charChildParsers;
   // the xml-document we used
-  XMLDocument _doc;
+  tinyxml2::XMLDocument _doc;
 
-  map<int, __Versions>           _variousVersion;
-  map<string, vector<CharFont*>> _parsedTextStyles;
-  const XMLElement*              _root;
-  string                         _base;
+  std::map<int, __Versions>           _variousVersion;
+  std::map<std::string, std::vector<CharFont*>> _parsedTextStyles;
+  const tinyxml2::XMLElement*              _root;
+  std::string                         _base;
 
-  static void parse_extension(const XMLElement*, wchar_t, __BasicInfo&);
-  static void parse_kern(const XMLElement*, wchar_t, __BasicInfo&);
-  static void parse_lig(const XMLElement*, wchar_t, __BasicInfo&);
-  static void parse_larger(const XMLElement*, wchar_t, __BasicInfo&);
+  static void parse_extension(const tinyxml2::XMLElement*, wchar_t, __BasicInfo&);
+  static void parse_kern(const tinyxml2::XMLElement*, wchar_t, __BasicInfo&);
+  static void parse_lig(const tinyxml2::XMLElement*, wchar_t, __BasicInfo&);
+  static void parse_larger(const tinyxml2::XMLElement*, wchar_t, __BasicInfo&);
 
-  void parseStyleMappings(_out_ map<string, vector<CharFont*>>& styles);
+  void parseStyleMappings(_out_ std::map<std::string, std::vector<CharFont*>>& styles);
 
-  static void processCharElement(const XMLElement* e, __BasicInfo& info);
+  static void processCharElement(const tinyxml2::XMLElement* e, __BasicInfo& info);
 
-  inline static bool exists(const char* attr, const XMLElement* e) {
-    const XMLAttribute* value = e->FindAttribute(attr);
+  inline static bool exists(const char* attr, const tinyxml2::XMLElement* e) {
+    const tinyxml2::XMLAttribute* value = e->FindAttribute(attr);
     return (value != nullptr);
   }
 
   inline static void obtainAttr(
-      const char* attr, const XMLElement* e, _out_ string& val) {
+      const char* attr, const tinyxml2::XMLElement* e, _out_ std::string& val) {
     const char* value = e->Attribute(attr);
     if (value == nullptr || strlen(value) == 0) return;
     val.assign(value);
   }
 
-  inline static string getAttrValueAndCheckIfNotNull(
-      const char* attr, const XMLElement* e) {
+  inline static std::string getAttrValueAndCheckIfNotNull(
+      const char* attr, const tinyxml2::XMLElement* e) {
     // find if attr is exists
     const char* value = e->Attribute(attr);
     if (value == nullptr || strlen(value) == 0)
@@ -105,53 +103,53 @@ private:
   }
 
   inline static float getFloatAndCheck(
-      const char* attr, const XMLElement* e) {
+      const char* attr, const tinyxml2::XMLElement* e) {
     // get value
     float v   = 0;
     int   err = e->QueryFloatAttribute(attr, &v);
     // no attribute mapped by attr
-    if (err != XML_NO_ERROR)
+    if (err != tinyxml2::XML_NO_ERROR)
       throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
     return v;
   }
 
   inline static int getIntAndCheck(
-      const char* attr, const XMLElement* e) {
+      const char* attr, const tinyxml2::XMLElement* e) {
     // get value
     int v   = 0;
     int err = e->QueryIntAttribute(attr, &v);
-    if (err != XML_NO_ERROR)
+    if (err != tinyxml2::XML_NO_ERROR)
       throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
     return v;
   }
 
   inline static int getOptionalInt(
-      const char* attr, const XMLElement* e, const int def) {
+      const char* attr, const tinyxml2::XMLElement* e, const int def) {
     // check exists
     if (!exists(attr, e)) return def;
     // get value
     int v   = 0;
     int err = e->QueryAttribute(attr, &v);
-    if (err != XML_NO_ERROR)
+    if (err != tinyxml2::XML_NO_ERROR)
       throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
     return v;
   }
 
   inline static float getOptionalFloat(
-      const char* attr, const XMLElement* e, const float def) {
+      const char* attr, const tinyxml2::XMLElement* e, const float def) {
     // check exists
     if (!exists(attr, e)) return def;
     // get value
     float v   = 0;
     int   err = e->QueryFloatAttribute(attr, &v);
-    if (err != XML_NO_ERROR)
+    if (err != tinyxml2::XML_NO_ERROR)
       throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
     return v;
   }
 
-  void init(const string& file) {
+  void init(const std::string& file) {
     int err = _doc.LoadFile(file.c_str());
-    if (err != XML_NO_ERROR) throw ex_xml_parse(file + " not found");
+    if (err != tinyxml2::XML_NO_ERROR) throw ex_xml_parse(file + " not found");
     _root = _doc.RootElement();
 #ifdef HAVE_LOG
     __dbg("root name:%s\n", _root->Name());
@@ -163,35 +161,35 @@ private:
   void setupFontInfo(__BasicInfo& bi, FontInfo& fi);
 
 public:
-  DefaultTeXFontParser() : _doc(true, COLLAPSE_WHITESPACE) {
-    string file = RES_BASE + "/" + RESOURCE_NAME;
+  DefaultTeXFontParser() : _doc(true, tinyxml2::COLLAPSE_WHITESPACE) {
+    std::string file = RES_BASE + "/" + RESOURCE_NAME;
     init(file);
   }
 
-  DefaultTeXFontParser(const string& file) : _doc(true, COLLAPSE_WHITESPACE) {
+  DefaultTeXFontParser(const std::string& file) : _doc(true, tinyxml2::COLLAPSE_WHITESPACE) {
     init(file);
   }
 
-  DefaultTeXFontParser(const string& base, const string& file)
-      : _doc(true, COLLAPSE_WHITESPACE), _base(base) {
+  DefaultTeXFontParser(const std::string& base, const std::string& file)
+      : _doc(true, tinyxml2::COLLAPSE_WHITESPACE), _base(base) {
     init(file);
   }
 
   void parseExtraPath();
 
-  void parseFontDescriptions(const string& file);
+  void parseFontDescriptions(const std::string& file);
 
   void parseFontDescriptions();
 
-  void parseSymbolMappings(_out_ map<string, CharFont*>& res);
+  void parseSymbolMappings(_out_ std::map<std::string, CharFont*>& res);
 
-  string* parseDefaultTextStyleMappins();
+  std::string* parseDefaultTextStyleMappins();
 
-  void parseParameters(_out_ map<string, float>& res);
+  void parseParameters(_out_ std::map<std::string, float>& res);
 
-  void parseGeneralSettings(_out_ map<string, float>& res);
+  void parseGeneralSettings(_out_ std::map<std::string, float>& res);
 
-  map<string, vector<CharFont*>> parseTextStyleMappings();
+  std::map<std::string, std::vector<CharFont*>> parseTextStyleMappings();
 };
 
 }  // namespace tex

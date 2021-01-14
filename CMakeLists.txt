@@ -2,20 +2,31 @@ cmake_minimum_required(VERSION 3.16)
 project(LaTeX)
 
 
-# check if compiler has c++17 support
+# check if compiler has c++11/c++17 support
 
 include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
-if(COMPILER_SUPPORTS_CXX17)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-else()
-    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no c++17 support. Please use a different one that supports c++17.")
-endif()
 
-# check for lstdc++fs
+# check gcc version
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-     set(CXX_FILESYSTEM_LIBRARIES "stdc++fs")
+    if ("${CMAKE_CXX_COMPILER_VERSION}" VERSION_LESS 9)
+        # needs extra lib to use std::filesystem
+    	set(CXX_FILESYSTEM_LIBRARIES "stdc++fs")
+	endif()
+    if ("${CMAKE_CXX_COMPILER_VERSION}" VERSION_LESS 8)
+        # dose not have full c++17 features
+		set(COMPILER_SUPPORTS_CXX17 OFF)
+    endif()
+endif()
+
+if(COMPILER_SUPPORTS_CXX17)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+elseif(COMPILER_SUPPORTS_CXX11)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+else()
+    message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no c++11 support. Please use a different one that supports c++11.")
 endif()
 
 # copy res dir

@@ -3,8 +3,6 @@
 
 #include <vector>
 
-using namespace std;
-
 namespace tex {
 
 /** Symbols registration function */
@@ -13,7 +11,7 @@ typedef void (*__reg_symbols_func)(void);
 /** Represents a set of symbols registration */
 class SymbolsSet {
 public:
-  virtual vector<__reg_symbols_func> regs() const = 0;
+  virtual std::vector<__reg_symbols_func> regs() const = 0;
 };
 
 }  // namespace tex

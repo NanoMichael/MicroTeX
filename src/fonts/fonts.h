@@ -14,15 +14,12 @@
 #include "fonts/tex_font.h"
 #include "graphic/graphic.h"
 
-using namespace std;
-using namespace tex;
-
 namespace tex {
 
 typedef struct {
   int    font;
   int    code;
-  string name;
+  std::string name;
 } __symbol_component;
 
 class SymbolsSet;
@@ -33,16 +30,16 @@ class SymbolsSet;
 class DefaultTeXFont : public TeXFont {
 private:
   // font related
-  static string*                        _defaultTextStyleMappings;
-  static map<string, vector<CharFont*>> _textStyleMappings;
-  static map<string, CharFont*>         _symbolMappings;
-  static map<string, float>             _parameters;
-  static map<string, float>             _generalSettings;
+  static std::string*                        _defaultTextStyleMappings;
+  static std::map<std::string, std::vector<CharFont*>> _textStyleMappings;
+  static std::map<std::string, CharFont*>         _symbolMappings;
+  static std::map<std::string, float>             _parameters;
+  static std::map<std::string, float>             _generalSettings;
   static bool                           _magnificationEnable;
 
   float _factor, _size;
 
-  Char getChar(wchar_t c, _in_ const vector<CharFont*>& cf, int style);
+  Char getChar(wchar_t c, _in_ const std::vector<CharFont*>& cf, int style);
 
   sptr<Metrics> getMetrics(_in_ const CharFont& cf, float size);
 
@@ -53,8 +50,8 @@ private:
   static void __default_text_style_mapping();
 
 public:
-  static vector<UnicodeBlock>                     _loadedAlphabets;
-  static map<UnicodeBlock, AlphabetRegistration*> _registeredAlphabets;
+  static std::vector<UnicodeBlock>                     _loadedAlphabets;
+  static std::map<UnicodeBlock, AlphabetRegistration*> _registeredAlphabets;
   // no extension part for that kind (TOP, MID, REP or BOT)
   static const int NONE;
 
@@ -87,18 +84,18 @@ public:
 
   static void __push_symbols(const __symbol_component* symbols, const int len);
 
-  static void addTeXFontDescription(const string& base, const string& file);
+  static void addTeXFontDescription(const std::string& base, const std::string& file);
 
   static void addAlphabet(AlphabetRegistration* reg);
 
   static void addAlphabet(
-      const string&               base,
-      const vector<UnicodeBlock>& alphabet,
-      const string&               lang);
+      const std::string&               base,
+      const std::vector<UnicodeBlock>& alphabet,
+      const std::string&               lang);
 
   static void registerAlphabet(AlphabetRegistration* reg);
 
-  inline static float getParameter(const string& name) {
+  inline static float getParameter(const std::string& name) {
     auto it = _parameters.find(name);
     if (it == _parameters.end()) return 0;
     return it->second;
@@ -114,7 +111,7 @@ public:
     return _generalSettings["scriptscriptfactor"];
   }
 
-  inline float styleParam(const string& name, int style) {
+  inline float styleParam(const std::string& name, int style) {
     return getParameter(name) * getSizeFactor(style) * TeXFormula::PIXELS_PER_POINT;
   }
 
@@ -124,12 +121,12 @@ public:
 
   Char getChar(
       wchar_t       c,
-      const string& textStyle,
+      const std::string& textStyle,
       int           style) override;
 
   Char getChar(const CharFont& cf, int style) override;
 
-  Char getChar(const string& symbolName, int style) override;
+  Char getChar(const std::string& symbolName, int style) override;
 
   /*********************************** font information *****************************************/
 

@@ -5,9 +5,6 @@
 #include "common.h"
 #include "xml/tinyxml2.h"
 
-using namespace std;
-using namespace tinyxml2;
-
 namespace tex {
 
 /**
@@ -15,22 +12,22 @@ namespace tex {
  */
 class TeXSymbolParser {
 private:
-  static const map<string, int> _typeMappings;
-  XMLDocument _doc;
-  XMLElement* _root;
+  static const std::map<std::string, int> _typeMappings;
+  tinyxml2::XMLDocument _doc;
+  tinyxml2::XMLElement* _root;
 
-  static string getAttr(const char* attr, const XMLElement* e);
+  static std::string getAttr(const char* attr, const tinyxml2::XMLElement* e);
 
 public:
-  static const string RESOURCE_NAME;
-  static const string DELIMITER_ATTR;
-  static const string TYPE_ATTR;
+  static const std::string RESOURCE_NAME;
+  static const std::string DELIMITER_ATTR;
+  static const std::string TYPE_ATTR;
 
   TeXSymbolParser() = delete;
 
-  TeXSymbolParser(const string& file);
+  TeXSymbolParser(const std::string& file);
 
-  void readSymbols(_out_ map<string, sptr<SymbolAtom>>& res);
+  void readSymbols(_out_ std::map<std::string, sptr<SymbolAtom>>& res);
 };
 
 /**
@@ -38,35 +35,35 @@ public:
  */
 class TeXFormulaSettingParser {
 private:
-  XMLDocument _doc;
-  XMLElement* _root;
+  tinyxml2::XMLDocument _doc;
+  tinyxml2::XMLElement* _root;
 
-  static int getUtf(const XMLElement* e, const char* attr);
+  static int getUtf(const tinyxml2::XMLElement* e, const char* attr);
 
   static void add2map(
-      const XMLElement* mapping,
-      _out_ map<int, string>& tableMath,
-      _out_ map<int, string>& tableTxt);
+      const tinyxml2::XMLElement* mapping,
+      _out_ std::map<int, std::string>& tableMath,
+      _out_ std::map<int, std::string>& tableTxt);
 
   static void addFormula2map(
-      const XMLElement* mapping,
-      _out_ map<int, string>& tableMath,
-      _out_ map<int, string>& tableTxt);
+      const tinyxml2::XMLElement* mapping,
+      _out_ std::map<int, std::string>& tableMath,
+      _out_ std::map<int, std::string>& tableTxt);
 
 public:
-  static const string RESOURCE_NAME;
+  static const std::string RESOURCE_NAME;
 
   TeXFormulaSettingParser() = delete;
 
-  TeXFormulaSettingParser(const string& file);
+  TeXFormulaSettingParser(const std::string& file);
 
   void parseSymbol2Formula(
-      _out_ map<int, string>& mappings,
-      _out_ map<int, string>& textMappings);
+      _out_ std::map<int, std::string>& mappings,
+      _out_ std::map<int, std::string>& textMappings);
 
   void parseSymbol(
-      _out_ map<int, string>& mappings,
-      _out_ map<int, string>& textMappings);
+      _out_ std::map<int, std::string>& mappings,
+      _out_ std::map<int, std::string>& textMappings);
 };
 }  // namespace tex
 

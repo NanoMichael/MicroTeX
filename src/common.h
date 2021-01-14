@@ -30,8 +30,6 @@
 #include "utils/string_utils.h"
 #include "utils/utf.h"
 
-using namespace std;
-
 /** OUT parameter, declaring that the function may has side effect on this parameter. */
 #define _out_
 /** IN parameter, declaring that the function will never has side effect on this parameter. */
@@ -40,27 +38,27 @@ using namespace std;
 namespace tex {
 
 /** The root directory of the "TeX resources" (defined in latex.cpp) */
-extern string RES_BASE;
+extern std::string RES_BASE;
 
 /** Type alias shared_ptr<T> to sptr<T> */
 template <typename T>
-using sptr = shared_ptr<T>;
+using sptr = std::shared_ptr<T>;
 
 /** Return the real name of the function, class or struct name. */
 #ifdef HAVE_LOG
 #ifdef __GNUC__
-inline string demangle_name(const char* name) {
+inline std::string demangle_name(const char* name) {
   int status = -4;
   char* res = abi::__cxa_demangle(name, 0, 0, &status);
   const char* const real_name = status == 0 ? res : name;
-  string res_str(real_name);
+  std::string res_str(real_name);
   if (res != nullptr) {
     free(res);
   }
   return res_str;
 }
 #else
-inline string demangle_name(const char* name) {
+inline std::string demangle_name(const char* name) {
   return name;
 }
 #endif  // __GNUC__
@@ -68,7 +66,7 @@ inline string demangle_name(const char* name) {
 
 /** Find the position of a value in the vector, return -1 if not found */
 template <class T>
-inline int indexOf(const vector<T>& v, const T& x) {
+inline int indexOf(const std::vector<T>& v, const T& x) {
   auto it = find(v.begin(), v.end(), x);
   int i = std::distance(v.begin(), it);
   return (i >= v.size() ? -1 : i);

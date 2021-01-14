@@ -4,6 +4,10 @@
 
 #define __id(x) FontInfo::__id(x)
 
+using namespace std;
+using namespace tex;
+using namespace tex::tinyxml2;
+
 const string DefaultTeXFontParser::FONTS_RES_BASE = "fonts";
 /** document define  */
 const string DefaultTeXFontParser::RESOURCE_NAME = FONTS_RES_BASE + "/DefaultTeXFont.xml";
@@ -32,40 +36,36 @@ const map<string, ChildParser> DefaultTeXFontParser::_charChildParsers = {
 /**************************************** child parsers *******************************************/
 
 void DefaultTeXFontParser::parse_extension(const XMLElement* e, wchar_t c, __BasicInfo& f) {
-  const __Extension ex{
-      .ch  = c,
-      .rep = getIntAndCheck("rep", e),
-      .top = getOptionalInt("top", e, DefaultTeXFont::NONE),
-      .mid = getOptionalInt("mid", e, DefaultTeXFont::NONE),
-      .bot = getOptionalInt("bot", e, DefaultTeXFont::NONE),
-  };
+  __Extension ex;
+  ex.ch = c;
+  ex.rep = getIntAndCheck("rep", e);
+  ex.top = getOptionalInt("top", e, DefaultTeXFont::NONE);
+  ex.mid = getOptionalInt("mid", e, DefaultTeXFont::NONE);
+  ex.bot = getOptionalInt("bot", e, DefaultTeXFont::NONE);
   f.extensions.push_back(ex);
 }
 
 void DefaultTeXFontParser::parse_kern(const XMLElement* e, wchar_t c, __BasicInfo& f) {
-  const __Kern kern{
-      .left  = c,
-      .right = (wchar_t)getIntAndCheck("code", e),
-      .kern  = getFloatAndCheck("val", e),
-  };
+  __Kern kern;
+  kern.left = c;
+  kern.right = (wchar_t)getIntAndCheck("code", e);
+  kern.kern = getFloatAndCheck("val", e);
   f.kerns.push_back(kern);
 }
 
 void DefaultTeXFontParser::parse_lig(const XMLElement* e, wchar_t c, __BasicInfo& f) {
-  const __Lig lig{
-      .left  = c,
-      .right = (wchar_t)getIntAndCheck("code", e),
-      .lig   = (wchar_t)getIntAndCheck("ligCode", e),
-  };
+  __Lig lig;
+  lig.left = c;
+  lig.right = (wchar_t)getIntAndCheck("code", e);
+  lig.lig = (wchar_t)getIntAndCheck("ligCode", e);
   f.ligs.push_back(lig);
 }
 
 void DefaultTeXFontParser::parse_larger(const XMLElement* e, wchar_t c, __BasicInfo& f) {
-  const __Larger larger{
-      .code   = c,
-      .larger = (wchar_t)getIntAndCheck("code", e),
-      .fontId = __id(getAttrValueAndCheckIfNotNull("fontId", e)),
-  };
+  __Larger larger;
+  larger.code = c;
+  larger.larger = (wchar_t)getIntAndCheck("code", e);
+  larger.fontId = __id(getAttrValueAndCheckIfNotNull("fontId", e));
   f.largers.push_back(larger);
 }
 
@@ -74,13 +74,12 @@ void DefaultTeXFontParser::parse_larger(const XMLElement* e, wchar_t c, __BasicI
 void DefaultTeXFontParser::processCharElement(const XMLElement* e, __BasicInfo& info) {
   // retrieve required integer value
   const wchar_t   ch = (wchar_t)getIntAndCheck("code", e);
-  const __Metrics m{
-      .ch     = ch,
-      .width  = getOptionalFloat("width", e, 0),
-      .height = getOptionalFloat("height", e, 0),
-      .depth  = getOptionalFloat("depth", e, 0),
-      .italic = getOptionalFloat("italic", e, 0),
-  };
+  __Metrics m;
+  m.ch = ch;
+  m.width = getOptionalFloat("width", e, 0);
+  m.height = getOptionalFloat("height", e, 0);
+  m.depth = getOptionalFloat("depth", e, 0);
+  m.italic = getOptionalFloat("italic", e, 0);
   info.metrics.push_back(m);
   // process children (kerning, ligature...)
   const XMLElement* x = e->FirstChildElement();

@@ -12,12 +12,12 @@ class FontSet;
 
 class FontInfo {
 private:
-  static vector<FontInfo*> _infos;
-  static vector<string>    _names;
+  static std::vector<FontInfo*> _infos;
+  static std::vector<std::string>    _names;
 
   const int    _id;    // id of this font info
   const Font*  _font;  // font of this info
-  const string _path;  // font file path
+  const std::string _path;  // font file path
 
   IndexedArray<int, 5, 1>     _extensions;   // extensions for big delimiter
   IndexedArray<int, 3, 1>     _nextLargers;  // largers, e.g. sigma
@@ -36,7 +36,7 @@ private:
 
   FontInfo(const FontInfo&);
 
-  FontInfo(int id, const string& path, float xHeight, float space, float quad)
+  FontInfo(int id, const std::string& path, float xHeight, float space, float quad)
       : _id(id), _path(path), _xHeight(xHeight), _space(space), _quad(quad) {
     // default various ids
     _boldId = _romanId = _ssId = _ttId = _itId = _id;
@@ -50,7 +50,7 @@ private:
     _infos[info->_id] = info;
   }
 
-  inline int __idOf(const string& name) {
+  inline int __idOf(const std::string& name) {
     const int id = __id(name);
     return id < 0 ? _id : id;
   }
@@ -58,18 +58,18 @@ private:
 public:
   /************************************** INTERNAL USE ******************************************/
   static FontInfo* __create(
-      int id, const string& path,
+      int id, const std::string& path,
       float xHeight = 0, float space = 0, float quad = 0) {
     auto i = new FontInfo(id, path, xHeight, space, quad);
     __add(i);
     return i;
   }
 
-  static void __predefine_name(const string& name) { _names.push_back(name); }
+  static void __predefine_name(const std::string& name) { _names.push_back(name); }
 
-  static inline int __id(const string& name) { return indexOf(_names, name); }
+  static inline int __id(const std::string& name) { return indexOf(_names, name); }
 
-  static inline const vector<FontInfo*>& __infos() { return _infos; }
+  static inline const std::vector<FontInfo*>& __infos() { return _infos; }
 
   static inline FontInfo* __get(int id) { return _infos[id]; }
 
@@ -128,11 +128,11 @@ public:
   float getKern(wchar_t left, wchar_t right, float factor) const;
 
   void setVariousId(
-      const string& bold,
-      const string& roman,
-      const string& ss,
-      const string& tt,
-      const string& it);
+      const std::string& bold,
+      const std::string& roman,
+      const std::string& ss,
+      const std::string& tt,
+      const std::string& it);
 
   const Font* getFont();
 
@@ -158,7 +158,7 @@ public:
 
   inline int getSsId() const { return _ssId; }
 
-  inline const string& getPath() const { return _path; }
+  inline const std::string& getPath() const { return _path; }
 
   ~FontInfo();
 

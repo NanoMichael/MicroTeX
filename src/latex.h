@@ -7,12 +7,8 @@
 #include "render.h"
 
 #include <string>
-#include <filesystem>
 #include <queue>
 #include <sstream>
-
-using namespace std;
-using namespace tex;
 
 namespace tex {
 
@@ -23,7 +19,7 @@ private:
   static TeXFormula* _formula;
   static TeXRenderBuilder* _builder;
 protected:
-  static string queryResourceLocation(string& custom_path);
+  static std::string queryResourceLocation(std::string& custom_path);
 public:
   /**
    * Initialize TeX context with given root path of the TeX resources
@@ -32,12 +28,12 @@ public:
    *      root path of the resources, default is 'res'
    */
 
-  static void init(string res_root_path = "res");
+  static void init(std::string res_root_path = "res");
 
   /**
    * Get the root path of the "TeX resources"
    */
-  static const string& getResRootPath();
+  static const std::string& getResRootPath();
 
   /**
    * If open debug
@@ -58,7 +54,7 @@ public:
    * @param fg
    *      the foreground color
    */
-  static TeXRender* parse(const wstring& tex, int width, float textSize, float lineSpace, color fg);
+  static TeXRender* parse(const std::wstring& tex, int width, float textSize, float lineSpace, color fg);
 
   /**
    * Release the LaTeX context

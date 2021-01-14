@@ -7,8 +7,6 @@
 #include <set>
 #include <string>
 
-using namespace std;
-
 namespace tex {
 
 /**
@@ -24,7 +22,7 @@ class TeXFormula;
  */
 class TeXParser {
 private:
-  wstring _parseString;
+  std::wstring _parseString;
   int _pos, _spos, _len;
   int _line, _col;
   int _group;
@@ -64,10 +62,10 @@ private:
   /**
    * scripts to formula map
    */
-  static const map<wchar_t, char> SUP_SCRIPT_MAP;
-  static const map<wchar_t, char> SUB_SCRIPT_MAP;
+  static const std::map<wchar_t, char> SUP_SCRIPT_MAP;
+  static const std::map<wchar_t, char> SUB_SCRIPT_MAP;
 
-  static const set<wstring> _unparsedContents;
+  static const std::set<std::wstring> _unparsedContents;
 
   /**
    * Preprocess parse string
@@ -76,11 +74,11 @@ private:
 
   sptr<Atom> getScripts(wchar_t f);
 
-  wstring getCommand();
+  std::wstring getCommand();
 
   sptr<Atom> processEscape();
 
-  void insert(int beg, int end, const wstring& formula);
+  void insert(int beg, int end, const std::wstring& formula);
 
   /**
    * Return a string with command, options and arguments.
@@ -89,13 +87,13 @@ private:
    *      name of command
    * @return command with arguments string with format: \cmd[opt][...]{arg}{...}
    */
-  wstring getCommandWithArgs(const wstring& command);
+  std::wstring getCommandWithArgs(const std::wstring& command);
 
   /**
    * Process the given TeX command (by parsing following command
    * arguments in the parse string).
    */
-  sptr<Atom> processCommands(const wstring& cmd);
+  sptr<Atom> processCommands(const std::wstring& cmd);
 
   void skipWhiteSpace();
 
@@ -104,17 +102,17 @@ private:
    */
   bool replaceScript();
 
-  void preprocess(wstring& cmd, vector<wstring>& args, int& pos);
+  void preprocess(std::wstring& cmd, std::vector<std::wstring>& args, int& pos);
 
-  void preprocessNewCmd(wstring& cmd, vector<wstring>& args, int& pos);
+  void preprocessNewCmd(std::wstring& cmd, std::vector<std::wstring>& args, int& pos);
 
-  void inflateNewCmd(wstring& cmd, vector<wstring>& args, int& pos);
+  void inflateNewCmd(std::wstring& cmd, std::vector<std::wstring>& args, int& pos);
 
-  void inflateEnv(wstring& cmd, vector<wstring>& args, int& pos);
+  void inflateEnv(std::wstring& cmd, std::vector<std::wstring>& args, int& pos);
 
   void init(
       bool ispartial,
-      const wstring& parsestring,
+      const std::wstring& parsestring,
       _out_ TeXFormula* formula,
       bool firstpass);
 
@@ -136,7 +134,7 @@ public:
    * @throw ex_parse
    *      if the string could not be parsed correctly
    */
-  TeXParser(const wstring& latex, _out_ TeXFormula* formula) {
+  TeXParser(const std::wstring& latex, _out_ TeXFormula* formula) {
     init(true, latex, formula, true);
   }
 
@@ -151,7 +149,7 @@ public:
    * @throw ex_parse
    *      if the string could not be parsed correctly
    */
-  TeXParser(bool isPartial, const wstring& latex, _out_ TeXFormula* formula) {
+  TeXParser(bool isPartial, const std::wstring& latex, _out_ TeXFormula* formula) {
     init(isPartial, latex, formula, true);
   }
 
@@ -170,7 +168,7 @@ public:
    */
   TeXParser(
       bool isPartial,
-      const wstring& latex,
+      const std::wstring& latex,
       _out_ TeXFormula* formula,
       bool firstPass) {
     init(isPartial, latex, formula, firstPass);
@@ -187,7 +185,7 @@ public:
    * @throw ex_parse
    *      if the string could not be parsed correctly
    */
-  TeXParser(const wstring& latex, _out_ TeXFormula* formula, bool firstPass) {
+  TeXParser(const std::wstring& latex, _out_ TeXFormula* formula, bool firstPass) {
     init(true, latex, formula, firstPass);
   }
 
@@ -212,7 +210,7 @@ public:
    */
   TeXParser(
       bool isPartial,
-      const wstring& latex,
+      const std::wstring& latex,
       _out_ TeXFormula* formula,
       bool firstpass,
       bool ignoreWhiteSpace) {
@@ -238,7 +236,7 @@ public:
    *      if the string could not be parsed correctly
    */
   TeXParser(
-      const wstring& latex,
+      const std::wstring& latex,
       _out_ TeXFormula* formula,
       bool firstpass,
       bool ignoreWhiteSpace) {
@@ -249,7 +247,7 @@ public:
   /**
    * Reset the parser with a new latex expression
    */
-  void reset(const wstring& latex);
+  void reset(const std::wstring& latex);
 
   /**
    * Return true if we get a partial formula
@@ -356,7 +354,7 @@ public:
     _pos = _parseString.size();
   }
 
-  wstring forwardFromCurrentPos();
+  std::wstring forwardFromCurrentPos();
 
   /**
    * Add a new row when the parser is in array mode
@@ -383,7 +381,7 @@ public:
    * @throw ex_parse
    *      if the contents are badly enclosed
    */
-  wstring getDollarGroup(wchar_t openClose);
+  std::wstring getDollarGroup(wchar_t openClose);
 
   /**
    * Get the contents between two delimiters
@@ -396,7 +394,7 @@ public:
    * @throw ex_parse
    *      if the contents are badly enclosed
    */
-  wstring getGroup(wchar_t open, wchar_t close);
+  std::wstring getGroup(wchar_t open, wchar_t close);
 
   /**
    * Get the contents between two strings as in \\begin{foo}... \\end{foo}
@@ -409,7 +407,7 @@ public:
    * @throw ex_parse
    *      if the contents are badly enclosed
    */
-  wstring getGroup(const wstring& open, const wstring& close);
+  std::wstring getGroup(const std::wstring& open, const std::wstring& close);
 
   /**
    * Get the argument of a command in his atomic format
@@ -423,14 +421,14 @@ public:
   /**
    * Get the supscript argument
    */
-  wstring getOverArgument();
+  std::wstring getOverArgument();
 
   /**
    * Get the unit and length from given string. The string must be in the format: a digital
    * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or a pair (UNIT_PIXEL, 0) will be
    * returned.
    */
-  pair<int, float> getLength();
+  std::pair<int, float> getLength();
 
   /**
    * Convert a character in the corresponding atom in using the file
@@ -458,7 +456,7 @@ public:
    * @param args
    *      a vector to put with argument strings
    */
-  void getOptsArgs(int nbArgs, int opts, _out_ vector<wstring>& args);
+  void getOptsArgs(int nbArgs, int opts, _out_ std::vector<std::wstring>& args);
 
   /**
    * Test the validity of the name of a command. It must contains only alpha
@@ -468,7 +466,7 @@ public:
    *      the command's name
    * @return the validity of the name
    */
-  bool isValidName(const wstring& cmd);
+  bool isValidName(const std::wstring& cmd);
 
   /**
    * Test the validity of a character in a command. It must contains only

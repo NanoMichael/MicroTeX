@@ -1,6 +1,8 @@
 #include "core/formula.h"
 
-map<int, string> TeXFormula::_symbolFormulaMappings = {
+using namespace std;
+
+map<int, string> tex::TeXFormula::_symbolFormulaMappings = {
     {160, "\\ "},
     {161, "!`"},
     {169, "\\copyright"},

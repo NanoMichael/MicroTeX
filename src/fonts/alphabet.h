@@ -3,13 +3,12 @@
 
 #include <string>
 #include <vector>
-using namespace std;
 
 namespace tex {
 
 class UnicodeBlock {
 private:
-  static vector<const UnicodeBlock*> _defined;
+  static std::vector<const UnicodeBlock*> _defined;
 
 public:
   // predefined unicode-blocks
@@ -40,41 +39,41 @@ public:
 
 class AlphabetRegistration {
 public:
-  virtual const vector<UnicodeBlock>& getUnicodeBlock() const = 0;
+  virtual const std::vector<UnicodeBlock>& getUnicodeBlock() const = 0;
 
-  virtual const string getPackage() const = 0;
+  virtual const std::string getPackage() const = 0;
 
-  virtual const string getTeXFontFile() const = 0;
+  virtual const std::string getTeXFontFile() const = 0;
 
   virtual ~AlphabetRegistration();
 };
 
 class CyrillicRegistration : public AlphabetRegistration {
 private:
-  static const vector<UnicodeBlock> _block;
-  static const string _package;
-  static const string _font;
+  static const std::vector<UnicodeBlock> _block;
+  static const std::string _package;
+  static const std::string _font;
 
 public:
-  const vector<UnicodeBlock>& getUnicodeBlock() const override;
+  const std::vector<UnicodeBlock>& getUnicodeBlock() const override;
 
-  const string getPackage() const override;
+  const std::string getPackage() const override;
 
-  const string getTeXFontFile() const override;
+  const std::string getTeXFontFile() const override;
 };
 
 class GreekRegistration : public AlphabetRegistration {
 private:
-  static const vector<UnicodeBlock> _block;
-  static const string _package;
-  static const string _font;
+  static const std::vector<UnicodeBlock> _block;
+  static const std::string _package;
+  static const std::string _font;
 
 public:
-  const vector<UnicodeBlock>& getUnicodeBlock() const override;
+  const std::vector<UnicodeBlock>& getUnicodeBlock() const override;
 
-  const string getPackage() const override;
+  const std::string getPackage() const override;
 
-  const string getTeXFontFile() const override;
+  const std::string getTeXFontFile() const override;
 };
 
 }  // namespace tex

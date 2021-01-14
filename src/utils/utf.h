@@ -3,12 +3,10 @@
 
 #include <string>
 
-using namespace std;
-
 namespace tex {
 
 /** Convert unicode wide string to UTF-8 encoded string. */
-inline string& wide2utf8(const wchar_t* in, string& out) {
+inline std::string& wide2utf8(const wchar_t* in, std::string& out) {
   unsigned int codepoint = 0;
   for (; *in != 0; ++in) {
     if (*in >= 0xd800 && *in <= 0xdbff) {
@@ -41,8 +39,8 @@ inline string& wide2utf8(const wchar_t* in, string& out) {
   return out;
 }
 
-inline string wide2utf8(const wchar_t* in) {
-  string out;
+inline std::string wide2utf8(const wchar_t* in) {
+  std::string out;
   return wide2utf8(in, out);
 }
 
@@ -50,7 +48,7 @@ inline string wide2utf8(const wchar_t* in) {
  * Convert an UTF-8 encoded char sequence to wide unicode string,
  * the encoding of input char sequence must be known as UTF-8
  */
-inline wstring& utf82wide(const char* in, wstring& out) {
+inline std::wstring& utf82wide(const char* in, std::wstring& out) {
   if (in == nullptr) return out;
   unsigned int codepoint;
   while (*in != 0) {
@@ -77,8 +75,8 @@ inline wstring& utf82wide(const char* in, wstring& out) {
   return out;
 }
 
-inline wstring utf82wide(const char* in) {
-  wstring out;
+inline std::wstring utf82wide(const char* in) {
+  std::wstring out;
   return utf82wide(in, out);
 }
 

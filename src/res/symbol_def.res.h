@@ -8,11 +8,11 @@
 
 #define DEF_SYMBOLS(name)      \
   void __symbols_reg(name)() { \
-    const __symbol_component x[] = {
+    const tex::__symbol_component x[] = {
 #define END_DEF_SYMBOLS                        \
   }                                            \
   ;                                            \
-  DefaultTeXFont::__push_symbols(x, __len(x)); \
+  tex::DefaultTeXFont::__push_symbols(x, __len(x)); \
   }
 
 /**

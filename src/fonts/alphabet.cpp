@@ -10,7 +10,7 @@ const UnicodeBlock UnicodeBlock::GREEK            (0x0370, 0x03ff);
 const UnicodeBlock UnicodeBlock::GREEK_EXTENDED   (0x1f00, 0x1fff);
 const UnicodeBlock UnicodeBlock::UNKNOWN          (0xffff, 0xffff);
 
-vector<const UnicodeBlock*> UnicodeBlock::_defined = {
+std::vector<const UnicodeBlock*> UnicodeBlock::_defined = {
     &BASIC_LATIN,
     &LATIN1_SUPPLEMENT,
     &CYRILLIC,
@@ -57,37 +57,37 @@ const UnicodeBlock& UnicodeBlock::of(wchar_t c) {
 
 AlphabetRegistration::~AlphabetRegistration() {}
 
-const vector<UnicodeBlock> CyrillicRegistration::_block = {UnicodeBlock::CYRILLIC};
-const string CyrillicRegistration::_package = "cyrillic";
-const string CyrillicRegistration::_font = "cyrillic/language_cyrillic.xml";
+const std::vector<UnicodeBlock> CyrillicRegistration::_block = {UnicodeBlock::CYRILLIC};
+const std::string CyrillicRegistration::_package = "cyrillic";
+const std::string CyrillicRegistration::_font = "cyrillic/language_cyrillic.xml";
 
-const vector<UnicodeBlock>& CyrillicRegistration::getUnicodeBlock() const {
+const std::vector<UnicodeBlock>& CyrillicRegistration::getUnicodeBlock() const {
   return _block;
 }
 
-const string CyrillicRegistration::getPackage() const {
+const std::string CyrillicRegistration::getPackage() const {
   return RES_BASE + "/" + _package;
 }
 
-const string CyrillicRegistration::getTeXFontFile() const {
+const std::string CyrillicRegistration::getTeXFontFile() const {
   return RES_BASE + "/" + _font;
 }
 
-const vector<UnicodeBlock> GreekRegistration::_block = {
+const std::vector<UnicodeBlock> GreekRegistration::_block = {
     UnicodeBlock::GREEK,
     UnicodeBlock::GREEK_EXTENDED};
 
-const string GreekRegistration::_package = "greek";
-const string GreekRegistration::_font = "greek/language_greek.xml";
+const std::string GreekRegistration::_package = "greek";
+const std::string GreekRegistration::_font = "greek/language_greek.xml";
 
-const vector<UnicodeBlock>& GreekRegistration::getUnicodeBlock() const {
+const std::vector<UnicodeBlock>& GreekRegistration::getUnicodeBlock() const {
   return _block;
 }
 
-const string GreekRegistration::getPackage() const {
+const std::string GreekRegistration::getPackage() const {
   return RES_BASE + "/" + _package;
 }
 
-const string GreekRegistration::getTeXFontFile() const {
+const std::string GreekRegistration::getTeXFontFile() const {
   return RES_BASE + "/" + _font;
 }

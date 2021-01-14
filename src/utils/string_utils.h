@@ -1,47 +1,47 @@
 #ifndef STRING_UTILS_H_INCLUDED
 #define STRING_UTILS_H_INCLUDED
 
+#include "config.h"
 #include <algorithm>
 #include <cerrno>
 #include <climits>
 #include <sstream>
 #include <string>
-
-using namespace std;
+#include <functional>
 
 namespace tex {
 
 /** Convert a value to string */
 template <class T>
-inline string tostring(T val) {
-  ostringstream os;
+inline std::string tostring(T val) {
+  std::ostringstream os;
   os << val;
   return os.str();
 }
 
 /** Convert a value to wide string */
 template <class T>
-inline wstring towstring(T val) {
-  wostringstream os;
+inline std::wstring towstring(T val) {
+  std::wostringstream os;
   os << val;
   return os.str();
 }
 
 template <class T>
-inline void valueof(const string& s, T& val) {
-  stringstream ss;
+inline void valueof(const std::string& s, T& val) {
+  std::stringstream ss;
   ss << s;
   ss >> val;
 }
 
 template <class T>
-inline void valueof(const wstring& s, T& val) {
-  wstringstream ss;
+inline void valueof(const std::wstring& s, T& val) {
+  std::wstringstream ss;
   ss << s;
   ss >> val;
 }
 
-inline bool str2int(const string& str, int& res, int radix) {
+inline bool str2int(const std::string& str, int& res, int radix) {
   char* endptr = nullptr;
   errno = 0;
 
@@ -55,73 +55,81 @@ inline bool str2int(const string& str, int& res, int radix) {
 }
 
 /** Transform a string to lowercase */
-inline string& tolower(string& src) {
-  transform(src.begin(), src.end(), src.begin(), ::tolower);
+inline std::string& tolower(std::string& src) {
+  std::transform(src.begin(), src.end(), src.begin(), ::tolower);
   return src;
 }
 
-inline wstring& tolower(wstring& src) {
-  transform(src.begin(), src.end(), src.begin(), ::tolower);
+inline std::wstring& tolower(std::wstring& src) {
+  std::transform(src.begin(), src.end(), src.begin(), ::tolower);
   return src;
 }
 
 /** Ignore left side whitespace in a string */
-inline string& ltrim(string& s) {
-  s.erase(s.begin(), find_if(s.begin(), s.end(), not1(ptr_fun<int, int>(isspace))));
+inline std::string& ltrim(std::string& s) {
+#if CLATEX_CXX17
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not_fn<int(int)>(isspace)));
+#else
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::cref<int(int)>(isspace))));
+#endif
   return s;
 }
 
 /** Ignore right side whitespace in a string */
-inline string& rtrim(string& s) {
-  s.erase(find_if(s.rbegin(), s.rend(), not1(ptr_fun<int, int>(isspace))).base(), s.end());
+inline std::string& rtrim(std::string& s) {
+#if CLATEX_CXX17
+  s.erase(std::find_if(s.rbegin(), s.rend(), std::not_fn<int(int)>(isspace)).base(), s.end());
+#else
+  s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::cref<int(int)>(isspace))).base(), s.end());
+#endif
   return s;
 }
 
 /** Ignore left and right side whitespace in a string */
-inline string& trim(string& s) {
+inline std::string& trim(std::string& s) {
   return ltrim(rtrim(s));
 }
 
 /** Split string with specified delimeter */
-inline void split(const string& str, char del, vector<string>& res) {
-  stringstream ss(str);
-  string tok;
-  while (getline(ss, tok, del)) res.push_back(tok);
+inline void split(const std::string& str, char del, std::vector<std::string>& res) {
+  std::stringstream ss(str);
+  std::string tok;
+  while (std::getline(ss, tok, del)) res.push_back(tok);
 }
 
-inline bool startswith(const string& str, const string& cmp) {
+inline bool startswith(const std::string& str, const std::string& cmp) {
   return str.find(cmp) == 0;
 }
 
-inline bool endswith(const string& str, const string& cmp) {
+inline bool endswith(const std::string& str, const std::string& cmp) {
   return str.rfind(cmp) == (str.length() - cmp.length());
 }
 
-inline bool startswith(const wstring& str, const wstring& cmp) {
+inline bool startswith(const std::wstring& str, const std::wstring& cmp) {
   return str.find(cmp) == 0;
 }
 
-inline bool endswith(const wstring& str, const wstring& cmp) {
+inline bool endswith(const std::wstring& str, const std::wstring& cmp) {
   return str.rfind(cmp) == (str.length() - cmp.length());
 }
 
 /** Split string with delimiter */
 class strtokenizer {
 private:
-  string _str;
-  string _del;
+  std::string _str;
+  std::string _del;
   bool _ret;
   int _pos;
 
 public:
-  strtokenizer(const string& str) {
+  strtokenizer(const std::string& str) {
     _str = str;
     _del = " \t\n\r\f";
     _ret = false;
     _pos = 0;
   }
 
-  strtokenizer(const string& str, const string& del, bool ret = false) {
+  strtokenizer(const std::string& str, const std::string& del, bool ret = false) {
     _str = str;
     _del = del;
     _ret = ret;
@@ -132,7 +140,7 @@ public:
     int c = 0;
     bool in = false;
     for (int i = _pos, len = _str.length(); i < len; i++) {
-      if (_del.find(_str[i]) != string::npos) {
+      if (_del.find(_str[i]) != std::string::npos) {
         if (_ret) c++;
         if (in) {
           c++;
@@ -146,26 +154,26 @@ public:
     return c;
   }
 
-  string next_token() {
+  std::string next_token() {
     int i = _pos;
     int len = _str.length();
 
     if (i < len) {
       if (_ret) {
-        if (_del.find(_str[_pos]) != string::npos)
-          return string({_str[_pos++]});
+        if (_del.find(_str[_pos]) != std::string::npos)
+          return std::string({_str[_pos++]});
         for (_pos++; _pos < len; _pos++)
-          if (_del.find(_str[_pos]) != string::npos)
+          if (_del.find(_str[_pos]) != std::string::npos)
             return _str.substr(i, _pos - i);
         return _str.substr(i);
       }
 
-      while (i < len && _del.find(_str[i]) != string::npos) i++;
+      while (i < len && _del.find(_str[i]) != std::string::npos) i++;
 
       _pos = i;
       if (i < len) {
         for (_pos++; _pos < len; _pos++)
-          if (_del.find(_str[_pos]) != string::npos)
+          if (_del.find(_str[_pos]) != std::string::npos)
             return _str.substr(i, _pos - i);
         return _str.substr(i);
       }
@@ -178,7 +186,7 @@ public:
  * Returns a replacement string for the given one that has all backslashes
  * and dollar signs escaped
  */
-inline string& quotereplace(const string& src, string& out) {
+inline std::string& quotereplace(const std::string& src, std::string& out) {
   for (size_t i = 0; i < src.length(); i++) {
     char c = src[i];
     if (c == '\\' || c == '$') out.append(1, '\\');
@@ -187,7 +195,7 @@ inline string& quotereplace(const string& src, string& out) {
   return out;
 }
 
-inline wstring& quotereplace(const wstring& src, wstring& out) {
+inline std::wstring& quotereplace(const std::wstring& src, std::wstring& out) {
   for (size_t i = 0; i < src.length(); i++) {
     wchar_t c = src[i];
     if (c == L'\\' || c == L'$') out.append(1, L'\\');
@@ -197,34 +205,34 @@ inline wstring& quotereplace(const wstring& src, wstring& out) {
 }
 
 /** Replace string with specified string in the first */
-inline string& replacefirst(string& src, const string& from, const string& to) {
+inline std::string& replacefirst(std::string& src, const std::string& from, const std::string& to) {
   size_t start = src.find(from);
-  if (start == string::npos) return src;
+  if (start == std::string::npos) return src;
   src.replace(start, from.length(), to);
   return src;
 }
 
-inline string& replaceall(string& src, const string& from, const string& to) {
+inline std::string& replaceall(std::string& src, const std::string& from, const std::string& to) {
   if (from.empty()) return src;
   size_t start = 0;
-  while ((start = src.find(from, start)) != string::npos) {
+  while ((start = src.find(from, start)) != std::string::npos) {
     src.replace(start, from.length(), to);
     start += to.length();
   }
   return src;
 }
 
-inline wstring& replacefirst(wstring& src, const wstring& from, const wstring& to) {
+inline std::wstring& replacefirst(std::wstring& src, const std::wstring& from, const std::wstring& to) {
   size_t start = src.find(from);
-  if (start == wstring::npos) return src;
+  if (start == std::wstring::npos) return src;
   src.replace(start, from.length(), to);
   return src;
 }
 
-inline wstring& replaceall(wstring& src, const wstring& from, const wstring& to) {
+inline std::wstring& replaceall(std::wstring& src, const std::wstring& from, const std::wstring& to) {
   if (from.empty()) return src;
   size_t start = 0;
-  while ((start = src.find(from, start)) != wstring::npos) {
+  while ((start = src.find(from, start)) != std::wstring::npos) {
     src.replace(start, from.length(), to);
     start += to.length();
   }
