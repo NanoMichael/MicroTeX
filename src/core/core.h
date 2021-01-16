@@ -43,7 +43,7 @@ public:
 class Environment {
 private:
   // current style
-  int _style;
+  TexStyle _style;
   // TeXFont used
   sptr<TeXFont> _tf;
   // last used font
@@ -66,7 +66,7 @@ private:
   sptr<Environment> _num, _root, _sub, _sup;
 
   inline void init() {
-    _style = STYLE_DISPLAY;
+    _style = TexStyle::display;
     _lastFontId = TeXFont::NO_FONT;
     _textWidth = POS_INF;
     _smallCap = false;
@@ -75,7 +75,7 @@ private:
     _interline = 0;
   }
 
-  Environment(int style, const sptr<TeXFont>& tf, color bg, const color c) {
+  Environment(TexStyle style, const sptr<TeXFont>& tf, color bg, const color c) {
     init();
     _style = style;
     _tf = tf;
@@ -83,7 +83,7 @@ private:
   }
 
   Environment(
-    int style, float scaleFactor,
+    TexStyle style, float scaleFactor,
     const sptr<TeXFont>& tf,
     const std::string& textstyle, bool smallCap  //
   ) {
@@ -97,14 +97,14 @@ private:
   }
 
 public:
-  Environment(int style, const sptr<TeXFont>& tf) {
+  Environment(TexStyle style, const sptr<TeXFont>& tf) {
     init();
     _style = style;
     _tf = tf;
     setInterline(UnitType::ex, 1.f);
   }
 
-  Environment(int style, const sptr<TeXFont>& tf, UnitType widthUnit, float textWidth);
+  Environment(TexStyle style, const sptr<TeXFont>& tf, UnitType widthUnit, float textWidth);
 
   inline void setInterline(UnitType unit, float len) {
     _interline = len;
@@ -157,9 +157,9 @@ public:
 
   inline float getSize() const { return _tf->getSize(); }
 
-  inline int getStyle() const { return _style; }
+  inline TexStyle getStyle() const { return _style; }
 
-  inline void setStyle(int style) { _style = style; }
+  inline void setStyle(TexStyle style) { _style = style; }
 
   inline const std::string& getTextStyle() const { return _textStyle; }
 

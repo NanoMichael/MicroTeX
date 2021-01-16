@@ -1203,7 +1203,7 @@ public:
 
   sptr<Box> createBox(Environment& env) override {
     TeXFont& tf = *(env.getTeXFont());
-    int style = env.getStyle();
+    TexStyle style = env.getStyle();
     float axis = tf.getAxisHeight(style);
     float drt = tf.getDefaultRuleThickness(style);
     auto b = _at->createBox(env);
@@ -1225,23 +1225,23 @@ public:
  */
 class StyleAtom : public Atom {
 private:
-  int _style;
+  TexStyle _style;
   sptr<Atom> _at;
 
 public:
   StyleAtom() = delete;
 
-  StyleAtom(int style, const sptr<Atom>& a) {
+  StyleAtom(TexStyle style, const sptr<Atom>& a) {
     _style = style;
     _at = a;
     _type = a->_type;
   }
 
   sptr<Box> createBox(Environment& env) override {
-    int s = env.getStyle();
+    TexStyle style = env.getStyle();
     env.setStyle(_style);
     auto box = _at->createBox(env);
-    env.setStyle(s);
+    env.setStyle(style);
     return box;
   }
 

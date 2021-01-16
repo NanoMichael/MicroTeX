@@ -414,7 +414,7 @@ sptr<Box> MatrixAtom::createBox(Environment& e) {
 
   if (_matType == MatrixType::smallMatrix) {
     env = *(e.copy());
-    env.setStyle(STYLE_SCRIPT);
+    env.setStyle(TexStyle::script);
   } /* else if (_matType == MatrixType::matrix) {
     env = *(e.copy());
     env.setStyle(STYLE_TEXT);

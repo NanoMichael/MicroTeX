@@ -19,7 +19,7 @@ sptr<Box> DelimiterFactory::create(SymbolAtom& symbol, Environment& env, int siz
   if (size > 4) return symbol.createBox(env);
 
   TeXFont& tf = *(env.getTeXFont());
-  int style = env.getStyle();
+  const TexStyle style = env.getStyle();
   Char c = tf.getChar(symbol.getName(), style);
   int i = 0;
 
@@ -36,7 +36,7 @@ sptr<Box> DelimiterFactory::create(SymbolAtom& symbol, Environment& env, int siz
 
 sptr<Box> DelimiterFactory::create(const string& symbol, Environment& env, float minHeight) {
   TeXFont& tf = *(env.getTeXFont());
-  int style = env.getStyle();
+  const TexStyle style = env.getStyle();
   Char c = tf.getChar(symbol, style);
 
   // start with smallest character

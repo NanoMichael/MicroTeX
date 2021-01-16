@@ -23,7 +23,6 @@
 #include <string>
 #include <vector>
 
-#include "utils/constants.h"
 #include "utils/exceptions.h"
 #include "utils/log.h"
 #include "utils/nums.h"

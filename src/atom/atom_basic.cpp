@@ -23,7 +23,7 @@ sptr<Box> ScaleAtom::createBox(Environment& env) {
 sptr<Box> MathAtom::createBox(Environment& env) {
   Environment& e = *(env.copy(env.getTeXFont()->copy()));
   e.getTeXFont()->setRoman(false);
-  int style = e.getStyle();
+  TexStyle style = e.getStyle();
   // if parent style greater than "this style",
   // that means the parent uses smaller font size,
   // then uses parent style instead
@@ -203,7 +203,7 @@ SymbolAtom::SymbolAtom(const string& name, AtomType type, bool del) : _unicode(0
 sptr<Box> SymbolAtom::createBox(Environment& env) {
   auto i = env.getTeXFont();
   TeXFont& tf = *i;
-  int style = env.getStyle();
+  TexStyle style = env.getStyle();
   Char c = tf.getChar(_name, style);
   sptr<Box> cb(new CharBox(c));
   if (env.getSmallCap() && _unicode != 0 && islower(_unicode)) {
@@ -218,7 +218,7 @@ sptr<Box> SymbolAtom::createBox(Environment& env) {
     }
   }
   if (_type == AtomType::bigOperator) {
-    if (style < STYLE_TEXT && tf.hasNextLarger(c)) c = tf.getNextLarger(c, style);
+    if (style < TexStyle::text && tf.hasNextLarger(c)) c = tf.getNextLarger(c, style);
     cb = sptr<Box>(new CharBox(c));
     cb->_shift = -(cb->_height + cb->_depth) / 2.f - tf.getAxisHeight(style);
     float delta = c.getItalic();
@@ -230,7 +230,7 @@ sptr<Box> SymbolAtom::createBox(Environment& env) {
 }
 
 sptr<CharFont> SymbolAtom::getCharFont(TeXFont& tf) {
-  return tf.getChar(_name, STYLE_DISPLAY).getCharFont();
+  return tf.getChar(_name, TexStyle::display).getCharFont();
 }
 
 void SymbolAtom::addSymbolAtom(const string& file) {
@@ -248,7 +248,7 @@ sptr<SymbolAtom> SymbolAtom::get(const string& name) {
   return it->second;
 }
 
-Char CharAtom::getChar(TeXFont& tf, int style, bool smallCap) {
+Char CharAtom::getChar(TeXFont& tf, TexStyle style, bool smallCap) {
   wchar_t chr = _c;
   if (smallCap) {
     if (islower(_c)) chr = toupper(_c);
@@ -258,7 +258,7 @@ Char CharAtom::getChar(TeXFont& tf, int style, bool smallCap) {
 }
 
 sptr<CharFont> CharAtom::getCharFont(TeXFont& tf) {
-  return getChar(tf, STYLE_DISPLAY, false).getCharFont();
+  return getChar(tf, TexStyle::display, false).getCharFont();
 }
 
 sptr<Box> CharAtom::createBox(Environment& env) {
@@ -738,7 +738,7 @@ AccentedAtom::AccentedAtom(
 
 sptr<Box> AccentedAtom::createBox(Environment& env) {
   TeXFont* tf = env.getTeXFont().get();
-  int style = env.getStyle();
+  const TexStyle style = env.getStyle();
 
   // set base in cramped style
   auto b = (_base == nullptr ? sptr<Box>(new StrutBox(0, 0, 0, 0))
@@ -876,10 +876,10 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
   if (_sub == nullptr && _sup == nullptr) return b;
 
   TeXFont* tf = env.getTeXFont().get();
-  const int style = env.getStyle();
+  const TexStyle style = env.getStyle();
 
   if (_base->_limitsType == LimitsType::limits ||
-      (_base->_limitsType == LimitsType::normal && style == STYLE_DISPLAY)) {
+      (_base->_limitsType == LimitsType::normal && style == TexStyle::display)) {
     sptr<Atom> in(new UnderOverAtom(_base, _sub, UnitType::point, 0.3f, true, false));
     return UnderOverAtom(in, _sup, UnitType::point, 3.f, true, true).createBox(env);
   }
@@ -907,7 +907,7 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
     // single big operator symbol
     Char c = tf->getChar(sym->getName(), style);
     // display style
-    if (style < STYLE_TEXT && tf->hasNextLarger(c)) c = tf->getNextLarger(c, style);
+    if (style < TexStyle::text && tf->hasNextLarger(c)) c = tf->getNextLarger(c, style);
     sptr<Box> x(new CharBox(c));
 
     float axish = env.getTeXFont()->getAxisHeight(env.getStyle());
@@ -962,7 +962,7 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
   sup->add(SCRIPT_SPACE.createBox(env));
   // adjust shift-up
   float p;
-  if (style == STYLE_DISPLAY)
+  if (style == TexStyle::display)
     p = tf->getSup1(style);
   else if (env.crampStyle()->getStyle() == style)
     p = tf->getSup3(style);
@@ -1065,7 +1065,7 @@ sptr<Box> BigOperatorAtom::createSideSets(Environment& env) {
   if (sr != nullptr) y->add(sr->createBox(env));
 
   TeXFont* tf = env.getTeXFont().get();
-  const int style = env.getStyle();
+  const TexStyle style = env.getStyle();
 
   float delta = 0;
   if (sb->_type == AtomType::bigOperator) {
@@ -1115,7 +1115,7 @@ sptr<Box> BigOperatorAtom::createBox(Environment& env) {
   if (dynamic_cast<SideSetsAtom*>(_base.get())) return createSideSets(env);
 
   TeXFont* tf = env.getTeXFont().get();
-  const int style = env.getStyle();
+  const TexStyle style = env.getStyle();
 
   RowAtom* row = nullptr;
   auto Base = _base;
@@ -1133,9 +1133,9 @@ sptr<Box> BigOperatorAtom::createBox(Environment& env) {
   }
 
   if ((_limitsSet && !_limits) ||
-      (!_limitsSet && style >= STYLE_TEXT) ||
+      (!_limitsSet && style >= TexStyle::text) ||
       (_base->_limitsType == LimitsType::noLimits) ||
-      (_base->_limitsType == LimitsType::normal && style >= STYLE_TEXT)) {
+      (_base->_limitsType == LimitsType::normal && style >= TexStyle::text)) {
     // if explicitly set to not display as limits or if not set and
     // style is not display, then attach over and under as regular sub or
     // super script
