@@ -234,7 +234,7 @@ inline macro(above) {
 
 inline macro(mbox) {
   sptr<Atom> group(new RomanAtom(Formula(tp, args[1], "mathnormal", false, false)._root));
-  return sptr<Atom>(new StyleAtom(STYLE_TEXT, group));
+  return sptr<Atom>(new StyleAtom(TexStyle::text, group));
 }
 
 inline macro(text) {
@@ -492,12 +492,12 @@ inline macro(iddots) {
 
 inline macro(leftparenthesis) {
   std::wstring grp = tp.getGroup(L"\\(", L"\\)");
-  return sptr<Atom>(new MathAtom(Formula(tp, grp, false)._root, STYLE_TEXT));
+  return sptr<Atom>(new MathAtom(Formula(tp, grp, false)._root, TexStyle::text));
 }
 
 inline macro(leftbracket) {
   std::wstring grp = tp.getGroup(L"\\[", L"\\]");
-  return sptr<Atom>(new MathAtom(Formula(tp, grp, false)._root, STYLE_DISPLAY));
+  return sptr<Atom>(new MathAtom(Formula(tp, grp, false)._root, TexStyle::display));
 }
 
 inline macro(middle) {
@@ -885,22 +885,22 @@ inline macro(Biggr) { return _macro_big(tp, args, 4, AtomType::closing); }
 
 inline macro(displaystyle) {
   auto g = Formula(tp, tp.getOverArgument(), false)._root;
-  return sptr<Atom>(new StyleAtom(STYLE_DISPLAY, g));
+  return sptr<Atom>(new StyleAtom(TexStyle::display, g));
 }
 
 inline macro(scriptstyle) {
   auto g = Formula(tp, tp.getOverArgument(), false)._root;
-  return sptr<Atom>(new StyleAtom(STYLE_SCRIPT, g));
+  return sptr<Atom>(new StyleAtom(TexStyle::script, g));
 }
 
 inline macro(textstyle) {
   auto g = Formula(tp, tp.getOverArgument(), false)._root;
-  return sptr<Atom>(new StyleAtom(STYLE_TEXT, g));
+  return sptr<Atom>(new StyleAtom(TexStyle::text, g));
 }
 
 inline macro(scriptscriptstyle) {
   auto g = Formula(tp, tp.getOverArgument(), false)._root;
-  return sptr<Atom>(new StyleAtom(STYLE_SCRIPT_SCRIPT, g));
+  return sptr<Atom>(new StyleAtom(TexStyle::scriptScript, g));
 }
 
 inline macro(rotatebox) {

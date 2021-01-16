@@ -57,7 +57,7 @@ macro(cfrac) {
   f->_useKern = false;
   f->_type = AtomType::inner;
   RowAtom* r = new RowAtom();
-  r->add(sptr<Atom>(new StyleAtom(STYLE_DISPLAY, f)));
+  r->add(sptr<Atom>(new StyleAtom(TexStyle::display, f)));
   return sptr<Atom>(r);
 }
 
@@ -120,7 +120,8 @@ macro(genfrac) {
   }
   sptr<Atom> fa(new FractionAtom(num._root, den._root, rule, unit, value));
   RowAtom* ra = new RowAtom();
-  ra->add(sptr<Atom>(new StyleAtom(style * 2, sptr<Atom>(new FencedAtom(fa, L, R)))));
+  const TexStyle texStyle = static_cast<TexStyle>(style * 2);
+  ra->add(sptr<Atom>(new StyleAtom(texStyle, sptr<Atom>(new FencedAtom(fa, L, R)))));
 
   return sptr<Atom>(ra);
 }

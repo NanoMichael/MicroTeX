@@ -114,9 +114,6 @@ TeXRender* TeXRenderBuilder::build(Formula& f) {
 TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
   sptr<Atom> f = fc;
   if (f == nullptr) f = sptr<Atom>(new EmptyAtom());
-  if (_style == -1) {
-    throw ex_invalid_state("A style is required, call function setStyle before build.");
-  }
   if (_textSize == -1) {
     throw ex_invalid_state("A size is required, call function setSize before build.");
   }

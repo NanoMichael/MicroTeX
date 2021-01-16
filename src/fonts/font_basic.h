@@ -21,7 +21,7 @@ struct Metrics {
 /** Represents a specific character in a specific font (identified by its font id) */
 struct CharFont {
   wchar_t chr;
-  int     fontId, boldFontId;
+  int fontId, boldFontId;
 
   CharFont() : chr(0), fontId(0), boldFontId(0) {}
 
@@ -37,11 +37,11 @@ struct CharFont {
 /** Class represents a character together with its font, font id and metric information */
 class Char {
 private:
-  wchar_t        _c;
-  int            _fontCode;
-  const Font*    _font;
+  wchar_t _c;
+  int _fontCode;
+  const Font* _font;
   sptr<CharFont> _cf;
-  sptr<Metrics>  _m;
+  sptr<Metrics> _m;
 
 public:
   Char() = delete;

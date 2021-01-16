@@ -16,17 +16,17 @@ public:
 
   virtual float getScaleFactor() = 0;
 
-  virtual float getAxisHeight(int style) = 0;
+  virtual float getAxisHeight(TexStyle style) = 0;
 
-  virtual float getBigOpSpacing1(int style) = 0;
+  virtual float getBigOpSpacing1(TexStyle style) = 0;
 
-  virtual float getBigOpSpacing2(int style) = 0;
+  virtual float getBigOpSpacing2(TexStyle style) = 0;
 
-  virtual float getBigOpSpacing3(int style) = 0;
+  virtual float getBigOpSpacing3(TexStyle style) = 0;
 
-  virtual float getBigOpSpacing4(int style) = 0;
+  virtual float getBigOpSpacing4(TexStyle style) = 0;
 
-  virtual float getBigOpSpacing5(int style) = 0;
+  virtual float getBigOpSpacing5(TexStyle style) = 0;
 
   /**
    * Get a Char-object specifying the given character in the given text style
@@ -45,7 +45,7 @@ public:
   virtual Char getChar(
     wchar_t c,
     const std::string& textStyle,
-    int style) = 0;
+    TexStyle style) = 0;
 
   /**
    * Get a Char-object for this specific character containing the metric information
@@ -55,7 +55,7 @@ public:
    *      the style in which the atom should be drawn
    * @return the Char-object for this character containing metric information
    */
-  virtual Char getChar(const CharFont& cf, int style) = 0;
+  virtual Char getChar(const CharFont& cf, TexStyle style) = 0;
 
   /**
    * Get a Char-object for the given symbol with metric information depending on "style"
@@ -65,7 +65,7 @@ public:
    *      the style in which the atom should be drawn
    * @return a Char-object for this symbol with metric information
    */
-  virtual Char getChar(const std::string& name, int style) = 0;
+  virtual Char getChar(const std::string& name, TexStyle style) = 0;
 
   /**
    * Get a Char-object specifying the given character in the default text style
@@ -76,13 +76,13 @@ public:
    *      the style in which the atom should be drawn
    * @return the Char-object specifying the given character in the default text style
    */
-  virtual Char getDefaultChar(wchar_t c, int style) = 0;
+  virtual Char getDefaultChar(wchar_t c, TexStyle style) = 0;
 
-  virtual float getDefaultRuleThickness(int style) = 0;
+  virtual float getDefaultRuleThickness(TexStyle style) = 0;
 
-  virtual float getDenom1(int style) = 0;
+  virtual float getDenom1(TexStyle style) = 0;
 
-  virtual float getDenom2(int style) = 0;
+  virtual float getDenom2(TexStyle style) = 0;
 
   /**
    * Get an Extension-object for the given Char containing the 4 possible
@@ -94,7 +94,7 @@ public:
    *      the style in which the atom should be drawn
    * @return an extension object containing the 4 possible parts
    */
-  virtual Extension* getExtension(const Char& c, int style) = 0;
+  virtual Extension* getExtension(const Char& c, TexStyle style) = 0;
 
   /**
    * Get the kern value to be inserted between the given characters in the
@@ -107,7 +107,7 @@ public:
    *      the style in which the atom should be drawn
    * @return the kern value between both characters (default 0)
    */
-  virtual float getKern(const CharFont& left, const CharFont& right, int style) = 0;
+  virtual float getKern(const CharFont& left, const CharFont& right, TexStyle style) = 0;
 
   /**
    * Get the ligature that replaces both characters (if any).
@@ -133,15 +133,15 @@ public:
    *      the style in which the atom should be drawn
    * @return the next larger version of this character
    */
-  virtual Char getNextLarger(const Char& c, int style) = 0;
+  virtual Char getNextLarger(const Char& c, TexStyle style) = 0;
 
-  virtual float getNum1(int style) = 0;
+  virtual float getNum1(TexStyle style) = 0;
 
-  virtual float getNum2(int style) = 0;
+  virtual float getNum2(TexStyle style) = 0;
 
-  virtual float getNum3(int style) = 0;
+  virtual float getNum3(TexStyle style) = 0;
 
-  virtual float getQuad(int style, int fontCode) = 0;
+  virtual float getQuad(TexStyle style, int fontCode) = 0;
 
   /**
    * @return the point size of this TeXFont
@@ -159,27 +159,27 @@ public:
    * @return the kern amount of the character defined by cf followed by the
    * "skewChar" of it's font
    */
-  virtual float getSkew(const CharFont& cf, int style) = 0;
+  virtual float getSkew(const CharFont& cf, TexStyle style) = 0;
 
-  virtual float getSpace(int style) = 0;
+  virtual float getSpace(TexStyle style) = 0;
 
-  virtual float getSub1(int style) = 0;
+  virtual float getSub1(TexStyle style) = 0;
 
-  virtual float getSub2(int style) = 0;
+  virtual float getSub2(TexStyle style) = 0;
 
-  virtual float getSubDrop(int style) = 0;
+  virtual float getSubDrop(TexStyle style) = 0;
 
-  virtual float getSup1(int style) = 0;
+  virtual float getSup1(TexStyle style) = 0;
 
-  virtual float getSup2(int style) = 0;
+  virtual float getSup2(TexStyle style) = 0;
 
-  virtual float getSup3(int style) = 0;
+  virtual float getSup3(TexStyle style) = 0;
 
-  virtual float getSupDrop(int style) = 0;
+  virtual float getSupDrop(TexStyle style) = 0;
 
-  virtual float getXHeight(int style, int fontCode) = 0;
+  virtual float getXHeight(TexStyle style, int fontCode) = 0;
 
-  virtual float getEM(int style) = 0;
+  virtual float getEM(TexStyle style) = 0;
 
   /**
    * Test if a character has larger version.

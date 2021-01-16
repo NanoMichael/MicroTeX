@@ -53,7 +53,8 @@ public:
 
 class TeXRenderBuilder {
 private:
-  int _style, _type;
+  TexStyle _style;
+  int _type;
   UnitType _widthUnit, _lineSpaceUnit;
   float _textSize, _textWidth, _lineSpace;
   bool _trueValues, _isMaxWidth;
@@ -72,7 +73,7 @@ public:
   };
 
   TeXRenderBuilder()
-      : _style(-1),
+      : _style(TexStyle::display),
         _type(-1),
         _widthUnit(UnitType::none),
         _align(Alignment::none),
@@ -84,7 +85,7 @@ public:
         _isMaxWidth(false),
         _fg(black) {}
 
-  inline TeXRenderBuilder& setStyle(int style) {
+  inline TeXRenderBuilder& setStyle(TexStyle style) {
     _style = style;
     return *this;
   }

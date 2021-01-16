@@ -139,13 +139,13 @@ public:
  */
 class MathAtom : public Atom {
 private:
-  int _style;
+  TexStyle _style;
   sptr<Atom> _base;
 
 public:
   MathAtom() = delete;
 
-  MathAtom(const sptr<Atom>& base, int style) {
+  MathAtom(const sptr<Atom>& base, TexStyle style) {
     _base = base;
     _style = style;
   }
@@ -501,7 +501,7 @@ private:
    * Get the Char-object representing this character ("c") in the right text
    * style
    */
-  Char getChar(TeXFont& tf, int style, bool smallCap);
+  Char getChar(TeXFont& tf, TexStyle style, bool smallCap);
 
 public:
   CharAtom() = delete;

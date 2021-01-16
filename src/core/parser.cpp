@@ -843,10 +843,10 @@ void TeXParser::parse() {
       case DOLLAR: {
         _pos++;
         if (!_ignoreWhiteSpace) {  // we are in mbox
-          int style = STYLE_TEXT;
+          TexStyle style = TexStyle::text;
           bool doubleDollar = false;
           if (_parseString[_pos] == DOLLAR) {
-            style = STYLE_DISPLAY;
+            style = TexStyle::display;
             doubleDollar = true;
             _pos++;
           }

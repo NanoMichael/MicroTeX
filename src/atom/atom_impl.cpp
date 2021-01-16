@@ -135,7 +135,7 @@ void FractionAtom::init(
 
 sptr<Box> FractionAtom::createBox(Environment& env) {
   TeXFont& tf = *(env.getTeXFont());
-  int style = env.getStyle();
+  TexStyle style = env.getStyle();
   // set thickness to default if default value should be use
   float drt = tf.getDefaultRuleThickness(style);
   if (_nodefault)
@@ -156,7 +156,7 @@ sptr<Box> FractionAtom::createBox(Environment& env) {
 
   // calculate default shift amounts
   float shiftup, shiftdown;
-  if (style < STYLE_TEXT) {
+  if (style < TexStyle::text) {
     shiftup = tf.getNum1(style);
     shiftdown = tf.getDenom1(style);
   } else {
@@ -177,7 +177,7 @@ sptr<Box> FractionAtom::createBox(Environment& env) {
   if (_thickness > 0) {
     // with fraction rule
     // clearance clr
-    if (style < STYLE_TEXT)
+    if (style < TexStyle::text)
       clr = 3 * _thickness;
     else
       clr = _thickness;
@@ -204,7 +204,7 @@ sptr<Box> FractionAtom::createBox(Environment& env) {
   } else {
     // without fraction rule
     // clearance clr
-    if (style < STYLE_TEXT)
+    if (style < TexStyle::text)
       clr = 7 * drt;
     else
       clr = 3 * drt;
@@ -285,10 +285,10 @@ const float NthRoot::FACTOR = 0.55f;
 sptr<Box> NthRoot::createBox(Environment& env) {
   // first create a simple square root construction
   TeXFont& tf = *(env.getTeXFont());
-  int style = env.getStyle();
+  TexStyle style = env.getStyle();
   // calculate minimum clearance clr
   float clr, drt = tf.getDefaultRuleThickness(style);
-  if (style < STYLE_TEXT)
+  if (style < TexStyle::text)
     clr = tf.getXHeight(style, tf.getChar(_sqrtSymbol, style).getFontCode());
   else
     clr = drt;

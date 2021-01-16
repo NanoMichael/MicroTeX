@@ -91,7 +91,7 @@ enum class DelimType : int8 {
   doubleLine
 };
 
-enum class TexStyle {
+enum class TexStyle : int8 {
   /**
    * The larger versions of big operators are used and limits are placed under
    * and over these operators (default). Symbols are rendered in the largest
@@ -114,7 +114,7 @@ enum class TexStyle {
   scriptScript1
 };
 
-enum class UnitType {
+enum class UnitType : int8 {
   /** 1 em = the width of the capital 'M' in the current font */
   em,
   /** 1 ex = the height of the character 'x' in the current font */

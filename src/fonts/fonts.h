@@ -39,7 +39,7 @@ private:
 
   float _factor, _size;
 
-  Char getChar(wchar_t c, const std::vector<CharFont*>& cf, int style);
+  Char getChar(wchar_t c, const std::vector<CharFont*>& cf, TexStyle style);
 
   sptr<Metrics> getMetrics(const CharFont& cf, float size);
 
@@ -104,85 +104,85 @@ public:
   /**
    * Get the size factor of given style
    */
-  inline static float getSizeFactor(int style) {
-    if (style < STYLE_TEXT) return 1;
-    if (style < STYLE_SCRIPT) return _generalSettings["textfactor"];
-    if (style < STYLE_SCRIPT_SCRIPT) return _generalSettings["scriptfactor"];
+  inline static float getSizeFactor(TexStyle style) {
+    if (style < TexStyle::text) return 1;
+    if (style < TexStyle::script) return _generalSettings["textfactor"];
+    if (style < TexStyle::scriptScript) return _generalSettings["scriptfactor"];
     return _generalSettings["scriptscriptfactor"];
   }
 
-  inline float styleParam(const std::string& name, int style) {
+  inline float styleParam(const std::string& name, TexStyle style) {
     return getParameter(name) * getSizeFactor(style) * Formula::PIXELS_PER_POINT;
   }
 
   /************************************ get char ************************************************/
 
-  Char getDefaultChar(wchar_t c, int style) override;
+  Char getDefaultChar(wchar_t c, TexStyle style) override;
 
   Char getChar(
     wchar_t c,
     const std::string& textStyle,
-    int style) override;
+    TexStyle style) override;
 
-  Char getChar(const CharFont& cf, int style) override;
+  Char getChar(const CharFont& cf, TexStyle style) override;
 
-  Char getChar(const std::string& symbolName, int style) override;
+  Char getChar(const std::string& symbolName, TexStyle style) override;
 
   /*********************************** font information *****************************************/
 
-  Extension* getExtension(const Char& c, int style) override;
+  Extension* getExtension(const Char& c, TexStyle style) override;
 
-  float getKern(const CharFont& left, const CharFont& right, int style) override;
+  float getKern(const CharFont& left, const CharFont& right, TexStyle style) override;
 
   sptr<CharFont> getLigature(const CharFont& left, const CharFont& right) override;
 
-  Char getNextLarger(const Char& c, int style) override;
+  Char getNextLarger(const Char& c, TexStyle style) override;
 
   sptr<TeXFont> copy() override;
 
   inline float getScaleFactor() override { return _factor; }
 
-  inline float getAxisHeight(int style) override { return styleParam("axisheight", style); }
+  inline float getAxisHeight(TexStyle style) override { return styleParam("axisheight", style); }
 
-  inline float getBigOpSpacing1(int style) override { return styleParam("bigopspacing1", style); }
+  inline float getBigOpSpacing1(TexStyle style) override { return styleParam("bigopspacing1", style); }
 
-  inline float getBigOpSpacing2(int style) override { return styleParam("bigopspacing2", style); }
+  inline float getBigOpSpacing2(TexStyle style) override { return styleParam("bigopspacing2", style); }
 
-  inline float getBigOpSpacing3(int style) override { return styleParam("bigopspacing3", style); }
+  inline float getBigOpSpacing3(TexStyle style) override { return styleParam("bigopspacing3", style); }
 
-  inline float getBigOpSpacing4(int style) override { return styleParam("bigopspacing4", style); }
+  inline float getBigOpSpacing4(TexStyle style) override { return styleParam("bigopspacing4", style); }
 
-  inline float getBigOpSpacing5(int style) override { return styleParam("bigopspacing5", style); }
+  inline float getBigOpSpacing5(TexStyle style) override { return styleParam("bigopspacing5", style); }
 
-  inline float getNum1(int style) override { return styleParam("num1", style); }
+  inline float getNum1(TexStyle style) override { return styleParam("num1", style); }
 
-  inline float getNum2(int style) override { return styleParam("num2", style); }
+  inline float getNum2(TexStyle style) override { return styleParam("num2", style); }
 
-  inline float getNum3(int style) override { return styleParam("num3", style); }
+  inline float getNum3(TexStyle style) override { return styleParam("num3", style); }
 
-  inline float getSub1(int style) override { return styleParam("sub1", style); }
+  inline float getSub1(TexStyle style) override { return styleParam("sub1", style); }
 
-  inline float getSub2(int style) override { return styleParam("sub2", style); }
+  inline float getSub2(TexStyle style) override { return styleParam("sub2", style); }
 
-  inline float getSubDrop(int style) override { return styleParam("subdrop", style); }
+  inline float getSubDrop(TexStyle style) override { return styleParam("subdrop", style); }
 
-  inline float getSup1(int style) override { return styleParam("sup1", style); }
+  inline float getSup1(TexStyle style) override { return styleParam("sup1", style); }
 
-  inline float getSup2(int style) override { return styleParam("sup2", style); }
+  inline float getSup2(TexStyle style) override { return styleParam("sup2", style); }
 
-  inline float getSup3(int style) override { return styleParam("sup3", style); }
+  inline float getSup3(TexStyle style) override { return styleParam("sup3", style); }
 
-  inline float getSupDrop(int style) override { return styleParam("supdrop", style); }
+  inline float getSupDrop(TexStyle style) override { return styleParam("supdrop", style); }
 
-  inline float getDenom1(int style) override { return styleParam("denom1", style); }
+  inline float getDenom1(TexStyle style) override { return styleParam("denom1", style); }
 
-  inline float getDenom2(int style) override { return styleParam("denom2", style); }
+  inline float getDenom2(TexStyle style) override { return styleParam("denom2", style); }
 
-  inline float getDefaultRuleThickness(int style) override {
+  inline float getDefaultRuleThickness(TexStyle style) override {
     return styleParam("defaultrulethickness", style);
   }
 
-  inline float getQuad(int style, int fontCode) override {
+  inline float getQuad(TexStyle style, int fontCode) override {
     return getInfo(fontCode)->getQuad(getSizeFactor(style) * Formula::PIXELS_PER_POINT);
   }
 
@@ -190,21 +190,21 @@ public:
 
   inline float getSize() override { return _size; }
 
-  inline float getSkew(const CharFont& cf, int style) override {
+  inline float getSkew(const CharFont& cf, TexStyle style) override {
     FontInfo* info = getInfo(cf.fontId);
     wchar_t skew = info->getSkewChar();
     if (skew == -1) return 0;
     return getKern(cf, CharFont(skew, cf.fontId), style);
   }
 
-  float getSpace(int style) override;
+  float getSpace(TexStyle style) override;
 
-  inline float getXHeight(int style, int fontCode) override {
+  inline float getXHeight(TexStyle style, int fontCode) override {
     FontInfo* info = getInfo(fontCode);
     return info->getXHeight(getSizeFactor(style) * Formula::PIXELS_PER_POINT);
   }
 
-  inline float getEM(int style) override {
+  inline float getEM(TexStyle style) override {
     return getSizeFactor(style) * Formula::PIXELS_PER_POINT;
   }
 
