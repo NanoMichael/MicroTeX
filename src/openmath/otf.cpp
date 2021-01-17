@@ -2,15 +2,18 @@
 
 #include "openmath/clm.h"
 
+using namespace std;
+
 namespace tex {
 
-int16 ClassKerning::operator()(uint16 left, uint16 right) const {
+pair<bool, int16> ClassKerning::operator()(uint16 left, uint16 right) const {
   const int li = binSearchIndex(_leftCount, [&](int i) { return left - _lefts[i << 1]; });
-  if (li < 0) return 0;
+  if (li < 0) return {false, 0};
   const int ri = binSearchIndex(_rightCount, [&](int i) { return right - _rights[i << 1]; });
-  if (ri < 0) return 0;
-  const int i = _lefts[(li << 1) + 1], j = _rights[(ri << 1) + 1];
-  return _table[i * _columnLength + j];
+  if (ri < 0) return {false, 0};
+  const int i = _lefts[(li << 1) + 1];
+  const int j = _rights[(ri << 1) + 1];
+  return {true, _table[i * _columnLength + j]};
 }
 
 ClassKerning::~ClassKerning() {
@@ -45,12 +48,11 @@ const Glyph* OTFFont::glyph(int32 id) const {
 }
 
 int16 OTFFont::classKerning(uint16 left, uint16 right) const {
-  int16 value = 0;
   for (uint16 i = 0; i < _classKerningCount; i++) {
-    value = (*_classKernings[i])(left, right);
-    if (value != 0) return value;
+    auto [found, value] = (*_classKernings[i])(left, right);
+    if (found) return value;
   }
-  return value;
+  return 0;
 }
 
 OTFFont::~OTFFont() {
