@@ -89,10 +89,11 @@ int main(int argc, char* argv[]) {
   tex::OTFFont* font = tex::OTFFont::fromFile(argv[1]);
   printf("font from %s\n", argv[1]);
   printf(
-    "unicodes count: %u, glyphs count: %u, is math font: %d\n",
+    "unicodes count: %u, glyphs count: %u, is math font: %d, em: %u\n",
     font->unicodesCount(),
     font->glyphsCount(),
-    font->isMathFont()  //
+    font->isMathFont(),
+    font->em()  //
   );
   printf("\n");
 
@@ -101,14 +102,18 @@ int main(int argc, char* argv[]) {
   printf("glyph id: %d, \n", font->glyphId('f'));
   show_metrics(glyph_f);
   printf("kerning of [f, a]: %d\n", glyph_f->kernRecord()[font->glyphId('a')]);
-  const char* fj = "fj";
-  printf("ligature of [fj]: %d\n", find_liga(font, fj));
-  const char* ffj = "ffj";
-  printf("ligature of [ffj]: %d\n", find_liga(font, ffj));
-  const char* ffjk = "ffjk";
-  printf("ligature of [ffjk]: %d\n", find_liga(font, ffjk));
-  const char* fa = "fa";
-  printf("ligature of [fa]: %d\n", find_liga(font, fa));
+  // glyph id of 2378 is the a.sc in XITS-Regular font
+  printf("class kerning of [V, a.sc]: %d\n", font->classKerning(font->glyphId('V'), 2378));
+  printf("ligatures:\n");
+  printf(
+    "   fj |   fa |  ffj | ffjk\n"
+    "--------------------------\n"
+    "%5d |%5d |%5d |%5d\n",
+    find_liga(font, "fj"),
+    find_liga(font, "fa"),
+    find_liga(font, "ffj"),
+    find_liga(font, "ffjk")  //
+  );
   printf("\n");
 
   const tex::Glyph* brace_left = font->glyphOfUnicode('{');

@@ -32,8 +32,11 @@ private:
 public:
   __no_copy_assign(ClassKerning);
 
-  /** Get the kerning value for the given left and right glyph. */
-  int16 operator()(uint16 left, uint16 right) const;
+  /**
+   * Get the kerning value for the given left and right glyph.
+   * Return [false, 0] if not found.
+   */
+  std::pair<bool, int16> operator()(uint16 left, uint16 right) const;
 
   ~ClassKerning();
 
@@ -47,6 +50,7 @@ private:
   uint32* _unicodes = nullptr;
   uint16* _unicodeGlyphs = nullptr;
 
+  uint16 _em = 0;
   bool _isMathFont = false;
   MathConsts* _mathConsts = nullptr;
 
@@ -62,6 +66,7 @@ private:
 public:
   __no_copy_assign(OTFFont);
 
+  /** Read otf font from file */
   static OTFFont* fromFile(const char* filePath);
 
   inline bool isMathFont() const { return _isMathFont; }
@@ -69,6 +74,9 @@ public:
   inline uint16 unicodesCount() const { return _unicodeCount; }
 
   inline uint16 glyphsCount() const { return _glyphCount; }
+
+  /** Get the em size of this font. */
+  inline uint16 em() const { return _em; }
 
   /** Get the math-consts table, return null if absent. */
   inline const MathConsts* mathConsts() const { return _mathConsts; }
