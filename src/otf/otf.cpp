@@ -1,6 +1,6 @@
-#include "openmath/otf.h"
+#include "otf/otf.h"
 
-#include "openmath/clm.h"
+#include "otf/clm.h"
 
 using namespace std;
 

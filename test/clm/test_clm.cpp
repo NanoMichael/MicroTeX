@@ -1,7 +1,7 @@
 #include <cstdio>
 
-#include "openmath/clm.h"
-#include "openmath/otf.h"
+#include "otf/clm.h"
+#include "otf/otf.h"
 
 tex::int32 find_liga(const tex::OTFFont* font, const char* txt) {
   auto p = font->ligatures();

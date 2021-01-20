@@ -1,4 +1,4 @@
-#include "openmath/glyph.h"
+#include "otf/glyph.h"
 
 namespace tex {
 

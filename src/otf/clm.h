@@ -3,7 +3,7 @@
 
 #include <cstdio>
 
-#include "openmath/otf.h"
+#include "otf/otf.h"
 
 namespace tex {
 

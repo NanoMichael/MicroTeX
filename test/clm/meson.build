@@ -4,9 +4,9 @@ project(
 )
 
 src = [
-    '../../src/openmath/clm.cpp',
-    '../../src/openmath/glyph.cpp',
-    '../../src/openmath/otf.cpp',
+    '../../src/otf/clm.cpp',
+    '../../src/otf/glyph.cpp',
+    '../../src/otf/otf.cpp',
     '../../src/utils/utils.cpp',
     'test_clm.cpp'
 ]
