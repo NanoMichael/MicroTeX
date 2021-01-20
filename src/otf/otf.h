@@ -1,8 +1,8 @@
 #ifndef OTF_INCLUDED
 #define OTF_INCLUDED
 
-#include "openmath/glyph.h"
-#include "openmath/math.h"
+#include "otf/glyph.h"
+#include "otf/math.h"
 #include "utils/utils.h"
 
 namespace tex {
