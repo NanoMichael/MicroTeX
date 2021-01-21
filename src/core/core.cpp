@@ -212,7 +212,7 @@ sptr<Environment>& Environment::copy(const sptr<TeXFont>& tf) {
 sptr<Environment>& Environment::crampStyle() {
   Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
   _cramp = sptr<Environment>(t);
-  const int8 style = static_cast<int8>(_style);
+  const i8 style = static_cast<i8>(_style);
   _cramp->_style = static_cast<TexStyle>(style % 2 == 1 ? style : style + 1);
   return _cramp;
 }
@@ -220,7 +220,7 @@ sptr<Environment>& Environment::crampStyle() {
 sptr<Environment>& Environment::dnomStyle() {
   Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
   _dnom = sptr<Environment>(t);
-  const int8 style = static_cast<int8>(_style);
+  const i8 style = static_cast<i8>(_style);
   _dnom->_style = static_cast<TexStyle>(2 * (style / 2) + 1 + 2 - 2 * (style / 6));
   return _dnom;
 }
@@ -228,7 +228,7 @@ sptr<Environment>& Environment::dnomStyle() {
 sptr<Environment>& Environment::numStyle() {
   Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
   _num = sptr<Environment>(t);
-  const int8 style = static_cast<int8>(_style);
+  const i8 style = static_cast<i8>(_style);
   _num->_style = static_cast<TexStyle>(style + 2 - 2 * (style / 6));
   return _num;
 }
@@ -243,7 +243,7 @@ sptr<Environment>& Environment::rootStyle() {
 sptr<Environment>& Environment::subStyle() {
   Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
   _sub = sptr<Environment>(t);
-  const int8 style = static_cast<int8>(_style);
+  const i8 style = static_cast<i8>(_style);
   _sub->_style = static_cast<TexStyle>(2 * (style / 4) + 4 + 1);
   return _sub;
 }
@@ -251,7 +251,7 @@ sptr<Environment>& Environment::subStyle() {
 sptr<Environment>& Environment::supStyle() {
   Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
   _sup = sptr<Environment>(t);
-  const int8 style = static_cast<int8>(_style);
+  const i8 style = static_cast<i8>(_style);
   _sup->_style = static_cast<TexStyle>(2 * (style / 4) + 4 + (style % 2));
   return _sup;
 }
@@ -301,8 +301,8 @@ int Glue::getGlueIndex(AtomType ltype, AtomType rtype, const Environment& env) {
   // types > INNER are considered of type ORD for glue calculations
   AtomType l = (ltype > AtomType::inner ? AtomType::ordinary : ltype);
   AtomType r = (rtype > AtomType::inner ? AtomType::ordinary : rtype);
-  const int8 k = static_cast<int8>(env.getStyle()) / 2;
-  return _table[static_cast<uint8>(l)][static_cast<uint8>(r)][k] - '0';
+  const i8 k = static_cast<i8>(env.getStyle()) / 2;
+  return _table[static_cast<u8>(l)][static_cast<u8>(r)][k] - '0';
 }
 
 sptr<Box> Glue::get(AtomType ltype, AtomType rtype, const Environment& env) {
@@ -311,7 +311,7 @@ sptr<Box> Glue::get(AtomType ltype, AtomType rtype, const Environment& env) {
 }
 
 Glue* Glue::getGlue(SpaceType skipType) {
-  const int8 i = static_cast<int8>(skipType);
+  const i8 i = static_cast<i8>(skipType);
   SpaceType st = static_cast<SpaceType>(i < 0 ? -i : i);
   string name;
   switch (st) {
@@ -335,7 +335,7 @@ sptr<Box> Glue::get(SpaceType skipType, const Environment& env) {
   auto glue = getGlue(skipType);
   if (glue == nullptr) return sptr<Box>(new GlueBox(0, 0, 0));
   auto b = glue->createBox(env);
-  if (static_cast<int8>(skipType) < 0) b->negWidth();
+  if (static_cast<i8>(skipType) < 0) b->negWidth();
   return b;
 }
 

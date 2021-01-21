@@ -285,11 +285,11 @@ public:
   }
 
   inline static float getFactor(UnitType unit, const Environment& env) {
-    return _unitConversions[static_cast<int8>(unit)](env);
+    return _unitConversions[static_cast<i8>(unit)](env);
   }
 
   inline static float getSize(UnitType unit, float size, const Environment& env) {
-    return _unitConversions[static_cast<int8>(unit)](env) * size;
+    return _unitConversions[static_cast<i8>(unit)](env) * size;
   }
 
   sptr<Box> createBox(Environment& env) override;

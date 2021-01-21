@@ -14,12 +14,12 @@ const MathKernRecord MathKernRecord::empty(0);
 
 const Math Math::empty(0);
 
-int16 KernRecord::operator[](uint16 glyph) const {
+i16 KernRecord::operator[](u16 glyph) const {
   const int i = binSearchIndex(_count, [&](int i) { return glyph - _fields[i << 1]; });
-  return i < 0 ? 0 : (int16)_fields[(i << 1) + 1];
+  return i < 0 ? 0 : (i16)_fields[(i << 1) + 1];
 }
 
-uint16 MathKern::indexOf(int32 height) const {
+u16 MathKern::indexOf(i32 height) const {
   if (_count == 0) return 0;
   return binSearchIndex(
     _count,
@@ -34,7 +34,7 @@ MathKernRecord::~MathKernRecord() {
   }
 }
 
-Math::Math(uint16 ignore) {
+Math::Math(u16 ignore) {
   _italicsCorrection = 0;
   _topAccentAttachment = 0;
   _horizontalVariants = &Variants::empty;

@@ -6,7 +6,7 @@
 namespace tex {
 
 /** Formula alignment. */
-enum class Alignment : int8 {
+enum class Alignment : i8 {
   /** Extra space will be added to the right of the formula. */
   left,
   /** Extra space will be added to the left of the formula. */
@@ -24,7 +24,7 @@ enum class Alignment : int8 {
 };
 
 /** Space amount between formulas. */
-enum class SpaceType : int8 {
+enum class SpaceType : i8 {
   thinMuSkip = 1,
   medMuSkip = 2,
   thickMuSkip = 3,
@@ -36,13 +36,13 @@ enum class SpaceType : int8 {
 };
 
 /** Script display type */
-enum class LimitsType : int8 {
+enum class LimitsType : i8 {
   normal,
   noLimits,
   limits
 };
 
-enum class AtomType : int8 {
+enum class AtomType : i8 {
   /** Ordinary symbol, e.g. "slash" */
   ordinary,
   /** Big operator, e.g. "sum" */
@@ -74,7 +74,7 @@ enum class AtomType : int8 {
 };
 
 /** Over and under delimiter type */
-enum class DelimType : int8 {
+enum class DelimType : i8 {
   brace,
   squareBracket,
   bracket,
@@ -91,7 +91,7 @@ enum class DelimType : int8 {
   doubleLine
 };
 
-enum class TexStyle : int8 {
+enum class TexStyle : i8 {
   /**
    * The larger versions of big operators are used and limits are placed under
    * and over these operators (default). Symbols are rendered in the largest
@@ -114,7 +114,7 @@ enum class TexStyle : int8 {
   scriptScript1
 };
 
-enum class UnitType : int8 {
+enum class UnitType : i8 {
   /** 1 em = the width of the capital 'M' in the current font */
   em,
   /** 1 ex = the height of the character 'x' in the current font */

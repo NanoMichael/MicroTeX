@@ -18,7 +18,7 @@ private:
 
   ClassKerning* readClassKerning(BinaryFileReader& reader) const;
 
-  std::pair<uint16, uint16*> readClassKerningGlyphs(BinaryFileReader& reader) const;
+  std::pair<u16, u16*> readClassKerningGlyphs(BinaryFileReader& reader) const;
 
   LigaTable* readLigatures(BinaryFileReader& reaader) const;
 
