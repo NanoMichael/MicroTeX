@@ -191,7 +191,7 @@ public:
 
 class VlineAtom;
 
-enum class MatrixType : int8 {
+enum class MatrixType : i8 {
   array,
   matrix,
   align,

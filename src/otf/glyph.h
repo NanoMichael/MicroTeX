@@ -12,7 +12,7 @@ class Glyph;
 /** Represents metrics for one glyph. */
 struct Metrics final {
 private:
-  int16 _width, _height, _depth;
+  i16 _width, _height, _depth;
 
   Metrics() {}
 
@@ -20,13 +20,13 @@ public:
   __no_copy_assign(Metrics);
 
   /** Glyph width */
-  inline int16 width() const { return _width; }
+  inline i16 width() const { return _width; }
 
   /** Distance above baseline (positive) */
-  inline int16 height() const { return _height; }
+  inline i16 height() const { return _height; }
 
   /** Distance below baseline (positive) */
-  inline int16 depth() const { return _depth; }
+  inline i16 depth() const { return _depth; }
 
   friend CLMReader;
   friend Glyph;
@@ -35,22 +35,22 @@ public:
 /** Represents standard kerning info for one glyph. */
 struct KernRecord final {
 private:
-  uint16 _count;
-  uint16* _fields;
+  u16 _count;
+  u16* _fields;
 
-  KernRecord(uint16 count)
+  KernRecord(u16 count)
       : _count(count),
-        _fields(_count == 0 ? nullptr : new uint16[count * 2]) {}
+        _fields(_count == 0 ? nullptr : new u16[count * 2]) {}
 
 public:
   __no_copy_assign(KernRecord);
 
   static const KernRecord empty;
 
-  inline uint16 count() const { return _count; }
+  inline u16 count() const { return _count; }
 
   /** Get the kerning value should be added to the given glyph, return 0 if no kerning. */
-  int16 operator[](uint16 glyph) const;
+  i16 operator[](u16 glyph) const;
 
   ~KernRecord() {
     if (_fields != nullptr) delete[] _fields;
@@ -62,13 +62,13 @@ public:
 /** Defines variants for one glyph */
 struct Variants final {
 private:
-  uint16 _count = 0;
+  u16 _count = 0;
   /** Array of glyph id in font to represents varints */
-  uint16* _glyphs = nullptr;
+  u16* _glyphs = nullptr;
 
-  Variants(uint16 count)
+  Variants(u16 count)
       : _count(count),
-        _glyphs(count == 0 ? nullptr : new uint16[count]) {}
+        _glyphs(count == 0 ? nullptr : new u16[count]) {}
 
 public:
   __no_copy_assign(Variants);
@@ -77,10 +77,10 @@ public:
   static const Variants empty;
 
   /** Glyph count for this variants */
-  inline uint16 count() const { return _count; }
+  inline u16 count() const { return _count; }
 
   /** Get glyph id at index i */
-  inline uint16 operator[](int i) const { return _glyphs[i]; }
+  inline u16 operator[](int i) const { return _glyphs[i]; }
 
   ~Variants() {
     if (_glyphs != nullptr) delete[] _glyphs;
@@ -94,17 +94,17 @@ struct GlyphAssembly;
 /** Defines glyph part to assemble large glyph */
 struct GlyphPart final {
 private:
-  uint16 _glyph;
-  uint16 _startConnectorLength;
-  uint16 _endConnectorLength;
-  uint16 _fullAdvance;
+  u16 _glyph;
+  u16 _startConnectorLength;
+  u16 _endConnectorLength;
+  u16 _fullAdvance;
   /**
    * Part qualifiers. PartFlags enumeration currently uses only one bit:
    *
    * - 0x0001 EXTENDER_FLAG: If set, the part can be skipped or repeated.
    * - 0xFFFE Reserved.
    */
-  uint16 _flags;
+  u16 _flags;
 
   GlyphPart() {}
 
@@ -112,24 +112,24 @@ public:
   __no_copy_assign(GlyphPart);
 
   /** Glyph id for this part. */
-  inline uint16 glyph() const { return _glyph; }
+  inline u16 glyph() const { return _glyph; }
 
   /**
    * Advance width/ height, in design units, of the straight bar connector material at the start
    * of the glyph in the direction of the extension (the left end for horizontal extension,
    * the bottom end for vertical extension).
    */
-  inline uint16 startConnectorLength() const { return _startConnectorLength; }
+  inline u16 startConnectorLength() const { return _startConnectorLength; }
 
   /**
    * Advance width/ height, in design units, of the straight bar connector material at the end of
    * the glyph in the direction of the extension (the right end for horizontal extension, the top
    * end for vertical extension).
    */
-  inline uint16 endConnectorLength() const { return _endConnectorLength; }
+  inline u16 endConnectorLength() const { return _endConnectorLength; }
 
   /** Full advance width/height for this part in the direction of the extension, in design units. */
-  inline uint16 fullAdvance() const { return _fullAdvance; }
+  inline u16 fullAdvance() const { return _fullAdvance; }
 
   /** Test if this part can be skipped or repeated. */
   inline bool isExtender() const { return (_flags & 0x0001) == 1; }
@@ -146,15 +146,15 @@ public:
  */
 struct GlyphAssembly final {
 private:
-  int16 _italicsCorrection = 0;
-  uint16 _partCount = 0;
+  i16 _italicsCorrection = 0;
+  u16 _partCount = 0;
   /**
    * Array of GlyphPart, from left to right (for assemblies that extend horizontally)
    * or bottom to top (for assemblies that extend vertically).
    */
   GlyphPart* _parts;
 
-  GlyphAssembly(uint16 partCount)
+  GlyphAssembly(u16 partCount)
       : _partCount(partCount),
         _parts(partCount == 0 ? nullptr : new GlyphPart[partCount]) {}
 
@@ -165,13 +165,13 @@ public:
   static const GlyphAssembly empty;
 
   /** Italics correction of this GlyphAssembly. Should not depend on the assembly size. */
-  inline int16 italicsCorrection() const { return _italicsCorrection; }
+  inline i16 italicsCorrection() const { return _italicsCorrection; }
 
   /** Number of parts in this assembly. */
-  inline uint16 partCount() const { return _partCount; }
+  inline u16 partCount() const { return _partCount; }
 
   /** Get part at index i */
-  inline const GlyphPart& operator[](uint16 i) const { return _parts[i]; }
+  inline const GlyphPart& operator[](u16 i) const { return _parts[i]; }
 
   ~GlyphAssembly() {
     if (_parts != nullptr) delete[] _parts;
@@ -198,26 +198,26 @@ public:
  */
 struct MathKern final {
 private:
-  const uint16 _count = 0;
-  int16* _fields = nullptr;
+  const u16 _count = 0;
+  i16* _fields = nullptr;
 
-  MathKern(uint16 count)
+  MathKern(u16 count)
       : _count(count),
-        _fields(count == 0 ? nullptr : new int16[count * 2]) {}
+        _fields(count == 0 ? nullptr : new i16[count * 2]) {}
 
 public:
   __no_copy_assign(MathKern);
 
   static const MathKern empty;
 
-  inline uint16 count() const { return _count; }
+  inline u16 count() const { return _count; }
 
-  inline int16 correctionHeight(uint16 i) const { return _count == 0 ? 0 : _fields[i << 1]; }
+  inline i16 correctionHeight(u16 i) const { return _count == 0 ? 0 : _fields[i << 1]; }
 
-  inline int16 value(uint16 i) const { return _count == 0 ? 0 : _fields[(i << 1) + 1]; }
+  inline i16 value(u16 i) const { return _count == 0 ? 0 : _fields[(i << 1) + 1]; }
 
   /** Find the index of the kern values that its correction height closest to the given height. */
-  uint16 indexOf(int32 height) const;
+  u16 indexOf(i32 height) const;
 
   ~MathKern() {
     if (_fields != nullptr) delete[] _fields;
@@ -240,7 +240,7 @@ private:
     &MathKern::empty,
   };
 
-  MathKernRecord(uint16 ignore) {}
+  MathKernRecord(u16 ignore) {}
 
 public:
   __no_copy_assign(MathKernRecord);
@@ -267,8 +267,8 @@ public:
  */
 struct Math final {
 private:
-  int16 _italicsCorrection;
-  int16 _topAccentAttachment;
+  i16 _italicsCorrection;
+  i16 _topAccentAttachment;
   /** MUST NOT BE NULL, equals to &Variants::empty if absent */
   const Variants* _horizontalVariants = &Variants::empty;
   /** MUST NOT BE NULL, equals to &Variants::empty if absent */
@@ -280,7 +280,7 @@ private:
   /** MUST NOT BE NULL, equals to &MathKernRecord::empty if absent */
   const MathKernRecord* _kernRecord = &MathKernRecord::empty;
 
-  Math(uint16 ignore);
+  Math(u16 ignore);
 
 public:
   __no_copy_assign(Math);
@@ -288,10 +288,10 @@ public:
   static const Math empty;
 
   /** Italics correction */
-  inline int16 italicsCorrection() const { return _italicsCorrection; }
+  inline i16 italicsCorrection() const { return _italicsCorrection; }
 
   /** Top accent attachment */
-  inline int16 topAccentAttachment() const { return _topAccentAttachment; }
+  inline i16 topAccentAttachment() const { return _topAccentAttachment; }
 
   /**
    * Alternate forms of the current glyph for use in typesetting math,

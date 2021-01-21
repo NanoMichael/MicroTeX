@@ -285,24 +285,24 @@ bitset<16> RowAtom::_ligKernSet(_initLigKernSet_());
 bitset<16> RowAtom::_initBinset_() {
   bitset<16> binSet;
   binSet
-    .set(static_cast<int8>(AtomType::binaryOperator))
-    .set(static_cast<int8>(AtomType::bigOperator))
-    .set(static_cast<int8>(AtomType::relation))
-    .set(static_cast<int8>(AtomType::opening))
-    .set(static_cast<int8>(AtomType::punctuation));
+    .set(static_cast<i8>(AtomType::binaryOperator))
+    .set(static_cast<i8>(AtomType::bigOperator))
+    .set(static_cast<i8>(AtomType::relation))
+    .set(static_cast<i8>(AtomType::opening))
+    .set(static_cast<i8>(AtomType::punctuation));
   return binSet;
 }
 
 bitset<16> RowAtom::_initLigKernSet_() {
   bitset<16> ligKern;
   ligKern
-    .set(static_cast<int8>(AtomType::ordinary))
-    .set(static_cast<int8>(AtomType::bigOperator))
-    .set(static_cast<int8>(AtomType::binaryOperator))
-    .set(static_cast<int8>(AtomType::relation))
-    .set(static_cast<int8>(AtomType::opening))
-    .set(static_cast<int8>(AtomType::closing))
-    .set(static_cast<int8>(AtomType::punctuation));
+    .set(static_cast<i8>(AtomType::ordinary))
+    .set(static_cast<i8>(AtomType::bigOperator))
+    .set(static_cast<i8>(AtomType::binaryOperator))
+    .set(static_cast<i8>(AtomType::relation))
+    .set(static_cast<i8>(AtomType::opening))
+    .set(static_cast<i8>(AtomType::closing))
+    .set(static_cast<i8>(AtomType::punctuation));
   return ligKern;
 }
 
@@ -345,7 +345,7 @@ void RowAtom::add(const sptr<Atom>& el) {
 void RowAtom::change2Ord(Dummy* cur, Dummy* prev, Atom* next) {
   AtomType type = cur->leftType();
   if ((type == AtomType::binaryOperator) &&
-      ((prev == nullptr || _binSet[static_cast<int8>(prev->rightType())]) || next == nullptr)) {
+      ((prev == nullptr || _binSet[static_cast<i8>(prev->rightType())]) || next == nullptr)) {
     cur->type = AtomType::ordinary;
   } else if (next != nullptr && cur->rightType() == AtomType::binaryOperator) {
     AtomType nextType = next->leftType();
@@ -399,7 +399,7 @@ sptr<Box> RowAtom::createBox(Environment& env) {
     while (i < e && atom->rightType() == AtomType::ordinary && atom->isCharSymbol()) {
       auto next = _elements[++i];
       CharSymbol* c = dynamic_cast<CharSymbol*>(next.get());
-      if (c != nullptr && _ligKernSet[static_cast<int8>(next->leftType())]) {
+      if (c != nullptr && _ligKernSet[static_cast<i8>(next->leftType())]) {
         atom->markAsTextSymbol();
         auto l = atom->getCharFont(tf);
         auto r = c->getCharFont(tf);

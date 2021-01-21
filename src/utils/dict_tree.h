@@ -10,7 +10,7 @@ struct SortedDictTree {
 private:
   K _key;
   V _value;
-  uint16 _childCount;
+  u16 _childCount;
   /** Children sorted by _key, MUST NOT BE NULL */
   SortedDictTree<K, V>** _children;
 
@@ -19,7 +19,7 @@ public:
 
   SortedDictTree() = delete;
 
-  SortedDictTree(const K& key, const V& value, uint16 childCount)
+  SortedDictTree(const K& key, const V& value, u16 childCount)
       : _key(key),
         _value(value),
         _childCount(childCount),
@@ -29,10 +29,10 @@ public:
 
   inline V value() const { return _value; }
 
-  inline uint16 childCount() const { return _childCount; }
+  inline u16 childCount() const { return _childCount; }
 
   /** Get child at the given index. */
-  inline SortedDictTree<K, V>*& child(uint16 i) const {
+  inline SortedDictTree<K, V>*& child(u16 i) const {
     return _children[i];
   }
 
@@ -50,7 +50,7 @@ public:
     if (&b == this) return true;
     bool same = _key == b._key && _value == b._value && _childCount == b._childCount;
     if (!same) return false;
-    for (uint16 i = 0; i < _childCount; i++) {
+    for (u16 i = 0; i < _childCount; i++) {
       same &= *child(i) == *(b.child(i));
       if (!same) return false;
     }
@@ -62,7 +62,7 @@ public:
   }
 
   ~SortedDictTree<K, V>() {
-    for (uint16 i = 0; i < _childCount; i++) delete _children[i];
+    for (u16 i = 0; i < _childCount; i++) delete _children[i];
     delete[] _children;
   }
 };

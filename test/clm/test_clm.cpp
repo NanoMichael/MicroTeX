@@ -3,7 +3,7 @@
 #include "otf/clm.h"
 #include "otf/otf.h"
 
-tex::int32 find_liga(const tex::OTFFont* font, const char* txt) {
+tex::i32 find_liga(const tex::OTFFont* font, const char* txt) {
   auto p = font->ligatures();
   while (p != nullptr && *txt != '\0') {
     auto id = font->glyphId(*txt);
@@ -28,7 +28,7 @@ void show_glyph_assembly(const tex::GlyphAssembly& assembly, const char* dir) {
     "glyph | extender | start length | end length | full advance\n"
     "-----------------------------------------------------------\n"  //
   );
-  for (tex::uint16 i = 0; i < assembly.partCount(); i++) {
+  for (tex::u16 i = 0; i < assembly.partCount(); i++) {
     const tex::GlyphPart& part = assembly[i];
     printf(
       "%5u | %8d | %12u | %10u | %12u\n",
@@ -43,7 +43,7 @@ void show_glyph_assembly(const tex::GlyphAssembly& assembly, const char* dir) {
 
 void show_math_kern(const tex::MathKern& kern) {
   if (kern.count() == 0) printf("absent");
-  for (tex::uint16 i = 0; i < kern.count(); i++) {
+  for (tex::u16 i = 0; i < kern.count(); i++) {
     printf("(%d, %d), ", kern.correctionHeight(i), kern.value(i));
   }
   printf("\n");
@@ -66,13 +66,13 @@ void show_math(tex::OTFFont* font, const tex::Glyph* glyph) {
   const tex::Math& math = glyph->math();
   const tex::Variants& hv = math.horizontalVariants();
   printf("horizontal variants: ");
-  for (tex::uint16 i = 0; i < hv.count(); i++) {
+  for (tex::u16 i = 0; i < hv.count(); i++) {
     printf("%u, ", hv[i]);
   }
   printf("\n");
   const tex::Variants& vv = math.verticalVariants();
   printf("vertical variants: ");
-  for (tex::uint16 i = 0; i < vv.count(); i++) {
+  for (tex::u16 i = 0; i < vv.count(); i++) {
     printf("%u, ", vv[i]);
   }
   printf("\n");
