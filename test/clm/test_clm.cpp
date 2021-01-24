@@ -3,7 +3,7 @@
 #include "otf/clm.h"
 #include "otf/otf.h"
 
-tex::i32 find_liga(const tex::OTFFont* font, const char* txt) {
+tex::i32 find_liga(const tex::Otf* font, const char* txt) {
   auto p = font->ligatures();
   while (p != nullptr && *txt != '\0') {
     auto id = font->glyphId(*txt);
@@ -62,7 +62,7 @@ void show_math_kerns(const tex::Math& math) {
   show_math_kern(record.bottomRight());
 }
 
-void show_math(tex::OTFFont* font, const tex::Glyph* glyph) {
+void show_math(tex::Otf* font, const tex::Glyph* glyph) {
   const tex::Math& math = glyph->math();
   const tex::Variants& hv = math.horizontalVariants();
   printf("horizontal variants: ");
@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) {
     printf("No clm file specified\n");
     exit(1);
   }
-  tex::OTFFont* font = tex::OTFFont::fromFile(argv[1]);
+  tex::Otf* font = tex::Otf::fromFile(argv[1]);
   printf("font from %s\n", argv[1]);
   printf(
     "unicodes count: %u, glyphs count: %u, is math font: %d, em: %u\n",

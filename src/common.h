@@ -38,6 +38,11 @@ extern std::string RES_BASE;
 template <typename T>
 using sptr = std::shared_ptr<T>;
 
+template <typename T, typename... Args>
+inline sptr<T> sptrOf(Args&&... args) {
+  return std::make_shared<T>(std::forward<Args>(args)...);
+}
+
 /** Return the real name of the function, class or struct name. */
 #ifdef HAVE_LOG
 #ifdef __GNUC__

@@ -4,8 +4,8 @@
 #include <cinttypes>
 #include <functional>
 
-#define __no_copy_assign(T) \
-  T(const T&) = delete;     \
+#define no_copy_assign(T) \
+  T(const T&) = delete;   \
   void operator=(const T&) = delete
 
 namespace tex {
@@ -16,6 +16,7 @@ using i16 = std::int16_t;
 using u16 = std::uint16_t;
 using i32 = std::int32_t;
 using u32 = std::uint32_t;
+using c32 = char32_t;
 
 /** 
  * Binary search for index of the given target.

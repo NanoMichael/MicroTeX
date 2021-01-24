@@ -22,12 +22,12 @@ ClassKerning::~ClassKerning() {
   if (_table != nullptr) delete _table;
 }
 
-OTFFont* OTFFont::fromFile(const char* filePath) {
+Otf* Otf::fromFile(const char* filePath) {
   const CLMReader reader;
   return reader.read(filePath);
 }
 
-i32 OTFFont::glyphId(u32 codepoint) const {
+i32 Otf::glyphId(u32 codepoint) const {
   const int index = binSearchIndex(
     _unicodeCount,
     [&](int i) { return codepoint - _unicodes[i]; }  //
@@ -36,18 +36,18 @@ i32 OTFFont::glyphId(u32 codepoint) const {
   return _unicodeGlyphs[index];
 }
 
-const Glyph* OTFFont::glyphOfUnicode(u32 codepoint) const {
+const Glyph* Otf::glyphOfUnicode(u32 codepoint) const {
   const int id = glyphId(codepoint);
   if (id < 0) return nullptr;
   return _glyphs[id];
 }
 
-const Glyph* OTFFont::glyph(i32 id) const {
+const Glyph* Otf::glyph(i32 id) const {
   if (id >= _glyphCount || id < 0) return nullptr;
   return _glyphs[id];
 }
 
-i16 OTFFont::classKerning(u16 left, u16 right) const {
+i16 Otf::classKerning(u16 left, u16 right) const {
   for (u16 i = 0; i < _classKerningCount; i++) {
     auto [found, value] = (*_classKernings[i])(left, right);
     if (found) return value;
@@ -55,7 +55,7 @@ i16 OTFFont::classKerning(u16 left, u16 right) const {
   return 0;
 }
 
-OTFFont::~OTFFont() {
+Otf::~Otf() {
   if (_unicodes != nullptr) delete[] _unicodes;
   if (_unicodeGlyphs != nullptr) delete[] _unicodeGlyphs;
   if (_mathConsts != nullptr) delete _mathConsts;

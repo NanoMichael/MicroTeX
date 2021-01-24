@@ -17,7 +17,7 @@ private:
   Metrics() {}
 
 public:
-  __no_copy_assign(Metrics);
+  no_copy_assign(Metrics);
 
   /** Glyph width */
   inline i16 width() const { return _width; }
@@ -43,7 +43,7 @@ private:
         _fields(_count == 0 ? nullptr : new u16[count * 2]) {}
 
 public:
-  __no_copy_assign(KernRecord);
+  no_copy_assign(KernRecord);
 
   static const KernRecord empty;
 
@@ -71,7 +71,7 @@ private:
         _glyphs(count == 0 ? nullptr : new u16[count]) {}
 
 public:
-  __no_copy_assign(Variants);
+  no_copy_assign(Variants);
 
   /** To represents an empty Variants that the number of its glyphs is 0 */
   static const Variants empty;
@@ -109,7 +109,7 @@ private:
   GlyphPart() {}
 
 public:
-  __no_copy_assign(GlyphPart);
+  no_copy_assign(GlyphPart);
 
   /** Glyph id for this part. */
   inline u16 glyph() const { return _glyph; }
@@ -159,7 +159,7 @@ private:
         _parts(partCount == 0 ? nullptr : new GlyphPart[partCount]) {}
 
 public:
-  __no_copy_assign(GlyphAssembly);
+  no_copy_assign(GlyphAssembly);
 
   /** To represents an empty GlyphAssembly that the number of its parts is 0 */
   static const GlyphAssembly empty;
@@ -206,7 +206,7 @@ private:
         _fields(count == 0 ? nullptr : new i16[count * 2]) {}
 
 public:
-  __no_copy_assign(MathKern);
+  no_copy_assign(MathKern);
 
   static const MathKern empty;
 
@@ -243,7 +243,7 @@ private:
   MathKernRecord(u16 ignore) {}
 
 public:
-  __no_copy_assign(MathKernRecord);
+  no_copy_assign(MathKernRecord);
 
   static const MathKernRecord empty;
 
@@ -283,7 +283,7 @@ private:
   Math(u16 ignore);
 
 public:
-  __no_copy_assign(Math);
+  no_copy_assign(Math);
 
   static const Math empty;
 
@@ -348,7 +348,7 @@ private:
   Glyph() {}
 
 public:
-  __no_copy_assign(Glyph);
+  no_copy_assign(Glyph);
 
   inline const Metrics& metrics() const { return _metrics; }
 

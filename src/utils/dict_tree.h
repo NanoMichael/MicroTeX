@@ -15,7 +15,7 @@ private:
   SortedDictTree<K, V>** _children;
 
 public:
-  __no_copy_assign(SortedDictTree);
+  no_copy_assign(SortedDictTree);
 
   SortedDictTree() = delete;
 
