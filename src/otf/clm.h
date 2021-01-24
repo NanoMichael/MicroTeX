@@ -9,12 +9,12 @@ namespace tex {
 
 class BinaryFileReader;
 
-/** Read a OTFFont from `.clm` file. */
+/** Read a Otf from `.clm` file. */
 class CLMReader final {
 private:
-  void readMeta(OTFFont& font, BinaryFileReader& reader) const;
+  void readMeta(Otf& font, BinaryFileReader& reader) const;
 
-  void readClassKernings(OTFFont& font, BinaryFileReader& reader) const;
+  void readClassKernings(Otf& font, BinaryFileReader& reader) const;
 
   ClassKerning* readClassKerning(BinaryFileReader& reader) const;
 
@@ -34,14 +34,14 @@ private:
 
   Glyph* readGlyph(bool isMathFont, BinaryFileReader& reader) const;
 
-  void readGlyphs(OTFFont& font, BinaryFileReader& reader) const;
+  void readGlyphs(Otf& font, BinaryFileReader& reader) const;
 
 public:
-  __no_copy_assign(CLMReader);
+  no_copy_assign(CLMReader);
 
   CLMReader() {}
 
-  OTFFont* read(const char* clmFilePath) const;
+  Otf* read(const char* clmFilePath) const;
 };
 
 }  // namespace tex

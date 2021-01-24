@@ -24,7 +24,7 @@ private:
   MathConsts() {}
 
 public:
-  __no_copy_assign(MathConsts);
+  no_copy_assign(MathConsts);
 
   inline i16 scriptPercentScaleDown() const { return _fields[0]; }
 

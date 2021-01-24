@@ -30,7 +30,7 @@ private:
   ClassKerning() {}
 
 public:
-  __no_copy_assign(ClassKerning);
+  no_copy_assign(ClassKerning);
 
   /**
    * Get the kerning value for the given left and right glyph.
@@ -44,7 +44,7 @@ public:
 };
 
 /** Class to represent an otf font */
-class OTFFont final {
+class Otf final {
 private:
   u16 _unicodeCount = 0;
   u32* _unicodes = nullptr;
@@ -61,13 +61,13 @@ private:
   u16 _glyphCount = 0;
   Glyph** _glyphs = nullptr;
 
-  OTFFont() {}
+  Otf() {}
 
 public:
-  __no_copy_assign(OTFFont);
+  no_copy_assign(Otf);
 
   /** Read otf font from file */
-  static OTFFont* fromFile(const char* filePath);
+  static Otf* fromFile(const char* filePath);
 
   inline bool isMathFont() const { return _isMathFont; }
 
@@ -102,7 +102,7 @@ public:
    */
   i16 classKerning(u16 left, u16 right) const;
 
-  ~OTFFont();
+  ~Otf();
 
   friend CLMReader;
 };

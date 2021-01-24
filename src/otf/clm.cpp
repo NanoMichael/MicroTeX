@@ -54,7 +54,7 @@ public:
   }
 };
 
-void CLMReader::readMeta(OTFFont& font, BinaryFileReader& reader) const {
+void CLMReader::readMeta(Otf& font, BinaryFileReader& reader) const {
   font._isMathFont = reader.read<bool>();
   font._em = reader.read<u16>();
   u16 count = reader.read<u16>();
@@ -102,7 +102,7 @@ ClassKerning* CLMReader::readClassKerning(BinaryFileReader& reader) const {
   return ptr;
 }
 
-void CLMReader::readClassKernings(OTFFont& font, BinaryFileReader& reader) const {
+void CLMReader::readClassKernings(Otf& font, BinaryFileReader& reader) const {
   const u16 count = reader.read<u16>();
   font._classKerningCount = count;
   if (count == 0) {
@@ -219,7 +219,7 @@ Glyph* CLMReader::readGlyph(bool isMathFont, BinaryFileReader& reader) const {
   return glyph;
 }
 
-void CLMReader::readGlyphs(OTFFont& font, BinaryFileReader& reader) const {
+void CLMReader::readGlyphs(Otf& font, BinaryFileReader& reader) const {
   const u16 count = reader.read<u16>();
   Glyph** glyphs = new Glyph*[count];
   for (u16 i = 0; i < count; i++) {
@@ -229,9 +229,9 @@ void CLMReader::readGlyphs(OTFFont& font, BinaryFileReader& reader) const {
   font._glyphs = glyphs;
 }
 
-OTFFont* CLMReader::read(const char* clmFilePath) const {
+Otf* CLMReader::read(const char* clmFilePath) const {
   BinaryFileReader reader(clmFilePath);
-  OTFFont* font = new OTFFont();
+  Otf* font = new Otf();
   readMeta(*font, reader);
   readClassKernings(*font, reader);
   font->_ligatures = readLigatures(reader);
