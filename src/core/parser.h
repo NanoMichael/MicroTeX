@@ -27,7 +27,7 @@ private:
   int _atIsLetter;
   bool _insertion;
   bool _arrayMode;
-  bool _ignoreWhiteSpace;
+  bool _isMathMode;
   bool _isPartial;
   bool _hideUnknownChar;
 
@@ -167,7 +167,7 @@ public:
    * @param latex the string to be parsed
    * @param formula the formula to hold the atoms
    * @param firstpass indicate if the parser must replace the user-defined macros by their content
-   * @param ignoreWhiteSpace a boolean to indicate if the parser must ignore or not the white space
+   * @param isMathMode a boolean to indicate if the parser must ignore or not the white space
    *
    * @throw ex_parse if the string could not be parsed correctly
    */
@@ -176,10 +176,10 @@ public:
     const std::wstring& latex,
     Formula* formula,
     bool firstpass,
-    bool ignoreWhiteSpace  //
+    bool isMathMode  //
   ) {
     init(isPartial, latex, formula, firstpass);
-    _ignoreWhiteSpace = ignoreWhiteSpace;
+    _isMathMode = isMathMode;
   }
 
   /**
@@ -189,7 +189,7 @@ public:
    * @param latex the string to be parsed
    * @param formula the formula to hold the atoms
    * @param firstpass indicate if the parser must replace the user-defined macros by their content
-   * @param ignoreWhiteSpace indicate if the parser must ignore or not the white space
+   * @param isMathMode indicate if the parser must ignore or not the white space
    *
    * @throw ex_parse if the string could not be parsed correctly
    */
@@ -197,10 +197,10 @@ public:
     const std::wstring& latex,
     Formula* formula,
     bool firstpass,
-    bool ignoreWhiteSpace  //
+    bool isMathMode  //
   ) {
     init(true, latex, formula, firstpass);
-    _ignoreWhiteSpace = ignoreWhiteSpace;
+    _isMathMode = isMathMode;
   }
 
   /** Reset the parser with a new latex expression */
@@ -238,11 +238,8 @@ public:
 
   inline void setArrayMode(bool arrayMode) { _arrayMode = arrayMode; }
 
-  /** Test if the parser must ignore white spaces */
-  inline bool isIgnoreWhiteSpace() const { return _ignoreWhiteSpace; }
-
   /** Test if the parser is in math mode  */
-  inline bool isMathMode() const { return _ignoreWhiteSpace; }
+  inline bool isMathMode() const { return _isMathMode; }
 
   /** Return the current position in the parsed string */
   inline int getPos() const { return _pos; }

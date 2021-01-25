@@ -432,7 +432,7 @@ macro(sizes) {
   else if (args[0] == L"Huge")
     f = 2.5f;
 
-  auto a = Formula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root;
+  auto a = Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root;
   return sptr<Atom>(new MonoScaleAtom(a, f));
 }
 

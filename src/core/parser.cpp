@@ -84,11 +84,11 @@ void TeXParser::init(
   _line = _col = 0;
   _group = 0;
   _atIsLetter = 0;
-  _insertion = _arrayMode = _ignoreWhiteSpace = false;
+  _insertion = _arrayMode = _isMathMode = false;
   _isPartial = _hideUnknownChar = true;
 
   _formula = formula;
-  _ignoreWhiteSpace = true;
+  _isMathMode = true;
   _isPartial = ispartial;
   if (!parsestring.empty()) {
     _parseString = parsestring;
@@ -115,7 +115,7 @@ void TeXParser::reset(const wstring& latex) {
   _insertion = false;
   _atIsLetter = 0;
   _arrayMode = false;
-  _ignoreWhiteSpace = true;
+  _isMathMode = true;
   firstpass();
 }
 
@@ -480,7 +480,7 @@ void TeXParser::getOptsArgs(int nbArgs, int opts, vector<wstring>& args) {
       }
     }
 
-    if (_ignoreWhiteSpace) skipWhiteSpace();
+    if (_isMathMode) skipWhiteSpace();
   }
 }
 
@@ -830,7 +830,7 @@ void TeXParser::parse() {
         break;
       case ' ': {
         _pos++;
-        if (!_ignoreWhiteSpace) {  // we are in mbox
+        if (!_isMathMode) {  // we are in mbox
           _formula->add(sptr<Atom>(new SpaceAtom()));
           _formula->add(sptr<Atom>(new BreakMarkAtom()));
           while (_pos < _len) {
@@ -842,7 +842,7 @@ void TeXParser::parse() {
       } break;
       case DOLLAR: {
         _pos++;
-        if (!_ignoreWhiteSpace) {  // we are in mbox
+        if (!_isMathMode) {  // we are in mbox
           TexStyle style = TexStyle::text;
           bool doubleDollar = false;
           if (_parseString[_pos] == DOLLAR) {
@@ -887,7 +887,7 @@ void TeXParser::parse() {
         _formula->add(getScripts(ch));
       } break;
       case SUB_SCRIPT: {
-        if (_ignoreWhiteSpace) {
+        if (_isMathMode) {
           _formula->add(getScripts(ch));
         } else {
           _formula->add(sptr<Atom>(new UnderScoreAtom()));
@@ -905,7 +905,7 @@ void TeXParser::parse() {
       } break;
       case PRIME_UTF:
       case PRIME: {
-        if (_ignoreWhiteSpace) {
+        if (_isMathMode) {
           _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
             popLastAtom(), nullptr, SymbolAtom::get("prime")))  //
           );
@@ -915,7 +915,7 @@ void TeXParser::parse() {
         _pos++;
       } break;
       case BACKPRIME: {
-        if (_ignoreWhiteSpace) {
+        if (_isMathMode) {
           _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
             popLastAtom(), nullptr, SymbolAtom::get("backprime")))  //
           );
@@ -925,7 +925,7 @@ void TeXParser::parse() {
         _pos++;
       } break;
       case DQUOTE: {
-        if (_ignoreWhiteSpace) {
+        if (_isMathMode) {
           _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
             popLastAtom(), nullptr, SymbolAtom::get("prime")))  //
           );
@@ -947,7 +947,7 @@ void TeXParser::parse() {
 }
 
 sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
-  if (_ignoreWhiteSpace) {
+  if (_isMathMode) {
     // the unicode Greek Letters in math mode are not drawn with the Greek font
     if (c >= 945 && c <= 969) {
       // Greek small letter
@@ -1023,7 +1023,7 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
       /*
            * In text mode (with command \text{})
            */
-      if (!_ignoreWhiteSpace) {
+      if (!_isMathMode) {
         auto it = Formula::_symbolTextMappings.find(c);
         if (it != Formula::_symbolTextMappings.end()) {
           auto atom = SymbolAtom::get(it->second);
@@ -1074,5 +1074,5 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
         new TextRenderingAtom(_parseString.substr(start, en - start + 1), infos));
     }
   }
-  return sptr<Atom>(new CharAtom(c, _formula->_textStyle, _ignoreWhiteSpace));
+  return sptr<Atom>(new CharAtom(c, _formula->_textStyle, _isMathMode));
 }

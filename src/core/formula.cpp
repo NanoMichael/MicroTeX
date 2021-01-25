@@ -45,8 +45,8 @@ Formula::Formula(
   const TeXParser& tp,
   const wstring& latex,
   const string& textStyle,
-  bool firstpass, bool ignoreWhiteSpace)
-    : _parser(tp.isPartial(), latex, this, firstpass, ignoreWhiteSpace) {
+  bool firstpass, bool isMathMode)
+    : _parser(tp.isPartial(), latex, this, firstpass, isMathMode) {
   _textStyle = textStyle;
   _xmlMap = tp._formula->_xmlMap;
   if (tp.isPartial()) {
@@ -122,8 +122,8 @@ Formula::Formula(const wstring& latex, const string& textStyle) : _parser(latex,
 
 Formula::Formula(
   const wstring& latex, const string& textStyle,
-  bool firstpass, bool ignoreWhiteSpace)
-    : _parser(latex, this, firstpass, ignoreWhiteSpace) {
+  bool firstpass, bool isMathMode)
+    : _parser(latex, this, firstpass, isMathMode) {
   _textStyle = textStyle;
   _parser.parse();
 }
@@ -159,18 +159,6 @@ Formula* Formula::add(const sptr<Atom>& el) {
   return this;
 }
 
-Formula* Formula::append(bool isPartial, const wstring& s) {
-  if (!s.empty()) {
-    TeXParser tp(isPartial, s, this);
-    tp.parse();
-  }
-  return this;
-}
-
-Formula* Formula::append(const wstring& s) {
-  return append(false, s);
-}
-
 void Formula::addImpl(const Formula* f) {
   if (f != nullptr) {
     RowAtom* rm = dynamic_cast<RowAtom*>(f->_root.get());
@@ -188,31 +176,6 @@ sptr<Box> Formula::createBox(Environment& style) {
 
 void Formula::setDEBUG(bool b) {
   Box::DEBUG = b;
-}
-
-Formula* Formula::setBackground(color c) {
-  if (istrans(c)) return this;
-  ColorAtom* ca = dynamic_cast<ColorAtom*>(_root.get());
-  if (ca != nullptr)
-    _root = sptr<Atom>(new ColorAtom(c, TRANS, _root));
-  else
-    _root = sptr<Atom>(new ColorAtom(_root, c, TRANS));
-  return this;
-}
-
-Formula* Formula::setColor(color c) {
-  if (istrans(c)) return this;
-  ColorAtom* ca = dynamic_cast<ColorAtom*>(_root.get());
-  if (ca != nullptr)
-    _root = sptr<Atom>(new ColorAtom(TRANS, c, _root));
-  else
-    _root = sptr<Atom>(new ColorAtom(_root, TRANS, c));
-  return this;
-}
-
-Formula* Formula::setFixedTypes(AtomType left, AtomType right) {
-  _root = sptr<Atom>(new TypedAtom(left, right, _root));
-  return this;
 }
 
 sptr<Formula> Formula::get(const wstring& name) {
@@ -299,24 +262,26 @@ void ArrayFormula::addRow() {
 
 void ArrayFormula::addRowSpecifier(const sptr<CellSpecifier>& spe) {
   auto it = _rowSpecifiers.find(_row);
-  if (it == _rowSpecifiers.end())
+  if (it == _rowSpecifiers.end()) {
     _rowSpecifiers[_row] = vector<sptr<CellSpecifier>>();
+  }
   _rowSpecifiers[_row].push_back(spe);
 }
 
 void ArrayFormula::addCellSpecifier(const sptr<CellSpecifier>& spe) {
   string str = tostring(_row) + tostring(_col);
   auto it = _cellSpecifiers.find(str);
-  if (it == _cellSpecifiers.end())
+  if (it == _cellSpecifiers.end()) {
     _cellSpecifiers[str] = vector<sptr<CellSpecifier>>();
+  }
   _cellSpecifiers[str].push_back(spe);
 }
 
-int ArrayFormula::rows() const {
+inline int ArrayFormula::rows() const {
   return _row;
 }
 
-int ArrayFormula::cols() const {
+inline int ArrayFormula::cols() const {
   return _col;
 }
 
@@ -343,9 +308,7 @@ void ArrayFormula::checkDimensions() {
 
   for (size_t i = 0; i < _row; i++) {
     size_t j = _array[i].size();
-    if (j != _col &&
-        _array[i][0] != nullptr &&
-        _array[i][0]->_type != AtomType::interText) {
+    if (j != _col && _array[i][0] != nullptr && _array[i][0]->_type != AtomType::interText) {
       // Fill the row with null atom
       vector<sptr<Atom>>& r = _array[i];
       for (; j < _col; j++) r.push_back(nullptr);

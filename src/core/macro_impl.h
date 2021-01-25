@@ -512,7 +512,7 @@ inline macro(cr) {
     arr.add(tp._formula->_root);
     arr.addRow();
     TeXParser parser(
-      tp.isPartial(), tp.forwardFromCurrentPos(), &arr, false, tp.isIgnoreWhiteSpace());
+      tp.isPartial(), tp.forwardFromCurrentPos(), &arr, false, tp.isMathMode());
     parser.parse();
     arr.checkDimensions();
     tp._formula->_root = arr.getAsVRow();
@@ -789,7 +789,7 @@ inline macro(mathrm) {
 
 inline macro(rm) {
   return sptr<Atom>(new RomanAtom(
-    Formula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
+    Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root));
 }
 
 inline macro(mathbf) {
@@ -799,7 +799,7 @@ inline macro(mathbf) {
 
 inline macro(bf) {
   return sptr<Atom>(new BoldAtom(sptr<Atom>(new RomanAtom(
-    Formula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root))));
+    Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root))));
 }
 
 inline macro(mathtt) {
@@ -808,7 +808,7 @@ inline macro(mathtt) {
 
 inline macro(tt) {
   return sptr<Atom>(new TtAtom(
-    Formula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
+    Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root));
 }
 
 inline macro(mathit) {
@@ -817,7 +817,7 @@ inline macro(mathit) {
 
 inline macro(it) {
   return sptr<Atom>(new ItAtom(
-    Formula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
+    Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root));
 }
 
 inline macro(mathsf) {
@@ -826,7 +826,7 @@ inline macro(mathsf) {
 
 inline macro(sf) {
   return sptr<Atom>(new SsAtom(
-    Formula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
+    Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root));
 }
 
 inline macro(LaTeX) {
@@ -1427,7 +1427,7 @@ inline macro(textsc) {
 
 inline macro(sc) {
   return sptr<Atom>(new SmallCpaAtom(
-    Formula(tp, tp.getOverArgument(), "", false, tp.isIgnoreWhiteSpace())._root));
+    Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root));
 }
 
 inline macro(quad) {
