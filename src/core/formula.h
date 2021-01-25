@@ -94,7 +94,7 @@ public:
   Formula(
     const TeXParser& tp, const std::wstring& latex,
     const std::string& textStyle, bool firstpass,
-    bool ignoreWhiteSpace  //
+    bool isMathMode  //
   );
 
   /** Create an empty Formula */
@@ -120,7 +120,7 @@ public:
 
   Formula(
     const std::wstring& latex, const std::string& textStyle,
-    bool firstpass, bool ignoreWhiteSpace  //
+    bool firstpass, bool isMathMode  //
   );
 
   /**
@@ -142,54 +142,8 @@ public:
   /** Inserts an atom at the end of the current formula. */
   Formula* add(const sptr<Atom>& atom);
 
-  Formula* append(const std::wstring& latex);
-
-  Formula* append(bool isPartial, const std::wstring& latex);
-
   /** Convert this Formula into a box, with the given style */
   sptr<Box> createBox(Environment& style);
-
-  /**
-   * Changes the background color of the <i>current</i> Formula into the
-   * given color. By default, a Formula has no background color, it's
-   * transparent. The backgrounds of subformula's will be painted on top of
-   * the background of the whole formula! Any changes that will be made to
-   * this Formula after this background color was set, will have the
-   * default background color (unless it will also be changed into another
-   * color afterwards)!
-   *
-   * @param bg the desired background color for the <i>current</i> Formula
-   * @return the modified Formula
-   */
-  Formula* setBackground(color bg);
-
-  /**
-   * Changes the (foreground) color of the <i>current</i> Formula into the
-   * given color. By default, the foreground color of a Formula is the
-   * foreground color of the component on which the TeXRender (created from this
-   * Formula) will be painted. The color of subformula's overrides the
-   * color of the whole formula. Any changes that will be made to this
-   * Formula after this color was set, will be painted in the default color
-   * (unless the color will also be changed afterwards into another color)!
-   *
-   * @param fg the desired foreground color for the <i>current</i> Formula
-   * @return the modified Formula
-   */
-  Formula* setColor(color fg);
-
-  /**
-   * Sets a fixed left and right type of the current Formula. This has an
-   * influence on the glue that will be inserted before and after this
-   * Formula.
-   *
-   * @param left the left type of this formula @see TeXConstants
-   * @param right the right type of this formula @see TeXConstants
-   * @return the modified Formula
-   *
-   * @throw ex_invalid_atom_type
-   *      if the given value does not represent a valid atom type
-   */
-  Formula* setFixedTypes(AtomType left, AtomType right);
 
   /** Test if this formula is in array mode. */
   virtual bool isArrayMode() const { return false; }
