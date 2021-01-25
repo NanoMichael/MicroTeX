@@ -46,33 +46,33 @@ string FontContext::_defaultVersionName = "mathnormal";
 
 #define version(name, digit, latinSmall, latinCapital, greekSmall, greekCapital)                 \
   {                                                                                              \
-    ##name, sptrOf<const MathVersion>(digit, latinSmall, latinCapital, greekSmall, greekCapital) \
+    #name, sptrOf<const MathVersion>(digit, latinSmall, latinCapital, greekSmall, greekCapital) \
   }
 
 map<string, sptr<const MathVersion>> FontContext::_mathStyles{
-  version("TeX", '0', 0x1D44E, 0x1D434, 0x1D6FC, 0x0391),
-  version("ISO", '0', 0x1D44E, 0x1D434, 0x1D6FC, 0x1D6E2),
-  version("French", '0', 0x1D44E, 'A', 0x03B1, 0x0391),
-  version("upright", '0', 'a', 'A', 0x03B1, 0x0391),
+  version(TeX, '0', 0x1D44E, 0x1D434, 0x1D6FC, 0x0391),
+  version(ISO, '0', 0x1D44E, 0x1D434, 0x1D6FC, 0x1D6E2),
+  version(French, '0', 0x1D44E, 'A', 0x03B1, 0x0391),
+  version(upright, '0', 'a', 'A', 0x03B1, 0x0391),
 };
 
 map<string, sptr<const MathVersion>> FontContext::_mathVersions{
   {_emptyVersionName, _mathStyles["TeX"]},
   {_defaultVersionName, _mathStyles["TeX"]},
-  version("mathrm", '0', 'a', 'A', 0x03B1, 0x0391),
-  version("mathbf", 0x1D7CE, 0x1D41A, 0x1D400, 0x1D6C2, 0x1D6A8),
-  version("mathit", '0', 0x1D44E, 0x1D434, 0x1D6FC, 0x1D6E2),
-  version("mathbfit", '0', 0x1D482, 0x1D468, 0x1D736, 0x1D71C),
-  version("mathcal", '0', 0x1D4B6, 0x1D49C, 0x03B1, 0x0391),
-  version("mathbfcal", '0', 0x1D4EA, 0x1D4D0, 0x03B1, 0x0391),
-  version("mathfrak", '0', 0x1D51E, 0x1D504, 0x03B1, 0x0391),
-  version("mathbb", 0x1D7D8, 0x1D552, 0x1D538, 0x03B1, 0x0391),
-  version("mathbffrak", '0', 0x1D586, 0x1D552, 0x03B1, 0x0391),
-  version("mathsf", 0x1D7E2, 0x1D5BA, 0x1D5A0, 0x03B1, 0x0391),
-  version("mathsfbf", 0x1D7EC, 0x1D5EE, 0x1D5D4, 0x1D770, 0x1D756),
-  version("mathsfit", '0', 0x1D622, 0x1D608, 0x03B1, 0x0391),
-  version("mathsfbfit", '0', 0x1D656, 0x1D63C, 0x1D7AA, 0x1D790),
-  version("mathtt", 0x1D7F6, 0x1D68A, 0x1D670, 0x03B1, 0x0391),
+  version(mathrm, '0', 'a', 'A', 0x03B1, 0x0391),
+  version(mathbf, 0x1D7CE, 0x1D41A, 0x1D400, 0x1D6C2, 0x1D6A8),
+  version(mathit, '0', 0x1D44E, 0x1D434, 0x1D6FC, 0x1D6E2),
+  version(mathbfit, '0', 0x1D482, 0x1D468, 0x1D736, 0x1D71C),
+  version(mathcal, '0', 0x1D4B6, 0x1D49C, 0x03B1, 0x0391),
+  version(mathbfcal, '0', 0x1D4EA, 0x1D4D0, 0x03B1, 0x0391),
+  version(mathfrak, '0', 0x1D51E, 0x1D504, 0x03B1, 0x0391),
+  version(mathbb, 0x1D7D8, 0x1D552, 0x1D538, 0x03B1, 0x0391),
+  version(mathbffrak, '0', 0x1D586, 0x1D552, 0x03B1, 0x0391),
+  version(mathsf, 0x1D7E2, 0x1D5BA, 0x1D5A0, 0x03B1, 0x0391),
+  version(mathsfbf, 0x1D7EC, 0x1D5EE, 0x1D5D4, 0x1D770, 0x1D756),
+  version(mathsfit, '0', 0x1D622, 0x1D608, 0x03B1, 0x0391),
+  version(mathsfbfit, '0', 0x1D656, 0x1D63C, 0x1D7AA, 0x1D790),
+  version(mathtt, 0x1D7F6, 0x1D68A, 0x1D670, 0x03B1, 0x0391),
 };
 
 map<string, sptr<TextFont>> FontContext::_mainFonts;
