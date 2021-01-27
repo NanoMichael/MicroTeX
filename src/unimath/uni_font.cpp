@@ -1,13 +1,13 @@
 #include "unimath/uni_font.h"
 
-#include <cstring>
+#include <utility>
 
 using namespace tex;
 using namespace std;
 
 MathVersion::MathVersion(
-  c32 digit, c32 latinSmall, c32 latinCapital, c32 greekSmall, c32 greekCapital  //
-  ) : _codepoints{0, digit, latinSmall, latinCapital, greekSmall, greekCapital} {}
+  c32 digit, c32 latinSmall, c32 latinCapital, c32 greekSmall, c32 greekCapital
+) : _codepoints{0, digit, latinSmall, latinCapital, greekSmall, greekCapital} {}
 
 pair<MathType, c32> MathVersion::ofChar(c32 codepoint) {
   if (codepoint >= '0' && codepoint <= '9') return {MathType::digit, codepoint - '0'};
@@ -25,15 +25,15 @@ pair<MathType, c32> MathVersion::ofChar(c32 codepoint) {
 c32 MathVersion::map(const c32 codepoint) const {
   vector<int> x;
   x.begin();
-  auto [type, offset] = ofChar(codepoint);
+  auto[type, offset] = ofChar(codepoint);
   return _codepoints[static_cast<u8>(type)] + offset;
 }
 
-OtfFont::OtfFont(const string& fontFile, const string& clmFile)
-    : _fontFile(fontFile), _otf(sptr<const Otf>(Otf::fromFile(clmFile.c_str()))) {}
+OtfFont::OtfFont(string fontFile, const string& clmFile)
+  : _fontFile(std::move(fontFile)), _otf(sptr<const Otf>(Otf::fromFile(clmFile.c_str()))) {}
 
 UniGlyph::UniGlyph(c32 unicode, const sptr<const OtfFont>& font)
-    : _unicode(unicode), _font(font) {
+  : _unicode(unicode), _font(font) {
   _glyph = font->otf().glyphOfUnicode(unicode);
 }
 
@@ -41,12 +41,12 @@ inline sptr<const OtfFont>& TextFont::operator[](const string& styleName) {
   return _styles[styleName];
 }
 
-string FontContext::_emptyVersionName = "";
-string FontContext::_defaultVersionName = "mathnormal";
+string FontContext::_emptyVersionName;
+string FontContext::_defaultVersionName{"mathnormal"};
 
 #define version(name, digit, latinSmall, latinCapital, greekSmall, greekCapital)                 \
   {                                                                                              \
-    #name, sptrOf<const MathVersion>(digit, latinSmall, latinCapital, greekSmall, greekCapital) \
+    #name, sptrOf<const MathVersion>(digit, latinSmall, latinCapital, greekSmall, greekCapital)  \
   }
 
 map<string, sptr<const MathVersion>> FontContext::_mathStyles{
@@ -79,16 +79,16 @@ map<string, sptr<TextFont>> FontContext::_mainFonts;
 map<string, sptr<const OtfFont>> FontContext::_mathFonts;
 
 void FontContext::setMainFont(const string& versionName, const vector<FontSpec>& params) {
-  TextFont* ptr = new TextFont();
+  auto* ptr = new TextFont();
   TextFont& f = *ptr;
-  for (auto [style, font, clm] : params) {
+  for (const auto&[style, font, clm] : params) {
     f[style] = sptrOf<const OtfFont>(font, clm);
   }
   _mainFonts[versionName] = sptr<TextFont>(ptr);
 }
 
 void FontContext::setMathFont(const FontSpec& params) {
-  auto [version, font, clm] = params;
+  const auto&[version, font, clm] = params;
   _mathFonts[version] = sptrOf<const OtfFont>(font, clm);
 }
 

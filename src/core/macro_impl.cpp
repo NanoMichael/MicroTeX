@@ -9,8 +9,7 @@ namespace tex {
 
 macro(hvspace) {
   size_t i;
-  for (i = 0; i < args[1].length() && !isalpha(args[1][i]); i++)
-    ;
+  for (i = 0; i < args[1].length() && !isalpha(args[1][i]); i++);
   float f = 0;
   valueof(args[1].substr(0, i), f);
 
@@ -30,8 +29,9 @@ macro(hvspace) {
     throw ex_parse("Unknown unit '" + str + "'!");
   }
 
-  return args[0][0] == L'h' ? sptr<Atom>(new SpaceAtom(unit, f, 0, 0))
-                            : sptr<Atom>(new SpaceAtom(unit, 0, f, 0));
+  return args[0][0] ==
+         L'h' ? sptr<Atom>(new SpaceAtom(unit, f, 0, 0))
+              : sptr<Atom>(new SpaceAtom(unit, 0, f, 0));
 }
 
 macro(rule) {
@@ -56,7 +56,7 @@ macro(cfrac) {
   sptr<FractionAtom> f(new FractionAtom(num._root, denom._root, true, numAlign, Alignment::center));
   f->_useKern = false;
   f->_type = AtomType::inner;
-  RowAtom* r = new RowAtom();
+  auto* r = new RowAtom();
   r->add(sptr<Atom>(new StyleAtom(TexStyle::display, f)));
   return sptr<Atom>(r);
 }
@@ -103,7 +103,7 @@ macro(genfrac) {
   R = dynamic_pointer_cast<SymbolAtom>(right._root);
 
   bool rule = true;
-  auto [unit, value] = SpaceAtom::getLength(args[3]);
+  auto[unit, value] = SpaceAtom::getLength(args[3]);
   if (args[3].empty()) {
     unit = UnitType::em;
     value = 0.f;
@@ -186,7 +186,7 @@ macro(atopwithdelims) {
 
 macro(abovewithdelims) {
   auto num = tp.getFormulaAtom();
-  auto [du, dv] = tp.getLength();
+  auto[du, dv] = tp.getLength();
   auto den = Formula(tp, tp.getOverArgument(), false)._root;
   if (num == nullptr || den == nullptr) {
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
@@ -365,9 +365,9 @@ macro(renewcommand) {
 }
 
 macro(raisebox) {
-  auto [ru, r] = SpaceAtom::getLength(args[1]);
-  auto [hu, h] = SpaceAtom::getLength(args[3]);
-  auto [du, d] = SpaceAtom::getLength(args[4]);
+  auto[ru, r] = SpaceAtom::getLength(args[1]);
+  auto[hu, h] = SpaceAtom::getLength(args[3]);
+  auto[du, d] = SpaceAtom::getLength(args[4]);
 
   return sptr<Atom>(new RaiseAtom(Formula(tp, args[2])._root, ru, r, hu, h, du, d));
 }
@@ -496,8 +496,7 @@ macro(xml) {
   while ((pos = str.find(L"$")) != wstring::npos) {
     if (pos < str.length() - 1) {
       start = pos;
-      while (++start < str.length() && isalpha(str[start]))
-        ;
+      while (++start < str.length() && isalpha(str[start]));
       wstring key = str.substr(pos + 1, start - pos - 1);
       string x = wide2utf8(key.c_str());
       auto it = m.find(x);

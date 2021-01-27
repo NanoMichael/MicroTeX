@@ -20,10 +20,10 @@ class Environment;
  * can be composed of other child boxes that can possibly be shifted (up, down,
  * left or right). Child boxes can also be positioned outside their parent's box
  * (defined by it's dimensions).
- *
+ * <p>
  * Subclasses must implement the abstract
  * Box#draw(Graphics2D, float, float) method (that paints the box).
- * 
+ * <p>
  * They must also implement the abstract Box#getLastFontId() method (the last font 
  * that will be used later when this box will be painted).
  */
@@ -125,7 +125,7 @@ public:
     return _children;
   }
 
-  virtual ~Box() {}
+  virtual ~Box() = default;
 };
 
 /**
@@ -151,7 +151,7 @@ public:
   /** The alignment type of the atom (default value: none) */
   Alignment _alignment = Alignment::none;
 
-  Atom() {}
+  Atom() = default;
 
   /**
    * Get the type of the leftermost child atom. Most atoms have no child
@@ -188,7 +188,7 @@ public:
   /** Shallow clone a atom from this atom. */
   virtual sptr<Atom> clone() const = 0;
 
-  virtual ~Atom() {}
+  virtual ~Atom() = default;
 
 #ifndef __decl_clone
 #define __decl_clone(type) \

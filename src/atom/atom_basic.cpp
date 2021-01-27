@@ -1,5 +1,6 @@
 #include "atom/atom_basic.h"
 
+#include <memory>
 #include <sstream>
 
 #include "atom/box.h"
@@ -38,7 +39,7 @@ sptr<Box> MathAtom::createBox(Environment& env) {
 sptr<Box> HlineAtom::createBox(Environment& env) {
   float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
   Box* b = new HorizontalRule(drt, _width, _shift, _color, false);
-  VerticalBox* vb = new VerticalBox();
+  auto* vb = new VerticalBox();
   vb->add(sptr<Box>(b));
   vb->_type = AtomType::hline;
   return sptr<Box>(vb);
@@ -49,14 +50,14 @@ SpaceAtom UnderScoreAtom::_s(UnitType::em, 0.06f, 0, 0);
 
 sptr<Box> UnderScoreAtom::createBox(Environment& env) {
   float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-  HorizontalBox* hb = new HorizontalBox(_s.createBox(env));
+  auto* hb = new HorizontalBox(_s.createBox(env));
   hb->add(sptr<Box>(new HorizontalRule(drt, _w.createBox(env)->_width, 0)));
   return sptr<Box>(hb);
 }
 
 CumulativeScriptsAtom::CumulativeScriptsAtom(
   const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup) {
-  CumulativeScriptsAtom* ca = dynamic_cast<CumulativeScriptsAtom*>(base.get());
+  auto* ca = dynamic_cast<CumulativeScriptsAtom*>(base.get());
   ScriptsAtom* sa = nullptr;
   if (ca != nullptr) {
     _base = ca->_base;
@@ -66,14 +67,14 @@ CumulativeScriptsAtom::CumulativeScriptsAtom(
     _sub = ca->_sub;
   } else if ((sa = dynamic_cast<ScriptsAtom*>(base.get()))) {
     _base = sa->_base;
-    _sup = sptr<RowAtom>(new RowAtom(sa->_sup));
-    _sub = sptr<RowAtom>(new RowAtom(sa->_sub));
+    _sup = sptrOf<RowAtom>(sa->_sup);
+    _sub = sptrOf<RowAtom>(sa->_sub);
     _sup->add(sup);
     _sub->add(sub);
   } else {
     _base = base;
-    _sup = sptr<RowAtom>(new RowAtom(sup));
-    _sub = sptr<RowAtom>(new RowAtom(sub));
+    _sup = sptrOf<RowAtom>(sup);
+    _sub = sptrOf<RowAtom>(sub);
   }
 }
 
@@ -98,7 +99,7 @@ sptr<Box> TextRenderingAtom::createBox(Environment& env) {
     return sptr<Box>(new TextRenderingBox(
       _str, _type, DefaultTeXFont::getSizeFactor(env.getStyle())));
   }
-  DefaultTeXFont* tf = (DefaultTeXFont*)(env.getTeXFont().get());
+  auto* tf = (DefaultTeXFont*) (env.getTeXFont().get());
   int type = tf->_isIt ? ITALIC : PLAIN;
   type = type | (tf->_isBold ? BOLD : 0);
   bool kerning = tf->_isRoman;
@@ -140,8 +141,7 @@ pair<UnitType, float> SpaceAtom::getLength(const string& lgth) {
   if (lgth.empty()) return {UnitType::pixel, 0.f};
 
   size_t i = 0;
-  for (; i < lgth.size() && !isalpha(lgth[i]); i++)
-    ;
+  for (; i < lgth.size() && !isalpha(lgth[i]); i++);
   float f = 0;
   valueof(lgth.substr(0, i), f);
 
@@ -170,7 +170,7 @@ sptr<CharFont> FixedCharAtom::getCharFont(TeXFont& tf) {
 }
 
 sptr<Box> FixedCharAtom::createBox(Environment& env) {
-  auto i = env.getTeXFont();
+  const auto& i = env.getTeXFont();
   TeXFont& tf = *i;
   Char c = tf.getChar(*_cf, env.getStyle());
   return sptr<Box>(new CharBox(c));
@@ -186,11 +186,13 @@ void SymbolAtom::_init_() {
 }
 
 #ifdef HAVE_LOG
+
 ostream& tex::operator<<(ostream& os, const SymbolAtom& s) {
   os << "SymbolAtom { "
      << "name: " << s._name << ", delimiter: " << s._delimiter << " }";
   return os;
 }
+
 #endif  // HAVE_LOG
 
 SymbolAtom::SymbolAtom(const string& name, AtomType type, bool del) : _unicode(0) {
@@ -201,7 +203,7 @@ SymbolAtom::SymbolAtom(const string& name, AtomType type, bool del) : _unicode(0
 }
 
 sptr<Box> SymbolAtom::createBox(Environment& env) {
-  auto i = env.getTeXFont();
+  const auto& i = env.getTeXFont();
   TeXFont& tf = *i;
   TexStyle style = env.getStyle();
   Char c = tf.getChar(_name, style);
@@ -307,9 +309,9 @@ bitset<16> RowAtom::_initLigKernSet_() {
 }
 
 RowAtom::RowAtom(const sptr<Atom>& el)
-    : _lookAtLastAtom(false), _previousAtom(nullptr), _canBreak(true) {
+  : _lookAtLastAtom(false), _previousAtom(nullptr), _breakable(true) {
   if (el != nullptr) {
-    RowAtom* x = dynamic_cast<RowAtom*>(el.get());
+    auto* x = dynamic_cast<RowAtom*>(el.get());
     if (x != nullptr) {
       // no need to make an mrow the only element of a mrow
       _elements.insert(_elements.end(), x->_elements.begin(), x->_elements.end());
@@ -370,14 +372,14 @@ AtomType RowAtom::rightType() const {
 sptr<Box> RowAtom::createBox(Environment& env) {
   auto x = env.getTeXFont();
   TeXFont& tf = *x;
-  HorizontalBox* hbox = new HorizontalBox();
+  auto* hbox = new HorizontalBox();
 
   // convert atoms to boxes and add to the horizontal box
   int e = _elements.size() - 1;
   for (int i = -1; i < e;) {
     auto at = _elements[++i];
     bool markAdded = false;
-    BreakMarkAtom* ba = dynamic_cast<BreakMarkAtom*>(at.get());
+    auto* ba = dynamic_cast<BreakMarkAtom*>(at.get());
     while (ba != nullptr) {
       if (!markAdded) markAdded = true;
       if (i < e) {
@@ -398,7 +400,7 @@ sptr<Box> RowAtom::createBox(Environment& env) {
     float kern = 0;
     while (i < e && atom->rightType() == AtomType::ordinary && atom->isCharSymbol()) {
       auto next = _elements[++i];
-      CharSymbol* c = dynamic_cast<CharSymbol*>(next.get());
+      auto* c = dynamic_cast<CharSymbol*>(next.get());
       if (c != nullptr && _ligKernSet[static_cast<i8>(next->leftType())]) {
         atom->markAsTextSymbol();
         auto l = atom->getCharFont(tf);
@@ -410,7 +412,7 @@ sptr<Box> RowAtom::createBox(Environment& env) {
           break;  // iterator remains unchanged (no ligature!)
         } else {
           // fixed with ligature
-          atom->changeAtom(sptr<FixedCharAtom>(new FixedCharAtom(lig)));
+          atom->changeAtom(std::make_shared<FixedCharAtom>(lig));
         }
       } else {
         i--;
@@ -426,14 +428,14 @@ sptr<Box> RowAtom::createBox(Environment& env) {
     // insert atom's box
     atom->setPreviousAtom(_previousAtom);
     auto b = atom->createBox(env);
-    CharBox* cb = dynamic_cast<CharBox*>(b.get());
+    auto* cb = dynamic_cast<CharBox*>(b.get());
     if (cb != nullptr && atom->isCharInMathMode()) {
       // When we have a single char, we need to add italic correction
       // As an example: (TVY) looks crappy...
       cb->addItalicCorrectionToWidth();
     }
 
-    if (_canBreak) {
+    if (_breakable) {
       if (_breakEveywhere) {
         hbox->addBreakPosition(hbox->_children.size());
       } else {
@@ -470,16 +472,16 @@ VRowAtom::VRowAtom() {
   _addInterline = false;
   _valign = Alignment::center;
   _halign = Alignment::none;
-  _raise = sptr<SpaceAtom>(new SpaceAtom(UnitType::ex, 0, 0, 0));
+  _raise = sptrOf<SpaceAtom>(UnitType::ex, 0, 0, 0);
 }
 
 VRowAtom::VRowAtom(const sptr<Atom>& el) {
   _addInterline = false;
   _valign = Alignment::center;
   _halign = Alignment::none;
-  _raise = sptr<SpaceAtom>(new SpaceAtom(UnitType::ex, 0, 0, 0));
+  _raise = sptrOf<SpaceAtom>(UnitType::ex, 0, 0, 0);
   if (el != nullptr) {
-    VRowAtom* a = dynamic_cast<VRowAtom*>(el.get());
+    auto* a = dynamic_cast<VRowAtom*>(el.get());
     if (a != nullptr) {
       _elements.insert(_elements.end(), a->_elements.begin(), a->_elements.end());
     } else {
@@ -489,7 +491,7 @@ VRowAtom::VRowAtom(const sptr<Atom>& el) {
 }
 
 void VRowAtom::setRaise(UnitType unit, float r) {
-  _raise = sptr<SpaceAtom>(new SpaceAtom(unit, r, 0, 0));
+  _raise = sptrOf<SpaceAtom>(unit, r, 0, 0);
 }
 
 sptr<Atom> VRowAtom::popLastAtom() {
@@ -507,7 +509,7 @@ void VRowAtom::append(const sptr<Atom>& el) {
 }
 
 sptr<Box> VRowAtom::createBox(Environment& env) {
-  VerticalBox* vb = new VerticalBox();
+  auto* vb = new VerticalBox();
   sptr<Box> interline(new StrutBox(0, env.getInterline(), 0, 0));
 
   if (_halign != Alignment::none) {
@@ -559,7 +561,7 @@ sptr<Box> VRowAtom::createBox(Environment& env) {
 const color ColorAtom::_default = black;
 
 ColorAtom::ColorAtom(const sptr<Atom>& atom, color bg, color c) : _background(bg), _color(c) {
-  _elements = sptr<RowAtom>(new RowAtom(atom));
+  _elements = sptrOf<RowAtom>(atom);
 }
 
 void ColorAtom::defineColor(const string& name, color c) {
@@ -603,11 +605,11 @@ color ColorAtom::getColor(string s) {
 
     if (r == 0.f && g == 0.f && b == 0.f) return _default;
 
-    if (r == (int)r && g == (int)g && b == (int)b &&
+    if (r == (int) r && g == (int) g && b == (int) b &&
         R.find('.') == en && G.find('.') == en && B.find('.') == en) {
-      int ir = (int)min(255.f, max(0.f, r));
-      int ig = (int)min(255.f, max(0.f, g));
-      int ib = (int)min(255.f, max(0.f, b));
+      int ir = (int) min(255.f, max(0.f, r));
+      int ig = (int) min(255.f, max(0.f, g));
+      int ib = (int) min(255.f, max(0.f, b));
       return rgb(ir, ig, ib);
     }
     r = min(1.f, max(0.f, r));
@@ -652,18 +654,14 @@ sptr<Box> RomanAtom::createBox(Environment& env) {
 }
 
 PhantomAtom::PhantomAtom(const sptr<Atom>& el) {
-  if (el == nullptr)
-    _elements = sptr<RowAtom>(new RowAtom());
-  else
-    _elements = sptr<RowAtom>(new RowAtom(el));
+  if (el == nullptr) _elements = sptrOf<RowAtom>();
+  else _elements = sptrOf<RowAtom>(el);
   _w = _h = _d = true;
 }
 
 PhantomAtom::PhantomAtom(const sptr<Atom>& el, bool w, bool h, bool d) {
-  if (el == nullptr)
-    _elements = sptr<RowAtom>(new RowAtom());
-  else
-    _elements = sptr<RowAtom>(new RowAtom(el));
+  if (el == nullptr) _elements = sptrOf<RowAtom>();
+  else _elements = sptrOf<RowAtom>(el);
   _w = w, _h = h, _d = d;
 }
 
@@ -678,14 +676,11 @@ sptr<Box> PhantomAtom::createBox(Environment& env) {
 
 /************************************ AccentedAtom implementation *********************************/
 
-void AccentedAtom::init(
-  const sptr<Atom>& base, const sptr<Atom>& accent) {
+void AccentedAtom::init(const sptr<Atom>& base, const sptr<Atom>& accent) {
   _base = base;
-  AccentedAtom* a = dynamic_cast<AccentedAtom*>(base.get());
-  if (a != nullptr)
-    _underbase = a->_underbase;
-  else
-    _underbase = base;
+  auto* a = dynamic_cast<AccentedAtom*>(base.get());
+  if (a != nullptr) _underbase = a->_underbase;
+  else _underbase = base;
 
   _accent = dynamic_pointer_cast<SymbolAtom>(accent);
   if (_accent == nullptr) throw ex_invalid_symbol_type("Invalid accent!");
@@ -694,30 +689,26 @@ void AccentedAtom::init(
   _changeSize = true;
 }
 
-AccentedAtom::AccentedAtom(
-  const sptr<Atom>& base, const string& name) {
+AccentedAtom::AccentedAtom(const sptr<Atom>& base, const string& name) {
   _accent = SymbolAtom::get(name);
   if (_accent->_type == AtomType::accent) {
     _base = base;
-    AccentedAtom* a = dynamic_cast<AccentedAtom*>(base.get());
-    if (a != nullptr)
-      _underbase = a->_underbase;
-    else
-      _underbase = base;
+    auto* a = dynamic_cast<AccentedAtom*>(base.get());
+    if (a != nullptr) _underbase = a->_underbase;
+    else _underbase = base;
   } else {
     throw ex_invalid_symbol_type(
-      "The symbol with the name '" +
-      name + "' is not defined as an accent (" +
-      TeXSymbolParser::TYPE_ATTR + "='acc') in '" +
-      TeXSymbolParser::RESOURCE_NAME + "'!");
+      "The symbol with the name '"
+      + name + "' is not defined as an accent ("
+      + TeXSymbolParser::TYPE_ATTR + "='acc') in '"
+      + TeXSymbolParser::RESOURCE_NAME + "'!"
+    );
   }
   _changeSize = true;
   _acc = false;
 }
 
-AccentedAtom::AccentedAtom(
-  const sptr<Atom>& base,
-  const sptr<Formula>& acc) {
+AccentedAtom::AccentedAtom(const sptr<Atom>& base, const sptr<Formula>& acc) {
   if (acc == nullptr) throw ex_invalid_formula("the accent Formula can't be null!");
   _changeSize = true;
   _acc = false;
@@ -729,10 +720,11 @@ AccentedAtom::AccentedAtom(
     _base = base;
   } else {
     throw ex_invalid_symbol_type(
-      "The accent Formula represents a single symbol with the name '" +
-      _accent->getName() + "', but this symbol is not defined as accent (" +
-      TeXSymbolParser::TYPE_ATTR + "='acc') in '" +
-      TeXSymbolParser::RESOURCE_NAME + "'!");
+      "The accent Formula represents a single symbol with the name '"
+      + _accent->getName() + "', but this symbol is not defined as accent ("
+      + TeXSymbolParser::TYPE_ATTR + "='acc') in '"
+      + TeXSymbolParser::RESOURCE_NAME + "'!"
+    );
   }
 }
 
@@ -741,23 +733,24 @@ sptr<Box> AccentedAtom::createBox(Environment& env) {
   const TexStyle style = env.getStyle();
 
   // set base in cramped style
-  auto b = (_base == nullptr ? sptr<Box>(new StrutBox(0, 0, 0, 0))
-                             : _base->createBox(*(env.crampStyle())));
+  auto b =
+    (_base == nullptr
+     ? sptr<Box>(new StrutBox(0, 0, 0, 0))
+     : _base->createBox(*(env.crampStyle()))
+    );
 
   float u = b->_width;
   float s = 0;
-  CharSymbol* sym = dynamic_cast<CharSymbol*>(_underbase.get());
+  auto* sym = dynamic_cast<CharSymbol*>(_underbase.get());
   if (sym != nullptr) s = tf->getSkew(*(sym->getCharFont(*tf)), style);
 
   // retrieve best char form the accent symbol
-  SymbolAtom* acc = (SymbolAtom*)_accent.get();
+  auto* acc = (SymbolAtom*) _accent.get();
   Char ch = tf->getChar(acc->getName(), style);
   while (tf->hasNextLarger(ch)) {
     Char larger = tf->getNextLarger(ch, style);
-    if (larger.getWidth() <= u)
-      ch = larger;
-    else
-      break;
+    if (larger.getWidth() <= u) ch = larger;
+    else break;
   }
 
   // calculate delta
@@ -765,7 +758,7 @@ sptr<Box> AccentedAtom::createBox(Environment& env) {
   float delta = _acc ? ec : min(b->_height, tf->getXHeight(style, ch.getFontCode()));
 
   // create vertical box
-  VerticalBox* vBox = new VerticalBox();
+  auto* vBox = new VerticalBox();
 
   // accent
   sptr<Box> y(nullptr);
@@ -797,7 +790,7 @@ sptr<Box> AccentedAtom::createBox(Environment& env) {
   vBox->_height = total - d;
 
   if (diff < 0) {
-    HorizontalBox* hb = new HorizontalBox(sptr<Box>(new StrutBox(diff, 0, 0, 0)));
+    auto* hb = new HorizontalBox(sptr<Box>(new StrutBox(diff, 0, 0, 0)));
     hb->add(sptr<Box>(vBox));
     hb->_width = u;
     return sptr<Box>(hb);
@@ -830,7 +823,7 @@ sptr<Box> UnderOverAtom::createBox(Environment& env) {
   }
 
   // create vertical box
-  VerticalBox* vBox = new VerticalBox();
+  auto* vBox = new VerticalBox();
 
   // last font used by base (for mono-space atoms following)
   env.setLastFontId(b->getLastFontId());
@@ -895,9 +888,9 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
   // set delta and preliminary shift-up and shift-down values
   float delta = 0, shiftUp = 0, shiftDown = 0;
 
-  AccentedAtom* acc = dynamic_cast<AccentedAtom*>(_base.get());
-  SymbolAtom* sym = dynamic_cast<SymbolAtom*>(_base.get());
-  CharSymbol* cs = dynamic_cast<CharSymbol*>(_base.get());
+  auto* acc = dynamic_cast<AccentedAtom*>(_base.get());
+  auto* sym = dynamic_cast<SymbolAtom*>(_base.get());
+  auto* cs = dynamic_cast<CharSymbol*>(_base.get());
   if (acc != nullptr) {
     // special case: accent
     auto box = acc->_base->createBox(*(env.crampStyle()));
@@ -912,7 +905,7 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
 
     float axish = env.getTeXFont()->getAxisHeight(env.getStyle());
     x->_shift = -(x->_height + x->_depth) / 2 - axish;
-    hor = sptr<HorizontalBox>(new HorizontalBox(x));
+    hor = sptrOf<HorizontalBox>(x);
 
     // include delta in width or not?
     delta = c.getItalic();
@@ -943,7 +936,7 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
     // calculate and set shift amount
     x->_shift = max(
       max(shiftDown, tf->getSub1(style)),
-      x->_height - 0.8f * abs(tf->getXHeight(style, lastFontId))  //
+      x->_height - 0.8f * abs(tf->getXHeight(style, lastFontId))
     );
     hor->add(x);
     hor->add(deltaSymbol);
@@ -962,12 +955,9 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
   sup->add(SCRIPT_SPACE.createBox(env));
   // adjust shift-up
   float p;
-  if (style == TexStyle::display)
-    p = tf->getSup1(style);
-  else if (env.crampStyle()->getStyle() == style)
-    p = tf->getSup3(style);
-  else
-    p = tf->getSup2(style);
+  if (style == TexStyle::display) p = tf->getSup1(style);
+  else if (env.crampStyle()->getStyle() == style) p = tf->getSup3(style);
+  else p = tf->getSup2(style);
   shiftUp = max(max(shiftUp, p), x->_depth + abs(tf->getXHeight(style, lastFontId)) / 4);
 
   if (_sub == nullptr) {
@@ -990,7 +980,7 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
       // too small
       shiftUp += 4 * drt - interspace;
       // set bottom super script at least 4/5 of X-height above baseline
-      float psi = 0.8 * abs(tf->getXHeight(style, lastFontId)) - (shiftUp - x->_depth);
+      float psi = 0.8f * abs(tf->getXHeight(style, lastFontId)) - (shiftUp - x->_depth);
 
       if (psi > 0) {
         shiftUp += psi;
@@ -999,7 +989,7 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
     }
 
     // create total box
-    VerticalBox* vBox = new VerticalBox();
+    auto* vBox = new VerticalBox();
     sup->_shift = delta;
     vBox->add(sup);
     // recalculate inter-space
@@ -1016,8 +1006,7 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
 
 /************************************ BigOperatorAtom implementation ******************************/
 
-void BigOperatorAtom::init(
-  const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over) {
+void BigOperatorAtom::init(const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over) {
   _base = base;
   _under = under;
   _over = over;
@@ -1033,7 +1022,7 @@ sptr<Box> BigOperatorAtom::changeWidth(const sptr<Box>& b, float maxw) {
 }
 
 sptr<Box> BigOperatorAtom::createSideSets(Environment& env) {
-  SideSetsAtom* sa = static_cast<SideSetsAtom*>(_base.get());
+  auto* sa = static_cast<SideSetsAtom*>(_base.get());
   auto sl = sa->_left, sr = sa->_right, sb = sa->_base;
   if (sb == nullptr) {
     sptr<Atom> in(new CharAtom(L'M', "mathnormal"));
@@ -1045,8 +1034,8 @@ sptr<Box> BigOperatorAtom::createSideSets(Environment& env) {
   pa->_limitsType = LimitsType::noLimits;
   pa->_type = AtomType::bigOperator;
 
-  ScriptsAtom* l = dynamic_cast<ScriptsAtom*>(sl.get());
-  ScriptsAtom* r = dynamic_cast<ScriptsAtom*>(sr.get());
+  auto* l = dynamic_cast<ScriptsAtom*>(sl.get());
+  auto* r = dynamic_cast<ScriptsAtom*>(sr.get());
 
   if (l != nullptr && l->_base == nullptr) {
     l->_base = pa;
@@ -1069,7 +1058,7 @@ sptr<Box> BigOperatorAtom::createSideSets(Environment& env) {
 
   float delta = 0;
   if (sb->_type == AtomType::bigOperator) {
-    SymbolAtom* sym = dynamic_cast<SymbolAtom*>(sb.get());
+    auto* sym = dynamic_cast<SymbolAtom*>(sb.get());
     if (sym != nullptr) {
       Char c = tf->getChar(sym->getName(), style);
       delta = c.getItalic();
@@ -1082,7 +1071,7 @@ sptr<Box> BigOperatorAtom::createSideSets(Environment& env) {
   if (_under != nullptr) z = _under->createBox(*(env.subStyle()));
 
   // build vertical box
-  VerticalBox* vbox = new VerticalBox();
+  auto* vbox = new VerticalBox();
   float bigop5 = tf->getBigOpSpacing5(style), kern = 0;
 
   if (_over != nullptr) {
@@ -1120,10 +1109,10 @@ sptr<Box> BigOperatorAtom::createBox(Environment& env) {
   RowAtom* row = nullptr;
   auto Base = _base;
 
-  TypedAtom* ta = dynamic_cast<TypedAtom*>(_base.get());
+  auto* ta = dynamic_cast<TypedAtom*>(_base.get());
   if (ta != nullptr) {
     auto atom = ta->getBase();
-    RowAtom* ra = dynamic_cast<RowAtom*>(atom.get());
+    auto* ra = dynamic_cast<RowAtom*>(atom.get());
     if (ra != nullptr && ra->_lookAtLastAtom && _base->_limitsType != LimitsType::limits) {
       _base = ra->popLastAtom();
       row = ra;
@@ -1135,7 +1124,8 @@ sptr<Box> BigOperatorAtom::createBox(Environment& env) {
   if ((_limitsSet && !_limits) ||
       (!_limitsSet && style >= TexStyle::text) ||
       (_base->_limitsType == LimitsType::noLimits) ||
-      (_base->_limitsType == LimitsType::normal && style >= TexStyle::text)) {
+      (_base->_limitsType == LimitsType::normal && style >= TexStyle::text)
+    ) {
     // if explicitly set to not display as limits or if not set and
     // style is not display, then attach over and under as regular sub or
     // super script
@@ -1153,7 +1143,7 @@ sptr<Box> BigOperatorAtom::createBox(Environment& env) {
   sptr<Box> y(nullptr);
   float delta;
 
-  SymbolAtom* sym = dynamic_cast<SymbolAtom*>(_base.get());
+  auto* sym = dynamic_cast<SymbolAtom*>(_base.get());
   if (sym != nullptr && _base->_type == AtomType::bigOperator) {
     // single big operator symbol
     Char c = tf->getChar(sym->getName(), style);
@@ -1181,7 +1171,7 @@ sptr<Box> BigOperatorAtom::createBox(Environment& env) {
   z = changeWidth(z, maxW);
 
   // build vertical box
-  VerticalBox* vBox = new VerticalBox();
+  auto* vBox = new VerticalBox();
 
   float bigop5 = tf->getBigOpSpacing5(style), kern = 0;
 
@@ -1213,7 +1203,7 @@ sptr<Box> BigOperatorAtom::createBox(Environment& env) {
   vBox->_depth = total - h;
 
   if (row != nullptr) {
-    HorizontalBox* hb = new HorizontalBox(row->createBox(env));
+    auto* hb = new HorizontalBox(row->createBox(env));
     row->add(_base);
     hb->add(sptr<Box>(vBox));
     _base = Base;
@@ -1234,8 +1224,8 @@ sptr<Box> SideSetsAtom::createBox(Environment& env) {
   auto bb = _base->createBox(env);
   auto pa = sptr<Atom>(new PlaceholderAtom(0, bb->_height, bb->_depth, bb->_shift));
 
-  ScriptsAtom* l = dynamic_cast<ScriptsAtom*>(_left.get());
-  ScriptsAtom* r = dynamic_cast<ScriptsAtom*>(_right.get());
+  auto* l = dynamic_cast<ScriptsAtom*>(_left.get());
+  auto* r = dynamic_cast<ScriptsAtom*>(_right.get());
 
   if (l != nullptr && l->_base == nullptr) {
     l->_base = pa;

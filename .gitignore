@@ -14,3 +14,5 @@ src/doc
 src/Doxyfile
 .vscode/
 prebuilt-scripts/
+.idea/
+cmake-build-debug/

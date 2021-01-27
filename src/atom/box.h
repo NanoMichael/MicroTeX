@@ -8,8 +8,11 @@
 namespace tex {
 
 class Char;
+
 struct CharFont;
+
 class TeXFont;
+
 class SymbolAtom;
 
 /***************************************************************************************************
@@ -64,11 +67,11 @@ private:
 public:
   std::vector<int> _breakPositions;
 
-  HorizontalBox() {}
+  HorizontalBox() = default;
 
   HorizontalBox(const sptr<Box>& b, float w, Alignment alignment);
 
-  HorizontalBox(const sptr<Box>& b);
+  explicit HorizontalBox(const sptr<Box>& b);
 
   sptr<HorizontalBox> cloneBox();
 
@@ -203,7 +206,7 @@ private:
 public:
   ColorBox() = delete;
 
-  ColorBox(const sptr<Box>& box, color fg = trans, color bg = trans);
+  explicit ColorBox(const sptr<Box>& box, color fg = trans, color bg = trans);
 
   void draw(Graphics2D& g2, float x, float y) override;
 
@@ -248,7 +251,7 @@ private:
 public:
   ReflectBox() = delete;
 
-  ReflectBox(const sptr<Box>& b);
+  explicit ReflectBox(const sptr<Box>& b);
 
   void draw(Graphics2D& g2, float x, float y) override;
 
@@ -366,13 +369,13 @@ private:
 public:
   OvalBox() = delete;
 
-  OvalBox(
+  explicit OvalBox(
     const sptr<FramedBox>& fbox,
     float multiplier = 0.5f,
-    float diameter = 0.f  //
-    ) : FramedBox(fbox->_box, fbox->_thickness, fbox->_space),
-        _multiplier(multiplier),
-        _diameter(diameter) {}
+    float diameter = 0.f
+  ) : FramedBox(fbox->_box, fbox->_thickness, fbox->_space),
+      _multiplier(multiplier),
+      _diameter(diameter) {}
 
   void draw(Graphics2D& g2, float x, float y) override;
 };
@@ -388,7 +391,7 @@ public:
   ShadowBox() = delete;
 
   ShadowBox(const sptr<FramedBox>& fbox, float shadowRule)
-      : FramedBox(fbox->_box, fbox->_thickness, fbox->_space) {
+    : FramedBox(fbox->_box, fbox->_thickness, fbox->_space) {
     _shadowRule = shadowRule;
     _depth += shadowRule;
     _width += shadowRule;
@@ -462,7 +465,7 @@ public:
    *
    * @param chr a Char-object containing the character's font information.
    */
-  CharBox(const Char& chr);
+  explicit CharBox(const Char& chr);
 
   void addItalicCorrectionToWidth();
 
@@ -476,7 +479,7 @@ class TextRenderingBox : public Box {
 private:
   static sptr<Font> _font;
   sptr<TextLayout> _layout;
-  float _size;
+  float _size{};
 
   void init(const std::wstring& str, int type, float size, const sptr<Font>& font, bool kerning);
 
@@ -485,7 +488,7 @@ public:
 
   TextRenderingBox(
     const std::wstring& str, int type, float size,
-    const sptr<Font>& font, bool kerning  //
+    const sptr<Font>& font, bool kerning
   ) {
     init(str, type, size, font, kerning);
   }
@@ -522,7 +525,7 @@ public:
   }
 
   WrapperBox(const sptr<Box>& base, float width, float rowheight, float rowdepth, Alignment align)
-      : _base(base), _l(0) {
+    : _base(base), _l(0) {
     _height = rowheight;
     _depth = rowdepth;
     _width = width;
@@ -571,12 +574,12 @@ private:
   // Every 4 elements represent a line, thus (x1, y1, x2, y2)
   std::vector<float> _lines;
   float _thickness;
-  int _lineCount;
+  int _lineCount{};
 
 public:
   LineBox() = delete;
 
-  LineBox(const std::vector<float> lines, float thickness);
+  LineBox(const std::vector<float>& lines, float thickness);
 
   void draw(Graphics2D& g2, float x, float y) override;
 
@@ -594,8 +597,8 @@ private:
 public:
   OverlappedBox() = delete;
 
-  OverlappedBox(const sptr<Box> base, const sptr<Box> overlap)
-      : _base(base), _overlap(overlap) {
+  OverlappedBox(const sptr<Box>& base, const sptr<Box>& overlap)
+    : _base(base), _overlap(overlap) {
     _width = base->_width;
     _height = base->_height;
     _depth = base->_depth;

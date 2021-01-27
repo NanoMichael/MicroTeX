@@ -11,12 +11,12 @@ using namespace tex;
 #define mac4(nbargs, posOpts, name, code) \
   { L##code, m(nbargs, posOpts, name) }
 
-inline static PredefMacroInfo* m(int nbargs, int posOpts, MacroDelegate del) {
-  return new PredefMacroInfo(nbargs, posOpts, del);
+inline static PreDefMacro* m(int nbargs, int posOpts, MacroDelegate del) {
+  return new PreDefMacro(nbargs, posOpts, del);
 }
 
-inline static PredefMacroInfo* m(int nbargs, MacroDelegate del) {
-  return new PredefMacroInfo(nbargs, del);
+inline static PreDefMacro* m(int nbargs, MacroDelegate del) {
+  return new PreDefMacro(nbargs, del);
 }
 
 map<wstring, MacroInfo*> MacroInfo::_commands = {

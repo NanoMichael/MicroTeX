@@ -7,6 +7,7 @@
 namespace tex {
 
 class CLMReader;
+
 class Glyph;
 
 /** Represents metrics for one glyph. */
@@ -14,7 +15,7 @@ struct Metrics final {
 private:
   i16 _width, _height, _depth;
 
-  Metrics() {}
+  Metrics() = default;
 
 public:
   no_copy_assign(Metrics);
@@ -38,9 +39,9 @@ private:
   u16 _count;
   u16* _fields;
 
-  KernRecord(u16 count)
-      : _count(count),
-        _fields(_count == 0 ? nullptr : new u16[count * 2]) {}
+  explicit KernRecord(u16 count)
+    : _count(count),
+      _fields(_count == 0 ? nullptr : new u16[count * 2]) {}
 
 public:
   no_copy_assign(KernRecord);
@@ -52,9 +53,7 @@ public:
   /** Get the kerning value should be added to the given glyph, return 0 if no kerning. */
   i16 operator[](u16 glyph) const;
 
-  ~KernRecord() {
-    if (_fields != nullptr) delete[] _fields;
-  }
+  ~KernRecord() { delete[] _fields; }
 
   friend CLMReader;
 };
@@ -66,9 +65,9 @@ private:
   /** Array of glyph id in font to represents varints */
   u16* _glyphs = nullptr;
 
-  Variants(u16 count)
-      : _count(count),
-        _glyphs(count == 0 ? nullptr : new u16[count]) {}
+  explicit Variants(u16 count)
+    : _count(count),
+      _glyphs(count == 0 ? nullptr : new u16[count]) {}
 
 public:
   no_copy_assign(Variants);
@@ -82,9 +81,7 @@ public:
   /** Get glyph id at index i */
   inline u16 operator[](int i) const { return _glyphs[i]; }
 
-  ~Variants() {
-    if (_glyphs != nullptr) delete[] _glyphs;
-  }
+  ~Variants() { delete[] _glyphs; }
 
   friend CLMReader;
 };
@@ -94,19 +91,19 @@ struct GlyphAssembly;
 /** Defines glyph part to assemble large glyph */
 struct GlyphPart final {
 private:
-  u16 _glyph;
-  u16 _startConnectorLength;
-  u16 _endConnectorLength;
-  u16 _fullAdvance;
+  u16 _glyph = 0;
+  u16 _startConnectorLength = 0;
+  u16 _endConnectorLength = 0;
+  u16 _fullAdvance = 0;
   /**
    * Part qualifiers. PartFlags enumeration currently uses only one bit:
    *
    * - 0x0001 EXTENDER_FLAG: If set, the part can be skipped or repeated.
    * - 0xFFFE Reserved.
    */
-  u16 _flags;
+  u16 _flags = 0;
 
-  GlyphPart() {}
+  GlyphPart() = default;
 
 public:
   no_copy_assign(GlyphPart);
@@ -152,11 +149,11 @@ private:
    * Array of GlyphPart, from left to right (for assemblies that extend horizontally)
    * or bottom to top (for assemblies that extend vertically).
    */
-  GlyphPart* _parts;
+  GlyphPart* _parts = nullptr;
 
-  GlyphAssembly(u16 partCount)
-      : _partCount(partCount),
-        _parts(partCount == 0 ? nullptr : new GlyphPart[partCount]) {}
+  explicit GlyphAssembly(u16 partCount)
+    : _partCount(partCount),
+      _parts(partCount == 0 ? nullptr : new GlyphPart[partCount]) {}
 
 public:
   no_copy_assign(GlyphAssembly);
@@ -173,9 +170,7 @@ public:
   /** Get part at index i */
   inline const GlyphPart& operator[](u16 i) const { return _parts[i]; }
 
-  ~GlyphAssembly() {
-    if (_parts != nullptr) delete[] _parts;
-  }
+  ~GlyphAssembly() { delete[] _parts; }
 
   friend CLMReader;
 };
@@ -188,7 +183,7 @@ public:
  * Correction heights for each glyph are relative to the glyph baseline, with positive height values
  * above the baseline, and negative height values below the baseline. The correctionHeights array is
  * sorted in increasing order, from lowest to highest.
- *
+ * <p>
  * The kerning value corresponding to a particular height is determined by finding two consecutive
  * entries in the correctionHeight array such that the given height is greater than or equal to the
  * first entry and less than the second entry. The index of the second entry is used to look up a
@@ -201,9 +196,9 @@ private:
   const u16 _count = 0;
   i16* _fields = nullptr;
 
-  MathKern(u16 count)
-      : _count(count),
-        _fields(count == 0 ? nullptr : new i16[count * 2]) {}
+  explicit MathKern(u16 count)
+    : _count(count),
+      _fields(count == 0 ? nullptr : new i16[count * 2]) {}
 
 public:
   no_copy_assign(MathKern);
@@ -219,9 +214,7 @@ public:
   /** Find the index of the kern values that its correction height closest to the given height. */
   u16 indexOf(i32 height) const;
 
-  ~MathKern() {
-    if (_fields != nullptr) delete[] _fields;
-  }
+  ~MathKern() { delete[] _fields; }
 
   friend CLMReader;
 };
@@ -240,7 +233,7 @@ private:
     &MathKern::empty,
   };
 
-  MathKernRecord(u16 ignore) {}
+  explicit MathKernRecord(u16 ignore) {}
 
 public:
   no_copy_assign(MathKernRecord);
@@ -267,8 +260,8 @@ public:
  */
 struct Math final {
 private:
-  i16 _italicsCorrection;
-  i16 _topAccentAttachment;
+  i16 _italicsCorrection = 0;
+  i16 _topAccentAttachment = 0;
   /** MUST NOT BE NULL, equals to &Variants::empty if absent */
   const Variants* _horizontalVariants = &Variants::empty;
   /** MUST NOT BE NULL, equals to &Variants::empty if absent */
@@ -280,7 +273,7 @@ private:
   /** MUST NOT BE NULL, equals to &MathKernRecord::empty if absent */
   const MathKernRecord* _kernRecord = &MathKernRecord::empty;
 
-  Math(u16 ignore);
+  explicit Math(u16 ignore);
 
 public:
   no_copy_assign(Math);
@@ -339,13 +332,13 @@ public:
 /** Defines info for one glyph, divice-table is JUST IGNORED. */
 struct Glyph final {
 private:
-  Metrics _metrics;
+  Metrics _metrics{};
   /** MUST NOT BE NULL, equals to &KernRecord::empty if absent */
   const KernRecord* _kernRecord = &KernRecord::empty;
   /** MUST NOT BE NULL, equals to &Math::empty if absent */
   const Math* _math = &Math::empty;
 
-  Glyph() {}
+  Glyph() = default;
 
 public:
   no_copy_assign(Glyph);

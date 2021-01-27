@@ -5,23 +5,23 @@
 using namespace std;
 using namespace tex;
 
-const map<string, UnitType> SpaceAtom::_units = {
-  {"em", UnitType::em},
-  {"ex", UnitType::ex},
-  {"px", UnitType::pixel},
-  {"pix", UnitType::pixel},
+const map<string, UnitType> SpaceAtom::_units{
+  {"em",    UnitType::em},
+  {"ex",    UnitType::ex},
+  {"px",    UnitType::pixel},
+  {"pix",   UnitType::pixel},
   {"pixel", UnitType::pixel},
-  {"pt", UnitType::pt},
-  {"bp", UnitType::point},
-  {"pica", UnitType::pica},
-  {"pc", UnitType::pica},
-  {"mu", UnitType::mu},
-  {"cm", UnitType::cm},
-  {"mm", UnitType::mm},
-  {"in", UnitType::in},
-  {"sp", UnitType::sp},
-  {"dd", UnitType::dd},
-  {"cc", UnitType::cc},
+  {"pt",    UnitType::pt},
+  {"bp",    UnitType::point},
+  {"pica",  UnitType::pica},
+  {"pc",    UnitType::pica},
+  {"mu",    UnitType::mu},
+  {"cm",    UnitType::cm},
+  {"mm",    UnitType::mm},
+  {"in",    UnitType::in},
+  {"sp",    UnitType::sp},
+  {"dd",    UnitType::dd},
+  {"cc",    UnitType::cc},
 };
 
 const int SpaceAtom::_units_count = 14;
@@ -49,7 +49,7 @@ const function<float(const Environment&)> SpaceAtom::_unitConversions[] = {
   },
   // MU
   [](const Environment& env) -> float {
-    auto tf = env.getTeXFont();
+    const auto& tf = env.getTeXFont();
     return tf->getQuad(env.getStyle(), tf->getMuFontId()) / 18.f;
   },
   // CM

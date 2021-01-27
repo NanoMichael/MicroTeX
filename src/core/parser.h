@@ -20,7 +20,7 @@ class Formula;
 /** This class implements a parser for latex formulas */
 class TeXParser {
 private:
-  std::wstring _parseString;
+  std::wstring _latex;
   int _pos, _spos, _len;
   int _line, _col;
   int _group;
@@ -56,7 +56,7 @@ private:
   static const std::set<std::wstring> _unparsedContents;
 
   /** Preprocess parse string */
-  void firstpass();
+  void preprocess();
 
   sptr<Atom> getScripts(wchar_t f);
 
@@ -94,20 +94,16 @@ private:
   void inflateEnv(std::wstring& cmd, std::vector<std::wstring>& args, int& pos);
 
   void init(
-    bool ispartial,
-    const std::wstring& parsestring,
+    bool isPartial,
+    const std::wstring& latex,
     Formula* formula,
-    bool firstpass  //
+    bool firstPass
   );
 
 public:
   static bool _isLoading;
 
   Formula* _formula;
-
-  TeXParser() {
-    init(true, L"", nullptr, false);
-  }
 
   /**
    * Create a new TeXParser
@@ -135,7 +131,7 @@ public:
    * @param isPartial if true certain exceptions are not thrown
    * @param latex the string to be parsed
    * @param formula the formula where to put the atoms
-   * @param firstPass indicate if the parser must replace the user-defined macros by their content
+   * @param preprocess indicate if the parser must replace the user-defined macros by their content
    *
    * @throw ex_parse if the string could not be parsed correctly
    */
@@ -143,20 +139,21 @@ public:
     bool isPartial,
     const std::wstring& latex,
     Formula* formula,
-    bool firstPass) {
-    init(isPartial, latex, formula, firstPass);
+    bool preprocess
+  ) {
+    init(isPartial, latex, formula, preprocess);
   }
 
   /**
    * Create a new TeXParser with or without a first pass
    * @param latex the string to be parsed
    * @param formula the formula where to put the atoms
-   * @param firstPass indicate if the parser must replace the user-defined macros by their content
+   * @param preprocess indicate if the parser must replace the user-defined macros by their content
    *
    * @throw ex_parse if the string could not be parsed correctly
    */
-  TeXParser(const std::wstring& latex, Formula* formula, bool firstPass) {
-    init(true, latex, formula, firstPass);
+  TeXParser(const std::wstring& latex, Formula* formula, bool preprocess) {
+    init(true, latex, formula, preprocess);
   }
 
   /**
@@ -166,7 +163,7 @@ public:
    * @param isPartial if true certains exceptions are not thrown
    * @param latex the string to be parsed
    * @param formula the formula to hold the atoms
-   * @param firstpass indicate if the parser must replace the user-defined macros by their content
+   * @param preprocess indicate if the parser must replace the user-defined macros by their content
    * @param isMathMode a boolean to indicate if the parser must ignore or not the white space
    *
    * @throw ex_parse if the string could not be parsed correctly
@@ -175,31 +172,10 @@ public:
     bool isPartial,
     const std::wstring& latex,
     Formula* formula,
-    bool firstpass,
-    bool isMathMode  //
+    bool preprocess,
+    bool isMathMode
   ) {
-    init(isPartial, latex, formula, firstpass);
-    _isMathMode = isMathMode;
-  }
-
-  /**
-   * Create a new TeXParser which ignores or not the white spaces, it's useful
-   * for mbox command
-   *
-   * @param latex the string to be parsed
-   * @param formula the formula to hold the atoms
-   * @param firstpass indicate if the parser must replace the user-defined macros by their content
-   * @param isMathMode indicate if the parser must ignore or not the white space
-   *
-   * @throw ex_parse if the string could not be parsed correctly
-   */
-  TeXParser(
-    const std::wstring& latex,
-    Formula* formula,
-    bool firstpass,
-    bool isMathMode  //
-  ) {
-    init(true, latex, formula, firstpass);
+    init(isPartial, latex, formula, preprocess);
     _isMathMode = isMathMode;
   }
 
@@ -216,13 +192,13 @@ public:
   inline int getCol() const { return _pos - _col - 1; }
 
   /** Get and remove the last atom of the current formula */
-  sptr<Atom> popLastAtom();
+  sptr<Atom> popLastAtom() const;
 
   /** Get and remove the atom represented by the current formula */
-  sptr<Atom> getFormulaAtom();
+  sptr<Atom> getFormulaAtom() const;
 
   /** Put an atom in the current formula */
-  void addAtom(const sptr<Atom>& atom);
+  void addAtom(const sptr<Atom>& atom) const;
 
   /** Indicate if the character @ can be used in the command's name */
   inline void makeAtLetter() { _atIsLetter++; }
@@ -256,7 +232,7 @@ public:
   }
 
   inline void finish() {
-    _pos = _parseString.size();
+    _pos = _latex.size();
   }
 
   std::wstring forwardFromCurrentPos();
@@ -266,7 +242,7 @@ public:
    *
    * @throw ex_parse if the parser is not in array mode
    */
-  void addRow();
+  void addRow() const;
 
   /**
    * Parse the input string
@@ -358,13 +334,13 @@ public:
    * @param cmd the command's name
    * @return the validity of the name
    */
-  bool isValidName(const std::wstring& cmd);
+  bool isValidName(const std::wstring& cmd) const;
 
   /**
    * Test the validity of a character in a command. It must contains only
    * alpha characters and eventually a @ if makeAtletter activated
    */
-  inline bool isValidCharacterInCommand(wchar_t ch) const {
+  inline bool isValidCharInCmd(wchar_t ch) const {
     return isalpha(ch) || (_atIsLetter != 0 && ch == '@');
   }
 };

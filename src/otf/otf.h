@@ -27,7 +27,7 @@ private:
   /** kerning value table, size = (_rowLength * _columnLength) */
   i16* _table = nullptr;
 
-  ClassKerning() {}
+  ClassKerning() = default;
 
 public:
   no_copy_assign(ClassKerning);
@@ -61,7 +61,7 @@ private:
   u16 _glyphCount = 0;
   Glyph** _glyphs = nullptr;
 
-  Otf() {}
+  Otf() = default;
 
 public:
   no_copy_assign(Otf);

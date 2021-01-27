@@ -18,7 +18,7 @@ void show_metrics(const tex::Glyph* glyph) {
     "metrics: [%d, %d, %d]\n",
     glyph->metrics().width(),
     glyph->metrics().height(),
-    glyph->metrics().depth()  //
+    glyph->metrics().depth()
   );
 }
 

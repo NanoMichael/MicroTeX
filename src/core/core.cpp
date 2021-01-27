@@ -8,6 +8,7 @@ using namespace std;
 using namespace tex;
 
 #ifdef HAVE_LOG
+
 void print_box(const sptr<Box>& b, int dep, vector<bool>& lines) {
   __print("%-4d", dep);
   if (lines.size() < dep + 1) lines.resize(dep + 1, false);
@@ -54,6 +55,7 @@ void tex::print_box(const sptr<Box>& b) {
   ::print_box(b, 0, lines);
   __print("\n");
 }
+
 #endif  // HAVE_LOG
 
 sptr<Box> BoxSplitter::split(const sptr<Box>& b, float width, float lineSpace) {
@@ -84,7 +86,7 @@ sptr<Box> BoxSplitter::split(const sptr<Box>& b, float width, float lineSpace) {
 sptr<Box> BoxSplitter::split(const sptr<HorizontalBox>& hb, float width, float lineSpace) {
   if (width == 0 || hb->_width <= width) return hb;
 
-  VerticalBox* vbox = new VerticalBox();
+  auto* vbox = new VerticalBox();
   sptr<HorizontalBox> first, second;
   stack<Position> positions;
   sptr<HorizontalBox> hbox = hb;
@@ -120,7 +122,7 @@ float BoxSplitter::canBreak(stack<Position>& s, const sptr<HorizontalBox>& hbox,
   const vector<sptr<Box>>& children = hbox->_children;
   const int count = children.size();
   // Cumulative width
-  float* cumWidth = new float[count + 1]();
+  auto* cumWidth = new float[count + 1]();
   cumWidth[0] = 0;
   for (int i = 0; i < count; i++) {
     auto box = children[i];
@@ -259,11 +261,13 @@ sptr<Environment>& Environment::supStyle() {
 /************************************* Glue implementation ****************************************/
 
 #ifdef HAVE_LOG
+
 ostream& tex::operator<<(ostream& out, const Glue& glue) {
   out << "Glue { space: " << glue._space << ", stretch: " << glue._stretch << ", shrink: ";
   out << glue._shrink << ", name: " << glue._name << " }";
   return out;
 }
+
 #endif  // HAVE_LOG
 
 void Glue::_init_() {
@@ -277,15 +281,15 @@ void Glue::_init_() {
 
 void Glue::_free_() {
   // delete glue-types
-  for (size_t i = 0; i < _glueTypes.size(); i++) {
-    Glue* g = _glueTypes[i];
+  for (auto& _glueType : _glueTypes) {
+    Glue* g = _glueType;
     delete g;
-    _glueTypes[i] = nullptr;
+    _glueType = nullptr;
   }
 }
 
-float Glue::getFactor(const Environment& env) const {
-  auto tf = env.getTeXFont();
+float Glue::getFactor(const Environment& env) {
+  const auto& tf = env.getTeXFont();
   // use "quad" from a font marked as an "mu font"
   float quad = tf->getQuad(env.getStyle(), tf->getMuFontId());
   return quad / 18.f;
@@ -312,7 +316,7 @@ sptr<Box> Glue::get(AtomType ltype, AtomType rtype, const Environment& env) {
 
 Glue* Glue::getGlue(SpaceType skipType) {
   const i8 i = static_cast<i8>(skipType);
-  SpaceType st = static_cast<SpaceType>(i < 0 ? -i : i);
+  auto st = static_cast<SpaceType>(i < 0 ? -i : i);
   string name;
   switch (st) {
     case SpaceType::thinMuSkip:

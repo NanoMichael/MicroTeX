@@ -4,6 +4,7 @@
 #include <bitset>
 #include <map>
 #include <string>
+#include <utility>
 
 #include "atom/atom.h"
 #include "atom/box.h"
@@ -13,10 +14,15 @@
 namespace tex {
 
 struct CharFont;
+
 class TeXFont;
+
 struct FontInfos;
+
 class Formula;
+
 class Dummy;
+
 class RowAtom;
 
 /**
@@ -40,7 +46,7 @@ private:
 
 public:
   PlaceholderAtom(float w, float h, float d, float s)
-      : _w(w), _h(h), _d(d), _s(s) {}
+    : _w(w), _h(h), _d(d), _s(s) {}
 
   sptr<Box> createBox(Environment& env) override {
     return sptr<Box>(new StrutBox(_w, _h, _d, _s));
@@ -61,10 +67,10 @@ private:
 public:
   TextRenderingAtom() = delete;
 
-  TextRenderingAtom(const std::wstring& str, int type) : _str(str), _type(type), _infos(nullptr) {}
+  TextRenderingAtom(std::wstring str, int type) : _str(std::move(str)), _type(type), _infos(nullptr) {}
 
-  TextRenderingAtom(const std::wstring& str, const FontInfos* info)
-      : _str(str), _type(0), _infos(info) {}
+  TextRenderingAtom(std::wstring str, const FontInfos* info)
+    : _str(std::move(str)), _type(0), _infos(info) {}
 
   sptr<Box> createBox(Environment& env) override;
 
@@ -84,13 +90,11 @@ public:
 
   SmashedAtom(const sptr<Atom>& a, const std::string& opt) : _h(true), _d(true) {
     _at = a;
-    if (opt == "opt")
-      _d = false;
-    else if (opt == "b")
-      _h = false;
+    if (opt == "opt") _d = false;
+    else if (opt == "b") _h = false;
   }
 
-  SmashedAtom(const sptr<Atom>& a) : _at(a), _h(true), _d(true) {}
+  explicit SmashedAtom(const sptr<Atom>& a) : _at(a), _h(true), _d(true) {}
 
   sptr<Box> createBox(Environment& env) override {
     sptr<Box> b = _at->createBox(env);
@@ -122,8 +126,7 @@ public:
     _sy = sy;
   }
 
-  ScaleAtom(const sptr<Atom>& base, float scale)
-      : ScaleAtom(base, scale, scale) {}
+  ScaleAtom(const sptr<Atom>& base, float scale) : ScaleAtom(base, scale, scale) {}
 
   AtomType leftType() const override { return _base->leftType(); }
 
@@ -335,7 +338,7 @@ public:
   MiddleAtom() = delete;
 
   MiddleAtom(const sptr<Atom>& a)
-      : _base(a), _box(new StrutBox(0, 0, 0, 0)) {}
+    : _base(a), _box(new StrutBox(0, 0, 0, 0)) {}
 
   sptr<Box> createBox(Environment& env) override {
     return _box;
@@ -479,7 +482,9 @@ public:
   static void _init_();
 
 #ifdef HAVE_LOG
+
   friend std::ostream& operator<<(std::ostream& os, const SymbolAtom& s);
+
 #endif  // HAVE_LOG
 
   __decl_clone(SymbolAtom)
@@ -515,11 +520,11 @@ public:
    * @param textStyle
    *      the text style in which the character should be drawn
    */
-  CharAtom(wchar_t c, const std::string& textStyle)
-      : _c(c), _textStyle(textStyle), _mathMode(false) {}
+  CharAtom(wchar_t c, std::string textStyle)
+    : _c(c), _textStyle(std::move(textStyle)), _mathMode(false) {}
 
-  CharAtom(wchar_t c, const std::string& textStyle, bool mathMode)
-      : _c(c), _textStyle(textStyle), _mathMode(mathMode) {}
+  CharAtom(wchar_t c, std::string textStyle, bool mathMode)
+    : _c(c), _textStyle(std::move(textStyle)), _mathMode(mathMode) {}
 
   inline wchar_t getCharacter() {
     return _c;
@@ -568,7 +573,7 @@ public:
    * Create a new dummy for the given atom
    * @param atom an atom
    */
-  Dummy(const sptr<Atom>& atom) {
+  explicit Dummy(const sptr<Atom>& atom) {
     _textSymbol = false;
     _atom = atom;
     type = AtomType::none;
@@ -596,7 +601,7 @@ public:
 
   /** This method will only be called if isCharSymbol returns true. */
   inline sptr<CharFont> getCharFont(TeXFont& tf) const {
-    return ((CharSymbol*)_atom.get())->getCharFont(tf);
+    return ((CharSymbol*) _atom.get())->getCharFont(tf);
   }
 
   /**
@@ -611,9 +616,9 @@ public:
   }
 
   inline sptr<Box> createBox(Environment& env) {
-    if (_textSymbol) ((CharSymbol*)_atom.get())->markAsTextSymbol();
+    if (_textSymbol) ((CharSymbol*) _atom.get())->markAsTextSymbol();
     auto box = _atom->createBox(env);
-    if (_textSymbol) ((CharSymbol*)_atom.get())->removeMark();
+    if (_textSymbol) ((CharSymbol*) _atom.get())->removeMark();
     return box;
   }
 
@@ -622,7 +627,7 @@ public:
   }
 
   inline bool isKern() const {
-    SpaceAtom* x = dynamic_cast<SpaceAtom*>(_atom.get());
+    auto* x = dynamic_cast<SpaceAtom*>(_atom.get());
     return (x != nullptr);
   }
 
@@ -645,7 +650,7 @@ private:
   // with the previous atom, be replaced by a ligature
   static std::bitset<16> _ligKernSet;
   // whether the box generated can be broken
-  bool _canBreak;
+  bool _breakable;
   // atoms to be displayed horizontally next to each-other
   std::vector<sptr<Atom>> _elements;
   // previous atom (for nested Row atoms)
@@ -662,9 +667,9 @@ public:
 
   bool _lookAtLastAtom;
 
-  RowAtom() : _lookAtLastAtom(false), _canBreak(true) {}
+  RowAtom() : _lookAtLastAtom(false), _breakable(true) {}
 
-  RowAtom(const sptr<Atom>& el);
+  explicit RowAtom(const sptr<Atom>& el);
 
   /**
    * Get the atom at the front in the elements
@@ -678,18 +683,16 @@ public:
 
   /**
    * Get the atom at position
-   * @param pos
-   *      the position of the atom to retrieve
+   * @param pos the position of the atom to retrieve
    */
   sptr<Atom> get(size_t pos);
 
   /**
-   * Indicate the box generated by this atom can be broken or not
-   * @param can
-   *      indicate whether the box can be broken
+   * Indicate the box generated by this atom breakable be broken or not
+   * @param breakable indicate whether the box breakable be broken
    */
-  inline void setCanBreak(bool can) {
-    _canBreak = can;
+  inline void setBreakable(bool breakable) {
+    _breakable = breakable;
   }
 
   /**
@@ -730,7 +733,7 @@ public:
 
   VRowAtom();
 
-  VRowAtom(const sptr<Atom>& el);
+  explicit VRowAtom(const sptr<Atom>& el);
 
   inline void setAddInterline(bool addInterline) {
     _addInterline = addInterline;
@@ -744,7 +747,7 @@ public:
     _valign = Alignment::top;
   }
 
-  inline bool getVtop() const {
+  inline bool isVtop() const {
     return _valign == Alignment::top;
   }
 
@@ -785,7 +788,7 @@ public:
   ColorAtom(const sptr<Atom>& atom, color bg, color c);
 
   ColorAtom(color bg, color c, const sptr<Atom>& old) {
-    ColorAtom* a = dynamic_cast<ColorAtom*>(old.get());
+    auto* a = dynamic_cast<ColorAtom*>(old.get());
     if (a == nullptr) throw ex_invalid_atom_type("Should be a ColorAtom!");
     _elements = a->_elements;
     _background = istrans(bg) ? a->_background : bg;
@@ -849,7 +852,7 @@ private:
 public:
   PhantomAtom() = delete;
 
-  PhantomAtom(const sptr<Atom>& el);
+  explicit PhantomAtom(const sptr<Atom>& el);
 
   PhantomAtom(const sptr<Atom>& el, bool w, bool h, bool d);
 
@@ -918,8 +921,8 @@ class AccentedAtom : public Atom {
 public:
   // accent symbol
   sptr<SymbolAtom> _accent;
-  bool _acc;
-  bool _changeSize;
+  bool _acc{};
+  bool _changeSize{};
 
   // base atom
   sptr<Atom> _base, _underbase;
@@ -936,7 +939,8 @@ public:
   AccentedAtom(
     const sptr<Atom>& base,
     const sptr<Atom>& accent,
-    bool changeSize) {
+    bool changeSize
+  ) {
     init(base, accent);
     _changeSize = changeSize;
   }
@@ -945,36 +949,26 @@ public:
    * Create an AccentedAtom from a base atom and an accent symbol defined by
    * its name
    *
-   * @param base
-   *      base atom
-   * @param name
-   *      name of the accent symbol to be put over the base atom
-   * @throw ex_invalid_symbol_type
-   *      if the symbol is not defined as An accent ('acc')
-   * @throw ex_symbol_not_found
-   *      if there's no symbol defined with the given name
+   * @param base base atom
+   * @param name name of the accent symbol to be put over the base atom
+   * @throw ex_invalid_symbol_type if the symbol is not defined as An accent ('acc')
+   * @throw ex_symbol_not_found if there's no symbol defined with the given name
    */
-  AccentedAtom(
-    const sptr<Atom>& base,
-    const std::string& name);
+  AccentedAtom(const sptr<Atom>& base, const std::string& name);
 
   /**
    * Creates an AccentedAtom from a base atom and an accent symbol defined as
    * a Formula. This is used for parsing MathML.
    *
-   * @param base
-   *      base atom
-   * @param acc
-   *      Formula representing an accent (SymbolAtom)
+   * @param base base atom
+   * @param acc Formula representing an accent (SymbolAtom)
    * @throw ex_invalid_formula
    *      if the given Formula does not represent a single
    *      SymbolAtom (type "TeXConstants.AtomType::accent")
    * @throw ex_invalid_symbol_type
    *      if the symbol is not defined as an accent ('acc')
    */
-  AccentedAtom(
-    const sptr<Atom>& base,
-    const sptr<Formula>& acc);
+  AccentedAtom(const sptr<Atom>& base, const sptr<Formula>& acc);
 
   sptr<Box> createBox(Environment& env) override;
 
@@ -1011,7 +1005,7 @@ public:
 
   UnderOverAtom(
     const sptr<Atom>& base, const sptr<Atom>& script,
-    UnitType unit, float space, bool small, bool over  //
+    UnitType unit, float space, bool small, bool over
   ) {
     init();
     _base = base;
@@ -1039,7 +1033,7 @@ public:
   UnderOverAtom(
     const sptr<Atom>& base,
     const sptr<Atom>& under, UnitType underunit, float underspace, bool undersmall,
-    const sptr<Atom>& over, UnitType overunit, float overspace, bool oversmall  //
+    const sptr<Atom>& over, UnitType overunit, float overspace, bool oversmall
   ) {
     _base = base;
     _under = under;
@@ -1123,9 +1117,9 @@ private:
   sptr<Atom> _base;
   // whether the "limits"-value should be taken into account
   // (otherwise the default rules will be applied)
-  bool _limitsSet;
+  bool _limitsSet = false;
   // whether limits should be drawn over and under the base (<-> as scripts)
-  bool _limits;
+  bool _limits = false;
 
   void init(const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over);
 
@@ -1190,7 +1184,7 @@ public:
   SideSetsAtom() = delete;
 
   SideSetsAtom(const sptr<Atom>& base, const sptr<Atom>& left, const sptr<Atom>& right)
-      : _base(base), _left(left), _right(right) {
+    : _base(base), _left(left), _right(right) {
     _type = AtomType::bigOperator;
     _limitsType = LimitsType::noLimits;
   }

@@ -15,47 +15,51 @@ bool NewCommandMacro::isMacro(const wstring& name) {
 }
 
 void NewCommandMacro::checkNew(const wstring& name) {
-  if (_errIfConflict && isMacro(name)) throw ex_parse(
-      "Command " + wide2utf8(name.c_str()) +
-      " already exists! Use renewcommand instead!");
+  if (_errIfConflict && isMacro(name))
+    throw ex_parse(
+      "Command " + wide2utf8(name.c_str())
+      + " already exists! Use renewcommand instead!"
+    );
 }
 
 void NewCommandMacro::checkRenew(const wstring& name) {
-  if (NewCommandMacro::_errIfConflict && !isMacro(name)) throw ex_parse(
-      "Command " + wide2utf8(name.c_str()) +
-      " is no defined! Use newcommand instead!");
+  if (NewCommandMacro::_errIfConflict && !isMacro(name))
+    throw ex_parse(
+      "Command " + wide2utf8(name.c_str())
+      + " is no defined! Use newcommand instead!"
+    );
 }
 
-void NewCommandMacro::addNewCommand(
-    const wstring& name, const wstring& code, int nbargs) {
+void NewCommandMacro::addNewCommand(const wstring& name, const wstring& code, int nbargs) {
   checkNew(name);
   _macrocode[name] = code;
   MacroInfo::addMacro(name, new InflationMacroInfo(_instance, nbargs));
 }
 
 void NewCommandMacro::addNewCommand(
-    const wstring& name,
-    const wstring& code,
-    int nbargs,
-    const wstring& def) {
+  const wstring& name,
+  const wstring& code,
+  int nbargs,
+  const wstring& def
+) {
   checkNew(name);
   _macrocode[name] = code;
   _macroreplacement[name] = def;
   MacroInfo::addMacro(name, new InflationMacroInfo(_instance, nbargs, 1));
 }
 
-void NewCommandMacro::addRenewCommand(
-    const wstring& name, const wstring& code, int nbargs) {
+void NewCommandMacro::addRenewCommand(const wstring& name, const wstring& code, int nbargs) {
   checkRenew(name);
   _macrocode[name] = code;
   MacroInfo::addMacro(name, new InflationMacroInfo(_instance, nbargs));
 }
 
 void NewCommandMacro::addRenewCommand(
-    const wstring& name,
-    const wstring& code,
-    int nbargs,
-    const wstring& def) {
+  const wstring& name,
+  const wstring& code,
+  int nbargs,
+  const wstring& def
+) {
   checkRenew(name);
   _macrocode[name] = code;
   _macroreplacement[name] = def;
@@ -94,27 +98,31 @@ void NewCommandMacro::execute(TeXParser& tp, vector<wstring>& args) {
 }
 
 void NewEnvironmentMacro::addNewEnvironment(
-    const wstring& name,
-    const wstring& begdef, const wstring& enddef,
-    int nbargs) {
+  const wstring& name,
+  const wstring& begdef, const wstring& enddef,
+  int nbargs
+) {
   wstring n = name + L"@env";
   wstring def = begdef + L" #" + towstring(nbargs + 1) + L" " + enddef;
   addNewCommand(n, def, nbargs + 1);
 }
 
 void NewEnvironmentMacro::addRenewEnvironment(
-    const wstring& name,
-    const wstring& begdef, const wstring& enddef,
-    int nbargs) {
+  const wstring& name,
+  const wstring& begdef, const wstring& enddef,
+  int nbargs
+) {
   if (_macrocode.find(name + L"@env") == _macrocode.end()) {
     throw ex_parse(
-        "Environment " + wide2utf8(name.c_str()) +
-        "is not defined! Use newenvironment instead!");
+      "Environment " + wide2utf8(name.c_str())
+      + "is not defined! Use newenvironment instead!"
+    );
   }
   addRenewCommand(
-      name + L"@env",
-      begdef + L" #" + towstring(nbargs + 1) + L" " + enddef,
-      nbargs + 1);
+    name + L"@env",
+    begdef + L" #" + towstring(nbargs + 1) + L" " + enddef,
+    nbargs + 1
+  );
 }
 
 void NewCommandMacro::_free_() {
@@ -128,19 +136,21 @@ void MacroInfo::addMacro(const wstring& name, MacroInfo* mac) {
 }
 
 void MacroInfo::_free_() {
-  for (auto i : _commands) delete i.second;
+  for (const auto& i : _commands) delete i.second;
 }
 
-sptr<Atom> PredefMacroInfo::invoke(
-    TeXParser& tp,
-    vector<wstring>& args) {
+sptr<Atom> PreDefMacro::invoke(
+  TeXParser& tp,
+  vector<wstring>& args
+) {
   try {
     return _delegate(tp, args);
   } catch (ex_parse& e) {
     throw ex_parse(
-        "Problem with command " +
-        wide2utf8(args[0].c_str()) +
-        " at position " + tostring(tp.getLine()) + ":" +
-        tostring(tp.getCol()) + "\n caused by: " + e.what());
+      "Problem with command "
+      + wide2utf8(args[0].c_str())
+      + " at position " + tostring(tp.getLine()) + ":"
+      + tostring(tp.getCol()) + "\n caused by: " + e.what()
+    );
   }
 }

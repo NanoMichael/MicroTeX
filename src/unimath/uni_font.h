@@ -33,7 +33,7 @@ public:
   );
 
   /** Map an Unicode char to version-specific Unicode char. */
-  c32 map(const c32 codepoint) const;
+  c32 map(c32 codepoint) const;
 };
 
 /** Represents a open-type font with font-file and clm-spec */
@@ -45,7 +45,7 @@ private:
 public:
   no_copy_assign(OtfFont);
 
-  OtfFont(const std::string& fontFile, const std::string& clmFile);
+  OtfFont(std::string fontFile, const std::string& clmFile);
 
   inline const std::string& fontFile() const { return _fontFile; }
 
@@ -75,7 +75,7 @@ private:
 public:
   no_copy_assign(TextFont);
 
-  TextFont() {}
+  TextFont() = default;
 
   sptr<const OtfFont>& operator[](const std::string& styleName);
 };
@@ -121,6 +121,6 @@ public:
   UniGlyph glyphOf(c32 codepoint, const std::string& versionName, bool isMathMode) const;
 };
 
-};  // namespace tex
+}  // namespace tex
 
 #endif
