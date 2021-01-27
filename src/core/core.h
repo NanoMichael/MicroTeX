@@ -11,7 +11,9 @@ namespace tex {
 class Box;
 
 #ifdef HAVE_LOG
+
 void print_box(const sptr<Box>& box);
+
 #endif  // HAVE_LOG
 
 class BoxSplitter {
@@ -21,7 +23,7 @@ public:
     sptr<HorizontalBox> _box;
 
     Position(int index, const sptr<HorizontalBox>& box)
-        : _index(index), _box(box) {}
+      : _index(index), _box(box) {}
   };
 
 private:
@@ -199,7 +201,7 @@ private:
 
   sptr<Box> createBox(const Environment& env) const;
 
-  float getFactor(const Environment& env) const;
+  static float getFactor(const Environment& env) ;
 
   static Glue* getGlue(SpaceType skipType);
 
@@ -255,7 +257,9 @@ public:
   static void _free_();
 
 #ifdef HAVE_LOG
+
   friend std::ostream& operator<<(std::ostream& out, const Glue& glue);
+
 #endif  // HAVE_LOG
 };
 

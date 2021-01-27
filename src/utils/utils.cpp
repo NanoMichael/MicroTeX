@@ -3,7 +3,7 @@
 int tex::binSearchIndex(
   int count,
   const std::function<int(int)>&& compare,
-  bool returnClosest  //
+  bool returnClosest
 ) {
   if (count == 0) return -1;
   int l = 0, h = count - 1;

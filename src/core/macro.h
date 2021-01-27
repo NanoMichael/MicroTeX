@@ -15,7 +15,7 @@ class Macro {
 public:
   virtual void execute(TeXParser& tp, std::vector<std::wstring>& args) = 0;
 
-  virtual ~Macro() {}
+  virtual ~Macro() = default;
 };
 
 class NewCommandMacro : public Macro {
@@ -36,29 +36,33 @@ public:
    */
   static bool _errIfConflict;
 
-  virtual void execute(TeXParser& tp, std::vector<std::wstring>& args) override;
+  void execute(TeXParser& tp, std::vector<std::wstring>& args) override;
 
   static void addNewCommand(
-      const std::wstring& name,
-      const std::wstring& code,
-      int nbargs);
+    const std::wstring& name,
+    const std::wstring& code,
+    int nbargs
+  );
 
   static void addNewCommand(
-      const std::wstring& name,
-      const std::wstring& code,
-      int nbargs,
-      const std::wstring& def);
+    const std::wstring& name,
+    const std::wstring& code,
+    int nbargs,
+    const std::wstring& def
+  );
 
   static void addRenewCommand(
-      const std::wstring& name,
-      const std::wstring& code,
-      int nbargs);
+    const std::wstring& name,
+    const std::wstring& code,
+    int nbargs
+  );
 
   static void addRenewCommand(
-      const std::wstring& name,
-      const std::wstring& code,
-      int nbargs,
-      const std::wstring& def);
+    const std::wstring& name,
+    const std::wstring& code,
+    int nbargs,
+    const std::wstring& def
+  );
 
   static bool isMacro(const std::wstring& name);
 
@@ -66,22 +70,24 @@ public:
 
   static void _free_();
 
-  virtual ~NewCommandMacro() {}
+  ~NewCommandMacro() override = default;
 };
 
 class NewEnvironmentMacro : public NewCommandMacro {
 public:
   static void addNewEnvironment(
-      const std::wstring& name,
-      const std::wstring& begdef,
-      const std::wstring& enddef,
-      int nbargs);
+    const std::wstring& name,
+    const std::wstring& begdef,
+    const std::wstring& enddef,
+    int nbargs
+  );
 
   static void addRenewEnvironment(
-      const std::wstring& name,
-      const std::wstring& begdef,
-      const std::wstring& enddef,
-      int nbargs);
+    const std::wstring& name,
+    const std::wstring& begdef,
+    const std::wstring& enddef,
+    int nbargs
+  );
 };
 
 class MacroInfo {
@@ -107,19 +113,19 @@ public:
 
   MacroInfo(int nbargs, int posOpts) : _nbArgs(nbargs), _posOpts(posOpts) {}
 
-  MacroInfo(int nbargs) : _nbArgs(nbargs), _posOpts(0) {}
+  explicit MacroInfo(int nbargs) : _nbArgs(nbargs), _posOpts(0) {}
 
   inline bool hasOptions() const {
     return _posOpts != 0;
   }
 
   virtual sptr<Atom> invoke(
-      TeXParser& tp,
-      std::vector<std::wstring>& args) {
+    TeXParser& tp,
+    std::vector<std::wstring>& args) {
     return nullptr;
   }
 
-  virtual ~MacroInfo() {}
+  virtual ~MacroInfo() = default;
 
   static void _free_();
 };
@@ -131,39 +137,41 @@ private:
 
 public:
   InflationMacroInfo(Macro* macro, int nbargs)
-      : _macro(macro), MacroInfo(nbargs) {}
+    : _macro(macro), MacroInfo(nbargs) {}
 
   InflationMacroInfo(Macro* macro, int nbargs, int posOpts)
-      : _macro(macro), MacroInfo(nbargs, posOpts) {}
+    : _macro(macro), MacroInfo(nbargs, posOpts) {}
 
-  virtual sptr<Atom> invoke(
-      TeXParser& tp,
-      std::vector<std::wstring>& args) override {
+  sptr<Atom> invoke(
+    TeXParser& tp,
+    std::vector<std::wstring>& args
+  ) override {
     _macro->execute(tp, args);
     return nullptr;
   }
 };
 
-typedef sptr<Atom> (*MacroDelegate)(
-    TeXParser& tp,
-    std::vector<std::wstring>& args);
+typedef sptr<Atom> (* MacroDelegate)(
+  TeXParser& tp,
+  std::vector<std::wstring>& args
+);
 
-class PredefMacroInfo : public MacroInfo {
+class PreDefMacro : public MacroInfo {
 private:
   MacroDelegate _delegate;
 
 public:
-  PredefMacroInfo() = delete;
+  PreDefMacro() = delete;
 
-  PredefMacroInfo(int nbargs, int posOpts, MacroDelegate delegate)
-      : MacroInfo(nbargs, posOpts), _delegate(delegate) {}
+  PreDefMacro(int nbargs, int posOpts, MacroDelegate delegate)
+    : MacroInfo(nbargs, posOpts), _delegate(delegate) {}
 
-  PredefMacroInfo(int nbargs, MacroDelegate delegate)
-      : MacroInfo(nbargs), _delegate(delegate) {}
+  PreDefMacro(int nbargs, MacroDelegate delegate)
+    : MacroInfo(nbargs), _delegate(delegate) {}
 
   sptr<Atom> invoke(
-      TeXParser& tp,
-      std::vector<std::wstring>& args) override;
+    TeXParser& tp,
+    std::vector<std::wstring>& args) override;
 };
 
 }  // namespace tex

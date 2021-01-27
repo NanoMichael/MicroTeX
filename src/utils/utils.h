@@ -31,7 +31,7 @@ using c32 = char32_t;
 int binSearchIndex(
   int count,
   const std::function<int(int)>&& compare,
-  bool returnClosest = false  //
+  bool returnClosest = false
 );
 
 }  // namespace tex

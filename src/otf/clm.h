@@ -12,34 +12,34 @@ class BinaryFileReader;
 /** Read a Otf from `.clm` file. */
 class CLMReader final {
 private:
-  void readMeta(Otf& font, BinaryFileReader& reader) const;
+  static void readMeta(Otf& font, BinaryFileReader& reader) ;
 
-  void readClassKernings(Otf& font, BinaryFileReader& reader) const;
+  static void readClassKernings(Otf& font, BinaryFileReader& reader) ;
 
-  ClassKerning* readClassKerning(BinaryFileReader& reader) const;
+  static ClassKerning* readClassKerning(BinaryFileReader& reader) ;
 
-  std::pair<u16, u16*> readClassKerningGlyphs(BinaryFileReader& reader) const;
+  static std::pair<u16, u16*> readClassKerningGlyphs(BinaryFileReader& reader);
 
-  LigaTable* readLigatures(BinaryFileReader& reaader) const;
+  LigaTable* readLigatures(BinaryFileReader& reader) const;
 
-  MathConsts* readMathConsts(BinaryFileReader& reader) const;
+  static MathConsts* readMathConsts(BinaryFileReader& reader) ;
 
-  KernRecord* readKerns(BinaryFileReader& reader) const;
+  static KernRecord* readKerns(BinaryFileReader& reader) ;
 
-  Variants* readVariants(BinaryFileReader& reader) const;
+  static Variants* readVariants(BinaryFileReader& reader) ;
 
-  GlyphAssembly* readGlyphAssembly(BinaryFileReader& reader) const;
+  static GlyphAssembly* readGlyphAssembly(BinaryFileReader& reader) ;
 
-  Math* readMath(BinaryFileReader& reader) const;
+  static Math* readMath(BinaryFileReader& reader) ;
 
-  Glyph* readGlyph(bool isMathFont, BinaryFileReader& reader) const;
+  static Glyph* readGlyph(bool isMathFont, BinaryFileReader& reader) ;
 
-  void readGlyphs(Otf& font, BinaryFileReader& reader) const;
+  static void readGlyphs(Otf& font, BinaryFileReader& reader) ;
 
 public:
   no_copy_assign(CLMReader);
 
-  CLMReader() {}
+  CLMReader() = default;
 
   Otf* read(const char* clmFilePath) const;
 };

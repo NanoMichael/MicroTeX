@@ -13,15 +13,15 @@ class CLMReader;
  * Defines a number of constants required to properly position elements of mathematical formulas.
  * See [https://docs.microsoft.com/en-us/typography/opentype/spec/math#mathconstants-table] for
  * details.
- * 
+ * <p>
  * Device-table is JUST IGNORED, so all the fields are represent as signed i16 directly.
  */
 struct MathConsts {
 private:
   /** Array to represents all constants */
-  i16 _fields[TEX_MATH_CONSTS_COUNT];
+  i16 _fields[TEX_MATH_CONSTS_COUNT]{};
 
-  MathConsts() {}
+  MathConsts() = default;
 
 public:
   no_copy_assign(MathConsts);

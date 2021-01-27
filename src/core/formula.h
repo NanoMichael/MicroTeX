@@ -2,6 +2,7 @@
 #define FORMULA_H_INCLUDED
 
 #include <string>
+#include <utility>
 
 #include "atom/atom_basic.h"
 #include "core/parser.h"
@@ -11,21 +12,23 @@
 namespace tex {
 
 class TeXFont;
+
 class CellSpecifier;
+
 class TeXParser;
 
 struct FontInfos {
   const std::string _sansserif;
   const std::string _serif;
 
-  FontInfos(const std::string& ss, const std::string& s) : _sansserif(ss), _serif(s) {}
+  FontInfos(std::string ss, std::string s) : _sansserif(std::move(ss)), _serif(std::move(s)) {}
 };
 
 /**
  * Represents a logical mathematical formula that will be displayed (by creating
  * a TeXRender from it and painting it) using algorithms that are based
  * on the TeX algorithms.
- *
+ * <p>
  * These formula's can be built using the built-in primitive TeX parser (methods
  * with String arguments) or using other Formula objects. Most methods have
  * (an) equivalent(s) where one or more Formula arguments are replaced with
@@ -38,7 +41,7 @@ struct FontInfos {
  * construction with them and insert this newly build construction at the end of
  * this Formula. Because all the provided methods return a pointer to this
  * (modified) Formula, method chaining is also possible.
- *
+ * <p>
  * Important: All the provided methods modify this Formula object, but
  * all the Formula arguments of these methods will remain unchanged and
  * independent of this Formula object!
@@ -46,8 +49,6 @@ struct FontInfos {
 class Formula {
 private:
   TeXParser _parser;
-
-  void addImpl(const Formula* f);
 
 public:
   std::map<std::string, std::string> _xmlMap;
@@ -70,8 +71,6 @@ public:
   // the current text style
   std::string _textStyle;
 
-  Formula(const TeXParser& tp);
-
   /**
    * Creates a new Formula by parsing the given string (using a primitive
    * TeX parser).
@@ -83,18 +82,12 @@ public:
    */
   Formula(const TeXParser& tp, const std::wstring& latex);
 
-  Formula(const TeXParser& tp, const std::wstring& s, bool firstpass);
-
-  /**
-   * Creates a Formula by parsing the given string in the given text style.
-   * Used when a text style command was found in the parse string.
-   */
-  Formula(const TeXParser& tp, const std::wstring& latex, const std::string& textStyle);
+  Formula(const TeXParser& tp, const std::wstring& latex, bool preprocess);
 
   Formula(
     const TeXParser& tp, const std::wstring& latex,
-    const std::string& textStyle, bool firstpass,
-    bool isMathMode  //
+    const std::string& textStyle, bool preprocess,
+    bool isMathMode
   );
 
   /** Create an empty Formula */
@@ -108,29 +101,15 @@ public:
    *
    * @throw ex_parse if the string could not be parsed correctly
    */
-  Formula(const std::wstring& latex);
+  explicit Formula(const std::wstring& latex);
 
-  Formula(const std::wstring& latex, bool firstpass);
+  Formula(const std::wstring& latex, bool preprocess);
 
   /**
    * Creates a Formula by parsing the given string in the given text style.
    * Used when a text style command was found in the parse string.
    */
   Formula(const std::wstring& latex, const std::string& textStyle);
-
-  Formula(
-    const std::wstring& latex, const std::string& textStyle,
-    bool firstpass, bool isMathMode  //
-  );
-
-  /**
-   * Creates a new Formula that is a copy of the given Formula.
-   *
-   * Both Formula's are independent of one another!
-   *
-   * @param f the formula to be copied
-   */
-  Formula(const Formula* f);
 
   /**
    * Change the text of the Formula and regenerate the root atom.
@@ -139,8 +118,8 @@ public:
    */
   void setLaTeX(const std::wstring& latex);
 
-  /** Inserts an atom at the end of the current formula. */
-  Formula* add(const sptr<Atom>& atom);
+  /** Inserts an a at the end of the current formula. */
+  Formula* add(const sptr<Atom>& a);
 
   /** Convert this Formula into a box, with the given style */
   sptr<Box> createBox(Environment& style);
@@ -180,7 +159,7 @@ public:
 
   static void _free_();
 
-  virtual ~Formula() {}
+  virtual ~Formula() = default;
 };
 
 class ArrayFormula : public Formula {
