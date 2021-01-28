@@ -16,10 +16,10 @@ namespace tex {
 inline static void parseMap(const std::string& options, std::map<std::string, std::string>& res) {
   if (options.empty()) return;
 
-  strtokenizer tokens(options, ",");
-  const int c = tokens.count_tokens();
+  StrTokenizer tokens(options, ",");
+  const int c = tokens.count();
   for (int i = 0; i < c; i++) {
-    std::string tok = tokens.next_token();
+    std::string tok = tokens.next();
     trim(tok);
     std::vector<std::string> optarg;
     split(tok, '=', optarg);

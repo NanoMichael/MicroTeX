@@ -5,7 +5,7 @@
 
 namespace tex {
 
-template <typename K, typename V>
+template<typename K, typename V>
 struct SortedDictTree {
 private:
   K _key;
@@ -20,10 +20,10 @@ public:
   SortedDictTree() = delete;
 
   SortedDictTree(const K& key, const V& value, u16 childCount)
-      : _key(key),
-        _value(value),
-        _childCount(childCount),
-        _children(childCount == 0 ? nullptr : new SortedDictTree<K, V>*[childCount]) {}
+    : _key(key),
+      _value(value),
+      _childCount(childCount),
+      _children(childCount == 0 ? nullptr : new SortedDictTree<K, V>* [childCount]) {}
 
   inline K key() const { return _key; }
 
