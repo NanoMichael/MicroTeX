@@ -12,7 +12,7 @@
 namespace tex {
 
 /** Convert a value to string */
-template <class T>
+template<class T>
 inline std::string tostring(T val) {
   std::ostringstream os;
   os << val;
@@ -20,21 +20,21 @@ inline std::string tostring(T val) {
 }
 
 /** Convert a value to wide string */
-template <class T>
+template<class T>
 inline std::wstring towstring(T val) {
   std::wostringstream os;
   os << val;
   return os.str();
 }
 
-template <class T>
+template<class T>
 inline void valueof(const std::string& s, T& val) {
   std::stringstream ss;
   ss << s;
   ss >> val;
 }
 
-template <class T>
+template<class T>
 inline void valueof(const std::wstring& s, T& val) {
   std::wstringstream ss;
   ss << s;
@@ -90,7 +90,7 @@ inline std::string& trim(std::string& s) {
   return ltrim(rtrim(s));
 }
 
-/** Split string with specified delimeter */
+/** Split string with specified delimiter */
 inline void split(const std::string& str, char del, std::vector<std::string>& res) {
   std::stringstream ss(str);
   std::string tok;
@@ -114,7 +114,7 @@ inline bool endswith(const std::wstring& str, const std::wstring& cmp) {
 }
 
 /** Split string with delimiter */
-class strtokenizer {
+class StrTokenizer {
 private:
   std::string _str;
   std::string _del;
@@ -122,21 +122,21 @@ private:
   int _pos;
 
 public:
-  strtokenizer(const std::string& str) {
+  StrTokenizer(const std::string& str) {
     _str = str;
     _del = " \t\n\r\f";
     _ret = false;
     _pos = 0;
   }
 
-  strtokenizer(const std::string& str, const std::string& del, bool ret = false) {
+  StrTokenizer(const std::string& str, const std::string& del, bool ret = false) {
     _str = str;
     _del = del;
     _ret = ret;
     _pos = 0;
   }
 
-  int count_tokens() {
+  int count() {
     int c = 0;
     bool in = false;
     for (int i = _pos, len = _str.length(); i < len; i++) {
@@ -154,7 +154,7 @@ public:
     return c;
   }
 
-  std::string next_token() {
+  std::string next() {
     int i = _pos;
     int len = _str.length();
 

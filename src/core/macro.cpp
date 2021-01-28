@@ -10,8 +10,8 @@ using namespace tex;
 bool NewCommandMacro::_errIfConflict = true;
 
 bool NewCommandMacro::isMacro(const wstring& name) {
-  auto it = _macrocode.find(name);
-  return (it != _macrocode.end());
+  auto it = _codes.find(name);
+  return (it != _codes.end());
 }
 
 void NewCommandMacro::checkNew(const wstring& name) {
@@ -30,49 +30,49 @@ void NewCommandMacro::checkRenew(const wstring& name) {
     );
 }
 
-void NewCommandMacro::addNewCommand(const wstring& name, const wstring& code, int nbargs) {
+void NewCommandMacro::addNewCommand(const wstring& name, const wstring& code, int argc) {
   checkNew(name);
-  _macrocode[name] = code;
-  MacroInfo::addMacro(name, new InflationMacroInfo(_instance, nbargs));
+  _codes[name] = code;
+  MacroInfo::addMacro(name, new InflationMacroInfo(_instance, argc));
 }
 
 void NewCommandMacro::addNewCommand(
   const wstring& name,
   const wstring& code,
-  int nbargs,
+  int argc,
   const wstring& def
 ) {
   checkNew(name);
-  _macrocode[name] = code;
-  _macroreplacement[name] = def;
-  MacroInfo::addMacro(name, new InflationMacroInfo(_instance, nbargs, 1));
+  _codes[name] = code;
+  _replacements[name] = def;
+  MacroInfo::addMacro(name, new InflationMacroInfo(_instance, argc, 1));
 }
 
-void NewCommandMacro::addRenewCommand(const wstring& name, const wstring& code, int nbargs) {
+void NewCommandMacro::addRenewCommand(const wstring& name, const wstring& code, int argc) {
   checkRenew(name);
-  _macrocode[name] = code;
-  MacroInfo::addMacro(name, new InflationMacroInfo(_instance, nbargs));
+  _codes[name] = code;
+  MacroInfo::addMacro(name, new InflationMacroInfo(_instance, argc));
 }
 
 void NewCommandMacro::addRenewCommand(
   const wstring& name,
   const wstring& code,
-  int nbargs,
+  int argc,
   const wstring& def
 ) {
   checkRenew(name);
-  _macrocode[name] = code;
-  _macroreplacement[name] = def;
-  MacroInfo::addMacro(name, new InflationMacroInfo(_instance, nbargs, 1));
+  _codes[name] = code;
+  _replacements[name] = def;
+  MacroInfo::addMacro(name, new InflationMacroInfo(_instance, argc, 1));
 }
 
 void NewCommandMacro::execute(TeXParser& tp, vector<wstring>& args) {
-  wstring code = _macrocode[args[0]];
+  wstring code = _codes[args[0]];
   wstring rep;
   int nbargs = args.size() - 12;
   int dec = 0;
 
-  auto it = _macroreplacement.find(args[0]);
+  auto it = _replacements.find(args[0]);
 
   // FIXME
   // Keep slash "\" and dollar "$" signs?
@@ -83,7 +83,7 @@ void NewCommandMacro::execute(TeXParser& tp, vector<wstring>& args) {
     dec = 1;
     // quotereplace(args[nbargs + 1], rep);
     replaceall(code, L"#1", args[nbargs + 1]);
-  } else if (it != _macroreplacement.end()) {
+  } else if (it != _replacements.end()) {
     dec = 1;
     // quotereplace(it->second, rep);
     replaceall(code, L"#1", it->second);
@@ -99,20 +99,20 @@ void NewCommandMacro::execute(TeXParser& tp, vector<wstring>& args) {
 
 void NewEnvironmentMacro::addNewEnvironment(
   const wstring& name,
-  const wstring& begdef, const wstring& enddef,
-  int nbargs
+  const wstring& begDef, const wstring& endDef,
+  int argc
 ) {
   wstring n = name + L"@env";
-  wstring def = begdef + L" #" + towstring(nbargs + 1) + L" " + enddef;
-  addNewCommand(n, def, nbargs + 1);
+  wstring def = begDef + L" #" + towstring(argc + 1) + L" " + endDef;
+  addNewCommand(n, def, argc + 1);
 }
 
 void NewEnvironmentMacro::addRenewEnvironment(
   const wstring& name,
-  const wstring& begdef, const wstring& enddef,
-  int nbargs
+  const wstring& begDef, const wstring& endDef,
+  int argc
 ) {
-  if (_macrocode.find(name + L"@env") == _macrocode.end()) {
+  if (_codes.find(name + L"@env") == _codes.end()) {
     throw ex_parse(
       "Environment " + wide2utf8(name.c_str())
       + "is not defined! Use newenvironment instead!"
@@ -120,8 +120,8 @@ void NewEnvironmentMacro::addRenewEnvironment(
   }
   addRenewCommand(
     name + L"@env",
-    begdef + L" #" + towstring(nbargs + 1) + L" " + enddef,
-    nbargs + 1
+    begDef + L" #" + towstring(argc + 1) + L" " + endDef,
+    argc + 1
   );
 }
 

@@ -105,7 +105,7 @@ private:
 public:
   static void setMainFont(
     const std::string& versionName,
-    const std::vector<FontSpec>& params  //
+    const std::vector<FontSpec>& params
   );
 
   static void setMathFont(const FontSpec& params);

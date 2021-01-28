@@ -590,13 +590,13 @@ color ColorAtom::getColor(string s) {
   }
 
   auto en = string::npos;
-  strtokenizer toks(s, ";,");
-  int n = toks.count_tokens();
+  StrTokenizer toks(s, ";,");
+  int n = toks.count();
   if (n == 3) {
     // RGB model
-    string R = toks.next_token();
-    string G = toks.next_token();
-    string B = toks.next_token();
+    string R = toks.next();
+    string G = toks.next();
+    string B = toks.next();
 
     float r = 0.f, g = 0.f, b = 0.f;
     valueof(trim(R), r);
@@ -619,10 +619,10 @@ color ColorAtom::getColor(string s) {
   } else if (n == 4) {
     // CMYK model
     float c = 0.f, m = 0.f, y = 0.f, k = 0.f;
-    string C = toks.next_token();
-    string M = toks.next_token();
-    string Y = toks.next_token();
-    string K = toks.next_token();
+    string C = toks.next();
+    string M = toks.next();
+    string Y = toks.next();
+    string K = toks.next();
     valueof(trim(C), c);
     valueof(trim(M), m);
     valueof(trim(Y), y);

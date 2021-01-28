@@ -29,17 +29,19 @@ macro(hvspace) {
     throw ex_parse("Unknown unit '" + str + "'!");
   }
 
-  return args[0][0] ==
-         L'h' ? sptr<Atom>(new SpaceAtom(unit, f, 0, 0))
-              : sptr<Atom>(new SpaceAtom(unit, 0, f, 0));
+  return (
+    args[0][0] == L'h'
+    ? sptr<Atom>(new SpaceAtom(unit, f, 0, 0))
+    : sptr<Atom>(new SpaceAtom(unit, 0, f, 0))
+  );
 }
 
 macro(rule) {
-  auto w = SpaceAtom::getLength(args[1]);
-  auto h = SpaceAtom::getLength(args[2]);
-  auto r = SpaceAtom::getLength(args[3]);
+  auto[wu, w] = SpaceAtom::getLength(args[1]);
+  auto[hu, h] = SpaceAtom::getLength(args[2]);
+  auto[ru, r] = SpaceAtom::getLength(args[3]);
 
-  return sptr<Atom>(new RuleAtom(w.first, w.second, h.first, h.second, r.first, -r.second));
+  return sptr<Atom>(new RuleAtom(wu, w, hu, h, ru, -r));
 }
 
 macro(cfrac) {
@@ -77,14 +79,14 @@ macro(sfrac) {
     sL = -0.24f;
     sR = -0.24f;
     auto in = sptr<Atom>(new ScaleAtom(SymbolAtom::get("textfractionsolidus"), 1.25f, 0.65f));
-    VRowAtom* vr = new VRowAtom(in);
+    auto* vr = new VRowAtom(in);
     vr->setRaise(UnitType::ex, 0.4f);
     slash = sptr<Atom>(vr);
   }
 
-  VRowAtom* snum = new VRowAtom(sptr<Atom>(new ScaleAtom(num._root, sx, sy)));
+  auto* snum = new VRowAtom(sptr<Atom>(new ScaleAtom(num._root, sx, sy)));
   snum->setRaise(UnitType::ex, r);
-  RowAtom* ra = new RowAtom(sptr<Atom>(snum));
+  auto* ra = new RowAtom(sptr<Atom>(snum));
   ra->add(sptr<Atom>(new SpaceAtom(UnitType::em, sL, 0, 0)));
   ra->add(slash);
   ra->add(sptr<Atom>(new SpaceAtom(UnitType::em, sR, 0, 0)));
@@ -119,8 +121,8 @@ macro(genfrac) {
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
   }
   sptr<Atom> fa(new FractionAtom(num._root, den._root, rule, unit, value));
-  RowAtom* ra = new RowAtom();
-  const TexStyle texStyle = static_cast<TexStyle>(style * 2);
+  auto* ra = new RowAtom();
+  const auto texStyle = static_cast<TexStyle>(style * 2);
   ra->add(sptr<Atom>(new StyleAtom(texStyle, sptr<Atom>(new FencedAtom(fa, L, R)))));
 
   return sptr<Atom>(ra);
@@ -134,7 +136,7 @@ macro(overwithdelims) {
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
 
   auto left = Formula(tp, args[1], false)._root;
-  BigDelimiterAtom* a = dynamic_cast<BigDelimiterAtom*>(left.get());
+  auto* a = dynamic_cast<BigDelimiterAtom*>(left.get());
   if (a != nullptr) left = a->_delim;
 
   auto right = Formula(tp, args[2], false)._root;
@@ -148,7 +150,7 @@ macro(overwithdelims) {
     return sptr<Atom>(new FencedAtom(f, sl, sr));
   }
 
-  RowAtom* ra = new RowAtom();
+  auto* ra = new RowAtom();
   ra->add(left);
   ra->add(sptr<Atom>(new FractionAtom(num, den, true)));
   ra->add(right);
@@ -163,7 +165,7 @@ macro(atopwithdelims) {
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
 
   auto left = Formula(tp, args[1], false)._root;
-  BigDelimiterAtom* big = dynamic_cast<BigDelimiterAtom*>(left.get());
+  auto* big = dynamic_cast<BigDelimiterAtom*>(left.get());
   if (big != nullptr) left = big->_delim;
 
   auto right = Formula(tp, args[2], false)._root;
@@ -177,7 +179,7 @@ macro(atopwithdelims) {
     return sptr<Atom>(new FencedAtom(f, sl, sr));
   }
 
-  RowAtom* ra = new RowAtom();
+  auto* ra = new RowAtom();
   ra->add(left);
   ra->add(sptr<Atom>(new FractionAtom(num, den, false)));
   ra->add(right);
@@ -193,7 +195,7 @@ macro(abovewithdelims) {
   }
 
   auto left = Formula(tp, args[1], false)._root;
-  BigDelimiterAtom* big = dynamic_cast<BigDelimiterAtom*>(left.get());
+  auto* big = dynamic_cast<BigDelimiterAtom*>(left.get());
   if (big != nullptr) left = big->_delim;
 
   auto right = Formula(tp, args[2], false)._root;
@@ -207,7 +209,7 @@ macro(abovewithdelims) {
     return sptr<Atom>(new FencedAtom(f, sl, sr));
   }
 
-  RowAtom* ra = new RowAtom();
+  auto* ra = new RowAtom();
   ra->add(left);
   ra->add(sptr<Atom>(new FractionAtom(num, den, true)));
   ra->add(right);
@@ -216,14 +218,10 @@ macro(abovewithdelims) {
 
 macro(textstyles) {
   wstring style(args[0]);
-  if (style == L"frak")
-    style = L"mathfrak";
-  else if (style == L"Bbb")
-    style = L"mathbb";
-  else if (style == L"bold")
-    return sptr<Atom>(new BoldAtom(Formula(tp, args[1], false)._root));
-  else if (style == L"cal")
-    style = L"mathcal";
+  if (style == L"frak") style = L"mathfrak";
+  else if (style == L"Bbb") style = L"mathbb";
+  else if (style == L"bold") return sptr<Atom>(new BoldAtom(Formula(tp, args[1], false)._root));
+  else if (style == L"cal") style = L"mathcal";
 
   FontInfos* info = nullptr;
   auto it = Formula::_externalFontMap.find(UnicodeBlock::BASIC_LATIN);
@@ -292,7 +290,7 @@ macro(left) {
   wstring grep = tp.getGroup(L"\\left", L"\\right");
 
   auto left = Formula(tp, args[1], false)._root;
-  BigDelimiterAtom* big = dynamic_cast<BigDelimiterAtom*>(left.get());
+  auto* big = dynamic_cast<BigDelimiterAtom*>(left.get());
   if (big != nullptr) left = big->_delim;
 
   auto right = tp.getArgument();
@@ -306,7 +304,7 @@ macro(left) {
     return sptr<Atom>(new FencedAtom(tf._root, sl, tf._middle, sr));
   }
 
-  RowAtom* ra = new RowAtom();
+  auto* ra = new RowAtom();
   ra->add(left);
   ra->add(Formula(tp, grep, false)._root);
   ra->add(right);
@@ -381,23 +379,23 @@ macro(definecolor) {
     valueof(args[3], f);
     c = rgb(f, f, f);
   } else if (args[2] == L"rgb") {
-    strtokenizer stok(cs, ":,");
-    if (stok.count_tokens() != 3)
+    StrTokenizer stok(cs, ":,");
+    if (stok.count() != 3)
       throw ex_parse("The color definition must have three components!");
     float r, g, b;
-    string R = stok.next_token(), G = stok.next_token(), B = stok.next_token();
+    string R = stok.next(), G = stok.next(), B = stok.next();
     valueof(trim(R), r);
     valueof(trim(G), g);
     valueof(trim(B), b);
     c = rgb(r, g, b);
   } else if (args[2] == L"cmyk") {
-    strtokenizer stok(cs, ":,");
-    if (stok.count_tokens() != 4)
+    StrTokenizer stok(cs, ":,");
+    if (stok.count() != 4)
       throw ex_parse("The color definition must have four components!");
     float cmyk[4];
-    for (int i = 0; i < 4; i++) {
-      string X = stok.next_token();
-      valueof(trim(X), cmyk[i]);
+    for (float& i : cmyk) {
+      string X = stok.next();
+      valueof(trim(X), i);
     }
     float k = 1 - cmyk[3];
     c = rgb(k * (1 - cmyk[0]), k * (1 - cmyk[1]), k * (1 - cmyk[2]));
@@ -439,7 +437,7 @@ macro(sizes) {
 macro(romannumeral) {
   int numbers[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
   string letters[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
-  string roman = "";
+  string roman;
 
   int num;
   string x;
@@ -493,7 +491,7 @@ macro(xml) {
   wstring buf;
   size_t start = 0;
   size_t pos;
-  while ((pos = str.find(L"$")) != wstring::npos) {
+  while ((pos = str.find(L'$')) != wstring::npos) {
     if (pos < str.length() - 1) {
       start = pos;
       while (++start < str.length() && isalpha(str[start]));

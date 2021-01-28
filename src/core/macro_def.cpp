@@ -5,21 +5,21 @@
 using namespace std;
 using namespace tex;
 
-#define mac3(nbargs, name, code) \
-  { L##code, m(nbargs, name) }
+#define mac3(argc, name, code) \
+  { L##code, m(argc, name) }
 
-#define mac4(nbargs, posOpts, name, code) \
-  { L##code, m(nbargs, posOpts, name) }
+#define mac4(argc, posOpts, name, code) \
+  { L##code, m(argc, posOpts, name) }
 
-inline static PreDefMacro* m(int nbargs, int posOpts, MacroDelegate del) {
-  return new PreDefMacro(nbargs, posOpts, del);
+inline static PreDefMacro* m(int argc, int posOpts, MacroDelegate del) {
+  return new PreDefMacro(argc, posOpts, del);
 }
 
-inline static PreDefMacro* m(int nbargs, MacroDelegate del) {
-  return new PreDefMacro(nbargs, del);
+inline static PreDefMacro* m(int argc, MacroDelegate del) {
+  return new PreDefMacro(argc, del);
 }
 
-map<wstring, MacroInfo*> MacroInfo::_commands = {
+map<wstring, MacroInfo*> MacroInfo::_commands{
 #define mac mac4
     mac(2, 2, macro_newcommand, "newcommand"),
     mac(2, 2, macro_renewcommand, "renewcommand"),
@@ -316,31 +316,32 @@ map<wstring, MacroInfo*> MacroInfo::_commands = {
     mac(2, macro_longdiv, "longdiv"),
     mac(1, macro_cancel, "cancel"),
     mac(1, macro_bcancel, "bcancel"),
-    mac(1, macro_xcancel, "xcancel")
+    mac(1, macro_xcancel, "xcancel"),
 #ifdef GRAPHICS_DEBUG
-        ,
     mac(0, macro_debug, "debug"),
-    mac(0, macro_undebug, "undebug")
+    mac(0, macro_undebug, "undebug"),
 #endif  // GRAPHICS_DEBUG
 };
 
-map<wstring, wstring> NewCommandMacro::_macrocode;
-map<wstring, wstring> NewCommandMacro::_macroreplacement;
+map<wstring, wstring> NewCommandMacro::_codes;
+map<wstring, wstring> NewCommandMacro::_replacements;
 Macro* NewCommandMacro::_instance = new NewCommandMacro();
 
 inline static void e(
-    int nbargs,
-    const wstring& name,
-    const wstring& begdef,
-    const wstring& enddef) {
-  NewEnvironmentMacro::addNewEnvironment(name, begdef, enddef, nbargs);
+  int argc,
+  const wstring& name,
+  const wstring& begDef,
+  const wstring& endDef
+) {
+  NewEnvironmentMacro::addNewEnvironment(name, begDef, endDef, argc);
 }
 
 inline static void c(
-    int nbargs,
-    const wstring& name,
-    const wstring& code) {
-  NewCommandMacro::addNewCommand(name, code, nbargs);
+  int argc,
+  const wstring& name,
+  const wstring& code
+) {
+  NewCommandMacro::addNewCommand(name, code, argc);
 }
 
 void NewCommandMacro::_init_() {
