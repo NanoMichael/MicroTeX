@@ -4,7 +4,9 @@
 #include "config.h"
 
 #if defined(HAVE_LOG) && defined(__GNUC__)
+
 #include <cxxabi.h>
+
 #endif
 
 #include <algorithm>
@@ -28,27 +30,20 @@
 #include "utils/nums.h"
 #include "utils/string_utils.h"
 #include "utils/utf.h"
+#include "utils/utils.h"
 
 namespace tex {
 
 /** The root directory of the "TeX resources" (defined in latex.cpp) */
 extern std::string RES_BASE;
 
-/** Type alias shared_ptr<T> to sptr<T> */
-template <typename T>
-using sptr = std::shared_ptr<T>;
-
-template <typename T, typename... Args>
-inline sptr<T> sptrOf(Args&&... args) {
-  return std::make_shared<T>(std::forward<Args>(args)...);
-}
-
 /** Return the real name of the function, class or struct name. */
 #ifdef HAVE_LOG
 #ifdef __GNUC__
+
 inline std::string demangle_name(const char* name) {
   int status = -4;
-  char* res = abi::__cxa_demangle(name, 0, 0, &status);
+  char* res = abi::__cxa_demangle(name, nullptr, nullptr, &status);
   const char* const real_name = status == 0 ? res : name;
   std::string res_str(real_name);
   if (res != nullptr) {
@@ -56,21 +51,13 @@ inline std::string demangle_name(const char* name) {
   }
   return res_str;
 }
+
 #else
 inline std::string demangle_name(const char* name) {
   return name;
 }
 #endif  // __GNUC__
 #endif  // HAVE_LOG
-
-/** Find the position of a value in the vector, return -1 if not found */
-template <class T>
-inline int indexOf(const std::vector<T>& v, const T& x) {
-  auto it = find(v.begin(), v.end(), x);
-  int i = std::distance(v.begin(), it);
-  return (i >= v.size() ? -1 : i);
-}
-
 }  // namespace tex
 
 #endif  // COMMON_H_INCLUDED
