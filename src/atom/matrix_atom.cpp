@@ -678,7 +678,7 @@ sptr<Box> HdotsforAtom::createBox(Environment& env) {
     return createBox(space, b, env);
   }
 
-  // Adjust the spce between
+  // Adjust the space between
   space += (x - count) * space / count;
   auto sb = sptr<Box>(new StrutBox(space, 0, 0, 0));
   auto b = sptr<Box>(new HorizontalBox());
