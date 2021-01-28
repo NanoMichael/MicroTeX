@@ -49,19 +49,19 @@ private:
   // TeXFont used
   sptr<TeXFont> _tf;
   // last used font
-  int _lastFontId;
+  int _lastFontId{};
   // Environment width
-  float _textWidth;
+  float _textWidth{};
 
   // The text style to use
   std::string _textStyle;
   // If is small capital
-  bool _smallCap;
-  float _scaleFactor;
+  bool _smallCap{};
+  float _scaleFactor{};
   // The unit of inter-line space
   UnitType _interlineUnit;
   // The inter line space
-  float _interline;
+  float _interline{};
 
   // Member to store copies to prevent destruct
   sptr<Environment> _copy, _copytf, _cramp, _dnom;
@@ -75,13 +75,6 @@ private:
     _scaleFactor = 1.f;
     _interlineUnit = UnitType::em;
     _interline = 0;
-  }
-
-  Environment(TexStyle style, const sptr<TeXFont>& tf, color bg, const color c) {
-    init();
-    _style = style;
-    _tf = tf;
-    setInterline(UnitType::ex, 1.f);
   }
 
   Environment(
@@ -201,7 +194,7 @@ private:
 
   sptr<Box> createBox(const Environment& env) const;
 
-  static float getFactor(const Environment& env) ;
+  static float getFactor(const Environment& env);
 
   static Glue* getGlue(SpaceType skipType);
 
@@ -225,12 +218,9 @@ public:
    * Creates a box representing the glue type according to the "glue rules" based
    * on the atom types between which the glue must be inserted.
    *
-   * @param ltype
-   *      left atom type
-   * @param rtype
-   *      right atom type
-   * @param env
-   *      the Environment
+   * @param ltype left atom type
+   * @param rtype right atom type
+   * @param env the Environment
    * @return a box containing representing the glue
    */
   static sptr<Box> get(AtomType ltype, AtomType rtype, const Environment& env);

@@ -14,6 +14,7 @@ class TeXFont {
 public:
   static const int NO_FONT;
 
+  // TODO
   virtual float getScaleFactor() = 0;
 
   virtual float getAxisHeight(TexStyle style) = 0;
