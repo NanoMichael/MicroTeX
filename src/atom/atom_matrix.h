@@ -1,5 +1,5 @@
-#ifndef LATEX_MATRIX_ATOM_H
-#define LATEX_MATRIX_ATOM_H
+#ifndef LATEX_ATOM_MATRIX_H
+#define LATEX_ATOM_MATRIX_H
 
 #include "atom/atom.h"
 #include "atom/box.h"
@@ -330,4 +330,4 @@ public:
 
 }
 
-#endif //LATEX_MATRIX_ATOM_H
+#endif //LATEX_ATOM_MATRIX_H
