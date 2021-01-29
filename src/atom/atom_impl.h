@@ -5,7 +5,7 @@
 
 #include "atom/atom.h"
 #include "atom/box.h"
-#include "atom/matrix_atom.h"
+#include "atom/atom_matrix.h"
 #include "common.h"
 #include "core/core.h"
 #include "core/formula.h"
