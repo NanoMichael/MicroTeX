@@ -45,16 +45,6 @@ sptr<Box> HlineAtom::createBox(Environment& env) {
   return sptr<Box>(vb);
 }
 
-SpaceAtom UnderScoreAtom::_w(UnitType::em, 0.7f, 0, 0);
-SpaceAtom UnderScoreAtom::_s(UnitType::em, 0.06f, 0, 0);
-
-sptr<Box> UnderScoreAtom::createBox(Environment& env) {
-  float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-  auto* hb = new HorizontalBox(_s.createBox(env));
-  hb->add(sptr<Box>(new HorizontalRule(drt, _w.createBox(env)->_width, 0)));
-  return sptr<Box>(hb);
-}
-
 CumulativeScriptsAtom::CumulativeScriptsAtom(
   const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup) {
   auto* ca = dynamic_cast<CumulativeScriptsAtom*>(base.get());
@@ -159,8 +149,14 @@ pair<UnitType, float> SpaceAtom::getLength(const wstring& lgth) {
   return getLength(s);
 }
 
-sptr<Box> BreakMarkAtom::createBox(Environment& env) {
-  return sptr<Box>(new StrutBox(0, 0, 0, 0));
+SpaceAtom UnderScoreAtom::_w(UnitType::em, 0.7f, 0, 0);
+SpaceAtom UnderScoreAtom::_s(UnitType::em, 0.06f, 0, 0);
+
+sptr<Box> UnderScoreAtom::createBox(Environment& env) {
+  float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
+  auto* hb = new HorizontalBox(_s.createBox(env));
+  hb->add(sptr<Box>(new HorizontalRule(drt, _w.createBox(env)->_width, 0)));
+  return sptr<Box>(hb);
 }
 
 /********************************** char symbol atoms implementation ******************************/
@@ -195,7 +191,7 @@ ostream& tex::operator<<(ostream& os, const SymbolAtom& s) {
 
 #endif  // HAVE_LOG
 
-SymbolAtom::SymbolAtom(const string& name, AtomType type, bool del) : _unicode(0) {
+SymbolAtom::SymbolAtom(const string& name, AtomType type, bool del) noexcept: _unicode(0) {
   _name = name;
   if (type == AtomType::bigOperator) _limitsType = LimitsType::normal;
   _delimiter = del;
@@ -278,192 +274,8 @@ sptr<Box> CharAtom::createBox(Environment& env) {
   return box;
 }
 
-/************************************** row atom implementation ***********************************/
-
-bool RowAtom::_breakEveywhere = false;
-bitset<16> RowAtom::_binSet(_initBinset_());
-bitset<16> RowAtom::_ligKernSet(_initLigKernSet_());
-
-bitset<16> RowAtom::_initBinset_() {
-  bitset<16> binSet;
-  binSet
-    .set(static_cast<i8>(AtomType::binaryOperator))
-    .set(static_cast<i8>(AtomType::bigOperator))
-    .set(static_cast<i8>(AtomType::relation))
-    .set(static_cast<i8>(AtomType::opening))
-    .set(static_cast<i8>(AtomType::punctuation));
-  return binSet;
-}
-
-bitset<16> RowAtom::_initLigKernSet_() {
-  bitset<16> ligKern;
-  ligKern
-    .set(static_cast<i8>(AtomType::ordinary))
-    .set(static_cast<i8>(AtomType::bigOperator))
-    .set(static_cast<i8>(AtomType::binaryOperator))
-    .set(static_cast<i8>(AtomType::relation))
-    .set(static_cast<i8>(AtomType::opening))
-    .set(static_cast<i8>(AtomType::closing))
-    .set(static_cast<i8>(AtomType::punctuation));
-  return ligKern;
-}
-
-RowAtom::RowAtom(const sptr<Atom>& el)
-  : _lookAtLastAtom(false), _previousAtom(nullptr), _breakable(true) {
-  if (el != nullptr) {
-    auto* x = dynamic_cast<RowAtom*>(el.get());
-    if (x != nullptr) {
-      // no need to make an mrow the only element of a mrow
-      _elements.insert(_elements.end(), x->_elements.begin(), x->_elements.end());
-    } else {
-      _elements.push_back(el);
-    }
-  }
-}
-
-sptr<Atom> RowAtom::getFirstAtom() {
-  if (!_elements.empty()) return _elements.front();
-  return nullptr;
-}
-
-sptr<Atom> RowAtom::popLastAtom() {
-  if (!_elements.empty()) {
-    sptr<Atom> x = _elements.back();
-    _elements.pop_back();
-    return x;
-  }
-  return sptr<Atom>(new SpaceAtom(UnitType::point, 0.f, 0.f, 0.f));
-}
-
-sptr<Atom> RowAtom::get(size_t pos) {
-  if (pos >= _elements.size()) return sptr<Atom>(new SpaceAtom(UnitType::point, 0, 0, 0));
-  return _elements[pos];
-}
-
-void RowAtom::add(const sptr<Atom>& el) {
-  if (el != nullptr) _elements.push_back(el);
-}
-
-void RowAtom::change2Ord(Dummy* cur, Dummy* prev, Atom* next) {
-  AtomType type = cur->leftType();
-  if ((type == AtomType::binaryOperator) &&
-      ((prev == nullptr || _binSet[static_cast<i8>(prev->rightType())]) || next == nullptr)) {
-    cur->type = AtomType::ordinary;
-  } else if (next != nullptr && cur->rightType() == AtomType::binaryOperator) {
-    AtomType nextType = next->leftType();
-    if (nextType == AtomType::relation ||
-        nextType == AtomType::closing ||
-        nextType == AtomType::punctuation) {
-      cur->type = AtomType::ordinary;
-    }
-  }
-}
-
-AtomType RowAtom::leftType() const {
-  if (_elements.empty()) return AtomType::ordinary;
-  return _elements.front()->leftType();
-}
-
-AtomType RowAtom::rightType() const {
-  if (_elements.empty()) return AtomType::ordinary;
-  return _elements.back()->rightType();
-}
-
-sptr<Box> RowAtom::createBox(Environment& env) {
-  auto x = env.getTeXFont();
-  TeXFont& tf = *x;
-  auto* hbox = new HorizontalBox();
-
-  // convert atoms to boxes and add to the horizontal box
-  int e = _elements.size() - 1;
-  for (int i = -1; i < e;) {
-    auto at = _elements[++i];
-    bool markAdded = false;
-    auto* ba = dynamic_cast<BreakMarkAtom*>(at.get());
-    while (ba != nullptr) {
-      if (!markAdded) markAdded = true;
-      if (i < e) {
-        at = _elements[++i];
-        ba = dynamic_cast<BreakMarkAtom*>(at.get());
-      } else {
-        break;
-      }
-    }
-
-    sptr<Dummy> atom(new Dummy(at));
-    // if necessary, change BIN type to ORD
-    // i.e. for formula: $+ e - f$, the plus sign should be traded as an ordinary type
-    sptr<Atom> nextAtom(nullptr);
-    if (i < e) nextAtom = _elements[i + 1];
-    change2Ord(atom.get(), _previousAtom.get(), nextAtom.get());
-    // check for ligature or kerning
-    float kern = 0;
-    while (i < e && atom->rightType() == AtomType::ordinary && atom->isCharSymbol()) {
-      auto next = _elements[++i];
-      auto* c = dynamic_cast<CharSymbol*>(next.get());
-      if (c != nullptr && _ligKernSet[static_cast<i8>(next->leftType())]) {
-        atom->markAsTextSymbol();
-        auto l = atom->getCharFont(tf);
-        auto r = c->getCharFont(tf);
-        auto lig = tf.getLigature(*l, *r);
-        if (lig == nullptr) {
-          kern = tf.getKern(*l, *r, env.getStyle());
-          i--;
-          break;  // iterator remains unchanged (no ligature!)
-        } else {
-          // fixed with ligature
-          atom->changeAtom(std::make_shared<FixedCharAtom>(lig));
-        }
-      } else {
-        i--;
-        break;
-      }  // iterator remains unchanged
-    }
-
-    // insert glue, unless it's the first element of the row
-    // or this element or the next is a kerning
-    if (i != 0 && _previousAtom != nullptr && !_previousAtom->isKern() && !atom->isKern()) {
-      hbox->add(Glue::get(_previousAtom->rightType(), atom->leftType(), env));
-    }
-    // insert atom's box
-    atom->setPreviousAtom(_previousAtom);
-    auto b = atom->createBox(env);
-    auto* cb = dynamic_cast<CharBox*>(b.get());
-    if (cb != nullptr && atom->isCharInMathMode()) {
-      // When we have a single char, we need to add italic correction
-      // As an example: (TVY) looks crappy...
-      cb->addItalicCorrectionToWidth();
-    }
-
-    if (_breakable) {
-      if (_breakEveywhere) {
-        hbox->addBreakPosition(hbox->_children.size());
-      } else {
-        auto ca = dynamic_cast<CharAtom*>(at.get());
-        if (markAdded || (ca != nullptr && isdigit(ca->getCharacter()))) {
-          hbox->addBreakPosition(hbox->_children.size());
-        }
-      }
-    }
-
-    hbox->add(b);
-
-    // set last used font id (for next atom)
-    env.setLastFontId(b->getLastFontId());
-
-    // insert kerning
-    if (abs(kern) > PREC) hbox->add(sptr<Box>(new StrutBox(kern, 0, 0, 0)));
-
-    // kerning do not interfere with the normal glue-rules without kerning
-    if (!atom->isKern()) _previousAtom = atom;
-  }
-  // reset previous atom
-  _previousAtom = nullptr;
-  return sptr<Box>(hbox);
-}
-
-void RowAtom::setPreviousAtom(const sptr<Dummy>& prev) {
-  _previousAtom = prev;
+sptr<Box> BreakMarkAtom::createBox(Environment& env) {
+  return sptr<Box>(new StrutBox(0, 0, 0, 0));
 }
 
 /************************************ VRowAtom implementation *************************************/
@@ -566,79 +378,6 @@ ColorAtom::ColorAtom(const sptr<Atom>& atom, color bg, color c) : _background(bg
 
 void ColorAtom::defineColor(const string& name, color c) {
   _colors[name] = c;
-}
-
-color ColorAtom::getColor(string s) {
-  if (s.empty()) return _default;
-  trim(s);
-  // #AARRGGBB formatted color
-  if (s[0] == '#') return decode(s);
-  if (s.find(',') == string::npos) {
-    // find from predefined colors
-    auto it = _colors.find(tolower(s));
-    if (it != _colors.end()) return it->second;
-    // AARRGGBB formatted color
-    if (s.find('.') == string::npos) return decode("#" + s);
-    // gray color
-    float x = 0.f;
-    valueof(s, x);
-    if (x != 0.f) {
-      float g = min(1.f, max(x, 0.f));
-      return rgb(g, g, g);
-    }
-    return _default;
-  }
-
-  auto en = string::npos;
-  StrTokenizer toks(s, ";,");
-  int n = toks.count();
-  if (n == 3) {
-    // RGB model
-    string R = toks.next();
-    string G = toks.next();
-    string B = toks.next();
-
-    float r = 0.f, g = 0.f, b = 0.f;
-    valueof(trim(R), r);
-    valueof(trim(G), g);
-    valueof(trim(B), b);
-
-    if (r == 0.f && g == 0.f && b == 0.f) return _default;
-
-    if (r == (int) r && g == (int) g && b == (int) b &&
-        R.find('.') == en && G.find('.') == en && B.find('.') == en) {
-      int ir = (int) min(255.f, max(0.f, r));
-      int ig = (int) min(255.f, max(0.f, g));
-      int ib = (int) min(255.f, max(0.f, b));
-      return rgb(ir, ig, ib);
-    }
-    r = min(1.f, max(0.f, r));
-    g = min(1.f, max(0.f, g));
-    b = min(1.f, max(0.f, b));
-    return rgb(r, g, b);
-  } else if (n == 4) {
-    // CMYK model
-    float c = 0.f, m = 0.f, y = 0.f, k = 0.f;
-    string C = toks.next();
-    string M = toks.next();
-    string Y = toks.next();
-    string K = toks.next();
-    valueof(trim(C), c);
-    valueof(trim(M), m);
-    valueof(trim(Y), y);
-    valueof(trim(K), k);
-
-    if (c == 0.f && m == 0.f && y == 0.f && k == 0.f) return _default;
-
-    c = min(1.f, max(0.f, c));
-    m = min(1.f, max(0.f, m));
-    y = min(1.f, max(0.f, y));
-    k = min(1.f, max(0.f, k));
-
-    return cmyk(c, m, y, k);
-  }
-
-  return _default;
 }
 
 sptr<Box> ColorAtom::createBox(Environment& env) {
@@ -801,9 +540,9 @@ sptr<Box> AccentedAtom::createBox(Environment& env) {
 
 /************************************ UnderOverAtom implementation *******************************/
 
-sptr<Box> UnderOverAtom::changeWidth(const sptr<Box>& b, float maxW) {
-  if (b != nullptr && abs(maxW - b->_width) > PREC)
-    return sptr<Box>(new HorizontalBox(b, maxW, Alignment::center));
+sptr<Box> UnderOverAtom::changeWidth(const sptr<Box>& b, float maxWidth) {
+  if (b != nullptr && abs(maxWidth - b->_width) > PREC)
+    return sptr<Box>(new HorizontalBox(b, maxWidth, Alignment::center));
   return b;
 }
 
@@ -1015,9 +754,9 @@ void BigOperatorAtom::init(const sptr<Atom>& base, const sptr<Atom>& under, cons
   _type = AtomType::bigOperator;
 }
 
-sptr<Box> BigOperatorAtom::changeWidth(const sptr<Box>& b, float maxw) {
-  if (b != nullptr && abs(maxw - b->_width) > PREC)
-    return sptr<Box>(new HorizontalBox(b, maxw, Alignment::center));
+sptr<Box> BigOperatorAtom::changeWidth(const sptr<Box>& b, float maxWidth) {
+  if (b != nullptr && abs(maxWidth - b->_width) > PREC)
+    return sptr<Box>(new HorizontalBox(b, maxWidth, Alignment::center));
   return b;
 }
 
@@ -1121,10 +860,10 @@ sptr<Box> BigOperatorAtom::createBox(Environment& env) {
     }
   }
 
-  if ((_limitsSet && !_limits) ||
-      (!_limitsSet && style >= TexStyle::text) ||
-      (_base->_limitsType == LimitsType::noLimits) ||
-      (_base->_limitsType == LimitsType::normal && style >= TexStyle::text)
+  if ((_limitsSet && !_limits)
+      || (!_limitsSet && style >= TexStyle::text)
+      || (_base->_limitsType == LimitsType::noLimits)
+      || (_base->_limitsType == LimitsType::normal && style >= TexStyle::text)
     ) {
     // if explicitly set to not display as limits or if not set and
     // style is not display, then attach over and under as regular sub or
@@ -1152,8 +891,11 @@ sptr<Box> BigOperatorAtom::createBox(Environment& env) {
     delta = c.getItalic();
   } else {
     delta = 0;
-    auto in = _base == nullptr ? sptr<Box>(new StrutBox(0, 0, 0, 0))
-                               : _base->createBox(env);
+    auto in = (
+      _base == nullptr
+      ? sptr<Box>(new StrutBox(0, 0, 0, 0))
+      : _base->createBox(env)
+    );
     y = sptr<Box>(new HorizontalBox(in));
   }
 
@@ -1165,7 +907,8 @@ sptr<Box> BigOperatorAtom::createBox(Environment& env) {
   // make boxes equally wide
   float maxW = max(
     max(x == nullptr ? 0 : x->_width, y->_width),
-    z == nullptr ? 0 : z->_width);
+    z == nullptr ? 0 : z->_width
+  );
   x = changeWidth(x, maxW);
   y = changeWidth(y, maxW);
   z = changeWidth(z, maxW);
@@ -1216,7 +959,7 @@ sptr<Box> BigOperatorAtom::createBox(Environment& env) {
 
 sptr<Box> SideSetsAtom::createBox(Environment& env) {
   if (_base == nullptr) {
-    // create a phatom to place side-sets
+    // create a phantom to place side-sets
     sptr<Atom> in(new CharAtom(L'M', "mathnormal"));
     _base = sptr<Atom>(new PhantomAtom(in, false, true, true));
   }

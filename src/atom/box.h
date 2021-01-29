@@ -411,7 +411,7 @@ class StrutBox : public Box {
 public:
   StrutBox() = delete;
 
-  StrutBox(float width, float height, float depth, float shift) {
+  StrutBox(float width, float height, float depth, float shift) noexcept {
     _width = width;
     _height = height;
     _depth = depth;
