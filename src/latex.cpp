@@ -94,7 +94,6 @@ void LaTeX::init(string res_root_path) {
   NewCommandMacro::_init_();
   DefaultTeXFont::_init_();
   SymbolAtom::_init_();
-  Glue::_init_();
   Formula::_init_();
   TextRenderingBox::_init_();
 
@@ -103,7 +102,6 @@ void LaTeX::init(string res_root_path) {
 }
 
 void LaTeX::release() {
-  Glue::_free_();
   DefaultTeXFont::_free_();
   Formula::_free_();
   MacroInfo::_free_();

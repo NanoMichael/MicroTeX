@@ -5,6 +5,7 @@
 
 #include "common.h"
 #include "fonts/fonts.h"
+#include "core/glue.h"
 
 namespace tex {
 
@@ -173,84 +174,6 @@ public:
   inline int getLastFontId() const {
     return (_lastFontId == TeXFont::NO_FONT ? _tf->getMuFontId() : _lastFontId);
   }
-};
-
-/**
- * Represents glue by its 3 components. Contains the "glue rules"
- */
-class Glue {
-private:
-  // contains the different glue types
-  static std::vector<Glue*> _glueTypes;
-#define TYPE_COUNT  8
-#define STYLE_COUNT 5
-  // the glue table represents the "glue rules"
-  static const char _table[TYPE_COUNT][TYPE_COUNT][STYLE_COUNT];
-  // the glue components
-  float _space;
-  float _stretch;
-  float _shrink;
-  std::string _name;
-
-  sptr<Box> createBox(const Environment& env) const;
-
-  static float getFactor(const Environment& env);
-
-  static Glue* getGlue(SpaceType skipType);
-
-  static int getGlueIndex(AtomType ltype, AtomType rtype, const Environment& env);
-
-public:
-  Glue() = delete;
-
-  Glue(float space, float stretch, float shrink, const std::string& name) {
-    _space = space;
-    _stretch = stretch;
-    _shrink = shrink;
-    _name = name;
-  }
-
-  inline const std::string& getName() const {
-    return _name;
-  }
-
-  /**
-   * Creates a box representing the glue type according to the "glue rules" based
-   * on the atom types between which the glue must be inserted.
-   *
-   * @param ltype left atom type
-   * @param rtype right atom type
-   * @param env the Environment
-   * @return a box containing representing the glue
-   */
-  static sptr<Box> get(AtomType ltype, AtomType rtype, const Environment& env);
-
-  /**
-   * Creates a box representing the glue type according to the "glue rules" based
-   * on the skip-type
-   */
-  static sptr<Box> get(SpaceType skipType, const Environment& env);
-
-  /**
-   * Get the space amount from the given left-type and right-type of atoms
-   * according to the "glue rules".
-   */
-  static float getSpace(AtomType ltype, AtomType rtype, const Environment& env);
-
-  /**
-   * Get the space amount from the given skip-type according to the "glue rules"
-   */
-  static float getSpace(SpaceType skipType, const Environment& env);
-
-  static void _init_();
-
-  static void _free_();
-
-#ifdef HAVE_LOG
-
-  friend std::ostream& operator<<(std::ostream& out, const Glue& glue);
-
-#endif  // HAVE_LOG
 };
 
 }  // namespace tex
