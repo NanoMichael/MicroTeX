@@ -24,8 +24,6 @@ const map<string, UnitType> SpaceAtom::_units{
   {"cc",    UnitType::cc},
 };
 
-const int SpaceAtom::_units_count = 14;
-
 const function<float(const Environment&)> SpaceAtom::_unitConversions[] = {
   // EM
   [](const Environment& env) -> float {

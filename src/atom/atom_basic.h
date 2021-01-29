@@ -6,9 +6,10 @@
 #include <string>
 #include <utility>
 
+#include "common.h"
+#include "atom/row.h"
 #include "atom/atom.h"
 #include "atom/box.h"
-#include "common.h"
 #include "graphic/graphic.h"
 
 namespace tex {
@@ -42,14 +43,14 @@ public:
  */
 class PlaceholderAtom : public Atom {
 private:
-  float _w, _h, _d, _s;
+  float _width, _height, _depth, _shift;
 
 public:
-  PlaceholderAtom(float w, float h, float d, float s)
-    : _w(w), _h(h), _d(d), _s(s) {}
+  PlaceholderAtom(float width, float height, float depth, float shift)
+    : _width(width), _height(height), _depth(depth), _shift(shift) {}
 
   sptr<Box> createBox(Environment& env) override {
-    return sptr<Box>(new StrutBox(_w, _h, _d, _s));
+    return sptrOf<StrutBox>(_width, _height, _depth, _shift);
   }
 
   __decl_clone(PlaceholderAtom)
@@ -119,11 +120,9 @@ private:
 public:
   ScaleAtom() = delete;
 
-  ScaleAtom(const sptr<Atom>& base, float sx, float sy) {
-    _type = base->_type;
-    _base = base;
-    _sx = sx;
-    _sy = sy;
+  ScaleAtom(const sptr<Atom>& base, float sx, float sy) noexcept
+    : _base(base), _sx(sx), _sy(sy) {
+    _type = _base->_type;
   }
 
   ScaleAtom(const sptr<Atom>& base, float scale) : ScaleAtom(base, scale, scale) {}
@@ -148,10 +147,8 @@ private:
 public:
   MathAtom() = delete;
 
-  MathAtom(const sptr<Atom>& base, TexStyle style) {
-    _base = base;
-    _style = style;
-  }
+  MathAtom(const sptr<Atom>& base, TexStyle style) noexcept
+    : _base(base), _style(style) {}
 
   sptr<Box> createBox(Environment& env) override;
 
@@ -167,7 +164,7 @@ private:
   color _color;
 
 public:
-  HlineAtom() : _color(trans), _width(0), _shift(0) {}
+  HlineAtom() noexcept: _color(trans), _width(0), _shift(0) {}
 
   inline void setWidth(float w) {
     _width = w;
@@ -211,75 +208,33 @@ public:
 };
 
 /**
- * A "composed atom": An atom that consists of child atoms that will be
- * displayed next to each other horizontally with glue between them.
- */
-class Row {
-public:
-  /**
-   * Sets the given dummy containing the atom that comes just before the first
-   * child atom of this "composed atom". This method will always be called by
-   * another composed atom, so this composed atom will be a child of it
-   * (nested). This is necessary to determine the glue to insert between the
-   * first child atom of this nested composed atom and the atom that the dummy
-   * contains.
-   *
-   * @param dummy
-   *      the dummy that comes just before this "composed atom"
-   */
-  virtual void setPreviousAtom(const sptr<Dummy>& dummy) = 0;
-};
-
-/**
  * An atom representing whitespace. The dimension values can be set using different
  * unit types.
  */
 class SpaceAtom : public Atom {
 private:
-  static const int _units_count;
   static const std::map<std::string, UnitType> _units;
   static const std::function<float(const Environment&)> _unitConversions[];
   // whether a hard space should be represented
-  bool _blankSpace;
+  bool _blankSpace = false;
   // thin-mu-skip, med-mu-skip, thick-mu-skip
-  SpaceType _blankType;
+  SpaceType _blankType{};
   // dimensions
-  float _width, _height, _depth;
+  float _width = 0, _height = 0, _depth = 0;
   // units of the dimensions
-  UnitType _wUnit, _hUnit, _dUnit;
-
-  void init() {
-    _blankSpace = false;
-    _blankType = SpaceType::none;
-    _width = _height = _depth = 0;
-    _wUnit = _hUnit = _dUnit = UnitType::em;
-  }
+  UnitType _wUnit{}, _hUnit{}, _dUnit{};
 
 public:
-  SpaceAtom() {
-    init();
-    _blankSpace = true;
-  }
+  SpaceAtom() noexcept: _blankSpace(true) {}
 
-  SpaceAtom(SpaceType type) {
-    init();
-    _blankSpace = true;
-    _blankType = type;
-  }
+  explicit SpaceAtom(SpaceType type) noexcept
+    : _blankSpace(true), _blankType(type) {}
 
-  SpaceAtom(UnitType unit, float width, float height, float depth) {
-    init();
-    _wUnit = _hUnit = _dUnit = unit;
-    _width = width;
-    _height = height;
-    _depth = depth;
-  }
+  SpaceAtom(UnitType unit, float width, float height, float depth) noexcept
+    : _wUnit(unit), _hUnit(unit), _dUnit(unit), _width(width), _height(height), _depth(depth) {}
 
-  SpaceAtom(UnitType wu, float w, UnitType hu, float h, UnitType du, float d) {
-    init();
-    _wUnit = wu, _hUnit = hu, _dUnit = du;
-    _width = w, _height = h, _depth = d;
-  }
+  SpaceAtom(UnitType wu, float w, UnitType hu, float h, UnitType du, float d) noexcept
+    : _wUnit(wu), _hUnit(hu), _dUnit(du), _width(w), _height(h), _depth(d) {}
 
   inline static UnitType getUnit(const std::string& unit) {
     auto i = _units.find(unit);
@@ -316,10 +271,11 @@ public:
  * An atom representing an underscore
  */
 class UnderScoreAtom : public Atom {
-public:
+private:
   static SpaceAtom _w, _s;
 
-  UnderScoreAtom() {}
+public:
+  UnderScoreAtom() = default;
 
   sptr<Box> createBox(Environment& env) override;
 
@@ -362,16 +318,12 @@ private:
 public:
   CharSymbol() : _textSymbol(false) {}
 
-  /**
-   * Mark as text symbol (used by Dummy)
-   */
+  /** Mark as text symbol (used by Dummy) */
   inline void markAsTextSymbol() {
     _textSymbol = true;
   }
 
-  /**
-   * Remove the mark so the atom remains unchanged (used by Dummy)
-   */
+  /** Remove the mark so the atom remains unchanged (used by Dummy) */
   inline void removeMark() {
     _textSymbol = false;
   }
@@ -381,7 +333,7 @@ public:
    *
    * @return whether this CharSymbol is marked as a text symbol
    */
-  bool isMarkedAsTextSymbol() {
+  inline bool isMarkedAsTextSymbol() const {
     return _textSymbol;
   }
 
@@ -389,8 +341,7 @@ public:
    * Get the CharFont-object that uniquely identifies the character that is
    * represented by this atom.
    *
-   * @param tf
-   *       the TeXFont containing all font related information
+   * @param tf the TeXFont containing all font related information
    * @return a CharFont
    */
   virtual sptr<CharFont> getCharFont(TeXFont& tf) = 0;
@@ -406,7 +357,7 @@ private:
 public:
   FixedCharAtom() = delete;
 
-  FixedCharAtom(const sptr<CharFont>& c) : _cf(c) {}
+  explicit FixedCharAtom(const sptr<CharFont>& c) : _cf(c) {}
 
   sptr<CharFont> getCharFont(TeXFont& tf) override;
 
@@ -432,14 +383,11 @@ public:
    * Constructs a new symbol. This used by "TeXSymbolParser" and the symbol
    * types are guaranteed to be valid.
    *
-   * @param name
-   *      symbol name
-   * @param type
-   *      symbol type constant
-   * @param del
-   *      whether the symbol is a delimiter
+   * @param name symbol name
+   * @param type symbol type constant
+   * @param del whether the symbol is a delimiter
    */
-  SymbolAtom(const std::string& name, AtomType type, bool del);
+  SymbolAtom(const std::string& name, AtomType type, bool del) noexcept;
 
   inline SymbolAtom& setUnicode(wchar_t c) {
     _unicode = c;
@@ -471,8 +419,7 @@ public:
    * Looks up the name in the table and returns the corresponding SymbolAtom
    * representing the symbol (if it's found).
    *
-   * @param name
-   *      the name of the symbol
+   * @param name the name of the symbol
    * @return a SymbolAtom representing the found symbol
    * @throw ex_symbol_not_found
    *      if no symbol with the given name was found
@@ -541,181 +488,12 @@ public:
   __decl_clone(CharAtom)
 };
 
-/**
- * An empty atom just to add a mark.
- */
+/** An empty atom just to add a mark. */
 class BreakMarkAtom : public Atom {
 public:
   sptr<Box> createBox(Environment& env) override;
 
   __decl_clone(BreakMarkAtom)
-};
-
-/**
- * Used by RowAtom. The "textSymbol"-property and the type of An atom can change
- * (according to the TeX-algorithms used). Or this atom can be replaced by a
- * ligature, (if it was a CharAtom). But atoms cannot be changed, otherwise
- * different boxes could be made from the same Formula, and that is not
- * desired! This "dummy atom" makes sure that changes to an atom (during the
- * createBox-method of a RowAtom) will be reset.
- */
-class Dummy {
-private:
-  sptr<Atom> _atom;
-  bool _textSymbol = false;
-
-public:
-  AtomType type = AtomType::none;
-
-  Dummy() = delete;
-
-  /**
-   * Create a new dummy for the given atom
-   * @param atom an atom
-   */
-  explicit Dummy(const sptr<Atom>& atom) {
-    _textSymbol = false;
-    _atom = atom;
-    type = AtomType::none;
-  }
-
-  /** @return the changed type, or the old left type if it has not been changed */
-  inline AtomType leftType() const {
-    return (type != AtomType::none ? type : _atom->leftType());
-  }
-
-  /** @return the changed type, or the old right type if it has not been changed */
-  inline AtomType rightType() const {
-    return (type != AtomType::none ? type : _atom->rightType());
-  }
-
-  inline bool isCharSymbol() const {
-    CharSymbol* x = dynamic_cast<CharSymbol*>(_atom.get());
-    return (x != nullptr);
-  }
-
-  inline bool isCharInMathMode() const {
-    CharAtom* at = dynamic_cast<CharAtom*>(_atom.get());
-    return at != nullptr && at->isMathMode();
-  }
-
-  /** This method will only be called if isCharSymbol returns true. */
-  inline sptr<CharFont> getCharFont(TeXFont& tf) const {
-    return ((CharSymbol*) _atom.get())->getCharFont(tf);
-  }
-
-  /**
-   * Changes this atom into the given "ligature atom".
-   *
-   * @param atom the ligature atom
-   */
-  inline void changeAtom(const sptr<FixedCharAtom>& atom) {
-    _textSymbol = false;
-    _atom = atom;
-    type = AtomType::none;
-  }
-
-  inline sptr<Box> createBox(Environment& env) {
-    if (_textSymbol) ((CharSymbol*) _atom.get())->markAsTextSymbol();
-    auto box = _atom->createBox(env);
-    if (_textSymbol) ((CharSymbol*) _atom.get())->removeMark();
-    return box;
-  }
-
-  inline void markAsTextSymbol() {
-    _textSymbol = true;
-  }
-
-  inline bool isKern() const {
-    auto* x = dynamic_cast<SpaceAtom*>(_atom.get());
-    return (x != nullptr);
-  }
-
-  /** Only for row-elements */
-  inline void setPreviousAtom(const sptr<Dummy>& prev) {
-    Row* row = dynamic_cast<Row*>(_atom.get());
-    if (row != nullptr) row->setPreviousAtom(prev);
-  }
-};
-
-/**
- * An atom representing a horizontal row of other atoms, to be separated by
- * glue. It's also responsible for inserting kerns and ligature.
- */
-class RowAtom : public Atom, public Row {
-private:
-  // set of atom types that make a previous bin atom change to ord
-  static std::bitset<16> _binSet;
-  // set of atom types that can possibly need a kern or, together
-  // with the previous atom, be replaced by a ligature
-  static std::bitset<16> _ligKernSet;
-  // whether the box generated can be broken
-  bool _breakable;
-  // atoms to be displayed horizontally next to each-other
-  std::vector<sptr<Atom>> _elements;
-  // previous atom (for nested Row atoms)
-  sptr<Dummy> _previousAtom;
-
-  void change2Ord(Dummy* cur, Dummy* prev, Atom* next);
-
-  static std::bitset<16> _initBinset_();
-
-  static std::bitset<16> _initLigKernSet_();
-
-public:
-  static bool _breakEveywhere;
-
-  bool _lookAtLastAtom;
-
-  RowAtom() : _lookAtLastAtom(false), _breakable(true) {}
-
-  explicit RowAtom(const sptr<Atom>& el);
-
-  /**
-   * Get the atom at the front in the elements
-   */
-  sptr<Atom> getFirstAtom();
-
-  /**
-   * Get and remove the atom at the tail in the elements
-   */
-  sptr<Atom> popLastAtom();
-
-  /**
-   * Get the atom at position
-   * @param pos the position of the atom to retrieve
-   */
-  sptr<Atom> get(size_t pos);
-
-  /**
-   * Indicate the box generated by this atom breakable be broken or not
-   * @param breakable indicate whether the box breakable be broken
-   */
-  inline void setBreakable(bool breakable) {
-    _breakable = breakable;
-  }
-
-  /**
-   * Retrieve the size of the elements
-   */
-  inline size_t size() const {
-    return _elements.size();
-  }
-
-  /**
-   * Push An atom to back
-   */
-  void add(const sptr<Atom>& el);
-
-  sptr<Box> createBox(Environment& env) override;
-
-  void setPreviousAtom(const sptr<Dummy>& prev) override;
-
-  AtomType leftType() const override;
-
-  AtomType rightType() const override;
-
-  __decl_clone(RowAtom)
 };
 
 /**
@@ -787,14 +565,6 @@ public:
 
   ColorAtom(const sptr<Atom>& atom, color bg, color c);
 
-  ColorAtom(color bg, color c, const sptr<Atom>& old) {
-    auto* a = dynamic_cast<ColorAtom*>(old.get());
-    if (a == nullptr) throw ex_invalid_atom_type("Should be a ColorAtom!");
-    _elements = a->_elements;
-    _background = istrans(bg) ? a->_background : bg;
-    _color = istrans(c) ? a->_color : c;
-  }
-
   sptr<Box> createBox(Environment& env) override;
 
   AtomType leftType() const override {
@@ -816,9 +586,7 @@ public:
    */
   static color getColor(std::string name);
 
-  /**
-   * Define a color with given name
-   */
+  /** Define a color with given name */
   static void defineColor(const std::string& name, color c);
 
   __decl_clone(ColorAtom)
@@ -887,10 +655,8 @@ private:
 public:
   TypedAtom() = delete;
 
-  TypedAtom(AtomType lt, AtomType rt, const sptr<Atom>& atom) {
-    _leftType = lt;
-    _rightType = rt;
-    _atom = atom;
+  TypedAtom(AtomType lt, AtomType rt, const sptr<Atom>& atom)
+    : _leftType(lt), _rightType(rt), _atom(atom) {
     _limitsType = atom->_limitsType;
   }
 
@@ -978,7 +744,7 @@ public:
 /**
  * An atom representing another atom with an atom above it (if not null)
  * separated by a kern and in a smaller size depending on "overScriptSize"
- * and/or an atom under it (if not null) seperated by a kern and in a smaller
+ * and/or an atom under it (if not null) separated by a kern and in a smaller
  * size depending on "underScriptSize"
  */
 class UnderOverAtom : public Atom {
@@ -987,12 +753,11 @@ private:
   sptr<Atom> _base, _under, _over;
   // kerning between base and under and over script
   float _underSpace, _overSpace;
-  // unit
   UnitType _underUnit, _overUnit;
   // whether the under over should be drawn in a smaller size
   bool _underSmall, _overSmall;
 
-  static sptr<Box> changeWidth(const sptr<Box>& b, float maxW);
+  static sptr<Box> changeWidth(const sptr<Box>& b, float maxWidth);
 
   inline void init() {
     _underSpace = _overSpace = 0;
@@ -1077,20 +842,11 @@ public:
 
   ScriptsAtom() = delete;
 
-  ScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup) {
-    _base = base;
-    _sub = sub;
-    _sup = sup;
-    _align = Alignment::left;
-  }
+  ScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup)
+    : _base(base), _sub(sub), _sup(sup), _align(Alignment::left) {}
 
-  ScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup, bool left) {
-    _base = base;
-    _sub = sub;
-    _sup = sup;
-    _align = Alignment::left;
-    if (!left) _align = Alignment::right;
-  }
+  ScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup, bool left)
+    : _base(base), _sub(sub), _sup(sup), _align(left ? Alignment::left : Alignment::right) {}
 
   AtomType leftType() const override {
     return _base == nullptr ? _type : _base->leftType();
@@ -1112,9 +868,9 @@ public:
 class BigOperatorAtom : public Atom {
 private:
   // limits
-  sptr<Atom> _under, _over;
+  sptr<Atom> _under{}, _over{};
   // atom representing a big operator
-  sptr<Atom> _base;
+  sptr<Atom> _base{};
   // whether the "limits"-value should be taken into account
   // (otherwise the default rules will be applied)
   bool _limitsSet = false;
@@ -1128,7 +884,7 @@ private:
   /**
    * Center the given box in a new box that has the given width
    */
-  static sptr<Box> changeWidth(const sptr<Box>& b, float maxW);
+  static sptr<Box> changeWidth(const sptr<Box>& b, float maxWidth);
 
 public:
   BigOperatorAtom() = delete;
@@ -1137,12 +893,9 @@ public:
    * Create a new BigOperatorAtom from the given atoms. The default rules the
    * positioning of the limits will be applied.
    *
-   * @param base
-   *      atom representing the big operator
-   * @param under
-   *      atom representing the under limit
-   * @param over
-   *      atom representing the over limit
+   * @param base atom representing the big operator
+   * @param under atom representing the under limit
+   * @param over atom representing the over limit
    */
   BigOperatorAtom(const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over) {
     init(base, under, over);
@@ -1152,18 +905,16 @@ public:
    * Create a new BigOperatorAtom from the given atoms. Limits will be drawn
    * according to the "limits"-value
    *
-   * @param base
-   *      atom representing the big operator
-   * @param under
-   *      atom representing the under limit
-   * @param over
-   *      atom representing the over limit
+   * @param base atom representing the big operator
+   * @param under atom representing the under limit
+   * @param over atom representing the over limit
    * @param limits
    *      whether limits should be drawn over and under the base (<-> as
    *      scripts)
    */
   BigOperatorAtom(
-    const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over, bool limits) {
+    const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over, bool limits
+  ) {
     init(base, under, over);
     _limits = limits;
     _limitsSet = true;
@@ -1174,9 +925,7 @@ public:
   __decl_clone(BigOperatorAtom)
 };
 
-/**
- * An atom represeting scripts around a base atom
- */
+/** An atom representing scripts around a base atom */
 class SideSetsAtom : public Atom {
 public:
   sptr<Atom> _left, _right, _base;
@@ -1217,13 +966,10 @@ public:
   OverUnderDelimiter(
     const sptr<Atom>& base,
     const sptr<Atom>& script,
-    const sptr<SymbolAtom>& symbol, UnitType kernunit, float kern, bool over  //
-  ) {
-    _base = base;
-    _script = script;
-    _symbol = symbol;
-    _kern = SpaceAtom(kernunit, 0, kern, 0);
-    _over = over;
+    const sptr<SymbolAtom>& symbol,
+    UnitType kernUnit, float kern, bool over
+  ) : _base(base), _script(script), _symbol(symbol), _over(over) {
+    _kern = SpaceAtom(kernUnit, 0, kern, 0);
     _type = AtomType::inner;
   }
 

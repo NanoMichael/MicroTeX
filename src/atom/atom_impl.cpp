@@ -7,43 +7,6 @@ using namespace tex;
 
 /**************************************** small atoms *********************************************/
 
-SpaceAtom MultlineAtom::_vsep_in(UnitType::ex, 0.f, 1.f, 0.f);
-
-sptr<Box> MultlineAtom::createBox(Environment& env) {
-  float tw = env.getTextWidth();
-  if (tw == POS_INF || _lineType == MultiLineType::gathered)
-    return MatrixAtom(_isPartial, _column, L"").createBox(env);
-
-  auto* vb = new VerticalBox();
-  auto atom = _column->_array[0][0];
-  Alignment alignment = _lineType == MultiLineType::gather ? Alignment::center : Alignment::left;
-  if (atom->_alignment != Alignment::none) alignment = atom->_alignment;
-
-  vb->add(sptr<Box>(new HorizontalBox(atom->createBox(env), tw, alignment)));
-  auto Vsep = _vsep_in.createBox(env);
-  for (size_t i = 1; i < _column->rows() - 1; i++) {
-    atom = _column->_array[i][0];
-    alignment = Alignment::center;
-    if (atom->_alignment != Alignment::none) alignment = atom->_alignment;
-    vb->add(Vsep);
-    vb->add(sptr<Box>(new HorizontalBox(atom->createBox(env), tw, alignment)));
-  }
-
-  if (_column->rows() > 1) {
-    atom = _column->_array[_column->rows() - 1][0];
-    alignment = _lineType == MultiLineType::gather ? Alignment::center : Alignment::right;
-    if (atom->_alignment != Alignment::none) alignment = atom->_alignment;
-    vb->add(Vsep);
-    vb->add(sptr<Box>(new HorizontalBox(atom->createBox(env), tw, alignment)));
-  }
-
-  float h = vb->_height + vb->_depth;
-  vb->_height = h / 2;
-  vb->_depth = h / 2;
-
-  return sptr<Box>(vb);
-}
-
 const float FBoxAtom::INTERSPACE = 0.65f;
 float OvalAtom::_multiplier = 0.5f;
 float OvalAtom::_diameter = 0.f;

@@ -4,6 +4,7 @@
   { name, cmyk(c, m, y, k) }
 
 using namespace std;
+using namespace tex;
 
 map<string, tex::color> tex::ColorAtom::_colors{
   {"black", black},
@@ -76,3 +77,77 @@ map<string, tex::color> tex::ColorAtom::_colors{
   c("tan", 0.14f, 0.42f, 0.56f, 0.f),
   c("gray", 0.f, 0.f, 0.f, 0.50f),
 };
+
+color ColorAtom::getColor(std::string name) {
+  if (name.empty()) return _default;
+  trim(name);
+
+  // #AARRGGBB formatted color
+  if (name[0] == '#') return decode(name);
+  if (name.find(',') == string::npos) {
+    // find from predefined colors
+    auto it = _colors.find(tolower(name));
+    if (it != _colors.end()) return it->second;
+    // AARRGGBB formatted color
+    if (name.find('.') == string::npos) return decode("#" + name);
+    // gray color
+    float x = 0.f;
+    valueof(name, x);
+    if (x != 0.f) {
+      float g = min(1.f, max(x, 0.f));
+      return rgb(g, g, g);
+    }
+    return _default;
+  }
+
+  auto en = string::npos;
+  StrTokenizer toks(name, ";,");
+  int n = toks.count();
+  if (n == 3) {
+    // RGB model
+    string R = toks.next();
+    string G = toks.next();
+    string B = toks.next();
+
+    float r = 0.f, g = 0.f, b = 0.f;
+    valueof(trim(R), r);
+    valueof(trim(G), g);
+    valueof(trim(B), b);
+
+    if (r == 0.f && g == 0.f && b == 0.f) return _default;
+
+    if (r == (int) r && g == (int) g && b == (int) b &&
+        R.find('.') == en && G.find('.') == en && B.find('.') == en) {
+      int ir = (int) min(255.f, max(0.f, r));
+      int ig = (int) min(255.f, max(0.f, g));
+      int ib = (int) min(255.f, max(0.f, b));
+      return rgb(ir, ig, ib);
+    }
+    r = min(1.f, max(0.f, r));
+    g = min(1.f, max(0.f, g));
+    b = min(1.f, max(0.f, b));
+    return rgb(r, g, b);
+  } else if (n == 4) {
+    // CMYK model
+    float c = 0.f, m = 0.f, y = 0.f, k = 0.f;
+    string C = toks.next();
+    string M = toks.next();
+    string Y = toks.next();
+    string K = toks.next();
+    valueof(trim(C), c);
+    valueof(trim(M), m);
+    valueof(trim(Y), y);
+    valueof(trim(K), k);
+
+    if (c == 0.f && m == 0.f && y == 0.f && k == 0.f) return _default;
+
+    c = min(1.f, max(0.f, c));
+    m = min(1.f, max(0.f, m));
+    y = min(1.f, max(0.f, y));
+    k = min(1.f, max(0.f, k));
+
+    return cmyk(c, m, y, k);
+  }
+
+  return _default;
+}
