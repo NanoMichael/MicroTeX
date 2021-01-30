@@ -957,19 +957,19 @@ inline macro(doublebox) {
 inline macro(fgcolor) {
   auto a = Formula(tp, args[2])._root;
   std::string x = wide2utf8(args[1].c_str());
-  return sptr<Atom>(new ColorAtom(a, TRANS, ColorAtom::getColor(x)));
+  return sptr<Atom>(new ColorAtom(a, TRANSPARENT, ColorAtom::getColor(x)));
 }
 
 inline macro(bgcolor) {
   auto a = Formula(tp, args[2])._root;
   std::string x = wide2utf8(args[1].c_str());
-  return sptr<Atom>(new ColorAtom(a, ColorAtom::getColor(x), TRANS));
+  return sptr<Atom>(new ColorAtom(a, ColorAtom::getColor(x), TRANSPARENT));
 }
 
 inline macro(textcolor) {
   auto a = Formula(tp, args[2])._root;
   std::string x = wide2utf8(args[1].c_str());
-  return sptr<Atom>(new ColorAtom(a, TRANS, ColorAtom::getColor(x)));
+  return sptr<Atom>(new ColorAtom(a, TRANSPARENT, ColorAtom::getColor(x)));
 }
 
 inline macro(colorbox) {

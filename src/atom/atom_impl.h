@@ -167,7 +167,7 @@ public:
 
   FBoxAtom() = delete;
 
-  explicit FBoxAtom(const sptr<Atom>& base, color bg = TRANS, color line = TRANS) {
+  explicit FBoxAtom(const sptr<Atom>& base, color bg = TRANSPARENT, color line = TRANSPARENT) {
     if (base == nullptr) _base = sptr<Atom>(new RowAtom());
     else {
       _base = base;

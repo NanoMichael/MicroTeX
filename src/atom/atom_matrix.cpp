@@ -5,7 +5,7 @@
 using namespace std;
 using namespace tex;
 
-color MatrixAtom::LINE_COLOR = trans;
+color MatrixAtom::LINE_COLOR = transparent;
 
 map<wstring, wstring> MatrixAtom::_colspeReplacement;
 
@@ -387,13 +387,13 @@ void MatrixAtom::applyCell(WrapperBox& box, int i, int j) {
   // 2. apply row specifier
   const auto row = _matrix->_rowSpecifiers.find(i);
   if (row != _matrix->_rowSpecifiers.end()) {
-    for (auto s : row->second) s->apply(box);
+    for (const auto& s : row->second) s->apply(box);
   }
   // 3. cell specifier
   const string key = tostring(i) + tostring(j);
   auto cell = _matrix->_cellSpecifiers.find(key);
   if (cell != _matrix->_cellSpecifiers.end()) {
-    for (auto s : cell->second) s->apply(box);
+    for (const auto& s : cell->second) s->apply(box);
   }
 }
 
@@ -645,9 +645,11 @@ Alignment MulticolumnAtom::parseAlign(const string& str) {
 }
 
 sptr<Box> MulticolumnAtom::createBox(Environment& env) {
-  sptr<Box> b;
-  if (_w == 0) b = _cols->createBox(env);
-  else b = sptr<Box>(new HorizontalBox(_cols->createBox(env), _w, _align));
+  sptr<Box> b = (
+    _width == 0
+    ? _cols->createBox(env)
+    : sptrOf<HorizontalBox>(_cols->createBox(env), _width, _align)
+  );
   b->_type = AtomType::multiColumn;
   return b;
 }
@@ -667,14 +669,14 @@ sptr<Box> HdotsforAtom::createBox(Environment& env) {
   float space = Glue::getSpace(SpaceType::thinMuSkip, env) * _coeff * 2;
 
   // If no width specified, create a box with one dot
-  if (_w == 0) return createBox(space, dot, env);
+  if (_width == 0) return createBox(space, dot, env);
 
-  float x = (_w - dot->_width) / (space + dot->_width);
+  float x = (_width - dot->_width) / (space + dot->_width);
   int count = (int) floor(x);
 
   // Only one dot can be placed in
   if (count == 0) {
-    auto b = sptr<Box>(new HorizontalBox(dot, _w, Alignment::center));
+    auto b = sptr<Box>(new HorizontalBox(dot, _width, Alignment::center));
     return createBox(space, b, env);
   }
 
@@ -688,7 +690,7 @@ sptr<Box> HdotsforAtom::createBox(Environment& env) {
   }
   b->add(dot);
 
-  auto hb = sptr<Box>(new HorizontalBox(b, _w, Alignment::center));
+  auto hb = sptr<Box>(new HorizontalBox(b, _width, Alignment::center));
   return createBox(space, hb, env);
 }
 

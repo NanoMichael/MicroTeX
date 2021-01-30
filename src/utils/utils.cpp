@@ -1,6 +1,6 @@
 #include "utils/utils.h"
 
-int tex::binSearchIndex(
+int tex::binIndexOf(
   int count,
   const std::function<int(int)>&& compare,
   bool returnClosest

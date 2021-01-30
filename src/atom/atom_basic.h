@@ -7,7 +7,8 @@
 #include <utility>
 
 #include "common.h"
-#include "atom/row.h"
+#include "atom/atom_row.h"
+#include "atom/atom_char.h"
 #include "atom/atom.h"
 #include "atom/box.h"
 #include "graphic/graphic.h"
@@ -68,7 +69,8 @@ private:
 public:
   TextRenderingAtom() = delete;
 
-  TextRenderingAtom(std::wstring str, int type) : _str(std::move(str)), _type(type), _infos(nullptr) {}
+  TextRenderingAtom(std::wstring str, int type)
+    : _str(std::move(str)), _type(type), _infos(nullptr) {}
 
   TextRenderingAtom(std::wstring str, const FontInfos* info)
     : _str(std::move(str)), _type(0), _infos(info) {}
@@ -164,19 +166,13 @@ private:
   color _color;
 
 public:
-  HlineAtom() noexcept: _color(trans), _width(0), _shift(0) {}
+  HlineAtom() noexcept: _color(transparent), _width(0), _shift(0) {}
 
-  inline void setWidth(float w) {
-    _width = w;
-  }
+  inline void setWidth(float w) { _width = w; }
 
-  inline void setShift(float s) {
-    _shift = s;
-  }
+  inline void setShift(float s) { _shift = s; }
 
-  inline void setColor(color c) {
-    _color = c;
-  }
+  inline void setColor(color c) { _color = c; }
 
   sptr<Box> createBox(Environment& env) override;
 
@@ -194,7 +190,11 @@ private:
 public:
   CumulativeScriptsAtom() = delete;
 
-  CumulativeScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup);
+  CumulativeScriptsAtom(
+    const sptr<Atom>& base,
+    const sptr<Atom>& sub,
+    const sptr<Atom>& sup
+  );
 
   void addSuperscript(const sptr<Atom>& sup);
 
@@ -293,7 +293,7 @@ public:
 
   MiddleAtom() = delete;
 
-  MiddleAtom(const sptr<Atom>& a)
+  explicit MiddleAtom(const sptr<Atom>& a)
     : _base(a), _box(new StrutBox(0, 0, 0, 0)) {}
 
   sptr<Box> createBox(Environment& env) override {
@@ -301,199 +301,6 @@ public:
   }
 
   __decl_clone(MiddleAtom)
-};
-
-/**
- * An common superclass for atoms that represent one single character and access
- * the font information.
- */
-class CharSymbol : public Atom {
-private:
-  /**
-   * Mrow will mark certain CharSymbol atoms as a text symbol. Msubsup wil use
-   * this property for a certain spacing rule.
-   */
-  bool _textSymbol;
-
-public:
-  CharSymbol() : _textSymbol(false) {}
-
-  /** Mark as text symbol (used by Dummy) */
-  inline void markAsTextSymbol() {
-    _textSymbol = true;
-  }
-
-  /** Remove the mark so the atom remains unchanged (used by Dummy) */
-  inline void removeMark() {
-    _textSymbol = false;
-  }
-
-  /**
-   * Tests if this atom is marked as a text symbol (used by Msubsup)
-   *
-   * @return whether this CharSymbol is marked as a text symbol
-   */
-  inline bool isMarkedAsTextSymbol() const {
-    return _textSymbol;
-  }
-
-  /**
-   * Get the CharFont-object that uniquely identifies the character that is
-   * represented by this atom.
-   *
-   * @param tf the TeXFont containing all font related information
-   * @return a CharFont
-   */
-  virtual sptr<CharFont> getCharFont(TeXFont& tf) = 0;
-};
-
-/**
- * An atom representing a fixed character (not depending on a text style).
- */
-class FixedCharAtom : public CharSymbol {
-private:
-  const sptr<CharFont> _cf;
-
-public:
-  FixedCharAtom() = delete;
-
-  explicit FixedCharAtom(const sptr<CharFont>& c) : _cf(c) {}
-
-  sptr<CharFont> getCharFont(TeXFont& tf) override;
-
-  sptr<Box> createBox(Environment& env) override;
-
-  __decl_clone(FixedCharAtom)
-};
-
-class SymbolAtom : public CharSymbol {
-private:
-  // contains all defined symbols
-  static std::map<std::string, sptr<SymbolAtom>> _symbols;
-  // whether it's a delimiter symbol
-  bool _delimiter;
-  // symbol name
-  std::string _name;
-  wchar_t _unicode;
-
-public:
-  SymbolAtom() = delete;
-
-  /**
-   * Constructs a new symbol. This used by "TeXSymbolParser" and the symbol
-   * types are guaranteed to be valid.
-   *
-   * @param name symbol name
-   * @param type symbol type constant
-   * @param del whether the symbol is a delimiter
-   */
-  SymbolAtom(const std::string& name, AtomType type, bool del) noexcept;
-
-  inline SymbolAtom& setUnicode(wchar_t c) {
-    _unicode = c;
-    return *this;
-  }
-
-  inline wchar_t getUnicode() const {
-    return _unicode;
-  }
-
-  /** @return true if this symbol can act as a delimiter to embrace formulas */
-  inline bool isDelimiter() const {
-    return _delimiter;
-  }
-
-  inline const std::string& getName() const {
-    return _name;
-  }
-
-  sptr<Box> createBox(Environment& env) override;
-
-  sptr<CharFont> getCharFont(TeXFont& tf) override;
-
-  static void addSymbolAtom(const std::string& file);
-
-  static void addSymbolAtom(const sptr<SymbolAtom>& sym);
-
-  /**
-   * Looks up the name in the table and returns the corresponding SymbolAtom
-   * representing the symbol (if it's found).
-   *
-   * @param name the name of the symbol
-   * @return a SymbolAtom representing the found symbol
-   * @throw ex_symbol_not_found
-   *      if no symbol with the given name was found
-   */
-  static sptr<SymbolAtom> get(const std::string& name);
-
-  static void _init_();
-
-#ifdef HAVE_LOG
-
-  friend std::ostream& operator<<(std::ostream& os, const SymbolAtom& s);
-
-#endif  // HAVE_LOG
-
-  __decl_clone(SymbolAtom)
-};
-
-/**
- * An atom representing exactly one alphanumeric character and the text style in
- * which it should be drawn.
- */
-class CharAtom : public CharSymbol {
-private:
-  // alphanumeric character
-  wchar_t _c;
-  // text style (empty means the default text style)
-  std::string _textStyle;
-  bool _mathMode;
-
-  /**
-   * Get the Char-object representing this character ("c") in the right text
-   * style
-   */
-  Char getChar(TeXFont& tf, TexStyle style, bool smallCap);
-
-public:
-  CharAtom() = delete;
-
-  /**
-   * Creates a CharAtom that will represent the given character in the given
-   * text style. Null for the text style means the default text style.
-   *
-   * @param c
-   *      the alphanumeric character
-   * @param textStyle
-   *      the text style in which the character should be drawn
-   */
-  CharAtom(wchar_t c, std::string textStyle)
-    : _c(c), _textStyle(std::move(textStyle)), _mathMode(false) {}
-
-  CharAtom(wchar_t c, std::string textStyle, bool mathMode)
-    : _c(c), _textStyle(std::move(textStyle)), _mathMode(mathMode) {}
-
-  inline wchar_t getCharacter() {
-    return _c;
-  }
-
-  inline bool isMathMode() {
-    return _mathMode;
-  }
-
-  sptr<Box> createBox(Environment& env) override;
-
-  sptr<CharFont> getCharFont(TeXFont& tf) override;
-
-  __decl_clone(CharAtom)
-};
-
-/** An empty atom just to add a mark. */
-class BreakMarkAtom : public Atom {
-public:
-  sptr<Box> createBox(Environment& env) override;
-
-  __decl_clone(BreakMarkAtom)
 };
 
 /**
@@ -601,7 +408,7 @@ public:
 
   RomanAtom() = delete;
 
-  RomanAtom(const sptr<Atom>& base) : _base(base) {}
+  explicit RomanAtom(const sptr<Atom>& base) : _base(base) {}
 
   sptr<Box> createBox(Environment& env) override;
 

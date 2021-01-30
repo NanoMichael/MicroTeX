@@ -78,7 +78,7 @@ map<string, sptr<const MathVersion>> FontContext::_mathVersions{
 map<string, sptr<TextFont>> FontContext::_mainFonts;
 map<string, sptr<const OtfFont>> FontContext::_mathFonts;
 
-void FontContext::setMainFont(const string& versionName, const vector<FontSpec>& params) {
+void FontContext::addMainFont(const string& versionName, const vector<FontSpec>& params) {
   auto* ptr = new TextFont();
   TextFont& f = *ptr;
   for (const auto&[style, font, clm] : params) {
@@ -87,7 +87,7 @@ void FontContext::setMainFont(const string& versionName, const vector<FontSpec>&
   _mainFonts[versionName] = sptr<TextFont>(ptr);
 }
 
-void FontContext::setMathFont(const FontSpec& params) {
+void FontContext::addMathFont(const FontSpec& params) {
   const auto&[version, font, clm] = params;
   _mathFonts[version] = sptrOf<const OtfFont>(font, clm);
 }

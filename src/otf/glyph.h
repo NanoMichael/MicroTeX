@@ -13,7 +13,7 @@ class Glyph;
 /** Represents metrics for one glyph. */
 struct Metrics final {
 private:
-  i16 _width, _height, _depth;
+  i16 _width{}, _height{}, _depth{};
 
   Metrics() = default;
 
@@ -39,7 +39,7 @@ private:
   u16 _count;
   u16* _fields;
 
-  explicit KernRecord(u16 count)
+  explicit KernRecord(u16 count) noexcept
     : _count(count),
       _fields(_count == 0 ? nullptr : new u16[count * 2]) {}
 
@@ -65,7 +65,7 @@ private:
   /** Array of glyph id in font to represents varints */
   u16* _glyphs = nullptr;
 
-  explicit Variants(u16 count)
+  explicit Variants(u16 count) noexcept
     : _count(count),
       _glyphs(count == 0 ? nullptr : new u16[count]) {}
 
@@ -151,7 +151,7 @@ private:
    */
   GlyphPart* _parts = nullptr;
 
-  explicit GlyphAssembly(u16 partCount)
+  explicit GlyphAssembly(u16 partCount) noexcept
     : _partCount(partCount),
       _parts(partCount == 0 ? nullptr : new GlyphPart[partCount]) {}
 
@@ -179,7 +179,7 @@ public:
  * Provides kerning amounts for different heights in a glyph’s vertical extent. An array of kerning
  * values is provided, each of which applies to a height range. A corresponding array of heights
  * indicate the transition points between consecutive ranges.
- *
+ * <p>
  * Correction heights for each glyph are relative to the glyph baseline, with positive height values
  * above the baseline, and negative height values below the baseline. The correctionHeights array is
  * sorted in increasing order, from lowest to highest.
@@ -196,7 +196,7 @@ private:
   const u16 _count = 0;
   i16* _fields = nullptr;
 
-  explicit MathKern(u16 count)
+  explicit MathKern(u16 count) noexcept
     : _count(count),
       _fields(count == 0 ? nullptr : new i16[count * 2]) {}
 
@@ -233,7 +233,7 @@ private:
     &MathKern::empty,
   };
 
-  explicit MathKernRecord(u16 ignore) {}
+  explicit MathKernRecord(u16 ignore) noexcept {}
 
 public:
   no_copy_assign(MathKernRecord);
@@ -273,7 +273,7 @@ private:
   /** MUST NOT BE NULL, equals to &MathKernRecord::empty if absent */
   const MathKernRecord* _kernRecord = &MathKernRecord::empty;
 
-  explicit Math(u16 ignore);
+  explicit Math(u16 ignore) noexcept {};
 
 public:
   no_copy_assign(Math);

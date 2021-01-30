@@ -42,7 +42,7 @@ public:
    * @param key the key to match
    */
   const SortedDictTree<K, V>* operator[](const K& key) const {
-    const int index = binSearchIndex(_childCount, [&](int i) { return key - _children[i]->_key; });
+    const int index = binIndexOf(_childCount, [&](int i) { return key - _children[i]->_key; });
     return index < 0 ? nullptr : _children[index];
   }
 

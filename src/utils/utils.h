@@ -37,16 +37,16 @@ inline int indexOf(const std::vector<T>& v, const T& x) {
 }
 
 /** 
- * Binary search for index of the given target.
+ * Binary search for index of the given target in a container.
  * 
- * @param count total count of the container
+ * @param count total count of elements in the container
  * @param compare function to compare between the target value and the value at given index
  * @param returnClosest if return the closest index while not found, default is false
  *
  * @return the index which the target value found at, or the closest index if returnClosest is true,
  * or -1 otherwise
  */
-int binSearchIndex(
+int binIndexOf(
   int count,
   const std::function<int(int)>&& compare,
   bool returnClosest = false
