@@ -294,14 +294,14 @@ int HorizontalBox::getLastFontId() {
 /********************************** horizontal rule implementation ********************************/
 
 HorizontalRule::HorizontalRule(float thickness, float width, float shift)
-  : _color(trans), _speShift(0) {
+  : _color(transparent), _speShift(0) {
   _height = thickness;
   _width = width;
   _shift = shift;
 }
 
 HorizontalRule::HorizontalRule(float thickness, float width, float shift, bool trueshift)
-  : _color(trans), _speShift(0) {
+  : _color(transparent), _speShift(0) {
   _height = thickness;
   _width = width;
   if (trueshift) {
@@ -711,8 +711,8 @@ vector<sptr<Box>> RotateBox::getChildren() const {
 /************************************* framed box implementation **********************************/
 
 void FramedBox::init(const sptr<Box>& box, float thickness, float space) {
-  _line = trans;
-  _bg = trans;
+  _line = transparent;
+  _bg = transparent;
   _box = box;
   const Box& b = *box;
   _width = b._width + 2 * thickness + 2 * space;

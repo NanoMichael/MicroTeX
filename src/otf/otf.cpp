@@ -7,9 +7,9 @@ using namespace std;
 namespace tex {
 
 pair<bool, i16> ClassKerning::operator()(u16 left, u16 right) const {
-  const int li = binSearchIndex(_leftCount, [&](int i) { return left - _lefts[i << 1]; });
+  const int li = binIndexOf(_leftCount, [&](int i) { return left - _lefts[i << 1]; });
   if (li < 0) return {false, 0};
-  const int ri = binSearchIndex(_rightCount, [&](int i) { return right - _rights[i << 1]; });
+  const int ri = binIndexOf(_rightCount, [&](int i) { return right - _rights[i << 1]; });
   if (ri < 0) return {false, 0};
   const int i = _lefts[(li << 1) + 1];
   const int j = _rights[(ri << 1) + 1];
@@ -28,7 +28,7 @@ Otf* Otf::fromFile(const char* filePath) {
 }
 
 i32 Otf::glyphId(u32 codepoint) const {
-  const int index = binSearchIndex(
+  const int index = binIndexOf(
     _unicodeCount,
     [&](int i) { return codepoint - _unicodes[i]; }
   );

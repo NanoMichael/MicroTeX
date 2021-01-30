@@ -371,7 +371,7 @@ macro(raisebox) {
 }
 
 macro(definecolor) {
-  color c = TRANS;
+  color c = TRANSPARENT;
   string cs;
   wide2utf8(args[3].c_str(), cs);
   if (args[2] == L"gray") {

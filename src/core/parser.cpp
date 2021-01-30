@@ -523,7 +523,7 @@ sptr<Atom> TeXParser::processEscape() {
   if (!_isPartial)
     throw ex_parse("Unknown symbol or command or predefined Formula: '" + cmd + "'");
   sptr<Atom> rm(new RomanAtom(Formula(L"\\backslash " + command)._root));
-  return sptr<Atom>(new ColorAtom(rm, TRANS, RED));
+  return sptr<Atom>(new ColorAtom(rm, TRANSPARENT, RED));
 }
 
 sptr<Atom> TeXParser::processCommands(const wstring& command) {
@@ -1031,7 +1031,7 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
         if (_hideUnknownChar) return nullptr;
         sptr<Atom> rm(new RomanAtom(
           Formula(L"\\text{(unknown char " + towstring((int) c) + L")}")._root));
-        return sptr<Atom>(new ColorAtom(rm, TRANS, RED));
+        return sptr<Atom>(new ColorAtom(rm, TRANSPARENT, RED));
       }
     } else {
       /*

@@ -1,5 +1,5 @@
-#ifndef LATEX_ROW_H
-#define LATEX_ROW_H
+#ifndef LATEX_ATOM_ROW_H
+#define LATEX_ATOM_ROW_H
 
 #include <bitset>
 
@@ -181,4 +181,4 @@ public:
 
 }
 
-#endif //LATEX_ROW_H
+#endif //LATEX_ATOM_ROW_H

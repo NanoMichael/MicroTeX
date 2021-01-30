@@ -200,13 +200,13 @@ public:
 class ColorBox : public Box {
 private:
   sptr<Box> _box;
-  color _foreground = trans;
-  color _background = trans;
+  color _foreground = transparent;
+  color _background = transparent;
 
 public:
   ColorBox() = delete;
 
-  explicit ColorBox(const sptr<Box>& box, color fg = trans, color bg = trans);
+  explicit ColorBox(const sptr<Box>& box, color fg = transparent, color bg = transparent);
 
   void draw(Graphics2D& g2, float x, float y) override;
 

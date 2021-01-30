@@ -264,7 +264,7 @@ public:
 
   float _textSize = 20.f;
   color _foreground = BLACK;
-  color _background = TRANS;
+  color _background = TRANSPARENT;
   float _padding = 10.f;
   float _maxWidth = 720.f;
 

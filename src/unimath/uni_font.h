@@ -22,14 +22,14 @@ struct MathVersion {
 private:
   c32 _codepoints[6];
 
-  /** Get the UniMathType and the version-specific offset of given codepoint. */
+  /** Get the MathType and the version-specific offset of given codepoint. */
   static std::pair<MathType, c32> ofChar(c32 codepoint);
 
 public:
   no_copy_assign(MathVersion);
 
   MathVersion(
-    c32 digit, c32 latinSmall, c32 latinCapital, c32 greekSmall, c32 greekCapital  //
+    c32 digit, c32 latinSmall, c32 latinCapital, c32 greekSmall, c32 greekCapital
   );
 
   /** Map an Unicode char to version-specific Unicode char. */
@@ -103,12 +103,12 @@ private:
   sptr<const OtfFont> _mathFont = nullptr;
 
 public:
-  static void setMainFont(
+  static void addMainFont(
     const std::string& versionName,
     const std::vector<FontSpec>& params
   );
 
-  static void setMathFont(const FontSpec& params);
+  static void addMathFont(const FontSpec& params);
 
   static void setMathStyle(const std::string& styleName);
 
