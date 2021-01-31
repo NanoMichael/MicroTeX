@@ -264,7 +264,7 @@ inline macro(accent) {
 }
 
 inline macro(cedilla) {
-  return sptr<Atom>(new CedillAtom(Formula(tp, args[1])._root));
+  return sptr<Atom>(new CedillaAtom(Formula(tp, args[1])._root));
 }
 
 inline macro(IJ) {

@@ -27,9 +27,7 @@ class Dummy;
 
 class RowAtom;
 
-/**
- * An empty atom
- */
+/** An empty atom */
 class EmptyAtom : public Atom {
 public:
   sptr<Box> createBox(Environment& env) override {
@@ -39,9 +37,7 @@ public:
   __decl_clone(EmptyAtom)
 };
 
-/**
- * A placeholder atom
- */
+/** A placeholder atom */
 class PlaceholderAtom : public Atom {
 private:
   float _width, _height, _depth, _shift;
@@ -57,9 +53,7 @@ public:
   __decl_clone(PlaceholderAtom)
 };
 
-/**
- * The string rendering is made in using Graphics2D
- */
+/** The string rendering is made in using Graphics2D */
 class TextRenderingAtom : public Atom {
 private:
   std::wstring _str;
@@ -80,27 +74,25 @@ public:
   __decl_clone(TextRenderingAtom)
 };
 
-/**
- * An atom representing a smashed atom (i.e. with no height and no depth)
- */
+/** An atom representing a smashed atom (i.e. with no height and no depth) */
 class SmashedAtom : public Atom {
 private:
-  sptr<Atom> _at;
+  sptr<Atom> _atom;
   bool _h, _d;
 
 public:
   SmashedAtom() = delete;
 
   SmashedAtom(const sptr<Atom>& a, const std::string& opt) : _h(true), _d(true) {
-    _at = a;
+    _atom = a;
     if (opt == "opt") _d = false;
     else if (opt == "b") _h = false;
   }
 
-  explicit SmashedAtom(const sptr<Atom>& a) : _at(a), _h(true), _d(true) {}
+  explicit SmashedAtom(const sptr<Atom>& a) : _atom(a), _h(true), _d(true) {}
 
   sptr<Box> createBox(Environment& env) override {
-    sptr<Box> b = _at->createBox(env);
+    sptr<Box> b = _atom->createBox(env);
     if (_h) b->_height = 0;
     if (_d) b->_depth = 0;
     return b;
@@ -109,9 +101,7 @@ public:
   __decl_clone(SmashedAtom)
 };
 
-/**
- * An atom representing a scaled atom
- */
+/** An atom representing a scaled atom */
 class ScaleAtom : public Atom {
 protected:
   sptr<Atom> _base;
@@ -138,9 +128,7 @@ public:
   __decl_clone(ScaleAtom)
 };
 
-/**
- * An atom representing a math atom
- */
+/** An atom representing a math atom */
 class MathAtom : public Atom {
 private:
   TexStyle _style;
@@ -157,9 +145,7 @@ public:
   __decl_clone(MathAtom)
 };
 
-/**
- * An atom representing a horizontal-line in array environment
- */
+/** An atom representing a horizontal-line in array environment */
 class HlineAtom : public Atom {
 private:
   float _width, _shift;
@@ -179,9 +165,7 @@ public:
   __decl_clone(HlineAtom)
 };
 
-/**
- * An atom representing a cumulative scripts atom
- */
+/** An atom representing a cumulative scripts atom */
 class CumulativeScriptsAtom : public Atom {
 private:
   sptr<Atom> _base;
@@ -267,9 +251,7 @@ public:
   __decl_clone(SpaceAtom)
 };
 
-/**
- * An atom representing an underscore
- */
+/** An atom representing an underscore */
 class UnderScoreAtom : public Atom {
 private:
   static SpaceAtom _w, _s;
@@ -303,9 +285,7 @@ public:
   __decl_clone(MiddleAtom)
 };
 
-/**
- * An atom representing a vertical row of other atoms.
- */
+/** An atom representing a vertical row of other atoms. */
 class VRowAtom : public Atom {
 private:
   std::vector<sptr<Atom>> _elements;
@@ -324,7 +304,7 @@ public:
     _addInterline = addInterline;
   }
 
-  inline bool getAddInterline() const {
+  inline bool isAddInterline() const {
     return _addInterline;
   }
 
@@ -340,14 +320,10 @@ public:
 
   sptr<Atom> popLastAtom();
 
-  /**
-   * Add an atom at the front
-   */
+  /** Add an atom at the front */
   void add(const sptr<Atom>& el);
 
-  /**
-   * Add an atom at the tail
-   */
+  /** Add an atom at the tail */
   void append(const sptr<Atom>& el);
 
   sptr<Box> createBox(Environment& env) override;
@@ -355,9 +331,7 @@ public:
   __decl_clone(VRowAtom)
 };
 
-/**
- * An atom representing the foreground and background color of an other atom
- */
+/** An atom representing the foreground and background color of an other atom */
 class ColorAtom : public Atom, public Row {
 private:
   static std::map<std::string, color> _colors;
@@ -389,7 +363,7 @@ public:
   /**
    * Parse color from given name. The name can be one of the following format:
    * [#AARRGGBB] or [AARRGGBB], [gray color], [c,m,y,k], [c;m;y;k], [r,g,b], [r;g;b]
-   * or a predefined color name.  Return black if not found.
+   * or a predefined color name. Return black if not found.
    */
   static color getColor(std::string name);
 
@@ -399,9 +373,7 @@ public:
   __decl_clone(ColorAtom)
 };
 
-/**
- * An atom representing a roman atom
- */
+/** An atom representing a roman atom */
 class RomanAtom : public Atom {
 public:
   sptr<Atom> _base;
@@ -415,9 +387,7 @@ public:
   __decl_clone(RomanAtom)
 };
 
-/**
- * An atom representing another atom that should be drawn invisibly
- */
+/** An atom representing another atom that should be drawn invisibly */
 class PhantomAtom : public Atom, public Row {
 private:
   sptr<RowAtom> _elements;
@@ -487,9 +457,7 @@ public:
   __decl_clone(TypedAtom)
 };
 
-/**
- * An atom representing another atom with an accent symbol above it
- */
+/** An atom representing another atom with an accent symbol above it */
 class AccentedAtom : public Atom {
 public:
   // accent symbol
@@ -688,9 +656,7 @@ private:
 
   sptr<Box> createSideSets(Environment& env);
 
-  /**
-   * Center the given box in a new box that has the given width
-   */
+  /** Center the given box in a new box that has the given width */
   static sptr<Box> changeWidth(const sptr<Box>& b, float maxWidth);
 
 public:

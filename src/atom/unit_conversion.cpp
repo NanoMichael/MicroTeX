@@ -24,7 +24,7 @@ const map<string, UnitType> SpaceAtom::_units{
   {"cc",    UnitType::cc},
 };
 
-const function<float(const Environment&)> SpaceAtom::_unitConversions[] = {
+const function<float(const Environment&)> SpaceAtom::_unitConversions[]{
   // EM
   [](const Environment& env) -> float {
     return env.getTeXFont()->getEM(env.getStyle());

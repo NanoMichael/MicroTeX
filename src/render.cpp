@@ -82,7 +82,7 @@ void TeXRender::setHeight(int height, Alignment align) {
 void TeXRender::draw(Graphics2D& g2, int x, int y) {
   color old = g2.getColor();
   g2.scale(_textSize, _textSize);
-  if (!istrans(_fg)) {
+  if (!isTransparent(_fg)) {
     g2.setColor(_fg);
   } else {
     g2.setColor(_defaultcolor);
@@ -146,7 +146,7 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
     ti = new TeXRender(box, _textSize, _trueValues);
   }
 
-  if (!istrans(_fg)) ti->setForeground(_fg);
+  if (!isTransparent(_fg)) ti->setForeground(_fg);
 
   delete te;
   return ti;

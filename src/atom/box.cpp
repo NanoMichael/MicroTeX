@@ -326,7 +326,7 @@ HorizontalRule::HorizontalRule(float thickness, float width, float shift, color 
 
 void HorizontalRule::draw(Graphics2D& g2, float x, float y) {
   const color oldColor = g2.getColor();
-  if (!istrans(_color)) g2.setColor(_color);
+  if (!isTransparent(_color)) g2.setColor(_color);
   const Stroke& oldStroke = g2.getStroke();
   g2.setStroke(Stroke(_height, CAP_BUTT, JOIN_BEVEL));
   y = y - _height / 2.f - _speShift;
@@ -492,11 +492,11 @@ ColorBox::ColorBox(const sptr<Box>& box, color fg, color bg) {
 
 void ColorBox::draw(Graphics2D& g2, float x, float y) {
   const color prev = g2.getColor();
-  if (!istrans(_background)) {
+  if (!isTransparent(_background)) {
     g2.setColor(_background);
     g2.fillRect(x, y - _height, _width, _height + _depth);
   }
-  g2.setColor(istrans(_foreground) ? prev : _foreground);
+  g2.setColor(isTransparent(_foreground) ? prev : _foreground);
   _box->draw(g2, x, y);
   g2.setColor(prev);
 }
@@ -727,13 +727,13 @@ void FramedBox::draw(Graphics2D& g2, float x, float y) {
   const Stroke& st = g2.getStroke();
   g2.setStroke(Stroke(_thickness, CAP_BUTT, JOIN_MITER));
   float th = _thickness / 2.f;
-  if (!istrans(_bg)) {
+  if (!isTransparent(_bg)) {
     color prev = g2.getColor();
     g2.setColor(_bg);
     g2.fillRect(x + th, y - _height + th, _width - _thickness, _height + _depth - _thickness);
     g2.setColor(prev);
   }
-  if (!istrans(_line)) {
+  if (!isTransparent(_line)) {
     color prev = g2.getColor();
     g2.setColor(_line);
     g2.drawRect(x + th, y - _height + th, _width - _thickness, _height + _depth - _thickness);
@@ -889,11 +889,11 @@ void WrapperBox::setInsets(float l, float t, float r, float b) {
 
 void WrapperBox::draw(Graphics2D& g2, float x, float y) {
   const color prev = g2.getColor();
-  if (!istrans(_bg)) {
+  if (!isTransparent(_bg)) {
     g2.setColor(_bg);
     g2.fillRect(x, y - _height, _width, _height + _depth);
   }
-  g2.setColor(istrans(_fg) ? prev : _fg);
+  g2.setColor(isTransparent(_fg) ? prev : _fg);
   _base->draw(g2, x + _l, y + _base->_shift);
   g2.setColor(prev);
 }
