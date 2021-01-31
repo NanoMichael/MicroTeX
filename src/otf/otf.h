@@ -78,6 +78,9 @@ public:
   /** Get the em size of this font. */
   inline u16 em() const { return _em; }
 
+  /** Get the quad of this font. */
+  inline u16 quad() const { return _em; }
+
   /** Get the math-consts table, return null if absent. */
   inline const MathConsts* mathConsts() const { return _mathConsts; }
 

@@ -354,18 +354,18 @@ sptr<Box> AccentedAtom::createBox(Environment& env) {
   const TexStyle style = env.getStyle();
 
   // set base in cramped style
-  auto b =
-    (_base == nullptr
-     ? sptr<Box>(new StrutBox(0, 0, 0, 0))
-     : _base->createBox(*(env.crampStyle()))
-    );
+  auto b = (
+    _base == nullptr
+    ? sptr<Box>(new StrutBox(0, 0, 0, 0))
+    : _base->createBox(*(env.crampStyle()))
+  );
 
   float u = b->_width;
   float s = 0;
   auto* sym = dynamic_cast<CharSymbol*>(_underbase.get());
   if (sym != nullptr) s = tf->getSkew(*(sym->getCharFont(*tf)), style);
 
-  // retrieve best char form the accent symbol
+  // retrieve best char from the accent symbol
   auto* acc = (SymbolAtom*) _accent.get();
   Char ch = tf->getChar(acc->getName(), style);
   while (tf->hasNextLarger(ch)) {

@@ -275,7 +275,7 @@ public:
     auto surface = Cairo::SvgSurface::create(file, w, h);
     auto context = Cairo::Context::create(surface);
     Graphics2D_cairo g2(context);
-    if (!istrans(_background)) {
+    if (!isTransparent(_background)) {
       g2.setColor(_background);
       g2.fillRect(0, 0, w, h);
     }
@@ -309,7 +309,7 @@ public:
 
   int run() {
     if (_textSize <= 0.f) _textSize = 20.f;
-    if (istrans(_foreground)) _foreground = BLACK;
+    if (isTransparent(_foreground)) _foreground = BLACK;
     if (_maxWidth <= 0.f) _maxWidth = 720.f;
     if (!_input.empty()) return runSingle();
     return runBatch();

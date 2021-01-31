@@ -67,7 +67,7 @@ inline color cmyk(float c, float m, float y, float k) {
 }
 
 /** Test if the given color is transparent */
-inline bool istrans(color c) {
+inline bool isTransparent(color c) {
   return (c >> 24 == 0);
 }
 

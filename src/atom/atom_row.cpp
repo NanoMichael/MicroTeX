@@ -1,4 +1,6 @@
 #include "atom/atom_row.h"
+
+#include <memory>
 #include "atom/atom_basic.h"
 #include "core/core.h"
 
@@ -94,11 +96,11 @@ sptr<Atom> RowAtom::popLastAtom() {
     _elements.pop_back();
     return x;
   }
-  return sptr<Atom>(new SpaceAtom(UnitType::point, 0.f, 0.f, 0.f));
+  return sptrOf<SpaceAtom>(UnitType::point, 0.f, 0.f, 0.f);
 }
 
 sptr<Atom> RowAtom::get(size_t pos) {
-  if (pos >= _elements.size()) return sptr<Atom>(new SpaceAtom(UnitType::point, 0, 0, 0));
+  if (pos >= _elements.size()) return sptrOf<SpaceAtom>(UnitType::point, 0, 0, 0);
   return _elements[pos];
 }
 

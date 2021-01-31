@@ -33,19 +33,18 @@ inline static void parseMap(const std::string& options, std::map<std::string, st
   }
 }
 
-/**
- * An atom representing a big delimiter atom (i.e. sigma)
- */
+/** An atom representing a big delimiter atom (i.e. sigma) */
 class BigDelimiterAtom : public Atom {
 private:
   int _size;
 
 public:
-  sptr<SymbolAtom> _delim;
+  const sptr<SymbolAtom> _delim;
 
   BigDelimiterAtom() = delete;
 
-  BigDelimiterAtom(const sptr<SymbolAtom>& delim, int s) : _delim(delim), _size(s) {}
+  BigDelimiterAtom(const sptr<SymbolAtom>& delim, int size)
+    : _delim(delim), _size(size) {}
 
   sptr<Box> createBox(Environment& env) override {
     auto b = DelimiterFactory::create(*_delim, env, _size);
@@ -61,9 +60,7 @@ public:
   __decl_clone(BigDelimiterAtom)
 };
 
-/**
- * An atom representing a bold atom
- */
+/** An atom representing a bold atom */
 class BoldAtom : public Atom {
 private:
   sptr<Atom> _base;
@@ -85,17 +82,15 @@ public:
   __decl_clone(BoldAtom)
 };
 
-/**
- * An atom with cedilla
- */
-class CedillAtom : public Atom {
+/** An atom with cedilla */
+class CedillaAtom : public Atom {
 private:
   sptr<Atom> _base;
 
 public:
-  CedillAtom() = delete;
+  CedillaAtom() = delete;
 
-  explicit CedillAtom(const sptr<Atom>& base) : _base(base) {}
+  explicit CedillaAtom(const sptr<Atom>& base) : _base(base) {}
 
   sptr<Box> createBox(Environment& env) override {
     auto b = _base->createBox(env);
@@ -122,12 +117,10 @@ public:
     return sptr<Box>(vb);
   }
 
-  __decl_clone(CedillAtom)
+  __decl_clone(CedillaAtom)
 };
 
-/**
- * An atom representing ddots
- */
+/** An atom representing ddots */
 class DdtosAtom : public Atom {
 public:
   sptr<Box> createBox(Environment& env) override {
@@ -154,9 +147,7 @@ public:
   __decl_clone(DdtosAtom)
 };
 
-/**
- * An atom representing a boxed base atom
- */
+/** An atom representing a boxed base atom */
 class FBoxAtom : public Atom {
 protected:
   sptr<Atom> _base;
@@ -181,16 +172,14 @@ public:
     auto bbase = _base->createBox(env);
     float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
     float space = INTERSPACE * SpaceAtom::getFactor(UnitType::em, env);
-    if (istrans(_bg)) return sptr<Box>(new FramedBox(bbase, drt, space));
+    if (isTransparent(_bg)) return sptr<Box>(new FramedBox(bbase, drt, space));
     return sptr<Box>(new FramedBox(bbase, drt, space, _line, _bg));
   }
 
   __decl_clone(FBoxAtom)
 };
 
-/**
- * An atom representing a boxed base atom
- */
+/** An atom representing a boxed base atom */
 class DoubleFramedAtom : public FBoxAtom {
 public:
   DoubleFramedAtom() = delete;
@@ -208,9 +197,7 @@ public:
   __decl_clone(DoubleFramedAtom)
 };
 
-/**
- * An atom representing a box-shadowed atom
- */
+/** An atom representing a box-shadowed atom */
 class ShadowAtom : public FBoxAtom {
 public:
   ShadowAtom() = delete;
@@ -276,7 +263,8 @@ public:
     const sptr<Atom>& b,
     const sptr<SymbolAtom>& l,
     const std::list<sptr<MiddleAtom>>& m,
-    const sptr<SymbolAtom>& r) {
+    const sptr<SymbolAtom>& r
+  ) {
     init(b, l, r);
     _middle = m;
   }
@@ -290,25 +278,23 @@ public:
   __decl_clone(FencedAtom)
 };
 
-/**
- * An atom representing a fraction
- */
+/** An atom representing a fraction */
 class FractionAtom : public Atom {
 private:
   // whether the default thickness should not be used for fraction line
-  bool _nodefault;
+  bool _nodefault = false;
   // unit used for the thickness of the fraction line
-  UnitType _unit;
+  UnitType _unit{};
   // alignment settings for the numerator and denominator
-  Alignment _numAlign, _denomAlign;
+  Alignment _numAlign{}, _denomAlign{};
   // the atoms representing the numerator and denominator
   sptr<Atom> _numerator, _denominator;
   // thickness of the fraction line
-  float _thickness;
+  float _thickness = 0;
   // thickness of the fraction line relative to the default thickness
-  float _deffactor;
+  float _deffactor = 1.f;
   // whether the def-factor value should be used
-  bool _deffactorset;
+  bool _deffactorset = false;
 
   inline Alignment checkAlign(Alignment align) {
     if (align == Alignment::left || align == Alignment::right) return align;
@@ -320,14 +306,12 @@ private:
     const sptr<Atom>& den,
     bool nodef,
     UnitType unit,
-    float t  //
+    float t
   );
 
 public:
-  /**
-     * If add space to start and end of fraction, default is true
-     */
-  bool _useKern;
+  /** If add space to start and end of fraction, default is true */
+  bool _useKern = false;
 
   FractionAtom() = delete;
 
@@ -383,9 +367,7 @@ public:
   __decl_clone(FractionAtom)
 };
 
-/**
- * An atom representing id-dots
- */
+/** An atom representing id-dots */
 class IddotsAtom : public Atom {
 public:
   sptr<Box> createBox(Environment& env) override {
@@ -414,9 +396,7 @@ public:
   __decl_clone(IddotsAtom)
 };
 
-/**
- * An atom representing an IJ
- */
+/** An atom representing an IJ */
 class IJAtom : public Atom {
 private:
   bool _upper;
@@ -438,9 +418,7 @@ public:
   __decl_clone(IJAtom)
 };
 
-/**
- * An atom representing a italic atom
- */
+/** An atom representing a italic atom */
 class ItAtom : public Atom {
 private:
   sptr<Atom> _base;
@@ -466,9 +444,7 @@ public:
   __decl_clone(ItAtom)
 };
 
-/**
- * An atom representing a lapped atom (i.e. with no width)
- */
+/** An atom representing a lapped atom (i.e. with no width) */
 class LapedAtom : public Atom {
 private:
   sptr<Atom> _at;
@@ -540,9 +516,7 @@ public:
   __decl_clone(LCaronAtom)
 };
 
-/**
- * An atom representing a mono scale atom
- */
+/** An atom representing a mono scale atom */
 class MonoScaleAtom : public ScaleAtom {
 private:
   float _factor;
@@ -563,9 +537,7 @@ public:
   __decl_clone(MonoScaleAtom)
 };
 
-/**
- * An atom with an Ogonek
- */
+/** An atom with an Ogonek */
 class OgonekAtom : public Atom {
 private:
   sptr<Atom> _base;
@@ -603,9 +575,7 @@ public:
   __decl_clone(OgonekAtom)
 };
 
-/**
- * An atom representing a over-lined atom
- */
+/** An atom representing a over-lined atom */
 class OverlinedAtom : public Atom {
 private:
   sptr<Atom> _base;
@@ -619,7 +589,7 @@ public:
 
   sptr<Box> createBox(Environment& env) override {
     float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-    // cramp the style of the formula to be overlined and create
+    // cramp the style of the formula to be over-lined and create
     // vertical box
     auto b = (
       _base == nullptr
@@ -674,9 +644,7 @@ public:
   __decl_clone(RaiseAtom)
 };
 
-/**
- * An atom representing a reflected atom
- */
+/** An atom representing a reflected atom */
 class ReflectAtom : public Atom {
 private:
   sptr<Atom> _base;
@@ -695,15 +663,13 @@ public:
   __decl_clone(ReflectAtom)
 };
 
-/**
- * An atom representing a resize atom
- */
+/** An atom representing a resize atom */
 class ResizeAtom : public Atom {
 private:
   sptr<Atom> _base;
   UnitType _wu, _hu;
   float _w, _h;
-  bool _keep_aspect_ratio;
+  bool _keepAspectRatio;
 
 public:
   ResizeAtom() = delete;
@@ -711,7 +677,7 @@ public:
   ResizeAtom(const sptr<Atom>& base, const std::string& ws, const std::string& hs, bool keepAspectRatio) {
     _type = base->_type;
     _base = base;
-    _keep_aspect_ratio = keepAspectRatio;
+    _keepAspectRatio = keepAspectRatio;
     auto[wu, w] = SpaceAtom::getLength(ws);
     auto[hu, h] = SpaceAtom::getLength(hs);
     _wu = wu, _w = w;
@@ -729,7 +695,7 @@ public:
     if (_wu != UnitType::none && _hu != UnitType::none) {
       sx = _w * SpaceAtom::getFactor(_wu, env) / bbox->_width;
       sy = _h * SpaceAtom::getFactor(_hu, env) / bbox->_height;
-      if (_keep_aspect_ratio) {
+      if (_keepAspectRatio) {
         sx = std::min(sx, sy);
         sy = sx;
       }
@@ -747,9 +713,7 @@ public:
   __decl_clone(ResizeAtom)
 };
 
-/**
- * An atom representing an nth-root construction
- */
+/** An atom representing an nth-root construction */
 class NthRoot : public Atom {
 private:
   static const std::string _sqrtSymbol;
@@ -772,9 +736,7 @@ public:
   __decl_clone(NthRoot)
 };
 
-/**
- * An atom representing a rotated atom
- */
+/** An atom representing a rotated atom */
 class RotateAtom : public Atom {
 private:
   sptr<Atom> _base;
@@ -816,9 +778,7 @@ public:
   __decl_clone(RuleAtom)
 };
 
-/**
- * An atom representing a small Capital atom
- */
+/** An atom representing a small Capital atom */
 class SmallCapAtom : public Atom {
 private:
   sptr<Atom> _base;
@@ -839,9 +799,7 @@ public:
   __decl_clone(SmallCapAtom)
 };
 
-/**
- * An atom representing a sans-serif atom
- */
+/** An atom representing a sans-serif atom */
 class SsAtom : public Atom {
 private:
   sptr<Atom> _base;
@@ -862,9 +820,7 @@ public:
   __decl_clone(SsAtom)
 };
 
-/**
- * An atom representing a strike through atom
- */
+/** An atom representing a strike through atom */
 class StrikeThroughAtom : public Atom {
 private:
   sptr<Atom> _at;
@@ -919,9 +875,7 @@ public:
   __decl_clone(StyleAtom)
 };
 
-/**
- * An atom representing an t with a Caron
- */
+/** An atom representing an t with a Caron */
 class TCaronAtom : public Atom {
 public:
   sptr<Box> createBox(Environment& env) override {
@@ -960,9 +914,7 @@ public:
   __decl_clone(TextCircledAtom)
 };
 
-/**
- * An atom representing a modification of style in a formula
- */
+/** An atom representing a modification of style in a formula */
 class TextStyleAtom : public Atom {
 private:
   std::string _style;
@@ -984,9 +936,7 @@ public:
   __decl_clone(TextStyleAtom)
 };
 
-/**
- * An atom with a stroked T
- */
+/** An atom with a stroked T */
 class TStrokeAtom : public Atom {
 private:
   bool _upper;
@@ -1020,9 +970,7 @@ public:
   __decl_clone(TStrokeAtom)
 };
 
-/**
- * An atom representing a typewriter atom
- */
+/** An atom representing a typewriter atom */
 class TtAtom : public Atom {
 private:
   sptr<Atom> _base;
@@ -1043,9 +991,7 @@ public:
   __decl_clone(TtAtom)
 };
 
-/**
- * An atom representing another atom with a line under it
- */
+/** An atom representing another atom with a line under it */
 class UnderlinedAtom : public Atom {
 private:
   sptr<Atom> _base;
@@ -1061,7 +1007,11 @@ public:
     float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
 
     // create formula box in same style
-    auto b = _base == nullptr ? sptr<Box>(new StrutBox(0, 0, 0, 0)) : _base->createBox(env);
+    auto b = (
+      _base == nullptr
+      ? sptr<Box>(new StrutBox(0, 0, 0, 0))
+      : _base->createBox(env)
+    );
 
     // create vertical box
     auto* vb = new VerticalBox();
@@ -1139,9 +1089,7 @@ public:
   __decl_clone(VCenteredAtom)
 };
 
-/**
- * An atom representing vertical-dots
- */
+/** An atom representing vertical-dots */
 class VdotsAtom : public Atom {
 public:
   sptr<Box> createBox(Environment& env) override {
@@ -1186,9 +1134,7 @@ public:
   __decl_clone(XArrowAtom)
 };
 
-/**
- * An atom representing long division
- */
+/** An atom representing long division */
 class LongDivAtom : public VRowAtom {
 private:
   long _divisor, _dividend;
@@ -1203,9 +1149,7 @@ public:
   __decl_clone(LongDivAtom)
 };
 
-/**
- * An atom representing an atom with lines covered
- */
+/** An atom representing an atom with lines covered */
 class CancelAtom : public Atom {
 private:
   sptr<Atom> _base;
