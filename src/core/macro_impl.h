@@ -356,70 +356,44 @@ inline macro(prescript) {
   return sptr<Atom>(new TypedAtom(AtomType::ordinary, AtomType::ordinary, base));
 }
 
-inline macro(underbrace) {
-  return sptr<Atom>(new OverUnderDelimiter(
+inline sptr<Atom> _macro_overunder(
+  TeXParser& tp,
+  std::vector<std::wstring>& args,
+  const std::string& name,
+  bool isOver
+) {
+  return sptrOf<OverUnderDelimiter>(
     Formula(tp, args[1], false)._root,
     nullptr,
-    SymbolAtom::get("rbrace"),
+    SymbolAtom::get(name),
     UnitType::ex,
     0,
-    false)
+    isOver
   );
+}
+
+inline macro(underbrace) {
+  return _macro_overunder(tp, args, "rbrace", false);
 }
 
 inline macro(overbrace) {
-  return sptr<Atom>(new OverUnderDelimiter(
-    Formula(tp, args[1], false)._root,
-    nullptr,
-    SymbolAtom::get("lbrace"),
-    UnitType::ex,
-    0,
-    true)
-  );
+  return _macro_overunder(tp, args, "lbrace", true);
 }
 
 inline macro(underbrack) {
-  return sptr<Atom>(new OverUnderDelimiter(
-    Formula(tp, args[1], false)._root,
-    nullptr,
-    SymbolAtom::get("rsqbrack"),
-    UnitType::ex,
-    0,
-    false)
-  );
+  return _macro_overunder(tp, args, "rsqbrack", false);
 }
 
 inline macro(overbrack) {
-  return sptr<Atom>(new OverUnderDelimiter(
-    Formula(tp, args[1], false)._root,
-    nullptr,
-    SymbolAtom::get("lsqbrack"),
-    UnitType::ex,
-    0,
-    true)
-  );
+  return _macro_overunder(tp, args, "lsqbrack", true);
 }
 
 inline macro(underparen) {
-  return sptr<Atom>(new OverUnderDelimiter(
-    Formula(tp, args[1], false)._root,
-    nullptr,
-    SymbolAtom::get("rbrack"),
-    UnitType::ex,
-    0,
-    false)
-  );
+  return _macro_overunder(tp, args, "rbrack", false);
 }
 
 inline macro(overparen) {
-  return sptr<Atom>(new OverUnderDelimiter(
-    Formula(tp, args[1], false)._root,
-    nullptr,
-    SymbolAtom::get("lbrack"),
-    UnitType::ex,
-    0,
-    true)
-  );
+  return _macro_overunder(tp, args, "lbrack", true);
 }
 
 inline macro(overline) {

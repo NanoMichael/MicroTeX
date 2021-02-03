@@ -16,7 +16,7 @@ struct CharFont;
 class CharSymbol : public Atom {
 private:
   /**
-   * Mrow will mark certain CharSymbol atoms as a text symbol. Msubsup wil use
+   * Row will mark certain CharSymbol atoms as a text symbol. Subsup wil use
    * this property for a certain spacing rule.
    */
   bool _textSymbol;
@@ -72,15 +72,15 @@ public:
 
 class SymbolAtom : public CharSymbol {
 private:
-  // contains all defined symbols
-  static std::map<std::string, sptr<SymbolAtom>> _symbols;
-  // whether it's a delimiter symbol
-  bool _delimiter;
+
   // symbol name
   std::string _name;
   wchar_t _unicode;
 
 public:
+  // contains all defined symbols
+  static std::map<std::string, sptr<SymbolAtom>> _symbols;
+
   SymbolAtom() = delete;
 
   /**
@@ -100,11 +100,6 @@ public:
 
   inline wchar_t getUnicode() const {
     return _unicode;
-  }
-
-  /** @return true if this symbol can act as a delimiter to embrace formulas */
-  inline bool isDelimiter() const {
-    return _delimiter;
   }
 
   inline const std::string& getName() const {
@@ -129,14 +124,6 @@ public:
    *      if no symbol with the given name was found
    */
   static sptr<SymbolAtom> get(const std::string& name);
-
-  static void _init_();
-
-#ifdef HAVE_LOG
-
-  friend std::ostream& operator<<(std::ostream& os, const SymbolAtom& s);
-
-#endif  // HAVE_LOG
 
   __decl_clone(SymbolAtom)
 };

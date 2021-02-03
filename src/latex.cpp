@@ -93,7 +93,6 @@ void LaTeX::init(string res_root_path) {
 
   NewCommandMacro::_init_();
   DefaultTeXFont::_init_();
-  SymbolAtom::_init_();
   Formula::_init_();
   TextRenderingBox::_init_();
 

@@ -1,6 +1,7 @@
 #include "atom/atom_char.h"
 #include "core/core.h"
 #include "res/parser/formula_parser.h"
+#include "unimath/uni_symbol.h"
 
 using namespace tex;
 using namespace std;
@@ -16,30 +17,10 @@ sptr<Box> FixedCharAtom::createBox(Environment& env) {
   return sptr<Box>(new CharBox(c));
 }
 
-void SymbolAtom::_init_() {
-#ifdef HAVE_LOG
-  __log << "elements in _symbols" << endl;
-  for (auto i : _symbols)
-    __log << "\t" << *(i.second) << endl;
-  __log << endl;
-#endif  // HAVE_LOG
-}
-
-#ifdef HAVE_LOG
-
-ostream& tex::operator<<(ostream& os, const SymbolAtom& s) {
-  os << "SymbolAtom { "
-     << "name: " << s._name << ", delimiter: " << s._delimiter << " }";
-  return os;
-}
-
-#endif  // HAVE_LOG
-
 SymbolAtom::SymbolAtom(const string& name, AtomType type, bool del) noexcept: _unicode(0) {
   _name = name;
+  _type = type;
   if (type == AtomType::bigOperator) _limitsType = LimitsType::normal;
-  _delimiter = del;
-  this->_type = type;
 }
 
 sptr<Box> SymbolAtom::createBox(Environment& env) {
