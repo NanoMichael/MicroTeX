@@ -160,7 +160,7 @@ public:
    * Create a new TeXParser which ignores or not the white spaces, it's useful
    * for mbox command
    *
-   * @param isPartial if true certains exceptions are not thrown
+   * @param isPartial if true certain exceptions are not thrown
    * @param latex the string to be parsed
    * @param formula the formula to hold the atoms
    * @param preprocess indicate if the parser must replace the user-defined macros by their content

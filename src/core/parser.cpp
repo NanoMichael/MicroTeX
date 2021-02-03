@@ -581,11 +581,9 @@ sptr<Atom> TeXParser::getScripts(wchar_t f) {
   sptr<Atom> atom;
   RowAtom* rm = nullptr;
   if (_formula->_root == nullptr) {
-    /**
-     * If there's no root exists, passing a null atom to ScriptsAtom as base is OK,
-     * the ScriptsAtom will handle it
-     */
-    return sptr<Atom>(new ScriptsAtom(nullptr, first, second));
+    // If there's no root exists, passing a null atom to ScriptsAtom as base is OK,
+    // the ScriptsAtom will handle it
+    return sptrOf<ScriptsAtom>(nullptr, first, second);
   } else if ((rm = dynamic_cast<RowAtom*>(_formula->_root.get()))) {
     atom = rm->popLastAtom();
   } else {
