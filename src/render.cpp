@@ -75,7 +75,7 @@ void TeXRender::setHeight(int height, Alignment align) {
   // FIXME
   // only care if new height larger than old
   if (diff > 0) {
-    _box = sptr<Box>(new VerticalBox(_box, diff, align));
+    _box = sptrOf<VerticalBox>(_box, diff, align);
   }
 }
 

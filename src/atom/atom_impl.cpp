@@ -108,17 +108,17 @@ sptr<Box> FractionAtom::createBox(Environment& env) {
   // create equal width boxes in appropriate styles
   auto num = (
     _numerator == nullptr
-    ? sptr<Box>(new StrutBox(0, 0, 0, 0))
+    ? sptrOf<StrutBox>(0, 0, 0, 0)
     : _numerator->createBox(*(env.numStyle()))
   );
   auto denom = (
     _denominator == nullptr
-    ? sptr<Box>(new StrutBox(0, 0, 0, 0))
+    ? sptrOf<StrutBox>(0, 0, 0, 0)
     : _denominator->createBox(*(env.dnomStyle()))
   );
 
-  if (num->_width < denom->_width) num = sptr<Box>(new HorizontalBox(num, denom->_width, _numAlign));
-  else denom = sptr<Box>(new HorizontalBox(denom, num->_width, _denomAlign));
+  if (num->_width < denom->_width) num = sptrOf<HorizontalBox>(num, denom->_width, _numAlign);
+  else denom = sptrOf<HorizontalBox>(denom, num->_width, _denomAlign);
 
   // calculate default shift amounts
   float shiftup, shiftdown;
@@ -160,9 +160,9 @@ sptr<Box> FractionAtom::createBox(Environment& env) {
     }
 
     // fill vertical box
-    vb->add(sptr<Box>(new StrutBox(0, kern1, 0, 0)));
-    vb->add(sptr<Box>(new HorizontalRule(_thickness, num->_width, 0)));
-    vb->add(sptr<Box>(new StrutBox(0, kern2, 0, 0)));
+    vb->add(sptrOf<StrutBox>(0, kern1, 0, 0));
+    vb->add(sptrOf<HorizontalRule>(_thickness, num->_width, 0));
+    vb->add(sptrOf<StrutBox>(0, kern2, 0, 0));
   } else {
     // without fraction rule
     // clearance clr
@@ -178,7 +178,7 @@ sptr<Box> FractionAtom::createBox(Environment& env) {
       kern += 2 * delta;
     }
     // fill vertical box
-    vb->add(sptr<Box>(new StrutBox(0, kern, 0, 0)));
+    vb->add(sptrOf<StrutBox>(0, kern, 0, 0));
   }
 
   // finish vertical box
@@ -287,7 +287,7 @@ sptr<Box> NthRoot::createBox(Environment& env) {
   // arrange both boxes together with the negative kerning
   sptr<Box> res(new HorizontalBox());
   float pos = r->_width + negkern->_width;
-  if (pos < 0) res->add(sptr<Box>(new StrutBox(-pos, 0, 0, 0)));
+  if (pos < 0) res->add(sptrOf<StrutBox>(-pos, 0, 0, 0));
 
   res->add(r);
   res->add(negkern);
@@ -344,7 +344,7 @@ sptr<Box> RotateAtom::createBox(Environment& env) {
 }
 
 sptr<Box> UnderOverArrowAtom::createBox(Environment& env) {
-  auto b = _base != nullptr ? _base->createBox(env) : sptr<Box>(new StrutBox(0, 0, 0, 0));
+  auto b = _base != nullptr ? _base->createBox(env) : sptrOf<StrutBox>(0, 0, 0, 0);
   float sep = SpaceAtom::getSize(UnitType::mu, 1, env);
 
   sptr<Box> arrow;
@@ -358,14 +358,14 @@ sptr<Box> UnderOverArrowAtom::createBox(Environment& env) {
   auto* vb = new VerticalBox();
   if (_over) {
     vb->add(arrow);
-    if (_dble) vb->add(sptr<Box>(new StrutBox(0, -sep, 0, 0)));
-    vb->add(sptr<Box>(new HorizontalBox(b, arrow->_width, Alignment::center)));
+    if (_dble) vb->add(sptrOf<StrutBox>(0, -sep, 0, 0));
+    vb->add(sptrOf<HorizontalBox>(b, arrow->_width, Alignment::center));
     float h = vb->_depth + vb->_height;
     vb->_depth = b->_depth;
     vb->_height = h - b->_depth;
   } else {
-    vb->add(sptr<Box>(new HorizontalBox(b, arrow->_width, Alignment::center)));
-    vb->add(sptr<Box>(new StrutBox(0, sep, 0, 0)));
+    vb->add(sptrOf<HorizontalBox>(b, arrow->_width, Alignment::center));
+    vb->add(sptrOf<StrutBox>(0, sep, 0, 0));
     vb->add(arrow);
     float h = vb->_depth + vb->_height;
     vb->_depth = h - b->_height;
@@ -379,12 +379,12 @@ sptr<Box> XArrowAtom::createBox(Environment& env) {
   auto O = (
     _over != nullptr
     ? _over->createBox(*(env.supStyle()))
-    : sptr<Box>(new StrutBox(0, 0, 0, 0))
+    : sptrOf<StrutBox>(0, 0, 0, 0)
   );
   auto U = (
     _under != nullptr
     ? _under->createBox(*(env.subStyle()))
-    : sptr<Box>(new StrutBox(0, 0, 0, 0))
+    : sptrOf<StrutBox>(0, 0, 0, 0)
   );
 
   auto oside = SpaceAtom(UnitType::em, 1.5f, 0, 0).createBox(*(env.supStyle()));
@@ -436,7 +436,7 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
   vector<wstring> results;
   calculate(results);
 
-  auto rule = sptr<Atom>(new RuleAtom(UnitType::ex, 0.f, UnitType::ex, 2.6f, UnitType::ex, 0.5f));
+  auto rule = sptrOf<RuleAtom>(UnitType::ex, 0.f, UnitType::ex, 2.6f, UnitType::ex, 0.5f);
 
   const int s = results.size();
   for (int i = 0; i < s; i++) {
@@ -444,8 +444,8 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
     if (i == 1) {
       wstring divisor = towstring(_divisor);
       auto rparen = SymbolAtom::get(Formula::_symbolMappings[')']);
-      auto big = sptr<Atom>(new BigDelimiterAtom(rparen, 1));
-      auto ph = sptr<Atom>(new PhantomAtom(big, false, true, true));
+      auto big = sptrOf<BigDelimiterAtom>(rparen, 1);
+      auto ph = sptrOf<PhantomAtom>(big, false, true, true);
       auto ra = sptrOf<RowAtom>(ph);
       auto raised = sptr<Atom>(
         new RaiseAtom(
@@ -458,11 +458,11 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
           0.f
         )
       );
-      ra->add(sptr<Atom>(new SmashedAtom(raised)));
+      ra->add(sptrOf<SmashedAtom>(raised));
       ra->add(num);
-      auto oa = sptr<Atom>(new OverlinedAtom(ra));
+      auto oa = sptrOf<OverlinedAtom>(ra);
       auto row = sptrOf<RowAtom>(Formula(divisor)._root);
-      row->add(sptr<Atom>(new SpaceAtom(SpaceType::thinMuSkip)));
+      row->add(sptrOf<SpaceAtom>(SpaceType::thinMuSkip));
       row->add(oa);
       append(row);
       continue;
@@ -471,7 +471,7 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
       auto row = sptrOf<RowAtom>(num);
       row->add(rule);
       if (i == 0) append(row);
-      else append(sptr<Atom>(new UnderlinedAtom(row)));
+      else append(sptrOf<UnderlinedAtom>(row));
     } else {
       auto row = sptrOf<RowAtom>(num);
       row->add(rule);
@@ -494,9 +494,9 @@ sptr<Box> CancelAtom::createBox(Environment& env) {
   }
 
   const float rt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-  auto overlap = sptr<Box>(new LineBox(lines, rt));
+  auto overlap = sptrOf<LineBox>(lines, rt);
   overlap->_width = box->_width;
   overlap->_height = box->_height;
   overlap->_depth = box->_depth;
-  return sptr<Box>(new OverlappedBox(box, overlap));
+  return sptrOf<OverlappedBox>(box, overlap);
 }

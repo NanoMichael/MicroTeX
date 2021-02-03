@@ -115,7 +115,7 @@ Formula* Formula::add(const sptr<Atom>& a) {
     return this;
   }
   auto* rm = dynamic_cast<RowAtom*>(_root.get());
-  if (rm == nullptr) _root = sptr<Atom>(new RowAtom(_root));
+  if (rm == nullptr) _root = sptrOf<RowAtom>(_root);
   rm = static_cast<RowAtom*>(_root.get());
   rm->add(a);
   auto* ta = dynamic_cast<TypedAtom*>(a.get());
@@ -129,7 +129,7 @@ Formula* Formula::add(const sptr<Atom>& a) {
 }
 
 sptr<Box> Formula::createBox(Environment& style) {
-  if (_root == nullptr) return sptr<Box>(new StrutBox(0, 0, 0, 0));
+  if (_root == nullptr) return sptrOf<StrutBox>(0, 0, 0, 0);
   return _root->createBox(style);
 }
 

@@ -45,7 +45,7 @@ void TeXSymbolParser::readSymbols(std::map<std::string, sptr<SymbolAtom>>& res) 
     if (it == _typeMappings.end()) {
       throw ex_xml_parse(RESOURCE_NAME, "Symbol", "type", "has an unknown value '" + type + "'!");
     }
-    res[name] = sptr<SymbolAtom>(new SymbolAtom(name, it->second, isDelimiter));
+    res[name] = sptrOf<SymbolAtom>(name, it->second, isDelimiter);
     e = e->NextSiblingElement("Symbol");
   }
 }

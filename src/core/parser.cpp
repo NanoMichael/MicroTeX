@@ -523,7 +523,7 @@ sptr<Atom> TeXParser::processEscape() {
   if (!_isPartial)
     throw ex_parse("Unknown symbol or command or predefined Formula: '" + cmd + "'");
   sptr<Atom> rm(new RomanAtom(Formula(L"\\backslash " + command)._root));
-  return sptr<Atom>(new ColorAtom(rm, TRANSPARENT, RED));
+  return sptrOf<ColorAtom>(rm, TRANSPARENT, RED);
 }
 
 sptr<Atom> TeXParser::processCommands(const wstring& command) {
@@ -600,7 +600,7 @@ sptr<Atom> TeXParser::getScripts(wchar_t f) {
   }
 
   if (atom->rightType() == AtomType::bigOperator) {
-    return sptr<Atom>(new BigOperatorAtom(atom, first, second));
+    return sptrOf<BigOperatorAtom>(atom, first, second);
   }
 
   auto* del = dynamic_cast<OverUnderDelimiter*>(atom.get());
@@ -608,15 +608,15 @@ sptr<Atom> TeXParser::getScripts(wchar_t f) {
     if (del->isOver()) {
       if (second != nullptr) {
         del->addScript(second);
-        return sptr<Atom>(new ScriptsAtom(atom, first, nullptr));
+        return sptrOf<ScriptsAtom>(atom, first, nullptr);
       }
     } else if (first != nullptr) {
       del->addScript(first);
-      return sptr<Atom>(new ScriptsAtom(atom, nullptr, second));
+      return sptrOf<ScriptsAtom>(atom, nullptr, second);
     }
   }
 
-  return sptr<Atom>(new ScriptsAtom(atom, first, second));
+  return sptrOf<ScriptsAtom>(atom, first, second);
 }
 
 sptr<Atom> TeXParser::getArgument() {
@@ -1029,7 +1029,7 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
         if (_hideUnknownChar) return nullptr;
         sptr<Atom> rm(new RomanAtom(
           Formula(L"\\text{(unknown char " + towstring((int) c) + L")}")._root));
-        return sptr<Atom>(new ColorAtom(rm, TRANSPARENT, RED));
+        return sptrOf<ColorAtom>(rm, TRANSPARENT, RED);
       }
     } else {
       /*
@@ -1085,5 +1085,5 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
       return sptr<Atom>(new TextRenderingAtom(_latex.substr(start, en - start + 1), infos));
     }
   }
-  return sptr<Atom>(new CharAtom(c, _formula->_textStyle, _isMathMode));
+  return sptrOf<CharAtom>(c, _formula->_textStyle, _isMathMode);
 }

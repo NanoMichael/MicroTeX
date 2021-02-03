@@ -14,7 +14,7 @@ sptr<Box> FixedCharAtom::createBox(Environment& env) {
   const auto& i = env.getTeXFont();
   TeXFont& tf = *i;
   Char c = tf.getChar(*_cf, env.getStyle());
-  return sptr<Box>(new CharBox(c));
+  return sptrOf<CharBox>(c);
 }
 
 SymbolAtom::SymbolAtom(const string& name, AtomType type, bool del) noexcept: _unicode(0) {
@@ -36,17 +36,17 @@ sptr<Box> SymbolAtom::createBox(Environment& env) {
       const string& name = it->second;
       try {
         sptr<Box> cx(new CharBox(tf.getChar(name, style)));
-        cb = sptr<Box>(new ScaleBox(cx, 0.8f, 0.8f));
+        cb = sptrOf<ScaleBox>(cx, 0.8f, 0.8f);
       } catch (ex_symbol_mapping_not_found& e) {}
     }
   }
   if (_type == AtomType::bigOperator) {
     if (style < TexStyle::text && tf.hasNextLarger(c)) c = tf.getNextLarger(c, style);
-    cb = sptr<Box>(new CharBox(c));
+    cb = sptrOf<CharBox>(c);
     cb->_shift = -(cb->_height + cb->_depth) / 2.f - tf.getAxisHeight(style);
     float delta = c.getItalic();
     sptr<HorizontalBox> hb(new HorizontalBox(cb));
-    if (delta > PREC) hb->add(sptr<Box>(new StrutBox(delta, 0, 0, 0)));
+    if (delta > PREC) hb->add(sptrOf<StrutBox>(delta, 0, 0, 0));
     return hb;
   }
   return cb;
@@ -94,11 +94,11 @@ sptr<Box> CharAtom::createBox(Environment& env) {
   sptr<Box> box(new CharBox(ch));
   if (smallCap && islower(_c)) {
     // we have a small capital
-    box = sptr<Box>(new ScaleBox(box, 0.8f, 0.8f));
+    box = sptrOf<ScaleBox>(box, 0.8f, 0.8f);
   }
   return box;
 }
 
 sptr<Box> BreakMarkAtom::createBox(Environment& env) {
-  return sptr<Box>(new StrutBox(0, 0, 0, 0));
+  return sptrOf<StrutBox>(0, 0, 0, 0);
 }

@@ -107,8 +107,8 @@ void DefaultTeXFont::registerAlphabet(AlphabetRegistration* reg) {
 }
 
 sptr<TeXFont> DefaultTeXFont::copy() {
-  return sptr<TeXFont>(new DefaultTeXFont(
-    _size, _factor, _isBold, _isRoman, _isSs, _isTt, _isIt));
+  return sptrOf<DefaultTeXFont>(
+    _size, _factor, _isBold, _isRoman, _isSs, _isTt, _isIt);
 }
 
 Char DefaultTeXFont::getChar(wchar_t c, const vector<CharFont*>& cf, TexStyle style) {
