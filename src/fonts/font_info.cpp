@@ -26,13 +26,13 @@ const int* const FontInfo::getExtension(wchar_t ch) const {
 sptr<CharFont> FontInfo::getNextLarger(wchar_t ch) const {
   const int* const item = _nextLargers((int)ch);
   if (item == nullptr) return nullptr;
-  return sptr<CharFont>(new CharFont(item[1], item[2]));
+  return sptrOf<CharFont>(item[1], item[2]);
 }
 
 sptr<CharFont> FontInfo::getLigture(wchar_t left, wchar_t right) const {
   const wchar_t* const item = _lig(left, right);
   if (item == nullptr) return nullptr;
-  return sptr<CharFont>(new CharFont(item[2], _id));
+  return sptrOf<CharFont>(item[2], _id);
 }
 
 float FontInfo::getKern(wchar_t left, wchar_t right, float factor) const {

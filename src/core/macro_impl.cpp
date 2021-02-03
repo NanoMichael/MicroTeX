@@ -1,5 +1,7 @@
 #include "core/macro_impl.h"
 
+#include <memory>
+
 #include "graphic/graphic.h"
 
 using namespace tex;
@@ -31,8 +33,8 @@ macro(hvspace) {
 
   return (
     args[0][0] == L'h'
-    ? sptr<Atom>(new SpaceAtom(unit, f, 0, 0))
-    : sptr<Atom>(new SpaceAtom(unit, 0, f, 0))
+    ? sptrOf<SpaceAtom>(unit, f, 0, 0)
+    : sptrOf<SpaceAtom>(unit, 0, f, 0)
   );
 }
 
@@ -41,7 +43,7 @@ macro(rule) {
   auto[hu, h] = SpaceAtom::getLength(args[2]);
   auto[ru, r] = SpaceAtom::getLength(args[3]);
 
-  return sptr<Atom>(new RuleAtom(wu, w, hu, h, ru, -r));
+  return sptrOf<RuleAtom>(wu, w, hu, h, ru, -r);
 }
 
 macro(cfrac) {
@@ -59,7 +61,7 @@ macro(cfrac) {
   f->_useKern = false;
   f->_type = AtomType::inner;
   auto* r = new RowAtom();
-  r->add(sptr<Atom>(new StyleAtom(TexStyle::display, f)));
+  r->add(sptrOf<StyleAtom>(TexStyle::display, f));
   return sptr<Atom>(r);
 }
 
@@ -84,13 +86,13 @@ macro(sfrac) {
     slash = sptr<Atom>(vr);
   }
 
-  auto* snum = new VRowAtom(sptr<Atom>(new ScaleAtom(num._root, sx, sy)));
+  auto* snum = new VRowAtom(sptrOf<ScaleAtom>(num._root, sx, sy));
   snum->setRaise(UnitType::ex, r);
   auto* ra = new RowAtom(sptr<Atom>(snum));
-  ra->add(sptr<Atom>(new SpaceAtom(UnitType::em, sL, 0, 0)));
+  ra->add(sptrOf<SpaceAtom>(UnitType::em, sL, 0, 0));
   ra->add(slash);
-  ra->add(sptr<Atom>(new SpaceAtom(UnitType::em, sR, 0, 0)));
-  ra->add(sptr<Atom>(new ScaleAtom(den._root, sx, sy)));
+  ra->add(sptrOf<SpaceAtom>(UnitType::em, sR, 0, 0));
+  ra->add(sptrOf<ScaleAtom>(den._root, sx, sy));
 
   return sptr<Atom>(ra);
 }
@@ -123,7 +125,7 @@ macro(genfrac) {
   sptr<Atom> fa(new FractionAtom(num._root, den._root, rule, unit, value));
   auto* ra = new RowAtom();
   const auto texStyle = static_cast<TexStyle>(style * 2);
-  ra->add(sptr<Atom>(new StyleAtom(texStyle, sptr<Atom>(new FencedAtom(fa, L, R)))));
+  ra->add(sptrOf<StyleAtom>(texStyle, sptrOf<FencedAtom>(fa, L, R)));
 
   return sptr<Atom>(ra);
 }
@@ -147,12 +149,12 @@ macro(overwithdelims) {
   auto sr = dynamic_pointer_cast<SymbolAtom>(right);
   if (sl != nullptr && sr != nullptr) {
     sptr<FractionAtom> f(new FractionAtom(num, den, true));
-    return sptr<Atom>(new FencedAtom(f, sl, sr));
+    return sptrOf<FencedAtom>(f, sl, sr);
   }
 
   auto* ra = new RowAtom();
   ra->add(left);
-  ra->add(sptr<Atom>(new FractionAtom(num, den, true)));
+  ra->add(sptrOf<FractionAtom>(num, den, true));
   ra->add(right);
   return sptr<Atom>(ra);
 }
@@ -176,12 +178,12 @@ macro(atopwithdelims) {
   auto sr = dynamic_pointer_cast<SymbolAtom>(right);
   if (sl != nullptr && sr != nullptr) {
     sptr<Atom> f(new FractionAtom(num, den, false));
-    return sptr<Atom>(new FencedAtom(f, sl, sr));
+    return sptrOf<FencedAtom>(f, sl, sr);
   }
 
   auto* ra = new RowAtom();
   ra->add(left);
-  ra->add(sptr<Atom>(new FractionAtom(num, den, false)));
+  ra->add(sptrOf<FractionAtom>(num, den, false));
   ra->add(right);
   return sptr<Atom>(ra);
 }
@@ -206,12 +208,12 @@ macro(abovewithdelims) {
   auto sr = dynamic_pointer_cast<SymbolAtom>(right);
   if (sl != nullptr && sr != nullptr) {
     sptr<Atom> f(new FractionAtom(num, den, du, dv));
-    return sptr<Atom>(new FencedAtom(f, sl, sr));
+    return sptrOf<FencedAtom>(f, sl, sr);
   }
 
   auto* ra = new RowAtom();
   ra->add(left);
-  ra->add(sptr<Atom>(new FractionAtom(num, den, true)));
+  ra->add(sptrOf<FractionAtom>(num, den, true));
   ra->add(right);
   return sptr<Atom>(ra);
 }
@@ -236,7 +238,7 @@ macro(textstyles) {
 
   string s;
   wide2utf8(style.c_str(), s);
-  return sptr<Atom>(new TextStyleAtom(atom, s));
+  return sptrOf<TextStyleAtom>(atom, s);
 }
 
 macro(accentbiss) {
@@ -301,7 +303,7 @@ macro(left) {
   auto sr = dynamic_pointer_cast<SymbolAtom>(right);
   if (sl != nullptr && sr != nullptr) {
     Formula tf(tp, grep, false);
-    return sptr<Atom>(new FencedAtom(tf._root, sl, tf._middle, sr));
+    return sptrOf<FencedAtom>(tf._root, sl, tf._middle, sr);
   }
 
   auto* ra = new RowAtom();
@@ -431,7 +433,7 @@ macro(sizes) {
     f = 2.5f;
 
   auto a = Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root;
-  return sptr<Atom>(new MonoScaleAtom(a, f));
+  return sptrOf<MonoScaleAtom>(a, f);
 }
 
 macro(romannumeral) {
@@ -482,7 +484,7 @@ macro(muskips) {
   else if (args[0] == L"negthickspace")
     type = SpaceType::negThickMuSkip;
 
-  return sptr<Atom>(new SpaceAtom(type));
+  return sptrOf<SpaceAtom>(type);
 }
 
 macro(xml) {

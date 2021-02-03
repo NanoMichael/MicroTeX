@@ -76,7 +76,7 @@ public:
       e.getTeXFont()->setBold(true);
       return _base->createBox(e);
     }
-    return sptr<Box>(new StrutBox(0, 0, 0, 0));
+    return sptrOf<StrutBox>(0, 0, 0, 0);
   }
 
   __decl_clone(BoldAtom)
@@ -101,7 +101,7 @@ public:
     Box* cedilla = new CharBox(ch);
     Box* y;
     if (std::abs(italic) > PREC) {
-      y = new HorizontalBox(sptr<Box>(new StrutBox(-italic, 0, 0, 0)));
+      y = new HorizontalBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
       y->add(sptr<Box>(cedilla));
     } else {
       y = cedilla;
@@ -109,7 +109,7 @@ public:
 
     Box* ce = new HorizontalBox(sptr<Box>(y), b->_width, Alignment::center);
     float x = 0.4f * SpaceAtom::getFactor(UnitType::mu, env);
-    vb->add(sptr<Box>(new StrutBox(0, -x, 0, 0)));
+    vb->add(sptrOf<StrutBox>(0, -x, 0, 0));
     vb->add(sptr<Box>(ce));
     float f = vb->_height + vb->_depth;
     vb->_height = b->_height;
@@ -172,8 +172,8 @@ public:
     auto bbase = _base->createBox(env);
     float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
     float space = INTERSPACE * SpaceAtom::getFactor(UnitType::em, env);
-    if (isTransparent(_bg)) return sptr<Box>(new FramedBox(bbase, drt, space));
-    return sptr<Box>(new FramedBox(bbase, drt, space, _line, _bg));
+    if (isTransparent(_bg)) return sptrOf<FramedBox>(bbase, drt, space);
+    return sptrOf<FramedBox>(bbase, drt, space, _line, _bg);
   }
 
   __decl_clone(FBoxAtom)
@@ -191,7 +191,7 @@ public:
     float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
     float space = INTERSPACE * SpaceAtom::getFactor(UnitType::em, env);
     float sspace = 1.5f * drt + 0.5f * SpaceAtom::getFactor(UnitType::point, env);
-    return sptr<Box>(new FramedBox(sptr<Box>(new FramedBox(bbase, 0.75f * drt, space)), 1.5f * drt, sspace));
+    return sptrOf<FramedBox>(sptrOf<FramedBox>(bbase, 0.75f * drt, space), 1.5f * drt, sspace);
   }
 
   __decl_clone(DoubleFramedAtom)
@@ -208,7 +208,7 @@ public:
     auto x = FBoxAtom::createBox(env);
     auto box = std::dynamic_pointer_cast<FramedBox>(x);
     float t = env.getTeXFont()->getDefaultRuleThickness(env.getStyle()) * 4;
-    return sptr<Box>(new ShadowBox(box, t));
+    return sptrOf<ShadowBox>(box, t);
   }
 
   __decl_clone(ShadowAtom)
@@ -229,7 +229,7 @@ public:
   sptr<Box> createBox(Environment& env) override {
     auto x = FBoxAtom::createBox(env);
     auto box = std::dynamic_pointer_cast<FramedBox>(x);
-    return sptr<Box>(new OvalBox(box, _multiplier, _diameter));
+    return sptrOf<OvalBox>(box, _multiplier, _diameter);
   }
 
   __decl_clone(OvalAtom)
@@ -435,7 +435,7 @@ public:
       e.getTeXFont()->setIt(true);
       box = _base->createBox(e);
     } else {
-      box = sptr<Box>(new StrutBox(0, 0, 0, 0));
+      box = sptrOf<StrutBox>(0, 0, 0, 0);
     }
 
     return box;
@@ -557,14 +557,14 @@ public:
     Box* y = nullptr;
 
     if (std::abs(italic) > PREC) {
-      y = new HorizontalBox(sptr<Box>(new StrutBox(-italic, 0, 0, 0)));
+      y = new HorizontalBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
       y->add(sptr<Box>(ogonek));
     } else {
       y = ogonek;
     }
 
     Box* og = new HorizontalBox(sptr<Box>(y), b->_width, Alignment::right);
-    vb->add(sptr<Box>(new StrutBox(0, -ogonek->_height, 0, 0)));
+    vb->add(sptrOf<StrutBox>(0, -ogonek->_height, 0, 0));
     vb->add(sptr<Box>(og));
     float f = vb->_height + vb->_depth;
     vb->_height = b->_height;
@@ -593,7 +593,7 @@ public:
     // vertical box
     auto b = (
       _base == nullptr
-      ? sptr<Box>(new StrutBox(0, 0, 0, 0))
+      ? sptrOf<StrutBox>(0, 0, 0, 0)
       : _base->createBox(*(env.crampStyle()))
     );
     auto* ob = new OverBar(b, 3 * drt, drt);
@@ -657,7 +657,7 @@ public:
   }
 
   sptr<Box> createBox(Environment& env) override {
-    return sptr<Box>(new ReflectBox(_base->createBox(env)));
+    return sptrOf<ReflectBox>(_base->createBox(env));
   }
 
   __decl_clone(ReflectAtom)
@@ -707,7 +707,7 @@ public:
       sy = sx;
     }
 
-    return sptr<Box>(new ScaleBox(bbox, sx, sy));
+    return sptrOf<ScaleBox>(bbox, sx, sy);
   }
 
   __decl_clone(ResizeAtom)
@@ -772,7 +772,7 @@ public:
     float w = SpaceAtom::getFactor(_wu, env) * _w;
     float h = SpaceAtom::getFactor(_hu, env) * _h;
     float r = SpaceAtom::getFactor(_ru, env) * _r;
-    return sptr<Box>(new HorizontalRule(h, w, r));
+    return sptrOf<HorizontalRule>(h, w, r);
   }
 
   __decl_clone(RuleAtom)
@@ -837,7 +837,7 @@ public:
     auto* rule = new HorizontalRule(drt, b->_width, -axis + drt, false);
     auto* hb = new HorizontalBox();
     hb->add(b);
-    hb->add(sptr<Box>(new StrutBox(-b->_width, 0, 0, 0)));
+    hb->add(sptrOf<StrutBox>(-b->_width, 0, 0, 0));
     hb->add(sptr<Box>(rule));
 
     return sptr<Box>(hb);
@@ -906,7 +906,7 @@ public:
     circle->_shift = -0.07f * SpaceAtom::getFactor(UnitType::ex, env);
     auto box = _at->createBox(env);
     auto* hb = new HorizontalBox(box, circle->_width, Alignment::center);
-    hb->add(sptr<Box>(new StrutBox(-hb->_width, 0, 0, 0)));
+    hb->add(sptrOf<StrutBox>(-hb->_width, 0, 0, 0));
     hb->add(circle);
     return sptr<Box>(hb);
   }
@@ -954,7 +954,7 @@ public:
     auto* B = new CharBox(ch);
     Box* y = nullptr;
     if (std::abs(italic) > PREC) {
-      y = new HorizontalBox(sptr<Box>(new StrutBox(-italic, 0, 0, 0)));
+      y = new HorizontalBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
       y->add(sptr<Box>(B));
     } else {
       y = B;
@@ -962,7 +962,7 @@ public:
     Box* b = new HorizontalBox(sptr<Box>(y), T->_width, Alignment::center);
     auto* vb = new VerticalBox();
     vb->add(sptr<Box>(T));
-    vb->add(sptr<Box>(new StrutBox(0, -0.5f * T->_width, 0, 0)));
+    vb->add(sptrOf<StrutBox>(0, -0.5f * T->_width, 0, 0));
     vb->add(sptr<Box>(b));
     return sptr<Box>(vb);
   }
@@ -1009,15 +1009,15 @@ public:
     // create formula box in same style
     auto b = (
       _base == nullptr
-      ? sptr<Box>(new StrutBox(0, 0, 0, 0))
+      ? sptrOf<StrutBox>(0, 0, 0, 0)
       : _base->createBox(env)
     );
 
     // create vertical box
     auto* vb = new VerticalBox();
     vb->add(b);
-    vb->add(sptr<Box>(new StrutBox(0, 3 * drt, 0, 0)));
-    vb->add(sptr<Box>(new HorizontalRule(drt, b->_width, 0)));
+    vb->add(sptrOf<StrutBox>(0, 3 * drt, 0, 0));
+    vb->add(sptrOf<HorizontalRule>(drt, b->_width, 0));
 
     // baseline vertical box = baseline box b
     // there's also an invisible strut of height drt under the rule
@@ -1083,7 +1083,7 @@ public:
     // center on axis
     b->_shift = -(total / 2) - axis;
 
-    return sptr<Box>(new HorizontalBox(b));
+    return sptrOf<HorizontalBox>(b);
   }
 
   __decl_clone(VCenteredAtom)

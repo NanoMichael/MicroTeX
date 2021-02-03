@@ -14,7 +14,7 @@ public:
   virtual void apply(WrapperBox& box) = 0;
 
   sptr<Box> createBox(Environment& env) override {
-    return sptr<Box>(new StrutBox(0, 0, 0, 0));
+    return sptrOf<StrutBox>(0, 0, 0, 0);
   }
 };
 
@@ -164,7 +164,7 @@ public:
   }
 
   sptr<Box> createBox(Environment& env) override {
-    if (_n == 0) return sptr<Box>(new StrutBox(0, 0, 0, 0));
+    if (_n == 0) return sptrOf<StrutBox>(0, 0, 0, 0);
 
     float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
     sptr<Box> b(new HorizontalRule(_height, drt, _shift, MatrixAtom::LINE_COLOR, true));

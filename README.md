@@ -401,7 +401,7 @@ Font* Font::create(const string& file, float size) {
 }
 
 sptr<Font> Font::_create(const string& name, int style, float size) {
-    return sptr<Font>(new Font_impl(name, style, size));
+    return sptrOf<Font_impl>(name, style, size);
 }
 
 } // namespace tex

@@ -31,7 +31,7 @@ class RowAtom;
 class EmptyAtom : public Atom {
 public:
   sptr<Box> createBox(Environment& env) override {
-    return sptr<Box>(new StrutBox(0, 0, 0, 0));
+    return sptrOf<StrutBox>(0, 0, 0, 0);
   }
 
   __decl_clone(EmptyAtom)

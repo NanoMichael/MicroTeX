@@ -168,7 +168,7 @@ float* MatrixAtom::getColumnSep(Environment& env, float width) {
       Align = _align.createBox(env);
       if (w != POS_INF) {
         h = max((w - width - cols / 2 * Align->_width) / floor((cols + 3) / 2.f), 0.f);
-        AlignSep = sptr<Box>(new StrutBox(h, 0, 0, 0));
+        AlignSep = sptrOf<StrutBox>(h, 0, 0, 0);
       } else {
         AlignSep = _hsep.createBox(env);
       }
@@ -207,7 +207,7 @@ float* MatrixAtom::getColumnSep(Environment& env, float width) {
       Align = _align.createBox(env);
       if (w != POS_INF) {
         h = max((w - width - (cols / 2) * Align->_width) / floor((cols - 1) / 2.f), 0.f);
-        AlignSep = sptr<Box>(new StrutBox(h, 0, 0, 0));
+        AlignSep = sptrOf<StrutBox>(h, 0, 0, 0);
       } else {
         AlignSep = _hsep.createBox(env);
       }
@@ -325,7 +325,7 @@ sptr<Box> MatrixAtom::generateMulticolumn(
 
   if (b->_width >= w) return b;
 
-  return sptr<Box>(new HorizontalBox(b, w, mca->align()));
+  return sptrOf<HorizontalBox>(b, w, mca->align());
 }
 
 MatrixAtom::MatrixAtom(bool isPartial, const sptr<ArrayFormula>& arr, const wstring& options, bool spaceAround) {
@@ -560,7 +560,7 @@ sptr<Box> MatrixAtom::createBox(Environment& e) {
           at->setColor(LINE_COLOR);
           at->setWidth(matW);
           if (i >= 1 && dynamic_cast<HlineAtom*>(_matrix->_array[i - 1][j].get()) != nullptr) {
-            hb->add(sptr<Box>(new StrutBox(0, 2 * drt, 0, 0)));
+            hb->add(sptrOf<StrutBox>(0, 2 * drt, 0, 0));
           }
 
           hb->add(at->createBox(env));
@@ -655,7 +655,7 @@ sptr<Box> MulticolumnAtom::createBox(Environment& env) {
 }
 
 sptr<Box> HdotsforAtom::createBox(float space, const sptr<Box>& b, Environment& env) {
-  auto sb = sptr<Box>(new StrutBox(0, space, 0, 0));
+  auto sb = sptrOf<StrutBox>(0, space, 0, 0);
   auto vb = sptr<Box>(new VerticalBox());
   vb->add(sb);
   vb->add(b);
@@ -676,13 +676,13 @@ sptr<Box> HdotsforAtom::createBox(Environment& env) {
 
   // Only one dot can be placed in
   if (count == 0) {
-    auto b = sptr<Box>(new HorizontalBox(dot, _width, Alignment::center));
+    auto b = sptrOf<HorizontalBox>(dot, _width, Alignment::center);
     return createBox(space, b, env);
   }
 
   // Adjust the space between
   space += (x - count) * space / count;
-  auto sb = sptr<Box>(new StrutBox(space, 0, 0, 0));
+  auto sb = sptrOf<StrutBox>(space, 0, 0, 0);
   auto b = sptr<Box>(new HorizontalBox());
   for (int i = 0; i < count; i++) {
     b->add(dot);
@@ -690,7 +690,7 @@ sptr<Box> HdotsforAtom::createBox(Environment& env) {
   }
   b->add(dot);
 
-  auto hb = sptr<Box>(new HorizontalBox(b, _width, Alignment::center));
+  auto hb = sptrOf<HorizontalBox>(b, _width, Alignment::center);
   return createBox(space, hb, env);
 }
 

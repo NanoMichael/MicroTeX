@@ -218,7 +218,7 @@ sptr<Box> RowAtom::createBox(Environment& env) {
     env.setLastFontId(b->getLastFontId());
 
     // insert kerning
-    if (abs(kern) > PREC) hbox->add(sptr<Box>(new StrutBox(kern, 0, 0, 0)));
+    if (abs(kern) > PREC) hbox->add(sptrOf<StrutBox>(kern, 0, 0, 0));
 
     // kerning do not interfere with the normal glue-rules without kerning
     if (!atom->isKern()) _previousAtom = atom;

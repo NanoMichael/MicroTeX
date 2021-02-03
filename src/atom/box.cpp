@@ -31,7 +31,7 @@ sptr<Box> DelimiterFactory::create(SymbolAtom& symbol, Environment& env, int siz
     return b;
   }
 
-  return sptr<Box>(new CharBox(c));
+  return sptrOf<CharBox>(c);
 }
 
 sptr<Box> DelimiterFactory::create(const string& symbol, Environment& env, float minHeight) {
@@ -52,9 +52,9 @@ sptr<Box> DelimiterFactory::create(const string& symbol, Environment& env, float
     /**if (total > minHeight) {
             sptr<Box> cb(new CharBox(c));
             float scale = minHeight / total;
-            return sptr<Box>(new ScaleBox(cb, scale));
+            return sptrOf<ScaleBox>(cb, scale);
         }*/
-    return sptr<Box>(new CharBox(c));
+    return sptrOf<CharBox>(c);
   } else if (tf.isExtensionChar(c)) {
     // construct vertical box
     auto* vBox = new VerticalBox();
@@ -63,17 +63,17 @@ sptr<Box> DelimiterFactory::create(const string& symbol, Environment& env, float
     // insert top part
     if (ext->hasTop()) {
       c = ext->getTop();
-      vBox->add(sptr<Box>(new CharBox(c)));
+      vBox->add(sptrOf<CharBox>(c));
     }
 
     if (ext->hasMiddle()) {
       c = ext->getMiddle();
-      vBox->add(sptr<Box>(new CharBox(c)));
+      vBox->add(sptrOf<CharBox>(c));
     }
 
     if (ext->hasBottom()) {
       c = ext->getBottom();
-      vBox->add(sptr<Box>(new CharBox(c)));
+      vBox->add(sptrOf<CharBox>(c));
     }
 
     // insert repeatable part until tall enough
@@ -95,7 +95,7 @@ sptr<Box> DelimiterFactory::create(const string& symbol, Environment& env, float
     return sptr<Box>(vBox);
   }
   // no extensions, so return the tallest possible character
-  return sptr<Box>(new CharBox(c));
+  return sptrOf<CharBox>(c);
 }
 
 sptr<Atom> XLeftRightArrowFactory::MINUS;
@@ -415,9 +415,9 @@ int VerticalBox::getLastFontId() {
 }
 
 OverBar::OverBar(const sptr<Box>& b, float kern, float thickness) : VerticalBox() {
-  add(sptr<Box>(new StrutBox(0, thickness, 0, 0)));
-  add(sptr<Box>(new HorizontalRule(thickness, b->_width, 0)));
-  add(sptr<Box>(new StrutBox(0, kern, 0, 0)));
+  add(sptrOf<StrutBox>(0, thickness, 0, 0));
+  add(sptrOf<HorizontalRule>(thickness, b->_width, 0));
+  add(sptrOf<StrutBox>(0, kern, 0, 0));
   add(b);
 }
 
