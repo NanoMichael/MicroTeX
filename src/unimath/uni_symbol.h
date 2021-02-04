@@ -13,9 +13,9 @@ private:
   static const i32 _count;
 
 public:
-  const char* name;
   const c32 unicode;
   const AtomType type;
+  const char* name;
 
   /**
    * Get the symbol from the given name.
