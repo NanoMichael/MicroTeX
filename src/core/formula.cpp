@@ -5,7 +5,6 @@
 #include "core/parser.h"
 #include "fonts/alphabet.h"
 #include "fonts/fonts.h"
-#include "graphic/graphic.h"
 #include "res/parser/formula_parser.h"
 
 using namespace std;
@@ -49,7 +48,7 @@ Formula::Formula(
     try {
       _parser.parse();
     } catch (exception& e) {
-      if (_root == nullptr) _root = sptr<Atom>(new EmptyAtom());
+      if (_root == nullptr) _root = sptrOf<EmptyAtom>();
     }
   } else {
     _parser.parse();
@@ -77,7 +76,7 @@ Formula::Formula(const TeXParser& tp, const wstring& latex)
     try {
       _parser.parse();
     } catch (exception& e) {
-      if (_root == nullptr) _root = sptr<Atom>(new EmptyAtom());
+      if (_root == nullptr) _root = sptrOf<EmptyAtom>();
     }
   } else {
     _parser.parse();
@@ -122,7 +121,7 @@ Formula* Formula::add(const sptr<Atom>& a) {
   if (ta != nullptr) {
     AtomType rt = ta->rightType();
     if (rt == AtomType::binaryOperator || rt == AtomType::relation) {
-      rm->add(sptr<Atom>(new BreakMarkAtom()));
+      rm->add(sptrOf<BreakMarkAtom>());
     }
   }
   return this;
@@ -143,7 +142,7 @@ sptr<Formula> Formula::get(const wstring& name) {
     auto i = _predefinedTeXFormulasAsString.find(name);
     if (i == _predefinedTeXFormulasAsString.end())
       throw ex_formula_not_found(wide2utf8(name.c_str()));
-    sptr<Formula> tf(new Formula(i->second));
+    auto tf = sptrOf<Formula>(i->second);
     auto* ra = dynamic_cast<RowAtom*>(tf->_root.get());
     if (ra == nullptr) {
       _predefinedTeXFormulas[name] = tf;

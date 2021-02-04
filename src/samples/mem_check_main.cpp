@@ -16,7 +16,7 @@ public:
   }
 
   sptr<Font> deriveFont(int style) const override {
-    return sptr<Font>(new Font_none());
+    return sptrOf<Font_none>();
   }
 
   bool operator==(const Font& f) const override {
@@ -35,7 +35,7 @@ Font* Font::create(const string& file, float size) {
 }
 
 sptr<Font> Font::_create(const string& name, int style, float size) {
-  return sptr<Font>(new Font_none());
+  return sptrOf<Font_none>();
 }
 
 /**************************************************************************************************/

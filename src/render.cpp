@@ -66,7 +66,7 @@ void TeXRender::setWidth(int width, Alignment align) {
   // FIXME
   // only care if new width larger than old
   if (diff > 0) {
-    _box = sptr<Box>(new HorizontalBox(_box, (float)width, align));
+    _box = sptrOf<HorizontalBox>(_box, (float)width, align);
   }
 }
 
@@ -113,7 +113,7 @@ TeXRender* TeXRenderBuilder::build(Formula& f) {
 
 TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
   sptr<Atom> f = fc;
-  if (f == nullptr) f = sptr<Atom>(new EmptyAtom());
+  if (f == nullptr) f = sptrOf<EmptyAtom>();
   if (_textSize == -1) {
     throw ex_invalid_state("A size is required, call function setSize before build.");
   }

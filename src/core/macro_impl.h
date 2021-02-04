@@ -47,7 +47,7 @@ inline macro(multirow) {
   if (!tp.isArrayMode()) throw ex_parse("Command \\multirow must used in array environment!");
   int n = 0;
   valueof(args[1], n);
-  tp.addAtom(sptr<Atom>(new MultiRowAtom(n, args[2], Formula(tp, args[3])._root)));
+  tp.addAtom(sptrOf<MultiRowAtom>(n, args[2], Formula(tp, args[3])._root));
   return nullptr;
 }
 
@@ -63,7 +63,7 @@ inline macro(longdiv) {
 inline macro(cellcolor) {
   if (!tp.isArrayMode()) throw ex_parse("Command \\cellcolor must used in array environment!");
   color c = ColorAtom::getColor(wide2utf8(args[1].c_str()));
-  sptr<CellSpecifier> atom(new CellColorAtom(c));
+  auto atom = sptrOf<CellColorAtom>(c);
   ((ArrayFormula*) tp._formula)->addCellSpecifier(atom);
   return nullptr;
 }
@@ -98,7 +98,7 @@ inline macro(columnbg) {
 inline macro(rowcolor) {
   if (!tp.isArrayMode()) throw ex_parse("Command \\rowcolor must used in array environment!");
   color c = ColorAtom::getColor(wide2utf8(args[1].c_str()));
-  sptr<CellSpecifier> spe(new CellColorAtom(c));
+  auto spe = sptrOf<CellColorAtom>(c);
   ((ArrayFormula*) tp._formula)->addRowSpecifier(spe);
   return nullptr;
 }
@@ -123,21 +123,21 @@ inline macro(Set) {
 inline macro(spATbreve) {
   auto* vra = new VRowAtom(Formula(L"\\displaystyle\\!\\breve{}")._root);
   vra->setRaise(UnitType::ex, 0.6f);
-  return sptr<Atom>(new SmashedAtom(sptr<Atom>(vra), ""));
+  return sptrOf<SmashedAtom>(sptr<Atom>(vra), "");
 }
 
 inline macro(spAThat) {
   auto* vra = new VRowAtom(Formula(L"\\displaystyle\\widehat{}")._root);
   vra->setRaise(UnitType::ex, 0.6f);
-  return sptr<Atom>(new SmashedAtom(sptr<Atom>(vra), ""));
+  return sptrOf<SmashedAtom>(sptr<Atom>(vra), "");
 }
 
 inline macro(clrlap) {
-  return sptr<Atom>(new LapedAtom(Formula(tp, args[1])._root, args[0][0]));
+  return sptrOf<LapedAtom>(Formula(tp, args[1])._root, args[0][0]);
 }
 
 inline macro(mathclrlap) {
-  return sptr<Atom>(new LapedAtom(Formula(tp, args[1])._root, args[0][4]));
+  return sptrOf<LapedAtom>(Formula(tp, args[1])._root, args[0][4]);
 }
 
 inline macro(frac) {
@@ -172,9 +172,9 @@ inline sptr<Atom> _macro_choose(
   auto den = Formula(tp, tp.getOverArgument(), false)._root;
   if (num == nullptr || den == nullptr)
     throw ex_parse("Both numerator and denominator of choos can't be empty!");
-  sptr<Atom> f(new FractionAtom(num, den, false));
-  sptr<SymbolAtom> l(new SymbolAtom(left, AtomType::opening, true));
-  sptr<SymbolAtom> r(new SymbolAtom(right, AtomType::closing, true));
+  auto f = sptrOf<FractionAtom>(num, den, false);
+  auto l = sptrOf<SymbolAtom>(left, AtomType::opening, true);
+  auto r = sptrOf<SymbolAtom>(right, AtomType::closing, true);
   return sptrOf<FencedAtom>(f, l, r);
 }
 
@@ -220,7 +220,7 @@ inline macro(binom) {
   Formula den(tp, args[2], false);
   if (num._root == nullptr || den._root == nullptr)
     throw ex_parse("Both binomial coefficients must be not empty!");
-  sptr<Atom> f(new FractionAtom(num._root, den._root, false));
+  auto f = sptrOf<FractionAtom>(num._root, den._root, false);
   sptr<SymbolAtom> s1(new SymbolAtom("lbrack", AtomType::opening, true));
   sptr<SymbolAtom> s2(new SymbolAtom("rbrack", AtomType::closing, true));
   return sptrOf<FencedAtom>(f, s1, s2);
@@ -237,36 +237,41 @@ inline macro(above) {
 }
 
 inline macro(mbox) {
-  sptr<Atom> group(new RomanAtom(Formula(tp, args[1], "mathnormal", false, false)._root));
+  auto group = sptrOf<RomanAtom>(Formula(tp, args[1], "mathnormal", false, false)._root);
   return sptrOf<StyleAtom>(TexStyle::text, group);
 }
 
 inline macro(text) {
-  return sptr<Atom>(new RomanAtom(Formula(tp, args[1], "mathnormal", false, false)._root));
+  return sptrOf<RomanAtom>(Formula(tp, args[1], "mathnormal", false, false)._root);
 }
 
 inline macro(underscore) {
-  return sptr<Atom>(new UnderScoreAtom());
+  return sptrOf<UnderScoreAtom>();
 }
 
 inline macro(accents) {
   std::string x;
   wide2utf8(args[0].c_str(), x);
-  return sptr<Atom>(new AccentedAtom(Formula(tp, args[1], false)._root, x));
+  return sptrOf<AccentedAtom>(Formula(tp, args[1], false)._root, x);
 }
 
 inline macro(grkaccent) {
-  return sptr<Atom>(new AccentedAtom(
-    Formula(tp, args[2], false)._root, Formula(tp, args[1], false)._root, false));
+  return sptrOf<AccentedAtom>(
+    Formula(tp, args[2], false)._root,
+    Formula(tp, args[1], false)._root,
+    false
+  );
 }
 
 inline macro(accent) {
-  return sptr<Atom>(new AccentedAtom(
-    Formula(tp, args[2], false)._root, Formula(tp, args[1], false)._root));
+  return sptrOf<AccentedAtom>(
+    Formula(tp, args[2], false)._root,
+    Formula(tp, args[1], false)._root
+  );
 }
 
 inline macro(cedilla) {
-  return sptr<Atom>(new CedillaAtom(Formula(tp, args[1])._root));
+  return sptrOf<CedillaAtom>(Formula(tp, args[1])._root);
 }
 
 inline macro(IJ) {
@@ -282,56 +287,63 @@ inline macro(LCaron) {
 }
 
 inline macro(tcaron) {
-  return sptr<Atom>(new TCaronAtom());
+  return sptrOf<TCaronAtom>();
 }
 
 inline macro(ogonek) {
-  return sptr<Atom>(new OgonekAtom(Formula(tp, args[1])._root));
+  return sptrOf<OgonekAtom>(Formula(tp, args[1])._root);
 }
 
 inline macro(nbsp) {
-  return sptr<Atom>(new SpaceAtom());
+  return sptrOf<SpaceAtom>();
 }
 
 inline macro(sqrt) {
-  if (args[2].empty())
-    return sptr<Atom>(new NthRoot(Formula(tp, args[1], false)._root, nullptr));
-  return sptr<Atom>(new NthRoot(
-    Formula(tp, args[1], false)._root, Formula(tp, args[2], false)._root));
+  if (args[2].empty()) return sptrOf<NthRoot>(Formula(tp, args[1], false)._root, nullptr);
+  return sptrOf<NthRoot>(
+    Formula(tp, args[1], false)._root,
+    Formula(tp, args[2], false)._root
+  );
 }
 
 inline macro(overrightarrow) {
-  return sptr<Atom>(new UnderOverArrowAtom(Formula(tp, args[1], false)._root, false, true));
+  return sptrOf<UnderOverArrowAtom>(Formula(tp, args[1], false)._root, false, true);
 }
 
 inline macro(overleftarrow) {
-  return sptr<Atom>(new UnderOverArrowAtom(Formula(tp, args[1], false)._root, true, true));
+  return sptrOf<UnderOverArrowAtom>(Formula(tp, args[1], false)._root, true, true);
 }
 
 inline macro(overleftrightarrow) {
-  return sptr<Atom>(new UnderOverArrowAtom(Formula(tp, args[1], false)._root, true));
+  return sptrOf<UnderOverArrowAtom>(Formula(tp, args[1], false)._root, true);
 }
 
 inline macro(underrightarrow) {
-  return sptr<Atom>(new UnderOverArrowAtom(Formula(tp, args[1], false)._root, false, false));
+  return sptrOf<UnderOverArrowAtom>(Formula(tp, args[1], false)._root, false, false);
 }
 
 inline macro(underleftarrow) {
-  return sptr<Atom>(new UnderOverArrowAtom(Formula(tp, args[1], false)._root, true, false));
+  return sptrOf<UnderOverArrowAtom>(Formula(tp, args[1], false)._root, true, false);
 }
 
 inline macro(underleftrightarrow) {
-  return sptr<Atom>(new UnderOverArrowAtom(Formula(tp, args[1], false)._root, false));
+  return sptrOf<UnderOverArrowAtom>(Formula(tp, args[1], false)._root, false);
 }
 
 inline macro(xleftarrow) {
-  return sptr<Atom>(new XArrowAtom(
-    Formula(tp, args[1], false)._root, Formula(tp, args[2])._root, true));
+  return sptrOf<XArrowAtom>(
+    Formula(tp, args[1], false)._root,
+    Formula(tp, args[2])._root,
+    true
+  );
 }
 
 inline macro(xrightarrow) {
-  return sptr<Atom>(new XArrowAtom(
-    Formula(tp, args[1], false)._root, Formula(tp, args[2])._root, false));
+  return sptrOf<XArrowAtom>(
+    Formula(tp, args[1], false)._root,
+    Formula(tp, args[2])._root,
+    false
+  );
 }
 
 inline macro(sideset) {
@@ -339,7 +351,7 @@ inline macro(sideset) {
   auto r = Formula(tp, args[2])._root;
   auto op = Formula(tp, args[3])._root;
   if (op == nullptr) {
-    sptr<Atom> in(new CharAtom(L'M', "mathnormal"));
+    auto in = sptrOf<CharAtom>(L'M', "mathnormal");
     op = sptrOf<PhantomAtom>(in, false, true, true);
   }
   auto cl = dynamic_cast<CumulativeScriptsAtom*>(l.get());
@@ -351,8 +363,8 @@ inline macro(sideset) {
 
 inline macro(prescript) {
   auto base = Formula(tp, args[3])._root;
-  sptr<Atom> p(new PhantomAtom(base, false, true, true));
-  sptr<Atom> s(new ScriptsAtom(p, Formula(tp, args[2])._root, Formula(tp, args[1])._root, false));
+  auto p = sptrOf<PhantomAtom>(base, false, true, true);
+  auto s = sptrOf<ScriptsAtom>(p, Formula(tp, args[2])._root, Formula(tp, args[1])._root, false);
   tp.addAtom(s);
   tp.addAtom(sptrOf<SpaceAtom>(UnitType::mu, -0.3f, 0, 0));
   return sptrOf<TypedAtom>(AtomType::ordinary, AtomType::ordinary, base);
@@ -399,33 +411,33 @@ inline macro(overparen) {
 }
 
 inline macro(overline) {
-  return sptr<Atom>(new OverlinedAtom(Formula(tp, args[1], false)._root));
+  return sptrOf<OverlinedAtom>(Formula(tp, args[1], false)._root);
 }
 
 inline macro(underline) {
-  return sptr<Atom>(new UnderlinedAtom(Formula(tp, args[1], false)._root));
+  return sptrOf<UnderlinedAtom>(Formula(tp, args[1], false)._root);
 }
 
 inline macro(mathop) {
-  sptr<TypedAtom> a(new TypedAtom(AtomType::bigOperator, AtomType::bigOperator, Formula(tp, args[1], false)._root));
+  auto a = sptrOf<TypedAtom>(AtomType::bigOperator, AtomType::bigOperator, Formula(tp, args[1], false)._root);
   a->_limitsType = LimitsType::noLimits;
   return a;
 }
 
 inline macro(mathpunct) {
-  return sptr<Atom>(new TypedAtom(AtomType::punctuation, AtomType::punctuation, Formula(tp, args[1], false)._root));
+  return sptrOf<TypedAtom>(AtomType::punctuation, AtomType::punctuation, Formula(tp, args[1], false)._root);
 }
 
 inline macro(mathord) {
-  return sptr<Atom>(new TypedAtom(AtomType::ordinary, AtomType::ordinary, Formula(tp, args[1], false)._root));
+  return sptrOf<TypedAtom>(AtomType::ordinary, AtomType::ordinary, Formula(tp, args[1], false)._root);
 }
 
 inline macro(mathrel) {
-  return sptr<Atom>(new TypedAtom(AtomType::relation, AtomType::relation, Formula(tp, args[1], false)._root));
+  return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, Formula(tp, args[1], false)._root);
 }
 
 inline macro(mathinner) {
-  return sptr<Atom>(new TypedAtom(AtomType::inner, AtomType::inner, Formula(tp, args[1], false)._root));
+  return sptrOf<TypedAtom>(AtomType::inner, AtomType::inner, Formula(tp, args[1], false)._root);
 }
 
 inline macro(mathbin) {
@@ -434,11 +446,11 @@ inline macro(mathbin) {
 }
 
 inline macro(mathopen) {
-  return sptr<Atom>(new TypedAtom(AtomType::opening, AtomType::opening, Formula(tp, args[1], false)._root));
+  return sptrOf<TypedAtom>(AtomType::opening, AtomType::opening, Formula(tp, args[1], false)._root);
 }
 
 inline macro(mathclose) {
-  return sptr<Atom>(new TypedAtom(AtomType::closing, AtomType::closing, Formula(tp, args[1], false)._root));
+  return sptrOf<TypedAtom>(AtomType::closing, AtomType::closing, Formula(tp, args[1], false)._root);
 }
 
 inline macro(joinrel) {
@@ -449,35 +461,35 @@ inline macro(joinrel) {
 inline macro(smash) {
   std::string x;
   wide2utf8(args[2].c_str(), x);
-  return sptr<Atom>(new SmashedAtom(Formula(tp, args[1], false)._root, x));
+  return sptrOf<SmashedAtom>(Formula(tp, args[1], false)._root, x);
 }
 
 inline macro(vdots) {
-  return sptr<Atom>(new VdotsAtom());
+  return sptrOf<VdotsAtom>();
 }
 
 inline macro(ddots) {
   return sptrOf<TypedAtom>(
-    AtomType::inner, AtomType::inner, sptr<Atom>(new DdtosAtom()));
+    AtomType::inner, AtomType::inner, sptrOf<DdtosAtom>());
 }
 
 inline macro(iddots) {
   return sptrOf<TypedAtom>(
-    AtomType::inner, AtomType::inner, sptr<Atom>(new IddotsAtom()));
+    AtomType::inner, AtomType::inner, sptrOf<IddotsAtom>());
 }
 
 inline macro(leftparenthesis) {
   std::wstring grp = tp.getGroup(L"\\(", L"\\)");
-  return sptr<Atom>(new MathAtom(Formula(tp, grp, false)._root, TexStyle::text));
+  return sptrOf<MathAtom>(Formula(tp, grp, false)._root, TexStyle::text);
 }
 
 inline macro(leftbracket) {
   std::wstring grp = tp.getGroup(L"\\[", L"\\]");
-  return sptr<Atom>(new MathAtom(Formula(tp, grp, false)._root, TexStyle::display));
+  return sptrOf<MathAtom>(Formula(tp, grp, false)._root, TexStyle::display);
 }
 
 inline macro(middle) {
-  return sptr<Atom>(new MiddleAtom(Formula(tp, args[1])._root));
+  return sptrOf<MiddleAtom>(Formula(tp, args[1])._root);
 }
 
 inline macro(cr) {
@@ -506,7 +518,7 @@ inline macro(smallmatrixATATenv) {
   TeXParser parser(tp.isPartial(), args[1], arr, false);
   parser.parse();
   arr->checkDimensions();
-  return sptr<Atom>(new MatrixAtom(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::smallMatrix));
+  return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::smallMatrix);
 }
 
 inline macro(matrixATATenv) {
@@ -514,7 +526,7 @@ inline macro(matrixATATenv) {
   TeXParser parser(tp.isPartial(), args[1], arr, false);
   parser.parse();
   arr->checkDimensions();
-  return sptr<Atom>(new MatrixAtom(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::matrix));
+  return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::matrix);
 }
 
 inline macro(multicolumn) {
@@ -522,7 +534,7 @@ inline macro(multicolumn) {
   valueof(args[1], n);
   std::string x;
   wide2utf8(args[2].c_str(), x);
-  tp.addAtom(sptr<Atom>(new MulticolumnAtom(n, x, Formula(tp, args[3])._root)));
+  tp.addAtom(sptrOf<MulticolumnAtom>(n, x, Formula(tp, args[3])._root));
   ((ArrayFormula*) tp._formula)->addCol(n);
   return nullptr;
 }
@@ -544,7 +556,7 @@ inline macro(arrayATATenv) {
   TeXParser parser(tp.isPartial(), args[2], arr, false);
   parser.parse();
   arr->checkDimensions();
-  return sptr<Atom>(new MatrixAtom(tp.isPartial(), sptr<ArrayFormula>(arr), args[1], true));
+  return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), args[1], true);
 }
 
 inline macro(alignATATenv) {
@@ -552,7 +564,7 @@ inline macro(alignATATenv) {
   TeXParser parser(tp.isPartial(), args[1], arr, false);
   parser.parse();
   arr->checkDimensions();
-  return sptr<Atom>(new MatrixAtom(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::align));
+  return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::align);
 }
 
 inline macro(flalignATATenv) {
@@ -560,7 +572,7 @@ inline macro(flalignATATenv) {
   TeXParser parser(tp.isPartial(), args[1], arr, false);
   parser.parse();
   arr->checkDimensions();
-  return sptr<Atom>(new MatrixAtom(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::flAlign));
+  return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::flAlign);
 }
 
 inline macro(alignatATATenv) {
@@ -572,7 +584,7 @@ inline macro(alignatATATenv) {
   valueof(args[1], n);
   if (arr->cols() != 2 * n) throw ex_parse("Bad number of equations in alignat environment!");
 
-  return sptr<Atom>(new MatrixAtom(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::alignAt));
+  return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::alignAt);
 }
 
 inline macro(alignedATATenv) {
@@ -580,7 +592,7 @@ inline macro(alignedATATenv) {
   TeXParser p(tp.isPartial(), args[1], arr, false);
   p.parse();
   arr->checkDimensions();
-  return sptr<Atom>(new MatrixAtom(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::aligned));
+  return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::aligned);
 }
 
 inline macro(alignedatATATenv) {
@@ -594,7 +606,7 @@ inline macro(alignedatATATenv) {
     throw ex_parse("Bad number of equations in alignedat environment!");
   }
 
-  return sptr<Atom>(new MatrixAtom(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::alignedAt));
+  return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::alignedAt);
 }
 
 inline macro(multlineATATenv) {
@@ -607,7 +619,7 @@ inline macro(multlineATATenv) {
   }
   if (arr->cols() == 0) return nullptr;
 
-  return sptr<Atom>(new MultlineAtom(tp.isPartial(), sptr<ArrayFormula>(arr), MultiLineType::multiline));
+  return sptrOf<MultlineAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MultiLineType::multiline);
 }
 
 inline macro(gatherATATenv) {
@@ -618,8 +630,8 @@ inline macro(gatherATATenv) {
   if (arr->cols() > 1) throw ex_parse("Requires exact one column in gather envrionment!");
   if (arr->cols() == 0) return nullptr;
 
-  return sptr<Atom>(new MultlineAtom(
-    tp.isPartial(), sptr<ArrayFormula>(arr), MultiLineType::gather));
+  return sptrOf<MultlineAtom>(
+    tp.isPartial(), sptr<ArrayFormula>(arr), MultiLineType::gather);
 }
 
 inline macro(gatheredATATenv) {
@@ -630,7 +642,7 @@ inline macro(gatheredATATenv) {
   if (arr->cols() > 1) throw ex_parse("Requires exact one column in gathered envrionment!");
   if (arr->cols() == 0) return nullptr;
 
-  return sptr<Atom>(new MultlineAtom(tp.isPartial(), sptr<ArrayFormula>(arr), MultiLineType::gathered));
+  return sptrOf<MultlineAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MultiLineType::gathered);
 }
 
 inline macro(shoveright) {
@@ -672,7 +684,7 @@ inline macro(renewenvironment) {
 }
 
 inline macro(fbox) {
-  return sptr<Atom>(new FBoxAtom(Formula(tp, args[1], false)._root));
+  return sptrOf<FBoxAtom>(Formula(tp, args[1], false)._root);
 }
 
 inline macro(questeq) {
@@ -734,89 +746,84 @@ inline macro(underset) {
 }
 
 inline macro(accentset) {
-  return sptr<Atom>(new AccentedAtom(
-    Formula(tp, args[2], false)._root, Formula(tp, args[1], false)._root));
+  return sptrOf<AccentedAtom>(
+    Formula(tp, args[2], false)._root,
+    Formula(tp, args[1], false)._root
+  );
 }
 
 inline macro(underaccent) {
-  return sptr<Atom>(new UnderOverAtom(
+  return sptrOf<UnderOverAtom>(
     Formula(tp, args[2], false)._root,
     Formula(tp, args[1], false)._root,
     UnitType::mu,
     0.3f,
     true,
-    false));
+    false
+  );
 }
 
 inline macro(undertilde) {
   auto a = Formula(tp, args[1], false)._root;
-  sptr<PhantomAtom> p(new PhantomAtom(a, true, false, false));
-  sptr<AccentedAtom> acc(new AccentedAtom(p, "widetilde"));
+  auto p = sptrOf<PhantomAtom>(a, true, false, false);
+  auto acc = sptrOf<AccentedAtom>(p, "widetilde");
   return sptrOf<UnderOverAtom>(a, acc, UnitType::mu, 0.3f, true, false);
 }
 
 inline macro(boldsymbol) {
-  return sptr<Atom>(new BoldAtom(Formula(tp, args[1], false)._root));
+  return sptrOf<BoldAtom>(Formula(tp, args[1], false)._root);
 }
 
 inline macro(mathrm) {
-  return sptr<Atom>(new RomanAtom(Formula(tp, args[1], false)._root));
+  return sptrOf<RomanAtom>(Formula(tp, args[1], false)._root);
 }
 
 inline macro(rm) {
-  return sptr<Atom>(new RomanAtom(
-    Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root));
+  return sptrOf<RomanAtom>(Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root);
 }
 
 inline macro(mathbf) {
-  return sptr<Atom>(new BoldAtom(
-    sptr<Atom>(new RomanAtom(Formula(tp, args[1], false)._root))));
+  return sptrOf<BoldAtom>(sptrOf<RomanAtom>(Formula(tp, args[1], false)._root));
 }
 
 inline macro(bf) {
-  return sptr<Atom>(new BoldAtom(sptr<Atom>(new RomanAtom(
-    Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root))));
+  return sptrOf<BoldAtom>(sptrOf<RomanAtom>(Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root));
 }
 
 inline macro(mathtt) {
-  return sptr<Atom>(new TtAtom(Formula(tp, args[1], false)._root));
+  return sptrOf<TtAtom>(Formula(tp, args[1], false)._root);
 }
 
 inline macro(tt) {
-  return sptr<Atom>(new TtAtom(
-    Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root));
+  return sptrOf<TtAtom>(Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root);
 }
 
 inline macro(mathit) {
-  return sptr<Atom>(new ItAtom(Formula(tp, args[1], false)._root));
+  return sptrOf<ItAtom>(Formula(tp, args[1], false)._root);
 }
 
 inline macro(it) {
-  return sptr<Atom>(new ItAtom(
-    Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root));
+  return sptrOf<ItAtom>(Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root);
 }
 
 inline macro(mathsf) {
-  return sptr<Atom>(new SsAtom(Formula(tp, args[1], false)._root));
+  return sptrOf<SsAtom>(Formula(tp, args[1], false)._root);
 }
 
 inline macro(sf) {
-  return sptr<Atom>(new SsAtom(
-    Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root));
+  return sptrOf<SsAtom>(Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root);
 }
 
 inline macro(LaTeX) {
-  return sptr<Atom>(new LaTeXAtom());
+  return sptrOf<LaTeXAtom>();
 }
 
 inline macro(hphantom) {
-  return sptr<Atom>(
-    new PhantomAtom(Formula(tp, args[1], false)._root, true, false, false));
+  return sptrOf<PhantomAtom>(Formula(tp, args[1], false)._root, true, false, false);
 }
 
 inline macro(vphantom) {
-  return sptr<Atom>(
-    new PhantomAtom(Formula(tp, args[1], false)._root, false, true, true));
+  return sptrOf<PhantomAtom>(Formula(tp, args[1], false)._root, false, true, true);
 }
 
 inline macro(phantom) {
@@ -825,12 +832,15 @@ inline macro(phantom) {
 }
 
 inline sptr<Atom> _macro_big(
-  TeXParser& tp, std::vector<std::wstring>& args, int size, AtomType type = AtomType::none  //
+  TeXParser& tp,
+  std::vector<std::wstring>& args,
+  int size,
+  AtomType type = AtomType::none
 ) {
   auto a = Formula(tp, args[1], false)._root;
   auto s = std::dynamic_pointer_cast<SymbolAtom>(a);
   if (s == nullptr) return a;
-  sptr<Atom> t(new BigDelimiterAtom(s, size));
+  auto t = sptrOf<BigDelimiterAtom>(s, size);
   if (type != AtomType::none) t->_type = type;
   return t;
 }
@@ -882,39 +892,38 @@ inline macro(scriptscriptstyle) {
 inline macro(rotatebox) {
   float x = 0;
   if (!args[1].empty()) valueof(args[1], x);
-  return sptr<Atom>(new RotateAtom(Formula(tp, args[2])._root, x, args[3]));
+  return sptrOf<RotateAtom>(Formula(tp, args[2])._root, x, args[3]);
 }
 
 inline macro(reflectbox) {
-  return sptr<Atom>(new ReflectAtom(Formula(tp, args[1])._root));
+  return sptrOf<ReflectAtom>(Formula(tp, args[1])._root);
 }
 
 inline macro(scalebox) {
   float sx = 1, sy = 1;
   valueof(args[1], sx);
-  if (args[3].empty())
-    sy = sx;
-  else
-    valueof(args[3], sy);
+
+  if (args[3].empty()) sy = sx;
+  else valueof(args[3], sy);
+
   if (sx == 0) sx = 1;
   if (sy == 0) sy = 1;
-  return sptr<Atom>(new ScaleAtom(Formula(tp, args[2])._root, sx, sy));
+  return sptrOf<ScaleAtom>(Formula(tp, args[2])._root, sx, sy);
 }
 
 inline macro(resizebox) {
   std::string ws, hs;
   wide2utf8(args[1].c_str(), ws);
   wide2utf8(args[2].c_str(), hs);
-  return sptr<Atom>(new ResizeAtom(
-    Formula(tp, args[3])._root, ws, hs, ws == "!" || hs == "!"));
+  return sptrOf<ResizeAtom>(Formula(tp, args[3])._root, ws, hs, ws == "!" || hs == "!");
 }
 
 inline macro(shadowbox) {
-  return sptr<Atom>(new ShadowAtom(Formula(tp, args[1])._root));
+  return sptrOf<ShadowAtom>(Formula(tp, args[1])._root);
 }
 
 inline macro(ovalbox) {
-  return sptr<Atom>(new OvalAtom(Formula(tp, args[1])._root));
+  return sptrOf<OvalAtom>(Formula(tp, args[1])._root);
 }
 
 inline macro(cornersize) {
@@ -927,7 +936,7 @@ inline macro(cornersize) {
 }
 
 inline macro(doublebox) {
-  return sptr<Atom>(new DoubleFramedAtom(Formula(tp, args[1])._root));
+  return sptrOf<DoubleFramedAtom>(Formula(tp, args[1])._root);
 }
 
 inline macro(fgcolor) {
@@ -939,7 +948,7 @@ inline macro(fgcolor) {
 inline macro(bgcolor) {
   auto a = Formula(tp, args[2])._root;
   std::string x = wide2utf8(args[1].c_str());
-  return sptr<Atom>(new ColorAtom(a, ColorAtom::getColor(x), TRANSPARENT));
+  return sptrOf<ColorAtom>(a, ColorAtom::getColor(x), TRANSPARENT);
 }
 
 inline macro(textcolor) {
@@ -951,7 +960,7 @@ inline macro(textcolor) {
 inline macro(colorbox) {
   std::string x = wide2utf8(args[1].c_str());
   color c = ColorAtom::getColor(x);
-  return sptr<Atom>(new FBoxAtom(Formula(tp, args[2])._root, c, c));
+  return sptrOf<FBoxAtom>(Formula(tp, args[2])._root, c, c);
 }
 
 inline macro(fcolorbox) {
@@ -959,7 +968,7 @@ inline macro(fcolorbox) {
   color f = ColorAtom::getColor(x);
   std::string y = wide2utf8(args[1].c_str());
   color b = ColorAtom::getColor(y);
-  return sptr<Atom>(new FBoxAtom(Formula(tp, args[3])._root, f, b));
+  return sptrOf<FBoxAtom>(Formula(tp, args[3])._root, f, b);
 }
 
 inline macro(cong) {
@@ -973,7 +982,7 @@ inline macro(cong) {
 inline macro(doteq) {
   auto e = SymbolAtom::get("equals");
   auto l = SymbolAtom::get("ldotp");
-  sptr<Atom> u(new UnderOverAtom(e, l, UnitType::mu, 3.7f, false, true));
+  auto u = sptrOf<UnderOverAtom>(e, l, UnitType::mu, 3.7f, false, true);
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, u);
 }
 
@@ -1016,17 +1025,17 @@ inline macro(magnification) {
 inline macro(hline) {
   if (!tp.isArrayMode())
     throw ex_parse("The macro \\hline only available in array mode!");
-  return sptr<Atom>(new HlineAtom());
+  return sptrOf<HlineAtom>();
 }
 
 inline macro(mathcumsup) {
-  return sptr<Atom>(new CumulativeScriptsAtom(
-    tp.popLastAtom(), nullptr, Formula(tp, args[1])._root));
+  return sptrOf<CumulativeScriptsAtom>(
+    tp.popLastAtom(), nullptr, Formula(tp, args[1])._root);
 }
 
 inline macro(mathcumsub) {
-  return sptr<Atom>(new CumulativeScriptsAtom(
-    tp.popLastAtom(), Formula(tp, args[1])._root, nullptr));
+  return sptrOf<CumulativeScriptsAtom>(
+    tp.popLastAtom(), Formula(tp, args[1])._root, nullptr);
 }
 
 inline macro(dotminus) {
@@ -1052,7 +1061,7 @@ inline macro(ratio) {
 }
 
 inline macro(geoprop) {
-  sptr<RowAtom> ddot(new RowAtom(SymbolAtom::get("normaldot")));
+  auto ddot = sptrOf<RowAtom>(SymbolAtom::get("normaldot"));
   ddot->add(sptrOf<SpaceAtom>(UnitType::mu, 4, 0, 0));
   ddot->add(SymbolAtom::get("normaldot"));
   sptr<Atom> a(new UnderOverAtom(
@@ -1325,7 +1334,7 @@ inline macro(smallfrowneq) {
 }
 
 inline macro(hstrok) {
-  sptr<RowAtom> ra(new RowAtom(sptrOf<SpaceAtom>(UnitType::ex, -0.1f, 0, 0)));
+  auto ra = sptrOf<RowAtom>(sptrOf<SpaceAtom>(UnitType::ex, -0.1f, 0, 0));
   ra->add(SymbolAtom::get("bar"));
   auto* vra = new VRowAtom(sptrOf<LapedAtom>(ra, 'r'));
   vra->setRaise(UnitType::ex, -0.1f);
@@ -1337,7 +1346,7 @@ inline macro(hstrok) {
 inline macro(Hstrok) {
   auto* ra = new RowAtom(sptrOf<SpaceAtom>(UnitType::ex, -0.28f, 0, 0));
   ra->add(SymbolAtom::get("textendash"));
-  auto* vra = new VRowAtom(sptr<Atom>(new LapedAtom(sptr<Atom>(ra), 'r')));
+  auto* vra = new VRowAtom(sptrOf<LapedAtom>(sptr<Atom>(ra), 'r'));
   vra->setRaise(UnitType::ex, 0.55f);
   auto* a = new RowAtom(sptr<Atom>(vra));
   a->add(sptrOf<RomanAtom>(sptrOf<CharAtom>('H', tp._formula->_textStyle)));
@@ -1347,7 +1356,7 @@ inline macro(Hstrok) {
 inline macro(dstrok) {
   auto* ra = new RowAtom(sptrOf<SpaceAtom>(UnitType::ex, 0.25f, 0, 0));
   ra->add(SymbolAtom::get("bar"));
-  auto* vra = new VRowAtom(sptr<Atom>(new LapedAtom(sptr<Atom>(ra), 'r')));
+  auto* vra = new VRowAtom(sptrOf<LapedAtom>(sptr<Atom>(ra), 'r'));
   vra->setRaise(UnitType::ex, -0.1f);
   auto* a = new RowAtom(sptr<Atom>(vra));
   a->add(sptrOf<RomanAtom>(sptrOf<CharAtom>('d', tp._formula->_textStyle)));
@@ -1357,7 +1366,7 @@ inline macro(dstrok) {
 inline macro(Dstrok) {
   auto* ra = new RowAtom(sptrOf<SpaceAtom>(UnitType::ex, -0.1f, 0, 0));
   ra->add(SymbolAtom::get("bar"));
-  auto* vra = new VRowAtom(sptr<Atom>(new LapedAtom(sptr<Atom>(ra), 'r')));
+  auto* vra = new VRowAtom(sptrOf<LapedAtom>(sptr<Atom>(ra), 'r'));
   vra->setRaise(UnitType::ex, -0.55f);
   auto* a = new RowAtom(sptr<Atom>(vra));
   a->add(sptrOf<RomanAtom>(sptrOf<CharAtom>('D', tp._formula->_textStyle)));
@@ -1389,21 +1398,20 @@ inline macro(char) {
 }
 
 inline macro(T) {
-  return sptr<Atom>(new RotateAtom(Formula(tp, args[1])._root, 180, L"origin=cc"));
+  return sptrOf<RotateAtom>(Formula(tp, args[1])._root, 180, L"origin=cc");
 }
 
 inline macro(textcircled) {
-  return sptr<Atom>(new TextCircledAtom(
-    sptr<Atom>(new RomanAtom(Formula(tp, args[1])._root))));
+  return sptrOf<TextCircledAtom>(sptrOf<RomanAtom>(Formula(tp, args[1])._root));
 }
 
 inline macro(textsc) {
-  return sptr<Atom>(new SmallCapAtom(Formula(tp, args[1], false)._root));
+  return sptrOf<SmallCapAtom>(Formula(tp, args[1], false)._root);
 }
 
 inline macro(sc) {
-  return sptr<Atom>(new SmallCapAtom(
-    Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root));
+  return sptrOf<SmallCapAtom>(
+    Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root);
 }
 
 inline macro(quad) {
@@ -1484,20 +1492,20 @@ inline macro(idotsint) {
 
 inline macro(lmoustache) {
   auto* s = new SymbolAtom(*(SymbolAtom::get("lmoustache")));
-  sptr<Atom> b(new BigDelimiterAtom(sptr<SymbolAtom>(s), 1));
+  auto b = sptrOf<BigDelimiterAtom>(sptr<SymbolAtom>(s), 1);
   b->_type = AtomType::opening;
   return b;
 }
 
 inline macro(rmoustache) {
   auto* s = new SymbolAtom(*(SymbolAtom::get("rmoustache")));
-  sptr<Atom> b(new BigDelimiterAtom(sptr<SymbolAtom>(s), 1));
+  auto b = sptrOf<BigDelimiterAtom>(sptr<SymbolAtom>(s), 1);
   b->_type = AtomType::closing;
   return b;
 }
 
 inline macro(insertBreakMark) {
-  return sptr<Atom>(new BreakMarkAtom());
+  return sptrOf<BreakMarkAtom>();
 }
 
 /**************************************** limits macros *******************************************/

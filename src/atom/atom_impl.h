@@ -159,7 +159,7 @@ public:
   FBoxAtom() = delete;
 
   explicit FBoxAtom(const sptr<Atom>& base, color bg = TRANSPARENT, color line = TRANSPARENT) {
-    if (base == nullptr) _base = sptr<Atom>(new RowAtom());
+    if (base == nullptr) _base = sptrOf<RowAtom>();
     else {
       _base = base;
       _type = base->_type;
@@ -531,7 +531,7 @@ public:
     Environment& e = *(env.copy());
     float f = e.getScaleFactor();
     e.setScaleFactor(_factor);
-    return sptr<Box>(new ScaleBox(_base->createBox(e), _factor / f));
+    return sptrOf<ScaleBox>(_base->createBox(e), _factor / f);
   }
 
   __decl_clone(MonoScaleAtom)
@@ -727,8 +727,8 @@ public:
   NthRoot() = delete;
 
   NthRoot(const sptr<Atom>& base, const sptr<Atom>& root) {
-    _base = base == nullptr ? sptr<Atom>(new EmptyAtom()) : base;
-    _root = root == nullptr ? sptr<Atom>(new EmptyAtom()) : root;
+    _base = base == nullptr ? sptrOf<EmptyAtom>() : base;
+    _root = root == nullptr ? sptrOf<EmptyAtom>() : root;
   }
 
   sptr<Box> createBox(Environment& env) override;

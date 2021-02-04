@@ -28,14 +28,14 @@ sptr<Box> SymbolAtom::createBox(Environment& env) {
   TeXFont& tf = *i;
   TexStyle style = env.getStyle();
   Char c = tf.getChar(_name, style);
-  sptr<Box> cb(new CharBox(c));
+  sptr<Box> cb = sptrOf<CharBox>(c);
   if (env.getSmallCap() && _unicode != 0 && islower(_unicode)) {
     // find if exists in mapping
     auto it = Formula::_symbolTextMappings.find(toupper(_unicode));
     if (it != Formula::_symbolFormulaMappings.end()) {
       const string& name = it->second;
       try {
-        sptr<Box> cx(new CharBox(tf.getChar(name, style)));
+        auto cx = sptrOf<CharBox>(tf.getChar(name, style));
         cb = sptrOf<ScaleBox>(cx, 0.8f, 0.8f);
       } catch (ex_symbol_mapping_not_found& e) {}
     }
@@ -45,7 +45,7 @@ sptr<Box> SymbolAtom::createBox(Environment& env) {
     cb = sptrOf<CharBox>(c);
     cb->_shift = -(cb->_height + cb->_depth) / 2.f - tf.getAxisHeight(style);
     float delta = c.getItalic();
-    sptr<HorizontalBox> hb(new HorizontalBox(cb));
+    auto hb = sptrOf<HorizontalBox>(cb);
     if (delta > PREC) hb->add(sptrOf<StrutBox>(delta, 0, 0, 0));
     return hb;
   }
@@ -91,7 +91,7 @@ sptr<Box> CharAtom::createBox(Environment& env) {
   }
   bool smallCap = env.getSmallCap();
   Char ch = getChar(*env.getTeXFont(), env.getStyle(), smallCap);
-  sptr<Box> box(new CharBox(ch));
+  sptr<Box> box = sptrOf<CharBox>(ch);
   if (smallCap && islower(_c)) {
     // we have a small capital
     box = sptrOf<ScaleBox>(box, 0.8f, 0.8f);
