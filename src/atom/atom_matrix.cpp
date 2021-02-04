@@ -88,7 +88,7 @@ void MatrixAtom::parsePositions(wstring opt, vector<Alignment>& lpos) {
         break;
       case '>': {
         pos++;
-        tf = sptr<Formula>(new ArrayFormula());
+        tf = sptrOf<ArrayFormula>();
         tp = sptrOf<TeXParser>(_isPartial, opt.substr(pos), &(*tf), false);
         sptr<Atom> cs = tp->getArgument();
         _columnSpecifiers[lpos.size()] = cs;
@@ -497,7 +497,7 @@ sptr<Box> MatrixAtom::createBox(Environment& e) {
   float Vspace = Vsep->_height / 2;
 
   for (int i = 0; i < rows; i++) {
-    sptr<HorizontalBox> hb(new HorizontalBox());
+    auto hb = sptrOf<HorizontalBox>();
     for (int j = 0; j < cols; j++) {
       switch (boxarr[i][j]->_type) {
         case AtomType::none:
@@ -656,7 +656,7 @@ sptr<Box> MulticolumnAtom::createBox(Environment& env) {
 
 sptr<Box> HdotsforAtom::createBox(float space, const sptr<Box>& b, Environment& env) {
   auto sb = sptrOf<StrutBox>(0, space, 0, 0);
-  auto vb = sptr<Box>(new VerticalBox());
+  auto vb = sptrOf<VerticalBox>();
   vb->add(sb);
   vb->add(b);
   vb->add(sb);
@@ -683,7 +683,7 @@ sptr<Box> HdotsforAtom::createBox(Environment& env) {
   // Adjust the space between
   space += (x - count) * space / count;
   auto sb = sptrOf<StrutBox>(space, 0, 0, 0);
-  auto b = sptr<Box>(new HorizontalBox());
+  auto b = sptrOf<HorizontalBox>();
   for (int i = 0; i < count; i++) {
     b->add(dot);
     b->add(sb);
@@ -706,14 +706,14 @@ sptr<Box> MultlineAtom::createBox(Environment& env) {
   Alignment alignment = _lineType == MultiLineType::gather ? Alignment::center : Alignment::left;
   if (atom->_alignment != Alignment::none) alignment = atom->_alignment;
 
-  vb->add(sptr<Box>(new HorizontalBox(atom->createBox(env), tw, alignment)));
+  vb->add(sptrOf<HorizontalBox>(atom->createBox(env), tw, alignment));
   auto Vsep = _vsep_in.createBox(env);
   for (size_t i = 1; i < _column->rows() - 1; i++) {
     atom = _column->_array[i][0];
     alignment = Alignment::center;
     if (atom->_alignment != Alignment::none) alignment = atom->_alignment;
     vb->add(Vsep);
-    vb->add(sptr<Box>(new HorizontalBox(atom->createBox(env), tw, alignment)));
+    vb->add(sptrOf<HorizontalBox>(atom->createBox(env), tw, alignment));
   }
 
   if (_column->rows() > 1) {
@@ -721,7 +721,7 @@ sptr<Box> MultlineAtom::createBox(Environment& env) {
     alignment = _lineType == MultiLineType::gather ? Alignment::center : Alignment::right;
     if (atom->_alignment != Alignment::none) alignment = atom->_alignment;
     vb->add(Vsep);
-    vb->add(sptr<Box>(new HorizontalBox(atom->createBox(env), tw, alignment)));
+    vb->add(sptrOf<HorizontalBox>(atom->createBox(env), tw, alignment));
   }
 
   float h = vb->_height + vb->_depth;

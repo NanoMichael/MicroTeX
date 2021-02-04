@@ -17,7 +17,7 @@ using namespace tex;
  ***************************************************************************************************/
 
 sptr<Box> ScaleAtom::createBox(Environment& env) {
-  return sptr<Box>(new ScaleBox(_base->createBox(env), _sx, _sy));
+  return sptrOf<ScaleBox>(_base->createBox(env), _sx, _sy);
 }
 
 sptr<Box> MathAtom::createBox(Environment& env) {
@@ -122,7 +122,7 @@ sptr<Box> SpaceAtom::createBox(Environment& env) {
     float d = _depth * getFactor(_dUnit, env);
     return sptrOf<StrutBox>(w, h, d, 0);
   }
-  if (_blankType == SpaceType::none) return sptr<Box>(new StrutBox(env.getSpace(), 0, 0, 0));
+  if (_blankType == SpaceType::none) return sptrOf<StrutBox>(env.getSpace(), 0, 0, 0);
   return Glue::get(_blankType, env);
 }
 
@@ -154,7 +154,7 @@ SpaceAtom UnderScoreAtom::_s(UnitType::em, 0.06f, 0, 0);
 sptr<Box> UnderScoreAtom::createBox(Environment& env) {
   float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
   auto* hb = new HorizontalBox(_s.createBox(env));
-  hb->add(sptr<Box>(new HorizontalRule(drt, _w.createBox(env)->_width, 0)));
+  hb->add(sptrOf<HorizontalRule>(drt, _w.createBox(env)->_width, 0));
   return sptr<Box>(hb);
 }
 
@@ -202,7 +202,7 @@ void VRowAtom::append(const sptr<Atom>& el) {
 
 sptr<Box> VRowAtom::createBox(Environment& env) {
   auto* vb = new VerticalBox();
-  sptr<Box> interline(new StrutBox(0, env.getInterline(), 0, 0));
+  auto interline = sptrOf<StrutBox>(0, env.getInterline(), 0, 0);
 
   if (_halign != Alignment::none) {
     float maxWidth = F_MIN;
@@ -383,7 +383,7 @@ sptr<Box> AccentedAtom::createBox(Environment& env) {
   // accent
   sptr<Box> y(nullptr);
   float italic = ch.getItalic();
-  sptr<Box> cb(new CharBox(ch));
+  sptr<Box> cb = sptrOf<CharBox>(ch);
   if (_acc) cb = _accent->createBox(_changeSize ? *(env.subStyle()) : env);
 
   if (abs(italic) > PREC) {
@@ -480,12 +480,12 @@ SpaceAtom ScriptsAtom::SCRIPT_SPACE(UnitType::point, 0.5f, 0, 0);
 
 sptr<Box> ScriptsAtom::createBox(Environment& env) {
   if (_base == nullptr) {
-    sptr<Atom> in(new CharAtom(L'M', "mathnormal"));
+    auto in = sptrOf<CharAtom>(L'M', "mathnormal");
     _base = sptrOf<PhantomAtom>(in, false, true, true);
   }
 
   auto b = _base->createBox(env);
-  sptr<Box> deltaSymbol(new StrutBox(0, 0, 0, 0));
+  sptr<Box> deltaSymbol = sptrOf<StrutBox>(0, 0, 0, 0);
   if (_sub == nullptr && _sup == nullptr) return b;
 
   TeXFont* tf = env.getTeXFont().get();
@@ -493,11 +493,11 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
 
   if (_base->_limitsType == LimitsType::limits ||
       (_base->_limitsType == LimitsType::normal && style == TexStyle::display)) {
-    sptr<Atom> in(new UnderOverAtom(_base, _sub, UnitType::point, 0.3f, true, false));
+    auto in = sptrOf<UnderOverAtom>(_base, _sub, UnitType::point, 0.3f, true, false);
     return UnderOverAtom(in, _sup, UnitType::point, 3.f, true, true).createBox(env);
   }
 
-  sptr<HorizontalBox> hor(new HorizontalBox(b));
+  auto hor = sptrOf<HorizontalBox>(b);
 
   int lastFontId = b->getLastFontId();
   // if no last font found (whitespace box), use default "mu font"
@@ -521,7 +521,7 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
     Char c = tf->getChar(sym->getName(), style);
     // display style
     if (style < TexStyle::text && tf->hasNextLarger(c)) c = tf->getNextLarger(c, style);
-    sptr<Box> x(new CharBox(c));
+    auto x = sptrOf<CharBox>(c);
 
     float axish = env.getTeXFont()->getAxisHeight(env.getStyle());
     x->_shift = -(x->_height + x->_depth) / 2 - axish;
@@ -570,7 +570,7 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
     msiz = max(msiz, _sub->createBox(subStyle)->_width);
   }
 
-  sptr<HorizontalBox> sup(new HorizontalBox(x, msiz, _align));
+  auto sup = sptrOf<HorizontalBox>(x, msiz, _align);
   // add space
   sup->add(SCRIPT_SPACE.createBox(env));
   // adjust shift-up
@@ -587,7 +587,7 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
   } else {
     // both super and sub script
     sptr<Box> y(_sub->createBox(subStyle));
-    sptr<HorizontalBox> sub(new HorizontalBox(y, msiz, _align));
+    auto sub = sptrOf<HorizontalBox>(y, msiz, _align);
     // add space
     sub->add(SCRIPT_SPACE.createBox(env));
     // adjust shift down
@@ -645,7 +645,7 @@ sptr<Box> BigOperatorAtom::createSideSets(Environment& env) {
   auto* sa = static_cast<SideSetsAtom*>(_base.get());
   auto sl = sa->_left, sr = sa->_right, sb = sa->_base;
   if (sb == nullptr) {
-    sptr<Atom> in(new CharAtom(L'M', "mathnormal"));
+    auto in = sptrOf<CharAtom>(L'M', "mathnormal");
     sb = sptrOf<PhantomAtom>(in, false, true, true);
   }
 
@@ -663,7 +663,7 @@ sptr<Box> BigOperatorAtom::createSideSets(Environment& env) {
   }
   if (r != nullptr && r->_base == nullptr) r->_base = pa;
 
-  auto y = sptr<Box>(new HorizontalBox());
+  auto y = sptrOf<HorizontalBox>();
   float limitsShift = 0;
   if (sl != nullptr) {
     auto lb = sl->createBox(env);
@@ -841,7 +841,7 @@ sptr<Box> BigOperatorAtom::createBox(Environment& env) {
 sptr<Box> SideSetsAtom::createBox(Environment& env) {
   if (_base == nullptr) {
     // create a phantom to place side-sets
-    sptr<Atom> in(new CharAtom(L'M', "mathnormal"));
+    auto in = sptrOf<CharAtom>(L'M', "mathnormal");
     _base = sptrOf<PhantomAtom>(in, false, true, true);
   }
 
@@ -889,5 +889,5 @@ sptr<Box> OverUnderDelimiter::createBox(Environment& env) {
   if (sb != nullptr && mx - sb->_width > PREC)
     sb = sptrOf<HorizontalBox>(sb, mx, Alignment::center);
 
-  return sptr<Box>(new OverUnderBox(b, del, sb, _kern.createBox(env)->_height, _over));
+  return sptrOf<OverUnderBox>(b, del, sb, _kern.createBox(env)->_height, _over);
 }

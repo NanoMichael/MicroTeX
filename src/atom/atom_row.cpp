@@ -154,7 +154,7 @@ sptr<Box> RowAtom::createBox(Environment& env) {
       }
     }
 
-    sptr<Dummy> atom(new Dummy(at));
+    auto atom = sptrOf<Dummy>(at);
     // if necessary, change BIN type to ORD
     // i.e. for formula: $+ e - f$, the plus sign should be treat as an ordinary type
     sptr<Atom> nextAtom(nullptr);

@@ -50,7 +50,7 @@ sptr<Box> DelimiterFactory::create(const string& symbol, Environment& env, float
   // tall enough char found
   if (total >= minHeight) {
     /**if (total > minHeight) {
-            sptr<Box> cb(new CharBox(c));
+            auto cb = sptrOf<CharBox>(c);
             float scale = minHeight / total;
             return sptrOf<ScaleBox>(cb, scale);
         }*/
@@ -78,7 +78,7 @@ sptr<Box> DelimiterFactory::create(const string& symbol, Environment& env, float
 
     // insert repeatable part until tall enough
     c = ext->getRepeat();
-    sptr<Box> rep(new CharBox(c));
+    auto rep = sptrOf<CharBox>(c);
     while (vBox->_height + vBox->_depth <= minHeight) {
       if (ext->hasTop() && ext->hasBottom()) {
         vBox->add(1, rep);
@@ -115,7 +115,7 @@ sptr<Box> XLeftRightArrowFactory::create(Environment& env, float width) {
 
   if (width < swidth) {
     auto* hb = new HorizontalBox(left);
-    hb->add(sptr<Box>(new StrutBox(-min(swidth - width, left->_width), 0, 0, 0)));
+    hb->add(sptrOf<StrutBox>(-min(swidth - width, left->_width), 0, 0, 0));
     hb->add(right);
     return sptr<Box>(hb);
   }
@@ -133,7 +133,7 @@ sptr<Box> XLeftRightArrowFactory::create(Environment& env, float width) {
     hb->add(kern);
   }
 
-  hb->add(sptr<Box>(new ScaleBox(minu, (width - swidth - w) / minu->_width, 1)));
+  hb->add(sptrOf<ScaleBox>(minu, (width - swidth - w) / minu->_width, 1));
 
   hb->add(0, kern);
   hb->add(0, left);
@@ -203,16 +203,16 @@ HorizontalBox::HorizontalBox(const sptr<Box>& b, float w, Alignment aligment) {
     return;
   }
   if (aligment == Alignment::center || aligment == Alignment::none) {
-    sptr<Box> s(new StrutBox(rest / 2, 0, 0, 0));
+    auto s = sptrOf<StrutBox>(rest / 2, 0, 0, 0);
     add(s);
     add(b);
     add(s);
   } else if (aligment == Alignment::left) {
     add(b);
-    sptr<Box> s(new StrutBox(rest, 0, 0, 0));
+    auto s = sptrOf<StrutBox>(rest, 0, 0, 0);
     add(s);
   } else if (aligment == Alignment::right) {
-    sptr<Box> s(new StrutBox(rest, 0, 0, 0));
+    auto s = sptrOf<StrutBox>(rest, 0, 0, 0);
     add(s);
     add(b);
   } else {
@@ -345,18 +345,18 @@ VerticalBox::VerticalBox(const sptr<Box>& b, float rest, Alignment alignment)
   : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {
   add(b);
   if (alignment == Alignment::center) {
-    sptr<Box> s(new StrutBox(0, rest / 2, 0, 0));
+    auto s = sptrOf<StrutBox>(0, rest / 2, 0, 0);
     Box::add(0, s);
     _height += rest / 2.f;
     _depth += rest / 2.f;
     Box::add(s);
   } else if (alignment == Alignment::top) {
     _depth += rest;
-    sptr<Box> s(new StrutBox(0, rest, 0, 0));
+    auto s = sptrOf<StrutBox>(0, rest, 0, 0);
     Box::add(s);
   } else if (alignment == Alignment::bottom) {
     _height += rest;
-    sptr<Box> s(new StrutBox(0, rest, 0, 0));
+    auto s = sptrOf<StrutBox>(0, rest, 0, 0);
     Box::add(0, s);
   }
 }
@@ -380,7 +380,7 @@ void VerticalBox::add(const sptr<Box>& b) {
 
 void VerticalBox::add(const sptr<Box>& b, float interline) {
   if (!_children.empty()) {
-    sptr<Box> s(new StrutBox(0, interline, 0, 0));
+    auto s = sptrOf<StrutBox>(0, interline, 0, 0);
     add(s);
   }
   add(b);

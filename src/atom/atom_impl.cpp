@@ -16,7 +16,7 @@ const float FencedAtom::DELIMITER_SHORTFALL = 5.f;
 
 void FencedAtom::init(const sptr<Atom>& b, const sptr<SymbolAtom>& l, const sptr<SymbolAtom>& r) {
   if (b == nullptr)
-    _base = sptr<Atom>(new RowAtom());
+    _base = sptrOf<RowAtom>();
   else
     _base = b;
   if (l == nullptr || l->getName() != "normaldot") _left = l;
@@ -191,7 +191,7 @@ sptr<Box> FractionAtom::createBox(Environment& env) {
   // \nulldelimiterspace is set by default to 1.2pt = 0.12em
   float f = SpaceAtom::getSize(UnitType::em, 0.12f, env);
 
-  return sptr<Box>(new HorizontalBox(sptr<Box>(vb), vb->_width + 2 * f, Alignment::center));
+  return sptrOf<HorizontalBox>(sptr<Box>(vb), vb->_width + 2 * f, Alignment::center);
 }
 
 sptr<Box> LaTeXAtom::createBox(Environment& en) {
@@ -254,7 +254,7 @@ sptr<Box> NthRoot::createBox(Environment& env) {
   // cramped style for the formula under the root sign
   Environment& cramped = *(env.crampStyle());
   auto bs = _base->createBox(cramped);
-  sptr<HorizontalBox> b(new HorizontalBox(bs));
+  auto b = sptrOf<HorizontalBox>(bs);
   b->add(sptr<Box>(SpaceAtom(UnitType::mu, 1, 0, 0).createBox(cramped)));
 
   // create root sign
@@ -267,9 +267,9 @@ sptr<Box> NthRoot::createBox(Environment& env) {
 
   // create total box
   rootSign->_shift = -(b->_height + clr);
-  sptr<OverBar> ob(new OverBar(b, clr, rootSign->_height));
+  auto ob = sptrOf<OverBar>(b, clr, rootSign->_height);
   ob->_shift = -(b->_height + clr + drt);
-  sptr<HorizontalBox> squareRoot(new HorizontalBox(rootSign));
+  auto squareRoot = sptrOf<HorizontalBox>(rootSign);
   squareRoot->add(ob);
 
   // simple square-root
@@ -285,7 +285,7 @@ sptr<Box> NthRoot::createBox(Environment& env) {
   sptr<Box> negkern = SpaceAtom(UnitType::mu, -10.f, 0, 0).createBox(env);
 
   // arrange both boxes together with the negative kerning
-  sptr<Box> res(new HorizontalBox());
+  auto res = sptrOf<HorizontalBox>();
   float pos = r->_width + negkern->_width;
   if (pos < 0) res->add(sptrOf<StrutBox>(-pos, 0, 0, 0));
 
@@ -336,11 +336,11 @@ RotateAtom::RotateAtom(const sptr<Atom>& base, const wstring& angle, const wstri
 }
 
 sptr<Box> RotateAtom::createBox(Environment& env) {
-  if (_option != -1) return sptr<Box>(new RotateBox(_base->createBox(env), _angle, _option));
+  if (_option != -1) return sptrOf<RotateBox>(_base->createBox(env), _angle, _option);
 
   float x = _x * SpaceAtom::getFactor(_xunit, env);
   float y = _y * SpaceAtom::getFactor(_yunit, env);
-  return sptr<Box>(new RotateBox(_base->createBox(env), _angle, x, y));
+  return sptrOf<RotateBox>(_base->createBox(env), _angle, x, y);
 }
 
 sptr<Box> UnderOverArrowAtom::createBox(Environment& env) {
@@ -393,10 +393,10 @@ sptr<Box> XArrowAtom::createBox(Environment& env) {
   float width = max(O->_width + 2 * oside->_width, U->_width + 2 * uside->_width);
   auto arrow = XLeftRightArrowFactory::create(_left, env, width);
 
-  sptr<Box> ohb(new HorizontalBox(O, width, Alignment::center));
-  sptr<Box> uhb(new HorizontalBox(U, width, Alignment::center));
+  auto ohb = sptrOf<HorizontalBox>(O, width, Alignment::center);
+  auto uhb = sptrOf<HorizontalBox>(U, width, Alignment::center);
 
-  sptr<VerticalBox> vb(new VerticalBox());
+  auto vb = sptrOf<VerticalBox>();
   vb->add(ohb);
   vb->add(sep);
   vb->add(arrow);
@@ -447,16 +447,14 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
       auto big = sptrOf<BigDelimiterAtom>(rparen, 1);
       auto ph = sptrOf<PhantomAtom>(big, false, true, true);
       auto ra = sptrOf<RowAtom>(ph);
-      auto raised = sptr<Atom>(
-        new RaiseAtom(
-          big,
-          UnitType::x8,
-          3.5f,
-          UnitType::x8,
-          0.f,
-          UnitType::x8,
-          0.f
-        )
+      auto raised = sptrOf<RaiseAtom>(
+        big,
+        UnitType::x8,
+        3.5f,
+        UnitType::x8,
+        0.f,
+        UnitType::x8,
+        0.f
       );
       ra->add(sptrOf<SmashedAtom>(raised));
       ra->add(num);

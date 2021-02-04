@@ -57,7 +57,7 @@ macro(cfrac) {
   Formula denom(tp, args[2], false);
   if (num._root == nullptr || denom._root == nullptr)
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
-  sptr<FractionAtom> f(new FractionAtom(num._root, denom._root, true, numAlign, Alignment::center));
+  auto f = sptrOf<FractionAtom>(num._root, denom._root, true, numAlign, Alignment::center);
   f->_useKern = false;
   f->_type = AtomType::inner;
   auto* r = new RowAtom();
@@ -80,7 +80,7 @@ macro(sfrac) {
     r = 0.75f;
     sL = -0.24f;
     sR = -0.24f;
-    auto in = sptr<Atom>(new ScaleAtom(SymbolAtom::get("textfractionsolidus"), 1.25f, 0.65f));
+    auto in = sptrOf<ScaleAtom>(SymbolAtom::get("textfractionsolidus"), 1.25f, 0.65f);
     auto* vr = new VRowAtom(in);
     vr->setRaise(UnitType::ex, 0.4f);
     slash = sptr<Atom>(vr);
@@ -122,7 +122,7 @@ macro(genfrac) {
   if (num._root == nullptr || den._root == nullptr) {
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
   }
-  sptr<Atom> fa(new FractionAtom(num._root, den._root, rule, unit, value));
+  auto fa = sptrOf<FractionAtom>(num._root, den._root, rule, unit, value);
   auto* ra = new RowAtom();
   const auto texStyle = static_cast<TexStyle>(style * 2);
   ra->add(sptrOf<StyleAtom>(texStyle, sptrOf<FencedAtom>(fa, L, R)));
@@ -148,7 +148,7 @@ macro(overwithdelims) {
   auto sl = dynamic_pointer_cast<SymbolAtom>(left);
   auto sr = dynamic_pointer_cast<SymbolAtom>(right);
   if (sl != nullptr && sr != nullptr) {
-    sptr<FractionAtom> f(new FractionAtom(num, den, true));
+    auto f = sptrOf<FractionAtom>(num, den, true);
     return sptrOf<FencedAtom>(f, sl, sr);
   }
 
@@ -177,7 +177,7 @@ macro(atopwithdelims) {
   auto sl = dynamic_pointer_cast<SymbolAtom>(left);
   auto sr = dynamic_pointer_cast<SymbolAtom>(right);
   if (sl != nullptr && sr != nullptr) {
-    sptr<Atom> f(new FractionAtom(num, den, false));
+    auto f = sptrOf<FractionAtom>(num, den, false);
     return sptrOf<FencedAtom>(f, sl, sr);
   }
 
@@ -207,7 +207,7 @@ macro(abovewithdelims) {
   auto sl = dynamic_pointer_cast<SymbolAtom>(left);
   auto sr = dynamic_pointer_cast<SymbolAtom>(right);
   if (sl != nullptr && sr != nullptr) {
-    sptr<Atom> f(new FractionAtom(num, den, du, dv));
+    auto f = sptrOf<FractionAtom>(num, den, du, dv);
     return sptrOf<FencedAtom>(f, sl, sr);
   }
 
@@ -222,7 +222,7 @@ macro(textstyles) {
   wstring style(args[0]);
   if (style == L"frak") style = L"mathfrak";
   else if (style == L"Bbb") style = L"mathbb";
-  else if (style == L"bold") return sptr<Atom>(new BoldAtom(Formula(tp, args[1], false)._root));
+  else if (style == L"bold") return sptrOf<BoldAtom>(Formula(tp, args[1], false)._root);
   else if (style == L"cal") style = L"mathcal";
 
   FontInfos* info = nullptr;
@@ -285,7 +285,7 @@ macro(accentbiss) {
       break;
   }
 
-  return sptr<Atom>(new AccentedAtom(Formula(tp, args[1], false)._root, acc));
+  return sptrOf<AccentedAtom>(Formula(tp, args[1], false)._root, acc);
 }
 
 macro(left) {
@@ -322,7 +322,7 @@ macro(intertext) {
   replaceall(str, L"^{\\prime}", L"\'");
   replaceall(str, L"^{\\prime\\prime}", L"\'\'");
 
-  sptr<RomanAtom> ra(new RomanAtom(Formula(tp, str, "mathnormal", false, false)._root));
+  auto ra = sptrOf<RomanAtom>(Formula(tp, str, "mathnormal", false, false)._root);
   ra->_type = AtomType::interText;
   tp.addAtom(ra);
   tp.addRow();
@@ -369,7 +369,7 @@ macro(raisebox) {
   auto[hu, h] = SpaceAtom::getLength(args[3]);
   auto[du, d] = SpaceAtom::getLength(args[4]);
 
-  return sptr<Atom>(new RaiseAtom(Formula(tp, args[2])._root, ru, r, hu, h, du, d));
+  return sptrOf<RaiseAtom>(Formula(tp, args[2])._root, ru, r, hu, h, du, d);
 }
 
 macro(definecolor) {

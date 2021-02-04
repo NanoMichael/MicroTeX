@@ -167,8 +167,8 @@ public:
     if (_n == 0) return sptrOf<StrutBox>(0, 0, 0, 0);
 
     float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-    sptr<Box> b(new HorizontalRule(_height, drt, _shift, MatrixAtom::LINE_COLOR, true));
-    sptr<Box> sep(new StrutBox(2 * drt, 0, 0, 0));
+    auto b = sptrOf<HorizontalRule>(_height, drt, _shift, MatrixAtom::LINE_COLOR, true);
+    auto sep = sptrOf<StrutBox>(2 * drt, 0, 0, 0);
     auto* hb = new HorizontalBox();
     for (int i = 0; i < _n - 1; i++) {
       hb->add(b);

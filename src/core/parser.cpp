@@ -504,7 +504,7 @@ sptr<Atom> TeXParser::processEscape() {
   _spos = _pos;
   wstring command = getCommand();
 
-  if (command.length() == 0) return sptr<Atom>(new EmptyAtom());
+  if (command.length() == 0) return sptrOf<EmptyAtom>();
 
   string cmd;
   wide2utf8(command.c_str(), cmd);
@@ -522,7 +522,7 @@ sptr<Atom> TeXParser::processEscape() {
   // not a valid command or symbol or predefined Formula found
   if (!_isPartial)
     throw ex_parse("Unknown symbol or command or predefined Formula: '" + cmd + "'");
-  sptr<Atom> rm(new RomanAtom(Formula(L"\\backslash " + command)._root));
+  auto rm = sptrOf<RomanAtom>(Formula(L"\\backslash " + command)._root);
   return sptrOf<ColorAtom>(rm, TRANSPARENT, RED);
 }
 
@@ -623,7 +623,7 @@ sptr<Atom> TeXParser::getArgument() {
   skipWhiteSpace();
   wchar_t ch;
   if (_pos < _len) ch = _latex[_pos];
-  else return sptr<Atom>(new EmptyAtom());
+  else return sptrOf<EmptyAtom>();
 
   if (ch == L_GROUP) {
     Formula tf;
@@ -812,7 +812,7 @@ void TeXParser::preprocess() {
 void TeXParser::parse() {
   if (_len == 0) {
     if (_formula->_root == nullptr && !_arrayMode)
-      _formula->add(sptr<Atom>(new EmptyAtom()));
+      _formula->add(sptrOf<EmptyAtom>());
     return;
   }
 
@@ -831,8 +831,8 @@ void TeXParser::parse() {
       case ' ': {
         _pos++;
         if (!_isMathMode) {  // we are in mbox
-          _formula->add(sptr<Atom>(new SpaceAtom()));
-          _formula->add(sptr<Atom>(new BreakMarkAtom()));
+          _formula->add(sptrOf<SpaceAtom>());
+          _formula->add(sptrOf<BreakMarkAtom>());
           while (_pos < _len) {
             ch = _latex[_pos];
             if (ch != ' ' || ch != '\t' || ch != '\r') break;
@@ -895,7 +895,7 @@ void TeXParser::parse() {
         if (_isMathMode) {
           _formula->add(getScripts(ch));
         } else {
-          _formula->add(sptr<Atom>(new UnderScoreAtom()));
+          _formula->add(sptrOf<UnderScoreAtom>());
           _pos++;
         }
       }
@@ -907,16 +907,14 @@ void TeXParser::parse() {
       }
         break;
       case '~': {
-        _formula->add(sptr<Atom>(new SpaceAtom()));
+        _formula->add(sptrOf<SpaceAtom>());
         _pos++;
       }
         break;
       case PRIME_UTF:
       case PRIME: {
         if (_isMathMode) {
-          _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
-            popLastAtom(), nullptr, SymbolAtom::get("prime")))  //
-          );
+          _formula->add(sptrOf<CumulativeScriptsAtom>(popLastAtom(), nullptr, SymbolAtom::get("prime")));
         } else {
           _formula->add(convertCharacter(PRIME, true));
         }
@@ -925,9 +923,7 @@ void TeXParser::parse() {
         break;
       case BACKPRIME: {
         if (_isMathMode) {
-          _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
-            popLastAtom(), nullptr, SymbolAtom::get("backprime")))  //
-          );
+          _formula->add(sptrOf<CumulativeScriptsAtom>(popLastAtom(), nullptr, SymbolAtom::get("backprime")));
         } else {
           _formula->add(convertCharacter(BACKPRIME, true));
         }
@@ -936,12 +932,8 @@ void TeXParser::parse() {
         break;
       case DQUOTE: {
         if (_isMathMode) {
-          _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
-            popLastAtom(), nullptr, SymbolAtom::get("prime")))  //
-          );
-          _formula->add(sptr<Atom>(new CumulativeScriptsAtom(
-            popLastAtom(), nullptr, SymbolAtom::get("prime")))  //
-          );
+          _formula->add(sptrOf<CumulativeScriptsAtom>(popLastAtom(), nullptr, SymbolAtom::get("prime")));
+          _formula->add(sptrOf<CumulativeScriptsAtom>(popLastAtom(), nullptr, SymbolAtom::get("prime")));
         } else {
           _formula->add(convertCharacter(PRIME, true));
           _formula->add(convertCharacter(PRIME, true));
@@ -1008,7 +1000,7 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
         fontInfos = Formula::getExternalFont(block);
       }
       if (fontInfos != nullptr) {
-        if (oneChar) return sptr<Atom>(new TextRenderingAtom(towstring(c), fontInfos));
+        if (oneChar) return sptrOf<TextRenderingAtom>(towstring(c), fontInfos);
         int start = _pos++;
         int en = _len - 1;
         while (_pos < _len) {
@@ -1019,8 +1011,8 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
           }
           _pos++;
         }
-        return sptr<Atom>(new TextRenderingAtom(
-          _latex.substr(start, en - start + 1), fontInfos));
+        return sptrOf<TextRenderingAtom>(
+          _latex.substr(start, en - start + 1), fontInfos);
       }
 
       if (!_isPartial)
@@ -1070,7 +1062,7 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
     auto it = Formula::_externalFontMap.find(UnicodeBlock::BASIC_LATIN);
     if (it != Formula::_externalFontMap.end()) {
       infos = it->second;
-      if (oneChar) return sptr<Atom>(new TextRenderingAtom(towstring(c), infos));
+      if (oneChar) return sptrOf<TextRenderingAtom>(towstring(c), infos);
 
       int start = _pos++;
       int en = _len - 1;
@@ -1082,7 +1074,7 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
         }
         _pos++;
       }
-      return sptr<Atom>(new TextRenderingAtom(_latex.substr(start, en - start + 1), infos));
+      return sptrOf<TextRenderingAtom>(_latex.substr(start, en - start + 1), infos);
     }
   }
   return sptrOf<CharAtom>(c, _formula->_textStyle, _isMathMode);
