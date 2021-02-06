@@ -741,7 +741,7 @@ void TeXParser::inflateEnv(wstring& cmd, vector<wstring>& args, int& pos) {
   if (it == MacroInfo::_commands.end()) {
     throw ex_parse(
       "Unknown environment: "
-      + wide2utf8(args[1].c_str())
+      + wide2utf8(args[1])
       + " at position " + tostring(getLine())
       + ":" + tostring(getCol())
     );

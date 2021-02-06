@@ -331,7 +331,7 @@ macro(newcommand) {
   wstring newcmd(args[1]);
   int nbArgs = 0;
   if (!tp.isValidName(newcmd))
-    throw ex_parse("Invalid name for the command '" + wide2utf8(newcmd.c_str()));
+    throw ex_parse("Invalid name for the command '" + wide2utf8(newcmd));
 
   if (!args[3].empty()) valueof(args[3], nbArgs);
 
@@ -348,7 +348,7 @@ macro(renewcommand) {
   wstring newcmd(args[1]);
   int nbArgs = 0;
   if (!tp.isValidName(newcmd))
-    throw ex_parse("Invalid name for the command: " + wide2utf8(newcmd.c_str()));
+    throw ex_parse("Invalid name for the command: " + wide2utf8(newcmd));
 
   if (!args[3].empty()) valueof(args[3], nbArgs);
 
@@ -492,7 +492,7 @@ macro(xml) {
       start = pos;
       while (++start < str.length() && isalpha(str[start]));
       wstring key = str.substr(pos + 1, start - pos - 1);
-      string x = wide2utf8(key.c_str());
+      string x = wide2utf8(key);
       auto it = m.find(x);
       if (it != m.end()) {
         buf.append(str.substr(0, pos));

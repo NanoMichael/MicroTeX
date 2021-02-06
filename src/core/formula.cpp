@@ -141,7 +141,7 @@ sptr<Formula> Formula::get(const wstring& name) {
   if (it == _predefinedTeXFormulas.end()) {
     auto i = _predefinedTeXFormulasAsString.find(name);
     if (i == _predefinedTeXFormulasAsString.end())
-      throw ex_formula_not_found(wide2utf8(name.c_str()));
+      throw ex_formula_not_found(wide2utf8(name));
     auto tf = sptrOf<Formula>(i->second);
     auto* ra = dynamic_cast<RowAtom*>(tf->_root.get());
     if (ra == nullptr) {
