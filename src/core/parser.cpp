@@ -506,8 +506,7 @@ sptr<Atom> TeXParser::processEscape() {
 
   if (command.length() == 0) return sptrOf<EmptyAtom>();
 
-  string cmd;
-  wide2utf8(command.c_str(), cmd);
+  string cmd = wide2utf8(command);
   auto it = MacroInfo::_commands.find(command);
   if (it != MacroInfo::_commands.end()) return processCommands(command);
 
@@ -958,8 +957,7 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
       return SymbolAtom::get(Formula::_symbolMappings[c]);
     } else if (c >= 913 && c <= 937) {
       // Greek capital letter
-      wstring ltx;
-      utf82wide(Formula::_symbolFormulaMappings[c].c_str(), ltx);
+      wstring ltx = utf82wide(Formula::_symbolFormulaMappings[c]);
       return Formula(ltx)._root;
     }
   }
@@ -1037,8 +1035,7 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
       }
       auto it = Formula::_symbolFormulaMappings.find(c);
       if (it != Formula::_symbolFormulaMappings.end()) {
-        wstring wstr;
-        utf82wide(it->second.c_str(), wstr);
+        wstring wstr = utf82wide(it->second);
         return Formula(wstr)._root;
       }
 
@@ -1050,7 +1047,8 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
           throw ex_parse(
             "The character '" + tostring(c) +
             "' was mapped to an unknown symbol with the name '" + symbolName + "'!",
-            e);
+            e
+          );
         }
       }
     }

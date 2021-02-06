@@ -18,16 +18,14 @@ macro(hvspace) {
   UnitType unit;
   if (i != args[1].length()) {
     wstring s = args[1].substr(i);
-    string str;
-    wide2utf8(s.c_str(), str);
+    string str = wide2utf8(s);
     tolower(str);
     unit = SpaceAtom::getUnit(str);
   } else {
     unit = UnitType::point;
   }
   if (unit == UnitType::none) {
-    string str;
-    wide2utf8(args[1].c_str(), str);
+    string str = wide2utf8(args[1]);
     throw ex_parse("Unknown unit '" + str + "'!");
   }
 
@@ -236,8 +234,7 @@ macro(textstyles) {
     Formula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = info;
   }
 
-  string s;
-  wide2utf8(style.c_str(), s);
+  string s = wide2utf8(style);
   return sptrOf<TextStyleAtom>(atom, s);
 }
 
@@ -374,8 +371,7 @@ macro(raisebox) {
 
 macro(definecolor) {
   color c = TRANSPARENT;
-  string cs;
-  wide2utf8(args[3].c_str(), cs);
+  string cs = wide2utf8(args[3]);
   if (args[2] == L"gray") {
     float f = 0;
     valueof(args[3], f);
@@ -405,7 +401,7 @@ macro(definecolor) {
     throw ex_parse("Color model is incorrect!");
   }
 
-  ColorAtom::defineColor(wide2utf8(args[1].c_str()), c);
+  ColorAtom::defineColor(wide2utf8(args[1]), c);
   return nullptr;
 }
 
@@ -442,8 +438,7 @@ macro(romannumeral) {
   string roman;
 
   int num;
-  string x;
-  wide2utf8(args[1].c_str(), x);
+  string x = wide2utf8(args[1]);
   valueof(trim(x), num);
   for (int i = 0; i < 13; i++) {
     while (num >= numbers[i]) {
@@ -456,8 +451,7 @@ macro(romannumeral) {
     tolower(roman);
   }
 
-  wstring str;
-  utf82wide(roman.c_str(), str);
+  const wstring str = utf82wide(roman);
   return Formula(str, false)._root;
 }
 
