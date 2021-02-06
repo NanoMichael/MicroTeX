@@ -13,6 +13,7 @@ using namespace tex;
 #define cls AtomType::closing
 #define puc AtomType::punctuation
 
+// IMPORTANT: sorted by the name, you must resort this array after add item
 const Symbol Symbol::_symbols[]{
   {0x0266F, ord, ""},
   {0x0223F, ord, "AC"},

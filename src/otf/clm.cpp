@@ -57,6 +57,7 @@ public:
 void CLMReader::readMeta(Otf& font, BinaryFileReader& reader) {
   font._isMathFont = reader.read<bool>();
   font._em = reader.read<u16>();
+  font._xHeight = reader.read<u16>();
   u16 count = reader.read<u16>();
   u32* unicodes = new u32[count];
   u16* glyphs = new u16[count];

@@ -531,7 +531,9 @@ public:
     Environment& e = *(env.copy());
     float f = e.getScaleFactor();
     e.setScaleFactor(_factor);
-    return sptrOf<ScaleBox>(_base->createBox(e), _factor / f);
+    auto box = sptrOf<ScaleBox>(_base->createBox(e), _factor / f);
+    e.setScaleFactor(f);
+    return box;
   }
 
   __decl_clone(MonoScaleAtom)

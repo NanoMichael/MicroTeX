@@ -443,6 +443,8 @@ void show_symbols() {
   fclose(f);
 }
 
+#include "core/env.h"
+
 int main(int argc, char* argv[]) {
   vector<string> opts;
   opts.reserve(argc);
