@@ -9,7 +9,7 @@ namespace tex {
 
 struct Symbol {
 private:
-  static const Symbol* _symbols;
+  static const Symbol _symbols[];
   static const i32 _count;
 
 public:

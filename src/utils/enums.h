@@ -73,24 +73,6 @@ enum class AtomType : i8 {
   none = -1
 };
 
-/** Over and under delimiter type */
-enum class DelimType : i8 {
-  brace,
-  squareBracket,
-  bracket,
-
-  leftArrow,
-  rightArrow,
-  leftRightArrow,
-
-  doubleLeftArrow,
-  doubleRightArrow,
-  doubleLeftRightArrow,
-
-  singleLine,
-  doubleLine
-};
-
 enum class TexStyle : i8 {
   /**
    * The larger versions of big operators are used and limits are placed under

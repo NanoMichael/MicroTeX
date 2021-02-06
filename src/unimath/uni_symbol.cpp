@@ -13,7 +13,7 @@ using namespace tex;
 #define cls AtomType::closing
 #define puc AtomType::punctuation
 
-static const Symbol static_symbols[]{
+const Symbol Symbol::_symbols[]{
   {0x0266F, ord, ""},
   {0x0223F, ord, "AC"},
   {0x02370, ord, "APLboxquestion"},
@@ -2952,8 +2952,7 @@ static const Symbol static_symbols[]{
   {0x0007D, cls, "}"},
 };
 
-const i32 Symbol::_count = sizeof(static_symbols) / sizeof(Symbol);
-const Symbol* Symbol::_symbols = static_symbols;
+const i32 Symbol::_count = sizeof(Symbol::_symbols) / sizeof(Symbol);
 
 const Symbol* Symbol::get(const char* name) {
   const int i = binIndexOf(
