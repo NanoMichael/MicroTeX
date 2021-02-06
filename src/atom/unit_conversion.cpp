@@ -5,7 +5,7 @@
 using namespace std;
 using namespace tex;
 
-const map<string, UnitType> SpaceAtom::_units{
+const pair<const char*, UnitType> SpaceAtom::_units[]{
   {"em",    UnitType::em},
   {"ex",    UnitType::ex},
   {"px",    UnitType::pixel},
@@ -23,6 +23,8 @@ const map<string, UnitType> SpaceAtom::_units{
   {"dd",    UnitType::dd},
   {"cc",    UnitType::cc},
 };
+
+const i32 SpaceAtom::_unitsCount = sizeof(_units) / sizeof(pair<const char*, UnitType>);
 
 const function<float(const Environment&)> SpaceAtom::_unitConversions[]{
   // EM

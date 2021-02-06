@@ -111,43 +111,6 @@ sptr<Box> TextRenderingAtom::createBox(Environment& env) {
   return sptrOf<TextRenderingBox>(_str, type, DefaultTeXFont::getSizeFactor(env.getStyle()), font, kerning);
 }
 
-/***************************************************************************************************
- *                                     SpaceAtom implementation                                    *
- ***************************************************************************************************/
-
-sptr<Box> SpaceAtom::createBox(Environment& env) {
-  if (!_blankSpace) {
-    float w = _width * getFactor(_wUnit, env);
-    float h = _height * getFactor(_hUnit, env);
-    float d = _depth * getFactor(_dUnit, env);
-    return sptrOf<StrutBox>(w, h, d, 0);
-  }
-  if (_blankType == SpaceType::none) return sptrOf<StrutBox>(env.getSpace(), 0, 0, 0);
-  return Glue::get(_blankType, env);
-}
-
-pair<UnitType, float> SpaceAtom::getLength(const string& lgth) {
-  if (lgth.empty()) return {UnitType::pixel, 0.f};
-
-  size_t i = 0;
-  for (; i < lgth.size() && !isalpha(lgth[i]); i++);
-  float f = 0;
-  valueof(lgth.substr(0, i), f);
-
-  UnitType unit = UnitType::pixel;
-  string x = lgth.substr(i);
-  tolower(x);
-  if (i != lgth.size()) unit = getUnit(x);
-
-  return {unit, f};
-}
-
-pair<UnitType, float> SpaceAtom::getLength(const wstring& lgth) {
-  string s;
-  wide2utf8(lgth.c_str(), s);
-  return getLength(s);
-}
-
 SpaceAtom UnderScoreAtom::_w(UnitType::em, 0.7f, 0, 0);
 SpaceAtom UnderScoreAtom::_s(UnitType::em, 0.06f, 0, 0);
 
