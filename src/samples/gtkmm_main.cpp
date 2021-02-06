@@ -428,7 +428,7 @@ void show_symbols() {
   // replacement symbols
   f = fopen("rp.txt", "w");
   for (const auto&[name, ignore] : Formula::_predefinedTeXFormulasAsString) {
-    auto x = wide2utf8(name.c_str());
+    auto x = wide2utf8(name);
     fwrite((x + "\n").c_str(), 1, x.size() + 1, f);
   }
   fflush(f);
@@ -436,7 +436,7 @@ void show_symbols() {
   // macros
   f = fopen("macro.txt", "w");
   for (const auto&[name, ignore] : MacroInfo::_commands) {
-    auto x = wide2utf8(name.c_str());
+    auto x = wide2utf8(name);
     fwrite((x + "\n").c_str(), 1, x.size() + 1, f);
   }
   fflush(f);

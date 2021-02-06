@@ -130,7 +130,7 @@ TextLayout_cairo::TextLayout_cairo(const wstring& src, const sptr<Font_cairo>& f
       break;
   }
 
-  _layout->set_text(wide2utf8(src.c_str()));
+  _layout->set_text(wide2utf8(src));
   _layout->set_font_description(fd);
 
   _ascent = (float) (_layout->get_baseline() / Pango::SCALE);
@@ -290,7 +290,7 @@ void Graphics2D_cairo::drawText(const wstring& t, float x, float y) {
   _context->set_font_face(_font->getCairoFontFace());
   _context->set_font_size(_font->getSize());
   _context->move_to(x, y);
-  _context->show_text(wide2utf8(t.c_str()));
+  _context->show_text(wide2utf8(t));
 }
 
 void Graphics2D_cairo::drawLine(float x1, float y1, float x2, float y2) {
