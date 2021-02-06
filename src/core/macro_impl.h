@@ -1405,8 +1405,7 @@ inline macro(textsc) {
 }
 
 inline macro(sc) {
-  return sptrOf<SmallCapAtom>(
-    Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root);
+  return sptrOf<SmallCapAtom>(Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root);
 }
 
 inline macro(quad) {

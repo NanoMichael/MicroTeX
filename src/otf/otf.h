@@ -51,6 +51,8 @@ private:
   u16* _unicodeGlyphs = nullptr;
 
   u16 _em = 0;
+  u16 _xHeight = 0;
+
   bool _isMathFont = false;
   MathConsts* _mathConsts = nullptr;
 
@@ -80,6 +82,9 @@ public:
 
   /** Get the quad of this font. */
   inline u16 quad() const { return _em; }
+
+  /** Get the x-height of this font. */
+  inline u16 xHeight() const { return _xHeight; }
 
   /** Get the math-consts table, return null if absent. */
   inline const MathConsts* mathConsts() const { return _mathConsts; }

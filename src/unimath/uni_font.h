@@ -30,15 +30,18 @@ public:
 
   MathVersion(
     c32 digit, c32 latinSmall, c32 latinCapital, c32 greekSmall, c32 greekCapital
-  );
+  ) noexcept;
 
   /** Map an Unicode char to version-specific Unicode char. */
   c32 map(c32 codepoint) const;
 };
 
+class FontContext;
+
 /** Represents a open-type font with font-file and clm-spec */
 struct OtfFont {
 private:
+  i32 _id;
   const std::string _fontFile;
   const sptr<const Otf> _otf;
 
@@ -47,9 +50,13 @@ public:
 
   OtfFont(std::string fontFile, const std::string& clmFile);
 
+  inline i32 id() const { return _id; }
+
   inline const std::string& fontFile() const { return _fontFile; }
 
   inline const Otf& otf() const { return *_otf; }
+
+  friend class FontContext;
 };
 
 struct UniGlyph {
@@ -89,12 +96,15 @@ using FontSpec = std::tuple<std::string, std::string, std::string>;
 
 class FontContext {
 private:
-  static std::string _emptyVersionName;
-  static std::string _defaultVersionName;
+  static const std::string _emptyVersionName;
+  static const std::string _defaultVersionName;
   /** style name to version map */
   static std::map<std::string, sptr<const MathVersion>> _mathStyles;
   /** version name to version map */
   static std::map<std::string, sptr<const MathVersion>> _mathVersions;
+
+  static int _lastId;
+  static std::vector<sptr<const OtfFont>> _fonts;
 
   static std::map<std::string, sptr<TextFont>> _mainFonts;
   static std::map<std::string, sptr<const OtfFont>> _mathFonts;
@@ -102,7 +112,11 @@ private:
   sptr<TextFont> _mainFont = nullptr;
   sptr<const OtfFont> _mathFont = nullptr;
 
+  static void addFont(const sptr<OtfFont>& font);
+
 public:
+  static constexpr i32 NO_FONT = -1;
+
   static void addMainFont(
     const std::string& versionName,
     const std::vector<FontSpec>& params
@@ -112,11 +126,15 @@ public:
 
   static void setMathStyle(const std::string& styleName);
 
+  static sptr<const OtfFont> getFont(i32 id);
+
   void selectMathFont(const std::string& versionName);
 
   void selectMainFont(const std::string& versionName);
 
   inline const OtfFont& mathFont() { return *_mathFont; }
+
+  inline i32 muFontId() const { return _mathFont->_id; }
 
   UniGlyph glyphOf(c32 codepoint, const std::string& versionName, bool isMathMode) const;
 };

@@ -488,11 +488,13 @@ def parse_otf(file_path, is_math_font, output_file_path):
             ligas.append(l)
 
     em = font.em
+    xheight = font.xHeight
     font.close()
 
     with open(output_file_path, 'wb') as f:
         f.write(struct.pack('?', is_math_font))
         f.write(struct.pack('!H', em))
+        f.write(struct.pack('!H', xheight))
         write_clm_unicode_glyph_map(f, unicode_glyph_map)
         write_clm_kerning_class(f, kern_class_tables, glyph_name_id_map)
         write_ligas(f, ligas, glyph_name_id_map)

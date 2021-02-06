@@ -7,7 +7,7 @@ using namespace std;
 
 MathVersion::MathVersion(
   c32 digit, c32 latinSmall, c32 latinCapital, c32 greekSmall, c32 greekCapital
-) : _codepoints{0, digit, latinSmall, latinCapital, greekSmall, greekCapital} {}
+) noexcept: _codepoints{0, digit, latinSmall, latinCapital, greekSmall, greekCapital} {}
 
 pair<MathType, c32> MathVersion::ofChar(c32 codepoint) {
   if (codepoint >= '0' && codepoint <= '9') return {MathType::digit, codepoint - '0'};
@@ -23,8 +23,6 @@ pair<MathType, c32> MathVersion::ofChar(c32 codepoint) {
 }
 
 c32 MathVersion::map(const c32 codepoint) const {
-  vector<int> x;
-  x.begin();
   auto[type, offset] = ofChar(codepoint);
   return _codepoints[static_cast<u8>(type)] + offset;
 }
@@ -41,8 +39,8 @@ inline sptr<const OtfFont>& TextFont::operator[](const string& styleName) {
   return _styles[styleName];
 }
 
-string FontContext::_emptyVersionName;
-string FontContext::_defaultVersionName{"mathnormal"};
+const string FontContext::_emptyVersionName;
+const string FontContext::_defaultVersionName{"mathnormal"};
 
 #define version(name, digit, latinSmall, latinCapital, greekSmall, greekCapital)                 \
   {                                                                                              \
@@ -75,27 +73,44 @@ map<string, sptr<const MathVersion>> FontContext::_mathVersions{
   version(mathtt, 0x1D7F6, 0x1D68A, 0x1D670, 0x03B1, 0x0391),
 };
 
+int FontContext::_lastId = 0;
+vector<sptr<const OtfFont>> FontContext::_fonts;
+
 map<string, sptr<TextFont>> FontContext::_mainFonts;
 map<string, sptr<const OtfFont>> FontContext::_mathFonts;
+
+void FontContext::addFont(const sptr<OtfFont>& font) {
+  font->_id = _lastId++;
+  _fonts.push_back(font);
+}
 
 void FontContext::addMainFont(const string& versionName, const vector<FontSpec>& params) {
   auto* ptr = new TextFont();
   TextFont& f = *ptr;
   for (const auto&[style, font, clm] : params) {
-    f[style] = sptrOf<const OtfFont>(font, clm);
+    auto otf = sptrOf<OtfFont>(font, clm);
+    addFont(otf);
+    f[style] = otf;
   }
   _mainFonts[versionName] = sptr<TextFont>(ptr);
 }
 
 void FontContext::addMathFont(const FontSpec& params) {
   const auto&[version, font, clm] = params;
-  _mathFonts[version] = sptrOf<const OtfFont>(font, clm);
+  auto otf = sptrOf<OtfFont>(font, clm);
+  addFont(otf);
+  _mathFonts[version] = otf;
 }
 
 void FontContext::setMathStyle(const string& styleName) {
   auto it = _mathStyles.find(styleName);
   if (it == _mathStyles.end()) return;
   _mathVersions[_defaultVersionName] = it->second;
+}
+
+sptr<const OtfFont> FontContext::getFont(i32 id) {
+  if (id >= _fonts.size() || id < 0) return nullptr;
+  return _fonts[id];
 }
 
 void FontContext::selectMathFont(const string& versionName) {

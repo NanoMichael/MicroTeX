@@ -4,6 +4,7 @@
 #include <cinttypes>
 #include <functional>
 #include <memory>
+#include <vector>
 
 #define no_copy_assign(T) \
   T(const T&) = delete;   \
