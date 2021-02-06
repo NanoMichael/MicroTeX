@@ -214,8 +214,7 @@ public:
 protected:
   void on_next_clicked() {
     auto sample = _samples.next();
-    string x;
-    wide2utf8(sample.c_str(), x);
+    string x = wide2utf8(sample);
     _tex_editor.get_buffer()->set_text(x);
     _tex.setLaTeX(sample);
     _save.set_sensitive(_tex.isRenderDisplayed());
@@ -239,8 +238,7 @@ protected:
   }
 
   void on_rendering_clicked() {
-    std::wstring x;
-    utf82wide(_tex_editor.get_buffer()->get_text().c_str(), x);
+    wstring x = utf82wide(_tex_editor.get_buffer()->get_text());
     _tex.setLaTeX(x);
     _save.set_sensitive(_tex.isRenderDisplayed());
   }
@@ -307,8 +305,7 @@ public:
       __print(ANSI_COLOR_RED "Error: the option '-output' must be specified\n" ANSI_RESET);
       return 1;
     }
-    std::wstring code;
-    utf82wide(_input.c_str(), code);
+    wstring code = utf82wide(_input);
     generateSingle(code, _outputFile);
     return 0;
   }

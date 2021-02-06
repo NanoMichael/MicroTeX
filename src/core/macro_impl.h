@@ -250,8 +250,7 @@ inline macro(underscore) {
 }
 
 inline macro(accents) {
-  std::string x;
-  wide2utf8(args[0].c_str(), x);
+  const std::string x = wide2utf8(args[0]);
   return sptrOf<AccentedAtom>(Formula(tp, args[1], false)._root, x);
 }
 
@@ -459,8 +458,7 @@ inline macro(joinrel) {
 }
 
 inline macro(smash) {
-  std::string x;
-  wide2utf8(args[2].c_str(), x);
+  const std::string x = wide2utf8(args[2]);
   return sptrOf<SmashedAtom>(Formula(tp, args[1], false)._root, x);
 }
 
@@ -532,8 +530,7 @@ inline macro(matrixATATenv) {
 inline macro(multicolumn) {
   int n = 0;
   valueof(args[1], n);
-  std::string x;
-  wide2utf8(args[2].c_str(), x);
+  const std::string x = wide2utf8(args[2]);
   tp.addAtom(sptrOf<MulticolumnAtom>(n, x, Formula(tp, args[3])._root));
   ((ArrayFormula*) tp._formula)->addCol(n);
   return nullptr;
@@ -912,9 +909,8 @@ inline macro(scalebox) {
 }
 
 inline macro(resizebox) {
-  std::string ws, hs;
-  wide2utf8(args[1].c_str(), ws);
-  wide2utf8(args[2].c_str(), hs);
+  const std::string ws = wide2utf8(args[1]);
+  const std::string hs = wide2utf8(args[2]);
   return sptrOf<ResizeAtom>(Formula(tp, args[3])._root, ws, hs, ws == "!" || hs == "!");
 }
 
@@ -1379,8 +1375,7 @@ inline macro(kern) {
 }
 
 inline macro(char) {
-  std::string x;
-  wide2utf8(args[1].c_str(), x);
+  std::string x = wide2utf8(args[1]);
   int radix = 10;
   if (startswith(x, "0x") || startswith(x, "0X")) {
     x = x.substr(2);
