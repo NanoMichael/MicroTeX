@@ -2,6 +2,7 @@
 #define LATEX_GLUE_H
 
 #include "utils/utils.h"
+#include "utils/enums.h"
 
 namespace tex {
 

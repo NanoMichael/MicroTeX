@@ -5,23 +5,24 @@
 using namespace std;
 using namespace tex;
 
+// IMPORTANT: sorted by the unit name, you must resort this array after add item
 const pair<const char*, UnitType> SpaceAtom::_units[]{
+  {"bp",    UnitType::point},
+  {"cc",    UnitType::cc},
+  {"cm",    UnitType::cm},
+  {"dd",    UnitType::dd},
   {"em",    UnitType::em},
   {"ex",    UnitType::ex},
-  {"px",    UnitType::pixel},
+  {"in",    UnitType::in},
+  {"mm",    UnitType::mm},
+  {"mu",    UnitType::mu},
+  {"pc",    UnitType::pica},
+  {"pica",  UnitType::pica},
   {"pix",   UnitType::pixel},
   {"pixel", UnitType::pixel},
   {"pt",    UnitType::pt},
-  {"bp",    UnitType::point},
-  {"pica",  UnitType::pica},
-  {"pc",    UnitType::pica},
-  {"mu",    UnitType::mu},
-  {"cm",    UnitType::cm},
-  {"mm",    UnitType::mm},
-  {"in",    UnitType::in},
+  {"px",    UnitType::pixel},
   {"sp",    UnitType::sp},
-  {"dd",    UnitType::dd},
-  {"cc",    UnitType::cc},
 };
 
 const i32 SpaceAtom::_unitsCount = sizeof(_units) / sizeof(pair<const char*, UnitType>);
