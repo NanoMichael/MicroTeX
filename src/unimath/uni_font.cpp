@@ -27,12 +27,12 @@ c32 MathVersion::map(const c32 codepoint) const {
   return _codepoints[static_cast<u8>(type)] + offset;
 }
 
-OtfFont::OtfFont(string fontFile, const string& clmFile)
-  : _fontFile(std::move(fontFile)), _otf(sptr<const Otf>(Otf::fromFile(clmFile.c_str()))) {}
+OtfFont::OtfFont(i32 id, string fontFile, const string& clmFile)
+  : _id(id), _fontFile(std::move(fontFile)), _otf(sptr<const Otf>(Otf::fromFile(clmFile.c_str()))) {}
 
 UniGlyph::UniGlyph(c32 unicode, const sptr<const OtfFont>& font)
   : _unicode(unicode), _font(font) {
-  _glyph = font->otf().glyphOfUnicode(unicode);
+  _glyph = font->_otf->glyphOfUnicode(unicode);
 }
 
 inline sptr<const OtfFont>& TextFont::operator[](const string& styleName) {
@@ -79,17 +79,12 @@ vector<sptr<const OtfFont>> FontContext::_fonts;
 map<string, sptr<TextFont>> FontContext::_mainFonts;
 map<string, sptr<const OtfFont>> FontContext::_mathFonts;
 
-void FontContext::addFont(const sptr<OtfFont>& font) {
-  font->_id = _lastId++;
-  _fonts.push_back(font);
-}
-
 void FontContext::addMainFont(const string& versionName, const vector<FontSpec>& params) {
   auto* ptr = new TextFont();
   TextFont& f = *ptr;
   for (const auto&[style, font, clm] : params) {
-    auto otf = sptrOf<OtfFont>(font, clm);
-    addFont(otf);
+    auto otf = sptrOf<const OtfFont>(_lastId++, font, clm);
+    _fonts.push_back(otf);
     f[style] = otf;
   }
   _mainFonts[versionName] = sptr<TextFont>(ptr);
@@ -97,8 +92,8 @@ void FontContext::addMainFont(const string& versionName, const vector<FontSpec>&
 
 void FontContext::addMathFont(const FontSpec& params) {
   const auto&[version, font, clm] = params;
-  auto otf = sptrOf<OtfFont>(font, clm);
-  addFont(otf);
+  auto otf = sptrOf<OtfFont>(_lastId++, font, clm);
+  _fonts.push_back(otf);
   _mathFonts[version] = otf;
 }
 

@@ -15,7 +15,7 @@ struct Metrics {
   Metrics(const Metrics&) = delete;
 
   explicit Metrics(float w, float h, float d, float i, float factor, float s)
-      : width(w * factor), height(h * factor), depth(d * factor), italic(i * factor), size(s) {}
+    : width(w * factor), height(h * factor), depth(d * factor), italic(i * factor), size(s) {}
 };
 
 /** Represents a specific character in a specific font (identified by its font id) */
@@ -30,7 +30,9 @@ struct CharFont {
   CharFont(wchar_t c, int f, int bf) : chr(c), fontId(f), boldFontId(bf) {}
 
 #ifdef HAVE_LOG
+
   friend std::ostream& operator<<(std::ostream& os, const CharFont& info);
+
 #endif
 };
 
@@ -84,7 +86,7 @@ public:
   Extension(const Extension&) = delete;
 
   Extension(Char* t, Char* m, Char* r, Char* b)
-      : _top(t), _middle(m), _repeat(r), _bottom(b) {}
+    : _top(t), _middle(m), _repeat(r), _bottom(b) {}
 
   inline bool hasTop() const { return _top != nullptr; }
 
