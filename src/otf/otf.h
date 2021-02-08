@@ -71,10 +71,13 @@ public:
   /** Read otf font from file */
   static Otf* fromFile(const char* filePath);
 
+  /** Test if this font is a math font */
   inline bool isMathFont() const { return _isMathFont; }
 
+  /** Get the char count covered by this font */
   inline u16 unicodesCount() const { return _unicodeCount; }
 
+  /** Get the glyphs count covered by this font */
   inline u16 glyphsCount() const { return _glyphCount; }
 
   /** Get the em size of this font. */

@@ -23,7 +23,7 @@ struct MathVersion {
 private:
   c32 _codepoints[6];
 
-  /** Get the MathType and the version-specific offset of given codepoint. */
+  /** Get the MathType and the version-specific offset of the given codepoint. */
   static std::pair<MathType, c32> ofChar(c32 codepoint);
 
 public:
@@ -46,36 +46,22 @@ struct OtfFont final {
   OtfFont(i32 id, std::string fontFile, const std::string& clmFile);
 };
 
+/** Represents a character with its font and glyph id */
 struct Char final {
   c32 _originCode;
   c32 _mappedCode;
   i32 _fontId;
+  i32 _glyphId;
 };
 
-struct UniGlyph {
-private:
-  c32 _unicode;
-  const Glyph* _glyph;
-  const sptr<const OtfFont> _font;
-
-public:
-  UniGlyph(c32 unicode, const sptr<const OtfFont>& font);
-
-  inline c32 unicode() const { return _unicode; }
-
-  inline const Glyph& glyph() const { return *_glyph; }
-
-  inline const OtfFont& font() const { return *_font; }
-};
-
-struct TextFont {
+struct FontFamily final {
 private:
   std::map<std::string, sptr<const OtfFont>> _styles;
 
 public:
-  no_copy_assign(TextFont);
+  no_copy_assign(FontFamily);
 
-  TextFont() = default;
+  FontFamily() = default;
 
   sptr<const OtfFont>& operator[](const std::string& styleName);
 };
@@ -101,8 +87,6 @@ enum class FontStyle : u8 {
 
 class FontContext {
 private:
-
-
   static const std::string _emptyVersionName;
   static const std::string _defaultVersionName;
   /** style name to version map */
@@ -113,10 +97,10 @@ private:
   static int _lastId;
   static std::vector<sptr<const OtfFont>> _fonts;
 
-  static std::map<std::string, sptr<TextFont>> _mainFonts;
+  static std::map<std::string, sptr<FontFamily>> _mainFonts;
   static std::map<std::string, sptr<const OtfFont>> _mathFonts;
 
-  sptr<TextFont> _mainFont = nullptr;
+  sptr<FontFamily> _mainFont = nullptr;
   sptr<const OtfFont> _mathFont = nullptr;
 
 public:
@@ -146,15 +130,22 @@ public:
   /** Get font-spec from given id, return nullptr if not found. */
   static sptr<const OtfFont> getFont(i32 id);
 
+  /** Select math font by the given version name */
   void selectMathFont(const std::string& versionName);
 
+  /** Select main font by the given version name */
   void selectMainFont(const std::string& versionName);
 
+  /** Get math font currently in use */
   inline const OtfFont& mathFont() { return *_mathFont; }
 
+  /** Get the mu font id, it is the math font id */
   inline i32 muFontId() const { return _mathFont->_id; }
 
-  UniGlyph glyphOf(c32 codepoint, const std::string& versionName, bool isMathMode) const;
+  /** Get the char-object from given code and style */
+  Char getChar(c32 code, const std::string& style, bool isMathMode) const;
+
+  Char getChar(c32 code, FontStyle style, bool isMathMode) const;
 };
 
 }  // namespace tex
