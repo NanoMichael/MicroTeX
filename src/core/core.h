@@ -21,21 +21,21 @@ class BoxSplitter {
 public:
   struct Position {
     int _index;
-    sptr<HorizontalBox> _box;
+    sptr<HBox> _box;
 
-    Position(int index, const sptr<HorizontalBox>& box)
+    Position(int index, const sptr<HBox>& box)
       : _index(index), _box(box) {}
   };
 
 private:
-  static float canBreak(std::stack<Position>& stack, const sptr<HorizontalBox>& hbox, float width);
+  static float canBreak(std::stack<Position>& stack, const sptr<HBox>& hbox, float width);
 
-  static int getBreakPosition(const sptr<HorizontalBox>& hb, int index);
+  static int getBreakPosition(const sptr<HBox>& hb, int index);
 
 public:
   static sptr<Box> split(const sptr<Box>& box, float width, float lineSpace);
 
-  static sptr<Box> split(const sptr<HorizontalBox>& hb, float width, float lineSpace);
+  static sptr<Box> split(const sptr<HBox>& hb, float width, float lineSpace);
 };
 
 /**

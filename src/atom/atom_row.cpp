@@ -136,7 +136,7 @@ AtomType RowAtom::rightType() const {
 sptr<Box> RowAtom::createBox(Environment& env) {
   auto x = env.getTeXFont();
   TeXFont& tf = *x;
-  auto* hbox = new HorizontalBox();
+  auto* hbox = new HBox();
 
   // convert atoms to boxes and add to the horizontal box
   int e = _elements.size() - 1;

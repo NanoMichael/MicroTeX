@@ -57,7 +57,7 @@ sptr<Box> DelimiterFactory::create(const string& symbol, Environment& env, float
     return sptrOf<CharBox>(c);
   } else if (tf.isExtensionChar(c)) {
     // construct vertical box
-    auto* vBox = new VerticalBox();
+    auto* vBox = new VBox();
     Extension* ext = tf.getExtension(c, style);
 
     // insert top part
@@ -114,7 +114,7 @@ sptr<Box> XLeftRightArrowFactory::create(Environment& env, float width) {
   float swidth = left->_width + right->_width;
 
   if (width < swidth) {
-    auto* hb = new HorizontalBox(left);
+    auto* hb = new HBox(left);
     hb->add(sptrOf<StrutBox>(-min(swidth - width, left->_width), 0, 0, 0));
     hb->add(right);
     return sptr<Box>(hb);
@@ -126,7 +126,7 @@ sptr<Box> XLeftRightArrowFactory::create(Environment& env, float width) {
   float mwidth = minu->_width + kern->_width;
   swidth += 2 * kern->_width;
 
-  auto* hb = new HorizontalBox();
+  auto* hb = new HBox();
   float w = 0.f;
   for (w = 0; w < width - swidth - mwidth; w += mwidth) {
     hb->add(minu);
@@ -164,7 +164,7 @@ sptr<Box> XLeftRightArrowFactory::create(bool left, Environment& env, float widt
   sptr<Box> kern = SpaceAtom(UnitType::mu, -4.f, 0, 0).createBox(env);
   float mwidth = minu->_width + kern->_width;
   swidth += kern->_width;
-  auto* hb = new HorizontalBox();
+  auto* hb = new HBox();
   float w = 0.f;
   for (w = 0; w < width - swidth - mwidth; w += mwidth) {
     hb->add(minu);
@@ -192,7 +192,7 @@ sptr<Box> XLeftRightArrowFactory::create(bool left, Environment& env, float widt
 
 /************************************* horizontal box implementation ******************************/
 
-HorizontalBox::HorizontalBox(const sptr<Box>& b, float w, Alignment aligment) {
+HBox::HBox(const sptr<Box>& b, float w, Alignment aligment) {
   if (w == POS_INF) {
     add(b);
     return;
@@ -220,11 +220,11 @@ HorizontalBox::HorizontalBox(const sptr<Box>& b, float w, Alignment aligment) {
   }
 }
 
-HorizontalBox::HorizontalBox(const sptr<Box>& b) {
+HBox::HBox(const sptr<Box>& b) {
   add(b);
 }
 
-void HorizontalBox::recalculate(const Box& b) {
+void HBox::recalculate(const Box& b) {
   /**
    * Commented for ticket 764
    * \left(\!\!\!\begin{array}{c}n\\\\r\end{array}\!\!\!\right)+123
@@ -238,23 +238,23 @@ void HorizontalBox::recalculate(const Box& b) {
   _depth = max(x, b._depth + b._shift);
 }
 
-sptr<HorizontalBox> HorizontalBox::cloneBox() {
-  auto* b = new HorizontalBox();
+sptr<HBox> HBox::cloneBox() {
+  auto* b = new HBox();
   b->_shift = _shift;
-  return sptr<HorizontalBox>(b);
+  return sptr<HBox>(b);
 }
 
-void HorizontalBox::add(const sptr<Box>& b) {
+void HBox::add(const sptr<Box>& b) {
   recalculate(*b);
   Box::add(b);
 }
 
-void HorizontalBox::add(int pos, const sptr<Box>& b) {
+void HBox::add(int pos, const sptr<Box>& b) {
   recalculate(*b);
   Box::add(pos, b);
 }
 
-pair<sptr<HorizontalBox>, sptr<HorizontalBox>> HorizontalBox::split(int pos, int shift) {
+pair<sptr<HBox>, sptr<HBox>> HBox::split(int pos, int shift) {
   auto hb1 = cloneBox();
   auto hb2 = cloneBox();
   for (int i = 0; i <= pos; i++) {
@@ -276,7 +276,7 @@ pair<sptr<HorizontalBox>, sptr<HorizontalBox>> HorizontalBox::split(int pos, int
   return make_pair(hb1, hb2);
 }
 
-void HorizontalBox::draw(Graphics2D& g2, float x, float y) {
+void HBox::draw(Graphics2D& g2, float x, float y) {
   float xPos = x;
   for (const auto& box : _children) {
     box->draw(g2, xPos, y + box->_shift);
@@ -284,7 +284,7 @@ void HorizontalBox::draw(Graphics2D& g2, float x, float y) {
   }
 }
 
-int HorizontalBox::getLastFontId() {
+int HBox::getLastFontId() {
   int id = TeXFont::NO_FONT;
   for (int i = _children.size() - 1; i >= 0 && id == TeXFont::NO_FONT; i--)
     id = _children[i]->getLastFontId();
@@ -293,14 +293,14 @@ int HorizontalBox::getLastFontId() {
 
 /********************************** horizontal rule implementation ********************************/
 
-HorizontalRule::HorizontalRule(float thickness, float width, float shift)
+HRule::HRule(float thickness, float width, float shift)
   : _color(transparent), _speShift(0) {
   _height = thickness;
   _width = width;
   _shift = shift;
 }
 
-HorizontalRule::HorizontalRule(float thickness, float width, float shift, bool trueshift)
+HRule::HRule(float thickness, float width, float shift, bool trueshift)
   : _color(transparent), _speShift(0) {
   _height = thickness;
   _width = width;
@@ -312,7 +312,7 @@ HorizontalRule::HorizontalRule(float thickness, float width, float shift, bool t
   }
 }
 
-HorizontalRule::HorizontalRule(float thickness, float width, float shift, color c, bool trueshift)
+HRule::HRule(float thickness, float width, float shift, color c, bool trueshift)
   : _color(c), _speShift(0) {
   _height = thickness;
   _width = width;
@@ -324,7 +324,7 @@ HorizontalRule::HorizontalRule(float thickness, float width, float shift, color 
   }
 }
 
-void HorizontalRule::draw(Graphics2D& g2, float x, float y) {
+void HRule::draw(Graphics2D& g2, float x, float y) {
   const color oldColor = g2.getColor();
   if (!isTransparent(_color)) g2.setColor(_color);
   const Stroke& oldStroke = g2.getStroke();
@@ -335,13 +335,13 @@ void HorizontalRule::draw(Graphics2D& g2, float x, float y) {
   g2.setColor(oldColor);
 }
 
-int HorizontalRule::getLastFontId() {
+int HRule::getLastFontId() {
   return TeXFont::NO_FONT;
 }
 
 /************************************* vertical box implementation ********************************/
 
-VerticalBox::VerticalBox(const sptr<Box>& b, float rest, Alignment alignment)
+VBox::VBox(const sptr<Box>& b, float rest, Alignment alignment)
   : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {
   add(b);
   if (alignment == Alignment::center) {
@@ -361,13 +361,13 @@ VerticalBox::VerticalBox(const sptr<Box>& b, float rest, Alignment alignment)
   }
 }
 
-void VerticalBox::recalculateWidth(const Box& b) {
+void VBox::recalculateWidth(const Box& b) {
   _leftMostPos = min(_leftMostPos, b._shift);
   _rightMostPos = max(_rightMostPos, b._shift + (b._width > 0 ? b._width : 0));
   _width = _rightMostPos - _leftMostPos;
 }
 
-void VerticalBox::add(const sptr<Box>& b) {
+void VBox::add(const sptr<Box>& b) {
   Box::add(b);
   if (_children.size() == 1) {
     _height = b->_height;
@@ -378,7 +378,7 @@ void VerticalBox::add(const sptr<Box>& b) {
   recalculateWidth(*b);
 }
 
-void VerticalBox::add(const sptr<Box>& b, float interline) {
+void VBox::add(const sptr<Box>& b, float interline) {
   if (!_children.empty()) {
     auto s = sptrOf<StrutBox>(0, interline, 0, 0);
     add(s);
@@ -386,7 +386,7 @@ void VerticalBox::add(const sptr<Box>& b, float interline) {
   add(b);
 }
 
-void VerticalBox::add(int pos, const sptr<Box>& b) {
+void VBox::add(int pos, const sptr<Box>& b) {
   Box::add(pos, b);
   if (pos == 0) {
     _depth += b->_depth + _height;
@@ -397,7 +397,7 @@ void VerticalBox::add(int pos, const sptr<Box>& b) {
   recalculateWidth(*b);
 }
 
-void VerticalBox::draw(Graphics2D& g2, float x, float y) {
+void VBox::draw(Graphics2D& g2, float x, float y) {
   float yPos = y - _height;
   for (const auto& b : _children) {
     yPos += b->_height;
@@ -406,7 +406,7 @@ void VerticalBox::draw(Graphics2D& g2, float x, float y) {
   }
 }
 
-int VerticalBox::getLastFontId() {
+int VBox::getLastFontId() {
   int id = TeXFont::NO_FONT;
   for (int i = _children.size() - 1; i >= 0 && id == TeXFont::NO_FONT; i--) {
     id = _children[i]->getLastFontId();
@@ -414,9 +414,9 @@ int VerticalBox::getLastFontId() {
   return id;
 }
 
-OverBar::OverBar(const sptr<Box>& b, float kern, float thickness) : VerticalBox() {
+OverBar::OverBar(const sptr<Box>& b, float kern, float thickness) : VBox() {
   add(sptrOf<StrutBox>(0, thickness, 0, 0));
-  add(sptrOf<HorizontalRule>(thickness, b->_width, 0));
+  add(sptrOf<HRule>(thickness, b->_width, 0));
   add(sptrOf<StrutBox>(0, kern, 0, 0));
   add(b);
 }

@@ -54,26 +54,26 @@ public:
 };
 
 /***************************************************************************************************
- *                                        rule boxes                                             *
+ *                                        rule boxes                                               *
  ***************************************************************************************************/
 
 /** A box composed of a horizontal row of child boxes */
-class HorizontalBox : public Box {
+class HBox : public Box {
 private:
   void recalculate(const Box& b);
 
-  std::pair<sptr<HorizontalBox>, sptr<HorizontalBox>> split(int pos, int shift);
+  std::pair<sptr<HBox>, sptr<HBox>> split(int pos, int shift);
 
 public:
   std::vector<int> _breakPositions;
 
-  HorizontalBox() = default;
+  HBox() = default;
 
-  HorizontalBox(const sptr<Box>& b, float w, Alignment alignment);
+  HBox(const sptr<Box>& b, float w, Alignment alignment);
 
-  explicit HorizontalBox(const sptr<Box>& b);
+  explicit HBox(const sptr<Box>& b);
 
-  sptr<HorizontalBox> cloneBox();
+  sptr<HBox> cloneBox();
 
   void add(const sptr<Box>& b) override;
 
@@ -83,11 +83,11 @@ public:
     _breakPositions.push_back(pos);
   }
 
-  std::pair<sptr<HorizontalBox>, sptr<HorizontalBox>> split(int pos) {
+  std::pair<sptr<HBox>, sptr<HBox>> split(int pos) {
     return split(pos, 1);
   }
 
-  std::pair<sptr<HorizontalBox>, sptr<HorizontalBox>> splitRemove(int pos) {
+  std::pair<sptr<HBox>, sptr<HBox>> splitRemove(int pos) {
     return split(pos, 2);
   }
 
@@ -97,16 +97,16 @@ public:
 };
 
 /** A box composed of other boxes, put one above the other */
-class VerticalBox : public Box {
+class VBox : public Box {
 private:
   float _leftMostPos, _rightMostPos;
 
   void recalculateWidth(const Box& b);
 
 public:
-  VerticalBox() : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {}
+  VBox() : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {}
 
-  VerticalBox(const sptr<Box>& b, float rest, Alignment alignment);
+  VBox(const sptr<Box>& b, float rest, Alignment alignment);
 
   void add(const sptr<Box>& b) override;
 
@@ -127,7 +127,7 @@ public:
  * A box representing another box with a horizontal rule above it, with
  * appropriate kerning.
  */
-class OverBar : public VerticalBox {
+class OverBar : public VBox {
 public:
   OverBar() = delete;
 
@@ -174,19 +174,19 @@ public:
 };
 
 /** A box representing a horizontal line. */
-class HorizontalRule : public Box {
+class HRule : public Box {
 private:
   color _color;
   float _speShift;
 
 public:
-  HorizontalRule() = delete;
+  HRule() = delete;
 
-  HorizontalRule(float thickness, float width, float shift);
+  HRule(float thickness, float width, float shift);
 
-  HorizontalRule(float thickness, float width, float shift, bool trueShift);
+  HRule(float thickness, float width, float shift, bool trueShift);
 
-  HorizontalRule(float thickness, float width, float shift, color c, bool trueshift);
+  HRule(float thickness, float width, float shift, color c, bool trueshift);
 
   void draw(Graphics2D& g2, float x, float y) override;
 

@@ -113,19 +113,19 @@ If HAVE_LOG is defined, the program will output some logs (e.g.: the symbols par
 will produce the following box tree:
 
 ```
-0    HorizontalBox
-1    ├── HorizontalBox
+0    HBox
+1    ├── HBox
 2    │   ├── StrutBox
 2    │   ├── CharBox
 2    │   ├── StrutBox
-2    │   └── HorizontalBox
+2    │   └── HBox
 3    │       ├── CharBox
 3    │       └── OverBar
 4    │           ├── StrutBox
-4    │           ├── HorizontalRule
+4    │           ├── HRule
 4    │           ├── StrutBox
-4    │           └── HorizontalBox
-5    │               ├── HorizontalBox
+4    │           └── HBox
+5    │               ├── HBox
 6    │               │   ├── CharBox
 6    │               │   ├── GlueBox
 6    │               │   ├── CharBox
@@ -134,9 +134,9 @@ will produce the following box tree:
 6    │               │   ├── GlueBox
 6    │               │   ├── CharBox
 6    │               │   ├── GlueBox
-6    │               │   └── HorizontalBox
+6    │               │   └── HBox
 7    │               │       ├── CharBox
-7    │               │       ├── HorizontalBox
+7    │               │       ├── HBox
 8    │               │       │   ├── CharBox
 8    │               │       │   └── StrutBox
 7    │               │       └── StrutBox

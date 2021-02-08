@@ -45,7 +45,7 @@ sptr<Box> SymbolAtom::createBox(Environment& env) {
     cb = sptrOf<CharBox>(c);
     cb->_shift = -(cb->_height + cb->_depth) / 2.f - tf.getAxisHeight(style);
     float delta = c.getItalic();
-    auto hb = sptrOf<HorizontalBox>(cb);
+    auto hb = sptrOf<HBox>(cb);
     if (delta > PREC) hb->add(sptrOf<StrutBox>(delta, 0, 0, 0));
     return hb;
   }

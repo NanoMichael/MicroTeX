@@ -48,7 +48,7 @@ public:
 
   sptr<Box> createBox(Environment& env) override {
     auto b = DelimiterFactory::create(*_delim, env, _size);
-    auto* hb = new HorizontalBox();
+    auto* hb = new HBox();
     float h = b->_height;
     float total = h + b->_depth;
     float axis = env.getTeXFont()->getAxisHeight(env.getStyle());
@@ -94,20 +94,20 @@ public:
 
   sptr<Box> createBox(Environment& env) override {
     auto b = _base->createBox(env);
-    auto* vb = new VerticalBox();
+    auto* vb = new VBox();
     vb->add(b);
     Char ch = env.getTeXFont()->getChar("mathcedilla", env.getStyle());
     float italic = ch.getItalic();
     Box* cedilla = new CharBox(ch);
     Box* y;
     if (std::abs(italic) > PREC) {
-      y = new HorizontalBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
+      y = new HBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
       y->add(sptr<Box>(cedilla));
     } else {
       y = cedilla;
     }
 
-    Box* ce = new HorizontalBox(sptr<Box>(y), b->_width, Alignment::center);
+    Box* ce = new HBox(sptr<Box>(y), b->_width, Alignment::center);
     float x = 0.4f * SpaceAtom::getFactor(UnitType::mu, env);
     vb->add(sptrOf<StrutBox>(0, -x, 0, 0));
     vb->add(sptr<Box>(ce));
@@ -127,11 +127,11 @@ public:
     auto ldots = Formula::get(L"ldots")->_root->createBox(env);
     float w = ldots->_width;
     auto dot = SymbolAtom::get("ldotp")->createBox(env);
-    auto* hb1 = new HorizontalBox(dot, w, Alignment::left);
-    auto* hb2 = new HorizontalBox(dot, w, Alignment::center);
-    auto* hb3 = new HorizontalBox(dot, w, Alignment::right);
+    auto* hb1 = new HBox(dot, w, Alignment::left);
+    auto* hb2 = new HBox(dot, w, Alignment::center);
+    auto* hb3 = new HBox(dot, w, Alignment::right);
     sptr<Box> pt4(SpaceAtom(UnitType::mu, 0, 4, 0).createBox(env));
-    auto* vb = new VerticalBox();
+    auto* vb = new VBox();
     vb->add(sptr<Box>(hb1));
     vb->add(pt4);
     vb->add(sptr<Box>(hb2));
@@ -374,12 +374,12 @@ public:
     auto ldots = Formula::get(L"ldots")->_root->createBox(env);
     float w = ldots->_width;
     auto dot = SymbolAtom::get("ldotp")->createBox(env);
-    sptr<Box> hb1(new HorizontalBox(dot, w, Alignment::right));
-    sptr<Box> hb2(new HorizontalBox(dot, w, Alignment::center));
-    sptr<Box> hb3(new HorizontalBox(dot, w, Alignment::left));
+    sptr<Box> hb1(new HBox(dot, w, Alignment::right));
+    sptr<Box> hb2(new HBox(dot, w, Alignment::center));
+    sptr<Box> hb3(new HBox(dot, w, Alignment::left));
     sptr<Box> pt4 = SpaceAtom(UnitType::mu, 0, 4, 0).createBox(env);
 
-    auto* vb = new VerticalBox();
+    auto* vb = new VBox();
     vb->add(hb1);
     vb->add(pt4);
     vb->add(hb2);
@@ -409,7 +409,7 @@ public:
   sptr<Box> createBox(Environment& env) override {
     auto* I = new CharBox(env.getTeXFont()->getChar(_upper ? 'I' : 'i', "mathnormal", env.getStyle()));
     auto* J = new CharBox(env.getTeXFont()->getChar(_upper ? 'J' : 'j', "mathnormal", env.getStyle()));
-    auto* hb = new HorizontalBox(sptr<Box>(I));
+    auto* hb = new HBox(sptr<Box>(I));
     hb->add(SpaceAtom(UnitType::em, -0.065f, 0, 0).createBox(env));
     hb->add(sptr<Box>(J));
     return sptr<Box>(hb);
@@ -457,7 +457,7 @@ public:
 
   sptr<Box> createBox(Environment& env) override {
     auto b = _at->createBox(env);
-    auto* vb = new VerticalBox();
+    auto* vb = new VBox();
     vb->add(b);
     vb->_width = 0;
     switch (_type) {
@@ -504,7 +504,7 @@ public:
   sptr<Box> createBox(Environment& env) override {
     auto* A = new CharBox(env.getTeXFont()->getChar("textapos", env.getStyle()));
     auto* L = new CharBox(env.getTeXFont()->getChar(_upper ? 'L' : 'l', "mathnormal", env.getStyle()));
-    auto* hb = new HorizontalBox(sptr<Box>(L));
+    auto* hb = new HBox(sptr<Box>(L));
     if (_upper)
       hb->add(SpaceAtom(UnitType::em, -0.3f, 0, 0).createBox(env));
     else
@@ -551,7 +551,7 @@ public:
 
   sptr<Box> createBox(Environment& env) override {
     auto b = _base->createBox(env);
-    auto* vb = new VerticalBox();
+    auto* vb = new VBox();
     vb->add(b);
     Char ch = env.getTeXFont()->getChar("ogonek", env.getStyle());
     float italic = ch.getItalic();
@@ -559,13 +559,13 @@ public:
     Box* y = nullptr;
 
     if (std::abs(italic) > PREC) {
-      y = new HorizontalBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
+      y = new HBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
       y->add(sptr<Box>(ogonek));
     } else {
       y = ogonek;
     }
 
-    Box* og = new HorizontalBox(sptr<Box>(y), b->_width, Alignment::right);
+    Box* og = new HBox(sptr<Box>(y), b->_width, Alignment::right);
     vb->add(sptrOf<StrutBox>(0, -ogonek->_height, 0, 0));
     vb->add(sptr<Box>(og));
     float f = vb->_height + vb->_depth;
@@ -636,7 +636,7 @@ public:
 
     if (_hu == UnitType::none) return bbox;
 
-    auto* hbox = new HorizontalBox(bbox);
+    auto* hbox = new HBox(bbox);
     hbox->_height = _h * SpaceAtom::getFactor(_hu, env);
     hbox->_depth = _du == UnitType::none ? 0 : _d * SpaceAtom::getFactor(_du, env);
 
@@ -774,7 +774,7 @@ public:
     float w = SpaceAtom::getFactor(_wu, env) * _w;
     float h = SpaceAtom::getFactor(_hu, env) * _h;
     float r = SpaceAtom::getFactor(_ru, env) * _r;
-    return sptrOf<HorizontalRule>(h, w, r);
+    return sptrOf<HRule>(h, w, r);
   }
 
   __decl_clone(RuleAtom)
@@ -836,8 +836,8 @@ public:
     float axis = tf.getAxisHeight(style);
     float drt = tf.getDefaultRuleThickness(style);
     auto b = _at->createBox(env);
-    auto* rule = new HorizontalRule(drt, b->_width, -axis + drt, false);
-    auto* hb = new HorizontalBox();
+    auto* rule = new HRule(drt, b->_width, -axis + drt, false);
+    auto* hb = new HBox();
     hb->add(b);
     hb->add(sptrOf<StrutBox>(-b->_width, 0, 0, 0));
     hb->add(sptr<Box>(rule));
@@ -885,7 +885,7 @@ public:
     auto* A = new CharBox(a);
     Char t = env.getTeXFont()->getChar('t', "mathnormal", env.getStyle());
     auto* T = new CharBox(t);
-    auto* hb = new HorizontalBox(sptr<Box>(T));
+    auto* hb = new HBox(sptr<Box>(T));
     hb->add(SpaceAtom(UnitType::em, -0.3f, 0, 0).createBox(env));
     hb->add(sptr<Box>(A));
     return sptr<Box>(hb);
@@ -907,7 +907,7 @@ public:
     auto circle = SymbolAtom::get("bigcirc")->createBox(env);
     circle->_shift = -0.07f * SpaceAtom::getFactor(UnitType::ex, env);
     auto box = _at->createBox(env);
-    auto* hb = new HorizontalBox(box, circle->_width, Alignment::center);
+    auto* hb = new HBox(box, circle->_width, Alignment::center);
     hb->add(sptrOf<StrutBox>(-hb->_width, 0, 0, 0));
     hb->add(circle);
     return sptr<Box>(hb);
@@ -956,13 +956,13 @@ public:
     auto* B = new CharBox(ch);
     Box* y = nullptr;
     if (std::abs(italic) > PREC) {
-      y = new HorizontalBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
+      y = new HBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
       y->add(sptr<Box>(B));
     } else {
       y = B;
     }
-    Box* b = new HorizontalBox(sptr<Box>(y), T->_width, Alignment::center);
-    auto* vb = new VerticalBox();
+    Box* b = new HBox(sptr<Box>(y), T->_width, Alignment::center);
+    auto* vb = new VBox();
     vb->add(sptr<Box>(T));
     vb->add(sptrOf<StrutBox>(0, -0.5f * T->_width, 0, 0));
     vb->add(sptr<Box>(b));
@@ -1016,10 +1016,10 @@ public:
     );
 
     // create vertical box
-    auto* vb = new VerticalBox();
+    auto* vb = new VBox();
     vb->add(b);
     vb->add(sptrOf<StrutBox>(0, 3 * drt, 0, 0));
-    vb->add(sptrOf<HorizontalRule>(drt, b->_width, 0));
+    vb->add(sptrOf<HRule>(drt, b->_width, 0));
 
     // baseline vertical box = baseline box b
     // there's also an invisible strut of height drt under the rule
@@ -1085,7 +1085,7 @@ public:
     // center on axis
     b->_shift = -(total / 2) - axis;
 
-    return sptrOf<HorizontalBox>(b);
+    return sptrOf<HBox>(b);
   }
 
   __decl_clone(VCenteredAtom)
@@ -1096,7 +1096,7 @@ class VdotsAtom : public Atom {
 public:
   sptr<Box> createBox(Environment& env) override {
     auto dot = SymbolAtom::get("ldotp")->createBox(env);
-    auto* vb = new VerticalBox(dot, 0, Alignment::bottom);
+    auto* vb = new VBox(dot, 0, Alignment::bottom);
     auto b = SpaceAtom(UnitType::mu, 0, 4, 0).createBox(env);
     vb->add(b);
     vb->add(dot);
