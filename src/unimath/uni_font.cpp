@@ -30,12 +30,7 @@ c32 MathVersion::map(const c32 codepoint) const {
 OtfFont::OtfFont(i32 id, string fontFile, const string& clmFile)
   : _id(id), _fontFile(std::move(fontFile)), _otf(sptr<const Otf>(Otf::fromFile(clmFile.c_str()))) {}
 
-UniGlyph::UniGlyph(c32 unicode, const sptr<const OtfFont>& font)
-  : _unicode(unicode), _font(font) {
-  _glyph = font->_otf->glyphOfUnicode(unicode);
-}
-
-inline sptr<const OtfFont>& TextFont::operator[](const string& styleName) {
+inline sptr<const OtfFont>& FontFamily::operator[](const string& styleName) {
   return _styles[styleName];
 }
 
@@ -76,18 +71,18 @@ map<string, sptr<const MathVersion>> FontContext::_mathVersions{
 int FontContext::_lastId = 0;
 vector<sptr<const OtfFont>> FontContext::_fonts;
 
-map<string, sptr<TextFont>> FontContext::_mainFonts;
+map<string, sptr<FontFamily>> FontContext::_mainFonts;
 map<string, sptr<const OtfFont>> FontContext::_mathFonts;
 
 void FontContext::addMainFont(const string& versionName, const vector<FontSpec>& params) {
-  auto* ptr = new TextFont();
-  TextFont& f = *ptr;
+  auto* ptr = new FontFamily();
+  FontFamily& f = *ptr;
   for (const auto&[style, font, clm] : params) {
     auto otf = sptrOf<const OtfFont>(_lastId++, font, clm);
     _fonts.push_back(otf);
     f[style] = otf;
   }
-  _mainFonts[versionName] = sptr<TextFont>(ptr);
+  _mainFonts[versionName] = sptr<FontFamily>(ptr);
 }
 
 void FontContext::addMathFont(const FontSpec& params) {
@@ -116,16 +111,19 @@ void FontContext::selectMainFont(const string& versionName) {
   _mainFont = _mainFonts[versionName];
 }
 
-UniGlyph FontContext::glyphOf(c32 codepoint, const string& versionName, bool isMathMode) const {
+Char FontContext::getChar(c32 code, const string& style, bool isMathMode) const {
   if (isMathMode) {
-    const auto ptr = _mathVersions[versionName];
+    const auto ptr = _mathVersions[style];
     const MathVersion& version = ptr == nullptr ? *_mathVersions[""] : *ptr;
-    const c32 unicode = version.map(codepoint);
-    return UniGlyph(unicode, _mathFont);
+    const c32 unicode = version.map(code);
+    return {code, unicode, _mathFont->_id, _mathFont->_otf->glyphId(unicode)};
   } else {
-    sptr<const OtfFont> font = (*_mainFont)[versionName];
+    sptr<const OtfFont> font = (*_mainFont)[style];
     if (font == nullptr) font = (*_mainFont)[""];
     if (font == nullptr) font = _mathFont;
-    return UniGlyph(codepoint, font);
+    return {code, code, font->_id, font->_otf->glyphId(code)};
   }
+}
+
+Char FontContext::getChar(c32 code, FontStyle style, bool isMathMode) const {
 }
