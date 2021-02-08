@@ -116,12 +116,12 @@ Char FontContext::getChar(c32 code, const string& style, bool isMathMode) const 
     const auto ptr = _mathVersions[style];
     const MathVersion& version = ptr == nullptr ? *_mathVersions[""] : *ptr;
     const c32 unicode = version.map(code);
-    return {code, unicode, _mathFont->_id, _mathFont->_otf->glyphId(unicode)};
+    return {code, unicode, _mathFont->_id, _mathFont->otf().glyphId(unicode)};
   } else {
     sptr<const OtfFont> font = (*_mainFont)[style];
     if (font == nullptr) font = (*_mainFont)[""];
     if (font == nullptr) font = _mathFont;
-    return {code, code, font->_id, font->_otf->glyphId(code)};
+    return {code, code, font->_id, font->otf().glyphId(code)};
   }
 }
 

@@ -75,7 +75,7 @@ public:
   }
 
   inline i32 lastFontId() const {
-    return _lastFontId == FontContext::NO_FONT ? _tf->muFontId() : _lastFontId;
+    return _lastFontId == FontContext::NO_FONT ? _tf->mathFontId() : _lastFontId;
   }
 
 };

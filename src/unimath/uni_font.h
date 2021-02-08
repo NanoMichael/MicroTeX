@@ -44,6 +44,8 @@ struct OtfFont final {
   const sptr<const Otf> _otf;
 
   OtfFont(i32 id, std::string fontFile, const std::string& clmFile);
+
+  inline const Otf& otf() const { return *_otf; }
 };
 
 /** Represents a character with its font and glyph id */
@@ -136,11 +138,11 @@ public:
   /** Select main font by the given version name */
   void selectMainFont(const std::string& versionName);
 
-  /** Get math font currently in use */
+  /** Get the math font currently in use */
   inline const OtfFont& mathFont() { return *_mathFont; }
 
-  /** Get the mu font id, it is the math font id */
-  inline i32 muFontId() const { return _mathFont->_id; }
+  /** Get the id of the math font currently in use */
+  inline i32 mathFontId() const { return _mathFont->_id; }
 
   /** Get the char-object from given code and style */
   Char getChar(c32 code, const std::string& style, bool isMathMode) const;
