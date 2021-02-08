@@ -39,7 +39,7 @@ sptr<Box> FencedAtom::createBox(Environment& env) {
   float delta = max(content->_height - axis, content->_depth + axis);
   float minh = max(delta / 500.f * DELIMITER_FACTOR, 2 * delta - shortfall);
 
-  auto* hb = new HorizontalBox();
+  auto* hb = new HBox();
 
   if (!_middle.empty()) {
     for (const auto& atom : _middle) {
@@ -117,8 +117,8 @@ sptr<Box> FractionAtom::createBox(Environment& env) {
     : _denominator->createBox(*(env.dnomStyle()))
   );
 
-  if (num->_width < denom->_width) num = sptrOf<HorizontalBox>(num, denom->_width, _numAlign);
-  else denom = sptrOf<HorizontalBox>(denom, num->_width, _denomAlign);
+  if (num->_width < denom->_width) num = sptrOf<HBox>(num, denom->_width, _numAlign);
+  else denom = sptrOf<HBox>(denom, num->_width, _denomAlign);
 
   // calculate default shift amounts
   float shiftup, shiftdown;
@@ -132,7 +132,7 @@ sptr<Box> FractionAtom::createBox(Environment& env) {
   }
 
   // upper part of vertical box = numerator
-  auto* vb = new VerticalBox();
+  auto* vb = new VBox();
   vb->add(num);
 
   // calculate clearance clr, adjust shift amounts and create vertical box
@@ -161,7 +161,7 @@ sptr<Box> FractionAtom::createBox(Environment& env) {
 
     // fill vertical box
     vb->add(sptrOf<StrutBox>(0, kern1, 0, 0));
-    vb->add(sptrOf<HorizontalRule>(_thickness, num->_width, 0));
+    vb->add(sptrOf<HRule>(_thickness, num->_width, 0));
     vb->add(sptrOf<StrutBox>(0, kern2, 0, 0));
   } else {
     // without fraction rule
@@ -191,7 +191,7 @@ sptr<Box> FractionAtom::createBox(Environment& env) {
   // \nulldelimiterspace is set by default to 1.2pt = 0.12em
   float f = SpaceAtom::getSize(UnitType::em, 0.12f, env);
 
-  return sptrOf<HorizontalBox>(sptr<Box>(vb), vb->_width + 2 * f, Alignment::center);
+  return sptrOf<HBox>(sptr<Box>(vb), vb->_width + 2 * f, Alignment::center);
 }
 
 sptr<Box> LaTeXAtom::createBox(Environment& en) {
@@ -212,7 +212,7 @@ sptr<Box> LaTeXAtom::createBox(Environment& en) {
     Formula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = fontInfos;
 
   // L
-  auto* hb = new HorizontalBox(rm->popLastAtom()->createBox(env));
+  auto* hb = new HBox(rm->popLastAtom()->createBox(env));
   hb->add(SpaceAtom(UnitType::em, -0.35f * sc, 0, 0).createBox(env));
   float f = SpaceAtom(UnitType::ex, 0.45f * sc, 0, 0).createBox(env)->_width;
   float f1 = SpaceAtom(UnitType::ex, 0.5f * sc, 0, 0).createBox(env)->_width;
@@ -254,7 +254,7 @@ sptr<Box> NthRoot::createBox(Environment& env) {
   // cramped style for the formula under the root sign
   Environment& cramped = *(env.crampStyle());
   auto bs = _base->createBox(cramped);
-  auto b = sptrOf<HorizontalBox>(bs);
+  auto b = sptrOf<HBox>(bs);
   b->add(sptr<Box>(SpaceAtom(UnitType::mu, 1, 0, 0).createBox(cramped)));
 
   // create root sign
@@ -269,7 +269,7 @@ sptr<Box> NthRoot::createBox(Environment& env) {
   rootSign->_shift = -(b->_height + clr);
   auto ob = sptrOf<OverBar>(b, clr, rootSign->_height);
   ob->_shift = -(b->_height + clr + drt);
-  auto squareRoot = sptrOf<HorizontalBox>(rootSign);
+  auto squareRoot = sptrOf<HBox>(rootSign);
   squareRoot->add(ob);
 
   // simple square-root
@@ -285,7 +285,7 @@ sptr<Box> NthRoot::createBox(Environment& env) {
   sptr<Box> negkern = SpaceAtom(UnitType::mu, -10.f, 0, 0).createBox(env);
 
   // arrange both boxes together with the negative kerning
-  auto res = sptrOf<HorizontalBox>();
+  auto res = sptrOf<HBox>();
   float pos = r->_width + negkern->_width;
   if (pos < 0) res->add(sptrOf<StrutBox>(-pos, 0, 0, 0));
 
@@ -353,16 +353,16 @@ sptr<Box> UnderOverArrowAtom::createBox(Environment& env) {
     arrow = XLeftRightArrowFactory::create(_left, env, b->_width);
   }
 
-  auto* vb = new VerticalBox();
+  auto* vb = new VBox();
   if (_over) {
     vb->add(arrow);
     if (_dble) vb->add(sptrOf<StrutBox>(0, -sep, 0, 0));
-    vb->add(sptrOf<HorizontalBox>(b, arrow->_width, Alignment::center));
+    vb->add(sptrOf<HBox>(b, arrow->_width, Alignment::center));
     float h = vb->_depth + vb->_height;
     vb->_depth = b->_depth;
     vb->_height = h - b->_depth;
   } else {
-    vb->add(sptrOf<HorizontalBox>(b, arrow->_width, Alignment::center));
+    vb->add(sptrOf<HBox>(b, arrow->_width, Alignment::center));
     vb->add(sptrOf<StrutBox>(0, sep, 0, 0));
     vb->add(arrow);
     float h = vb->_depth + vb->_height;
@@ -391,10 +391,10 @@ sptr<Box> XArrowAtom::createBox(Environment& env) {
   float width = max(O->_width + 2 * oside->_width, U->_width + 2 * uside->_width);
   auto arrow = XLeftRightArrowFactory::create(_left, env, width);
 
-  auto ohb = sptrOf<HorizontalBox>(O, width, Alignment::center);
-  auto uhb = sptrOf<HorizontalBox>(U, width, Alignment::center);
+  auto ohb = sptrOf<HBox>(O, width, Alignment::center);
+  auto uhb = sptrOf<HBox>(U, width, Alignment::center);
 
-  auto vb = sptrOf<VerticalBox>();
+  auto vb = sptrOf<VBox>();
   vb->add(ohb);
   vb->add(sep);
   vb->add(arrow);
@@ -406,7 +406,7 @@ sptr<Box> XArrowAtom::createBox(Environment& env) {
   vb->_depth = d;
   vb->_height = h - d;
 
-  auto* hb = new HorizontalBox(vb, vb->_width + 2 * sep->_height, Alignment::center);
+  auto* hb = new HBox(vb, vb->_width + 2 * sep->_height, Alignment::center);
 
   return sptr<Box>(hb);
 }

@@ -59,7 +59,7 @@ void tex::print_box(const sptr<Box>& b) {
 #endif  // HAVE_LOG
 
 sptr<Box> BoxSplitter::split(const sptr<Box>& b, float width, float lineSpace) {
-  auto h = dynamic_pointer_cast<HorizontalBox>(b);
+  auto h = dynamic_pointer_cast<HBox>(b);
   sptr<Box> box;
   if (h != nullptr) {
     auto box = split(h, width, lineSpace);
@@ -83,13 +83,13 @@ sptr<Box> BoxSplitter::split(const sptr<Box>& b, float width, float lineSpace) {
   return b;
 }
 
-sptr<Box> BoxSplitter::split(const sptr<HorizontalBox>& hb, float width, float lineSpace) {
+sptr<Box> BoxSplitter::split(const sptr<HBox>& hb, float width, float lineSpace) {
   if (width == 0 || hb->_width <= width) return hb;
 
-  auto* vbox = new VerticalBox();
-  sptr<HorizontalBox> first, second;
+  auto* vbox = new VBox();
+  sptr<HBox> first, second;
   stack<Position> positions;
-  sptr<HorizontalBox> hbox = hb;
+  sptr<HBox> hbox = hb;
 
   while (hbox->_width > width && canBreak(positions, hbox, width) != hbox->_width) {
     Position pos = positions.top();
@@ -118,7 +118,7 @@ sptr<Box> BoxSplitter::split(const sptr<HorizontalBox>& hb, float width, float l
   return hbox;
 }
 
-float BoxSplitter::canBreak(stack<Position>& s, const sptr<HorizontalBox>& hbox, const float width) {
+float BoxSplitter::canBreak(stack<Position>& s, const sptr<HBox>& hbox, const float width) {
   const vector<sptr<Box>>& children = hbox->_children;
   const int count = children.size();
   // Cumulative width
@@ -129,7 +129,7 @@ float BoxSplitter::canBreak(stack<Position>& s, const sptr<HorizontalBox>& hbox,
     cumWidth[i + 1] = cumWidth[i] + box->_width;
     if (cumWidth[i + 1] <= width) continue;
     int pos = getBreakPosition(hbox, i);
-    auto h = dynamic_pointer_cast<HorizontalBox>(box);
+    auto h = dynamic_pointer_cast<HBox>(box);
     if (h != nullptr) {
       stack<Position> sub;
       float w = canBreak(sub, h, width - cumWidth[i]);
@@ -161,7 +161,7 @@ float BoxSplitter::canBreak(stack<Position>& s, const sptr<HorizontalBox>& hbox,
   return hbox->_width;
 }
 
-int BoxSplitter::getBreakPosition(const sptr<HorizontalBox>& hb, int i) {
+int BoxSplitter::getBreakPosition(const sptr<HBox>& hb, int i) {
   if (hb->_breakPositions.empty()) return -1;
 
   if (hb->_breakPositions.size() == 1 && hb->_breakPositions[0] <= i)

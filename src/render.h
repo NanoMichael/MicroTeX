@@ -124,7 +124,7 @@ public:
     }
     if (i) {
       // Currently isMaxWidth==true does not work with
-      // Alignment::center or Alignment::right (see HorizontalBox constructor)
+      // Alignment::center or Alignment::right (see HBox constructor)
       //
       // The case (1) we don't support by setting align := Alignment::left
       // here is this:

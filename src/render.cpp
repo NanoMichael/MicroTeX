@@ -66,7 +66,7 @@ void TeXRender::setWidth(int width, Alignment align) {
   // FIXME
   // only care if new width larger than old
   if (diff > 0) {
-    _box = sptrOf<HorizontalBox>(_box, (float)width, align);
+    _box = sptrOf<HBox>(_box, (float)width, align);
   }
 }
 
@@ -75,7 +75,7 @@ void TeXRender::setHeight(int height, Alignment align) {
   // FIXME
   // only care if new height larger than old
   if (diff > 0) {
-    _box = sptrOf<VerticalBox>(_box, diff, align);
+    _box = sptrOf<VBox>(_box, diff, align);
   }
 }
 
@@ -133,13 +133,13 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
   auto box = f->createBox(*te);
   TeXRender* ti = nullptr;
   if (_widthUnit != UnitType::none && _textWidth != 0) {
-    HorizontalBox* hb = nullptr;
+    HBox* hb = nullptr;
     if (_lineSpaceUnit != UnitType::none && _lineSpace != 0) {
       float il = _lineSpace * SpaceAtom::getFactor(_lineSpaceUnit, *te);
       auto b = BoxSplitter::split(box, te->getTextWidth(), il);
-      hb = new HorizontalBox(b, _isMaxWidth ? b->_width : te->getTextWidth(), _align);
+      hb = new HBox(b, _isMaxWidth ? b->_width : te->getTextWidth(), _align);
     } else {
-      hb = new HorizontalBox(box, _isMaxWidth ? box->_width : te->getTextWidth(), _align);
+      hb = new HBox(box, _isMaxWidth ? box->_width : te->getTextWidth(), _align);
     }
     ti = new TeXRender(sptr<Box>(hb), _textSize, _trueValues);
   } else {

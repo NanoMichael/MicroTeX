@@ -325,7 +325,7 @@ sptr<Box> MatrixAtom::generateMulticolumn(
 
   if (b->_width >= w) return b;
 
-  return sptrOf<HorizontalBox>(b, w, mca->align());
+  return sptrOf<HBox>(b, w, mca->align());
 }
 
 MatrixAtom::MatrixAtom(bool isPartial, const sptr<ArrayFormula>& arr, const wstring& options, bool spaceAround) {
@@ -492,12 +492,12 @@ sptr<Box> MatrixAtom::createBox(Environment& e) {
   // Recalculate the height of the row
   recalculateLine(rows, boxarr, listMultiRow, lineHeight, lineDepth, drt, Vsep->_height);
 
-  auto* vb = new VerticalBox();
+  auto* vb = new VBox();
   float totalHeight = 0;
   float Vspace = Vsep->_height / 2;
 
   for (int i = 0; i < rows; i++) {
-    auto hb = sptrOf<HorizontalBox>();
+    auto hb = sptrOf<HBox>();
     for (int j = 0; j < cols; j++) {
       switch (boxarr[i][j]->_type) {
         case AtomType::none:
@@ -550,7 +550,7 @@ sptr<Box> MatrixAtom::createBox(Environment& e) {
         case AtomType::interText: {
           float f = env.getTextWidth();
           f = f == POS_INF ? colWidth[j] : f;
-          hb = sptrOf<HorizontalBox>(boxarr[i][j], f, Alignment::left);
+          hb = sptrOf<HBox>(boxarr[i][j], f, Alignment::left);
           j = cols;
         }
           break;
@@ -648,7 +648,7 @@ sptr<Box> MulticolumnAtom::createBox(Environment& env) {
   sptr<Box> b = (
     _width == 0
     ? _cols->createBox(env)
-    : sptrOf<HorizontalBox>(_cols->createBox(env), _width, _align)
+    : sptrOf<HBox>(_cols->createBox(env), _width, _align)
   );
   b->_type = AtomType::multiColumn;
   return b;
@@ -656,7 +656,7 @@ sptr<Box> MulticolumnAtom::createBox(Environment& env) {
 
 sptr<Box> HdotsforAtom::createBox(float space, const sptr<Box>& b, Environment& env) {
   auto sb = sptrOf<StrutBox>(0, space, 0, 0);
-  auto vb = sptrOf<VerticalBox>();
+  auto vb = sptrOf<VBox>();
   vb->add(sb);
   vb->add(b);
   vb->add(sb);
@@ -676,21 +676,21 @@ sptr<Box> HdotsforAtom::createBox(Environment& env) {
 
   // Only one dot can be placed in
   if (count == 0) {
-    auto b = sptrOf<HorizontalBox>(dot, _width, Alignment::center);
+    auto b = sptrOf<HBox>(dot, _width, Alignment::center);
     return createBox(space, b, env);
   }
 
   // Adjust the space between
   space += (x - count) * space / count;
   auto sb = sptrOf<StrutBox>(space, 0, 0, 0);
-  auto b = sptrOf<HorizontalBox>();
+  auto b = sptrOf<HBox>();
   for (int i = 0; i < count; i++) {
     b->add(dot);
     b->add(sb);
   }
   b->add(dot);
 
-  auto hb = sptrOf<HorizontalBox>(b, _width, Alignment::center);
+  auto hb = sptrOf<HBox>(b, _width, Alignment::center);
   return createBox(space, hb, env);
 }
 
@@ -701,19 +701,19 @@ sptr<Box> MultlineAtom::createBox(Environment& env) {
   if (tw == POS_INF || _lineType == MultiLineType::gathered)
     return MatrixAtom(_isPartial, _column, L"").createBox(env);
 
-  auto* vb = new VerticalBox();
+  auto* vb = new VBox();
   auto atom = _column->_array[0][0];
   Alignment alignment = _lineType == MultiLineType::gather ? Alignment::center : Alignment::left;
   if (atom->_alignment != Alignment::none) alignment = atom->_alignment;
 
-  vb->add(sptrOf<HorizontalBox>(atom->createBox(env), tw, alignment));
+  vb->add(sptrOf<HBox>(atom->createBox(env), tw, alignment));
   auto Vsep = _vsep_in.createBox(env);
   for (size_t i = 1; i < _column->rows() - 1; i++) {
     atom = _column->_array[i][0];
     alignment = Alignment::center;
     if (atom->_alignment != Alignment::none) alignment = atom->_alignment;
     vb->add(Vsep);
-    vb->add(sptrOf<HorizontalBox>(atom->createBox(env), tw, alignment));
+    vb->add(sptrOf<HBox>(atom->createBox(env), tw, alignment));
   }
 
   if (_column->rows() > 1) {
@@ -721,7 +721,7 @@ sptr<Box> MultlineAtom::createBox(Environment& env) {
     alignment = _lineType == MultiLineType::gather ? Alignment::center : Alignment::right;
     if (atom->_alignment != Alignment::none) alignment = atom->_alignment;
     vb->add(Vsep);
-    vb->add(sptrOf<HorizontalBox>(atom->createBox(env), tw, alignment));
+    vb->add(sptrOf<HBox>(atom->createBox(env), tw, alignment));
   }
 
   float h = vb->_height + vb->_depth;
