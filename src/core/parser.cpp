@@ -353,11 +353,11 @@ wstring TeXParser::getCommandWithArgs(const wstring& command) {
   // return as format: \cmd[opt][...]{arg}{...}
 
   vector<wstring> mac_args;
-  getOptsArgs(mac->_nbArgs, mac_opts, mac_args);
+  getOptsArgs(mac->_argc, mac_opts, mac_args);
   wstring mac_arg(L"\\");
   mac_arg.append(command);
   for (int j = 0; j < mac->_posOpts; j++) {
-    wstring arg_t = mac_args[mac->_nbArgs + j + 1];
+    wstring arg_t = mac_args[mac->_argc + j + 1];
     if (!arg_t.empty()) {
       mac_arg.append(L"[");
       mac_arg.append(arg_t);
@@ -365,7 +365,7 @@ wstring TeXParser::getCommandWithArgs(const wstring& command) {
     }
   }
 
-  for (int j = 0; j < mac->_nbArgs; j++) {
+  for (int j = 0; j < mac->_argc; j++) {
     wstring arg_t = mac_args[j + 1];
     if (!arg_t.empty()) {
       mac_arg.append(L"{");
@@ -418,18 +418,18 @@ wstring TeXParser::forwardFromCurrentPos() {
   return sub;
 }
 
-void TeXParser::getOptsArgs(int nbArgs, int opts, vector<wstring>& args) {
+void TeXParser::getOptsArgs(int argc, int opts, vector<wstring>& args) {
   /*
    * A maximum of 10 options can be passed to a command,
    * the value will be added at the tail of the args if found any
    */
-  args.resize(nbArgs + 10 + 1 + 1);
-  if (nbArgs != 0) {
+  args.resize(argc + 10 + 1 + 1);
+  if (argc != 0) {
     // we get the options just after the command name
     if (opts == 1) {
-      int j = nbArgs + 1;
+      int j = argc + 1;
       try {
-        for (; j < nbArgs + 11; j++) {
+        for (; j < argc + 11; j++) {
           skipWhiteSpace();
           args[j] = getGroup(L_BRACK, R_BRACK);
         }
@@ -453,9 +453,9 @@ void TeXParser::getOptsArgs(int nbArgs, int opts, vector<wstring>& args) {
 
     // we get the options after the first argument
     if (opts == 2) {
-      int j = nbArgs + 1;
+      int j = argc + 1;
       try {
-        for (; j < nbArgs + 11; j++) {
+        for (; j < argc + 11; j++) {
           skipWhiteSpace();
           args[j] = getGroup(L_BRACK, R_BRACK);
         }
@@ -465,7 +465,7 @@ void TeXParser::getOptsArgs(int nbArgs, int opts, vector<wstring>& args) {
     }
 
     // we get the next arguments
-    for (int i = 2; i <= nbArgs; i++) {
+    for (int i = 2; i <= argc; i++) {
       skipWhiteSpace();
       try {
         args[i] = getGroup(L_GROUP, R_GROUP);
@@ -530,7 +530,7 @@ sptr<Atom> TeXParser::processCommands(const wstring& command) {
   int opts = mac->_posOpts;
 
   vector<wstring> args;
-  getOptsArgs(mac->_nbArgs, opts, args);
+  getOptsArgs(mac->_argc, opts, args);
   args[0] = command;
 
   if (NewCommandMacro::isMacro(command)) {
@@ -711,7 +711,7 @@ void TeXParser::preprocess(wstring& cmd, vector<wstring>& args, int& pos) {
 
 void TeXParser::preprocessNewCmd(wstring& cmd, vector<wstring>& args, int& pos) {
   MacroInfo* const mac = MacroInfo::_commands[cmd];
-  getOptsArgs(mac->_nbArgs, mac->_posOpts, args);
+  getOptsArgs(mac->_argc, mac->_posOpts, args);
   mac->invoke(*this, args);
   _latex.erase(pos, _pos - pos);
   _len = _latex.length();
@@ -720,7 +720,7 @@ void TeXParser::preprocessNewCmd(wstring& cmd, vector<wstring>& args, int& pos) 
 
 void TeXParser::inflateNewCmd(wstring& cmd, vector<wstring>& args, int& pos) {
   MacroInfo* const mac = MacroInfo::_commands[cmd];
-  getOptsArgs(mac->_nbArgs, mac->_posOpts, args);
+  getOptsArgs(mac->_argc, mac->_posOpts, args);
   args[0] = cmd;
   try {
     mac->invoke(*this, args);
@@ -748,10 +748,10 @@ void TeXParser::inflateEnv(wstring& cmd, vector<wstring>& args, int& pos) {
   }
   MacroInfo* const mac = it->second;
   vector<wstring> optargs;
-  getOptsArgs(mac->_nbArgs - 1, 0, optargs);
+  getOptsArgs(mac->_argc - 1, 0, optargs);
   wstring grp = getGroup(L"\\begin{" + args[1] + L"}", L"\\end{" + args[1] + L"}");
   wstring expr = L"{\\makeatletter \\" + args[1] + L"@env";
-  for (int i = 1; i <= mac->_nbArgs - 1; i++) expr += L"{" + optargs[i] + L"}";
+  for (int i = 1; i <= mac->_argc - 1; i++) expr += L"{" + optargs[i] + L"}";
   expr += L"{" + grp + L"}\\makeatother}";
   _latex.replace(pos, _pos - pos, expr);
   _len = _latex.length();
@@ -881,7 +881,8 @@ void TeXParser::parse() {
           throw ex_parse(
             "Found a closing '" +
             tostring((char) R_GROUP) +
-            "' without an opening '" + tostring((char) L_GROUP) + "'!");
+            "' without an opening '" + tostring((char) L_GROUP) + "'!"
+          );
         }
         // End of a group
         return;

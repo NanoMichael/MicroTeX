@@ -317,7 +317,7 @@ public:
   /**
    * Get the arguments and the options of a command
    *
-   * @param nbArgs the number of arguments of the command
+   * @param argc the number of arguments of the command
    * @param opts
    *   must be 1 if the options are found before the first argument,
    *   and must be 2 if they must be found before the second argument,
@@ -325,7 +325,7 @@ public:
    *
    * @param args a vector to put with argument strings
    */
-  void getOptsArgs(int nbArgs, int opts, std::vector<std::wstring>& args);
+  void getOptsArgs(int argc, int opts, std::vector<std::wstring>& args);
 
   /**
    * Test the validity of the name of a command. It must contains only alpha

@@ -69,7 +69,7 @@ void NewCommandMacro::addRenewCommand(
 void NewCommandMacro::execute(TeXParser& tp, vector<wstring>& args) {
   wstring code = _codes[args[0]];
   wstring rep;
-  int nbargs = args.size() - 12;
+  size_t argc = args.size() - 12;
   int dec = 0;
 
   auto it = _replacements.find(args[0]);
@@ -79,17 +79,17 @@ void NewCommandMacro::execute(TeXParser& tp, vector<wstring>& args) {
   // Example:
   //      \newcommand{\cmd}[2][\sqrt{e^x}]{ #2 - #1 }
   // we want the optional argument "\sqrt{e^x}" keep the slash sign
-  if (!args[nbargs + 1].empty()) {
+  if (!args[argc + 1].empty()) {
     dec = 1;
-    // quotereplace(args[nbargs + 1], rep);
-    replaceall(code, L"#1", args[nbargs + 1]);
+    // quotereplace(args[argc + 1], rep);
+    replaceall(code, L"#1", args[argc + 1]);
   } else if (it != _replacements.end()) {
     dec = 1;
     // quotereplace(it->second, rep);
     replaceall(code, L"#1", it->second);
   }
 
-  for (int i = 1; i <= nbargs; i++) {
+  for (int i = 1; i <= argc; i++) {
     rep = args[i];
     replaceall(code, L"#" + towstring(i + dec), rep);
   }

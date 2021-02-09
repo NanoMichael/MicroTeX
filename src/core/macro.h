@@ -98,7 +98,7 @@ public:
   static void addMacro(const std::wstring& name, MacroInfo* mac);
 
   // Number of arguments
-  const int _nbArgs;
+  const int _argc;
   // Options' position, can be  0, 1 and 2
   // 0 represents this macro has no options
   // 1 represents the options appear after the command name, e.g.:
@@ -107,11 +107,11 @@ public:
   //      \scalebox{0.5}[2]{\LaTeX}
   const int _posOpts;
 
-  MacroInfo() : _nbArgs(0), _posOpts(0) {}
+  MacroInfo() : _argc(0), _posOpts(0) {}
 
-  MacroInfo(int argc, int posOpts) : _nbArgs(argc), _posOpts(posOpts) {}
+  MacroInfo(int argc, int posOpts) : _argc(argc), _posOpts(posOpts) {}
 
-  explicit MacroInfo(int argc) : _nbArgs(argc), _posOpts(0) {}
+  explicit MacroInfo(int argc) : _argc(argc), _posOpts(0) {}
 
   inline bool hasOptions() const {
     return _posOpts != 0;
