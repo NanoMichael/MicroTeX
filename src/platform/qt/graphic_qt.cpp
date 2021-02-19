@@ -28,7 +28,7 @@ QMap<QString, QString> Font_qt::_loaded_families;
 
 namespace tex {
 // Some wstrings arrive with a \0 at end, so we remove when converting
-QString wstring_to_QString(const wstring& ws)
+QString wstring_to_QString(const std::wstring& ws)
 {
   QString out = QString::fromStdWString(ws);
   auto index = out.indexOf('\0');
@@ -130,7 +130,7 @@ sptr<Font> Font::_create(const string& name, int style, float size) {
 
 /**************************************************************************************************/
 
-TextLayout_qt::TextLayout_qt(const wstring& src, const sptr<Font_qt>& f) :
+TextLayout_qt::TextLayout_qt(const std::wstring& src, const sptr<Font_qt>& f) :
   _font(f->getQFont()),
   _text(wstring_to_QString(src))
 {
@@ -152,7 +152,7 @@ void TextLayout_qt::draw(Graphics2D& g2, float x, float y) {
   g.getQPainter()->drawText(QPointF(x, y), _text);
 }
 
-sptr<TextLayout> TextLayout::create(const wstring& src, const sptr<Font>& font) {
+sptr<TextLayout> TextLayout::create(const std::wstring& src, const sptr<Font>& font) {
   sptr<Font_qt> f = static_pointer_cast<Font_qt>(font);
   return sptr<TextLayout>(new TextLayout_qt(src, f));
 }
@@ -285,11 +285,11 @@ float Graphics2D_qt::sy() const {
 }
 
 void Graphics2D_qt::drawChar(wchar_t c, float x, float y) {
-  wstring str = {c};
+  std::wstring str = {c};
   drawText(str, x, y);
 }
 
-void Graphics2D_qt::drawText(const wstring& t, float x, float y) {
+void Graphics2D_qt::drawText(const std::wstring& t, float x, float y) {
 
   _painter->setFont(_font->getQFont());
 

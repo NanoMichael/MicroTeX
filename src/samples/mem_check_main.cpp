@@ -52,7 +52,7 @@ public:
   }
 };
 
-sptr<TextLayout> TextLayout::create(const wstring& src, const sptr<Font>& font) {
+sptr<TextLayout> TextLayout::create(const std::wstring& src, const sptr<Font>& font) {
   return sptr<TextLayout>(new TextLayout_none());
 }
 
@@ -123,7 +123,7 @@ public:
   void drawChar(wchar_t c, float x, float y) override {
   }
 
-  void drawText(const wstring& c, float x, float y) override {
+  void drawText(const std::wstring& c, float x, float y) override {
   }
 
   void drawLine(float x1, float y1, float x2, float y2) override {

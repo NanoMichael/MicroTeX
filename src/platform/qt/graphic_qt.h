@@ -59,7 +59,7 @@ private:
   QString _text;
 
 public:
-  TextLayout_qt(const wstring& src, const sptr<Font_qt>& font);
+  TextLayout_qt(const std::wstring& src, const sptr<Font_qt>& font);
 
   virtual void getBounds(_out_ Rect& r) override;
 
@@ -117,7 +117,7 @@ public:
 
   virtual void drawChar(wchar_t c, float x, float y) override;
 
-  virtual void drawText(const wstring& t, float x, float y) override;
+  virtual void drawText(const std::wstring& t, float x, float y) override;
 
   virtual void drawLine(float x, float y1, float x2, float y2) override;
 

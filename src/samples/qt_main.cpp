@@ -11,12 +11,12 @@ int main(int argc, char **argv)
 {
   QApplication app(argc, argv);
 
-  LaTeX::init();
+  tex::LaTeX::init();
   MainWindow mainwin;
   mainwin.show();
   int retn = app.exec();
 
-  LaTeX::release();
+  tex::LaTeX::release();
   return retn;
 }
 

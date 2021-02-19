@@ -76,7 +76,7 @@ public:
     }
   }
 
-  void setLaTeX(const wstring& latex) {
+  void setLaTeX(const std::wstring& latex) {
     if (_render != nullptr) delete _render;
 
     _render = LaTeX::parse(
@@ -233,7 +233,7 @@ protected:
   }
 
   void on_rendering_clicked() {
-    wstring x;
+    std::wstring x;
     utf82wide(_tex_editor.get_buffer()->get_text().c_str(), x);
     _tex.setLaTeX(x);
     _save.set_sensitive(_tex.isRenderDisplayed());
@@ -268,7 +268,7 @@ public:
   float _padding = 10.f;
   float _maxWidth = 720.f;
 
-  void generateSingle(const wstring& code, const string& file) {
+  void generateSingle(const std::wstring& code, const string& file) {
     auto r = LaTeX::parse(code, _maxWidth, _textSize, _textSize / 3.f, _foreground);
     const float w = r->getWidth() + _padding * 2;
     const float h = r->getHeight() + _padding * 2;
@@ -301,7 +301,7 @@ public:
       __print(ANSI_COLOR_RED "Error: the option '-output' must be specified\n" ANSI_RESET);
       return 1;
     }
-    wstring code;
+    std::wstring code;
     utf82wide(_input.c_str(), code);
     generateSingle(code, _outputFile);
     return 0;

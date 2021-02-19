@@ -147,7 +147,7 @@ void HandleRandom() {
   }
   RECT r;
   GetClientRect(hCanvas, &r);
-  _render = LaTeX::parse(wstring(tex::SAMPLES[idx]), r.right - r.left, _size, _size / 3.f, _color);
+  _render = LaTeX::parse(std::wstring(tex::SAMPLES[idx]), r.right - r.left, _size, _size / 3.f, _color);
   InvalidateRect(hCanvas, NULL, TRUE);
   UpdateWindow(hCanvas);
 }
@@ -161,7 +161,7 @@ void HandleOK() {
   }
   RECT r;
   GetClientRect(hCanvas, &r);
-  _render = LaTeX::parse(wstring(txt), r.right - r.left, _size, _size / 3.f, _color);
+  _render = LaTeX::parse(std::wstring(txt), r.right - r.left, _size, _size / 3.f, _color);
   InvalidateRect(hCanvas, NULL, TRUE);
   UpdateWindow(hCanvas);
   delete[] txt;
