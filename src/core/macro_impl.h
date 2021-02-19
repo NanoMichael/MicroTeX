@@ -1319,13 +1319,14 @@ inline macro(coloncolonapprox) {
 }
 
 inline macro(smallfrowneq) {
-  sptr<Atom> u(new UnderOverAtom(
+  sptr<Atom> u = sptrOf<UnderOverAtom>(
     SymbolAtom::get("equals"),
     SymbolAtom::get("smallfrown"),
     UnitType::mu,
     -2,
     true,
-    true));
+    true
+  );
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, u);
 }
 
@@ -1367,11 +1368,6 @@ inline macro(Dstrok) {
   auto* a = new RowAtom(sptr<Atom>(vra));
   a->add(sptrOf<RomanAtom>(sptrOf<CharAtom>('D', tp._formula->_textStyle)));
   return sptr<Atom>(a);
-}
-
-inline macro(kern) {
-  auto[unit, value] = SpaceAtom::getLength(args[1]);
-  return sptrOf<SpaceAtom>(unit, value, 0, 0);
 }
 
 inline macro(char) {
@@ -1526,6 +1522,8 @@ inline macro(normal) {
 }
 
 /***************************************** implement at .cpp **************************************/
+
+macro(kern);
 
 macro(hvspace);
 

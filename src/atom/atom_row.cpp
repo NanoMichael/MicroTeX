@@ -187,7 +187,11 @@ sptr<Box> RowAtom::createBox(Environment& env) {
 
     // insert glue, unless it's the first element of the row
     // or this element or the next is a kerning
-    if (i != 0 && _previousAtom != nullptr && !_previousAtom->isKern() && !atom->isKern()) {
+    if (i != 0
+        && _previousAtom != nullptr
+        && !_previousAtom->isKern()
+        && !atom->isKern()
+      ) {
       hbox->add(Glue::get(_previousAtom->rightType(), atom->leftType(), env));
     }
 
@@ -195,7 +199,10 @@ sptr<Box> RowAtom::createBox(Environment& env) {
     atom->setPreviousAtom(_previousAtom);
     auto b = atom->createBox(env);
     auto* cb = dynamic_cast<CharBox*>(b.get());
-    if (cb != nullptr && atom->isCharInMathMode()) {
+    if (cb != nullptr
+        && atom->isCharInMathMode()
+        && dynamic_cast<CharSymbol*>(nextAtom.get()) != nullptr
+      ) {
       // When we have a single char, we need to add italic correction
       // As an example: (TVY) looks crappy...
       cb->addItalicCorrectionToWidth();

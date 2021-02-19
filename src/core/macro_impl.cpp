@@ -9,6 +9,11 @@ using namespace std;
 
 namespace tex {
 
+macro(kern) {
+  auto[unit, value] = tp.getLength();
+  return sptrOf<SpaceAtom>(unit, value, 0, 0);
+}
+
 macro(hvspace) {
   size_t i;
   for (i = 0; i < args[1].length() && !isalpha(args[1][i]); i++);
