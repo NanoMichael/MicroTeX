@@ -51,7 +51,7 @@ private:
   bool _textSymbol = false;
 
 public:
-  AtomType type = AtomType::none;
+  AtomType _type = AtomType::none;
 
   Dummy() = delete;
 
@@ -62,17 +62,17 @@ public:
   explicit Dummy(const sptr<Atom>& atom) {
     _textSymbol = false;
     _atom = atom;
-    type = AtomType::none;
+    _type = AtomType::none;
   }
 
   /** @return the changed type, or the old left type if it has not been changed */
   inline AtomType leftType() const {
-    return (type != AtomType::none ? type : _atom->leftType());
+    return (_type != AtomType::none ? _type : _atom->leftType());
   }
 
   /** @return the changed type, or the old right type if it has not been changed */
   inline AtomType rightType() const {
-    return (type != AtomType::none ? type : _atom->rightType());
+    return (_type != AtomType::none ? _type : _atom->rightType());
   }
 
   /** Test if this atom is a char-symbol. */

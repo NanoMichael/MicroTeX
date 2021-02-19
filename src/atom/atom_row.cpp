@@ -24,7 +24,7 @@ inline sptr<CharFont> Dummy::getCharFont(TeXFont& tf) const {
 void Dummy::changeAtom(const sptr<FixedCharAtom>& atom) {
   _textSymbol = false;
   _atom = atom;
-  type = AtomType::none;
+  _type = AtomType::none;
 }
 
 sptr<Box> Dummy::createBox(Environment& env) {
@@ -112,13 +112,13 @@ void RowAtom::changeToOrd(Dummy* cur, Dummy* prev, Atom* next) {
   AtomType type = cur->leftType();
   if ((type == AtomType::binaryOperator)
       && ((prev == nullptr || _binSet[static_cast<i8>(prev->rightType())]) || next == nullptr)) {
-    cur->type = AtomType::ordinary;
+    cur->_type = AtomType::ordinary;
   } else if (next != nullptr && cur->rightType() == AtomType::binaryOperator) {
     AtomType nextType = next->leftType();
     if (nextType == AtomType::relation
         || nextType == AtomType::closing
         || nextType == AtomType::punctuation) {
-      cur->type = AtomType::ordinary;
+      cur->_type = AtomType::ordinary;
     }
   }
 }
