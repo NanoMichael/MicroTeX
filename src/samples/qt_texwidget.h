@@ -18,14 +18,14 @@ class TeXWidget : public QWidget
   float getTextSize();
 
   void setTextSize(float size);
-  void setLaTeX(const wstring& latex);
+  void setLaTeX(const std::wstring& latex);
   bool isRenderDisplayed();
   int getRenderWidth();
   int getRenderHeight();
   void paintEvent(QPaintEvent* event);
 
  private:
-  TeXRender* _render;
+  tex::TeXRender* _render;
   float _text_size;
   int _padding;
 };

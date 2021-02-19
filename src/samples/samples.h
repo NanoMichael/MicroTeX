@@ -11,10 +11,12 @@
 
 namespace tex {
 
+using namespace std;
+
 class Samples {
 private:
   int _index;
-  vector<wstring> _samples;
+  vector<std::wstring> _samples;
 
   void readSamples(const string& file = "") {
     string path = file;
@@ -51,9 +53,9 @@ private:
 public:
   Samples(const string& file = "") : _index(0) { readSamples(file); }
 
-  const wstring& next() {
+  const std::wstring& next() {
     if (_index >= _samples.size()) _index = 0;
-    const wstring& x = _samples[_index];
+    const std::wstring& x = _samples[_index];
     _index++;
     return x;
   }

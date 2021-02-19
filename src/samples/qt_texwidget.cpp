@@ -2,6 +2,8 @@
 
 #include "qt_texwidget.h"
 
+using namespace tex;
+
 TeXWidget::TeXWidget(QWidget* parent, float text_size)
   : QWidget(parent),
     _render(nullptr),
@@ -33,7 +35,7 @@ void TeXWidget::setTextSize(float size)
   }
 }
 
-void TeXWidget::setLaTeX(const wstring& latex)
+void TeXWidget::setLaTeX(const std::wstring& latex)
 {
   if (_render != nullptr) delete _render;
 

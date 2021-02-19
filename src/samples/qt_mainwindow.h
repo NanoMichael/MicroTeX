@@ -28,7 +28,7 @@ protected:
   QTextEdit* _textedit;
   QSpinBox* _sizespin;
 
-  Samples _samples;
+  tex::Samples _samples;
 };
 
 #endif
