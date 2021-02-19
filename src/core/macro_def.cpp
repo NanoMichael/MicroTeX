@@ -273,7 +273,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_coloncolonsim, "coloncolonsim"),
     mac(0, macro_colonapprox, "colonapprox"),
     mac(0, macro_coloncolonapprox, "coloncolonapprox"),
-    mac(1, macro_kern, "kern"),
+    mac(0, macro_kern, "kern"),
     mac(1, macro_char, "char"),
     mac(1, macro_romannumeral, "roman"),
     mac(1, macro_romannumeral, "Roman"),

@@ -657,17 +657,18 @@ sptr<Atom> TeXParser::getArgument() {
 pair<UnitType, float> TeXParser::getLength() {
   if (_pos == _len) return make_pair(UnitType::none, -1.f);
 
-  int spos;
   wchar_t ch = L'\0';
 
   skipWhiteSpace();
-  spos = _pos;
-  while (_pos < _len && ch != ' ') {
+  const int start = _pos;
+  while (_pos < _len && ch != ' ' && ch != ESCAPE) {
     ch = _latex[_pos++];
   }
-  skipWhiteSpace();
+  const int end = _pos;
+  if (ch == '\\') _pos--;
+  else skipWhiteSpace();
 
-  return SpaceAtom::getLength(_latex.substr(spos, _pos - spos - 1));
+  return SpaceAtom::getLength(_latex.substr(start, end - start - 1));
 }
 
 bool TeXParser::replaceScript() {
