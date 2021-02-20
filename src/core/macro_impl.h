@@ -16,7 +16,7 @@
 namespace tex {
 
 #ifndef macro
-#define macro(name) sptr<Atom> macro_##name(TeXParser& tp, std::vector<std::wstring>& args)
+#define macro(name) sptr<Atom> macro_##name(TeXParser& tp, Args& args)
 #endif
 
 #ifdef GRAPHICS_DEBUG
@@ -797,7 +797,9 @@ inline macro(mathbf) {
 }
 
 inline macro(bf) {
-  return sptrOf<BoldAtom>(sptrOf<RomanAtom>(Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root));
+  return sptrOf<BoldAtom>(
+    sptrOf<RomanAtom>(Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root)
+  );
 }
 
 inline macro(mathtt) {
@@ -1053,28 +1055,31 @@ inline macro(mathcumsub) {
   );
 }
 
-inline macro(dotminus) {
-  sptr<Atom> a = sptrOf<UnderOverAtom>(
-    SymbolAtom::get("minus"),
-    SymbolAtom::get("normaldot"),
+inline sptr<Atom> _underover(
+  const std::string& base,
+  const std::string& script,
+  float space) {
+  return sptrOf<UnderOverAtom>(
+    SymbolAtom::get(base),
+    SymbolAtom::get(script),
     UnitType::mu,
-    -3.3f,
+    space,
     false,
     true
   );
+}
+
+inline sptr<Atom> _colon() {
+  return _underover("normaldot", "normaldot", 5.2f);
+}
+
+inline macro(dotminus) {
+  sptr<Atom> a = _underover("minus", "normaldot", -3.3f);
   return sptrOf<TypedAtom>(AtomType::binaryOperator, AtomType::binaryOperator, a);
 }
 
 inline macro(ratio) {
-  sptr<Atom> a = sptrOf<UnderOverAtom>(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true
-  );
-  return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, a);
+  return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, _colon());
 }
 
 inline macro(geoprop) {
@@ -1098,29 +1103,14 @@ inline macro(geoprop) {
 inline macro(minuscolon) {
   auto* ra = new RowAtom(SymbolAtom::get("minus"));
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.095f, 0, 0));
-  sptr<Atom> colon = sptrOf<UnderOverAtom>(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true
-  );
-  ra->add(colon);
+  ra->add(_colon());
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(ra));
 }
 
 inline macro(minuscoloncolon) {
   auto* ra = new RowAtom(SymbolAtom::get("minus"));
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.095f, 0, 0));
-  sptr<Atom> colon = sptrOf<UnderOverAtom>(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true
-  );
+  sptr<Atom> colon = _colon();
   ra->add(colon);
   ra->add(colon);
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(ra));
@@ -1129,27 +1119,14 @@ inline macro(minuscoloncolon) {
 inline macro(simcolon) {
   auto* ra = new RowAtom(SymbolAtom::get("sim"));
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.095f, 0, 0));
-  sptr<Atom> colon(new UnderOverAtom(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true));
-  ra->add(colon);
+  ra->add(_colon());
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(ra));
 }
 
 inline macro(simcoloncolon) {
   auto* ra = new RowAtom(SymbolAtom::get("sim"));
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.095f, 0, 0));
-  sptr<Atom> colon(new UnderOverAtom(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true));
+  sptr<Atom> colon = _colon();
   ra->add(colon);
   ra->add(colon);
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(ra));
@@ -1158,27 +1135,14 @@ inline macro(simcoloncolon) {
 inline macro(approxcolon) {
   auto* ra = new RowAtom(SymbolAtom::get("approx"));
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.095f, 0, 0));
-  sptr<Atom> colon(new UnderOverAtom(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true));
-  ra->add(colon);
+  ra->add(_colon());
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(ra));
 }
 
 inline macro(approxcoloncolon) {
   auto* ra = new RowAtom(SymbolAtom::get("approx"));
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.095f, 0, 0));
-  sptr<Atom> colon(new UnderOverAtom(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true));
+  sptr<Atom> colon = _colon();
   ra->add(colon);
   ra->add(colon);
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(ra));
@@ -1187,54 +1151,28 @@ inline macro(approxcoloncolon) {
 inline macro(equalscolon) {
   auto* ra = new RowAtom(SymbolAtom::get("equals"));
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.095f, 0, 0));
-  sptr<Atom> colon(new UnderOverAtom(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true));
-  ra->add(colon);
+  ra->add(_colon());
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(ra));
 }
 
 inline macro(equalscoloncolon) {
   auto* ra = new RowAtom(SymbolAtom::get("equals"));
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.095f, 0, 0));
-  sptr<Atom> colon(new UnderOverAtom(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true));
+  sptr<Atom> colon = _colon();
   ra->add(colon);
   ra->add(colon);
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(ra));
 }
 
 inline macro(colonminus) {
-  sptr<Atom> u(new UnderOverAtom(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true));
-  auto* ra = new RowAtom(u);
+  auto* ra = new RowAtom(_colon());
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.32f, 0, 0));
   ra->add(SymbolAtom::get("minus"));
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(ra));
 }
 
 inline macro(coloncolonminus) {
-  sptr<Atom> u(new UnderOverAtom(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true));
+  sptr<Atom> u = _colon();
   auto* ra = new RowAtom(u);
   ra->add(u);
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.32f, 0, 0));
@@ -1243,27 +1181,14 @@ inline macro(coloncolonminus) {
 }
 
 inline macro(colonequals) {
-  sptr<Atom> u(new UnderOverAtom(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true));
-  auto* ra = new RowAtom(u);
+  auto* ra = new RowAtom(_colon());
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.32f, 0, 0));
   ra->add(SymbolAtom::get("equals"));
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(ra));
 }
 
 inline macro(coloncolonequals) {
-  sptr<Atom> u(new UnderOverAtom(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true));
+  sptr<Atom> u = _colon();
   auto* ra = new RowAtom(u);
   ra->add(u);
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.32f, 0, 0));
@@ -1272,40 +1197,21 @@ inline macro(coloncolonequals) {
 }
 
 inline macro(coloncolon) {
-  sptr<Atom> u(new UnderOverAtom(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true));
+  sptr<Atom> u = _colon();
   auto* ra = new RowAtom(u);
   ra->add(u);
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(ra));
 }
 
 inline macro(colonsim) {
-  sptr<Atom> u(new UnderOverAtom(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true));
-  auto* ra = new RowAtom(u);
+  auto* ra = new RowAtom(_colon());
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.32f, 0, 0));
   ra->add(SymbolAtom::get("sim"));
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(ra));
 }
 
 inline macro(coloncolonsim) {
-  sptr<Atom> u(new UnderOverAtom(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true));
+  sptr<Atom> u = _colon();
   auto* ra = new RowAtom(u);
   ra->add(u);
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.32f, 0, 0));
@@ -1314,27 +1220,14 @@ inline macro(coloncolonsim) {
 }
 
 inline macro(colonapprox) {
-  sptr<Atom> u(new UnderOverAtom(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true));
-  auto* ra = new RowAtom(u);
+  auto* ra = new RowAtom(_colon());
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.32f, 0, 0));
   ra->add(SymbolAtom::get("approx"));
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(ra));
 }
 
 inline macro(coloncolonapprox) {
-  sptr<Atom> u(new UnderOverAtom(
-    SymbolAtom::get("normaldot"),
-    SymbolAtom::get("normaldot"),
-    UnitType::mu,
-    5.2f,
-    false,
-    true));
+  sptr<Atom> u = _colon();
   auto* ra = new RowAtom(u);
   ra->add(u);
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.32f, 0, 0));
@@ -1524,9 +1417,7 @@ inline macro(insertBreakMark) {
 
 /**************************************** limits macros *******************************************/
 
-inline sptr<Atom> _macro_limitsType(
-  TeXParser& tp, std::vector<std::wstring>& args, LimitsType type  //
-) {
+inline sptr<Atom> _limits_type(TeXParser& tp, Args& args, LimitsType type) {
   auto atom = tp.popLastAtom();
   auto copy = atom->clone();
   copy->_limitsType = type;
@@ -1534,15 +1425,15 @@ inline sptr<Atom> _macro_limitsType(
 }
 
 inline macro(nolimits) {
-  return _macro_limitsType(tp, args, LimitsType::noLimits);
+  return _limits_type(tp, args, LimitsType::noLimits);
 }
 
 inline macro(limits) {
-  return _macro_limitsType(tp, args, LimitsType::limits);
+  return _limits_type(tp, args, LimitsType::limits);
 }
 
 inline macro(normal) {
-  return _macro_limitsType(tp, args, LimitsType::normal);
+  return _limits_type(tp, args, LimitsType::normal);
 }
 
 /***************************************** implement at .cpp **************************************/
