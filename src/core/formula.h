@@ -32,7 +32,7 @@ struct FontInfos {
  * These formula's can be built using the built-in primitive TeX parser (methods
  * with String arguments) or using other Formula objects. Most methods have
  * (an) equivalent(s) where one or more Formula arguments are replaced with
- * String arguments. These are just shorter notations, because all they do is
+ * string arguments. These are just shorter notations, because all they do is
  * parse the string(s) to Formula's and call an equivalent method with (a)
  * Formula argument(s). Most methods also come in 2 variants. One kind will
  * use this Formula to build another mathematical construction and then

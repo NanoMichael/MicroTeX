@@ -149,7 +149,7 @@ inline macro(frac) {
 }
 
 inline macro(over) {
-  auto num = tp.getFormulaAtom();
+  auto num = tp.popFormulaAtom();
   auto den = Formula(tp, tp.getOverArgument(), false)._root;
   if (num == nullptr || den == nullptr)
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
@@ -157,21 +157,21 @@ inline macro(over) {
 }
 
 inline macro(atop) {
-  auto num = tp.getFormulaAtom();
+  auto num = tp.popFormulaAtom();
   auto den = Formula(tp, tp.getOverArgument(), false)._root;
   if (num == nullptr || den == nullptr)
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
   return sptrOf<FractionAtom>(num, den, false);
 }
 
-inline sptr<Atom> _macro_choose(
+inline sptr<Atom> _choose(
   const std::string& left, const std::string& right,
   TeXParser& tp, std::vector<std::wstring>& args
 ) {
-  auto num = tp.getFormulaAtom();
+  auto num = tp.popFormulaAtom();
   auto den = Formula(tp, tp.getOverArgument(), false)._root;
   if (num == nullptr || den == nullptr)
-    throw ex_parse("Both numerator and denominator of choos can't be empty!");
+    throw ex_parse("Both numerator and denominator of choose can't be empty!");
   auto f = sptrOf<FractionAtom>(num, den, false);
   auto l = sptrOf<SymbolAtom>(left, AtomType::opening, true);
   auto r = sptrOf<SymbolAtom>(right, AtomType::closing, true);
@@ -179,22 +179,22 @@ inline sptr<Atom> _macro_choose(
 }
 
 inline macro(choose) {
-  return _macro_choose("lbrack", "rbrack", tp, args);
+  return _choose("lbrack", "rbrack", tp, args);
 }
 
 inline macro(brack) {
-  return _macro_choose("lsqbrack", "rsqbrack", tp, args);
+  return _choose("lsqbrack", "rsqbrack", tp, args);
 }
 
 inline macro(bangle) {
-  return _macro_choose("langle", "rangle", tp, args);
+  return _choose("langle", "rangle", tp, args);
 }
 
 inline macro(brace) {
-  return _macro_choose("lbrace", "rbrace", tp, args);
+  return _choose("lbrace", "rbrace", tp, args);
 }
 
-inline sptr<Atom> _marco_cancel(
+inline sptr<Atom> _cancel(
   int cancelType,
   TeXParser& tp, std::vector<std::wstring>& args) {
   auto base = Formula(tp, args[1], false)._root;
@@ -204,15 +204,15 @@ inline sptr<Atom> _marco_cancel(
 }
 
 inline macro(cancel) {
-  return _marco_cancel(CancelAtom::SLASH, tp, args);
+  return _cancel(CancelAtom::SLASH, tp, args);
 }
 
 inline macro(bcancel) {
-  return _marco_cancel(CancelAtom::BACKSLASH, tp, args);
+  return _cancel(CancelAtom::BACKSLASH, tp, args);
 }
 
 inline macro(xcancel) {
-  return _marco_cancel(CancelAtom::CROSS, tp, args);
+  return _cancel(CancelAtom::CROSS, tp, args);
 }
 
 inline macro(binom) {
@@ -221,13 +221,13 @@ inline macro(binom) {
   if (num._root == nullptr || den._root == nullptr)
     throw ex_parse("Both binomial coefficients must be not empty!");
   auto f = sptrOf<FractionAtom>(num._root, den._root, false);
-  sptr<SymbolAtom> s1(new SymbolAtom("lbrack", AtomType::opening, true));
-  sptr<SymbolAtom> s2(new SymbolAtom("rbrack", AtomType::closing, true));
-  return sptrOf<FencedAtom>(f, s1, s2);
+  sptr<SymbolAtom> l(new SymbolAtom("lbrack", AtomType::opening, true));
+  sptr<SymbolAtom> r(new SymbolAtom("rbrack", AtomType::closing, true));
+  return sptrOf<FencedAtom>(f, l, r);
 }
 
 inline macro(above) {
-  auto num = tp.getFormulaAtom();
+  auto num = tp.popFormulaAtom();
   auto[unit, value] = tp.getLength();
   auto den = Formula(tp, tp.getOverArgument(), false)._root;
   if (num == nullptr || den == nullptr)
@@ -369,7 +369,7 @@ inline macro(prescript) {
   return sptrOf<TypedAtom>(AtomType::ordinary, AtomType::ordinary, base);
 }
 
-inline sptr<Atom> _macro_overunder(
+inline sptr<Atom> _overunder(
   TeXParser& tp,
   std::vector<std::wstring>& args,
   const std::string& name,
@@ -386,27 +386,27 @@ inline sptr<Atom> _macro_overunder(
 }
 
 inline macro(underbrace) {
-  return _macro_overunder(tp, args, "rbrace", false);
+  return _overunder(tp, args, "rbrace", false);
 }
 
 inline macro(overbrace) {
-  return _macro_overunder(tp, args, "lbrace", true);
+  return _overunder(tp, args, "lbrace", true);
 }
 
 inline macro(underbrack) {
-  return _macro_overunder(tp, args, "rsqbrack", false);
+  return _overunder(tp, args, "rsqbrack", false);
 }
 
 inline macro(overbrack) {
-  return _macro_overunder(tp, args, "lsqbrack", true);
+  return _overunder(tp, args, "lsqbrack", true);
 }
 
 inline macro(underparen) {
-  return _macro_overunder(tp, args, "rbrack", false);
+  return _overunder(tp, args, "rbrack", false);
 }
 
 inline macro(overparen) {
-  return _macro_overunder(tp, args, "lbrack", true);
+  return _overunder(tp, args, "lbrack", true);
 }
 
 inline macro(overline) {
@@ -417,44 +417,50 @@ inline macro(underline) {
   return sptrOf<UnderlinedAtom>(Formula(tp, args[1], false)._root);
 }
 
+inline sptr<Atom> _math_type(TeXParser& tp, Args& args, AtomType type) {
+  return sptrOf<TypedAtom>(type, type, Formula(tp, args[1], false)._root);
+}
+
 inline macro(mathop) {
-  auto a = sptrOf<TypedAtom>(AtomType::bigOperator, AtomType::bigOperator, Formula(tp, args[1], false)._root);
+  auto a = _math_type(tp, args, AtomType::bigOperator);
   a->_limitsType = LimitsType::noLimits;
   return a;
 }
 
 inline macro(mathpunct) {
-  return sptrOf<TypedAtom>(AtomType::punctuation, AtomType::punctuation, Formula(tp, args[1], false)._root);
+  return _math_type(tp, args, AtomType::punctuation);
 }
 
 inline macro(mathord) {
-  return sptrOf<TypedAtom>(AtomType::ordinary, AtomType::ordinary, Formula(tp, args[1], false)._root);
+  return _math_type(tp, args, AtomType::ordinary);
 }
 
 inline macro(mathrel) {
-  return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, Formula(tp, args[1], false)._root);
+  return _math_type(tp, args, AtomType::relation);
 }
 
 inline macro(mathinner) {
-  return sptrOf<TypedAtom>(AtomType::inner, AtomType::inner, Formula(tp, args[1], false)._root);
+  return _math_type(tp, args, AtomType::inner);
 }
 
 inline macro(mathbin) {
-  return sptr<Atom>(
-    new TypedAtom(AtomType::binaryOperator, AtomType::binaryOperator, Formula(tp, args[1], false)._root));
+  return _math_type(tp, args, AtomType::binaryOperator);
 }
 
 inline macro(mathopen) {
-  return sptrOf<TypedAtom>(AtomType::opening, AtomType::opening, Formula(tp, args[1], false)._root);
+  return _math_type(tp, args, AtomType::opening);
 }
 
 inline macro(mathclose) {
-  return sptrOf<TypedAtom>(AtomType::closing, AtomType::closing, Formula(tp, args[1], false)._root);
+  return _math_type(tp, args, AtomType::closing);
 }
 
 inline macro(joinrel) {
-  return sptr<Atom>(
-    new TypedAtom(AtomType::relation, AtomType::relation, sptrOf<SpaceAtom>(UnitType::mu, -2.6f, 0, 0)));
+  return sptrOf<TypedAtom>(
+    AtomType::relation,
+    AtomType::relation,
+    sptrOf<SpaceAtom>(UnitType::mu, -2.6f, 0, 0)
+  );
 }
 
 inline macro(smash) {
@@ -467,13 +473,11 @@ inline macro(vdots) {
 }
 
 inline macro(ddots) {
-  return sptrOf<TypedAtom>(
-    AtomType::inner, AtomType::inner, sptrOf<DdtosAtom>());
+  return sptrOf<TypedAtom>(AtomType::inner, AtomType::inner, sptrOf<DdtosAtom>());
 }
 
 inline macro(iddots) {
-  return sptrOf<TypedAtom>(
-    AtomType::inner, AtomType::inner, sptrOf<IddotsAtom>());
+  return sptrOf<TypedAtom>(AtomType::inner, AtomType::inner, sptrOf<IddotsAtom>());
 }
 
 inline macro(leftparenthesis) {
@@ -498,7 +502,12 @@ inline macro(cr) {
     arr.add(tp._formula->_root);
     arr.addRow();
     TeXParser parser(
-      tp.isPartial(), tp.forwardFromCurrentPos(), &arr, false, tp.isMathMode());
+      tp.isPartial(),
+      tp.forwardBalancedGroup(),
+      &arr,
+      false,
+      tp.isMathMode()
+    );
     parser.parse();
     arr.checkDimensions();
     tp._formula->_root = arr.getAsVRow();
@@ -693,7 +702,7 @@ inline macro(questeq) {
 }
 
 inline macro(stackrel) {
-  sptr<Atom> a(new UnderOverAtom(
+  sptr<Atom> a = sptrOf<UnderOverAtom>(
     Formula(tp, args[2], false)._root,
     Formula(tp, args[3], false)._root,
     UnitType::mu,
@@ -702,12 +711,13 @@ inline macro(stackrel) {
     Formula(tp, args[1], false)._root,
     UnitType::mu,
     2.5f,
-    true));
+    true
+  );
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, a);
 }
 
 inline macro(stackbin) {
-  sptr<Atom> a(new UnderOverAtom(
+  sptr<Atom> a = sptrOf<UnderOverAtom>(
     Formula(tp, args[2], false)._root,
     Formula(tp, args[3], false)._root,
     UnitType::mu,
@@ -716,29 +726,32 @@ inline macro(stackbin) {
     Formula(tp, args[1], false)._root,
     UnitType::mu,
     2.5f,
-    true));
+    true
+  );
   return sptrOf<TypedAtom>(AtomType::binaryOperator, AtomType::binaryOperator, a);
 }
 
 inline macro(overset) {
-  sptr<Atom> a(new UnderOverAtom(
+  sptr<Atom> a = sptrOf<UnderOverAtom>(
     Formula(tp, args[2], false)._root,
     Formula(tp, args[1], false)._root,
     UnitType::mu,
     2.5f,
     true,
-    true));
+    true
+  );
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, a);
 }
 
 inline macro(underset) {
-  sptr<Atom> a(new UnderOverAtom(
+  sptr<Atom> a = sptrOf<UnderOverAtom>(
     Formula(tp, args[2], false)._root,
     Formula(tp, args[1], false)._root,
     UnitType::mu,
     0.5f,
     true,
-    false));
+    false
+  );
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, a);
 }
 
@@ -828,7 +841,7 @@ inline macro(phantom) {
     new PhantomAtom(Formula(tp, args[1], false)._root, true, true, true));
 }
 
-inline sptr<Atom> _macro_big(
+inline sptr<Atom> _big(
   TeXParser& tp,
   std::vector<std::wstring>& args,
   int size,
@@ -842,29 +855,29 @@ inline sptr<Atom> _macro_big(
   return t;
 }
 
-inline macro(big) { return _macro_big(tp, args, 1); }
+inline macro(big) { return _big(tp, args, 1); }
 
-inline macro(Big) { return _macro_big(tp, args, 2); }
+inline macro(Big) { return _big(tp, args, 2); }
 
-inline macro(bigg) { return _macro_big(tp, args, 3); }
+inline macro(bigg) { return _big(tp, args, 3); }
 
-inline macro(Bigg) { return _macro_big(tp, args, 4); }
+inline macro(Bigg) { return _big(tp, args, 4); }
 
-inline macro(bigl) { return _macro_big(tp, args, 1, AtomType::opening); }
+inline macro(bigl) { return _big(tp, args, 1, AtomType::opening); }
 
-inline macro(Bigl) { return _macro_big(tp, args, 2, AtomType::opening); }
+inline macro(Bigl) { return _big(tp, args, 2, AtomType::opening); }
 
-inline macro(biggl) { return _macro_big(tp, args, 3, AtomType::opening); }
+inline macro(biggl) { return _big(tp, args, 3, AtomType::opening); }
 
-inline macro(Biggl) { return _macro_big(tp, args, 4, AtomType::opening); }
+inline macro(Biggl) { return _big(tp, args, 4, AtomType::opening); }
 
-inline macro(bigr) { return _macro_big(tp, args, 1, AtomType::closing); }
+inline macro(bigr) { return _big(tp, args, 1, AtomType::closing); }
 
-inline macro(Bigr) { return _macro_big(tp, args, 2, AtomType::closing); }
+inline macro(Bigr) { return _big(tp, args, 2, AtomType::closing); }
 
-inline macro(biggr) { return _macro_big(tp, args, 3, AtomType::closing); }
+inline macro(biggr) { return _big(tp, args, 3, AtomType::closing); }
 
-inline macro(Biggr) { return _macro_big(tp, args, 4, AtomType::closing); }
+inline macro(Biggr) { return _big(tp, args, 4, AtomType::closing); }
 
 inline macro(displaystyle) {
   auto g = Formula(tp, tp.getOverArgument(), false)._root;
@@ -1026,33 +1039,41 @@ inline macro(hline) {
 
 inline macro(mathcumsup) {
   return sptrOf<CumulativeScriptsAtom>(
-    tp.popLastAtom(), nullptr, Formula(tp, args[1])._root);
+    tp.popLastAtom(),
+    nullptr,
+    Formula(tp, args[1])._root
+  );
 }
 
 inline macro(mathcumsub) {
   return sptrOf<CumulativeScriptsAtom>(
-    tp.popLastAtom(), Formula(tp, args[1])._root, nullptr);
+    tp.popLastAtom(),
+    Formula(tp, args[1])._root,
+    nullptr
+  );
 }
 
 inline macro(dotminus) {
-  sptr<Atom> a(new UnderOverAtom(
+  sptr<Atom> a = sptrOf<UnderOverAtom>(
     SymbolAtom::get("minus"),
     SymbolAtom::get("normaldot"),
     UnitType::mu,
     -3.3f,
     false,
-    true));
+    true
+  );
   return sptrOf<TypedAtom>(AtomType::binaryOperator, AtomType::binaryOperator, a);
 }
 
 inline macro(ratio) {
-  sptr<Atom> a(new UnderOverAtom(
+  sptr<Atom> a = sptrOf<UnderOverAtom>(
     SymbolAtom::get("normaldot"),
     SymbolAtom::get("normaldot"),
     UnitType::mu,
     5.2f,
     false,
-    true));
+    true
+  );
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, a);
 }
 
@@ -1060,7 +1081,7 @@ inline macro(geoprop) {
   auto ddot = sptrOf<RowAtom>(SymbolAtom::get("normaldot"));
   ddot->add(sptrOf<SpaceAtom>(UnitType::mu, 4, 0, 0));
   ddot->add(SymbolAtom::get("normaldot"));
-  sptr<Atom> a(new UnderOverAtom(
+  sptr<Atom> a = sptrOf<UnderOverAtom>(
     SymbolAtom::get("minus"),
     ddot,
     UnitType::mu,
@@ -1069,20 +1090,22 @@ inline macro(geoprop) {
     ddot,
     UnitType::mu,
     -3.4f,
-    false));
+    false
+  );
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, a);
 }
 
 inline macro(minuscolon) {
   auto* ra = new RowAtom(SymbolAtom::get("minus"));
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.095f, 0, 0));
-  sptr<Atom> colon(new UnderOverAtom(
+  sptr<Atom> colon = sptrOf<UnderOverAtom>(
     SymbolAtom::get("normaldot"),
     SymbolAtom::get("normaldot"),
     UnitType::mu,
     5.2f,
     false,
-    true));
+    true
+  );
   ra->add(colon);
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(ra));
 }
@@ -1090,13 +1113,14 @@ inline macro(minuscolon) {
 inline macro(minuscoloncolon) {
   auto* ra = new RowAtom(SymbolAtom::get("minus"));
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.095f, 0, 0));
-  sptr<Atom> colon(new UnderOverAtom(
+  sptr<Atom> colon = sptrOf<UnderOverAtom>(
     SymbolAtom::get("normaldot"),
     SymbolAtom::get("normaldot"),
     UnitType::mu,
     5.2f,
     false,
-    true));
+    true
+  );
   ra->add(colon);
   ra->add(colon);
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(ra));
