@@ -78,7 +78,7 @@ void TeXParser::init(
   bool isPartial,
   const wstring& latex,
   Formula* formula,
-  bool firstPass  //
+  bool firstPass
 ) {
   _pos = _spos = _len = 0;
   _line = _col = 0;
@@ -127,7 +127,7 @@ sptr<Atom> TeXParser::popLastAtom() const {
   return a;
 }
 
-sptr<Atom> TeXParser::getFormulaAtom() const {
+sptr<Atom> TeXParser::popFormulaAtom() const {
   auto a = _formula->_root;
   _formula->_root = nullptr;
   return a;
@@ -280,11 +280,10 @@ wstring TeXParser::getOverArgument() {
           ogroup--;
           _pos--;
         } else if (
-          _pos < _len - 1 &&
-          _latex[_pos] == 'c' &&
-          _latex[_pos + 1] == 'r' &&
-          ogroup == 1  //
-          ) {
+          _pos < _len - 1
+          && _latex[_pos] == 'c'
+          && _latex[_pos + 1] == 'r'
+          && ogroup == 1) {
           ogroup--;
           _pos--;
         }
@@ -316,9 +315,10 @@ wstring TeXParser::getCommand() {
 
   while (_pos < _len) {
     ch = _latex[_pos];
-    if ((ch < 'a' || ch > 'z') &&
-        (ch < 'A' || ch > 'Z') &&
-        (_atIsLetter == 0 || ch != '@'))
+    if ((ch < 'a' || ch > 'z')
+        && (ch < 'A' || ch > 'Z')
+        && (_atIsLetter == 0 || ch != '@')
+      )
       break;
 
     _pos++;
@@ -334,10 +334,10 @@ wstring TeXParser::getCommand() {
   return com;
 }
 
-void TeXParser::insert(int s, int e, const wstring& formula) {
-  _latex.replace(s, e - s, formula);
+void TeXParser::insert(int beg, int end, const wstring& formula) {
+  _latex.replace(beg, end - beg, formula);
   _len = _latex.length();
-  _pos = s;
+  _pos = beg;
   _insertion = true;
 }
 
@@ -359,18 +359,14 @@ wstring TeXParser::getCommandWithArgs(const wstring& command) {
   for (int j = 0; j < mac->_posOpts; j++) {
     wstring arg_t = mac_args[mac->_argc + j + 1];
     if (!arg_t.empty()) {
-      mac_arg.append(L"[");
-      mac_arg.append(arg_t);
-      mac_arg.append(L"]");
+      mac_arg.append(L"[").append(arg_t).append(L"]");
     }
   }
 
   for (int j = 0; j < mac->_argc; j++) {
     wstring arg_t = mac_args[j + 1];
     if (!arg_t.empty()) {
-      mac_arg.append(L"{");
-      mac_arg.append(arg_t);
-      mac_arg.append(L"}");
+      mac_arg.append(L"{").append(arg_t).append(L"}");
     }
   }
 
@@ -390,7 +386,7 @@ void TeXParser::skipWhiteSpace() {
   }
 }
 
-wstring TeXParser::forwardFromCurrentPos() {
+wstring TeXParser::forwardBalancedGroup() {
   if (_group == 0) {
     const wstring& sub = _latex.substr(_pos);
     finish();
@@ -406,79 +402,56 @@ wstring TeXParser::forwardFromCurrentPos() {
     }
   }
   if (closing != 0) {
-    throw ex_parse(
-      "Found a closing '"
-      + tostring((char) R_GROUP)
-      + "' without an opening '"
-      + tostring((char) L_GROUP) + "'!"
-    );
+    throw ex_parse("Found a closing '}' without an opening '{'!");
   }
   const wstring& sub = _latex.substr(_pos, i - _pos);
   _pos = i;
   return sub;
 }
 
-void TeXParser::getOptsArgs(int argc, int opts, vector<wstring>& args) {
-  /*
-   * A maximum of 10 options can be passed to a command,
-   * the value will be added at the tail of the args if found any
-   */
+void TeXParser::getOptsArgs(int argc, int opts, Args& args) {
+  // A maximum of 10 options can be passed to a command,
+  // the value will be added at the tail of the args if found any,
+  // the last (maximum to 12th) value is reserved for returned value
   args.resize(argc + 10 + 1 + 1);
-  if (argc != 0) {
-    // we get the options just after the command name
-    if (opts == 1) {
-      int j = argc + 1;
-      try {
-        for (; j < argc + 11; j++) {
-          skipWhiteSpace();
-          args[j] = getGroup(L_BRACK, R_BRACK);
-        }
-      } catch (ex_parse& e) {
-        args[j] = L"";
-      }
-    }
 
-    // we get the first argument
+  auto getOpts = [&]() {
+    int j = argc + 1;
+    try {
+      for (; j < argc + 11; j++) {
+        skipWhiteSpace();
+        args[j] = getGroup(L_BRACK, R_BRACK);
+      }
+    } catch (ex_parse& e) {
+      args[j] = L"";
+    }
+  };
+
+  auto getArg = [&](int i) {
     skipWhiteSpace();
     try {
-      args[1] = getGroup(L_GROUP, R_GROUP);
+      args[i] = getGroup(L_GROUP, R_GROUP);
     } catch (ex_parse& e) {
       if (_latex[_pos] != '\\') {
-        args[1] = towstring(_latex[_pos]);
+        args[i] = towstring(_latex[_pos]);
         _pos++;
       } else {
-        args[1] = getCommandWithArgs(getCommand());
+        args[i] = getCommandWithArgs(getCommand());
       }
     }
+  };
 
+  if (argc != 0) {
+    // we get the options just after the command name
+    if (opts == 1) getOpts();
+    // we get the first argument
+    getArg(1);
     // we get the options after the first argument
-    if (opts == 2) {
-      int j = argc + 1;
-      try {
-        for (; j < argc + 11; j++) {
-          skipWhiteSpace();
-          args[j] = getGroup(L_BRACK, R_BRACK);
-        }
-      } catch (ex_parse& e) {
-        args[j] = L"";
-      }
-    }
-
+    if (opts == 2) getOpts();
     // we get the next arguments
     for (int i = 2; i <= argc; i++) {
-      skipWhiteSpace();
-      try {
-        args[i] = getGroup(L_GROUP, R_GROUP);
-      } catch (ex_parse& e) {
-        if (_latex[_pos] != '\\') {
-          args[i] = towstring(_latex[_pos]);
-          _pos++;
-        } else {
-          args[i] = getCommandWithArgs(getCommand());
-        }
-      }
+      getArg(i);
     }
-
     if (_isMathMode) skipWhiteSpace();
   }
 }
@@ -502,11 +475,11 @@ bool TeXParser::isValidName(const wstring& com) const {
 
 sptr<Atom> TeXParser::processEscape() {
   _spos = _pos;
-  wstring command = getCommand();
+  const wstring command = getCommand();
 
   if (command.length() == 0) return sptrOf<EmptyAtom>();
 
-  string cmd = wide2utf8(command);
+  const string cmd = wide2utf8(command);
   auto it = MacroInfo::_commands.find(command);
   if (it != MacroInfo::_commands.end()) return processCommands(command);
 
@@ -529,11 +502,12 @@ sptr<Atom> TeXParser::processCommands(const wstring& command) {
   MacroInfo* mac = MacroInfo::_commands[command];
   int opts = mac->_posOpts;
 
-  vector<wstring> args;
+  Args args;
   getOptsArgs(mac->_argc, opts, args);
   args[0] = command;
 
   if (NewCommandMacro::isMacro(command)) {
+    // The last value in "args" is the replacement string
     auto ret = mac->invoke(*this, args);
     insert(_spos, _pos, args.back());
     return ret;
@@ -542,39 +516,33 @@ sptr<Atom> TeXParser::processCommands(const wstring& command) {
   return mac->invoke(*this, args);
 }
 
-sptr<Atom> TeXParser::getScripts(wchar_t f) {
+sptr<Atom> TeXParser::getScripts(wchar_t first) {
   _pos++;
-  // get the first script
-  sptr<Atom> first = getArgument();
-  sptr<Atom> second(nullptr);
-  wchar_t s = '\0';
+  // get the sub script
+  sptr<Atom> sub = getArgument();
+  sptr<Atom> sup(nullptr);
+  wchar_t second = '\0';
 
-  if (_pos < _len) s = _latex[_pos];
+  if (_pos < _len) second = _latex[_pos];
 
-  /**
-   * 4 conditions
-   *
-   * \cmd_{\sub}^{\super}
-   *
-   * \cmd_{\sub}
-   *
-   * \cmd^{\super}_{\sub}
-   *
-   * \cmd^{\super}
-   */
-  if (f == SUPER_SCRIPT && s == SUPER_SCRIPT) {
-    second = first;
-    first = nullptr;
-  } else if (f == SUB_SCRIPT && s == SUPER_SCRIPT) {
+  // 4 conditions:
+  // 1. \cmd_{\sub}^{\super}
+  // 2. \cmd^{\super}_{\sub}
+  // 3. \cmd_{\sub}
+  // 4. \cmd^{\super}
+  if (first == SUPER_SCRIPT && second == SUPER_SCRIPT) {
+    sup = sub;
+    sub = nullptr;
+  } else if (first == SUB_SCRIPT && second == SUPER_SCRIPT) {
     _pos++;
-    second = getArgument();
-  } else if (f == SUPER_SCRIPT && s == SUB_SCRIPT) {
+    sup = getArgument();
+  } else if (first == SUPER_SCRIPT && second == SUB_SCRIPT) {
     _pos++;
-    second = first;
-    first = getArgument();
-  } else if (f == SUPER_SCRIPT && s != SUB_SCRIPT) {
-    second = first;
-    first = nullptr;
+    sup = sub;
+    sub = getArgument();
+  } else if (first == SUPER_SCRIPT && second != SUB_SCRIPT) {
+    sup = sub;
+    sub = nullptr;
   }
 
   sptr<Atom> atom;
@@ -582,7 +550,7 @@ sptr<Atom> TeXParser::getScripts(wchar_t f) {
   if (_formula->_root == nullptr) {
     // If there's no root exists, passing a null atom to ScriptsAtom as base is OK,
     // the ScriptsAtom will handle it
-    return sptrOf<ScriptsAtom>(nullptr, first, second);
+    return sptrOf<ScriptsAtom>(nullptr, sub, sup);
   } else if ((rm = dynamic_cast<RowAtom*>(_formula->_root.get()))) {
     atom = rm->popLastAtom();
   } else {
@@ -593,29 +561,29 @@ sptr<Atom> TeXParser::getScripts(wchar_t f) {
   // Check if previous atom is CumulativeScriptsAtom
   auto* ca = dynamic_cast<CumulativeScriptsAtom*>(atom.get());
   if (ca != nullptr) {
-    ca->addSubscript(first);
-    ca->addSuperscript(second);
+    ca->addSubscript(sub);
+    ca->addSuperscript(sup);
     return atom;
   }
 
   if (atom->rightType() == AtomType::bigOperator) {
-    return sptrOf<BigOperatorAtom>(atom, first, second);
+    return sptrOf<BigOperatorAtom>(atom, sub, sup);
   }
 
   auto* del = dynamic_cast<OverUnderDelimiter*>(atom.get());
   if (del != nullptr) {
     if (del->isOver()) {
-      if (second != nullptr) {
-        del->addScript(second);
-        return sptrOf<ScriptsAtom>(atom, first, nullptr);
+      if (sup != nullptr) {
+        del->addScript(sup);
+        return sptrOf<ScriptsAtom>(atom, sub, nullptr);
       }
-    } else if (first != nullptr) {
-      del->addScript(first);
-      return sptrOf<ScriptsAtom>(atom, nullptr, second);
+    } else if (sub != nullptr) {
+      del->addScript(sub);
+      return sptrOf<ScriptsAtom>(atom, nullptr, sup);
     }
   }
 
-  return sptrOf<ScriptsAtom>(atom, first, second);
+  return sptrOf<ScriptsAtom>(atom, sub, sup);
 }
 
 sptr<Atom> TeXParser::getArgument() {
@@ -692,7 +660,7 @@ bool TeXParser::replaceScript() {
   return false;
 }
 
-void TeXParser::preprocess(wstring& cmd, vector<wstring>& args, int& pos) {
+void TeXParser::preprocess(wstring& cmd, Args& args, int& pos) {
   if (cmd == L"newcommand" || cmd == L"renewcommand") {
     preprocessNewCmd(cmd, args, pos);
   } else if (cmd == L"newenvironment" || cmd == L"renewenvironment") {
@@ -710,7 +678,7 @@ void TeXParser::preprocess(wstring& cmd, vector<wstring>& args, int& pos) {
   }
 }
 
-void TeXParser::preprocessNewCmd(wstring& cmd, vector<wstring>& args, int& pos) {
+void TeXParser::preprocessNewCmd(wstring& cmd, Args& args, int& pos) {
   MacroInfo* const mac = MacroInfo::_commands[cmd];
   getOptsArgs(mac->_argc, mac->_posOpts, args);
   mac->invoke(*this, args);
@@ -719,7 +687,7 @@ void TeXParser::preprocessNewCmd(wstring& cmd, vector<wstring>& args, int& pos) 
   _pos = pos;
 }
 
-void TeXParser::inflateNewCmd(wstring& cmd, vector<wstring>& args, int& pos) {
+void TeXParser::inflateNewCmd(wstring& cmd, Args& args, int& pos) {
   MacroInfo* const mac = MacroInfo::_commands[cmd];
   getOptsArgs(mac->_argc, mac->_posOpts, args);
   args[0] = cmd;
@@ -735,7 +703,7 @@ void TeXParser::inflateNewCmd(wstring& cmd, vector<wstring>& args, int& pos) {
   _pos = pos;
 }
 
-void TeXParser::inflateEnv(wstring& cmd, vector<wstring>& args, int& pos) {
+void TeXParser::inflateEnv(wstring& cmd, Args& args, int& pos) {
   getOptsArgs(1, 0, args);
   wstring env = args[1] + L"@env";
   auto it = MacroInfo::_commands.find(env);
@@ -852,9 +820,11 @@ void TeXParser::parse() {
             _pos++;
           }
 
-          _formula->add(sptr<Atom>(
-            new MathAtom(Formula(*this, getDollarGroup(DOLLAR), false)._root, style))  //
+          auto atom = sptrOf<MathAtom>(
+            Formula(*this, getDollarGroup(DOLLAR), false)._root,
+            style
           );
+          _formula->add(atom);
           if (doubleDollar) {
             if (_latex[_pos] == DOLLAR) _pos++;
           }
@@ -879,11 +849,7 @@ void TeXParser::parse() {
         _group--;
         _pos++;
         if (_group == -1) {
-          throw ex_parse(
-            "Found a closing '" +
-            tostring((char) R_GROUP) +
-            "' without an opening '" + tostring((char) L_GROUP) + "'!"
-          );
+          throw ex_parse("Found a closing '}' without an opening '{'!");
         }
         // End of a group
         return;
@@ -902,7 +868,9 @@ void TeXParser::parse() {
       }
         break;
       case '&': {
-        if (!_arrayMode) throw ex_parse("Character '&' is only available in array mode!");
+        if (!_arrayMode) {
+          throw ex_parse("Character '&' is only available in array mode!");
+        }
         ((ArrayFormula*) _formula)->addCol();
         _pos++;
       }
@@ -913,28 +881,31 @@ void TeXParser::parse() {
       }
         break;
       case PRIME_UTF:
-      case PRIME: {
-        if (_isMathMode) {
-          _formula->add(sptrOf<CumulativeScriptsAtom>(popLastAtom(), nullptr, SymbolAtom::get("prime")));
-        } else {
-          _formula->add(convertCharacter(PRIME, true));
-        }
-        _pos++;
-      }
-        break;
+      case PRIME:
       case BACKPRIME: {
+        // special case for ` and '
+        const string symbol = ch == BACKPRIME ? "backprime" : "prime";
         if (_isMathMode) {
-          _formula->add(sptrOf<CumulativeScriptsAtom>(popLastAtom(), nullptr, SymbolAtom::get("backprime")));
+          auto atom = sptrOf<CumulativeScriptsAtom>(
+            popLastAtom(),
+            nullptr,
+            SymbolAtom::get(symbol)
+          );
+          _formula->add(atom);
         } else {
-          _formula->add(convertCharacter(BACKPRIME, true));
+          _formula->add(convertCharacter(ch, true));
         }
         _pos++;
       }
         break;
       case DQUOTE: {
         if (_isMathMode) {
-          _formula->add(sptrOf<CumulativeScriptsAtom>(popLastAtom(), nullptr, SymbolAtom::get("prime")));
-          _formula->add(sptrOf<CumulativeScriptsAtom>(popLastAtom(), nullptr, SymbolAtom::get("prime")));
+          _formula->add(sptrOf<CumulativeScriptsAtom>(
+            popLastAtom(), nullptr, SymbolAtom::get("prime"))
+          );
+          _formula->add(sptrOf<CumulativeScriptsAtom>(
+            popLastAtom(), nullptr, SymbolAtom::get("prime"))
+          );
         } else {
           _formula->add(convertCharacter(PRIME, true));
           _formula->add(convertCharacter(PRIME, true));

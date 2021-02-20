@@ -9,6 +9,8 @@
 
 namespace tex {
 
+using Args = std::vector<std::wstring>;
+
 /**
  * Convert a character to roman-number if it is a digit localized
  * @param c character to be converted
@@ -58,7 +60,7 @@ private:
   /** Preprocess parse string */
   void preprocess();
 
-  sptr<Atom> getScripts(wchar_t f);
+  sptr<Atom> getScripts(wchar_t first);
 
   std::wstring getCommand();
 
@@ -85,13 +87,13 @@ private:
   /** Replace the script-characters with command. */
   bool replaceScript();
 
-  void preprocess(std::wstring& cmd, std::vector<std::wstring>& args, int& pos);
+  void preprocess(std::wstring& cmd, Args& args, int& pos);
 
-  void preprocessNewCmd(std::wstring& cmd, std::vector<std::wstring>& args, int& pos);
+  void preprocessNewCmd(std::wstring& cmd, Args& args, int& pos);
 
-  void inflateNewCmd(std::wstring& cmd, std::vector<std::wstring>& args, int& pos);
+  void inflateNewCmd(std::wstring& cmd, Args& args, int& pos);
 
-  void inflateEnv(std::wstring& cmd, std::vector<std::wstring>& args, int& pos);
+  void inflateEnv(std::wstring& cmd, Args& args, int& pos);
 
   void init(
     bool isPartial,
@@ -195,15 +197,15 @@ public:
   sptr<Atom> popLastAtom() const;
 
   /** Get and remove the atom represented by the current formula */
-  sptr<Atom> getFormulaAtom() const;
+  sptr<Atom> popFormulaAtom() const;
 
   /** Put an atom in the current formula */
   void addAtom(const sptr<Atom>& atom) const;
 
-  /** Indicate if the character @ can be used in the command's name */
+  /** Make the character @ as letter that can be used in the command's name */
   inline void makeAtLetter() { _atIsLetter++; }
 
-  /** Indicate if the character @ can be used in the command's name */
+  /** Make the character @ that can not be used in the command's name */
   inline void makeAtOther() { _atIsLetter--; }
 
   /** Test if the character @ is considered as a letter or not */
@@ -211,8 +213,6 @@ public:
 
   /** Test if the parser is used to parse an array or not */
   inline bool isArrayMode() const { return _arrayMode; }
-
-  inline void setArrayMode(bool arrayMode) { _arrayMode = arrayMode; }
 
   /** Test if the parser is in math mode  */
   inline bool isMathMode() const { return _isMathMode; }
@@ -223,7 +223,7 @@ public:
   /**
    * Rewind the current parsed string
    *
-   * @param n the number of character to be rewinded
+   * @param n the number of character to be rewind
    * @return the new position in the parsed string
    */
   inline int rewind(int n) {
@@ -231,11 +231,15 @@ public:
     return _pos;
   }
 
-  inline void finish() {
-    _pos = _latex.size();
-  }
+  /** Finish the parse process */
+  inline void finish() { _pos = _latex.size(); }
 
-  std::wstring forwardFromCurrentPos();
+  /**
+   * Forward from current position to get a balanced group.
+   * <li> Forward to the end of the parse string if no group was in process
+   * <li> Otherwise get the balanced group embraced by '{' and '}' and forward
+   */
+  std::wstring forwardBalancedGroup();
 
   /**
    * Add a new row when the parser is in array mode
@@ -325,7 +329,7 @@ public:
    *
    * @param args a vector to put with argument strings
    */
-  void getOptsArgs(int argc, int opts, std::vector<std::wstring>& args);
+  void getOptsArgs(int argc, int opts, Args& args);
 
   /**
    * Test the validity of the name of a command. It must contains only alpha

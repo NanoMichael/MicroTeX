@@ -15,29 +15,11 @@ macro(kern) {
 }
 
 macro(hvspace) {
-  size_t i;
-  for (i = 0; i < args[1].length() && !isalpha(args[1][i]); i++);
-  float f = 0;
-  valueof(args[1].substr(0, i), f);
-
-  UnitType unit;
-  if (i != args[1].length()) {
-    wstring s = args[1].substr(i);
-    string str = wide2utf8(s);
-    tolower(str);
-    unit = SpaceAtom::getUnit(str);
-  } else {
-    unit = UnitType::point;
-  }
-  if (unit == UnitType::none) {
-    string str = wide2utf8(args[1]);
-    throw ex_parse("Unknown unit '" + str + "'!");
-  }
-
+  auto[unit, value] = SpaceAtom::getLength(args[1]);
   return (
     args[0][0] == L'h'
-    ? sptrOf<SpaceAtom>(unit, f, 0, 0)
-    : sptrOf<SpaceAtom>(unit, 0, f, 0)
+    ? sptrOf<SpaceAtom>(unit, value, 0, 0)
+    : sptrOf<SpaceAtom>(unit, 0, value, 0)
   );
 }
 
@@ -133,92 +115,56 @@ macro(genfrac) {
   return sptr<Atom>(ra);
 }
 
-macro(overwithdelims) {
-  auto num = tp.getFormulaAtom();
+sptr<Atom> _frac_with_delims(TeXParser& tp, Args& args, bool rule, bool hasLength) {
+  auto num = tp.popFormulaAtom();
+  pair<UnitType, float> l;
+  if (hasLength) l = tp.getLength();
+  auto[unit, value] = l;
   auto den = Formula(tp, tp.getOverArgument(), false)._root;
 
   if (num == nullptr || den == nullptr)
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
 
   auto left = Formula(tp, args[1], false)._root;
-  auto* a = dynamic_cast<BigDelimiterAtom*>(left.get());
-  if (a != nullptr) left = a->_delim;
+  auto bigl = dynamic_cast<BigDelimiterAtom*>(left.get());
+  if (bigl != nullptr) left = bigl->_delim;
 
   auto right = Formula(tp, args[2], false)._root;
-  a = dynamic_cast<BigDelimiterAtom*>(right.get());
-  if (a != nullptr) right = a->_delim;
+  auto bigr = dynamic_cast<BigDelimiterAtom*>(right.get());
+  if (bigr != nullptr) right = bigr->_delim;
 
   auto sl = dynamic_pointer_cast<SymbolAtom>(left);
   auto sr = dynamic_pointer_cast<SymbolAtom>(right);
   if (sl != nullptr && sr != nullptr) {
-    auto f = sptrOf<FractionAtom>(num, den, true);
+    auto f = (
+      hasLength
+      ? sptrOf<FractionAtom>(num, den, unit, value)
+      : sptrOf<FractionAtom>(num, den, rule)
+    );
     return sptrOf<FencedAtom>(f, sl, sr);
   }
 
-  auto* ra = new RowAtom();
+  auto ra = new RowAtom();
   ra->add(left);
-  ra->add(sptrOf<FractionAtom>(num, den, true));
+  ra->add(
+    hasLength
+    ? sptrOf<FractionAtom>(num, den, unit, value)
+    : sptrOf<FractionAtom>(num, den, rule)
+  );
   ra->add(right);
   return sptr<Atom>(ra);
+}
+
+macro(overwithdelims) {
+  return _frac_with_delims(tp, args, true, false);
 }
 
 macro(atopwithdelims) {
-  auto num = tp.getFormulaAtom();
-  auto den = Formula(tp, tp.getOverArgument(), false)._root;
-
-  if (num == nullptr || den == nullptr)
-    throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
-
-  auto left = Formula(tp, args[1], false)._root;
-  auto* big = dynamic_cast<BigDelimiterAtom*>(left.get());
-  if (big != nullptr) left = big->_delim;
-
-  auto right = Formula(tp, args[2], false)._root;
-  big = dynamic_cast<BigDelimiterAtom*>(right.get());
-  if (big != nullptr) right = big->_delim;
-
-  auto sl = dynamic_pointer_cast<SymbolAtom>(left);
-  auto sr = dynamic_pointer_cast<SymbolAtom>(right);
-  if (sl != nullptr && sr != nullptr) {
-    auto f = sptrOf<FractionAtom>(num, den, false);
-    return sptrOf<FencedAtom>(f, sl, sr);
-  }
-
-  auto* ra = new RowAtom();
-  ra->add(left);
-  ra->add(sptrOf<FractionAtom>(num, den, false));
-  ra->add(right);
-  return sptr<Atom>(ra);
+  return _frac_with_delims(tp, args, false, false);
 }
 
 macro(abovewithdelims) {
-  auto num = tp.getFormulaAtom();
-  auto[du, dv] = tp.getLength();
-  auto den = Formula(tp, tp.getOverArgument(), false)._root;
-  if (num == nullptr || den == nullptr) {
-    throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
-  }
-
-  auto left = Formula(tp, args[1], false)._root;
-  auto* big = dynamic_cast<BigDelimiterAtom*>(left.get());
-  if (big != nullptr) left = big->_delim;
-
-  auto right = Formula(tp, args[2], false)._root;
-  big = dynamic_cast<BigDelimiterAtom*>(right.get());
-  if (big != nullptr) right = big->_delim;
-
-  auto sl = dynamic_pointer_cast<SymbolAtom>(left);
-  auto sr = dynamic_pointer_cast<SymbolAtom>(right);
-  if (sl != nullptr && sr != nullptr) {
-    auto f = sptrOf<FractionAtom>(num, den, du, dv);
-    return sptrOf<FencedAtom>(f, sl, sr);
-  }
-
-  auto* ra = new RowAtom();
-  ra->add(left);
-  ra->add(sptrOf<FractionAtom>(num, den, true));
-  ra->add(right);
-  return sptr<Atom>(ra);
+  return _frac_with_delims(tp, args, true, true);
 }
 
 macro(textstyles) {
@@ -370,7 +316,6 @@ macro(raisebox) {
   auto[ru, r] = SpaceAtom::getLength(args[1]);
   auto[hu, h] = SpaceAtom::getLength(args[3]);
   auto[du, d] = SpaceAtom::getLength(args[4]);
-
   return sptrOf<RaiseAtom>(Formula(tp, args[2])._root, ru, r, hu, h, du, d);
 }
 

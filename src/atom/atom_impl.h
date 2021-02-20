@@ -632,7 +632,7 @@ public:
 
   sptr<Box> createBox(Environment& env) override {
     auto bbox = _base->createBox(env);
-    bbox->_shift = _ru == UnitType::none ? 0 : -_r * SpaceAtom::getFactor(_ru, env);
+    bbox->_shift = _ru == UnitType::none ? 0 : SpaceAtom::getSize(_ru, -_r, env);
 
     if (_hu == UnitType::none) return bbox;
 
