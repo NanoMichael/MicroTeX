@@ -192,50 +192,47 @@ sptr<Box> XLeftRightArrowFactory::create(bool left, Environment& env, float widt
 
 /************************************* horizontal box implementation ******************************/
 
-HBox::HBox(const sptr<Box>& b, float w, Alignment aligment) {
-  if (w == POS_INF) {
-    add(b);
+HBox::HBox(const sptr<Box>& box, float width, Alignment aligment) {
+  if (width == POS_INF) {
+    add(box);
     return;
   }
-  float rest = w - b->_width;
+  float rest = width - box->_width;
   if (rest <= 0) {
-    add(b);
+    add(box);
     return;
   }
   if (aligment == Alignment::center || aligment == Alignment::none) {
     auto s = sptrOf<StrutBox>(rest / 2, 0, 0, 0);
     add(s);
-    add(b);
+    add(box);
     add(s);
   } else if (aligment == Alignment::left) {
-    add(b);
+    add(box);
     auto s = sptrOf<StrutBox>(rest, 0, 0, 0);
     add(s);
   } else if (aligment == Alignment::right) {
     auto s = sptrOf<StrutBox>(rest, 0, 0, 0);
     add(s);
-    add(b);
+    add(box);
   } else {
-    add(b);
+    add(box);
   }
 }
 
-HBox::HBox(const sptr<Box>& b) {
-  add(b);
+HBox::HBox(const sptr<Box>& box) {
+  add(box);
 }
 
-void HBox::recalculate(const Box& b) {
-  /**
-   * Commented for ticket 764
-   * \left(\!\!\!\begin{array}{c}n\\\\r\end{array}\!\!\!\right)+123
-   * curPos += b._width;
-   * width = max(width, curPos);
-   */
-  _width += b._width;
+void HBox::recalculate(const Box& box) {
+  // \left(\!\!\!\begin{array}{c}n\\\\r\end{array}\!\!\!\right)+123
+  // curPos += box._width;
+  // width = max(width, curPos);
+  _width += box._width;
   float x = _children.empty() ? NEG_INF : _height;
-  _height = max(x, b._height - b._shift);
+  _height = max(x, box._height - box._shift);
   x = _children.empty() ? NEG_INF : _depth;
-  _depth = max(x, b._depth + b._shift);
+  _depth = max(x, box._depth + box._shift);
 }
 
 sptr<HBox> HBox::cloneBox() {
@@ -244,14 +241,14 @@ sptr<HBox> HBox::cloneBox() {
   return sptr<HBox>(b);
 }
 
-void HBox::add(const sptr<Box>& b) {
-  recalculate(*b);
-  Box::add(b);
+void HBox::add(const sptr<Box>& box) {
+  recalculate(*box);
+  Box::add(box);
 }
 
-void HBox::add(int pos, const sptr<Box>& b) {
-  recalculate(*b);
-  Box::add(pos, b);
+void HBox::add(int pos, const sptr<Box>& box) {
+  recalculate(*box);
+  Box::add(pos, box);
 }
 
 pair<sptr<HBox>, sptr<HBox>> HBox::split(int pos, int shift) {

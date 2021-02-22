@@ -427,7 +427,7 @@ void TeXParser::getOptsArgs(int argc, int opts, Args& args) {
     }
   };
 
-  auto getArg = [&](int i) {
+  auto getArg = [&](int i) { // NOLINT(misc-no-recursion)
     skipWhiteSpace();
     try {
       args[i] = getGroup(L_GROUP, R_GROUP);
