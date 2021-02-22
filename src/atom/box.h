@@ -60,7 +60,7 @@ public:
 /** A box composed of a horizontal row of child boxes */
 class HBox : public Box {
 private:
-  void recalculate(const Box& b);
+  void recalculate(const Box& box);
 
   std::pair<sptr<HBox>, sptr<HBox>> split(int pos, int shift);
 
@@ -69,15 +69,15 @@ public:
 
   HBox() = default;
 
-  HBox(const sptr<Box>& b, float w, Alignment alignment);
+  HBox(const sptr<Box>& box, float width, Alignment alignment);
 
-  explicit HBox(const sptr<Box>& b);
+  explicit HBox(const sptr<Box>& box);
 
   sptr<HBox> cloneBox();
 
-  void add(const sptr<Box>& b) override;
+  void add(const sptr<Box>& box) override;
 
-  void add(int pos, const sptr<Box>& b) override;
+  void add(int pos, const sptr<Box>& box) override;
 
   inline void addBreakPosition(int pos) {
     _breakPositions.push_back(pos);
