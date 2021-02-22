@@ -97,6 +97,9 @@ public:
   /** Add a macro, replace it if the macro is exists. */
   static void addMacro(const std::wstring& name, MacroInfo* mac);
 
+  /** Get the macro info from given name, return nullptr if not found. */
+  static MacroInfo* get(const std::wstring& name);
+
   // Number of arguments
   const int _argc;
   // Options' position, can be  0, 1 and 2
@@ -112,10 +115,6 @@ public:
   MacroInfo(int argc, int posOpts) : _argc(argc), _posOpts(posOpts) {}
 
   explicit MacroInfo(int argc) : _argc(argc), _posOpts(0) {}
-
-  inline bool hasOptions() const {
-    return _posOpts != 0;
-  }
 
   virtual sptr<Atom> invoke(
     TeXParser& tp,
