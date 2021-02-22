@@ -344,10 +344,10 @@ void TeXParser::insert(int beg, int end, const wstring& formula) {
 wstring TeXParser::getCommandWithArgs(const wstring& command) {
   if (command == L"left") return getGroup(L"\\left", L"\\right");
 
-  auto it = MacroInfo::_commands.find(command);
-  if (it == MacroInfo::_commands.end()) return L"\\" + command;
-
-  MacroInfo* mac = it->second;
+  auto mac = MacroInfo::get(command);
+  if (mac == nullptr) {
+    return L"\\" + command;
+  }
   int mac_opts = mac->_posOpts;
 
   // return as format: \cmd[opt][...]{arg}{...}
@@ -479,10 +479,12 @@ sptr<Atom> TeXParser::processEscape() {
 
   if (command.length() == 0) return sptrOf<EmptyAtom>();
 
-  const string cmd = wide2utf8(command);
-  auto it = MacroInfo::_commands.find(command);
-  if (it != MacroInfo::_commands.end()) return processCommands(command);
+  auto mac = MacroInfo::get(command);
+  if (mac != nullptr) {
+    return processCommands(command, mac);
+  }
 
+  const string cmd = wide2utf8(command);
   try {
     return Formula::get(command)->_root;
   } catch (ex_formula_not_found& e) {
@@ -498,15 +500,14 @@ sptr<Atom> TeXParser::processEscape() {
   return sptrOf<ColorAtom>(rm, TRANSPARENT, RED);
 }
 
-sptr<Atom> TeXParser::processCommands(const wstring& command) {
-  MacroInfo* mac = MacroInfo::_commands[command];
+sptr<Atom> TeXParser::processCommands(const wstring& cmd, MacroInfo* mac) {
   int opts = mac->_posOpts;
 
   Args args;
   getOptsArgs(mac->_argc, opts, args);
-  args[0] = command;
+  args[0] = cmd;
 
-  if (NewCommandMacro::isMacro(command)) {
+  if (NewCommandMacro::isMacro(cmd)) {
     // The last value in "args" is the replacement string
     auto ret = mac->invoke(*this, args);
     insert(_spos, _pos, args.back());
@@ -679,7 +680,8 @@ void TeXParser::preprocess(wstring& cmd, Args& args, int& pos) {
 }
 
 void TeXParser::preprocessNewCmd(wstring& cmd, Args& args, int& pos) {
-  MacroInfo* const mac = MacroInfo::_commands[cmd];
+  // The macro must exists
+  auto mac = MacroInfo::get(cmd);
   getOptsArgs(mac->_argc, mac->_posOpts, args);
   mac->invoke(*this, args);
   _latex.erase(pos, _pos - pos);
@@ -688,7 +690,8 @@ void TeXParser::preprocessNewCmd(wstring& cmd, Args& args, int& pos) {
 }
 
 void TeXParser::inflateNewCmd(wstring& cmd, Args& args, int& pos) {
-  MacroInfo* const mac = MacroInfo::_commands[cmd];
+  // The macro must exists
+  auto mac = MacroInfo::get(cmd);
   getOptsArgs(mac->_argc, mac->_posOpts, args);
   args[0] = cmd;
   try {
@@ -706,8 +709,8 @@ void TeXParser::inflateNewCmd(wstring& cmd, Args& args, int& pos) {
 void TeXParser::inflateEnv(wstring& cmd, Args& args, int& pos) {
   getOptsArgs(1, 0, args);
   wstring env = args[1] + L"@env";
-  auto it = MacroInfo::_commands.find(env);
-  if (it == MacroInfo::_commands.end()) {
+  auto mac = MacroInfo::get(env);
+  if (mac == nullptr) {
     throw ex_parse(
       "Unknown environment: "
       + wide2utf8(args[1])
@@ -715,7 +718,6 @@ void TeXParser::inflateEnv(wstring& cmd, Args& args, int& pos) {
       + ":" + tostring(getCol())
     );
   }
-  MacroInfo* const mac = it->second;
   vector<wstring> optargs;
   getOptsArgs(mac->_argc - 1, 0, optargs);
   wstring grp = getGroup(L"\\begin{" + args[1] + L"}", L"\\end{" + args[1] + L"}");

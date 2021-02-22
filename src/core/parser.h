@@ -19,6 +19,8 @@ wchar_t convertToRomanNumber(wchar_t c);
 
 class Formula;
 
+class MacroInfo;
+
 /** This class implements a parser for latex formulas */
 class TeXParser {
 private:
@@ -80,7 +82,7 @@ private:
    * Process the given TeX command (by parsing following command
    * arguments in the parse string).
    */
-  sptr<Atom> processCommands(const std::wstring& cmd);
+  sptr<Atom> processCommands(const std::wstring& cmd, MacroInfo* mac);
 
   void skipWhiteSpace();
 

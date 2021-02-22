@@ -135,6 +135,12 @@ void MacroInfo::addMacro(const wstring& name, MacroInfo* mac) {
   _commands[name] = mac;
 }
 
+MacroInfo* MacroInfo::get(const std::wstring& name) {
+  auto it = _commands.find(name);
+  if (it == _commands.end()) return nullptr;
+  return it->second;
+}
+
 void MacroInfo::_free_() {
   for (const auto& i : _commands) delete i.second;
 }
