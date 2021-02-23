@@ -494,8 +494,10 @@ sptr<Atom> TeXParser::processEscape() {
   }
 
   // not a valid command or symbol or predefined Formula found
-  if (!_isPartial)
+  if (!_isPartial) {
     throw ex_parse("Unknown symbol or command or predefined Formula: '" + cmd + "'");
+  }
+  // Show invalid command
   auto rm = sptrOf<RomanAtom>(Formula(L"\\backslash " + command)._root);
   return sptrOf<ColorAtom>(rm, TRANSPARENT, RED);
 }
@@ -505,6 +507,7 @@ sptr<Atom> TeXParser::processCommands(const wstring& cmd, MacroInfo* mac) {
 
   Args args;
   getOptsArgs(mac->_argc, opts, args);
+  // we promise the first argument is the command name itself
   args[0] = cmd;
 
   if (NewCommandMacro::isMacro(cmd)) {
@@ -519,7 +522,7 @@ sptr<Atom> TeXParser::processCommands(const wstring& cmd, MacroInfo* mac) {
 
 sptr<Atom> TeXParser::getScripts(wchar_t first) {
   _pos++;
-  // get the sub script
+  // get the sub script (assume the first is the sub script)
   sptr<Atom> sub = getArgument();
   sptr<Atom> sup(nullptr);
   wchar_t second = '\0';
