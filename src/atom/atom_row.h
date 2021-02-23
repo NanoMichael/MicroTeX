@@ -123,11 +123,13 @@ private:
   // previous atom (for nested Row atoms)
   sptr<Dummy> _previousAtom;
 
+  /**
+   * Change the atom-type to ORD if necessary
+   * <p>
+   * i.e. for formula: `$+ e - f$`, the plus sign should be treat as
+   * an ordinary type
+   */
   static void changeToOrd(Dummy* cur, Dummy* prev, Atom* next);
-
-  static std::bitset<16> _initBinSet_() noexcept;
-
-  static std::bitset<16> _initLigKernSet_() noexcept;
 
 public:
   static bool _breakEveywhere;
@@ -165,7 +167,7 @@ public:
     return _elements.size();
   }
 
-  /** Push An atom to back */
+  /** Push an atom to back */
   void add(const sptr<Atom>& atom);
 
   sptr<Box> createBox(Environment& env) override;
