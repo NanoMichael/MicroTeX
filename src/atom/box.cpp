@@ -281,10 +281,10 @@ void HBox::draw(Graphics2D& g2, float x, float y) {
   }
 }
 
-int HBox::getLastFontId() {
+int HBox::lastFontId() {
   int id = TeXFont::NO_FONT;
   for (int i = _children.size() - 1; i >= 0 && id == TeXFont::NO_FONT; i--)
-    id = _children[i]->getLastFontId();
+    id = _children[i]->lastFontId();
   return id;
 }
 
@@ -332,7 +332,7 @@ void HRule::draw(Graphics2D& g2, float x, float y) {
   g2.setColor(oldColor);
 }
 
-int HRule::getLastFontId() {
+int HRule::lastFontId() {
   return TeXFont::NO_FONT;
 }
 
@@ -403,10 +403,10 @@ void VBox::draw(Graphics2D& g2, float x, float y) {
   }
 }
 
-int VBox::getLastFontId() {
+int VBox::lastFontId() {
   int id = TeXFont::NO_FONT;
   for (int i = _children.size() - 1; i >= 0 && id == TeXFont::NO_FONT; i--) {
-    id = _children[i]->getLastFontId();
+    id = _children[i]->lastFontId();
   }
   return id;
 }
@@ -471,8 +471,8 @@ void OverUnderBox::draw(Graphics2D& g2, float x, float y) {
   if (_script != nullptr) _script->draw(g2, x, yVar + _kern + _script->_height);
 }
 
-int OverUnderBox::getLastFontId() {
-  return _base->getLastFontId();
+int OverUnderBox::lastFontId() {
+  return _base->lastFontId();
 }
 
 vector<sptr<Box>> OverUnderBox::getChildren() const {
@@ -498,8 +498,8 @@ void ColorBox::draw(Graphics2D& g2, float x, float y) {
   g2.setColor(prev);
 }
 
-int ColorBox::getLastFontId() {
-  return _box->getLastFontId();
+int ColorBox::lastFontId() {
+  return _box->lastFontId();
 }
 
 vector<sptr<Box>> ColorBox::getChildren() const {
@@ -530,8 +530,8 @@ void ScaleBox::draw(Graphics2D& g2, float x, float y) {
   }
 }
 
-int ScaleBox::getLastFontId() {
-  return _box->getLastFontId();
+int ScaleBox::lastFontId() {
+  return _box->lastFontId();
 }
 
 vector<sptr<Box>> ScaleBox::getChildren() const {
@@ -556,8 +556,8 @@ void ReflectBox::draw(Graphics2D& g2, float x, float y) {
   g2.translate(-x, -y);
 }
 
-int ReflectBox::getLastFontId() {
-  return _box->getLastFontId();
+int ReflectBox::lastFontId() {
+  return _box->lastFontId();
 }
 
 vector<sptr<Box>> ReflectBox::getChildren() const {
@@ -697,8 +697,8 @@ void RotateBox::draw(Graphics2D& g2, float x, float y) {
   g2.rotate(_angle, x, y);
 }
 
-int RotateBox::getLastFontId() {
-  return _box->getLastFontId();
+int RotateBox::lastFontId() {
+  return _box->lastFontId();
 }
 
 vector<sptr<Box>> RotateBox::getChildren() const {
@@ -742,8 +742,8 @@ void FramedBox::draw(Graphics2D& g2, float x, float y) {
   _box->draw(g2, x + _space + _thickness, y);
 }
 
-int FramedBox::getLastFontId() {
-  return _box->getLastFontId();
+int FramedBox::lastFontId() {
+  return _box->lastFontId();
 }
 
 vector<sptr<Box>> FramedBox::getChildren() const {
@@ -801,11 +801,11 @@ void ShadowBox::draw(Graphics2D& g2, float x, float y) {
 
 /************************************** basic box implementation **********************************/
 
-int StrutBox::getLastFontId() {
+int StrutBox::lastFontId() {
   return TeXFont::NO_FONT;
 }
 
-int GlueBox::getLastFontId() {
+int GlueBox::lastFontId() {
   return TeXFont::NO_FONT;
 }
 
@@ -834,7 +834,7 @@ void CharBox::draw(Graphics2D& g2, float x, float y) {
   g2.translate(-x, -y);
 }
 
-int CharBox::getLastFontId() {
+int CharBox::lastFontId() {
   return _cf->fontId;
 }
 
@@ -873,7 +873,7 @@ void TextRenderingBox::draw(Graphics2D& g2, float x, float y) {
   g2.translate(-x, -y);
 }
 
-int TextRenderingBox::getLastFontId() {
+int TextRenderingBox::lastFontId() {
   return 0;
 }
 
@@ -895,8 +895,8 @@ void WrapperBox::draw(Graphics2D& g2, float x, float y) {
   g2.setColor(prev);
 }
 
-int WrapperBox::getLastFontId() {
-  return _base->getLastFontId();
+int WrapperBox::lastFontId() {
+  return _base->lastFontId();
 }
 
 vector<sptr<Box>> WrapperBox::getChildren() const {
@@ -907,8 +907,8 @@ void ShiftBox::draw(Graphics2D& g2, float x, float y) {
   _base->draw(g2, x, y + _sf);
 }
 
-int ShiftBox::getLastFontId() {
-  return _base->getLastFontId();
+int ShiftBox::lastFontId() {
+  return _base->lastFontId();
 }
 
 vector<sptr<Box>> ShiftBox::getChildren() const {
@@ -936,7 +936,7 @@ void LineBox::draw(Graphics2D& g2, float x, float y) {
   g2.setStrokeWidth(oldThickness);
 }
 
-int LineBox::getLastFontId() {
+int LineBox::lastFontId() {
   return 0;
 }
 
@@ -945,8 +945,8 @@ void OverlappedBox::draw(Graphics2D& g2, float x, float y) {
   _overlap->draw(g2, x, y);
 }
 
-int OverlappedBox::getLastFontId() {
-  return _base->getLastFontId();
+int OverlappedBox::lastFontId() {
+  return _base->lastFontId();
 }
 
 vector<sptr<Box>> OverlappedBox::getChildren() const {
