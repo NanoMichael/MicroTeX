@@ -93,7 +93,7 @@ public:
 
   void draw(Graphics2D& g2, float x, float y) override;
 
-  int getLastFontId() override;
+  int lastFontId() override;
 };
 
 /** A box composed of other boxes, put one above the other */
@@ -120,7 +120,7 @@ public:
 
   void draw(Graphics2D& g2, float x, float y) override;
 
-  int getLastFontId() override;
+  int lastFontId() override;
 };
 
 /**
@@ -168,7 +168,7 @@ public:
 
   void draw(Graphics2D& g2, float x, float y) override;
 
-  int getLastFontId() override;
+  int lastFontId() override;
 
   std::vector<sptr<Box>> getChildren() const override;
 };
@@ -190,7 +190,7 @@ public:
 
   void draw(Graphics2D& g2, float x, float y) override;
 
-  int getLastFontId() override;
+  int lastFontId() override;
 };
 
 /***************************************************************************************************
@@ -210,7 +210,7 @@ public:
 
   void draw(Graphics2D& g2, float x, float y) override;
 
-  int getLastFontId() override;
+  int lastFontId() override;
 
   std::vector<sptr<Box>> getChildren() const override;
 };
@@ -238,7 +238,7 @@ public:
 
   void draw(Graphics2D& g2, float x, float y) override;
 
-  int getLastFontId() override;
+  int lastFontId() override;
 
   std::vector<sptr<Box>> getChildren() const override;
 };
@@ -255,7 +255,7 @@ public:
 
   void draw(Graphics2D& g2, float x, float y) override;
 
-  int getLastFontId() override;
+  int lastFontId() override;
 
   std::vector<sptr<Box>> getChildren() const override;
 };
@@ -319,7 +319,7 @@ public:
 
   void draw(Graphics2D& g2, float x, float y) override;
 
-  int getLastFontId() override;
+  int lastFontId() override;
 
   std::vector<sptr<Box>> getChildren() const override;
 
@@ -356,7 +356,7 @@ public:
 
   virtual void draw(Graphics2D& g2, float x, float y) override;
 
-  int getLastFontId() override;
+  int lastFontId() override;
 
   std::vector<sptr<Box>> getChildren() const override;
 };
@@ -422,7 +422,7 @@ public:
     // no visual effect
   }
 
-  int getLastFontId() override;
+  int lastFontId() override;
 };
 
 /**
@@ -444,7 +444,7 @@ public:
     // no visual effect
   }
 
-  int getLastFontId() override;
+  int lastFontId() override;
 };
 
 /**
@@ -471,7 +471,7 @@ public:
 
   void draw(Graphics2D& g2, float x, float y) override;
 
-  int getLastFontId() override;
+  int lastFontId() override;
 };
 
 /** A box representing a text rendering box */
@@ -499,7 +499,7 @@ public:
 
   void draw(Graphics2D& g2, float x, float y) override;
 
-  int getLastFontId() override;
+  int lastFontId() override;
 
   static void setFont(const std::string& name);
 
@@ -545,7 +545,7 @@ public:
 
   void draw(Graphics2D& g2, float x, float y) override;
 
-  int getLastFontId() override;
+  int lastFontId() override;
 
   std::vector<sptr<Box>> getChildren() const override;
 };
@@ -563,7 +563,7 @@ public:
 
   void draw(Graphics2D& g2, float x, float y) override;
 
-  int getLastFontId() override;
+  int lastFontId() override;
 
   std::vector<sptr<Box>> getChildren() const override;
 };
@@ -583,7 +583,7 @@ public:
 
   void draw(Graphics2D& g2, float x, float y) override;
 
-  int getLastFontId() override;
+  int lastFontId() override;
 };
 
 /**
@@ -608,7 +608,7 @@ public:
 
   void draw(Graphics2D& g2, float x, float y) override;
 
-  int getLastFontId() override;
+  int lastFontId() override;
 
   std::vector<sptr<Box>> getChildren() const override;
 };

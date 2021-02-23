@@ -212,7 +212,7 @@ sptr<Box> RowAtom::createBox(Environment& env) {
     hbox->add(b);
 
     // set last used font id (for next atom)
-    env.setLastFontId(b->getLastFontId());
+    env.setLastFontId(b->lastFontId());
 
     // insert kerning
     if (abs(kern) > PREC) hbox->add(sptrOf<StrutBox>(kern, 0, 0, 0));

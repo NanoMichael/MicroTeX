@@ -409,7 +409,7 @@ sptr<Box> UnderOverAtom::createBox(Environment& env) {
   auto* vBox = new VBox();
 
   // last font used by base (for mono-space atoms following)
-  env.setLastFontId(b->getLastFontId());
+  env.setLastFontId(b->lastFontId());
 
   // over script + space
   if (_over != nullptr) {
@@ -462,7 +462,7 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
 
   auto hor = sptrOf<HBox>(b);
 
-  int lastFontId = b->getLastFontId();
+  int lastFontId = b->lastFontId();
   // if no last font found (whitespace box), use default "mu font"
   if (lastFontId == TeXFont::NO_FONT) lastFontId = tf->getMuFontId();
 

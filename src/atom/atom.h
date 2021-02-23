@@ -24,7 +24,7 @@ class Environment;
  * Subclasses must implement the abstract
  * Box#draw(Graphics2D, float, float) method (that paints the box).
  * <p>
- * They must also implement the abstract Box#getLastFontId() method (the last font 
+ * They must also implement the abstract Box#lastFontId() method (the last font
  * that will be used later when this box will be painted).
  */
 class Box {
@@ -115,7 +115,7 @@ public:
    *
    * @return the id of the last font that will be used later.
    */
-  virtual int getLastFontId() = 0;
+  virtual int lastFontId() = 0;
 
   /**
    * Get child boxes of this box, modification on the returned value by this function
