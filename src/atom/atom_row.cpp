@@ -45,32 +45,22 @@ void Dummy::setPreviousAtom(const sptr<Dummy>& prev) {
 }
 
 bool RowAtom::_breakEveywhere = false;
-bitset<16> RowAtom::_binSet(_initBinSet_());
-bitset<16> RowAtom::_ligKernSet(_initLigKernSet_());
 
-bitset<16> RowAtom::_initBinSet_() noexcept {
-  bitset<16> binSet;
-  binSet
-    .set(static_cast<i8>(AtomType::binaryOperator))
-    .set(static_cast<i8>(AtomType::bigOperator))
-    .set(static_cast<i8>(AtomType::relation))
-    .set(static_cast<i8>(AtomType::opening))
-    .set(static_cast<i8>(AtomType::punctuation));
-  return binSet;
-}
+bitset<16> RowAtom::_binSet = bitset<16>()
+  .set(static_cast<i8>(AtomType::binaryOperator))
+  .set(static_cast<i8>(AtomType::bigOperator))
+  .set(static_cast<i8>(AtomType::relation))
+  .set(static_cast<i8>(AtomType::opening))
+  .set(static_cast<i8>(AtomType::punctuation));
 
-bitset<16> RowAtom::_initLigKernSet_() noexcept {
-  bitset<16> ligKern;
-  ligKern
-    .set(static_cast<i8>(AtomType::ordinary))
-    .set(static_cast<i8>(AtomType::bigOperator))
-    .set(static_cast<i8>(AtomType::binaryOperator))
-    .set(static_cast<i8>(AtomType::relation))
-    .set(static_cast<i8>(AtomType::opening))
-    .set(static_cast<i8>(AtomType::closing))
-    .set(static_cast<i8>(AtomType::punctuation));
-  return ligKern;
-}
+bitset<16> RowAtom::_ligKernSet = bitset<16>()
+  .set(static_cast<i8>(AtomType::ordinary))
+  .set(static_cast<i8>(AtomType::bigOperator))
+  .set(static_cast<i8>(AtomType::binaryOperator))
+  .set(static_cast<i8>(AtomType::relation))
+  .set(static_cast<i8>(AtomType::opening))
+  .set(static_cast<i8>(AtomType::closing))
+  .set(static_cast<i8>(AtomType::punctuation));
 
 RowAtom::RowAtom(const sptr<Atom>& atom)
   : _lookAtLastAtom(false), _previousAtom(nullptr), _breakable(true) {
@@ -139,14 +129,14 @@ sptr<Box> RowAtom::createBox(Environment& env) {
   auto* hbox = new HBox();
 
   // convert atoms to boxes and add to the horizontal box
-  int e = _elements.size() - 1;
-  for (int i = -1; i < e;) {
+  const int end = _elements.size() - 1;
+  for (int i = -1; i < end;) {
     auto at = _elements[++i];
     bool markAdded = false;
     auto* ba = dynamic_cast<BreakMarkAtom*>(at.get());
     while (ba != nullptr) {
       if (!markAdded) markAdded = true;
-      if (i < e) {
+      if (i < end) {
         at = _elements[++i];
         ba = dynamic_cast<BreakMarkAtom*>(at.get());
       } else {
@@ -158,12 +148,12 @@ sptr<Box> RowAtom::createBox(Environment& env) {
     // if necessary, change BIN type to ORD
     // i.e. for formula: $+ e - f$, the plus sign should be treat as an ordinary type
     sptr<Atom> nextAtom(nullptr);
-    if (i < e) nextAtom = _elements[i + 1];
+    if (i < end) nextAtom = _elements[i + 1];
     changeToOrd(atom.get(), _previousAtom.get(), nextAtom.get());
 
     // check for ligature or kerning
     float kern = 0;
-    while (i < e && atom->rightType() == AtomType::ordinary && atom->isCharSymbol()) {
+    while (i < end && atom->rightType() == AtomType::ordinary && atom->isCharSymbol()) {
       auto next = _elements[++i];
       auto* c = dynamic_cast<CharSymbol*>(next.get());
       if (c != nullptr && _ligKernSet[static_cast<i8>(next->leftType())]) {
