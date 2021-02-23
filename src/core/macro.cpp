@@ -33,7 +33,7 @@ void NewCommandMacro::checkRenew(const wstring& name) {
 void NewCommandMacro::addNewCommand(const wstring& name, const wstring& code, int argc) {
   checkNew(name);
   _codes[name] = code;
-  MacroInfo::addMacro(name, new InflationMacroInfo(_instance, argc));
+  MacroInfo::add(name, new InflationMacroInfo(_instance, argc));
 }
 
 void NewCommandMacro::addNewCommand(
@@ -45,13 +45,13 @@ void NewCommandMacro::addNewCommand(
   checkNew(name);
   _codes[name] = code;
   _replacements[name] = def;
-  MacroInfo::addMacro(name, new InflationMacroInfo(_instance, argc, 1));
+  MacroInfo::add(name, new InflationMacroInfo(_instance, argc, 1));
 }
 
 void NewCommandMacro::addRenewCommand(const wstring& name, const wstring& code, int argc) {
   checkRenew(name);
   _codes[name] = code;
-  MacroInfo::addMacro(name, new InflationMacroInfo(_instance, argc));
+  MacroInfo::add(name, new InflationMacroInfo(_instance, argc));
 }
 
 void NewCommandMacro::addRenewCommand(
@@ -63,7 +63,7 @@ void NewCommandMacro::addRenewCommand(
   checkRenew(name);
   _codes[name] = code;
   _replacements[name] = def;
-  MacroInfo::addMacro(name, new InflationMacroInfo(_instance, argc, 1));
+  MacroInfo::add(name, new InflationMacroInfo(_instance, argc, 1));
 }
 
 void NewCommandMacro::execute(TeXParser& tp, vector<wstring>& args) {
@@ -129,7 +129,7 @@ void NewCommandMacro::_free_() {
   delete _instance;
 }
 
-void MacroInfo::addMacro(const wstring& name, MacroInfo* mac) {
+void MacroInfo::add(const wstring& name, MacroInfo* mac) {
   auto it = _commands.find(name);
   if (it != _commands.end()) delete it->second;
   _commands[name] = mac;

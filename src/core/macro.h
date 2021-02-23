@@ -95,7 +95,7 @@ public:
   static std::map<std::wstring, MacroInfo*> _commands;
 
   /** Add a macro, replace it if the macro is exists. */
-  static void addMacro(const std::wstring& name, MacroInfo* mac);
+  static void add(const std::wstring& name, MacroInfo* mac);
 
   /** Get the macro info from given name, return nullptr if not found. */
   static MacroInfo* get(const std::wstring& name);
