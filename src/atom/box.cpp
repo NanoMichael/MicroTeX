@@ -83,7 +83,7 @@ sptr<Box> DelimiterFactory::create(const string& symbol, Environment& env, float
       if (ext->hasTop() && ext->hasBottom()) {
         vBox->add(1, rep);
         if (ext->hasMiddle()) {
-          vBox->add(vBox->getSize() - 1, rep);
+          vBox->add(vBox->size() - 1, rep);
         }
       } else if (ext->hasBottom()) {
         vBox->add(0, rep);
@@ -338,9 +338,9 @@ int HRule::lastFontId() {
 
 /************************************* vertical box implementation ********************************/
 
-VBox::VBox(const sptr<Box>& b, float rest, Alignment alignment)
+VBox::VBox(const sptr<Box>& box, float rest, Alignment alignment)
   : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {
-  add(b);
+  add(box);
   if (alignment == Alignment::center) {
     auto s = sptrOf<StrutBox>(0, rest / 2, 0, 0);
     Box::add(0, s);
@@ -358,40 +358,40 @@ VBox::VBox(const sptr<Box>& b, float rest, Alignment alignment)
   }
 }
 
-void VBox::recalculateWidth(const Box& b) {
-  _leftMostPos = min(_leftMostPos, b._shift);
-  _rightMostPos = max(_rightMostPos, b._shift + (b._width > 0 ? b._width : 0));
+void VBox::recalculateWidth(const Box& box) {
+  _leftMostPos = min(_leftMostPos, box._shift);
+  _rightMostPos = max(_rightMostPos, box._shift + (box._width > 0 ? box._width : 0));
   _width = _rightMostPos - _leftMostPos;
 }
 
-void VBox::add(const sptr<Box>& b) {
-  Box::add(b);
+void VBox::add(const sptr<Box>& box) {
+  Box::add(box);
   if (_children.size() == 1) {
-    _height = b->_height;
-    _depth = b->_depth;
+    _height = box->_height;
+    _depth = box->_depth;
   } else {
-    _depth += b->_height + b->_depth;
+    _depth += box->_height + box->_depth;
   }
-  recalculateWidth(*b);
+  recalculateWidth(*box);
 }
 
-void VBox::add(const sptr<Box>& b, float interline) {
+void VBox::add(const sptr<Box>& box, float interline) {
   if (!_children.empty()) {
     auto s = sptrOf<StrutBox>(0, interline, 0, 0);
     add(s);
   }
-  add(b);
+  add(box);
 }
 
-void VBox::add(int pos, const sptr<Box>& b) {
-  Box::add(pos, b);
+void VBox::add(int pos, const sptr<Box>& box) {
+  Box::add(pos, box);
   if (pos == 0) {
-    _depth += b->_depth + _height;
-    _height = b->_height;
+    _depth += box->_depth + _height;
+    _height = box->_height;
   } else {
-    _depth += b->_height + b->_depth;
+    _depth += box->_height + box->_depth;
   }
-  recalculateWidth(*b);
+  recalculateWidth(*box);
 }
 
 void VBox::draw(Graphics2D& g2, float x, float y) {

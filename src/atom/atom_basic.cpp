@@ -195,7 +195,7 @@ sptr<Box> VRowAtom::createBox(Environment& env) {
 
   vb->_shift = -_raise->createBox(env)->_width;
   if (_valign == Alignment::top) {
-    float t = vb->getSize() == 0 ? 0 : vb->_children.front()->_height;
+    float t = vb->size() == 0 ? 0 : vb->_children.front()->_height;
     vb->_height = t;
     vb->_depth = vb->_depth + vb->_height - t;
   } else if (_valign == Alignment::center) {
@@ -204,7 +204,7 @@ sptr<Box> VRowAtom::createBox(Environment& env) {
     vb->_height = h / 2 + axis;
     vb->_depth = h / 2 - axis;
   } else {
-    float t = vb->getSize() == 0 ? 0 : vb->_children.back()->_depth;
+    float t = vb->size() == 0 ? 0 : vb->_children.back()->_depth;
     vb->_height = vb->_depth + vb->_height - t;
     vb->_depth = t;
   }
