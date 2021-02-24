@@ -101,20 +101,20 @@ class VBox : public Box {
 private:
   float _leftMostPos, _rightMostPos;
 
-  void recalculateWidth(const Box& b);
+  void recalculateWidth(const Box& box);
 
 public:
   VBox() : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {}
 
-  VBox(const sptr<Box>& b, float rest, Alignment alignment);
+  VBox(const sptr<Box>& box, float rest, Alignment alignment);
 
-  void add(const sptr<Box>& b) override;
+  void add(const sptr<Box>& box) override;
 
-  void add(const sptr<Box>& b, float interline);
+  void add(const sptr<Box>& box, float interline);
 
-  void add(int pos, const sptr<Box>& b) override;
+  void add(int pos, const sptr<Box>& box) override;
 
-  inline int getSize() const {
+  inline int size() const {
     return _children.size();
   }
 
