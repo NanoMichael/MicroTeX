@@ -902,9 +902,9 @@ inline macro(scriptscriptstyle) {
 }
 
 inline macro(rotatebox) {
-  float x = 0;
-  if (!args[1].empty()) valueof(args[1], x);
-  return sptrOf<RotateAtom>(Formula(tp, args[2])._root, x, args[3]);
+  float angle = 0;
+  if (!args[1].empty()) valueof(args[1], angle);
+  return sptrOf<RotateAtom>(Formula(tp, args[2])._root, angle, args[3]);
 }
 
 inline macro(reflectbox) {
