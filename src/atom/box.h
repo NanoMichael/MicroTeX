@@ -220,7 +220,6 @@ class ScaleBox : public Box {
 private:
   sptr<Box> _box;
   float _sx, _sy;
-  float _factor;
 
   void init(const sptr<Box>& b, float sx, float sy);
 
@@ -233,7 +232,6 @@ public:
 
   ScaleBox(const sptr<Box>& b, float factor) {
     init(b, factor, factor);
-    _factor = factor;
   }
 
   void draw(Graphics2D& g2, float x, float y) override;

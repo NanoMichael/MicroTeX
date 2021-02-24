@@ -509,7 +509,6 @@ vector<sptr<Box>> ColorBox::getChildren() const {
 /*************************************** scale box implementation *********************************/
 
 void ScaleBox::init(const sptr<Box>& b, float sx, float sy) {
-  _factor = 1;
   _box = b;
   _sx = (isnan(sx) || isinf(sx)) ? 1 : sx;
   _sy = (isnan(sy) || isinf(sy)) ? 1 : sy;
@@ -520,14 +519,13 @@ void ScaleBox::init(const sptr<Box>& b, float sx, float sy) {
 }
 
 void ScaleBox::draw(Graphics2D& g2, float x, float y) {
-  if (_sx != 0 && _sy != 0) {
-    float dec = _sx < 0 ? _width : 0;
-    g2.translate(x + dec, y);
-    g2.scale(_sx, _sy);
-    _box->draw(g2, 0, 0);
-    g2.scale(1.f / _sx, 1.f / _sy);
-    g2.translate(-x - dec, -y);
-  }
+  if (_sx == 0 || _sy == 0) return;
+  float dec = _sx < 0 ? _width : 0;
+  g2.translate(x + dec, y);
+  g2.scale(_sx, _sy);
+  _box->draw(g2, 0, 0);
+  g2.scale(1.f / _sx, 1.f / _sy);
+  g2.translate(-x - dec, -y);
 }
 
 int ScaleBox::lastFontId() {
