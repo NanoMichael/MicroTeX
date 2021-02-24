@@ -229,10 +229,10 @@ void HBox::recalculate(const Box& box) {
   // curPos += box._width;
   // width = max(width, curPos);
   _width += box._width;
-  float x = _children.empty() ? NEG_INF : _height;
-  _height = max(x, box._height - box._shift);
-  x = _children.empty() ? NEG_INF : _depth;
-  _depth = max(x, box._depth + box._shift);
+  const float h = _children.empty() ? NEG_INF : _height;
+  _height = max(h, box._height - box._shift);
+  const float d = _children.empty() ? NEG_INF : _depth;
+  _depth = max(d, box._depth + box._shift);
 }
 
 sptr<HBox> HBox::cloneBox() {
@@ -877,7 +877,7 @@ int TextRenderingBox::lastFontId() {
   return 0;
 }
 
-void WrapperBox::setInsets(float l, float t, float r, float b) {
+void WrapperBox::addInsets(float l, float t, float r, float b) {
   _l += l;
   _width += l + r;
   _height += t;

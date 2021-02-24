@@ -530,7 +530,7 @@ sptr<Box> MatrixAtom::createBox(Environment& e) {
             isLastVline = matom->hasRightVline();
           }
           float r = j == cols - 1 ? Hsep[j + 1] : Hsep[j + 1] / 2;
-          wb->setInsets(l, Vspace, r, Vspace);
+          wb->addInsets(l, Vspace, r, Vspace);
           applyCell(*wb, i, j);
           sptr<Box> swb(wb);
           boxarr[i][tj] = swb;

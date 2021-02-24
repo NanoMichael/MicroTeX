@@ -294,7 +294,6 @@ private:
   sptr<Box> _box;
   float _angle;
   float _xmax, _xmin, _ymax, _ymin;
-  int _option;
   float _shiftX, _shiftY;
 
   void init(const sptr<Box>& b, float angle, float x, float y);
@@ -541,7 +540,7 @@ public:
 
   inline void setBackground(color bg) { _bg = bg; }
 
-  void setInsets(float l, float t, float r, float b);
+  void addInsets(float l, float t, float r, float b);
 
   void draw(Graphics2D& g2, float x, float y) override;
 
@@ -574,7 +573,6 @@ private:
   // Every 4 elements represent a line, thus (x1, y1, x2, y2)
   std::vector<float> _lines;
   float _thickness;
-  int _lineCount{};
 
 public:
   LineBox() = delete;
@@ -586,9 +584,7 @@ public:
   int lastFontId() override;
 };
 
-/**
- * Class representing a box covered by another box
- */
+/** Class representing a box covered by another box */
 class OverlappedBox : public Box {
 private:
   sptr<Box> _base;
