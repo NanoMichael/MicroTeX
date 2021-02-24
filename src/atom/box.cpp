@@ -288,54 +288,6 @@ int HBox::lastFontId() {
   return id;
 }
 
-/********************************** horizontal rule implementation ********************************/
-
-HRule::HRule(float thickness, float width, float shift)
-  : _color(transparent), _speShift(0) {
-  _height = thickness;
-  _width = width;
-  _shift = shift;
-}
-
-HRule::HRule(float thickness, float width, float shift, bool trueshift)
-  : _color(transparent), _speShift(0) {
-  _height = thickness;
-  _width = width;
-  if (trueshift) {
-    _shift = shift;
-  } else {
-    _shift = 0;
-    _speShift = shift;
-  }
-}
-
-HRule::HRule(float thickness, float width, float shift, color c, bool trueshift)
-  : _color(c), _speShift(0) {
-  _height = thickness;
-  _width = width;
-  if (trueshift) {
-    _shift = shift;
-  } else {
-    _shift = 0;
-    _speShift = shift;
-  }
-}
-
-void HRule::draw(Graphics2D& g2, float x, float y) {
-  const color oldColor = g2.getColor();
-  if (!isTransparent(_color)) g2.setColor(_color);
-  const Stroke& oldStroke = g2.getStroke();
-  g2.setStroke(Stroke(_height, CAP_BUTT, JOIN_BEVEL));
-  y = y - _height / 2.f - _speShift;
-  g2.drawLine(x, y, x + _width, y);
-  g2.setStroke(oldStroke);
-  g2.setColor(oldColor);
-}
-
-int HRule::lastFontId() {
-  return TeXFont::NO_FONT;
-}
-
 /************************************* vertical box implementation ********************************/
 
 VBox::VBox(const sptr<Box>& box, float rest, Alignment alignment)
@@ -477,6 +429,54 @@ int OverUnderBox::lastFontId() {
 
 vector<sptr<Box>> OverUnderBox::getChildren() const {
   return {_base, _del, _script};
+}
+
+/********************************** horizontal rule implementation ********************************/
+
+HRule::HRule(float thickness, float width, float shift)
+  : _color(transparent), _speShift(0) {
+  _height = thickness;
+  _width = width;
+  _shift = shift;
+}
+
+HRule::HRule(float thickness, float width, float shift, bool trueshift)
+  : _color(transparent), _speShift(0) {
+  _height = thickness;
+  _width = width;
+  if (trueshift) {
+    _shift = shift;
+  } else {
+    _shift = 0;
+    _speShift = shift;
+  }
+}
+
+HRule::HRule(float thickness, float width, float shift, color c, bool trueshift)
+  : _color(c), _speShift(0) {
+  _height = thickness;
+  _width = width;
+  if (trueshift) {
+    _shift = shift;
+  } else {
+    _shift = 0;
+    _speShift = shift;
+  }
+}
+
+void HRule::draw(Graphics2D& g2, float x, float y) {
+  const color oldColor = g2.getColor();
+  if (!isTransparent(_color)) g2.setColor(_color);
+  const Stroke& oldStroke = g2.getStroke();
+  g2.setStroke(Stroke(_height, CAP_BUTT, JOIN_BEVEL));
+  y = y - _height / 2.f - _speShift;
+  g2.drawLine(x, y, x + _width, y);
+  g2.setStroke(oldStroke);
+  g2.setColor(oldColor);
+}
+
+int HRule::lastFontId() {
+  return TeXFont::NO_FONT;
 }
 
 ColorBox::ColorBox(const sptr<Box>& box, color fg, color bg) {
