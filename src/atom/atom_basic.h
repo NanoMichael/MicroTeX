@@ -246,7 +246,7 @@ public:
   }
 
   inline void setVtop(bool vtop) {
-    _valign = Alignment::top;
+    _valign = vtop ? Alignment::top : Alignment::center;
   }
 
   inline bool isVtop() const {

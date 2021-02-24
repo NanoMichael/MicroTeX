@@ -57,24 +57,18 @@ public:
   float _depth = 0;
 
   /**
-    * The shift amount: the meaning depends on the particular kind of box (up,
-    * down, left, right)
-    */
+   * The shift amount: the meaning depends on the particular kind of box (up,
+   * down, left, right)
+   */
   float _shift = 0;
 
-  /**
-   * The box type (default = -1, no type)
-   */
+  /** The box type (default = -1, no type) */
   AtomType _type = AtomType::none;
 
-  /**
-   * Children of this box
-   */
+  /** Children of this box */
   std::vector<sptr<Box>> _children;
 
-  /**
-   * Create a new box with default options
-   */
+  /** Create a new box with default options */
   Box() { init(); }
 
   /**
@@ -176,7 +170,7 @@ public:
   virtual AtomType rightType() const { return _type; }
 
   /**
-   * Convert this atom into a {@link Box}, using properties set by "parent"
+   * Convert this atom into a Box, using properties set by "parent"
    * atoms, like the TeX style, the last used font, color settings, ...
    *
    * @param env the current environment settings
