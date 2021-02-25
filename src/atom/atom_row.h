@@ -3,10 +3,10 @@
 
 #include <bitset>
 
+#include "common.h"
 #include "utils/utils.h"
 #include "atom/atom.h"
-#include "atom/box.h"
-#include "common.h"
+#include "box/box_group.h"
 #include "graphic/graphic.h"
 
 namespace tex {
@@ -16,6 +16,10 @@ class Dummy;
 class FixedCharAtom;
 
 class Environment;
+
+class CharFont;
+
+class TeXFont;
 
 /**
  * A "composed atom": An atom that consists of child atoms that will be

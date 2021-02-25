@@ -11,7 +11,8 @@
 #include "atom/atom_char.h"
 #include "atom/atom_space.h"
 #include "atom/atom.h"
-#include "atom/box.h"
+#include "box/box_single.h"
+#include "box/box_group.h"
 #include "graphic/graphic.h"
 
 namespace tex {

@@ -1,8 +1,7 @@
 #include "atom/atom_basic.h"
 
-#include <memory>
-
-#include "atom/box.h"
+#include "box/box_group.h"
+#include "box/box_factory.h"
 #include "core/core.h"
 #include "core/formula.h"
 #include "fonts/fonts.h"

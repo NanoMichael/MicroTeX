@@ -2,7 +2,7 @@
 #define LATEX_ATOM_MATRIX_H
 
 #include "atom/atom.h"
-#include "atom/box.h"
+#include "box/box_group.h"
 #include "core/core.h"
 #include "graphic/graphic.h"
 
