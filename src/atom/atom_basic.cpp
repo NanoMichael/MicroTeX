@@ -350,8 +350,9 @@ sptr<Box> AccentedAtom::createBox(Environment& env) {
   if (_acc) cb = _accent->createBox(_changeSize ? *(env.subStyle()) : env);
 
   if (abs(italic) > PREC) {
-    y = sptrOf<HBox>(sptrOf<StrutBox>(-italic, 0, 0, 0));
-    y->add(cb);
+    auto hbox = sptrOf<HBox>(sptrOf<StrutBox>(-italic, 0, 0, 0));
+    hbox->add(cb);
+    y = hbox;
   } else {
     y = cb;
   }

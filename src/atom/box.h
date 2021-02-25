@@ -58,7 +58,7 @@ public:
  ***************************************************************************************************/
 
 /** A box composed of a horizontal row of child boxes */
-class HBox : public Box {
+class HBox : public BoxGroup {
 private:
   void recalculate(const Box& box);
 
@@ -92,12 +92,10 @@ public:
   }
 
   void draw(Graphics2D& g2, float x, float y) override;
-
-  int lastFontId() override;
 };
 
 /** A box composed of other boxes, put one above the other */
-class VBox : public Box {
+class VBox : public BoxGroup {
 private:
   float _leftMostPos, _rightMostPos;
 
@@ -114,13 +112,7 @@ public:
 
   void add(int pos, const sptr<Box>& box) override;
 
-  inline int size() const {
-    return _children.size();
-  }
-
   void draw(Graphics2D& g2, float x, float y) override;
-
-  int lastFontId() override;
 };
 
 /**
@@ -170,7 +162,7 @@ public:
 
   int lastFontId() override;
 
-  std::vector<sptr<Box>> descendants() const override;
+  const std::vector<sptr<Box>> descendants() const override;
 };
 
 /** A box representing a horizontal line. */
@@ -212,7 +204,7 @@ public:
 
   int lastFontId() override;
 
-  std::vector<sptr<Box>> descendants() const override;
+  const std::vector<sptr<Box>> descendants() const override;
 };
 
 /** A box representing a scale operation */
@@ -238,7 +230,7 @@ public:
 
   int lastFontId() override;
 
-  std::vector<sptr<Box>> descendants() const override;
+  const std::vector<sptr<Box>> descendants() const override;
 };
 
 /** A box representing a reflected box */
@@ -255,7 +247,7 @@ public:
 
   int lastFontId() override;
 
-  std::vector<sptr<Box>> descendants() const override;
+  const std::vector<sptr<Box>> descendants() const override;
 };
 
 /** Enumeration representing rotation origin */
@@ -318,7 +310,7 @@ public:
 
   int lastFontId() override;
 
-  std::vector<sptr<Box>> descendants() const override;
+  const std::vector<sptr<Box>> descendants() const override;
 
   static int getOrigin(std::string option);
 };
@@ -355,7 +347,7 @@ public:
 
   int lastFontId() override;
 
-  std::vector<sptr<Box>> descendants() const override;
+  const std::vector<sptr<Box>> descendants() const override;
 };
 
 /** A box representing a wrapped box by oval frame */
@@ -544,7 +536,7 @@ public:
 
   int lastFontId() override;
 
-  std::vector<sptr<Box>> descendants() const override;
+  const std::vector<sptr<Box>> descendants() const override;
 };
 
 /** Class representing a box that shifted up or down (when shift is negative) */
@@ -562,7 +554,7 @@ public:
 
   int lastFontId() override;
 
-  std::vector<sptr<Box>> descendants() const override;
+  const std::vector<sptr<Box>> descendants() const override;
 };
 
 /** Class represents several lines */
