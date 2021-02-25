@@ -427,7 +427,7 @@ int OverUnderBox::lastFontId() {
   return _base->lastFontId();
 }
 
-vector<sptr<Box>> OverUnderBox::getChildren() const {
+vector<sptr<Box>> OverUnderBox::descendants() const {
   return {_base, _del, _script};
 }
 
@@ -502,7 +502,7 @@ int ColorBox::lastFontId() {
   return _box->lastFontId();
 }
 
-vector<sptr<Box>> ColorBox::getChildren() const {
+vector<sptr<Box>> ColorBox::descendants() const {
   return {_box};
 }
 
@@ -532,7 +532,7 @@ int ScaleBox::lastFontId() {
   return _box->lastFontId();
 }
 
-vector<sptr<Box>> ScaleBox::getChildren() const {
+vector<sptr<Box>> ScaleBox::descendants() const {
   return {_box};
 }
 
@@ -558,7 +558,7 @@ int ReflectBox::lastFontId() {
   return _box->lastFontId();
 }
 
-vector<sptr<Box>> ReflectBox::getChildren() const {
+vector<sptr<Box>> ReflectBox::descendants() const {
   return {_box};
 }
 
@@ -699,7 +699,7 @@ int RotateBox::lastFontId() {
   return _box->lastFontId();
 }
 
-vector<sptr<Box>> RotateBox::getChildren() const {
+vector<sptr<Box>> RotateBox::descendants() const {
   return {_box};
 }
 
@@ -744,7 +744,7 @@ int FramedBox::lastFontId() {
   return _box->lastFontId();
 }
 
-vector<sptr<Box>> FramedBox::getChildren() const {
+vector<sptr<Box>> FramedBox::descendants() const {
   return {_box};
 }
 
@@ -897,7 +897,7 @@ int WrapperBox::lastFontId() {
   return _base->lastFontId();
 }
 
-vector<sptr<Box>> WrapperBox::getChildren() const {
+vector<sptr<Box>> WrapperBox::descendants() const {
   return {_base};
 }
 
@@ -909,7 +909,7 @@ int ShiftBox::lastFontId() {
   return _base->lastFontId();
 }
 
-vector<sptr<Box>> ShiftBox::getChildren() const {
+vector<sptr<Box>> ShiftBox::descendants() const {
   return {_base};
 }
 
@@ -935,5 +935,5 @@ void LineBox::draw(Graphics2D& g2, float x, float y) {
 }
 
 int LineBox::lastFontId() {
-  return 0;
+  return TeXFont::NO_FONT;
 }

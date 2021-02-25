@@ -115,7 +115,7 @@ public:
    * Get child boxes of this box, modification on the returned value by this function
    * will not effect this box's children
    */
-  virtual std::vector<sptr<Box>> getChildren() const {
+  virtual std::vector<sptr<Box>> descendants() const {
     return _children;
   }
 
