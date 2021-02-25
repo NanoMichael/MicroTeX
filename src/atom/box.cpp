@@ -937,16 +937,3 @@ void LineBox::draw(Graphics2D& g2, float x, float y) {
 int LineBox::lastFontId() {
   return 0;
 }
-
-void OverlappedBox::draw(Graphics2D& g2, float x, float y) {
-  _base->draw(g2, x, y);
-  _overlap->draw(g2, x, y);
-}
-
-int OverlappedBox::lastFontId() {
-  return _base->lastFontId();
-}
-
-vector<sptr<Box>> OverlappedBox::getChildren() const {
-  return {_base, _overlap};
-}
