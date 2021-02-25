@@ -17,9 +17,7 @@ class Environment;
  * An abstract graphical representation of a formula, that can be painted. All
  * characters, font sizes, positions are fixed. Only special Glue boxes could
  * possibly stretch or shrink. A box has 3 dimensions (width, height and depth),
- * can be composed of other child boxes that can possibly be shifted (up, down,
- * left or right). Child boxes can also be positioned outside their parent's box
- * (defined by it's dimensions).
+ * will be used for further layout calculations.
  * <p>
  * Subclasses must implement the abstract
  * Box#draw(Graphics2D, float, float) method (that paints the box).
@@ -65,30 +63,8 @@ public:
   /** The box type (default = -1, no type) */
   AtomType _type = AtomType::none;
 
-  /** Children of this box */
-  std::vector<sptr<Box>> _children;
-
   /** Create a new box with default options */
   Box() { init(); }
-
-  /**
-   * Append the given box at the end of the list of child boxes.
-   *
-   * @param box the box to be inserted
-   */
-  virtual void add(const sptr<Box>& box) {
-    _children.push_back(box);
-  }
-
-  /**
-   * Inserts the given box at the given position in the list of child boxes.
-   *
-   * @param pos the position at which to insert the given box
-   * @param box the box to be inserted
-   */
-  virtual void add(int pos, const sptr<Box>& box) {
-    _children.insert(_children.begin() + pos, box);
-  }
 
   /** Transform the width of box to negative */
   inline void negWidth() { _width = -_width; }
@@ -111,15 +87,62 @@ public:
    */
   virtual int lastFontId() = 0;
 
-  /**
-   * Get child boxes of this box, modification on the returned value by this function
-   * will not effect this box's children
-   */
-  virtual std::vector<sptr<Box>> descendants() const {
-    return _children;
+  /** Get child boxes of this box. */
+  virtual const std::vector<sptr<Box>> descendants() const {
+    return {};
+  }
+
+  /** Test if this box is composed by other boxes */
+  virtual bool isComposable() const {
+    return false;
   }
 
   virtual ~Box() = default;
+};
+
+/**
+ * A box composed of other child boxes that can possibly be shifted (up, down,
+ * left of right). Child boxes can also be positioned outside their parent's box
+ * (defined by it's dimensions).
+ */
+class BoxGroup : public Box {
+public:
+  /** Children of this box */
+  std::vector<sptr<Box>> _children{};
+
+  /**
+   * Append the given box at the end of the list of child boxes.
+   *
+   * @param box the box to be inserted
+   */
+  virtual void add(const sptr<Box>& box) {
+    _children.push_back(box);
+  }
+
+  /**
+   * Inserts the given box at the given position in the list of child boxes.
+   *
+   * @param pos the position at which to insert the given box
+   * @param box the box to be inserted
+   */
+  virtual void add(int pos, const sptr<Box>& box) {
+    _children.insert(_children.begin() + pos, box);
+  }
+
+  /** Child count of this box */
+  inline int size() const {
+    return _children.size();
+  }
+
+  const std::vector<sptr<Box>> descendants() const override {
+    return _children;
+  }
+
+  bool isComposable() const override {
+    return true;
+  }
+
+  int lastFontId() override;
 };
 
 /**

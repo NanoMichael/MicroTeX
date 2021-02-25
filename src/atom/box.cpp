@@ -190,6 +190,13 @@ sptr<Box> XLeftRightArrowFactory::create(bool left, Environment& env, float widt
   return sptr<Box>(hb);
 }
 
+int BoxGroup::lastFontId() {
+  int id = TeXFont::NO_FONT;
+  for (int i = _children.size() - 1; i >= 0 && id == TeXFont::NO_FONT; i--)
+    id = _children[i]->lastFontId();
+  return id;
+}
+
 /************************************* horizontal box implementation ******************************/
 
 HBox::HBox(const sptr<Box>& box, float width, Alignment aligment) {
@@ -243,12 +250,12 @@ sptr<HBox> HBox::cloneBox() {
 
 void HBox::add(const sptr<Box>& box) {
   recalculate(*box);
-  Box::add(box);
+  BoxGroup::add(box);
 }
 
 void HBox::add(int pos, const sptr<Box>& box) {
   recalculate(*box);
-  Box::add(pos, box);
+  BoxGroup::add(pos, box);
 }
 
 pair<sptr<HBox>, sptr<HBox>> HBox::split(int pos, int shift) {
@@ -281,13 +288,6 @@ void HBox::draw(Graphics2D& g2, float x, float y) {
   }
 }
 
-int HBox::lastFontId() {
-  int id = TeXFont::NO_FONT;
-  for (int i = _children.size() - 1; i >= 0 && id == TeXFont::NO_FONT; i--)
-    id = _children[i]->lastFontId();
-  return id;
-}
-
 /************************************* vertical box implementation ********************************/
 
 VBox::VBox(const sptr<Box>& box, float rest, Alignment alignment)
@@ -295,18 +295,18 @@ VBox::VBox(const sptr<Box>& box, float rest, Alignment alignment)
   add(box);
   if (alignment == Alignment::center) {
     auto s = sptrOf<StrutBox>(0, rest / 2, 0, 0);
-    Box::add(0, s);
+    BoxGroup::add(0, s);
     _height += rest / 2.f;
     _depth += rest / 2.f;
-    Box::add(s);
+    BoxGroup::add(s);
   } else if (alignment == Alignment::top) {
     _depth += rest;
     auto s = sptrOf<StrutBox>(0, rest, 0, 0);
-    Box::add(s);
+    BoxGroup::add(s);
   } else if (alignment == Alignment::bottom) {
     _height += rest;
     auto s = sptrOf<StrutBox>(0, rest, 0, 0);
-    Box::add(0, s);
+    BoxGroup::add(0, s);
   }
 }
 
@@ -317,7 +317,7 @@ void VBox::recalculateWidth(const Box& box) {
 }
 
 void VBox::add(const sptr<Box>& box) {
-  Box::add(box);
+  BoxGroup::add(box);
   if (_children.size() == 1) {
     _height = box->_height;
     _depth = box->_depth;
@@ -336,7 +336,7 @@ void VBox::add(const sptr<Box>& box, float interline) {
 }
 
 void VBox::add(int pos, const sptr<Box>& box) {
-  Box::add(pos, box);
+  BoxGroup::add(pos, box);
   if (pos == 0) {
     _depth += box->_depth + _height;
     _height = box->_height;
@@ -353,14 +353,6 @@ void VBox::draw(Graphics2D& g2, float x, float y) {
     b->draw(g2, x + b->_shift - _leftMostPos, yPos);
     yPos += b->_depth;
   }
-}
-
-int VBox::lastFontId() {
-  int id = TeXFont::NO_FONT;
-  for (int i = _children.size() - 1; i >= 0 && id == TeXFont::NO_FONT; i--) {
-    id = _children[i]->lastFontId();
-  }
-  return id;
 }
 
 OverBar::OverBar(const sptr<Box>& b, float kern, float thickness) : VBox() {
@@ -427,7 +419,7 @@ int OverUnderBox::lastFontId() {
   return _base->lastFontId();
 }
 
-vector<sptr<Box>> OverUnderBox::descendants() const {
+const vector<sptr<Box>> OverUnderBox::descendants() const {
   return {_base, _del, _script};
 }
 
@@ -502,7 +494,7 @@ int ColorBox::lastFontId() {
   return _box->lastFontId();
 }
 
-vector<sptr<Box>> ColorBox::descendants() const {
+const vector<sptr<Box>> ColorBox::descendants() const {
   return {_box};
 }
 
@@ -532,7 +524,7 @@ int ScaleBox::lastFontId() {
   return _box->lastFontId();
 }
 
-vector<sptr<Box>> ScaleBox::descendants() const {
+const vector<sptr<Box>> ScaleBox::descendants() const {
   return {_box};
 }
 
@@ -558,7 +550,7 @@ int ReflectBox::lastFontId() {
   return _box->lastFontId();
 }
 
-vector<sptr<Box>> ReflectBox::descendants() const {
+const vector<sptr<Box>> ReflectBox::descendants() const {
   return {_box};
 }
 
@@ -699,7 +691,7 @@ int RotateBox::lastFontId() {
   return _box->lastFontId();
 }
 
-vector<sptr<Box>> RotateBox::descendants() const {
+const vector<sptr<Box>> RotateBox::descendants() const {
   return {_box};
 }
 
@@ -744,7 +736,7 @@ int FramedBox::lastFontId() {
   return _box->lastFontId();
 }
 
-vector<sptr<Box>> FramedBox::descendants() const {
+const vector<sptr<Box>> FramedBox::descendants() const {
   return {_box};
 }
 
@@ -897,7 +889,7 @@ int WrapperBox::lastFontId() {
   return _base->lastFontId();
 }
 
-vector<sptr<Box>> WrapperBox::descendants() const {
+const vector<sptr<Box>> WrapperBox::descendants() const {
   return {_base};
 }
 
@@ -909,7 +901,7 @@ int ShiftBox::lastFontId() {
   return _base->lastFontId();
 }
 
-vector<sptr<Box>> ShiftBox::descendants() const {
+const vector<sptr<Box>> ShiftBox::descendants() const {
   return {_base};
 }
 

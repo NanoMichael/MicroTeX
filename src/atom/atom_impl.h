@@ -101,8 +101,9 @@ public:
     Box* cedilla = new CharBox(ch);
     Box* y;
     if (std::abs(italic) > PREC) {
-      y = new HBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
-      y->add(sptr<Box>(cedilla));
+      auto hbox = new HBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
+      hbox->add(sptr<Box>(cedilla));
+      y = hbox;
     } else {
       y = cedilla;
     }
@@ -559,8 +560,9 @@ public:
     Box* y = nullptr;
 
     if (std::abs(italic) > PREC) {
-      y = new HBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
-      y->add(sptr<Box>(ogonek));
+      auto hbox = new HBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
+      hbox->add(sptr<Box>(ogonek));
+      y = hbox;
     } else {
       y = ogonek;
     }
@@ -956,8 +958,9 @@ public:
     auto* B = new CharBox(ch);
     Box* y = nullptr;
     if (std::abs(italic) > PREC) {
-      y = new HBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
-      y->add(sptr<Box>(B));
+      auto hbox = new HBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
+      hbox->add(sptr<Box>(B));
+      y = hbox;
     } else {
       y = B;
     }
