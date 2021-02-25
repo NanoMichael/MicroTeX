@@ -2,6 +2,7 @@
 #define CORE_H_INCLUDED
 
 #include <cstring>
+#include <stack>
 
 #include "common.h"
 #include "fonts/fonts.h"

@@ -1,12 +1,11 @@
 #ifndef ATOM_IMPL_H_INCLUDED
 #define ATOM_IMPL_H_INCLUDED
 
-#include <utility>
-
-#include "atom/atom.h"
-#include "atom/box.h"
-#include "atom/atom_matrix.h"
 #include "common.h"
+#include "box/box_factory.h"
+#include "box/box_group.h"
+#include "atom/atom.h"
+#include "atom/atom_matrix.h"
 #include "core/core.h"
 #include "core/formula.h"
 #include "fonts/fonts.h"

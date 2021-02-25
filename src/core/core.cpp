@@ -1,7 +1,7 @@
 #include "core/core.h"
 
 #include "atom/atom_basic.h"
-#include "atom/box.h"
+#include "box/box_group.h"
 #include "common.h"
 
 using namespace std;

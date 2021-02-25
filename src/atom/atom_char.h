@@ -3,11 +3,15 @@
 
 #include "common.h"
 #include "atom/atom.h"
-#include "atom/box.h"
+#include "box/box_group.h"
 
 namespace tex {
 
 struct CharFont;
+
+struct Char;
+
+class TeXFont;
 
 /**
  * An common superclass for atoms that represent one single character and access

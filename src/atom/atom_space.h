@@ -2,7 +2,7 @@
 #define LATEX_ATOM_SPACE_H
 
 #include "atom/atom.h"
-#include "atom/box.h"
+#include "box/box_group.h"
 #include "utils/utils.h"
 
 namespace tex {
