@@ -494,5 +494,8 @@ sptr<Box> CancelAtom::createBox(Environment& env) {
   overlap->_width = box->_width;
   overlap->_height = box->_height;
   overlap->_depth = box->_depth;
-  return sptrOf<OverlappedBox>(box, overlap);
+  auto hbox = new HBox(box);
+  hbox->add(sptr<Box>(new StrutBox(-box->_width, 0, 0, 0)));
+  hbox->add(overlap);
+  return sptr<Box>(hbox);
 }

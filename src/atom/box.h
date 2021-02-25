@@ -582,31 +582,6 @@ public:
   int lastFontId() override;
 };
 
-/** Class representing a box covered by another box */
-class OverlappedBox : public Box {
-private:
-  sptr<Box> _base;
-  sptr<Box> _overlap;
-
-public:
-  OverlappedBox() = delete;
-
-  OverlappedBox(const sptr<Box>& base, const sptr<Box>& overlap)
-    : _base(base), _overlap(overlap) {
-    _width = base->_width;
-    _height = base->_height;
-    _depth = base->_depth;
-    _shift = base->_shift;
-    _type = base->_type;
-  }
-
-  void draw(Graphics2D& g2, float x, float y) override;
-
-  int lastFontId() override;
-
-  std::vector<sptr<Box>> getChildren() const override;
-};
-
 }  // namespace tex
 
 #endif  // BOX_H_INCLUDED
