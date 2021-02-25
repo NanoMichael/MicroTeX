@@ -34,7 +34,7 @@ void print_box(const sptr<Box>& b, int dep, vector<bool>& lines) {
     return;
   }
 
-  const vector<sptr<Box>> children = b->getChildren();
+  const vector<sptr<Box>> children = b->descendants();
   const size_t c = children.size();
   const string& str = demangle_name(typeid(*(b)).name());
   string name = str.substr(str.find_last_of("::") + 1);
