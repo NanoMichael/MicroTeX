@@ -80,18 +80,6 @@ int TextRenderingBox::lastFontId() {
   return 0;
 }
 
-void ShiftBox::draw(Graphics2D& g2, float x, float y) {
-  _base->draw(g2, x, y + _sf);
-}
-
-int ShiftBox::lastFontId() {
-  return _base->lastFontId();
-}
-
-const vector<sptr<Box>> ShiftBox::descendants() const {
-  return {_base};
-}
-
 LineBox::LineBox(const vector<float>& lines, float thickness) {
   _thickness = thickness;
   if (lines.size() % 4 != 0) throw ex_invalid_param("The vector not represent lines.");

@@ -83,7 +83,7 @@ public:
   virtual int lastFontId() = 0;
 
   /** Get child boxes of this box. */
-  virtual const std::vector<sptr<Box>> descendants() const {
+  virtual std::vector<sptr<Box>> descendants() const {
     return {};
   }
 
@@ -124,7 +124,7 @@ public:
     return _children.size();
   }
 
-  const std::vector<sptr<Box>> descendants() const override {
+  std::vector<sptr<Box>> descendants() const override {
     return _children;
   }
 
