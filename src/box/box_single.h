@@ -109,25 +109,6 @@ public:
   static void _free_();
 };
 
-/** Class representing a box that shifted up or down (when shift is negative) */
-class ShiftBox : public Box {
-private:
-  float _sf;
-  sptr<Box> _base;
-
-public:
-  ShiftBox() = delete;
-
-  ShiftBox(const sptr<Box>& base, float shift) : _base(base), _sf(shift) {}
-
-  void draw(Graphics2D& g2, float x, float y) override;
-
-  int lastFontId() override;
-
-  const std::vector<sptr<Box>> descendants()
-  const override;
-};
-
 /** Class represents several lines */
 class LineBox : public Box {
 private:
