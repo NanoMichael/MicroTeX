@@ -78,65 +78,6 @@ public:
   OverBar(const sptr<Box>& b, float kern, float thickness);
 };
 
-/**
- * A box representing another box with a delimiter box and a script box above or
- * under it, with script and delimiter separated by a kerning.
- */
-class OverUnderBox : public Box {
-private:
-  // base, delimiter and script
-  sptr<Box> _base, _del, _script;
-  // kerning amount between the delimiter and the script
-  float _kern;
-  // whether the delimiter should be drawn over (<->under) the base box
-  bool _over;
-
-public:
-  OverUnderBox() = delete;
-
-  /**
-   * The parameter boxes must have an equal width!!
-   *
-   * @param base base box to be drawn on the baseline
-   * @param del delimiter box
-   * @param script subscript or superscript box
-   * @param kern the kerning amount to draw
-   * @param over
-   *     true : draws delimiter and script box above the base box,
-   *     false : under the base box
-   */
-  OverUnderBox(
-    const sptr<Box>& base, const sptr<Box>& del, const sptr<Box>& script,
-    float kern, bool over  //
-  );
-
-  void draw(Graphics2D& g2, float x, float y) override;
-
-  int lastFontId() override;
-
-  std::vector<sptr<Box>> descendants() const override;
-};
-
-/** A box representing a horizontal line. */
-class HRule : public Box {
-private:
-  color _color;
-  float _speShift;
-
-public:
-  HRule() = delete;
-
-  HRule(float thickness, float width, float shift);
-
-  HRule(float thickness, float width, float shift, bool trueShift);
-
-  HRule(float thickness, float width, float shift, color c, bool trueshift);
-
-  void draw(Graphics2D& g2, float x, float y) override;
-
-  int lastFontId() override;
-};
-
 /***************************************************************************************************
  *                                   operation boxes                                               *
  ***************************************************************************************************/
@@ -399,6 +340,25 @@ public:
   int lastFontId() override;
 
   std::vector<sptr<Box>> descendants() const override;
+};
+
+/**
+ * Box to draw debug info of another box, not recursive,
+ * so its descendants is empty.
+ * <p>
+ * Its width, height and depth is 0, so it does not take
+ * any space to layout.
+ */
+class DebugBox : public Box {
+private:
+  sptr<Box> _base;
+
+public:
+  explicit DebugBox(const sptr<Box>& base);
+
+  void draw(Graphics2D& g2, float x, float y) override;
+
+  int lastFontId() override;
 };
 
 }  // namespace tex

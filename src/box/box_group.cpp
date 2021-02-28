@@ -184,114 +184,7 @@ OverBar::OverBar(const sptr<Box>& b, float kern, float thickness) : VBox() {
   add(b);
 }
 
-/************************************ over-under box implementation *******************************/
-
-OverUnderBox::OverUnderBox(
-  const sptr<Box>& base,
-  const sptr<Box>& del,
-  const sptr<Box>& script,
-  float kern,
-  bool over
-) {
-  _base = base, _del = del, _script = script;
-  _kern = kern;
-  _over = over;
-  // calculate metrics of the box
-  _width = base->_width;
-  float x = (over && script != nullptr ? script->_height + script->_depth + kern : 0);
-  _height = base->_height + (over ? del->_width : 0) + x;
-  x = (!over && script != nullptr ? script->_height + script->_depth + kern : 0);
-  _depth = base->_depth + (over ? 0 : del->_width) + x;
-}
-
-void OverUnderBox::draw(Graphics2D& g2, float x, float y) {
-  _base->draw(g2, x, y);
-
-  float yVar = y - _base->_height - _del->_width;
-  _del->_depth += _del->_height;
-  _del->_height = 0;
-  float tx = x + (_del->_height + _del->_depth) * 0.75f;
-  // draw delimiter and script above base box
-  if (_over) {
-    float ty = yVar;
-    g2.translate(tx, ty);
-    g2.rotate(PI / 2);
-    _del->draw(g2, 0, 0);
-    // reset
-    g2.rotate(-PI / 2);
-    g2.translate(-tx, -ty);
-    // draw superscript
-    if (_script != nullptr) _script->draw(g2, x, yVar - _kern - _script->_depth);
-    return;
-  }
-  yVar = y + _base->_depth;
-  float ty = yVar;
-  g2.translate(tx, ty);
-  g2.rotate(PI / 2);
-  _del->draw(g2, 0, 0);
-  // reset
-  g2.rotate(-PI / 2);
-  g2.translate(-tx, -ty);
-  yVar += _del->_width;
-  // draw subscript
-  if (_script != nullptr) _script->draw(g2, x, yVar + _kern + _script->_height);
-}
-
-int OverUnderBox::lastFontId() {
-  return _base->lastFontId();
-}
-
-vector<sptr<Box>> OverUnderBox::descendants() const {
-  return {_base, _del, _script};
-}
-
-/********************************** horizontal rule implementation ********************************/
-
-HRule::HRule(float thickness, float width, float shift)
-  : _color(transparent), _speShift(0) {
-  _height = thickness;
-  _width = width;
-  _shift = shift;
-}
-
-HRule::HRule(float thickness, float width, float shift, bool trueshift)
-  : _color(transparent), _speShift(0) {
-  _height = thickness;
-  _width = width;
-  if (trueshift) {
-    _shift = shift;
-  } else {
-    _shift = 0;
-    _speShift = shift;
-  }
-}
-
-HRule::HRule(float thickness, float width, float shift, color c, bool trueshift)
-  : _color(c), _speShift(0) {
-  _height = thickness;
-  _width = width;
-  if (trueshift) {
-    _shift = shift;
-  } else {
-    _shift = 0;
-    _speShift = shift;
-  }
-}
-
-void HRule::draw(Graphics2D& g2, float x, float y) {
-  const color oldColor = g2.getColor();
-  if (!isTransparent(_color)) g2.setColor(_color);
-  const Stroke& oldStroke = g2.getStroke();
-  g2.setStroke(Stroke(_height, CAP_BUTT, JOIN_BEVEL));
-  y = y - _height / 2.f - _speShift;
-  g2.drawLine(x, y, x + _width, y);
-  g2.setStroke(oldStroke);
-  g2.setColor(oldColor);
-}
-
-int HRule::lastFontId() {
-  return TeXFont::NO_FONT;
-}
+/********************************** color box implementation ********************************/
 
 ColorBox::ColorBox(const sptr<Box>& box, color fg, color bg) {
   _box = box;
@@ -649,4 +542,22 @@ int ShiftBox::lastFontId() {
 
 vector<sptr<Box>> ShiftBox::descendants() const {
   return {_base};
+}
+
+DebugBox::DebugBox(const sptr<Box>& base) : _base(base), Box() {
+  _shift = base->_shift;
+}
+
+void DebugBox::draw(Graphics2D& g2, float x, float y) {
+  const color prevColor = g2.getColor();
+  const Stroke& prevStroke = g2.getStroke();
+  g2.setColor(red);
+  g2.setStrokeWidth(std::abs(1.f / g2.sx()));
+  g2.drawRect(x, y - _base->_height, _base->_width, _base->_height + _base->_depth);
+  g2.setColor(prevColor);
+  g2.setStroke(prevStroke);
+}
+
+int DebugBox::lastFontId() {
+  _base->lastFontId();
 }

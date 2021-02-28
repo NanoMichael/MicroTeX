@@ -10,38 +10,56 @@ const color TeXRender::_defaultcolor = black;
 float TeXRender::_defaultSize = -1;
 float TeXRender::_magFactor = 0;
 
-TeXRender::TeXRender(const sptr<Box> box, float textSize, bool trueValues) {
+TeXRender::TeXRender(const sptr<Box>& box, float textSize, bool trueValues) {
   _box = box;
   if (_defaultSize != -1) _textSize = _defaultSize;
   if (_magFactor != 0) {
-    _textSize = textSize * abs(_magFactor);
+    _textSize = textSize * std::abs(_magFactor);
   } else {
     _textSize = textSize;
   }
-  if (!trueValues) _insets += (int)(0.18f * textSize);
+  if (!trueValues) _insets += (int) (0.18f * textSize);
+  if (Box::DEBUG) {
+    buildDebug(box);
+  }
 }
 
-float TeXRender::getTextSize() const {
+void TeXRender::buildDebug(const sptr<Box>& box) {
+  auto group = std::dynamic_pointer_cast<BoxGroup>(box);
+  if (group == nullptr) return;
+  const auto& des = box->descendants();
+  for (size_t i = 0; i < des.size(); i++) {
+    const auto& b = des[i];
+    group->add(i, sptrOf<DebugBox>(b));
+    buildDebug(b);
+  }
+}
+
+inline float TeXRender::getTextSize() const {
   return _textSize;
 }
 
 int TeXRender::getHeight() const {
-  return (int)(_box->_height * _textSize + 0.99f +
-               _box->_depth * _textSize + 0.99f +
-               _insets.top + _insets.bottom);
+  return (int) (
+    _box->_height * _textSize +
+    _box->_depth * _textSize +
+    _insets.top + _insets.bottom
+  );
 }
 
 int TeXRender::getDepth() const {
-  return (int)(_box->_depth * _textSize + 0.99f + _insets.bottom);
+  return (int) (_box->_depth * _textSize + _insets.bottom);
 }
 
 int TeXRender::getWidth() const {
-  return (int)(_box->_width * _textSize + 0.99f + _insets.left + _insets.right);
+  return (int) (_box->_width * _textSize + _insets.left + _insets.right);
 }
 
 float TeXRender::getBaseline() const {
-  return ((_box->_height * _textSize + 0.99f + _insets.top) /
-          ((_box->_height + _box->_depth) * _textSize + 0.99f + _insets.top + _insets.bottom));
+  return (
+    (_box->_height * _textSize + _insets.top) /
+    ((_box->_height + _box->_depth) * _textSize + _insets.top + _insets.bottom)
+  );
 }
 
 void TeXRender::setTextSize(float textSize) {
@@ -58,7 +76,7 @@ Insets TeXRender::getInsets() {
 
 void TeXRender::setInsets(const Insets& insets, bool trueval) {
   _insets = insets;
-  if (!trueval) _insets += (int)(0.18f * _textSize);
+  if (!trueval) _insets += (int) (0.18f * _textSize);
 }
 
 void TeXRender::setWidth(int width, Alignment align) {
@@ -66,7 +84,7 @@ void TeXRender::setWidth(int width, Alignment align) {
   // FIXME
   // only care if new width larger than old
   if (diff > 0) {
-    _box = sptrOf<HBox>(_box, (float)width, align);
+    _box = sptrOf<HBox>(_box, (float) width, align);
   }
 }
 

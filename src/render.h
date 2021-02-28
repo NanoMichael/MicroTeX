@@ -7,8 +7,11 @@
 namespace tex {
 
 class DefaultTeXFont;
+
 class Formula;
+
 class Box;
+
 class Atom;
 
 class TeXRender {
@@ -17,14 +20,16 @@ private:
 
   sptr<Box> _box;
   float _textSize;
-  color _fg;
+  color _fg = black;
   Insets _insets;
+
+  void buildDebug(const sptr<Box>& box);
 
 public:
   static float _defaultSize;
   static float _magFactor;
 
-  TeXRender(const sptr<Box> box, float textSize, bool trueValues = false);
+  TeXRender(const sptr<Box>& box, float textSize, bool trueValues = false);
 
   float getTextSize() const;
 
@@ -73,17 +78,17 @@ public:
   };
 
   TeXRenderBuilder()
-      : _style(TexStyle::display),
-        _type(-1),
-        _widthUnit(UnitType::none),
-        _align(Alignment::none),
-        _lineSpaceUnit(UnitType::none),
-        _textSize(0),
-        _textWidth(0),
-        _lineSpace(0),
-        _trueValues(false),
-        _isMaxWidth(false),
-        _fg(black) {}
+    : _style(TexStyle::display),
+      _type(-1),
+      _widthUnit(UnitType::none),
+      _align(Alignment::none),
+      _lineSpaceUnit(UnitType::none),
+      _textSize(0),
+      _textWidth(0),
+      _lineSpace(0),
+      _trueValues(false),
+      _isMaxWidth(false),
+      _fg(black) {}
 
   inline TeXRenderBuilder& setStyle(TexStyle style) {
     _style = style;
