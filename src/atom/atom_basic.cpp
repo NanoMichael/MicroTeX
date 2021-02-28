@@ -1,5 +1,7 @@
 #include "atom/atom_basic.h"
 
+#include <memory>
+
 #include "box/box_group.h"
 #include "box/box_factory.h"
 #include "core/core.h"
@@ -831,26 +833,56 @@ sptr<Box> SideSetsAtom::createBox(Environment& env) {
 /******************************** OverUnderDelimiter implementation *******************************/
 
 float OverUnderDelimiter::getMaxWidth(const Box* b, const Box* del, const Box* script) {
-  float mx = max(b->_width, del->_height + del->_depth);
+  // TODO
+  // float mx = max(b->_width, del->_height + del->_depth);
+  float mx = max(b->_width, del->_width);
   if (script != nullptr) mx = max(mx, script->_width);
   return mx;
 }
 
 sptr<Box> OverUnderDelimiter::createBox(Environment& env) {
-  auto b = (_base == nullptr ? sptrOf<StrutBox>(0, 0, 0, 0) : _base->createBox(env));
-  sptr<Box> del = DelimiterFactory::create(_symbol->getName(), env, b->_width);
+  auto base = (_base == nullptr ? sptrOf<StrutBox>(0, 0, 0, 0) : _base->createBox(env));
+  sptr<Box> del = DelimiterFactory::create(_symbol->getName(), env, base->_width);
+  // TODO
+  // no rotation needed
+  del = sptrOf<RotateBox>(del, -90, Rotation::CC);
 
   sptr<Box> sb(nullptr);
-  if (_script != nullptr)
+  if (_script != nullptr) {
     sb = _script->createBox((_over ? *(env.supStyle()) : *(env.subStyle())));
+  }
 
   // create centered horizontal box if smaller than maximum width
-  float mx = getMaxWidth(b.get(), del.get(), sb.get());
-  if (mx - b->_width > PREC) b = sptrOf<HBox>(b, mx, Alignment::center);
+  float mx = getMaxWidth(base.get(), del.get(), sb.get());
+  if (mx - base->_width > PREC) base = sptrOf<HBox>(base, mx, Alignment::center);
 
-  del = sptrOf<VBox>(del, mx, Alignment::center);
-  if (sb != nullptr && mx - sb->_width > PREC)
+  del = sptrOf<HBox>(del, mx, Alignment::center);
+  if (sb != nullptr && mx - sb->_width > PREC) {
     sb = sptrOf<HBox>(sb, mx, Alignment::center);
+  }
 
-  return sptrOf<OverUnderBox>(b, del, sb, _kern.createBox(env)->_height, _over);
+  const auto kb = _kern.createBox(env);
+  auto vbox = new VBox();
+  if (_over) {
+    if (sb != nullptr) {
+      vbox->add(sb);
+      if (kb->_height > PREC) vbox->add(kb);
+    }
+    vbox->add(del);
+    vbox->add(base);
+    const float total = vbox->_height + vbox->_depth;
+    vbox->_height = total - base->_depth;
+    vbox->_depth = base->_depth;
+  } else {
+    vbox->add(base);
+    vbox->add(del);
+    if (sb != nullptr) {
+      if (kb->_height > PREC) vbox->add(kb);
+      vbox->add(sb);
+    }
+    const float total = vbox->_height + vbox->_depth;
+    vbox->_height = base->_height;
+    vbox->_depth = total - base->_height;
+  }
+  return sptr<Box>(vbox);
 }

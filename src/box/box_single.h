@@ -126,6 +126,26 @@ public:
   int lastFontId() override;
 };
 
+/** A box representing a horizontal line. */
+class HRule : public Box {
+private:
+  color _color;
+  float _speShift;
+
+public:
+  HRule() = delete;
+
+  HRule(float thickness, float width, float shift);
+
+  HRule(float thickness, float width, float shift, bool trueShift);
+
+  HRule(float thickness, float width, float shift, color c, bool trueshift);
+
+  void draw(Graphics2D& g2, float x, float y) override;
+
+  int lastFontId() override;
+};
+
 }
 
 #endif //LATEX_BOX_SINGLE_H
