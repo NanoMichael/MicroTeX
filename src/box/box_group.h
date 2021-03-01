@@ -144,31 +144,32 @@ public:
 };
 
 /** Enumeration representing rotation origin */
-enum Rotation {
+enum class Rotation {
   // Bottom Left
-  BL,
+  bl,
   // Bottom Center
-  BC,
+  bc,
   // Bottom Right
-  BR,
+  br,
   // Top Left
-  TL,
+  tl,
   // Top Center
-  TC,
+  tc,
   // Top Right
-  TR,
-  // Bottom Bottom Left
-  BBL,
-  // Bottom Bottom Right
-  BBR,
-  // Bottom Bottom Center
-  BBC,
+  tr,
+  // Baseline Left
+  Bl,
+  // Baseline Right
+  Br,
+  // Baseline Center
+  Bc,
   // Center Left
-  CL,
+  cl,
   // Center Center
-  CC,
+  cc,
   // Center Right
-  CR
+  cr,
+  none = -1
 };
 
 /** A box representing a rotate operation */
@@ -181,7 +182,7 @@ private:
 
   void init(const sptr<Box>& b, float angle, float x, float y);
 
-  static Point calculateShift(const Box& b, int option);
+  static Point calculateShift(const Box& b, Rotation option);
 
 public:
   RotateBox() = delete;
@@ -194,7 +195,7 @@ public:
     init(b, angle, origin.x, origin.y);
   }
 
-  RotateBox(const sptr<Box>& b, float angle, int option) {
+  RotateBox(const sptr<Box>& b, float angle, Rotation option) {
     const Point& p = calculateShift(*b, option);
     init(b, angle, p.x, p.y);
   }
@@ -205,7 +206,7 @@ public:
 
   std::vector<sptr<Box>> descendants() const override;
 
-  static int getOrigin(std::string option);
+  static Rotation getOrigin(std::string option);
 };
 
 /***************************************************************************************************

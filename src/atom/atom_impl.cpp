@@ -296,7 +296,7 @@ sptr<Box> NthRoot::createBox(Environment& env) {
 }
 
 RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const wstring& option)
-  : _angle(0), _option(-1), _xunit(UnitType::em), _yunit(UnitType::em), _x(0), _y(0) {
+  : _angle(0), _option(Rotation::bl), _xunit(UnitType::em), _yunit(UnitType::em), _x(0), _y(0) {
   _type = base->_type;
   _base = base;
   _angle = angle;
@@ -325,7 +325,7 @@ RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const wstring& optio
 }
 
 RotateAtom::RotateAtom(const sptr<Atom>& base, const wstring& angle, const wstring& option)
-  : _angle(0), _option(-1), _xunit(UnitType::em), _yunit(UnitType::em), _x(0), _y(0) {
+  : _angle(0), _option(Rotation::none), _xunit(UnitType::em), _yunit(UnitType::em), _x(0), _y(0) {
   _type = base->_type;
   _base = base;
   valueof(angle, _angle);
@@ -334,7 +334,9 @@ RotateAtom::RotateAtom(const sptr<Atom>& base, const wstring& angle, const wstri
 }
 
 sptr<Box> RotateAtom::createBox(Environment& env) {
-  if (_option != -1) return sptrOf<RotateBox>(_base->createBox(env), _angle, _option);
+  if (_option != Rotation::none) {
+    return sptrOf<RotateBox>(_base->createBox(env), _angle, _option);
+  }
 
   float x = _x * SpaceAtom::getFactor(_xunit, env);
   float y = _y * SpaceAtom::getFactor(_yunit, env);

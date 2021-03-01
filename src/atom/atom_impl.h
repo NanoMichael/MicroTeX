@@ -744,7 +744,7 @@ class RotateAtom : public Atom {
 private:
   sptr<Atom> _base;
   float _angle;
-  int _option;
+  Rotation _option;
   UnitType _xunit, _yunit;
   float _x, _y;
 

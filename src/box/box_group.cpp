@@ -318,54 +318,54 @@ void RotateBox::init(const sptr<Box>& b, float angle, float x, float y) {
   _depth = -_ymin - _shiftY;
 }
 
-Point RotateBox::calculateShift(const Box& b, int option) {
+Point RotateBox::calculateShift(const Box& b, Rotation option) {
   Point p(0, -b._depth);
   switch (option) {
-    case BL:
+    case Rotation::bl:
       p.x = 0;
       p.y = -b._depth;
       break;
-    case BR:
+    case Rotation::br:
       p.x = b._width;
       p.y = -b._depth;
       break;
-    case BC:
+    case Rotation::bc:
       p.x = b._width / 2.f;
       p.y = -b._depth;
       break;
-    case TL:
+    case Rotation::tl:
       p.x = 0;
       p.y = b._height;
       break;
-    case TR:
+    case Rotation::tr:
       p.x = b._width;
       p.y = b._height;
       break;
-    case TC:
+    case Rotation::tc:
       p.x = b._width / 2.f;
       p.y = b._height;
       break;
-    case BBL:
+    case Rotation::Bl:
       p.x = 0;
       p.y = 0;
       break;
-    case BBR:
+    case Rotation::Br:
       p.x = b._width;
       p.y = 0;
       break;
-    case BBC:
+    case Rotation::Bc:
       p.x = b._width / 2.f;
       p.y = 0;
       break;
-    case CL:
+    case Rotation::cl:
       p.x = 0;
       p.y = (b._height - b._depth) / 2.f;
       break;
-    case CR:
+    case Rotation::cr:
       p.x = b._width;
       p.y = (b._height - b._depth) / 2.f;
       break;
-    case CC:
+    case Rotation::cc:
       p.x = b._width / 2.f;
       p.y = (b._height - b._depth) / 2.f;
       break;
@@ -375,23 +375,23 @@ Point RotateBox::calculateShift(const Box& b, int option) {
   return p;
 }
 
-int RotateBox::getOrigin(string option) {
-  if (option.empty()) return BBL;
+Rotation RotateBox::getOrigin(string option) {
+  if (option.empty()) return Rotation::Bl;
   if (option.size() == 1) option += "c";
 
-  if (option == "bl" || option == "lb") return BL;
-  if (option == "bc" || option == "cb") return BC;
-  if (option == "br" || option == "rb") return BR;
-  if (option == "cl" || option == "lc") return CL;
-  if (option == "cc") return CC;
-  if (option == "cr" || option == "rc") return CR;
-  if (option == "tl" || option == "lt") return TL;
-  if (option == "tc" || option == "ct") return TC;
-  if (option == "tr" || option == "rt") return TR;
-  if (option == "Bl" || option == "lB") return BBL;
-  if (option == "Bc" || option == "cB") return BBC;
-  if (option == "Br" || option == "rB") return BBR;
-  return BBL;
+  if (option == "bl" || option == "lb") return Rotation::bl;
+  if (option == "bc" || option == "cb") return Rotation::bc;
+  if (option == "br" || option == "rb") return Rotation::br;
+  if (option == "cl" || option == "lc") return Rotation::cl;
+  if (option == "cc") return Rotation::cc;
+  if (option == "cr" || option == "rc") return Rotation::cr;
+  if (option == "tl" || option == "lt") return Rotation::tl;
+  if (option == "tc" || option == "ct") return Rotation::tc;
+  if (option == "tr" || option == "rt") return Rotation::tr;
+  if (option == "Bl" || option == "lB") return Rotation::Bl;
+  if (option == "Bc" || option == "cB") return Rotation::Bc;
+  if (option == "Br" || option == "rB") return Rotation::Br;
+  return Rotation::Bl;
 }
 
 void RotateBox::draw(Graphics2D& g2, float x, float y) {
