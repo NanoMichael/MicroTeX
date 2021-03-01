@@ -845,7 +845,7 @@ sptr<Box> OverUnderDelimiter::createBox(Environment& env) {
   sptr<Box> del = DelimiterFactory::create(_symbol->getName(), env, base->_width);
   // TODO
   // no rotation needed
-  del = sptrOf<RotateBox>(del, -90, Rotation::CC);
+  del = sptrOf<RotateBox>(del, -90, Rotation::cc);
 
   sptr<Box> sb(nullptr);
   if (_script != nullptr) {
