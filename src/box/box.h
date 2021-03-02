@@ -64,6 +64,8 @@ public:
   /** Transform the width of box to negative */
   inline void negWidth() { _width = -_width; }
 
+  virtual void drawDebug(Graphics2D& g2, float x, float y);
+
   /**
    * Paints this box at the given coordinates using the given 2D graphics
    * context.
@@ -72,7 +74,17 @@ public:
    * @param x the x-coordinate
    * @param y the y-coordinate
    */
-  virtual void draw(Graphics2D& g2, float x, float y) = 0;
+  virtual void draw(Graphics2D& g2, float x, float y);
+
+  /**
+   * Draw the content of this box at the given coordinates using the given 2D graphics
+   * context.
+   *
+   * @param g2 the graphics (2D) context to use for painting
+   * @param x the x-coordinate
+   * @param y the y-coordinate
+   */
+  virtual void onDraw(Graphics2D& g2, float x, float y) = 0;
 
   /**
    * Get the id of the last font that will be used later when this box is to be

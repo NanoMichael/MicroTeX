@@ -18,7 +18,7 @@ void CharBox::addItalicCorrectionToWidth() {
   _italic = 0;
 }
 
-void CharBox::draw(Graphics2D& g2, float x, float y) {
+void CharBox::onDraw(Graphics2D& g2, float x, float y) {
   g2.translate(x, y);
   const Font* font = FontInfo::getFont(_cf->fontId);
   if (_size != 1) g2.scale(_size, _size);
@@ -50,7 +50,8 @@ void TextRenderingBox::setFont(const string& name) {
 }
 
 void TextRenderingBox::init(
-  const wstring& str, int type, float size, const sptr<Font>& f, bool kerning) {
+  const wstring& str, int type, float size, const sptr<Font>& f, bool kerning
+) {
   _size = size;
   _layout = TextLayout::create(str, f->deriveFont(type));
   Rect rect;
@@ -60,7 +61,7 @@ void TextRenderingBox::init(
   _width = (rect.w + rect.x + 0.4f) * size / 10;
 }
 
-void TextRenderingBox::draw(Graphics2D& g2, float x, float y) {
+void TextRenderingBox::onDraw(Graphics2D& g2, float x, float y) {
   g2.translate(x, y);
   g2.scale(0.1f * _size, 0.1f * _size);
   _layout->draw(g2, 0, 0);
@@ -74,7 +75,7 @@ LineBox::LineBox(const vector<float>& lines, float thickness) {
   _lines = lines;
 }
 
-void LineBox::draw(Graphics2D& g2, float x, float y) {
+void LineBox::onDraw(Graphics2D& g2, float x, float y) {
   const float oldThickness = g2.getStroke().lineWidth;
   g2.setStrokeWidth(_thickness);
   g2.translate(0, -_height);
@@ -101,7 +102,7 @@ HRule::HRule(float thickness, float width, float shift, color c, bool trueshift)
   }
 }
 
-void HRule::draw(Graphics2D& g2, float x, float y) {
+void HRule::onDraw(Graphics2D& g2, float x, float y) {
   const color oldColor = g2.getColor();
   if (!isTransparent(_color)) g2.setColor(_color);
   const Stroke& oldStroke = g2.getStroke();

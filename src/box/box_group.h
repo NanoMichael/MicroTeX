@@ -43,7 +43,7 @@ public:
     return split(pos, 2);
   }
 
-  void draw(Graphics2D& g2, float x, float y) override;
+  void onDraw(Graphics2D& g2, float x, float y) override;
 };
 
 /** A box composed of other boxes, put one above the other */
@@ -64,7 +64,7 @@ public:
 
   void add(int pos, const sptr<Box>& box) override;
 
-  void draw(Graphics2D& g2, float x, float y) override;
+  void onDraw(Graphics2D& g2, float x, float y) override;
 };
 
 /**
@@ -92,7 +92,7 @@ public:
 
   explicit ColorBox(const sptr<Box>& box, color fg = transparent, color bg = transparent);
 
-  void draw(Graphics2D& g2, float x, float y) override;
+  void onDraw(Graphics2D& g2, float x, float y) override;
 };
 
 /** A box representing a scale operation */
@@ -113,7 +113,7 @@ public:
     init(b, factor, factor);
   }
 
-  void draw(Graphics2D& g2, float x, float y) override;
+  void onDraw(Graphics2D& g2, float x, float y) override;
 };
 
 /** A box representing a reflected box */
@@ -123,7 +123,7 @@ public:
 
   explicit ReflectBox(const sptr<Box>& b);
 
-  void draw(Graphics2D& g2, float x, float y) override;
+  void onDraw(Graphics2D& g2, float x, float y) override;
 };
 
 /** Enumeration representing rotation origin */
@@ -185,7 +185,7 @@ public:
     init(b, angle, p.x, p.y);
   }
 
-  void draw(Graphics2D& g2, float x, float y) override;
+  void onDraw(Graphics2D& g2, float x, float y) override;
 
   static Rotation getOrigin(std::string option);
 };
@@ -219,7 +219,7 @@ public:
     _bg = bg;
   }
 
-  void draw(Graphics2D& g2, float x, float y) override;
+  void onDraw(Graphics2D& g2, float x, float y) override;
 };
 
 /** A box representing a wrapped box by oval frame */
@@ -238,7 +238,7 @@ public:
       _multiplier(multiplier),
       _diameter(diameter) {}
 
-  void draw(Graphics2D& g2, float x, float y) override;
+  void onDraw(Graphics2D& g2, float x, float y) override;
 };
 
 /** A box representing a wrapped box by shadowed frame */
@@ -256,7 +256,7 @@ public:
     _width += shadowRule;
   }
 
-  void draw(Graphics2D& g2, float x, float y) override;
+  void onDraw(Graphics2D& g2, float x, float y) override;
 };
 
 /** A box representing 'wrapper' that with insets in left, top, right and bottom */
@@ -287,26 +287,7 @@ public:
 
   void addInsets(float l, float t, float r, float b);
 
-  void draw(Graphics2D& g2, float x, float y) override;
-};
-
-/**
- * Box to draw debug info of another box, not recursive,
- * so its descendants is empty.
- * <p>
- * Its width, height and depth is 0, so it does not take
- * any space to layout.
- */
-class DebugBox : public Box {
-private:
-  sptr<Box> _base;
-
-public:
-  explicit DebugBox(const sptr<Box>& base);
-
-  void draw(Graphics2D& g2, float x, float y) override;
-
-  int lastFontId() override;
+  void onDraw(Graphics2D& g2, float x, float y) override;
 };
 
 }  // namespace tex

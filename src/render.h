@@ -23,8 +23,6 @@ private:
   color _fg = black;
   Insets _insets;
 
-  void buildDebug(const sptr<Box>& box);
-
 public:
   static float _defaultSize;
   static float _magFactor;

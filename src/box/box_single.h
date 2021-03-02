@@ -21,7 +21,7 @@ public:
     _shift = shift;
   }
 
-  void draw(Graphics2D& g2, float x, float y) override {
+  void onDraw(Graphics2D& g2, float x, float y) override {
     // no visual effect
   }
 };
@@ -39,7 +39,7 @@ public:
     _shrink = shrink;
   }
 
-  void draw(Graphics2D& g2, float x, float y) override {
+  void onDraw(Graphics2D& g2, float x, float y) override {
     // no visual effect
   }
 };
@@ -64,7 +64,7 @@ public:
 
   void addItalicCorrectionToWidth();
 
-  void draw(Graphics2D& g2, float x, float y) override;
+  void onDraw(Graphics2D& g2, float x, float y) override;
 
   int lastFontId() override;
 };
@@ -92,7 +92,7 @@ public:
     init(str, type, size, sptr<Font>(_font), true);
   }
 
-  void draw(Graphics2D& g2, float x, float y) override;
+  void onDraw(Graphics2D& g2, float x, float y) override;
 
   static void setFont(const std::string& name);
 
@@ -113,7 +113,7 @@ public:
 
   LineBox(const std::vector<float>& lines, float thickness);
 
-  void draw(Graphics2D& g2, float x, float y) override;
+  void onDraw(Graphics2D& g2, float x, float y) override;
 };
 
 /** A box representing a horizontal line. */
@@ -130,7 +130,7 @@ public:
     color c = transparent, bool trueshift = true
   );
 
-  void draw(Graphics2D& g2, float x, float y) override;
+  void onDraw(Graphics2D& g2, float x, float y) override;
 };
 
 }
