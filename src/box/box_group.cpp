@@ -176,11 +176,11 @@ OverBar::OverBar(const sptr<Box>& b, float kern, float thickness) : VBox() {
 
 /********************************** color box implementation ********************************/
 
-ColorBox::ColorBox(const sptr<Box>& box, color fg, color bg) {
-  _box = box;
+ColorBox::ColorBox(const sptr<Box>& box, color fg, color bg) : DecorBox(box) {
   _foreground = fg;
   _background = bg;
   _width = box->_width, _height = box->_height, _depth = box->_depth;
+  _shift = box->_shift;
   _type = box->_type;
 }
 
@@ -191,22 +191,13 @@ void ColorBox::draw(Graphics2D& g2, float x, float y) {
     g2.fillRect(x, y - _height, _width, _height + _depth);
   }
   g2.setColor(isTransparent(_foreground) ? prev : _foreground);
-  _box->draw(g2, x, y);
+  _base->draw(g2, x, y);
   g2.setColor(prev);
-}
-
-int ColorBox::lastFontId() {
-  return _box->lastFontId();
-}
-
-vector<sptr<Box>> ColorBox::descendants() const {
-  return {_box};
 }
 
 /*************************************** scale box implementation *********************************/
 
 void ScaleBox::init(const sptr<Box>& b, float sx, float sy) {
-  _box = b;
   _sx = (isnan(sx) || isinf(sx)) ? 1 : sx;
   _sy = (isnan(sy) || isinf(sy)) ? 1 : sy;
   _width = b->_width * abs(_sx);
@@ -220,23 +211,14 @@ void ScaleBox::draw(Graphics2D& g2, float x, float y) {
   float dec = _sx < 0 ? _width : 0;
   g2.translate(x + dec, y);
   g2.scale(_sx, _sy);
-  _box->draw(g2, 0, 0);
+  _base->draw(g2, 0, 0);
   g2.scale(1.f / _sx, 1.f / _sy);
   g2.translate(-x - dec, -y);
 }
 
-int ScaleBox::lastFontId() {
-  return _box->lastFontId();
-}
-
-vector<sptr<Box>> ScaleBox::descendants() const {
-  return {_box};
-}
-
 /************************************** reflect box implementation ********************************/
 
-ReflectBox::ReflectBox(const sptr<Box>& b) {
-  _box = b;
+ReflectBox::ReflectBox(const sptr<Box>& b) : DecorBox(b) {
   _width = b->_width;
   _height = b->_height;
   _depth = b->_depth;
@@ -246,23 +228,14 @@ ReflectBox::ReflectBox(const sptr<Box>& b) {
 void ReflectBox::draw(Graphics2D& g2, float x, float y) {
   g2.translate(x, y);
   g2.scale(-1, 1);
-  _box->draw(g2, -_width, 0);
+  _base->draw(g2, -_width, 0);
   g2.scale(-1, 1);
   g2.translate(-x, -y);
-}
-
-int ReflectBox::lastFontId() {
-  return _box->lastFontId();
-}
-
-vector<sptr<Box>> ReflectBox::descendants() const {
-  return {_box};
 }
 
 /************************************** rotate box implementation *********************************/
 
 void RotateBox::init(const sptr<Box>& b, float angle, float x, float y) {
-  _box = b;
   _angle = angle * PI / 180;
   _height = b->_height;
   _depth = b->_depth;
@@ -388,16 +361,8 @@ void RotateBox::draw(Graphics2D& g2, float x, float y) {
   y -= _shiftY;
   x += _shiftX - _xmin;
   g2.rotate(-_angle, x, y);
-  _box->draw(g2, x, y);
+  _base->draw(g2, x, y);
   g2.rotate(_angle, x, y);
-}
-
-int RotateBox::lastFontId() {
-  return _box->lastFontId();
-}
-
-vector<sptr<Box>> RotateBox::descendants() const {
-  return {_box};
 }
 
 /************************************* framed box implementation **********************************/
@@ -405,7 +370,6 @@ vector<sptr<Box>> RotateBox::descendants() const {
 void FramedBox::init(const sptr<Box>& box, float thickness, float space) {
   _line = transparent;
   _bg = transparent;
-  _box = box;
   const Box& b = *box;
   _width = b._width + 2 * thickness + 2 * space;
   _height = b._height + thickness + space;
@@ -434,19 +398,10 @@ void FramedBox::draw(Graphics2D& g2, float x, float y) {
     g2.drawRect(x + th, y - _height + th, _width - _thickness, _height + _depth - _thickness);
   }
   g2.setStroke(st);
-  _box->draw(g2, x + _space + _thickness, y);
-}
-
-int FramedBox::lastFontId() {
-  return _box->lastFontId();
-}
-
-vector<sptr<Box>> FramedBox::descendants() const {
-  return {_box};
+  _base->draw(g2, x + _space + _thickness, y);
 }
 
 void OvalBox::draw(Graphics2D& g2, float x, float y) {
-  _box->draw(g2, x + _space + _thickness, y);
   const Stroke& st = g2.getStroke();
   g2.setStroke(Stroke(_thickness, CAP_BUTT, JOIN_MITER));
   float th = _thickness / 2.f;
@@ -464,11 +419,11 @@ void OvalBox::draw(Graphics2D& g2, float x, float y) {
     r, r
   );
   g2.setStroke(st);
+  _base->draw(g2, x + _space + _thickness, y);
 }
 
 void ShadowBox::draw(Graphics2D& g2, float x, float y) {
-  float th = _thickness / 2.f;
-  _box->draw(g2, x + _space + _thickness, y);
+  const float th = _thickness / 2.f;
   const Stroke& st = g2.getStroke();
   g2.setStroke(Stroke(_thickness, CAP_BUTT, JOIN_MITER));
   g2.drawRect(
@@ -492,6 +447,7 @@ void ShadowBox::draw(Graphics2D& g2, float x, float y) {
     _depth + _height - 2 * _shadowRule - th
   );
   g2.setStroke(st);
+  _base->draw(g2, x + _space + _thickness, y);
 }
 
 /************************************** wrapper box implementation **********************************/
@@ -512,14 +468,6 @@ void WrapperBox::draw(Graphics2D& g2, float x, float y) {
   g2.setColor(isTransparent(_fg) ? prev : _fg);
   _base->draw(g2, x + _l, y + _base->_shift);
   g2.setColor(prev);
-}
-
-int WrapperBox::lastFontId() {
-  return _base->lastFontId();
-}
-
-vector<sptr<Box>> WrapperBox::descendants() const {
-  return {_base};
 }
 
 DebugBox::DebugBox(const sptr<Box>& base) : _base(base), Box() {

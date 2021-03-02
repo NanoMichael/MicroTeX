@@ -131,6 +131,24 @@ public:
   int lastFontId() override;
 };
 
+/**
+ * A box contains another box will add some decorations when to draw
+ * <p>
+ * e.g. rotation, scale and so on
+ */
+class DecorBox : public Box {
+public:
+  sptr<Box> _base;
+
+  explicit DecorBox(const sptr<Box>& base) : _base(base) {}
+
+  int lastFontId() override;
+
+  std::vector<sptr<Box>> descendants() const override {
+    return {_base};
+  }
+};
+
 }
 
 #endif //LATEX_BOX_H
