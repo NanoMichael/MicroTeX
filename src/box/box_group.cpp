@@ -92,7 +92,7 @@ pair<sptr<HBox>, sptr<HBox>> HBox::split(int pos, int shift) {
   return make_pair(hb1, hb2);
 }
 
-void HBox::draw(Graphics2D& g2, float x, float y) {
+void HBox::onDraw(Graphics2D& g2, float x, float y) {
   float xPos = x;
   for (const auto& box : _children) {
     box->draw(g2, xPos, y + box->_shift);
@@ -158,7 +158,7 @@ void VBox::add(int pos, const sptr<Box>& box) {
   recalculateWidth(*box);
 }
 
-void VBox::draw(Graphics2D& g2, float x, float y) {
+void VBox::onDraw(Graphics2D& g2, float x, float y) {
   float yPos = y - _height;
   for (const auto& b : _children) {
     yPos += b->_height;
@@ -184,7 +184,7 @@ ColorBox::ColorBox(const sptr<Box>& box, color fg, color bg) : DecorBox(box) {
   _type = box->_type;
 }
 
-void ColorBox::draw(Graphics2D& g2, float x, float y) {
+void ColorBox::onDraw(Graphics2D& g2, float x, float y) {
   const color prev = g2.getColor();
   if (!isTransparent(_background)) {
     g2.setColor(_background);
@@ -206,7 +206,7 @@ void ScaleBox::init(const sptr<Box>& b, float sx, float sy) {
   _shift = b->_shift * _sy;
 }
 
-void ScaleBox::draw(Graphics2D& g2, float x, float y) {
+void ScaleBox::onDraw(Graphics2D& g2, float x, float y) {
   if (_sx == 0 || _sy == 0) return;
   float dec = _sx < 0 ? _width : 0;
   g2.translate(x + dec, y);
@@ -225,7 +225,7 @@ ReflectBox::ReflectBox(const sptr<Box>& b) : DecorBox(b) {
   _shift = b->_shift;
 }
 
-void ReflectBox::draw(Graphics2D& g2, float x, float y) {
+void ReflectBox::onDraw(Graphics2D& g2, float x, float y) {
   g2.translate(x, y);
   g2.scale(-1, 1);
   _base->draw(g2, -_width, 0);
@@ -357,7 +357,7 @@ Rotation RotateBox::getOrigin(string option) {
   return Rotation::Bl;
 }
 
-void RotateBox::draw(Graphics2D& g2, float x, float y) {
+void RotateBox::onDraw(Graphics2D& g2, float x, float y) {
   y -= _shiftY;
   x += _shiftX - _xmin;
   g2.rotate(-_angle, x, y);
@@ -379,7 +379,7 @@ void FramedBox::init(const sptr<Box>& box, float thickness, float space) {
   _space = space;
 }
 
-void FramedBox::draw(Graphics2D& g2, float x, float y) {
+void FramedBox::onDraw(Graphics2D& g2, float x, float y) {
   const Stroke& st = g2.getStroke();
   g2.setStroke(Stroke(_thickness, CAP_BUTT, JOIN_MITER));
   float th = _thickness / 2.f;
@@ -401,7 +401,7 @@ void FramedBox::draw(Graphics2D& g2, float x, float y) {
   _base->draw(g2, x + _space + _thickness, y);
 }
 
-void OvalBox::draw(Graphics2D& g2, float x, float y) {
+void OvalBox::onDraw(Graphics2D& g2, float x, float y) {
   const Stroke& st = g2.getStroke();
   g2.setStroke(Stroke(_thickness, CAP_BUTT, JOIN_MITER));
   float th = _thickness / 2.f;
@@ -422,7 +422,7 @@ void OvalBox::draw(Graphics2D& g2, float x, float y) {
   _base->draw(g2, x + _space + _thickness, y);
 }
 
-void ShadowBox::draw(Graphics2D& g2, float x, float y) {
+void ShadowBox::onDraw(Graphics2D& g2, float x, float y) {
   const float th = _thickness / 2.f;
   const Stroke& st = g2.getStroke();
   g2.setStroke(Stroke(_thickness, CAP_BUTT, JOIN_MITER));
@@ -459,7 +459,7 @@ void WrapperBox::addInsets(float l, float t, float r, float b) {
   _depth += b;
 }
 
-void WrapperBox::draw(Graphics2D& g2, float x, float y) {
+void WrapperBox::onDraw(Graphics2D& g2, float x, float y) {
   const color prev = g2.getColor();
   if (!isTransparent(_bg)) {
     g2.setColor(_bg);
@@ -468,22 +468,4 @@ void WrapperBox::draw(Graphics2D& g2, float x, float y) {
   g2.setColor(isTransparent(_fg) ? prev : _fg);
   _base->draw(g2, x + _l, y + _base->_shift);
   g2.setColor(prev);
-}
-
-DebugBox::DebugBox(const sptr<Box>& base) : _base(base), Box() {
-  _shift = base->_shift;
-}
-
-void DebugBox::draw(Graphics2D& g2, float x, float y) {
-  const color prevColor = g2.getColor();
-  const Stroke& prevStroke = g2.getStroke();
-  g2.setColor(red);
-  g2.setStrokeWidth(std::abs(1.f / g2.sx()));
-  g2.drawRect(x, y - _base->_height, _base->_width, _base->_height + _base->_depth);
-  g2.setColor(prevColor);
-  g2.setStroke(prevStroke);
-}
-
-int DebugBox::lastFontId() {
-  _base->lastFontId();
 }

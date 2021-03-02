@@ -19,20 +19,6 @@ TeXRender::TeXRender(const sptr<Box>& box, float textSize, bool trueValues) {
     _textSize = textSize;
   }
   if (!trueValues) _insets += (int) (0.18f * textSize);
-  if (Box::DEBUG) {
-    buildDebug(box);
-  }
-}
-
-void TeXRender::buildDebug(const sptr<Box>& box) {
-  auto group = std::dynamic_pointer_cast<BoxGroup>(box);
-  if (group == nullptr) return;
-  const auto& des = box->descendants();
-  for (size_t i = 0; i < des.size(); i++) {
-    const auto& b = des[i];
-    group->add(i, sptrOf<DebugBox>(b));
-    buildDebug(b);
-  }
 }
 
 inline float TeXRender::getTextSize() const {
