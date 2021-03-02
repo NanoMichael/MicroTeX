@@ -13,25 +13,6 @@
 
 namespace tex {
 
-inline static void parseMap(const std::string& options, std::map<std::string, std::string>& res) {
-  if (options.empty()) return;
-
-  StrTokenizer tokens(options, ",");
-  const int c = tokens.count();
-  for (int i = 0; i < c; i++) {
-    std::string tok = tokens.next();
-    trim(tok);
-    std::vector<std::string> optarg;
-    split(tok, '=', optarg);
-    if (!optarg.empty()) {
-      if (optarg.size() == 2)
-        res[trim(optarg[0])] = trim(optarg[1]);
-      else if (optarg.size() == 1)
-        res[trim(optarg[0])] = "";
-    }
-  }
-}
-
 /** An atom representing a big delimiter atom (i.e. sigma) */
 class BigDelimiterAtom : public Atom {
 private:
