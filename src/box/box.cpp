@@ -17,3 +17,7 @@ int BoxGroup::lastFontId() {
   }
   return id;
 }
+
+int DecorBox::lastFontId() {
+  return _base->lastFontId();
+}

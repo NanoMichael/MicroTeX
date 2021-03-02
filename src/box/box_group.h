@@ -82,9 +82,8 @@ public:
  *                                   operation boxes                                               *
  ***************************************************************************************************/
 
-class ColorBox : public Box {
+class ColorBox : public DecorBox {
 private:
-  sptr<Box> _box;
   color _foreground = transparent;
   color _background = transparent;
 
@@ -94,53 +93,37 @@ public:
   explicit ColorBox(const sptr<Box>& box, color fg = transparent, color bg = transparent);
 
   void draw(Graphics2D& g2, float x, float y) override;
-
-  int lastFontId() override;
-
-  std::vector<sptr<Box>> descendants() const override;
 };
 
 /** A box representing a scale operation */
-class ScaleBox : public Box {
+class ScaleBox : public DecorBox {
 private:
-  sptr<Box> _box;
-  float _sx, _sy;
+  float _sx = 1, _sy = 1;
 
   void init(const sptr<Box>& b, float sx, float sy);
 
 public:
   ScaleBox() = delete;
 
-  ScaleBox(const sptr<Box>& b, float sx, float sy) {
+  ScaleBox(const sptr<Box>& b, float sx, float sy) : DecorBox(b) {
     init(b, sx, sy);
   }
 
-  ScaleBox(const sptr<Box>& b, float factor) {
+  ScaleBox(const sptr<Box>& b, float factor) : DecorBox(b) {
     init(b, factor, factor);
   }
 
   void draw(Graphics2D& g2, float x, float y) override;
-
-  int lastFontId() override;
-
-  std::vector<sptr<Box>> descendants() const override;
 };
 
 /** A box representing a reflected box */
-class ReflectBox : public Box {
-private:
-  sptr<Box> _box;
-
+class ReflectBox : public DecorBox {
 public:
   ReflectBox() = delete;
 
   explicit ReflectBox(const sptr<Box>& b);
 
   void draw(Graphics2D& g2, float x, float y) override;
-
-  int lastFontId() override;
-
-  std::vector<sptr<Box>> descendants() const override;
 };
 
 /** Enumeration representing rotation origin */
@@ -173,12 +156,11 @@ enum class Rotation {
 };
 
 /** A box representing a rotate operation */
-class RotateBox : public Box {
+class RotateBox : public DecorBox {
 private:
-  sptr<Box> _box;
-  float _angle;
-  float _xmax, _xmin, _ymax, _ymin;
-  float _shiftX, _shiftY;
+  float _angle = 0;
+  float _xmax = 0, _xmin = 0, _ymax = 0, _ymin = 0;
+  float _shiftX = 0, _shiftY = 0;
 
   void init(const sptr<Box>& b, float angle, float x, float y);
 
@@ -187,24 +169,23 @@ private:
 public:
   RotateBox() = delete;
 
-  RotateBox(const sptr<Box>& b, float angle, float x, float y) {
+  RotateBox(const sptr<Box>& b, float angle, float x, float y)
+    : DecorBox(b) {
     init(b, angle, x, y);
   }
 
-  RotateBox(const sptr<Box>& b, float angle, const Point& origin) {
+  RotateBox(const sptr<Box>& b, float angle, const Point& origin)
+    : DecorBox(b) {
     init(b, angle, origin.x, origin.y);
   }
 
-  RotateBox(const sptr<Box>& b, float angle, Rotation option) {
+  RotateBox(const sptr<Box>& b, float angle, Rotation option)
+    : DecorBox(b) {
     const Point& p = calculateShift(*b, option);
     init(b, angle, p.x, p.y);
   }
 
   void draw(Graphics2D& g2, float x, float y) override;
-
-  int lastFontId() override;
-
-  std::vector<sptr<Box>> descendants() const override;
 
   static Rotation getOrigin(std::string option);
 };
@@ -214,34 +195,31 @@ public:
  ***************************************************************************************************/
 
 /** A box representing a wrapped box by square frame */
-class FramedBox : public Box {
+class FramedBox : public DecorBox {
 public:
-  sptr<Box> _box;
-  float _thickness;
-  float _space;
-  color _line;
-  color _bg;
+  float _thickness = 1;
+  float _space = 0;
+  color _line = transparent;
+  color _bg = transparent;
 
   void init(const sptr<Box>& box, float thickness, float space);
 
 public:
   FramedBox() = delete;
 
-  FramedBox(const sptr<Box>& box, float thickness, float space) {
+  FramedBox(const sptr<Box>& box, float thickness, float space)
+    : DecorBox(box) {
     init(box, thickness, space);
   }
 
-  FramedBox(const sptr<Box>& box, float thickness, float space, color line, color bg) {
+  FramedBox(const sptr<Box>& box, float thickness, float space, color line, color bg)
+    : DecorBox(box) {
     init(box, thickness, space);
     _line = line;
     _bg = bg;
   }
 
-  virtual void draw(Graphics2D& g2, float x, float y) override;
-
-  int lastFontId() override;
-
-  std::vector<sptr<Box>> descendants() const override;
+  void draw(Graphics2D& g2, float x, float y) override;
 };
 
 /** A box representing a wrapped box by oval frame */
@@ -256,16 +234,14 @@ public:
     const sptr<FramedBox>& fbox,
     float multiplier = 0.5f,
     float diameter = 0.f
-  ) : FramedBox(fbox->_box, fbox->_thickness, fbox->_space),
+  ) : FramedBox(fbox->_base, fbox->_thickness, fbox->_space),
       _multiplier(multiplier),
       _diameter(diameter) {}
 
   void draw(Graphics2D& g2, float x, float y) override;
 };
 
-/**
- * A box representing a wrapped box by shadowed frame
- */
+/** A box representing a wrapped box by shadowed frame */
 class ShadowBox : public FramedBox {
 private:
   float _shadowRule;
@@ -274,7 +250,7 @@ public:
   ShadowBox() = delete;
 
   ShadowBox(const sptr<FramedBox>& fbox, float shadowRule)
-    : FramedBox(fbox->_box, fbox->_thickness, fbox->_space) {
+    : FramedBox(fbox->_base, fbox->_thickness, fbox->_space) {
     _shadowRule = shadowRule;
     _depth += shadowRule;
     _width += shadowRule;
@@ -284,23 +260,16 @@ public:
 };
 
 /** A box representing 'wrapper' that with insets in left, top, right and bottom */
-class WrapperBox : public Box {
+class WrapperBox : public DecorBox {
 private:
-  sptr<Box> _base;
   float _l;
   color _fg = 0, _bg = 0;
 
 public:
   WrapperBox() = delete;
 
-  WrapperBox(const sptr<Box>& base) : _base(base), _l(0) {
-    _height = _base->_height;
-    _depth = _base->_depth;
-    _width = _base->_width;
-  }
-
   WrapperBox(const sptr<Box>& base, float width, float rowheight, float rowdepth, Alignment align)
-    : _base(base), _l(0) {
+    : DecorBox(base), _l(0) {
     _height = rowheight;
     _depth = rowdepth;
     _width = width;
@@ -319,10 +288,6 @@ public:
   void addInsets(float l, float t, float r, float b);
 
   void draw(Graphics2D& g2, float x, float y) override;
-
-  int lastFontId() override;
-
-  std::vector<sptr<Box>> descendants() const override;
 };
 
 /**
