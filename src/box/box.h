@@ -80,7 +80,7 @@ public:
    *
    * @return the id of the last font that will be used later.
    */
-  virtual int lastFontId() = 0;
+  virtual int lastFontId();
 
   /** Get child boxes of this box. */
   virtual std::vector<sptr<Box>> descendants() const {
