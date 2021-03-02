@@ -3,21 +3,11 @@
 #include <utility>
 
 #include "common.h"
-#include "fonts/fonts.h"
 #include "graphic/graphic.h"
 #include "box/box_single.h"
 
 using namespace std;
 using namespace tex;
-
-bool Box::DEBUG = false;
-
-int BoxGroup::lastFontId() {
-  int id = TeXFont::NO_FONT;
-  for (int i = _children.size() - 1; i >= 0 && id == TeXFont::NO_FONT; i--)
-    id = _children[i]->lastFontId();
-  return id;
-}
 
 /************************************* horizontal box implementation ******************************/
 
@@ -529,18 +519,6 @@ int WrapperBox::lastFontId() {
 }
 
 vector<sptr<Box>> WrapperBox::descendants() const {
-  return {_base};
-}
-
-void ShiftBox::draw(Graphics2D& g2, float x, float y) {
-  _base->draw(g2, x, y + _sf);
-}
-
-int ShiftBox::lastFontId() {
-  return _base->lastFontId();
-}
-
-vector<sptr<Box>> ShiftBox::descendants() const {
   return {_base};
 }
 

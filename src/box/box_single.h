@@ -24,8 +24,6 @@ public:
   void draw(Graphics2D& g2, float x, float y) override {
     // no visual effect
   }
-
-  int lastFontId() override;
 };
 
 /** A box representing glue */
@@ -44,13 +42,9 @@ public:
   void draw(Graphics2D& g2, float x, float y) override {
     // no visual effect
   }
-
-  int lastFontId() override;
 };
 
-/**
- * A box representing a single character
- */
+/** A box representing a single character */
 class CharBox : public Box {
 private:
   sptr<CharFont> _cf;
@@ -100,8 +94,6 @@ public:
 
   void draw(Graphics2D& g2, float x, float y) override;
 
-  int lastFontId() override;
-
   static void setFont(const std::string& name);
 
   static void _init_();
@@ -122,8 +114,6 @@ public:
   LineBox(const std::vector<float>& lines, float thickness);
 
   void draw(Graphics2D& g2, float x, float y) override;
-
-  int lastFontId() override;
 };
 
 /** A box representing a horizontal line. */
@@ -135,15 +125,12 @@ private:
 public:
   HRule() = delete;
 
-  HRule(float thickness, float width, float shift);
-
-  HRule(float thickness, float width, float shift, bool trueShift);
-
-  HRule(float thickness, float width, float shift, color c, bool trueshift);
+  HRule(
+    float thickness, float width, float shift,
+    color c = transparent, bool trueshift = true
+  );
 
   void draw(Graphics2D& g2, float x, float y) override;
-
-  int lastFontId() override;
 };
 
 }

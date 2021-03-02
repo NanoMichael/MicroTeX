@@ -4,14 +4,6 @@
 using namespace std;
 using namespace tex;
 
-int StrutBox::lastFontId() {
-  return TeXFont::NO_FONT;
-}
-
-int GlueBox::lastFontId() {
-  return TeXFont::NO_FONT;
-}
-
 CharBox::CharBox(const Char& c) {
   _cf = c.getCharFont();
   _size = c.getSize();
@@ -76,10 +68,6 @@ void TextRenderingBox::draw(Graphics2D& g2, float x, float y) {
   g2.translate(-x, -y);
 }
 
-int TextRenderingBox::lastFontId() {
-  return 0;
-}
-
 LineBox::LineBox(const vector<float>& lines, float thickness) {
   _thickness = thickness;
   if (lines.size() % 4 != 0) throw ex_invalid_param("The vector not represent lines.");
@@ -99,29 +87,6 @@ void LineBox::draw(Graphics2D& g2, float x, float y) {
   }
   g2.translate(0, _height);
   g2.setStrokeWidth(oldThickness);
-}
-
-int LineBox::lastFontId() {
-  return TeXFont::NO_FONT;
-}
-
-HRule::HRule(float thickness, float width, float shift)
-  : _color(transparent), _speShift(0) {
-  _height = thickness;
-  _width = width;
-  _shift = shift;
-}
-
-HRule::HRule(float thickness, float width, float shift, bool trueshift)
-  : _color(transparent), _speShift(0) {
-  _height = thickness;
-  _width = width;
-  if (trueshift) {
-    _shift = shift;
-  } else {
-    _shift = 0;
-    _speShift = shift;
-  }
 }
 
 HRule::HRule(float thickness, float width, float shift, color c, bool trueshift)
@@ -145,8 +110,4 @@ void HRule::draw(Graphics2D& g2, float x, float y) {
   g2.drawLine(x, y, x + _width, y);
   g2.setStroke(oldStroke);
   g2.setColor(oldColor);
-}
-
-int HRule::lastFontId() {
-  return TeXFont::NO_FONT;
 }
