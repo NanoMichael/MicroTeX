@@ -300,9 +300,8 @@ RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const wstring& optio
   _type = base->_type;
   _base = base;
   _angle = angle;
-  map<string, string> opt;
   const string x = wide2utf8(option);
-  parseMap(x, opt);
+  const auto& opt = parseOption(x);
   auto it = opt.find("origin");
   if (it != opt.end()) {
     _option = RotateBox::getOrigin(it->second);

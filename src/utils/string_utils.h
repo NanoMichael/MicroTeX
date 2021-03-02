@@ -8,8 +8,11 @@
 #include <sstream>
 #include <string>
 #include <functional>
+#include <map>
 
 namespace tex {
+
+std::map<std::string, std::string> parseOption(const std::string& options);
 
 /** Convert a value to string */
 template<class T>
@@ -122,64 +125,13 @@ private:
   int _pos;
 
 public:
-  StrTokenizer(const std::string& str) {
-    _str = str;
-    _del = " \t\n\r\f";
-    _ret = false;
-    _pos = 0;
-  }
+  StrTokenizer(std::string str);
 
-  StrTokenizer(const std::string& str, const std::string& del, bool ret = false) {
-    _str = str;
-    _del = del;
-    _ret = ret;
-    _pos = 0;
-  }
+  StrTokenizer(std::string  str, std::string  del, bool ret = false);
 
-  int count() {
-    int c = 0;
-    bool in = false;
-    for (int i = _pos, len = _str.length(); i < len; i++) {
-      if (_del.find(_str[i]) != std::string::npos) {
-        if (_ret) c++;
-        if (in) {
-          c++;
-          in = false;
-        }
-      } else {
-        in = true;
-      }
-    }
-    if (in) c++;
-    return c;
-  }
+  int count();
 
-  std::string next() {
-    int i = _pos;
-    int len = _str.length();
-
-    if (i < len) {
-      if (_ret) {
-        if (_del.find(_str[_pos]) != std::string::npos)
-          return std::string({_str[_pos++]});
-        for (_pos++; _pos < len; _pos++)
-          if (_del.find(_str[_pos]) != std::string::npos)
-            return _str.substr(i, _pos - i);
-        return _str.substr(i);
-      }
-
-      while (i < len && _del.find(_str[i]) != std::string::npos) i++;
-
-      _pos = i;
-      if (i < len) {
-        for (_pos++; _pos < len; _pos++)
-          if (_del.find(_str[_pos]) != std::string::npos)
-            return _str.substr(i, _pos - i);
-        return _str.substr(i);
-      }
-    }
-    return "";
-  }
+  std::string next();
 };
 
 /**
