@@ -169,7 +169,7 @@ void VBox::onDraw(Graphics2D& g2, float x, float y) {
 
 OverBar::OverBar(const sptr<Box>& b, float kern, float thickness) : VBox() {
   add(sptrOf<StrutBox>(0, thickness, 0, 0));
-  add(sptrOf<HRule>(thickness, b->_width, 0));
+  add(sptrOf<RuleBox>(thickness, b->_width, 0));
   add(sptrOf<StrutBox>(0, kern, 0, 0));
   add(b);
 }

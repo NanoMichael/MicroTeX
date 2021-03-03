@@ -756,7 +756,7 @@ public:
     float w = SpaceAtom::getFactor(_wu, env) * _w;
     float h = SpaceAtom::getFactor(_hu, env) * _h;
     float r = SpaceAtom::getFactor(_ru, env) * _r;
-    return sptrOf<HRule>(h, w, r);
+    return sptrOf<RuleBox>(h, w, r);
   }
 
   __decl_clone(RuleAtom)
@@ -818,7 +818,7 @@ public:
     float axis = tf.getAxisHeight(style);
     float drt = tf.getDefaultRuleThickness(style);
     auto b = _at->createBox(env);
-    auto* rule = new HRule(drt, b->_width, -axis + drt, false);
+    auto* rule = new RuleBox(drt, b->_width, -axis + drt, false);
     auto* hb = new HBox();
     hb->add(b);
     hb->add(sptrOf<StrutBox>(-b->_width, 0, 0, 0));
@@ -1002,7 +1002,7 @@ public:
     auto* vb = new VBox();
     vb->add(b);
     vb->add(sptrOf<StrutBox>(0, 3 * drt, 0, 0));
-    vb->add(sptrOf<HRule>(drt, b->_width, 0));
+    vb->add(sptrOf<RuleBox>(drt, b->_width, 0));
 
     // baseline vertical box = baseline box b
     // there's also an invisible strut of height drt under the rule
