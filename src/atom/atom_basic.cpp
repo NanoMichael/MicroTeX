@@ -38,7 +38,7 @@ sptr<Box> MathAtom::createBox(Environment& env) {
 
 sptr<Box> HlineAtom::createBox(Environment& env) {
   float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-  Box* b = new HRule(drt, _width, _shift, _color, false);
+  Box* b = new RuleBox(drt, _width, _shift, _color, false);
   auto* vb = new VBox();
   vb->add(sptr<Box>(b));
   vb->_type = AtomType::hline;
@@ -118,7 +118,7 @@ SpaceAtom UnderScoreAtom::_s(UnitType::em, 0.06f, 0, 0);
 sptr<Box> UnderScoreAtom::createBox(Environment& env) {
   float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
   auto* hb = new HBox(_s.createBox(env));
-  hb->add(sptrOf<HRule>(drt, _w.createBox(env)->_width, 0));
+  hb->add(sptrOf<RuleBox>(drt, _w.createBox(env)->_width, 0));
   return sptr<Box>(hb);
 }
 

@@ -161,7 +161,7 @@ sptr<Box> FractionAtom::createBox(Environment& env) {
 
     // fill vertical box
     vb->add(sptrOf<StrutBox>(0, kern1, 0, 0));
-    vb->add(sptrOf<HRule>(_thickness, num->_width, 0));
+    vb->add(sptrOf<RuleBox>(_thickness, num->_width, 0));
     vb->add(sptrOf<StrutBox>(0, kern2, 0, 0));
   } else {
     // without fraction rule

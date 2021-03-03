@@ -122,7 +122,7 @@ will produce the following box tree:
 3    │       ├── CharBox
 3    │       └── OverBar
 4    │           ├── StrutBox
-4    │           ├── HRule
+4    │           ├── RuleBox
 4    │           ├── StrutBox
 4    │           └── HBox
 5    │               ├── HBox

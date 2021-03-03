@@ -90,7 +90,7 @@ void LineBox::onDraw(Graphics2D& g2, float x, float y) {
   g2.setStrokeWidth(oldThickness);
 }
 
-HRule::HRule(float thickness, float width, float shift, color c, bool trueshift)
+RuleBox::RuleBox(float thickness, float width, float shift, color c, bool trueshift)
   : _color(c), _speShift(0) {
   _height = thickness;
   _width = width;
@@ -102,7 +102,7 @@ HRule::HRule(float thickness, float width, float shift, color c, bool trueshift)
   }
 }
 
-void HRule::onDraw(Graphics2D& g2, float x, float y) {
+void RuleBox::onDraw(Graphics2D& g2, float x, float y) {
   const color oldColor = g2.getColor();
   if (!isTransparent(_color)) g2.setColor(_color);
   const Stroke& oldStroke = g2.getStroke();

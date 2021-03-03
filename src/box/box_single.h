@@ -116,16 +116,16 @@ public:
   void onDraw(Graphics2D& g2, float x, float y) override;
 };
 
-/** A box representing a horizontal line. */
-class HRule : public Box {
+/** A box representing a line. */
+class RuleBox : public Box {
 private:
   color _color;
   float _speShift;
 
 public:
-  HRule() = delete;
+  RuleBox() = delete;
 
-  HRule(
+  RuleBox(
     float thickness, float width, float shift,
     color c = transparent, bool trueshift = true
   );
