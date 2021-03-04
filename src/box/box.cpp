@@ -6,9 +6,16 @@ using namespace std;
 
 bool Box::DEBUG = false;
 
+void Box::copyMetrics(const sptr<Box>& box) {
+  _width = box->_width;
+  _height = box->_height;
+  _depth = box->_depth;
+  _shift = box->_shift;
+}
+
 void Box::draw(Graphics2D& g2, float x, float y) {
   onDraw(g2, x, y);
-  if (DEBUG) drawDebug(g2, x, y);
+  // if (DEBUG) drawDebug(g2, x, y);
 }
 
 void Box::drawDebug(Graphics2D& g2, float x, float y) {

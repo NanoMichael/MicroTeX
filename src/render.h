@@ -1,8 +1,9 @@
 #ifndef RENDER_H_INCLUDED
 #define RENDER_H_INCLUDED
 
-#include "graphic/graphic.h"
 #include "utils/enums.h"
+#include "box/box.h"
+#include "graphic/graphic.h"
 
 namespace tex {
 
@@ -22,6 +23,8 @@ private:
   float _textSize;
   color _fg = black;
   Insets _insets;
+
+  void buildDebug(const sptr<BoxGroup>& parent, const sptr<Box>& box);
 
 public:
   static float _defaultSize;
