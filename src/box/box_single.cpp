@@ -113,6 +113,16 @@ void RuleBox::onDraw(Graphics2D& g2, float x, float y) {
   g2.setColor(oldColor);
 }
 
+DebugBox::DebugBox(const sptr<Box>& base) {
+  copyMetrics(base);
+}
+
 void DebugBox::onDraw(Graphics2D& g2, float x, float y) {
-  
+  const color prevColor = g2.getColor();
+  const Stroke& prevStroke = g2.getStroke();
+  g2.setColor(red);
+  g2.setStrokeWidth(std::abs(1.f / g2.sx()));
+  g2.drawRect(x, y - _height, _width, _height + _depth);
+  g2.setColor(prevColor);
+  g2.setStroke(prevStroke);
 }

@@ -138,11 +138,8 @@ public:
 };
 
 class DebugBox : public Box {
-private:
-  sptr<Box> _base;
-
 public:
-  explicit DebugBox(const sptr<Box>& base) : _base(base) {}
+  explicit DebugBox(const sptr<Box>& base);
 
   void onDraw(Graphics2D& g2, float x, float y) override;
 };

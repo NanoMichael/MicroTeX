@@ -179,9 +179,8 @@ OverBar::OverBar(const sptr<Box>& b, float kern, float thickness) : VBox() {
 ColorBox::ColorBox(const sptr<Box>& box, color fg, color bg) : DecorBox(box) {
   _foreground = fg;
   _background = bg;
-  _width = box->_width, _height = box->_height, _depth = box->_depth;
-  _shift = box->_shift;
   _type = box->_type;
+  copyMetrics(box);
 }
 
 void ColorBox::onDraw(Graphics2D& g2, float x, float y) {
@@ -219,10 +218,7 @@ void ScaleBox::onDraw(Graphics2D& g2, float x, float y) {
 /************************************** reflect box implementation ********************************/
 
 ReflectBox::ReflectBox(const sptr<Box>& b) : DecorBox(b) {
-  _width = b->_width;
-  _height = b->_height;
-  _depth = b->_depth;
-  _shift = b->_shift;
+  copyMetrics(b);
 }
 
 void ReflectBox::onDraw(Graphics2D& g2, float x, float y) {

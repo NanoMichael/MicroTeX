@@ -4,6 +4,7 @@
 #include "core/core.h"
 #include "core/formula.h"
 
+using namespace std;
 using namespace tex;
 
 const color TeXRender::_defaultcolor = black;
@@ -19,6 +20,27 @@ TeXRender::TeXRender(const sptr<Box>& box, float textSize, bool trueValues) {
     _textSize = textSize;
   }
   if (!trueValues) _insets += (int) (0.18f * textSize);
+  buildDebug(nullptr, box);
+}
+
+void TeXRender::buildDebug(const sptr<BoxGroup>& parent, const sptr<Box>& box) {
+  if (auto group = dynamic_pointer_cast<BoxGroup>(box); group != nullptr) {
+    const auto kern = sptrOf<StrutBox>(-group->_width, -group->_height, -group->_depth, -group->_shift);
+    // snapshot of current children
+    const auto children = group->descendants();
+    group->addOnly(kern);
+    for (const auto& child : children) {
+      if (child->isSpace()) {
+        group->addOnly(child);
+      } else {
+        group->addOnly(sptrOf<DebugBox>(child));
+      }
+      buildDebug(group, child);
+    }
+  } else if (auto decor = dynamic_pointer_cast<DecorBox>(box); decor != nullptr) {
+
+  } else {
+  }
 }
 
 inline float TeXRender::getTextSize() const {
@@ -122,36 +144,41 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
     throw ex_invalid_state("A size is required, call function setSize before build.");
   }
 
-  DefaultTeXFont* font = (_type == -1) ? new DefaultTeXFont(_textSize)
-                                       : createFont(_textSize, _type);
+  DefaultTeXFont* font = (
+    _type == -1
+    ? new DefaultTeXFont(_textSize)
+    : createFont(_textSize, _type)
+  );
   sptr<TeXFont> tf(font);
-  Environment* te = nullptr;
+  Environment* env;
   if (_widthUnit != UnitType::none && _textWidth != 0) {
-    te = new Environment(_style, tf, _widthUnit, _textWidth);
+    env = new Environment(_style, tf, _widthUnit, _textWidth);
   } else {
-    te = new Environment(_style, tf);
+    env = new Environment(_style, tf);
   }
 
-  if (_lineSpaceUnit != UnitType::none) te->setInterline(_lineSpaceUnit, _lineSpace);
+  if (_lineSpaceUnit != UnitType::none) {
+    env->setInterline(_lineSpaceUnit, _lineSpace);
+  }
 
-  auto box = f->createBox(*te);
-  TeXRender* ti = nullptr;
+  auto box = f->createBox(*env);
+  TeXRender* render;
   if (_widthUnit != UnitType::none && _textWidth != 0) {
     HBox* hb = nullptr;
     if (_lineSpaceUnit != UnitType::none && _lineSpace != 0) {
-      float il = _lineSpace * SpaceAtom::getFactor(_lineSpaceUnit, *te);
-      auto b = BoxSplitter::split(box, te->getTextWidth(), il);
-      hb = new HBox(b, _isMaxWidth ? b->_width : te->getTextWidth(), _align);
+      float space = _lineSpace * SpaceAtom::getFactor(_lineSpaceUnit, *env);
+      auto b = BoxSplitter::split(box, env->getTextWidth(), space);
+      hb = new HBox(b, _isMaxWidth ? b->_width : env->getTextWidth(), _align);
     } else {
-      hb = new HBox(box, _isMaxWidth ? box->_width : te->getTextWidth(), _align);
+      hb = new HBox(box, _isMaxWidth ? box->_width : env->getTextWidth(), _align);
     }
-    ti = new TeXRender(sptr<Box>(hb), _textSize, _trueValues);
+    render = new TeXRender(sptr<Box>(hb), _textSize, _trueValues);
   } else {
-    ti = new TeXRender(box, _textSize, _trueValues);
+    render = new TeXRender(box, _textSize, _trueValues);
   }
 
-  if (!isTransparent(_fg)) ti->setForeground(_fg);
+  if (!isTransparent(_fg)) render->setForeground(_fg);
 
-  delete te;
-  return ti;
+  delete env;
+  return render;
 }

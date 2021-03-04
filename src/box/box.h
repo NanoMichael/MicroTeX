@@ -61,6 +61,9 @@ public:
   /** Create a new box with default options */
   Box() { init(); }
 
+  /** Copy the metrics from another box */
+  void copyMetrics(const sptr<Box>& box);
+
   /** Transform the width of box to negative */
   inline void negWidth() { _width = -_width; }
 
@@ -100,7 +103,7 @@ public:
   }
 
   /** Test if this box represents a space */
-  virtual bool isSpace() const { return true; }
+  virtual bool isSpace() const { return false; }
 
   virtual ~Box() = default;
 };
@@ -116,9 +119,9 @@ public:
   std::vector<sptr<Box>> _children{};
 
   /**
-   * Append the given box at the end of the list of child boxes.
+   * Append the given box to the end of the list of the child boxes.
    *
-   * @param box the box to be inserted
+   * @param box the box to be append
    */
   virtual void add(const sptr<Box>& box) {
     _children.push_back(box);
@@ -132,6 +135,20 @@ public:
    */
   virtual void add(int pos, const sptr<Box>& box) {
     _children.insert(_children.begin() + pos, box);
+  }
+
+  /**
+   * Append the given box to the end of the list of the child boxes,
+   * and the given box will not participate in the metrics calculation
+   * of this composed box.
+   * <p>
+   * You shall not use this method to compose child boxes, it is for
+   * special uses.
+   *
+   * @param box the box to be append
+   */
+  void addOnly(const sptr<Box>& box) {
+    _children.push_back(box);
   }
 
   /** Child count of this box */
