@@ -24,6 +24,8 @@ public:
   void onDraw(Graphics2D& g2, float x, float y) override {
     // no visual effect
   }
+
+  bool isSpace() const override { return true; }
 };
 
 /** A box representing glue */
@@ -42,6 +44,8 @@ public:
   void onDraw(Graphics2D& g2, float x, float y) override {
     // no visual effect
   }
+
+  bool isSpace() const override { return true; }
 };
 
 /** A box representing a single character */
@@ -129,6 +133,16 @@ public:
     float thickness, float width, float shift,
     color c = transparent, bool trueshift = true
   );
+
+  void onDraw(Graphics2D& g2, float x, float y) override;
+};
+
+class DebugBox : public Box {
+private:
+  sptr<Box> _base;
+
+public:
+  explicit DebugBox(const sptr<Box>& base) : _base(base) {}
 
   void onDraw(Graphics2D& g2, float x, float y) override;
 };
