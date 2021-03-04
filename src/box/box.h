@@ -99,6 +99,9 @@ public:
     return {};
   }
 
+  /** Test if this box represents a space */
+  virtual bool isSpace() const { return true; }
+
   virtual ~Box() = default;
 };
 

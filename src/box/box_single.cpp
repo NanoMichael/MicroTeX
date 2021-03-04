@@ -112,3 +112,7 @@ void RuleBox::onDraw(Graphics2D& g2, float x, float y) {
   g2.setStroke(oldStroke);
   g2.setColor(oldColor);
 }
+
+void DebugBox::onDraw(Graphics2D& g2, float x, float y) {
+  
+}
