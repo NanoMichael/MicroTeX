@@ -1,6 +1,8 @@
 #ifndef RENDER_H_INCLUDED
 #define RENDER_H_INCLUDED
 
+#include <functional>
+
 #include "utils/enums.h"
 #include "box/box.h"
 #include "graphic/graphic.h"
@@ -15,6 +17,8 @@ class Box;
 
 class Atom;
 
+using BoxFilter = std::function<bool(const sptr<Box>&)>;
+
 class TeXRender {
 private:
   static const color _defaultcolor;
@@ -24,7 +28,11 @@ private:
   color _fg = black;
   Insets _insets;
 
-  void buildDebug(const sptr<BoxGroup>& parent, const sptr<Box>& box);
+  void buildDebug(
+    const sptr<BoxGroup>& parent,
+    const sptr<Box>& box,
+    BoxFilter&& filter
+  );
 
 public:
   static float _defaultSize;

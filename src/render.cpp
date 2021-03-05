@@ -20,25 +20,28 @@ TeXRender::TeXRender(const sptr<Box>& box, float textSize, bool trueValues) {
     _textSize = textSize;
   }
   if (!trueValues) _insets += (int) (0.18f * textSize);
-  buildDebug(nullptr, box);
+  buildDebug(nullptr, box, [](auto box) { return true; });
 }
 
-void TeXRender::buildDebug(const sptr<BoxGroup>& parent, const sptr<Box>& box) {
+void TeXRender::buildDebug(
+  const sptr<BoxGroup>& parent,
+  const sptr<Box>& box,
+  BoxFilter&& filter
+) {
+  if (box->isSpace()) {
+    parent->addOnly(box);
+  } else if (filter(box)) {
+    parent->addOnly(sptrOf<DebugBox>(box));
+  }
   if (auto group = dynamic_pointer_cast<BoxGroup>(box); group != nullptr) {
     const auto kern = sptrOf<StrutBox>(-group->_width, -group->_height, -group->_depth, -group->_shift);
     // snapshot of current children
     const auto children = group->descendants();
     group->addOnly(kern);
-    for (const auto& child : children) {
-      if (child->isSpace()) {
-        group->addOnly(child);
-      } else {
-        group->addOnly(sptrOf<DebugBox>(child));
-      }
-      buildDebug(group, child);
+    for (const auto& child: children) {
+      buildDebug(group, child, std::forward<BoxFilter>(filter));
     }
   } else if (auto decor = dynamic_pointer_cast<DecorBox>(box); decor != nullptr) {
-
   } else {
   }
 }
