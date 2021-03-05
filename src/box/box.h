@@ -102,7 +102,7 @@ public:
     return {};
   }
 
-  /** Test if this box represents a space */
+  /** Test if this box represents a space that only has metrics and has no visual effect. */
   virtual bool isSpace() const { return false; }
 
   virtual ~Box() = default;
