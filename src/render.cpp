@@ -23,7 +23,10 @@ TeXRender::TeXRender(const sptr<Box>& box, float textSize, bool trueValues) {
   if (Box::DEBUG) {
     const auto group = wrap(box);
     _box = group;
-    buildDebug(nullptr, group, [](auto b) { return true; });
+    BoxFilter filter = [](auto b) {
+      return dynamic_cast<CharBox*>(b.get()) != nullptr;
+    };
+    buildDebug(nullptr, group, std::move(filter));
   }
 }
 
@@ -47,6 +50,9 @@ void TeXRender::buildDebug(
       parent->addOnly(box);
     } else if (filter(box)) {
       parent->addOnly(sptrOf<DebugBox>(box));
+    } else {
+      // placeholder to consume the space of the current box
+      parent->addOnly(sptrOf<StrutBox>(box));
     }
   }
   if (auto group = dynamic_pointer_cast<BoxGroup>(box); group != nullptr) {
@@ -188,8 +194,8 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
     HBox* hb;
     if (_lineSpaceUnit != UnitType::none && _lineSpace != 0) {
       float space = _lineSpace * SpaceAtom::getFactor(_lineSpaceUnit, *env);
-      auto b = BoxSplitter::split(box, env->getTextWidth(), space);
-      hb = new HBox(b, _isMaxWidth ? b->_width : env->getTextWidth(), _align);
+      auto split = BoxSplitter::split(box, env->getTextWidth(), space);
+      hb = new HBox(split, _isMaxWidth ? split->_width : env->getTextWidth(), _align);
     } else {
       hb = new HBox(box, _isMaxWidth ? box->_width : env->getTextWidth(), _align);
     }
