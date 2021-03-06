@@ -14,6 +14,11 @@ class StrutBox : public Box {
 public:
   StrutBox() = delete;
 
+  explicit StrutBox(const sptr<Box>& box) noexcept {
+    copyMetrics(box);
+    _shift = _shift;
+  }
+
   StrutBox(float width, float height, float depth, float shift) noexcept {
     _width = width;
     _height = height;
