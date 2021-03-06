@@ -20,7 +20,19 @@ TeXRender::TeXRender(const sptr<Box>& box, float textSize, bool trueValues) {
     _textSize = textSize;
   }
   if (!trueValues) _insets += (int) (0.18f * textSize);
-  buildDebug(nullptr, box, [](auto box) { return true; });
+  const auto group = wrap(box);
+  _box = group;
+  buildDebug(nullptr, group, [](auto b) { return true; });
+}
+
+sptr<BoxGroup> TeXRender::wrap(const sptr<Box>& box) {
+  sptr<BoxGroup> parent;
+  if (auto group = dynamic_pointer_cast<BoxGroup>(box); group != nullptr) {
+    parent = group;
+  } else {
+    parent = sptrOf<HBox>(box);
+  }
+  return parent;
 }
 
 void TeXRender::buildDebug(
@@ -28,10 +40,12 @@ void TeXRender::buildDebug(
   const sptr<Box>& box,
   BoxFilter&& filter
 ) {
-  if (box->isSpace()) {
-    parent->addOnly(box);
-  } else if (filter(box)) {
-    parent->addOnly(sptrOf<DebugBox>(box));
+  if (parent != nullptr) {
+    if (box->isSpace()) {
+      parent->addOnly(box);
+    } else if (filter(box)) {
+      parent->addOnly(sptrOf<DebugBox>(box));
+    }
   }
   if (auto group = dynamic_pointer_cast<BoxGroup>(box); group != nullptr) {
     const auto kern = sptrOf<StrutBox>(-group->_width, -group->_height, -group->_depth, -group->_shift);
@@ -42,7 +56,9 @@ void TeXRender::buildDebug(
       buildDebug(group, child, std::forward<BoxFilter>(filter));
     }
   } else if (auto decor = dynamic_pointer_cast<DecorBox>(box); decor != nullptr) {
-  } else {
+    const auto g = wrap(decor->_base);
+    decor->_base = g;
+    buildDebug(nullptr, g, std::forward<BoxFilter>(filter));
   }
 }
 
