@@ -18,7 +18,7 @@ void CharBox::addItalicCorrectionToWidth() {
   _italic = 0;
 }
 
-void CharBox::onDraw(Graphics2D& g2, float x, float y) {
+void CharBox::draw(Graphics2D& g2, float x, float y) {
   g2.translate(x, y);
   const Font* font = FontInfo::getFont(_cf->fontId);
   if (_size != 1) g2.scale(_size, _size);
@@ -61,7 +61,7 @@ void TextRenderingBox::init(
   _width = (rect.w + rect.x + 0.4f) * size / 10;
 }
 
-void TextRenderingBox::onDraw(Graphics2D& g2, float x, float y) {
+void TextRenderingBox::draw(Graphics2D& g2, float x, float y) {
   g2.translate(x, y);
   g2.scale(0.1f * _size, 0.1f * _size);
   _layout->draw(g2, 0, 0);
@@ -75,7 +75,7 @@ LineBox::LineBox(const vector<float>& lines, float thickness) {
   _lines = lines;
 }
 
-void LineBox::onDraw(Graphics2D& g2, float x, float y) {
+void LineBox::draw(Graphics2D& g2, float x, float y) {
   const float oldThickness = g2.getStroke().lineWidth;
   g2.setStrokeWidth(_thickness);
   g2.translate(0, -_height);
@@ -102,7 +102,7 @@ RuleBox::RuleBox(float thickness, float width, float shift, color c, bool truesh
   }
 }
 
-void RuleBox::onDraw(Graphics2D& g2, float x, float y) {
+void RuleBox::draw(Graphics2D& g2, float x, float y) {
   const color oldColor = g2.getColor();
   if (!isTransparent(_color)) g2.setColor(_color);
   const Stroke& oldStroke = g2.getStroke();
@@ -117,7 +117,7 @@ DebugBox::DebugBox(const sptr<Box>& base) {
   copyMetrics(base);
 }
 
-void DebugBox::onDraw(Graphics2D& g2, float x, float y) {
+void DebugBox::draw(Graphics2D& g2, float x, float y) {
   const color prevColor = g2.getColor();
   const Stroke& prevStroke = g2.getStroke();
   g2.setColor(red);

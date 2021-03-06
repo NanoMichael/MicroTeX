@@ -21,7 +21,7 @@ public:
     _shift = shift;
   }
 
-  void onDraw(Graphics2D& g2, float x, float y) override {
+  void draw(Graphics2D& g2, float x, float y) override {
     // no visual effect
   }
 
@@ -41,7 +41,7 @@ public:
     _shrink = shrink;
   }
 
-  void onDraw(Graphics2D& g2, float x, float y) override {
+  void draw(Graphics2D& g2, float x, float y) override {
     // no visual effect
   }
 
@@ -68,7 +68,7 @@ public:
 
   void addItalicCorrectionToWidth();
 
-  void onDraw(Graphics2D& g2, float x, float y) override;
+  void draw(Graphics2D& g2, float x, float y) override;
 
   int lastFontId() override;
 };
@@ -96,7 +96,7 @@ public:
     init(str, type, size, sptr<Font>(_font), true);
   }
 
-  void onDraw(Graphics2D& g2, float x, float y) override;
+  void draw(Graphics2D& g2, float x, float y) override;
 
   static void setFont(const std::string& name);
 
@@ -117,7 +117,7 @@ public:
 
   LineBox(const std::vector<float>& lines, float thickness);
 
-  void onDraw(Graphics2D& g2, float x, float y) override;
+  void draw(Graphics2D& g2, float x, float y) override;
 };
 
 /** A box representing a line. */
@@ -134,14 +134,14 @@ public:
     color c = transparent, bool trueshift = true
   );
 
-  void onDraw(Graphics2D& g2, float x, float y) override;
+  void draw(Graphics2D& g2, float x, float y) override;
 };
 
 class DebugBox : public Box {
 public:
   explicit DebugBox(const sptr<Box>& base);
 
-  void onDraw(Graphics2D& g2, float x, float y) override;
+  void draw(Graphics2D& g2, float x, float y) override;
 };
 
 }
