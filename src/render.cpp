@@ -20,9 +20,11 @@ TeXRender::TeXRender(const sptr<Box>& box, float textSize, bool trueValues) {
     _textSize = textSize;
   }
   if (!trueValues) _insets += (int) (0.18f * textSize);
-  const auto group = wrap(box);
-  _box = group;
-  buildDebug(nullptr, group, [](auto b) { return true; });
+  if (Box::DEBUG) {
+    const auto group = wrap(box);
+    _box = group;
+    buildDebug(nullptr, group, [](auto b) { return true; });
+  }
 }
 
 sptr<BoxGroup> TeXRender::wrap(const sptr<Box>& box) {
@@ -183,7 +185,7 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
   auto box = f->createBox(*env);
   TeXRender* render;
   if (_widthUnit != UnitType::none && _textWidth != 0) {
-    HBox* hb = nullptr;
+    HBox* hb;
     if (_lineSpaceUnit != UnitType::none && _lineSpace != 0) {
       float space = _lineSpace * SpaceAtom::getFactor(_lineSpaceUnit, *env);
       auto b = BoxSplitter::split(box, env->getTextWidth(), space);

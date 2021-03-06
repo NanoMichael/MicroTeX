@@ -69,13 +69,14 @@ public:
 
 class TeXRenderBuilder {
 private:
-  TexStyle _style;
-  int _type;
-  UnitType _widthUnit, _lineSpaceUnit;
-  float _textSize, _textWidth, _lineSpace;
-  bool _trueValues, _isMaxWidth;
-  color _fg;
-  Alignment _align;
+  TexStyle _style = TexStyle::display;
+  int _type = -1;
+  UnitType _widthUnit = UnitType::none;
+  UnitType _lineSpaceUnit = UnitType::none;
+  float _textSize = 0, _textWidth = 0, _lineSpace = 0;
+  bool _trueValues = false, _isMaxWidth = false;
+  color _fg = black;
+  Alignment _align = Alignment::none;
 
 public:
   // TODO declaration conflict with TypefaceStyle defined in graphic/graphic.h
@@ -88,18 +89,7 @@ public:
     TYPEWRITER = 16
   };
 
-  TeXRenderBuilder()
-    : _style(TexStyle::display),
-      _type(-1),
-      _widthUnit(UnitType::none),
-      _align(Alignment::none),
-      _lineSpaceUnit(UnitType::none),
-      _textSize(0),
-      _textWidth(0),
-      _lineSpace(0),
-      _trueValues(false),
-      _isMaxWidth(false),
-      _fg(black) {}
+  TeXRenderBuilder() {}
 
   inline TeXRenderBuilder& setStyle(TexStyle style) {
     _style = style;
