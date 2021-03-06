@@ -34,6 +34,8 @@ private:
     BoxFilter&& filter
   );
 
+  static sptr<BoxGroup> wrap(const sptr<Box>& box);
+
 public:
   static float _defaultSize;
   static float _magFactor;
