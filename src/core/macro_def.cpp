@@ -181,7 +181,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_Set, "Set"),
     mac(2, macro_underset, "underset"),
     mac(1, macro_boldsymbol, "boldsymbol"),
-    mac(0, macro_LaTeX, "LaTeX"),
     mac(0, macro_GeoGebra, "GeoGebra"),
     mac(1, macro_big, "big"),
     mac(1, macro_Big, "Big"),

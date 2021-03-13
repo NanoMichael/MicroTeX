@@ -826,10 +826,6 @@ inline macro(sf) {
   return sptrOf<SsAtom>(Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root);
 }
 
-inline macro(LaTeX) {
-  return sptrOf<LaTeXAtom>();
-}
-
 inline macro(hphantom) {
   return sptrOf<PhantomAtom>(Formula(tp, args[1], false)._root, true, false, false);
 }
