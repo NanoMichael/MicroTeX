@@ -194,50 +194,6 @@ sptr<Box> FractionAtom::createBox(Environment& env) {
   return sptrOf<HBox>(sptr<Box>(vb), vb->_width + 2 * f, Alignment::center);
 }
 
-sptr<Box> LaTeXAtom::createBox(Environment& en) {
-  Environment& env = *(en.copy(en.getTeXFont()->copy()));
-  env.getTeXFont()->setRoman(true);
-  float sc = env.getTeXFont()->getScaleFactor();
-
-  FontInfos* fontInfos = nullptr;
-  auto it = Formula::_externalFontMap.find(UnicodeBlock::BASIC_LATIN);
-  if (it != Formula::_externalFontMap.end()) {
-    fontInfos = it->second;
-    Formula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = nullptr;
-  }
-  sptr<Atom> root = Formula(L"\\mathrm{XETL}")._root;
-  sptr<Atom> atom = ((RomanAtom*) root.get())->_base;
-  auto* rm = (RowAtom*) (atom.get());
-  if (fontInfos != nullptr)
-    Formula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = fontInfos;
-
-  // L
-  auto* hb = new HBox(rm->popLastAtom()->createBox(env));
-  hb->add(SpaceAtom(UnitType::em, -0.35f * sc, 0, 0).createBox(env));
-  float f = SpaceAtom(UnitType::ex, 0.45f * sc, 0, 0).createBox(env)->_width;
-  float f1 = SpaceAtom(UnitType::ex, 0.5f * sc, 0, 0).createBox(env)->_width;
-
-  // A
-  auto* A = new CharBox(env.getTeXFont()->getChar('A', "mathnormal", env.supStyle()->getStyle()));
-  A->_shift = -f;
-  hb->add(sptr<Box>(A));
-  hb->add(SpaceAtom(UnitType::em, -0.15f * sc, 0, 0).createBox(env));
-
-  // T
-  hb->add(rm->popLastAtom()->createBox(env));
-  hb->add(SpaceAtom(UnitType::em, -0.15f * sc, 0, 0).createBox(env));
-
-  // E
-  auto E = rm->popLastAtom()->createBox(env);
-  E->_shift = f1;
-  hb->add(E);
-  hb->add(SpaceAtom(UnitType::em, -0.15f * sc, 0, 0).createBox(env));
-
-  // X
-  hb->add(rm->popLastAtom()->createBox(env));
-  return sptr<Box>(hb);
-}
-
 const string NthRoot::_sqrtSymbol = "sqrt";
 const float NthRoot::FACTOR = 0.55f;
 

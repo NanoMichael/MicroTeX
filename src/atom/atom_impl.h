@@ -460,17 +460,6 @@ public:
 };
 
 /**
- * An atom representing LaTeX logo. the dimension values can be set using
- * different unit types.
- */
-class LaTeXAtom : public Atom {
-public:
-  sptr<Box> createBox(Environment& env) override;
-
-  __decl_clone(LaTeXAtom)
-};
-
-/**
  * An atom representing an L with a Caron
  */
 class LCaronAtom : public Atom {
@@ -613,14 +602,14 @@ public:
   AtomType rightType() const override { return _base->rightType(); }
 
   sptr<Box> createBox(Environment& env) override {
-    auto bbox = _base->createBox(env);
-    bbox->_shift = _ru == UnitType::none ? 0 : SpaceAtom::getSize(_ru, -_r, env);
+    auto base = _base->createBox(env);
+    base->_shift = _ru == UnitType::none ? 0 : SpaceAtom::getSize(_ru, -_r, env);
 
-    if (_hu == UnitType::none) return bbox;
+    if (_hu == UnitType::none) return base;
 
-    auto* hbox = new HBox(bbox);
-    hbox->_height = _h * SpaceAtom::getFactor(_hu, env);
-    hbox->_depth = _du == UnitType::none ? 0 : _d * SpaceAtom::getFactor(_du, env);
+    auto* hbox = new HBox(base);
+    hbox->_height = SpaceAtom::getSize(_hu, _h, env);
+    hbox->_depth = _du == UnitType::none ? 0 : SpaceAtom::getSize(_du, _d, env);
 
     return sptr<Box>(hbox);
   }
