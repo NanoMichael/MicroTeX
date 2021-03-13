@@ -6,14 +6,16 @@
 
 #include <fontconfig/fontconfig.h>
 
+#include <utility>
+
 using namespace tex;
 using namespace std;
 
 map<string, string> Font_cairo::_families;
 map<string, Cairo::RefPtr<Cairo::FtFontFace>> Font_cairo::_cairoFtFaces;
 
-Font_cairo::Font_cairo(const string& family, int style, float size)
-  : _family(family), _style(style), _size((double) size) {}
+Font_cairo::Font_cairo(string family, int style, float size)
+  : _family(std::move(family)), _style(style), _size((double) size) {}
 
 Font_cairo::Font_cairo(const string& file, float size) : Font_cairo("", PLAIN, size) {
   loadFont(file);
@@ -155,7 +157,7 @@ void TextLayout_cairo::draw(Graphics2D& g2, float x, float y) {
   // draw layout
   g2.setColor(old);
   g2.translate(x, y - _ascent);
-  Graphics2D_cairo& g = static_cast<Graphics2D_cairo&>(g2);
+  auto& g = static_cast<Graphics2D_cairo&>(g2);
   _layout->show_in_cairo_context(g.getCairoContext());
   g2.translate(-x, -y + _ascent);
 }
@@ -213,7 +215,7 @@ void Graphics2D_cairo::setStroke(const Stroke& s) {
   }
   _context->set_line_cap(c);
 
-  // conver abstract line join to platform line join
+  // convert abstract line join to platform line join
   Cairo::LineJoin j;
   switch (s.join) {
     case JOIN_BEVEL:
