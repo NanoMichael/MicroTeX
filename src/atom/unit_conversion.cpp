@@ -27,6 +27,7 @@ const pair<const char*, UnitType> SpaceAtom::_units[]{
 
 const i32 SpaceAtom::_unitsCount = sizeof(_units) / sizeof(pair<const char*, UnitType>);
 
+// IMPORTANT: the order corresponds to the order of the enum UnitType
 const function<float(const Environment&)> SpaceAtom::_unitConversions[]{
   // EM
   [](const Environment& env) -> float {
