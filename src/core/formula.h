@@ -106,12 +106,6 @@ public:
   Formula(const std::wstring& latex, bool preprocess);
 
   /**
-   * Creates a Formula by parsing the given string in the given text style.
-   * Used when a text style command was found in the parse string.
-   */
-  Formula(const std::wstring& latex, const std::string& textStyle);
-
-  /**
    * Change the text of the Formula and regenerate the root atom.
    *
    * @param latex the latex formula

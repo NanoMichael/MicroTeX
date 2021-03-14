@@ -76,15 +76,22 @@ public:
 using FontSpec = std::tuple<std::string, std::string, std::string>;
 
 /** Enum represents all font style */
-enum class FontStyle : u8 {
-  rm,
-  bf,
-  it,
-  cal,
-  frak,
-  bb,
-  sf,
-  tt
+enum class FontStyle : u16 {
+  rm = 0b1,
+  bf = 0b10,
+  it = 0b100,
+  cal = 0b1000,
+  frak = 0b10000,
+  bb = 0b100000,
+  sf = 0b1000000,
+  tt = 0b10000000,
+  // composed styles
+  bfit = bf | it,
+  bfcal = bf | cal,
+  bffrak = bf | frak,
+  sfbf = bf | sf,
+  sfit = it | sf,
+  sfbfit = bf | it | sf
 };
 
 class FontContext {
@@ -101,6 +108,9 @@ private:
 
   static std::map<std::string, sptr<FontFamily>> _mainFonts;
   static std::map<std::string, sptr<const OtfFont>> _mathFonts;
+
+  /** Get the font style from the given name */
+  static u16 fontStyleOf(const std::string& name);
 
   sptr<FontFamily> _mainFont = nullptr;
   sptr<const OtfFont> _mathFont = nullptr;
@@ -148,6 +158,9 @@ public:
   Char getChar(c32 code, const std::string& style, bool isMathMode) const;
 
   Char getChar(c32 code, FontStyle style, bool isMathMode) const;
+
+  /** Get the char-object from given symbol */
+  Char getChar(const std::string& symbol) const;
 };
 
 }  // namespace tex

@@ -95,11 +95,6 @@ Formula::Formula(const wstring& latex, bool preprocess) : _parser(latex, this, p
   _parser.parse();
 }
 
-Formula::Formula(const wstring& latex, const string& textStyle) : _parser(latex, this) {
-  _textStyle = textStyle;
-  _parser.parse();
-}
-
 void Formula::setLaTeX(const wstring& latex) {
   _parser.reset(latex);
   if (!latex.empty()) _parser.parse();

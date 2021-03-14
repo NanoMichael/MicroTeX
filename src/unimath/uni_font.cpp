@@ -1,6 +1,7 @@
-#include "unimath/uni_font.h"
-
 #include <utility>
+
+#include "unimath/uni_font.h"
+#include "unimath/uni_symbol.h"
 
 using namespace tex;
 using namespace std;
@@ -74,6 +75,25 @@ vector<sptr<const OtfFont>> FontContext::_fonts;
 map<string, sptr<FontFamily>> FontContext::_mainFonts;
 map<string, sptr<const OtfFont>> FontContext::_mathFonts;
 
+u16 FontContext::fontStyleOf(const std::string& name) {
+  static const map<string, FontStyle> nameStyle{
+    {"mathrm",     FontStyle::rm},
+    {"mathbf",     FontStyle::bf},
+    {"mathit",     FontStyle::it},
+    {"mathbfit",   FontStyle::bfit},
+    {"mathcal",    FontStyle::cal},
+    {"mathbfcal",  FontStyle::bfcal},
+    {"mathfrak",   FontStyle::frak},
+    {"mathbb",     FontStyle::bb},
+    {"mathbffrak", FontStyle::bffrak},
+    {"mathsf",     FontStyle::sf},
+    {"mathsfbf",   FontStyle::sfbf},
+    {"mathsfit",   FontStyle::sfit},
+    {"mathsfbfit", FontStyle::sfbfit},
+    {"mathtt",     FontStyle::tt},
+  };
+}
+
 void FontContext::addMainFont(const string& versionName, const vector<FontSpec>& params) {
   auto* ptr = new FontFamily();
   FontFamily& f = *ptr;
@@ -126,4 +146,10 @@ Char FontContext::getChar(c32 code, const string& style, bool isMathMode) const 
 }
 
 Char FontContext::getChar(c32 code, FontStyle style, bool isMathMode) const {
+  // TODO
+}
+
+Char FontContext::getChar(const std::string& symbol) const {
+  const Symbol* sym = Symbol::get(symbol.c_str());
+  if (sym == nullptr) return {};
 }
