@@ -31,8 +31,13 @@ c32 MathVersion::map(const c32 codepoint) const {
 OtfFont::OtfFont(i32 id, string fontFile, const string& clmFile)
   : _id(id), _fontFile(std::move(fontFile)), _otf(sptr<const Otf>(Otf::fromFile(clmFile.c_str()))) {}
 
-inline sptr<const OtfFont>& FontFamily::operator[](const string& styleName) {
-  return _styles[styleName];
+inline void FontFamily::add(const std::string& styleName, const sptr<const OtfFont>& font) {
+  _styles[styleName] = font;
+}
+
+inline sptr<const OtfFont> FontFamily::get(const std::string& styleName) const {
+  const auto it = _styles.find(styleName);
+  return it == _styles.end() ? nullptr : it->second;
 }
 
 const string FontContext::_emptyVersionName;
@@ -100,7 +105,7 @@ void FontContext::addMainFont(const string& versionName, const vector<FontSpec>&
   for (const auto&[style, font, clm] : params) {
     auto otf = sptrOf<const OtfFont>(_lastId++, font, clm);
     _fonts.push_back(otf);
-    f[style] = otf;
+    f.add(style, otf);
   }
   _mainFonts[versionName] = sptr<FontFamily>(ptr);
 }
@@ -124,22 +129,28 @@ sptr<const OtfFont> FontContext::getFont(i32 id) {
 }
 
 void FontContext::selectMathFont(const string& versionName) {
-  _mathFont = _mathFonts[versionName];
+  const auto it = _mathFonts.find(versionName);
+  _mathFont = it == _mathFonts.end() ? nullptr : it->second;
 }
 
 void FontContext::selectMainFont(const string& versionName) {
-  _mainFont = _mainFonts[versionName];
+  const auto it = _mainFonts.find(versionName);
+  _mainFont = it == _mainFonts.end() ? nullptr : it->second;
 }
 
 Char FontContext::getChar(c32 code, const string& style, bool isMathMode) const {
   if (isMathMode) {
-    const auto ptr = _mathVersions[style];
-    const MathVersion& version = ptr == nullptr ? *_mathVersions[""] : *ptr;
+    const auto it = _mathVersions.find(style);
+    const MathVersion& version = (
+      it == _mathVersions.end()
+      ? *_mathVersions[""]
+      : *(it->second)
+    );
     const c32 unicode = version.map(code);
     return {code, unicode, _mathFont->_id, _mathFont->otf().glyphId(unicode)};
   } else {
-    sptr<const OtfFont> font = (*_mainFont)[style];
-    if (font == nullptr) font = (*_mainFont)[""];
+    sptr<const OtfFont> font = _mainFont->get(style);
+    if (font == nullptr) font = _mainFont->get("");
     if (font == nullptr) font = _mathFont;
     return {code, code, font->_id, font->otf().glyphId(code)};
   }

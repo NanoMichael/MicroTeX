@@ -65,7 +65,11 @@ public:
 
   FontFamily() = default;
 
-  sptr<const OtfFont>& operator[](const std::string& styleName);
+  /** Add a font to this family with given style */
+  void add(const std::string& styleName, const sptr<const OtfFont>& font);
+
+  /** Get the font corresponding to the style */
+  sptr<const OtfFont> get(const std::string& styleName) const;
 };
 
 /**
