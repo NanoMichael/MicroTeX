@@ -16,7 +16,7 @@ jobs:
     - name: Downloading dependencies 📥
       run: sudo apt-get install build-essential meson libgtksourceviewmm-3.0-dev libgtkmm-3.0-dev
     - name: Configure 🔧
-      run: meson _build -DTARGET_DEMO=true
+      run: meson _build -DTARGET_DEMO=GTK
     - name: Compile 🎲
       run: ninja -C _build
     - name: Compress build artifacts 📦
