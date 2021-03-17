@@ -272,7 +272,7 @@ public:
   float _padding = 10.f;
   float _maxWidth = 720.f;
 
-  void generateSingle(const std::wstring& code, const std::string& file) {
+  void generateSingle(const std::wstring& code, const std::string& file) const {
     auto r = LaTeX::parse(code, _maxWidth, _textSize, _textSize / 3.f, _foreground);
     const float w = r->getWidth() + _padding * 2;
     const float h = r->getHeight() + _padding * 2;
