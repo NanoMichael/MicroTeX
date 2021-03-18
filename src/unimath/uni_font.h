@@ -81,6 +81,7 @@ using FontSpec = std::tuple<std::string, std::string, std::string>;
 
 /** Enum represents all font style */
 enum class FontStyle : u16 {
+  none = 0,
   rm = 0b1,
   bf = 0b10,
   it = 0b100,
@@ -100,12 +101,10 @@ enum class FontStyle : u16 {
 
 class FontContext {
 private:
-  static const std::string _emptyVersionName;
-  static const std::string _defaultVersionName;
   /** style name to version map */
   static std::map<std::string, sptr<const MathVersion>> _mathStyles;
-  /** version name to version map */
-  static std::map<std::string, sptr<const MathVersion>> _mathVersions;
+  /** font style to version map */
+  static std::map<FontStyle, sptr<const MathVersion>> _mathVersions;
 
   static int _lastId;
   static std::vector<sptr<const OtfFont>> _fonts;
@@ -113,8 +112,13 @@ private:
   static std::map<std::string, sptr<FontFamily>> _mainFonts;
   static std::map<std::string, sptr<const OtfFont>> _mathFonts;
 
-  /** Get the font style from the given name */
-  static u16 fontStyleOf(const std::string& name);
+  /**
+   * Get the font style from the given name
+   *
+   * @param name the style name
+   * @return the corresponding FontStyle or FontStyle::none if not found
+   */
+  static FontStyle fontStyleOf(const std::string& name);
 
   sptr<FontFamily> _mainFont = nullptr;
   sptr<const OtfFont> _mathFont = nullptr;
@@ -158,13 +162,14 @@ public:
   /** Get the id of the math font currently in use */
   inline i32 mathFontId() const { return _mathFont->_id; }
 
-  /** Get the char-object from given code and style */
-  Char getChar(c32 code, const std::string& style, bool isMathMode) const;
-
-  Char getChar(c32 code, FontStyle style, bool isMathMode) const;
-
   /** Get the char-object from given symbol */
   Char getChar(const std::string& symbol) const;
+
+  /** Get the char-object from given code and styleName */
+  Char getChar(c32 code, const std::string& styleName, bool isMathMode) const;
+
+  /** Get the char-object from the given code and style */
+  Char getChar(c32 code, FontStyle style, bool isMathMode) const;
 };
 
 }  // namespace tex
