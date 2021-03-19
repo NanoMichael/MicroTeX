@@ -169,5 +169,16 @@ Char FontContext::getChar(c32 code, const string& styleName, bool isMathMode) co
 }
 
 Char FontContext::getChar(c32 code, FontStyle style, bool isMathMode) const {
-  // TODO
+  if (isMathMode) {
+    const auto it = _mathVersions.find(style);
+    const MathVersion& version = (
+      it == _mathVersions.end()
+      ? *_mathVersions[FontStyle::none]
+      : *it->second
+    );
+    const c32 unicode = version.map(code);
+    return {code, unicode, _mathFont->_id, _mathFont->otf().glyphId(unicode)};
+  } else {
+    // TODO
+  }
 }
