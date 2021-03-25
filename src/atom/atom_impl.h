@@ -356,7 +356,7 @@ public:
     float italic = ch.getItalic();
     Box* cedilla = new CharBox(ch);
     Box* y;
-    if (abs(italic) > PREC) {
+    if (std::abs(italic) > PREC) {
       y = new HorizontalBox(sptr<Box>(new StrutBox(-italic, 0, 0, 0)));
       y->add(sptr<Box>(cedilla));
     } else {
@@ -930,7 +930,7 @@ public:
     float italic = ch.getItalic();
     Box* ogonek = new CharBox(ch);
     Box* y = nullptr;
-    if (abs(italic) > PREC) {
+    if (std::abs(italic) > PREC) {
       y = new HorizontalBox(sptr<Box>(new StrutBox(-italic, 0, 0, 0)));
       y->add(sptr<Box>(ogonek));
     } else {
@@ -1359,7 +1359,7 @@ public:
     CharBox* T = new CharBox(t);
     CharBox* B = new CharBox(ch);
     Box* y = nullptr;
-    if (abs(italic) > PREC) {
+    if (std::abs(italic) > PREC) {
       y = new HorizontalBox(sptr<Box>(new StrutBox(-italic, 0, 0, 0)));
       y->add(sptr<Box>(B));
     } else {

@@ -531,7 +531,7 @@ public:
     _width = _base->_width;
   }
 
-  WrapperBox(const sptr<Box>& base, float width, float rowheight, float rowdepth, float align)
+  WrapperBox(const sptr<Box>& base, float width, float rowheight, float rowdepth, int align)
       : _base(base), _l(0) {
     _height = rowheight;
     _depth = rowdepth;

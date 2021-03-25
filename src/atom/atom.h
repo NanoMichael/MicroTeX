@@ -65,7 +65,7 @@ protected:
   void drawDebug(Graphics2D& g2, float x, float y, bool showDepth = true) {
     if (!DEBUG) return;
     const Stroke& st = g2.getStroke();
-    Stroke s(abs(1.f / g2.sx()), CAP_BUTT, JOIN_MITER);
+    Stroke s(std::abs(1.f / g2.sx()), CAP_BUTT, JOIN_MITER);
     g2.setStroke(s);
     if (_width < 0) {
       x += _width;

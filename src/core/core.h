@@ -278,7 +278,7 @@ public:
   static void _free_();
 
 #ifdef HAVE_LOG
-  friend ostream& operator<<(ostream& out, const Glue& glue);
+  friend std::ostream& operator<<(std::ostream& out, const Glue& glue);
 #endif  // HAVE_LOG
 };
 
