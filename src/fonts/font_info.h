@@ -167,7 +167,7 @@ public:
   }
 
 #ifdef HAVE_LOG
-  friend ostream& operator<<(ostream& os, const FontInfo& info);
+  friend std::ostream& operator<<(std::ostream& os, const FontInfo& info);
 #endif
 };
 

@@ -19,6 +19,13 @@ inline std::string tostring(T val) {
   return os.str();
 }
 
+template<>
+inline std::string tostring(wchar_t val) {
+  char buf[16];
+  auto len = wctomb(buf, val);
+  return std::string(buf, len);
+}
+
 /** Convert a value to wide string */
 template <class T>
 inline std::wstring towstring(T val) {

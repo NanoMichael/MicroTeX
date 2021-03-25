@@ -55,7 +55,7 @@ string LaTeX::queryResourceLocation(string& custom_path) {
 		p.append(CHECK_FILE);
 		if (filesystem::exists(p)) {
 			p.remove_filename();
-			return p.u8string();
+			return p.string();
 		}
 #elif defined(_MSC_VER)
 		std::string path = paths.front();

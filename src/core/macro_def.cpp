@@ -37,6 +37,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands = {
     mac(2, 2, macro_scalebox, "scalebox"),
     mac(2, 2, macro_raisebox, "raisebox"),
     mac(1, 1, macro_dynamic, "dynamic"),
+#undef mac
 #define mac mac3
     mac(1, macro_fatalIfCmdConflict, "fatalIfCmdConflict"),
     mac(1, macro_breakEverywhere, "breakEverywhere"),

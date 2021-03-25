@@ -13,7 +13,7 @@ TeXRender::TeXRender(const sptr<Box> box, float textSize, bool trueValues) {
   _box = box;
   if (_defaultSize != -1) _textSize = _defaultSize;
   if (_magFactor != 0) {
-    _textSize = textSize * abs(_magFactor);
+    _textSize = textSize * std::abs(_magFactor);
   } else {
     _textSize = textSize;
   }
