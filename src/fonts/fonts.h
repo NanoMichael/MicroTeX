@@ -56,7 +56,7 @@ public:
   static const int NONE;
 
   // font type
-  static const int NUMBERS, CAPITAL, SMALL, UNICODE;
+  static const int NUMBERS, CAPITAL, SMALL, IS_UNICODE;
   // font information
   static const int WIDTH, HEIGHT, DEPTH, IT;
   // extensions

@@ -14,7 +14,7 @@ private:
   size_t   _rows;
   bool     _auto_delete;
 
-  char compare(const T a[M], const T b[M]) const {
+  int compare(const T a[M], const T b[M]) const {
     for (size_t i = 0; i < M; i++) {
       if (a[i] < b[i]) return -1;
       if (a[i] > b[i]) return 1;
@@ -51,7 +51,7 @@ public:
     while (l <= h) {
       const int  m   = l + ((h - l) >> 1);
       const T*   r   = _raw + (m * N);
-      const char cmp = compare(k, r);
+      const int cmp = compare(k, r);
       if (cmp == 0) return r;
       cmp < 0 ? h = m - 1 : l = m + 1;
     }

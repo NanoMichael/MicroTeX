@@ -70,7 +70,7 @@ public:
 
 class Graphics2D_qt : public Graphics2D {
 private:
-  static Font_qt _default_font;
+  /*static*/ Font_qt _default_font = Font_qt("SansSerif", PLAIN, 20.f);
 
   QPainter* _painter;
 

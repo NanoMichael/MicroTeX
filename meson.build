@@ -94,7 +94,7 @@ src = [
 	'src/res/sym/amsfonts.def.cpp',
 	'src/res/sym/amssymb.def.cpp',
 	'src/res/sym/base.def.cpp',
-	'src/res/sym/special.def.cpp',
+	'src/res/sym/symspecial.def.cpp',
 	'src/res/sym/stmaryrd.def.cpp',
 	'src/samples/gtkmm_main.cpp',
 	'src/samples/mem_check_main.cpp',
