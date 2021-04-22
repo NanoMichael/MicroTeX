@@ -26,7 +26,7 @@ const int DefaultTeXFont::NONE = -1;
 const int DefaultTeXFont::NUMBERS = 0;
 const int DefaultTeXFont::CAPITAL = 1;
 const int DefaultTeXFont::SMALL   = 2;
-const int DefaultTeXFont::UNICODE = 3;
+const int DefaultTeXFont::IS_UNICODE = 3;
 /** font information */
 const int DefaultTeXFont::WIDTH  = 0;
 const int DefaultTeXFont::HEIGHT = 1;
@@ -123,7 +123,7 @@ Char DefaultTeXFont::getChar(wchar_t c, _in_ const vector<CharFont*>& cf, int st
     kind   = CAPITAL;
     offset = c - 'A';
   } else {
-    kind   = UNICODE;
+    kind   = IS_UNICODE;
     offset = c;
   }
   // if no mapping for the character's range, then use the default style

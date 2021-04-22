@@ -134,7 +134,11 @@ void TeXParser::addAtom(const sptr<Atom>& atom) {
 
 void TeXParser::addRow() {
   if (!_arrayMode) throw ex_parse("Can not add row in none-array mode!");
-  ((ArrayOfAtoms*)_formula)->addRow();
+  auto* array = dynamic_cast<ArrayOfAtoms*>(_formula);
+  if (array) {
+      array->addRow();
+  }
+//  ((ArrayOfAtoms*)_formula)->addRow();
 }
 
 wstring TeXParser::getDollarGroup(wchar_t openclose) {
@@ -502,8 +506,9 @@ sptr<Atom> TeXParser::processEscape() {
   string cmd;
   wide2utf8(command.c_str(), cmd);
   auto it = MacroInfo::_commands.find(command);
-  if (it != MacroInfo::_commands.end()) return processCommands(command);
-
+  if (it != MacroInfo::_commands.end()) {
+      return processCommands(command);
+  }
   try {
     return TeXFormula::get(command)->_root;
   } catch (ex_formula_not_found& e) {
@@ -579,7 +584,9 @@ sptr<Atom> TeXParser::getScripts(wchar_t f) {
        * the ScriptsAtom will handle it
        */
     return sptr<Atom>(new ScriptsAtom(nullptr, first, second));
-  } else if ((rm = dynamic_cast<RowAtom*>(_formula->_root.get()))) {
+  }
+  auto* r = _formula->_root.get();
+  if (rm = dynamic_cast<RowAtom*>(r)) {
     atom = rm->popLastAtom();
   } else {
     atom = _formula->_root;
