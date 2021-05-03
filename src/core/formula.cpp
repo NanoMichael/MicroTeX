@@ -188,7 +188,10 @@ sptr<Box> TeXFormula::createBox(_out_ TeXEnvironment& style) {
 }
 
 void TeXFormula::setDEBUG(bool b) {
+#ifdef DEBUG
+#undef DEBUG
   Box::DEBUG = b;
+#endif
 }
 
 TeXFormula* TeXFormula::setBackground(color c) {
