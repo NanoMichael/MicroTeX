@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 3.16)
 project(LaTeX)
 
+# MSVC Compat
+
+if (MSVC)
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    add_compile_options("/utf-8")
+else()
 
 # check if compiler has c++11/c++17 support
 
@@ -28,7 +35,7 @@ elseif(COMPILER_SUPPORTS_CXX11)
 else()
     message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no c++11 support. Please use a different one that supports c++11.")
 endif()
-
+endif()
 # copy res dir
 
 file(COPY res DESTINATION .)
