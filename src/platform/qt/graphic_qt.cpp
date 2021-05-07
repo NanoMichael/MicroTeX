@@ -32,7 +32,7 @@ namespace tex {
 QString wstring_to_QString(const std::wstring& ws)
 {
   QString out = QString::fromStdWString(ws);
-  auto index = out.indexOf('\0');
+  auto index = out.indexOf(QChar('\0'));
   if (index != -1)
     out.truncate(index);
   return out;

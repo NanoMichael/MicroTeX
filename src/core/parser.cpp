@@ -659,7 +659,7 @@ sptr<Atom> TeXParser::getArgument() {
 }
 
 pair<int, float> TeXParser::getLength() {
-  if (_pos == _len) return make_pair(-1.f, -1.f);
+  if (_pos == _len) return make_pair(-1, -1.f);
 
   int spos;
   wchar_t ch = L'\0';

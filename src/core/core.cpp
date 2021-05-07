@@ -261,10 +261,12 @@ sptr<TeXEnvironment>& TeXEnvironment::supStyle() {
 /************************************* Glue implementation ****************************************/
 
 #ifdef HAVE_LOG
-ostream& tex::operator<<(ostream& out, const Glue& glue) {
-  out << "Glue { space: " << glue._space << ", stretch: " << glue._stretch << ", shrink: ";
-  out << glue._shrink << ", name: " << glue._name << " }";
-  return out;
+namespace tex {
+    ostream& operator<<(ostream& out, const Glue& glue) {
+        out << "Glue { space: " << glue._space << ", stretch: " << glue._stretch << ", shrink: ";
+        out << glue._shrink << ", name: " << glue._name << " }";
+        return out;
+    }
 }
 #endif  // HAVE_LOG
 
