@@ -557,7 +557,7 @@ that will produce:
 
 # License
 
-Excluding the font resources (under the directory `res/font`) that under different licenses (check out `res/fonts/license`), this project is under the [MIT](https://opensource.org/licenses/MIT) license.
+Excluding the fonts and xml resources (under the directory `res`) that under different licenses (check out `res/fonts/license`, `res/greek` and `res/cyrillic`), this project is under the [MIT](https://opensource.org/licenses/MIT) license.
 
 ```
  The MIT License (MIT)
