@@ -228,3 +228,9 @@ endif ()
 
 option(QT "Compile using Qt instead of Win32/Gtk" OFF)
 
+
+option(BUILD_EXAMPLE "Build examples" OFF)
+if (BUILD_EXAMPLE)
+    add_subdirectory(example)
+endif()
+
