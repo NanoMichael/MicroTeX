@@ -3,7 +3,7 @@
 
 #include "common.h"
 #include "fonts/fonts.h"
-#include "xml/tinyxml2.h"
+#include <tinyxml2.h>
 
 namespace tex {
 
@@ -108,7 +108,7 @@ private:
     float v   = 0;
     int   err = e->QueryFloatAttribute(attr, &v);
     // no attribute mapped by attr
-    if (err != tinyxml2::XML_NO_ERROR)
+    if (err != tinyxml2::XML_SUCCESS)
       throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
     return v;
   }
@@ -118,7 +118,7 @@ private:
     // get value
     int v   = 0;
     int err = e->QueryIntAttribute(attr, &v);
-    if (err != tinyxml2::XML_NO_ERROR)
+    if (err != tinyxml2::XML_SUCCESS)
       throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
     return v;
   }
@@ -130,7 +130,7 @@ private:
     // get value
     int v   = 0;
     int err = e->QueryAttribute(attr, &v);
-    if (err != tinyxml2::XML_NO_ERROR)
+    if (err != tinyxml2::XML_SUCCESS)
       throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid integer value");
     return v;
   }
@@ -142,14 +142,14 @@ private:
     // get value
     float v   = 0;
     int   err = e->QueryFloatAttribute(attr, &v);
-    if (err != tinyxml2::XML_NO_ERROR)
+    if (err != tinyxml2::XML_SUCCESS)
       throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "has invalid real value");
     return v;
   }
 
   void init(const std::string& file) {
     int err = _doc.LoadFile(file.c_str());
-    if (err != tinyxml2::XML_NO_ERROR) throw ex_xml_parse(file + " not found");
+    if (err != tinyxml2::XML_SUCCESS) throw ex_xml_parse(file + " not found");
     _root = _doc.RootElement();
 #ifdef HAVE_LOG
     __dbg("root name:%s\n", _root->Name());

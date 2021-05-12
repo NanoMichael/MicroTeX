@@ -6,7 +6,8 @@ project('clatexmath', 'cpp',
 deps = [
 	dependency('fontconfig'),
 	dependency('gtkmm-3.0'),
-	dependency('gtksourceviewmm-3.0')
+	dependency('gtksourceviewmm-3.0'),
+	dependency('tinyxml2')
 ]
 
 # GCC versions earlier than 9 require linking with stdc++fs to use
@@ -101,8 +102,7 @@ src = [
 	'src/samples/qt_main.cpp',
 	'src/samples/qt_mainwindow.cpp',
 	'src/samples/qt_texwidget.cpp',
-	'src/samples/win32_main.cpp',
-	'src/xml/tinyxml2.cpp'
+	'src/samples/win32_main.cpp'
 ]
 clatexmath_inc = include_directories('src')
 if get_option('TARGET_LIB')
@@ -180,9 +180,6 @@ if get_option('TARGET_LIB')
 		'src/utils/string_utils.h',
 		'src/utils/utf.h',
 	], subdir: 'clatexmath/utils')
-	install_headers([
-		'src/xml/tinyxml2.h',
-	], subdir: 'clatexmath/xml')
 
 	import('pkgconfig').generate(
 		libraries : clatexmath_lib,
