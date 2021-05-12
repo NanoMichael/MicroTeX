@@ -20,7 +20,6 @@ string LaTeX::queryResourceLocation(string& custom_path) {
     queue<string> paths;
 	paths.push(custom_path);
 
-#ifndef _WIN32
 	// checks if XDG_DATA_HOME exists. If it does, it pushes it to potential paths.
 	char* userdata = getenv("XDG_DATA_HOME");
 	if (userdata != NULL && strcmp(userdata, "") != 0) {
@@ -37,6 +36,7 @@ string LaTeX::queryResourceLocation(string& custom_path) {
 			paths.push(xdg_path);
 		}
 	}
+#ifndef _WIN32
 	// checks if HOME env var is unset. if it isn't it pushes ~/.local/share/clatexmath to potential paths.
 	char* home = getenv("HOME");
 	if (home != NULL && strcmp(home, "") != 0) {
