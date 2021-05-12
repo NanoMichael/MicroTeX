@@ -311,7 +311,7 @@ void Graphics2D_cairo::fillRect(float x, float y, float w, float h) {
 
 void Graphics2D_cairo::roundRect(float x, float y, float w, float h, float rx, float ry) {
   double r = max(rx, ry);
-  double d = M_PI / 180.;
+  double d = G_PI / 180.;
   _context->begin_new_sub_path();
   _context->arc(x + r, y + r, r, 180 * d, 270 * d);
   _context->arc(x + w - r, y + r, r, -90 * d, 0);
