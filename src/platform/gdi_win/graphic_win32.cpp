@@ -5,7 +5,8 @@
 #include "platform/gdi_win/graphic_win32.h"
 
 #include <sstream>
-
+// fix error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+#include <comdef.h>
 #include <gdiplus.h>
 #include <windows.h>
 

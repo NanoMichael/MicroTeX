@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <iostream>
 
+#include <comdef.h>
 #include <gdiplus.h>
 #include <objidl.h>
 #include <tchar.h>
