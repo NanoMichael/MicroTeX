@@ -33,6 +33,7 @@ using namespace Gdiplus;
 TeXRender* _render = nullptr;
 int _size = 26;
 color _color = 0xff424242;
+Samples _samples;
 
 HWND hEditor, hBtnSize, hBtnRandom, hCanvas, hEditSize;
 WNDPROC editorProc, setterProc;
@@ -142,13 +143,12 @@ void init() {
 
 void HandleRandom() {
   srand(time(NULL));
-  int idx = rand() % tex::SAMPLES_COUNT;
   if (_render != nullptr) {
     delete _render;
   }
   RECT r;
   GetClientRect(hCanvas, &r);
-  _render = LaTeX::parse(std::wstring(tex::SAMPLES[idx]), r.right - r.left, _size, _size / 3.f, _color);
+  _render = LaTeX::parse(_samples.next(), r.right - r.left, _size, _size / 3.f, _color);
   InvalidateRect(hCanvas, NULL, TRUE);
   UpdateWindow(hCanvas);
 }
