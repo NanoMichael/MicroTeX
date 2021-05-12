@@ -174,7 +174,7 @@ elseif (SKIA)
 elseif (WIN32)
     message(STATUS "We are working on Windows")
     target_compile_definitions(LaTeX PUBLIC -DBUILD_WIN32 -D_HAS_STD_BYTE=0)
-    add_executable(LaTeXWin32Sample
+    add_executable(LaTeXWin32Sample WIN32
             src/platform/gdi_win/graphic_win32.cpp
             src/samples/win32_main.cpp
             )
