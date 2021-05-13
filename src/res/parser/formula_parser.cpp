@@ -1,6 +1,6 @@
 #include "res/parser/formula_parser.h"
 
-using namespace tex::tinyxml2;
+using namespace tinyxml2;
 
 using TeXSymbolParser = tex::TeXSymbolParser;
 using TeXFormulaSettingParser = tex::TeXFormulaSettingParser;
@@ -28,7 +28,7 @@ std::string TeXSymbolParser::getAttr(const char* attr, const XMLElement* e) {
 TeXSymbolParser::TeXSymbolParser(const std::string& file)
     : _doc(true, COLLAPSE_WHITESPACE) {
   int err = _doc.LoadFile(file.c_str());
-  if (err != XML_NO_ERROR) throw ex_res_parse(file + " not found!");
+  if (err != XML_SUCCESS) throw ex_res_parse(file + " not found!");
   _root = _doc.RootElement();
 }
 
@@ -54,7 +54,7 @@ const std::string TeXFormulaSettingParser::RESOURCE_NAME = "TeXFormulaSettings";
 TeXFormulaSettingParser::TeXFormulaSettingParser(const std::string& file)
     : _doc(true, COLLAPSE_WHITESPACE) {
   int err = _doc.LoadFile(file.c_str());
-  if (err != XML_NO_ERROR) throw ex_xml_parse(file + " not found!");
+  if (err != XML_SUCCESS) throw ex_xml_parse(file + " not found!");
   _root = _doc.RootElement();
 }
 

@@ -6,7 +6,8 @@ project('clatexmath', 'cpp',
 deps = [
 	dependency('fontconfig'),
 	dependency('gtkmm-3.0'),
-	dependency('gtksourceviewmm-3.0')
+	dependency('gtksourceviewmm-3.0'),
+	dependency('tinyxml2')
 ]
 
 # GCC versions earlier than 9 require linking with stdc++fs to use
@@ -95,8 +96,7 @@ src = [
 	'src/res/sym/amssymb.def.cpp',
 	'src/res/sym/base.def.cpp',
 	'src/res/sym/symspecial.def.cpp',
-	'src/res/sym/stmaryrd.def.cpp',
-	'src/xml/tinyxml2.cpp'
+	'src/res/sym/stmaryrd.def.cpp'
 ]
 
 if get_option('TARGET_DEMO')
@@ -188,9 +188,6 @@ if get_option('TARGET_LIB')
 		'src/utils/string_utils.h',
 		'src/utils/utf.h',
 	], subdir: 'clatexmath/utils')
-	install_headers([
-		'src/xml/tinyxml2.h',
-	], subdir: 'clatexmath/xml')
 
 	import('pkgconfig').generate(
 		libraries : clatexmath_lib,
