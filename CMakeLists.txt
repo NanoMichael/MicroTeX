@@ -41,6 +41,14 @@ endif ()
 # copy res dir
 
 file(COPY res DESTINATION .)
+if (MSVC)
+    find_package(tinyxml2 CONFIG REQUIRED)
+    target_link_libraries(LaTeX PRIVATE tinyxml2::tinyxml2)
+else()
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(tinyxml2 REQUIRED IMPORTED_TARGET tinyxml2)
+    target_link_libraries(LaTeX PRIVATE tinyxml2)
+endif ()
 
 # source files
 target_sources(LaTeX PRIVATE
@@ -113,8 +121,6 @@ target_sources(LaTeX PRIVATE
         src/res/sym/base.def.cpp
         src/res/sym/stmaryrd.def.cpp
         src/res/sym/symspecial.def.cpp
-        # xml folder
-        src/xml/tinyxml2.cpp
 
         src/latex.cpp
         src/render.cpp
@@ -183,7 +189,6 @@ elseif (WIN32)
 elseif (UNIX)
     message(STATUS "We are working with GTK on a Unix like OS")
     target_compile_definitions(LaTeX PUBLIC -DBUILD_GTK)
-    find_package(PkgConfig REQUIRED)
     find_package(Fontconfig REQUIRED)
     pkg_check_modules(GTKMM REQUIRED IMPORTED_TARGET gtkmm-3.0)
     pkg_check_modules(GSVMM REQUIRED IMPORTED_TARGET gtksourceviewmm-3.0)
