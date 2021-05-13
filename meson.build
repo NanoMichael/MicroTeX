@@ -96,14 +96,20 @@ src = [
 	'src/res/sym/amssymb.def.cpp',
 	'src/res/sym/base.def.cpp',
 	'src/res/sym/symspecial.def.cpp',
-	'src/res/sym/stmaryrd.def.cpp',
-	'src/samples/gtkmm_main.cpp',
-	'src/samples/mem_check_main.cpp',
-	'src/samples/qt_main.cpp',
-	'src/samples/qt_mainwindow.cpp',
-	'src/samples/qt_texwidget.cpp',
-	'src/samples/win32_main.cpp'
+	'src/res/sym/stmaryrd.def.cpp'
 ]
+
+if get_option('TARGET_DEMO')
+	src += [
+		'src/samples/gtkmm_main.cpp',
+		'src/samples/mem_check_main.cpp',
+		'src/samples/qt_main.cpp',
+		'src/samples/qt_mainwindow.cpp',
+		'src/samples/qt_texwidget.cpp',
+		'src/samples/win32_main.cpp'
+	]
+endif
+
 clatexmath_inc = include_directories('src')
 if get_option('TARGET_LIB')
 	clatexmath_lib = library('clatexmath', src,
@@ -166,11 +172,13 @@ if get_option('TARGET_LIB')
 		'src/res/reg/builtin_font_reg.h',
 		'src/res/reg/builtin_syms_reg.h',
 	], subdir: 'clatexmath/res/reg')
-	install_headers([
-		'src/samples/qt_mainwindow.h',
-		'src/samples/qt_texwidget.h',
-		'src/samples/samples.h',
-	], subdir: 'clatexmath/samples')
+	if get_option('TARGET_DEMO')
+		install_headers([
+			'src/samples/qt_mainwindow.h',
+			'src/samples/qt_texwidget.h',
+			'src/samples/samples.h',
+		], subdir: 'clatexmath/samples')
+	endif
 	install_headers([
 		'src/utils/constants.h',
 		'src/utils/exceptions.h',
