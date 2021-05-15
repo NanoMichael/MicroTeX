@@ -31,12 +31,27 @@ c32 MathVersion::map(const c32 codepoint) const {
 OtfFont::OtfFont(i32 id, string fontFile, const string& clmFile)
   : _id(id), _fontFile(std::move(fontFile)), _otf(sptr<const Otf>(Otf::fromFile(clmFile.c_str()))) {}
 
+
+FontStyle FontFamily::fontStyleOf(const std::string& name) {
+  static map<string, FontStyle> nameStyle{
+    {"",   FontStyle::none},
+    {"rm", FontStyle::rm},
+    {"bf", FontStyle::bf},
+    {"it", FontStyle::it},
+    {"sf", FontStyle::sf},
+    {"tt", FontStyle::tt},
+  };
+  const auto it = nameStyle.find(name);
+  if (it == nameStyle.end()) return FontStyle::none;
+  return it->second;
+}
+
 inline void FontFamily::add(const std::string& styleName, const sptr<const OtfFont>& font) {
-  _styles[styleName] = font;
+  _styles[fontStyleOf(styleName)] = font;
 }
 
 inline sptr<const OtfFont> FontFamily::get(const std::string& styleName) const {
-  const auto it = _styles.find(styleName);
+  const auto it = _styles.find(fontStyleOf(styleName));
   return it == _styles.end() ? nullptr : it->second;
 }
 
@@ -81,7 +96,7 @@ vector<sptr<const OtfFont>> FontContext::_fonts;
 map<string, sptr<FontFamily>> FontContext::_mainFonts;
 map<string, sptr<const OtfFont>> FontContext::_mathFonts;
 
-FontStyle FontContext::fontStyleOf(const std::string& name) {
+FontStyle FontContext::mathFontStyleOf(const std::string& name) {
   static map<string, FontStyle> nameStyle{
     {"",           FontStyle::none},
     {"mathnormal", FontStyle::none},
@@ -109,14 +124,13 @@ FontStyle FontContext::fontStyleOf(const std::string& name) {
 }
 
 void FontContext::addMainFont(const string& versionName, const vector<FontSpec>& params) {
-  auto* ptr = new FontFamily();
-  FontFamily& f = *ptr;
+  auto f = new FontFamily();
   for (const auto&[style, font, clm] : params) {
     auto otf = sptrOf<const OtfFont>(_lastId++, font, clm);
     _fonts.push_back(otf);
-    f.add(style, otf);
+    f->add(style, otf);
   }
-  _mainFonts[versionName] = sptr<FontFamily>(ptr);
+  _mainFonts[versionName] = sptr<FontFamily>(f);
 }
 
 void FontContext::addMathFont(const FontSpec& params) {
@@ -156,7 +170,7 @@ Char FontContext::getChar(const std::string& symbol) const {
 
 Char FontContext::getChar(c32 code, const string& styleName, bool isMathMode) const {
   if (isMathMode) {
-    const auto style = fontStyleOf(styleName);
+    const auto style = mathFontStyleOf(styleName);
     const MathVersion& version = *_mathVersions[style];
     const c32 unicode = version.map(code);
     return {code, unicode, _mathFont->_id, _mathFont->otf().glyphId(unicode)};

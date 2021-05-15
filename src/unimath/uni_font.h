@@ -56,9 +56,35 @@ struct Char final {
   i32 _glyphId;
 };
 
+/**
+ * Enum represents all font style
+ *
+ * Current only support following font styles
+ */
+enum class FontStyle : u16 {
+  none = 0,
+  rm = 0b1,
+  bf = 0b10,
+  it = 0b100,
+  cal = 0b1000,
+  frak = 0b10000,
+  bb = 0b100000,
+  sf = 0b1000000,
+  tt = 0b10000000,
+  // composed styles
+  bfit = bf | it,
+  bfcal = bf | cal,
+  bffrak = bf | frak,
+  sfbf = bf | sf,
+  sfit = it | sf,
+  sfbfit = bf | it | sf
+};
+
 struct FontFamily final {
 private:
-  std::map<std::string, sptr<const OtfFont>> _styles;
+  std::map<FontStyle, sptr<const OtfFont>> _styles;
+
+  static FontStyle fontStyleOf(const std::string& name);
 
 public:
   no_copy_assign(FontFamily);
@@ -79,26 +105,6 @@ public:
  */
 using FontSpec = std::tuple<std::string, std::string, std::string>;
 
-/** Enum represents all font style */
-enum class FontStyle : u16 {
-  none = 0,
-  rm = 0b1,
-  bf = 0b10,
-  it = 0b100,
-  cal = 0b1000,
-  frak = 0b10000,
-  bb = 0b100000,
-  sf = 0b1000000,
-  tt = 0b10000000,
-  // composed styles
-  bfit = bf | it,
-  bfcal = bf | cal,
-  bffrak = bf | frak,
-  sfbf = bf | sf,
-  sfit = it | sf,
-  sfbfit = bf | it | sf
-};
-
 class FontContext {
 private:
   /** style name to version map */
@@ -113,12 +119,12 @@ private:
   static std::map<std::string, sptr<const OtfFont>> _mathFonts;
 
   /**
-   * Get the font style from the given name
+   * Get the math font style from the given name
    *
    * @param name the style name
    * @return the corresponding FontStyle or FontStyle::none if not found
    */
-  static FontStyle fontStyleOf(const std::string& name);
+  static FontStyle mathFontStyleOf(const std::string& name);
 
   sptr<FontFamily> _mainFont = nullptr;
   sptr<const OtfFont> _mathFont = nullptr;
