@@ -7,9 +7,9 @@
 
 namespace tex {
 
-typedef unsigned int color;
+using color = std::uint32_t;
 
-static const color trans = 0x00000000;
+static const color transparent = 0x00000000;
 static const color black = 0xff000000;
 static const color white = 0xffffffff;
 static const color red = 0xffff0000;
@@ -19,7 +19,7 @@ static const color yellow = 0xffffff00;
 static const color cyan = 0xff00ffff;
 static const color magenta = 0xffff00ff;
 
-static const color TRANS = trans;
+static const color TRANSPARENT = transparent;
 static const color BLACK = black;
 static const color WHITE = white;
 static const color RED = red;
@@ -38,26 +38,26 @@ inline color rgb(int r, int g, int b) {
 }
 
 inline color argb(float a, float r, float g, float b) {
-  return argb((int)(a * 255), (int)(r * 255), (int)(g * 255), (int)(b * 255));
+  return argb((int) (a * 255), (int) (r * 255), (int) (g * 255), (int) (b * 255));
 }
 
 inline color rgb(float r, float g, float b) {
   return argb(1.f, r, g, b);
 }
 
-inline int color_a(color c) {
+inline color color_a(color c) {
   return c >> 24;
 }
 
-inline int color_r(color c) {
+inline color color_r(color c) {
   return c >> 16 & 0x00ff;
 }
 
-inline int color_g(color c) {
+inline color color_g(color c) {
   return c >> 8 & 0x0000ff;
 }
 
-inline int color_b(color c) {
+inline color color_b(color c) {
   return c & 0x000000ff;
 }
 
@@ -66,16 +66,12 @@ inline color cmyk(float c, float m, float y, float k) {
   return rgb(kk * (1 - c), kk * (1 - m), kk * (1 - y));
 }
 
-/**
- * Test if the given color is transparent
- */
-inline bool istrans(color c) {
+/** Test if the given color is transparent */
+inline bool isTransparent(color c) {
   return (c >> 24 == 0);
 }
 
-/**
- * Convert #AARRGGBB or #RRGGBB formatted string into color.
- */
+/** Convert #AARRGGBB or #RRGGBB formatted string into color. */
 inline color decode(const std::string& s) {
   if (s[0] == '#') {
     const std::string x = s.substr(1);
@@ -151,10 +147,10 @@ struct Stroke {
   Join join;
 
   Stroke()
-      : lineWidth(1.f), cap(CAP_ROUND), join(JOIN_ROUND), miterLimit(0) {}
+    : lineWidth(1.f), cap(CAP_ROUND), join(JOIN_ROUND), miterLimit(0) {}
 
   Stroke(float w, Cap c, Join j, float ml = 0)
-      : lineWidth(w), cap(c), join(j), miterLimit(ml) {}
+    : lineWidth(w), cap(c), join(j), miterLimit(ml) {}
 
   void setStroke(float w, Cap c, Join j, float ml = 0) {
     lineWidth = w;

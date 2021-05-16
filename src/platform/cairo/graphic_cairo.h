@@ -28,7 +28,7 @@ private:
   void loadFont(const string& file);
 
 public:
-  Font_cairo(const string& family = "", int style = PLAIN, float size = 1.f);
+  explicit Font_cairo(string family = "", int style = PLAIN, float size = 1.f);
 
   Font_cairo(const string& file, float size);
 
@@ -38,15 +38,15 @@ public:
 
   Cairo::RefPtr<Cairo::FtFontFace> getCairoFontFace() const;
 
-  virtual float getSize() const override;
+  float getSize() const override;
 
-  virtual sptr<Font> deriveFont(int style) const override;
+  sptr<Font> deriveFont(int style) const override;
 
-  virtual bool operator==(const Font& f) const override;
+  bool operator==(const Font& f) const override;
 
-  virtual bool operator!=(const Font& f) const override;
+  bool operator!=(const Font& f) const override;
 
-  virtual ~Font_cairo() {};
+  ~Font_cairo() override = default;;
 };
 
 /**************************************************************************************************/
@@ -60,9 +60,9 @@ private:
 public:
   TextLayout_cairo(const wstring& src, const sptr<Font_cairo>& font);
 
-  virtual void getBounds(_out_ Rect& r) override;
+  void getBounds(Rect& r) override;
 
-  virtual void draw(Graphics2D& g2, float x, float y) override;
+  void draw(Graphics2D& g2, float x, float y) override;
 };
 
 /**************************************************************************************************/
@@ -80,51 +80,51 @@ private:
   void roundRect(float x, float y, float w, float h, float rx, float ry);
 
 public:
-  Graphics2D_cairo(const Cairo::RefPtr<Cairo::Context>& context);
+  explicit Graphics2D_cairo(const Cairo::RefPtr<Cairo::Context>& context);
 
   const Cairo::RefPtr<Cairo::Context>& getCairoContext() const;
 
-  virtual void setColor(color c) override;
+  void setColor(color c) override;
 
-  virtual color getColor() const override;
+  color getColor() const override;
 
-  virtual void setStroke(const Stroke& s) override;
+  void setStroke(const Stroke& s) override;
 
-  virtual const Stroke& getStroke() const override;
+  const Stroke& getStroke() const override;
 
-  virtual void setStrokeWidth(float w) override;
+  void setStrokeWidth(float w) override;
 
-  virtual const Font* getFont() const override;
+  const Font* getFont() const override;
 
-  virtual void setFont(const Font* font) override;
+  void setFont(const Font* font) override;
 
-  virtual void translate(float dx, float dy) override;
+  void translate(float dx, float dy) override;
 
-  virtual void scale(float sx, float sy) override;
+  void scale(float sx, float sy) override;
 
-  virtual void rotate(float angle) override;
+  void rotate(float angle) override;
 
-  virtual void rotate(float angle, float px, float py) override;
+  void rotate(float angle, float px, float py) override;
 
-  virtual void reset() override;
+  void reset() override;
 
-  virtual float sx() const override;
+  float sx() const override;
 
-  virtual float sy() const override;
+  float sy() const override;
 
-  virtual void drawChar(wchar_t c, float x, float y) override;
+  void drawChar(wchar_t c, float x, float y) override;
 
-  virtual void drawText(const wstring& t, float x, float y) override;
+  void drawText(const wstring& t, float x, float y) override;
 
-  virtual void drawLine(float x, float y1, float x2, float y2) override;
+  void drawLine(float x, float y1, float x2, float y2) override;
 
-  virtual void drawRect(float x, float y, float w, float h) override;
+  void drawRect(float x, float y, float w, float h) override;
 
-  virtual void fillRect(float x, float y, float w, float h) override;
+  void fillRect(float x, float y, float w, float h) override;
 
-  virtual void drawRoundRect(float x, float y, float w, float h, float rx, float ry) override;
+  void drawRoundRect(float x, float y, float w, float h, float rx, float ry) override;
 
-  virtual void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
+  void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
 };
 
 }  // namespace tex

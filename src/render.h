@@ -1,14 +1,23 @@
 #ifndef RENDER_H_INCLUDED
 #define RENDER_H_INCLUDED
 
+#include <functional>
+
+#include "utils/enums.h"
+#include "box/box.h"
 #include "graphic/graphic.h"
 
 namespace tex {
 
 class DefaultTeXFont;
-class TeXFormula;
+
+class Formula;
+
 class Box;
+
 class Atom;
+
+using BoxFilter = std::function<bool(const sptr<Box>&)>;
 
 class TeXRender {
 private:
@@ -16,15 +25,22 @@ private:
 
   sptr<Box> _box;
   float _textSize;
-  color _fg;
+  color _fg = black;
   Insets _insets;
+
+  void buildDebug(
+    const sptr<BoxGroup>& parent,
+    const sptr<Box>& box,
+    BoxFilter&& filter
+  );
+
+  static sptr<BoxGroup> wrap(const sptr<Box>& box);
 
 public:
   static float _defaultSize;
   static float _magFactor;
-  bool _iscolored;
 
-  TeXRender(const sptr<Box> box, float textSize, bool trueValues = false);
+  TeXRender(const sptr<Box>& box, float textSize, bool trueValues = false);
 
   float getTextSize() const;
 
@@ -44,19 +60,23 @@ public:
 
   void setInsets(const Insets& insets, bool trueval = false);
 
-  void setWidth(int width, int align);
+  void setWidth(int width, Alignment align);
 
-  void setHeight(int height, int align);
+  void setHeight(int height, Alignment align);
 
-  void draw(_out_ Graphics2D& g2, int x, int y);
+  void draw(Graphics2D& g2, int x, int y);
 };
 
 class TeXRenderBuilder {
 private:
-  int _style, _type, _widthUnit, _align, _lineSpaceUnit;
-  float _textSize, _textWidth, _lineSpace;
-  bool _trueValues, _isMaxWidth;
-  color _fg;
+  TexStyle _style = TexStyle::display;
+  int _type = -1;
+  UnitType _widthUnit = UnitType::none;
+  UnitType _lineSpaceUnit = UnitType::none;
+  float _textSize = 0, _textWidth = 0, _lineSpace = 0;
+  bool _trueValues = false, _isMaxWidth = false;
+  color _fg = black;
+  Alignment _align = Alignment::none;
 
 public:
   // TODO declaration conflict with TypefaceStyle defined in graphic/graphic.h
@@ -69,20 +89,9 @@ public:
     TYPEWRITER = 16
   };
 
-  TeXRenderBuilder()
-      : _style(-1),
-        _type(-1),
-        _widthUnit(-1),
-        _align(-1),
-        _lineSpaceUnit(-1),
-        _textSize(0),
-        _textWidth(0),
-        _lineSpace(0),
-        _trueValues(false),
-        _isMaxWidth(false),
-        _fg(black) {}
+  TeXRenderBuilder() {}
 
-  inline TeXRenderBuilder& setStyle(int style) {
+  inline TeXRenderBuilder& setStyle(TexStyle style) {
     _style = style;
     return *this;
   }
@@ -107,7 +116,7 @@ public:
     return *this;
   }
 
-  inline TeXRenderBuilder& setWidth(int unit, float width, int align) {
+  inline TeXRenderBuilder& setWidth(UnitType unit, float width, Alignment align) {
     _widthUnit = unit;
     _textWidth = width;
     _align = align;
@@ -116,16 +125,17 @@ public:
   }
 
   inline TeXRenderBuilder& setIsMaxWidth(bool i) {
-    if (_widthUnit == -1)
+    if (_widthUnit == UnitType::none) {
       throw ex_invalid_state("Cannot set 'isMaxWidth' without having specified a width!");
+    }
     if (i) {
       // Currently isMaxWidth==true does not work with
-      // ALIGN_CENTER or ALIGN_RIGHT (see HorizontalBox constructor)
+      // Alignment::center or Alignment::right (see HBox constructor)
       //
-      // The case (1) we don't support by setting align := ALIGN_LEFT
+      // The case (1) we don't support by setting align := Alignment::left
       // here is this:
-      //      \text{hello world\\hello} with align=ALIGN_CENTER (but forced
-      //      to ALIGN_LEFT) and isMaxWidth==true results in:
+      //      \text{hello world\\hello} with align=Alignment::center (but forced
+      //      to Alignment::left) and isMaxWidth==true results in:
       //      [hello world]
       //      [hello ]
       // and NOT:
@@ -133,7 +143,7 @@ public:
       //      [ hello ]
       //
       // However, this case (2) is currently not supported anyway
-      // (ALIGN_CENTER with isMaxWidth==false):
+      // (Alignment::center with isMaxWidth==false):
       //      [ hello world ]
       //      [ hello ]
       // and NOT:
@@ -141,15 +151,15 @@ public:
       //      [ hello ]
       //
       // => until (2) is solved, we stick with the hack to set align
-      // := ALIGN_LEFT!
-      _align = ALIGN_LEFT;
+      // := Alignment::left!
+      _align = Alignment::left;
     }
     _isMaxWidth = i;
     return *this;
   }
 
-  inline TeXRenderBuilder& setLineSpace(int unit, float space) {
-    if (_widthUnit == -1) {
+  inline TeXRenderBuilder& setLineSpace(UnitType unit, float space) {
+    if (_widthUnit == UnitType::none) {
       throw ex_invalid_state("Cannot set line space without having specified a width!");
     }
     _lineSpace = space;
@@ -159,7 +169,7 @@ public:
 
   TeXRender* build(const sptr<Atom>& f);
 
-  TeXRender* build(TeXFormula& f);
+  TeXRender* build(Formula& f);
 
   static DefaultTeXFont* createFont(float size, int type);
 };

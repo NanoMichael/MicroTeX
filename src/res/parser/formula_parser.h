@@ -12,7 +12,7 @@ namespace tex {
  */
 class TeXSymbolParser {
 private:
-  static const std::map<std::string, int> _typeMappings;
+  static const std::map<std::string, AtomType> _typeMappings;
   tinyxml2::XMLDocument _doc;
   tinyxml2::XMLElement* _root;
 
@@ -27,7 +27,7 @@ public:
 
   TeXSymbolParser(const std::string& file);
 
-  void readSymbols(_out_ std::map<std::string, sptr<SymbolAtom>>& res);
+  void readSymbols(std::map<std::string, sptr<SymbolAtom>>& res);
 };
 
 /**
@@ -42,13 +42,13 @@ private:
 
   static void add2map(
       const tinyxml2::XMLElement* mapping,
-      _out_ std::map<int, std::string>& tableMath,
-      _out_ std::map<int, std::string>& tableTxt);
+      std::map<int, std::string>& tableMath,
+      std::map<int, std::string>& tableTxt);
 
   static void addFormula2map(
       const tinyxml2::XMLElement* mapping,
-      _out_ std::map<int, std::string>& tableMath,
-      _out_ std::map<int, std::string>& tableTxt);
+      std::map<int, std::string>& tableMath,
+      std::map<int, std::string>& tableTxt);
 
 public:
   static const std::string RESOURCE_NAME;
@@ -58,12 +58,12 @@ public:
   TeXFormulaSettingParser(const std::string& file);
 
   void parseSymbol2Formula(
-      _out_ std::map<int, std::string>& mappings,
-      _out_ std::map<int, std::string>& textMappings);
+      std::map<int, std::string>& mappings,
+      std::map<int, std::string>& textMappings);
 
   void parseSymbol(
-      _out_ std::map<int, std::string>& mappings,
-      _out_ std::map<int, std::string>& textMappings);
+      std::map<int, std::string>& mappings,
+      std::map<int, std::string>& textMappings);
 };
 }  // namespace tex
 

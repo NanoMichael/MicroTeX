@@ -5,21 +5,21 @@
 using namespace std;
 using namespace tex;
 
-#define mac3(nbargs, name, code) \
-  { L##code, m(nbargs, name) }
+#define mac3(argc, name, code) \
+  { L##code, m(argc, name) }
 
-#define mac4(nbargs, posOpts, name, code) \
-  { L##code, m(nbargs, posOpts, name) }
+#define mac4(argc, posOpts, name, code) \
+  { L##code, m(argc, posOpts, name) }
 
-inline static PredefMacroInfo* m(int nbargs, int posOpts, MacroDelegate del) {
-  return new PredefMacroInfo(nbargs, posOpts, del);
+inline static PreDefMacro* m(int argc, int posOpts, MacroDelegate del) {
+  return new PreDefMacro(argc, posOpts, del);
 }
 
-inline static PredefMacroInfo* m(int nbargs, MacroDelegate del) {
-  return new PredefMacroInfo(nbargs, del);
+inline static PreDefMacro* m(int argc, MacroDelegate del) {
+  return new PreDefMacro(argc, del);
 }
 
-map<wstring, MacroInfo*> MacroInfo::_commands = {
+map<wstring, MacroInfo*> MacroInfo::_commands{
 #define mac mac4
     mac(2, 2, macro_newcommand, "newcommand"),
     mac(2, 2, macro_renewcommand, "renewcommand"),
@@ -68,9 +68,10 @@ map<wstring, MacroInfo*> MacroInfo::_commands = {
     mac(2, macro_sfrac, "sfrac"),
     mac(6, macro_genfrac, "genfrac"),
     mac(0, macro_over, "over"),
-    mac(2, macro_overwithdelims, "overwithdelims"),
     mac(0, macro_atop, "atop"),
+    mac(2, macro_overwithdelims, "overwithdelims"),
     mac(2, macro_atopwithdelims, "atopwithdelims"),
+    mac(2, macro_abovewithdelims, "abovewithdelims"),
     mac(0, macro_choose, "choose"),
     mac(0, macro_brace, "brace"),
     mac(0, macro_brack, "brack"),
@@ -80,26 +81,29 @@ map<wstring, MacroInfo*> MacroInfo::_commands = {
     mac(1, macro_text, "text"),
     mac(1, macro_intertext, "intertext"),
     mac(2, macro_binom, "binom"),
+    // math text styles
     mac(1, macro_mathbf, "mathbf"),
     mac(0, macro_bf, "bf"),
-    mac(1, macro_textstyles, "mathbb"),
-    mac(1, macro_textstyles, "mathcal"),
-    mac(1, macro_textstyles, "cal"),
     mac(1, macro_mathit, "mathit"),
     mac(0, macro_it, "it"),
     mac(1, macro_mathrm, "mathrm"),
     mac(0, macro_rm, "rm"),
-    mac(1, macro_textstyles, "mathscr"),
     mac(1, macro_mathsf, "mathsf"),
     mac(0, macro_sf, "sf"),
     mac(1, macro_mathtt, "mathtt"),
     mac(0, macro_tt, "tt"),
+    // text styles
+    mac(1, macro_textstyles, "mathscr"),
+    mac(1, macro_textstyles, "mathbb"),
+    mac(1, macro_textstyles, "mathcal"),
+    mac(1, macro_textstyles, "cal"),
     mac(1, macro_textstyles, "mathfrak"),
     mac(1, macro_textstyles, "mathds"),
     mac(1, macro_textstyles, "frak"),
     mac(1, macro_textstyles, "Bbb"),
     mac(1, macro_textstyles, "oldstylenums"),
     mac(1, macro_textstyles, "bold"),
+    // accents
     mac(1, macro_accentbiss, "^"),
     mac(1, macro_accentbiss, "\'"),
     mac(1, macro_accentbiss, "\""),
@@ -181,7 +185,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands = {
     mac(1, macro_Set, "Set"),
     mac(2, macro_underset, "underset"),
     mac(1, macro_boldsymbol, "boldsymbol"),
-    mac(0, macro_LaTeX, "LaTeX"),
     mac(0, macro_GeoGebra, "GeoGebra"),
     mac(1, macro_big, "big"),
     mac(1, macro_Big, "Big"),
@@ -274,7 +277,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands = {
     mac(0, macro_coloncolonsim, "coloncolonsim"),
     mac(0, macro_colonapprox, "colonapprox"),
     mac(0, macro_coloncolonapprox, "coloncolonapprox"),
-    mac(1, macro_kern, "kern"),
+    mac(0, macro_kern, "kern"),
     mac(1, macro_char, "char"),
     mac(1, macro_romannumeral, "roman"),
     mac(1, macro_romannumeral, "Roman"),
@@ -304,7 +307,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands = {
     mac(0, macro_insertBreakMark, "-"),
     mac(1, macro_xml, "XML"),
     mac(0, macro_above, "above"),
-    mac(2, macro_abovewithdelims, "abovewithdelims"),
     mac(1, macro_st, "st"),
     mac(1, macro_fcscore, "fcscore"),
     mac(1, macro_rowcolor, "rowcolor"),
@@ -317,93 +319,94 @@ map<wstring, MacroInfo*> MacroInfo::_commands = {
     mac(2, macro_longdiv, "longdiv"),
     mac(1, macro_cancel, "cancel"),
     mac(1, macro_bcancel, "bcancel"),
-    mac(1, macro_xcancel, "xcancel")
+    mac(1, macro_xcancel, "xcancel"),
 #ifdef GRAPHICS_DEBUG
-        ,
     mac(0, macro_debug, "debug"),
-    mac(0, macro_undebug, "undebug")
+    mac(0, macro_undebug, "undebug"),
 #endif  // GRAPHICS_DEBUG
 };
 
-map<wstring, wstring> NewCommandMacro::_macrocode;
-map<wstring, wstring> NewCommandMacro::_macroreplacement;
+map<wstring, wstring> NewCommandMacro::_codes;
+map<wstring, wstring> NewCommandMacro::_replacements;
 Macro* NewCommandMacro::_instance = new NewCommandMacro();
 
-inline static void e(
-    int nbargs,
-    const wstring& name,
-    const wstring& begdef,
-    const wstring& enddef) {
-  NewEnvironmentMacro::addNewEnvironment(name, begdef, enddef, nbargs);
+inline static void env(
+  int argc,
+  const wstring& name,
+  const wstring& begDef,
+  const wstring& endDef
+) {
+  NewEnvironmentMacro::addNewEnvironment(name, begDef, endDef, argc);
 }
 
-inline static void c(
-    int nbargs,
-    const wstring& name,
-    const wstring& code) {
-  NewCommandMacro::addNewCommand(name, code, nbargs);
+inline static void cmd(
+  int argc,
+  const wstring& name,
+  const wstring& code
+) {
+  NewCommandMacro::addNewCommand(name, code, argc);
 }
 
 void NewCommandMacro::_init_() {
   // Predefined environments
-  e(1, L"array", L"\\array@@env{#1}{", L"}");
-  e(1, L"tabular", L"\\array@@env{#1}{", L"}");
-  e(0, L"matrix", L"\\matrix@@env{", L"}");
-  e(0, L"smallmatrix", L"\\smallmatrix@@env{", L"}");
-  e(0, L"pmatrix", L"\\left(\\begin{matrix}", L"\\end{matrix}\\right)");
-  e(0, L"bmatrix", L"\\left[\\begin{matrix}", L"\\end{matrix}\\right]");
-  e(0, L"Bmatrix", L"\\left\\{\\begin{matrix}", L"\\end{matrix}\\right\\}");
-  e(0, L"vmatrix", L"\\left|\\begin{matrix}", L"\\end{matrix}\\right|");
-  e(0, L"Vmatrix", L"\\left\\|\\begin{matrix}", L"\\end{matrix}\\right\\|");
-  e(0, L"eqnarray", L"\\begin{array}{rcl}", L"\\end{array}");
-  e(0, L"align", L"\\align@@env{", L"}");
-  e(0, L"flalign", L"\\flalign@@env{", L"}");
-  e(1, L"alignat", L"\\alignat@@env{#1}{", L"}");
-  e(0, L"aligned", L"\\aligned@@env{", L"}");
-  e(1, L"alignedat", L"\\alignedat@@env{#1}{", L"}");
-  e(0, L"multline", L"\\multline@@env{", L"}");
-  e(0, L"cases", L"\\left\\{\\begin{array}{@{}ll@{\\,}}", L"\\end{array}\\right.");
-  e(0, L"split", L"\\begin{array}{r@{\\;}l}", L"\\end{array}");
-  e(0, L"gather", L"\\gather@@env{", L"}");
-  e(0, L"gathered", L"\\gathered@@env{", L"}");
-  e(0, L"math", L"\\(", L"\\)");
-  e(0, L"displaymath", L"\\[", L"\\]");
+  env(1, L"array", L"\\array@@env{#1}{", L"}");
+  env(1, L"tabular", L"\\array@@env{#1}{", L"}");
+  env(0, L"matrix", L"\\matrix@@env{", L"}");
+  env(0, L"smallmatrix", L"\\smallmatrix@@env{", L"}");
+  env(0, L"pmatrix", L"\\left(\\begin{matrix}", L"\\end{matrix}\\right)");
+  env(0, L"bmatrix", L"\\left[\\begin{matrix}", L"\\end{matrix}\\right]");
+  env(0, L"Bmatrix", L"\\left\\{\\begin{matrix}", L"\\end{matrix}\\right\\}");
+  env(0, L"vmatrix", L"\\left|\\begin{matrix}", L"\\end{matrix}\\right|");
+  env(0, L"Vmatrix", L"\\left\\|\\begin{matrix}", L"\\end{matrix}\\right\\|");
+  env(0, L"eqnarray", L"\\begin{array}{rcl}", L"\\end{array}");
+  env(0, L"align", L"\\align@@env{", L"}");
+  env(0, L"flalign", L"\\flalign@@env{", L"}");
+  env(1, L"alignat", L"\\alignat@@env{#1}{", L"}");
+  env(0, L"aligned", L"\\aligned@@env{", L"}");
+  env(1, L"alignedat", L"\\alignedat@@env{#1}{", L"}");
+  env(0, L"multline", L"\\multline@@env{", L"}");
+  env(0, L"cases", L"\\left\\{\\begin{array}{@{}ll@{\\,}}", L"\\end{array}\\right.");
+  env(0, L"split", L"\\begin{array}{r@{\\;}l}", L"\\end{array}");
+  env(0, L"gather", L"\\gather@@env{", L"}");
+  env(0, L"gathered", L"\\gathered@@env{", L"}");
+  env(0, L"math", L"\\(", L"\\)");
+  env(0, L"displaymath", L"\\[", L"\\]");
   // Predefined commands
-  c(1, L"operatorname", L"\\mathop{\\mathrm{#1}}\\nolimits ");
-  c(2, L"DeclareMathOperator", L"\\newcommand{#1}{\\mathop{\\mathrm{#2}}\\nolimits}");
-  c(1, L"substack", L"{\\scriptstyle\\begin{array}{c}#1\\end{array}}");
-  c(2, L"dfrac", L"\\genfrac{}{}{}{}{#1}{#2}");
-  c(2, L"tfrac", L"\\genfrac{}{}{}{1}{#1}{#2}");
-  c(2, L"dbinom", L"\\genfrac{(}{)}{0pt}{}{#1}{#2}");
-  c(2, L"tbinom", L"\\genfrac{(}{)}{0pt}{1}{#1}{#2}");
-  c(1, L"pmod", L"\\qquad\\mathbin{(\\mathrm{mod}\\ #1)}");
-  c(1, L"mod", L"\\qquad\\mathbin{\\mathrm{mod}\\ #1}");
-  c(1, L"pod", L"\\qquad\\mathbin{(#1)}");
-  c(1, L"dddot", L"\\mathop{#1}\\limits^{...}");
-  c(1, L"ddddot", L"\\mathop{#1}\\limits^{....}");
-  c(0, L"spdddot", L"^{\\mathrm{...}}");
-  c(0, L"spbreve", L"^{\\makeatletter\\sp@breve\\makeatother}");
-  c(0, L"sphat", L"^{\\makeatletter\\sp@hat\\makeatother}");
-  c(0, L"spddot", L"^{\\displaystyle..}");
-  c(0, L"spcheck", L"^{\\vee}");
-  c(0, L"sptilde", L"^{\\sim}");
-  c(0, L"spdot", L"^{\\displaystyle.}");
-  c(1, L"d", L"\\underaccent{\\dot}{#1}");
-  c(1, L"b", L"\\underaccent{\\bar}{#1}");
-  c(1, L"Bra", L"\\left\\langle{#1}\\right\\vert");
-  c(1, L"Ket", L"\\left\\vert{#1}\\right\\rangle");
-  c(1, L"textsuperscript", L"{}^{\\text{#1}}");
-  c(1, L"textsubscript", L"{}_{\\text{#1}}");
-  c(1, L"textit", L"\\mathit{\\text{#1}}");
-  c(1, L"textbf", L"\\mathbf{\\text{#1}}");
-  c(1, L"textsf", L"\\mathsf{\\text{#1}}");
-  c(1, L"texttt", L"\\mathtt{\\text{#1}}");
-  c(1, L"textrm", L"\\text{#1}");
-  c(0, L"degree", L"^\\circ");
-  c(0, L"with", L"\\mathbin{\\&}");
-  c(0, L"parr", L"\\mathbin{\\rotatebox[origin=c]{180}{\\&}}");
-  c(0, L"copyright", L"\\textcircled{\\raisebox{0.2ex}{c}}");
-  c(0, L"L", L"\\mathrm{\\polishlcross L}");
-  c(0, L"l", L"\\mathrm{\\polishlcross l}");
-  c(0, L"Join", L"\\mathop{\\rlap{\\ltimes}\\rtimes}");
+  cmd(1, L"operatorname", L"\\mathop{\\mathrm{#1}}\\nolimits ");
+  cmd(2, L"DeclareMathOperator", L"\\newcommand{#1}{\\mathop{\\mathrm{#2}}\\nolimits}");
+  cmd(1, L"substack", L"{\\scriptstyle\\begin{array}{c}#1\\end{array}}");
+  cmd(2, L"dfrac", L"\\genfrac{}{}{}{}{#1}{#2}");
+  cmd(2, L"tfrac", L"\\genfrac{}{}{}{1}{#1}{#2}");
+  cmd(2, L"dbinom", L"\\genfrac{(}{)}{0pt}{}{#1}{#2}");
+  cmd(2, L"tbinom", L"\\genfrac{(}{)}{0pt}{1}{#1}{#2}");
+  cmd(1, L"pmod", L"\\qquad\\mathbin{(\\mathrm{mod}\\ #1)}");
+  cmd(1, L"mod", L"\\qquad\\mathbin{\\mathrm{mod}\\ #1}");
+  cmd(1, L"pod", L"\\qquad\\mathbin{(#1)}");
+  cmd(1, L"dddot", L"\\mathop{#1}\\limits^{...}");
+  cmd(1, L"ddddot", L"\\mathop{#1}\\limits^{....}");
+  cmd(0, L"spdddot", L"^{\\mathrm{...}}");
+  cmd(0, L"spbreve", L"^{\\makeatletter\\sp@breve\\makeatother}");
+  cmd(0, L"sphat", L"^{\\makeatletter\\sp@hat\\makeatother}");
+  cmd(0, L"spddot", L"^{\\displaystyle..}");
+  cmd(0, L"spcheck", L"^{\\vee}");
+  cmd(0, L"sptilde", L"^{\\sim}");
+  cmd(0, L"spdot", L"^{\\displaystyle.}");
+  cmd(1, L"d", L"\\underaccent{\\dot}{#1}");
+  cmd(1, L"b", L"\\underaccent{\\bar}{#1}");
+  cmd(1, L"Bra", L"\\left\\langle{#1}\\right\\vert");
+  cmd(1, L"Ket", L"\\left\\vert{#1}\\right\\rangle");
+  cmd(1, L"textsuperscript", L"{}^{\\text{#1}}");
+  cmd(1, L"textsubscript", L"{}_{\\text{#1}}");
+  cmd(1, L"textit", L"\\mathit{\\text{#1}}");
+  cmd(1, L"textbf", L"\\mathbf{\\text{#1}}");
+  cmd(1, L"textsf", L"\\mathsf{\\text{#1}}");
+  cmd(1, L"texttt", L"\\mathtt{\\text{#1}}");
+  cmd(1, L"textrm", L"\\text{#1}");
+  cmd(0, L"degree", L"^\\circ");
+  cmd(0, L"with", L"\\mathbin{\\&}");
+  cmd(0, L"parr", L"\\mathbin{\\rotatebox[origin=c]{180}{\\&}}");
+  cmd(0, L"copyright", L"\\textcircled{\\raisebox{0.2ex}{c}}");
+  cmd(0, L"L", L"\\mathrm{\\polishlcross L}");
+  cmd(0, L"l", L"\\mathrm{\\polishlcross l}");
+  cmd(0, L"Join", L"\\mathop{\\rlap{\\ltimes}\\rtimes}");
 }

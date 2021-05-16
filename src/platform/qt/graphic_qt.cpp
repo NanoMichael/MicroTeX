@@ -111,7 +111,7 @@ float Font_qt::getSize() const {
 }
 
 sptr<Font> Font_qt::deriveFont(int style) const {
-  return sptr<Font>(new Font_qt(getFamily(), style, getSize()));
+  return sptrOf<Font_qt>(getFamily(), style, getSize());
 }
 
 bool Font_qt::operator==(const Font& ft) const {
@@ -130,7 +130,7 @@ Font* Font::create(const string& file, float size) {
 }
 
 sptr<Font> Font::_create(const string& name, int style, float size) {
-  return sptr<Font>(new Font_qt(name, style, size));
+  return sptrOf<Font_qt>(name, style, size);
 }
 
 /**************************************************************************************************/
@@ -141,7 +141,7 @@ TextLayout_qt::TextLayout_qt(const std::wstring& src, const sptr<Font_qt>& f) :
 {
 }
 
-void TextLayout_qt::getBounds(_out_ Rect& r) {
+void TextLayout_qt::getBounds(Rect& r) {
   QFontMetricsF fm(_font);
   QRectF br(fm.boundingRect(_text));
 
@@ -159,7 +159,7 @@ void TextLayout_qt::draw(Graphics2D& g2, float x, float y) {
 
 sptr<TextLayout> TextLayout::create(const std::wstring& src, const sptr<Font>& font) {
   sptr<Font_qt> f = static_pointer_cast<Font_qt>(font);
-  return sptr<TextLayout>(new TextLayout_qt(src, f));
+  return sptrOf<TextLayout_qt>(src, f);
 }
 
 /**************************************************************************************************/

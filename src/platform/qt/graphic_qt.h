@@ -61,7 +61,7 @@ private:
 public:
   TextLayout_qt(const std::wstring& src, const sptr<Font_qt>& font);
 
-  virtual void getBounds(_out_ Rect& r) override;
+  virtual void getBounds(Rect& r) override;
 
   virtual void draw(Graphics2D& g2, float x, float y) override;
 };
