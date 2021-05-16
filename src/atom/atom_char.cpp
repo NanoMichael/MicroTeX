@@ -1,7 +1,6 @@
 #include "atom/atom_char.h"
 #include "core/core.h"
 #include "res/parser/formula_parser.h"
-#include "unimath/uni_symbol.h"
 
 using namespace tex;
 using namespace std;
