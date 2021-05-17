@@ -24,7 +24,7 @@ else
 	add_project_arguments('-std=c++11', language : 'cpp')
 endif
 
-add_global_arguments('-DBUILD_GTK', language : 'cpp')
+add_project_arguments('-DBUILD_GTK', language : 'cpp')
 
 src = [
 	'src/atom/atom_basic.cpp',
@@ -198,7 +198,7 @@ if get_option('TARGET_LIB')
 		description : 'A dynamic, cross-platform, and embeddable LaTeX rendering library'
 	)
 
-	latex_dep  = declare_dependency(
+	clatexmath_dep  = declare_dependency(
 		link_with : clatexmath_lib,
 		include_directories : clatexmath_inc,
 		version : meson.project_version()
