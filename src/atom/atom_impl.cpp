@@ -108,12 +108,12 @@ sptr<Box> FractionAtom::createBox(Environment& env) {
   // create equal width boxes in appropriate styles
   auto num = (
     _numerator == nullptr
-    ? sptrOf<StrutBox>(0, 0, 0, 0)
+    ? sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f)
     : _numerator->createBox(*(env.numStyle()))
   );
   auto denom = (
     _denominator == nullptr
-    ? sptrOf<StrutBox>(0, 0, 0, 0)
+    ? sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f)
     : _denominator->createBox(*(env.dnomStyle()))
   );
 
@@ -160,9 +160,9 @@ sptr<Box> FractionAtom::createBox(Environment& env) {
     }
 
     // fill vertical box
-    vb->add(sptrOf<StrutBox>(0, kern1, 0, 0));
-    vb->add(sptrOf<RuleBox>(_thickness, num->_width, 0));
-    vb->add(sptrOf<StrutBox>(0, kern2, 0, 0));
+    vb->add(sptrOf<StrutBox>(0.f, kern1, 0.f, 0.f));
+    vb->add(sptrOf<RuleBox>(_thickness, num->_width, 0.f));
+    vb->add(sptrOf<StrutBox>(0.f, kern2, 0.f, 0.f));
   } else {
     // without fraction rule
     // clearance clr
@@ -178,7 +178,7 @@ sptr<Box> FractionAtom::createBox(Environment& env) {
       kern += 2 * delta;
     }
     // fill vertical box
-    vb->add(sptrOf<StrutBox>(0, kern, 0, 0));
+    vb->add(sptrOf<StrutBox>(0.f, kern, 0.f, 0.f));
   }
 
   // finish vertical box
@@ -211,7 +211,7 @@ sptr<Box> NthRoot::createBox(Environment& env) {
   Environment& cramped = *(env.crampStyle());
   auto bs = _base->createBox(cramped);
   auto b = sptrOf<HBox>(bs);
-  b->add(sptr<Box>(SpaceAtom(UnitType::mu, 1, 0, 0).createBox(cramped)));
+  b->add(sptr<Box>(SpaceAtom(UnitType::mu, 1.f, 0.f, 0.f).createBox(cramped)));
 
   // create root sign
   float totalH = b->_height + b->_depth;
@@ -238,12 +238,12 @@ sptr<Box> NthRoot::createBox(Environment& env) {
   r->_shift = squareRoot->_depth - r->_depth - bottomShift;
 
   // negative kerning
-  sptr<Box> negkern = SpaceAtom(UnitType::mu, -10.f, 0, 0).createBox(env);
+  sptr<Box> negkern = SpaceAtom(UnitType::mu, -10.f, 0.f, 0.f).createBox(env);
 
   // arrange both boxes together with the negative kerning
   auto res = sptrOf<HBox>();
   float pos = r->_width + negkern->_width;
-  if (pos < 0) res->add(sptrOf<StrutBox>(-pos, 0, 0, 0));
+  if (pos < 0) res->add(sptrOf<StrutBox>(-pos, 0.f, 0.f, 0.f));
 
   res->add(r);
   res->add(negkern);
@@ -299,7 +299,7 @@ sptr<Box> RotateAtom::createBox(Environment& env) {
 }
 
 sptr<Box> UnderOverArrowAtom::createBox(Environment& env) {
-  auto b = _base != nullptr ? _base->createBox(env) : sptrOf<StrutBox>(0, 0, 0, 0);
+  auto b = _base != nullptr ? _base->createBox(env) : sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
   float sep = SpaceAtom::getSize(UnitType::mu, 1, env);
 
   sptr<Box> arrow;
@@ -313,14 +313,14 @@ sptr<Box> UnderOverArrowAtom::createBox(Environment& env) {
   auto* vb = new VBox();
   if (_over) {
     vb->add(arrow);
-    if (_dble) vb->add(sptrOf<StrutBox>(0, -sep, 0, 0));
+    if (_dble) vb->add(sptrOf<StrutBox>(0.f, -sep, 0.f, 0.f));
     vb->add(sptrOf<HBox>(b, arrow->_width, Alignment::center));
     float h = vb->_depth + vb->_height;
     vb->_depth = b->_depth;
     vb->_height = h - b->_depth;
   } else {
     vb->add(sptrOf<HBox>(b, arrow->_width, Alignment::center));
-    vb->add(sptrOf<StrutBox>(0, sep, 0, 0));
+    vb->add(sptrOf<StrutBox>(0.f, sep, 0.f, 0.f));
     vb->add(arrow);
     float h = vb->_depth + vb->_height;
     vb->_depth = h - b->_height;
@@ -334,12 +334,12 @@ sptr<Box> XArrowAtom::createBox(Environment& env) {
   auto O = (
     _over != nullptr
     ? _over->createBox(*(env.supStyle()))
-    : sptrOf<StrutBox>(0, 0, 0, 0)
+    : sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f)
   );
   auto U = (
     _under != nullptr
     ? _under->createBox(*(env.subStyle()))
-    : sptrOf<StrutBox>(0, 0, 0, 0)
+    : sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f)
   );
 
   auto oside = SpaceAtom(UnitType::em, 1.5f, 0, 0).createBox(*(env.supStyle()));

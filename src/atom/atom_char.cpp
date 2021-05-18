@@ -45,7 +45,7 @@ sptr<Box> SymbolAtom::createBox(Environment& env) {
     cb->_shift = -(cb->_height + cb->_depth) / 2.f - tf.getAxisHeight(style);
     float delta = c.getItalic();
     auto hb = sptrOf<HBox>(cb);
-    if (delta > PREC) hb->add(sptrOf<StrutBox>(delta, 0, 0, 0));
+    if (delta > PREC) hb->add(sptrOf<StrutBox>(delta, 0.f, 0.f, 0.f));
     return hb;
   }
   return cb;
@@ -99,5 +99,5 @@ sptr<Box> CharAtom::createBox(Environment& env) {
 }
 
 sptr<Box> BreakMarkAtom::createBox(Environment& env) {
-  return sptrOf<StrutBox>(0, 0, 0, 0);
+  return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
 }

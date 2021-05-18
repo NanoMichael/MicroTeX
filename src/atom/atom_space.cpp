@@ -19,9 +19,9 @@ sptr<Box> SpaceAtom::createBox(Environment& env) {
     float w = _width * getFactor(_wUnit, env);
     float h = _height * getFactor(_hUnit, env);
     float d = _depth * getFactor(_dUnit, env);
-    return sptrOf<StrutBox>(w, h, d, 0);
+    return sptrOf<StrutBox>(w, h, d, 0.f);
   }
-  if (_blankType == SpaceType::none) return sptrOf<StrutBox>(env.getSpace(), 0, 0, 0);
+  if (_blankType == SpaceType::none) return sptrOf<StrutBox>(env.getSpace(), 0.f, 0.f, 0.f);
   return Glue::get(_blankType, env);
 }
 

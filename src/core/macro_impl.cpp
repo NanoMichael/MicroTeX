@@ -11,15 +11,15 @@ namespace tex {
 
 macro(kern) {
   auto[unit, value] = tp.getLength();
-  return sptrOf<SpaceAtom>(unit, value, 0, 0);
+  return sptrOf<SpaceAtom>(unit, value, 0.f, 0.f);
 }
 
 macro(hvspace) {
   auto[unit, value] = SpaceAtom::getLength(args[1]);
   return (
     args[0][0] == L'h'
-    ? sptrOf<SpaceAtom>(unit, value, 0, 0)
-    : sptrOf<SpaceAtom>(unit, 0, value, 0)
+    ? sptrOf<SpaceAtom>(unit, value, 0.f, 0.f)
+    : sptrOf<SpaceAtom>(unit, 0.f, value, 0.f)
   );
 }
 
@@ -74,9 +74,9 @@ macro(sfrac) {
   auto* snum = new VRowAtom(sptrOf<ScaleAtom>(num._root, sx, sy));
   snum->setRaise(UnitType::ex, r);
   auto* ra = new RowAtom(sptr<Atom>(snum));
-  ra->add(sptrOf<SpaceAtom>(UnitType::em, sL, 0, 0));
+  ra->add(sptrOf<SpaceAtom>(UnitType::em, sL, 0.f, 0.f));
   ra->add(slash);
-  ra->add(sptrOf<SpaceAtom>(UnitType::em, sR, 0, 0));
+  ra->add(sptrOf<SpaceAtom>(UnitType::em, sR, 0.f, 0.f));
   ra->add(sptrOf<ScaleAtom>(den._root, sx, sy));
 
   return sptr<Atom>(ra);
