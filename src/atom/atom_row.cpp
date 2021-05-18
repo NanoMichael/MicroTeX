@@ -90,7 +90,7 @@ sptr<Atom> RowAtom::popLastAtom() {
 }
 
 sptr<Atom> RowAtom::get(size_t pos) {
-  if (pos >= _elements.size()) return sptrOf<SpaceAtom>(UnitType::point, 0, 0, 0);
+  if (pos >= _elements.size()) return sptrOf<SpaceAtom>(UnitType::point, 0.f, 0.f, 0.f);
   return _elements[pos];
 }
 
@@ -215,7 +215,7 @@ sptr<Box> RowAtom::createBox(Environment& env) {
     env.setLastFontId(b->lastFontId());
 
     // insert kerning
-    if (abs(kern) > PREC) hbox->add(sptrOf<StrutBox>(kern, 0, 0, 0));
+    if (abs(kern) > PREC) hbox->add(sptrOf<StrutBox>(kern, 0.f, 0.f, 0.f));
 
     // kerning do not interfere with the normal glue-rules without kerning
     if (!atom->isKern()) _previousAtom = atom;

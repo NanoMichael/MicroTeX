@@ -123,7 +123,7 @@ Formula* Formula::add(const sptr<Atom>& a) {
 }
 
 sptr<Box> Formula::createBox(Environment& style) {
-  if (_root == nullptr) return sptrOf<StrutBox>(0, 0, 0, 0);
+  if (_root == nullptr) return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
   return _root->createBox(style);
 }
 

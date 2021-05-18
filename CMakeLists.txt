@@ -9,6 +9,7 @@ if (MSVC)
     set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     add_compile_options("/utf-8")
+    target_compile_features(LaTeX PUBLIC cxx_std_17)
 else ()
 
     # check if compiler has c++11/c++17 support

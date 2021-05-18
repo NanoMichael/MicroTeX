@@ -5,36 +5,36 @@
  * specific for the computer modern font family
  */
 std::map<std::string, float> tex::DefaultTeXFont::_parameters = {
-    {"num1", 0.676508},
-    {"num2", 0.393732},
-    {"num3", 0.443731},
-    {"denom1", 0.685951},
-    {"denom2", 0.344841},
-    {"sup1", 0.412892},
-    {"sup2", 0.362892},
-    {"sup3", 0.288889},
-    {"sub1", 0.15},
-    {"sub2", 0.247217},
-    {"supdrop", 0.386108},
-    {"subdrop", 0.05},
-    {"axisheight", 0.25},
-    {"defaultrulethickness", 0.039999},
-    {"bigopspacing1", 0.111112},
-    {"bigopspacing2", 0.166667},
-    {"bigopspacing3", 0.2},
-    {"bigopspacing4", 0.6},
-    {"bigopspacing5", 0.1},
+    {"num1", 0.676508f},
+    {"num2", 0.393732f},
+    {"num3", 0.443731f},
+    {"denom1", 0.685951f},
+    {"denom2", 0.344841f},
+    {"sup1", 0.412892f},
+    {"sup2", 0.362892f},
+    {"sup3", 0.288889f},
+    {"sub1", 0.15f},
+    {"sub2", 0.247217f},
+    {"supdrop", 0.386108f},
+    {"subdrop", 0.05f},
+    {"axisheight", 0.25f},
+    {"defaultrulethickness", 0.039999f},
+    {"bigopspacing1", 0.111112f},
+    {"bigopspacing2", 0.166667f},
+    {"bigopspacing3", 0.2f},
+    {"bigopspacing4", 0.6f},
+    {"bigopspacing5", 0.1f},
 };
 
 #define __id(name) FontInfo::__id(#name)
 
 void tex::DefaultTeXFont::__default_general_settings() {
   tex::DefaultTeXFont::_generalSettings = {
-      {"mufontid", __id(cmsy10)},
-      {"spacefontid", __id(cmr10)},
-      {"textfactor", 1},
-      {"scriptfactor", 0.7},
-      {"scriptscriptfactor", 0.5},
+      {"mufontid", static_cast<float>(__id(cmsy10))},
+      {"spacefontid", static_cast<float>(__id(cmr10))},
+      {"textfactor", 1.f},
+      {"scriptfactor", 0.7f},
+      {"scriptscriptfactor", 0.5f},
   };
 }
 
