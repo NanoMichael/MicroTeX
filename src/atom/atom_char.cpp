@@ -5,9 +5,9 @@
 using namespace tex;
 using namespace std;
 
-sptr<CharFont> FixedCharAtom::getCharFont(TeXFont& tf) {
-  return _cf;
-}
+//sptr<CharFont> FixedCharAtom::getCharFont(TeXFont& tf) {
+//  return _cf;
+//}
 
 sptr<Box> FixedCharAtom::createBox(Environment& env) {
   const auto& i = env.getTeXFont();
@@ -51,9 +51,9 @@ sptr<Box> SymbolAtom::createBox(Environment& env) {
   return cb;
 }
 
-sptr<CharFont> SymbolAtom::getCharFont(TeXFont& tf) {
-  return tf.getChar(_name, TexStyle::display).getCharFont();
-}
+//sptr<CharFont> SymbolAtom::getCharFont(TeXFont& tf) {
+//  return tf.getChar(_name, TexStyle::display).getCharFont();
+//}
 
 void SymbolAtom::addSymbolAtom(const string& file) {
   TeXSymbolParser parser(file);
@@ -79,9 +79,10 @@ Char CharAtom::getChar(TeXFont& tf, TexStyle style, bool smallCap) {
   return tf.getChar(chr, _textStyle, style);
 }
 
-sptr<CharFont> CharAtom::getCharFont(TeXFont& tf) {
-  return getChar(tf, TexStyle::display, false).getCharFont();
-}
+//sptr<CharFont> CharAtom::getCharFont(TeXFont& tf) {
+//    std::cout << "???" << std::endl;
+//  return getChar(tf, TexStyle::display, false).getCharFont();
+//}
 
 sptr<Box> CharAtom::createBox(Environment& env) {
   if (_textStyle.empty()) {
