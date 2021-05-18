@@ -225,7 +225,7 @@ will produce:
 
 You can also build the cairo version of cLaTeXMath with Meson:
 ```sh
-meson _build -DTARGET_DEMO=true # you can specify TARGET_DEMO=true if you want a GUI to test cLaTeXMath, otherwise only the library (TARGET_LIB) will be built.
+meson _build -DTARGET_DEMO=NONE # you can specify TARGET_DEMO=GTK if you want a GTK+ GUI to test cLaTeXMath, otherwise only the library (TARGET_DEVEL) will be built.
 ninja -C _build
 _build/clatexmath
 ```
