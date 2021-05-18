@@ -4,7 +4,8 @@
 #include "common.h"
 #include "atom/atom.h"
 #include "box/box_group.h"
-
+#include "fonts/font_basic.h"
+#include "fonts/tex_font.h"
 namespace tex {
 
 struct CharFont;
@@ -67,7 +68,9 @@ public:
 
   explicit FixedCharAtom(const sptr<CharFont>& c) : _cf(c) {}
 
-  sptr<CharFont> getCharFont(TeXFont& tf) override;
+  sptr<CharFont> getCharFont(TeXFont& tf) override {
+      return _cf;
+  }
 
   sptr<Box> createBox(Environment& env) override;
 
@@ -112,7 +115,9 @@ public:
 
   sptr<Box> createBox(Environment& env) override;
 
-  sptr<CharFont> getCharFont(TeXFont& tf) override;
+  sptr<CharFont> getCharFont(TeXFont& tf) override {
+      return tf.getChar(_name, TexStyle::display).getCharFont();
+  }
 
   static void addSymbolAtom(const std::string& file);
 
@@ -176,7 +181,9 @@ public:
 
   sptr<Box> createBox(Environment& env) override;
 
-  sptr<CharFont> getCharFont(TeXFont& tf) override;
+  sptr<CharFont> getCharFont(TeXFont& tf) override {
+      return getChar(tf, TexStyle::display, false).getCharFont();
+  }
 
   __decl_clone(CharAtom)
 };
