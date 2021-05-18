@@ -182,7 +182,7 @@ void TextLayout_win32::draw(Graphics2D& g2, float x, float y) {
 
 sptr<TextLayout> TextLayout::create(const wstring& src, const sptr<Font>& font) {
   sptr<Font_win32> f = static_pointer_cast<Font_win32>(font);
-  return sptrOf<TextLayout_win>32(src, f));
+  return sptrOf<TextLayout_win32>(src, f);
 }
 
 /**************************************************************************************************/
