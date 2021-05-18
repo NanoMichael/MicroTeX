@@ -142,7 +142,7 @@ Font* Font::create(const string& file, float s) {
 }
 
 sptr<Font> Font::_create(const string& name, int style, float size) {
-  return sptrOf<Font_win>32(name, style, size));
+  return sptrOf<Font_win32>(name, style, size);
 }
 
 /**************************************************************************************************/
