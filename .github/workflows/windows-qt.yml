@@ -1,0 +1,59 @@
+name: Windows Qt
+
+on: 
+  - push
+  - pull_request
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix: 
+        os: 
+          - windows-2019
+        include:
+          - qt_ver: 5.15.2
+            qt_arch: win64_msvc2019_64
+            msvc_arch: x64
+            qt_arch_install: msvc2019_64
+          - qt_ver: 6.0.0
+            qt_arch: win64_msvc2019_64
+            msvc_arch: x64
+            qt_arch_install: msvc2019_64
+    steps:
+    - name: Downloading Source Code 📥
+      uses: actions/checkout@v2
+    - name: Downloading CMake 📥
+      # Install latest CMake.
+      uses: lukka/get-cmake@latest
+    - name: Downloading Vcpkg 📥
+      run: |
+        cd ${{ github.workspace }}
+        mkdir build -force
+        git clone https://github.com/Microsoft/vcpkg.git
+        cd vcpkg
+        .\bootstrap-vcpkg.bat
+    - name: Setup Environment (x64)
+      uses: ilammy/msvc-dev-cmd@v1
+      if: runner.os == 'Windows'
+      with:
+        arch: x64
+    - name: Downloading Qt 📥
+      uses: jurplel/install-qt-action@v2.13.0
+      with:
+          # Version of Qt to install
+        version: ${{ matrix.qt_ver }}
+          # Target platform for build
+          # target: ${{ matrix.qt_target }}
+        arch: ${{ matrix.qt_arch }}
+        cached: 'false'
+    - name: Configure 🔧
+      run: |
+        cd ${{ github.workspace }}
+        cd build
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DQT=ON -DCMAKE_BUILD_TYPE=Release -G Ninja
+    - name: Compile 🎲
+      run: |
+        cd ${{ github.workspace }}
+        cd build
+        ninja

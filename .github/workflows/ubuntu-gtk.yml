@@ -1,11 +1,11 @@
-name: cLaTeXMath CI
+name: Ubuntu GTK
 
 on: 
   - push
   - pull_request
 
 jobs:
-  build:
+  build_by_meson:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix: 
@@ -29,3 +29,26 @@ jobs:
       with:
         name: Build artifacts
         path: artifacts.tar.zst
+
+  build_by_cmake:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-20.04
+    steps:
+    - name: Downloading Source Code 📥
+      uses: actions/checkout@v2
+    - name: Downloading dependencies 📥
+      run: sudo apt-get install build-essential meson libgtksourceviewmm-3.0-dev libgtkmm-3.0-dev libtinyxml2-dev
+    - name: Configure 🔧
+      run: |
+        cd ${{ github.workspace }}
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release -G Ninja
+    - name: Compile 🎲
+      run: |
+        cd ${{ github.workspace }}
+        cd build
+        ninja
