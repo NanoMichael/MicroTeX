@@ -71,7 +71,7 @@ public:
 
   TextLayout_win32(const wstring& src, const sptr<Font_win32>& font);
 
-  virtual void getBounds(_out_ Rect& bounds) override;
+  virtual void getBounds(Rect& bounds) override;
 
   virtual void draw(Graphics2D& g2, float x, float y) override;
 };

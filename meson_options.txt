@@ -1,2 +1,5 @@
-option('TARGET_LIB', type : 'boolean', value : true)
-option('TARGET_DEMO', type : 'boolean', value : false)
+# generate pkgconfig files & install headers
+option('TARGET_DEVEL', type : 'boolean', value : true)
+
+# if, and what demo/sample application to build --- Todo: add (QT &) Win32
+option('TARGET_DEMO', type : 'combo', choices : ['NONE', 'GTK'], value : 'NONE')

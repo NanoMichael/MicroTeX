@@ -6,14 +6,16 @@
 
 #include <fontconfig/fontconfig.h>
 
+#include <utility>
+
 using namespace tex;
 using namespace std;
 
 map<string, string> Font_cairo::_families;
 map<string, Cairo::RefPtr<Cairo::FtFontFace>> Font_cairo::_cairoFtFaces;
 
-Font_cairo::Font_cairo(const string& family, int style, float size)
-    : _family(family), _style(style), _size((double)size) {}
+Font_cairo::Font_cairo(string family, int style, float size)
+  : _family(std::move(family)), _style(style), _size((double) size) {}
 
 Font_cairo::Font_cairo(const string& file, float size) : Font_cairo("", PLAIN, size) {
   loadFont(file);
@@ -33,7 +35,7 @@ void Font_cairo::loadFont(const string& file) {
   }
 
   // query font via fontconfig
-  const FcChar8* f = (const FcChar8*)file.c_str();
+  const FcChar8* f = (const FcChar8*) file.c_str();
 
   // get font family from file first
   int count;
@@ -52,7 +54,7 @@ void Font_cairo::loadFont(const string& file) {
   if (!status) __dbg(ANSI_COLOR_RED "Load %s failed\n" ANSI_RESET, file.c_str());
 #endif
 
-  _family = (const char*)family;
+  _family = (const char*) family;
   _families[file] = _family;
 
   _fface = Cairo::FtFontFace::create(p);
@@ -75,11 +77,11 @@ int Font_cairo::getStyle() const {
 }
 
 float Font_cairo::getSize() const {
-  return (float)_size;
+  return (float) _size;
 }
 
 sptr<Font> Font_cairo::deriveFont(int style) const {
-  return sptr<Font>(new Font_cairo(_family, style, _size));
+  return sptrOf<Font_cairo>(_family, style, _size);
 }
 
 bool Font_cairo::operator==(const Font& ft) const {
@@ -96,7 +98,7 @@ Font* Font::create(const string& file, float size) {
 }
 
 sptr<Font> Font::_create(const string& name, int style, float size) {
-  return sptr<Font>(new Font_cairo(name, style, size));
+  return sptrOf<Font_cairo>(name, style, size);
 }
 
 /**************************************************************************************************/
@@ -130,19 +132,19 @@ TextLayout_cairo::TextLayout_cairo(const wstring& src, const sptr<Font_cairo>& f
       break;
   }
 
-  _layout->set_text(wide2utf8(src.c_str()));
+  _layout->set_text(wide2utf8(src));
   _layout->set_font_description(fd);
 
-  _ascent = (float)(_layout->get_baseline() / Pango::SCALE);
+  _ascent = (float) (_layout->get_baseline() / Pango::SCALE);
 }
 
-void TextLayout_cairo::getBounds(_out_ Rect& r) {
+void TextLayout_cairo::getBounds(Rect& r) {
   int w, h;
   _layout->get_pixel_size(w, h);
   r.x = 0;
   r.y = -_ascent;
-  r.w = (float)w;
-  r.h = (float)h;
+  r.w = (float) w;
+  r.h = (float) h;
 }
 
 void TextLayout_cairo::draw(Graphics2D& g2, float x, float y) {
@@ -155,14 +157,14 @@ void TextLayout_cairo::draw(Graphics2D& g2, float x, float y) {
   // draw layout
   g2.setColor(old);
   g2.translate(x, y - _ascent);
-  Graphics2D_cairo& g = static_cast<Graphics2D_cairo&>(g2);
+  auto& g = static_cast<Graphics2D_cairo&>(g2);
   _layout->show_in_cairo_context(g.getCairoContext());
   g2.translate(-x, -y + _ascent);
 }
 
 sptr<TextLayout> TextLayout::create(const wstring& src, const sptr<Font>& font) {
   sptr<Font_cairo> f = static_pointer_cast<Font_cairo>(font);
-  return sptr<TextLayout>(new TextLayout_cairo(src, f));
+  return sptrOf<TextLayout_cairo>(src, f);
 }
 
 /**************************************************************************************************/
@@ -170,7 +172,7 @@ sptr<TextLayout> TextLayout::create(const wstring& src, const sptr<Font>& font) 
 Font_cairo Graphics2D_cairo::_default_font("SansSerif", PLAIN, 20.f);
 
 Graphics2D_cairo::Graphics2D_cairo(const Cairo::RefPtr<Cairo::Context>& context)
-    : _context(context) {
+  : _context(context) {
   _sx = _sy = 1.f;
   setColor(BLACK);
   setStroke(Stroke());
@@ -196,7 +198,7 @@ color Graphics2D_cairo::getColor() const {
 
 void Graphics2D_cairo::setStroke(const Stroke& s) {
   _stroke = s;
-  _context->set_line_width((double)s.lineWidth);
+  _context->set_line_width((double) s.lineWidth);
 
   // convert abstract line cap to platform line cap
   Cairo::LineCap c;
@@ -213,7 +215,7 @@ void Graphics2D_cairo::setStroke(const Stroke& s) {
   }
   _context->set_line_cap(c);
 
-  // conver abstract line join to platform line join
+  // convert abstract line join to platform line join
   Cairo::LineJoin j;
   switch (s.join) {
     case JOIN_BEVEL:
@@ -228,7 +230,7 @@ void Graphics2D_cairo::setStroke(const Stroke& s) {
   }
   _context->set_line_join(j);
 
-  _context->set_miter_limit((double)s.miterLimit);
+  _context->set_miter_limit((double) s.miterLimit);
 }
 
 const Stroke& Graphics2D_cairo::getStroke() const {
@@ -237,7 +239,7 @@ const Stroke& Graphics2D_cairo::getStroke() const {
 
 void Graphics2D_cairo::setStrokeWidth(float w) {
   _stroke.lineWidth = w;
-  _context->set_line_width((double)w);
+  _context->set_line_width((double) w);
 }
 
 const Font* Graphics2D_cairo::getFont() const {
@@ -249,13 +251,13 @@ void Graphics2D_cairo::setFont(const Font* font) {
 }
 
 void Graphics2D_cairo::translate(float dx, float dy) {
-  _context->translate((double)dx, (double)dy);
+  _context->translate((double) dx, (double) dy);
 }
 
 void Graphics2D_cairo::scale(float sx, float sy) {
   _sx *= sx;
   _sy *= sy;
-  _context->scale((double)sx, (double)sy);
+  _context->scale((double) sx, (double) sy);
 }
 
 void Graphics2D_cairo::rotate(float angle) {
@@ -263,9 +265,9 @@ void Graphics2D_cairo::rotate(float angle) {
 }
 
 void Graphics2D_cairo::rotate(float angle, float px, float py) {
-  _context->translate((double)px, (double)py);
+  _context->translate((double) px, (double) py);
   _context->rotate(angle);
-  _context->translate((double)-px, (double)-py);
+  _context->translate((double) -px, (double) -py);
 }
 
 void Graphics2D_cairo::reset() {
@@ -290,7 +292,7 @@ void Graphics2D_cairo::drawText(const wstring& t, float x, float y) {
   _context->set_font_face(_font->getCairoFontFace());
   _context->set_font_size(_font->getSize());
   _context->move_to(x, y);
-  _context->show_text(wide2utf8(t.c_str()));
+  _context->show_text(wide2utf8(t));
 }
 
 void Graphics2D_cairo::drawLine(float x1, float y1, float x2, float y2) {

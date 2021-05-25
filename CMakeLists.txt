@@ -9,6 +9,7 @@ if (MSVC)
     set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     add_compile_options("/utf-8")
+    target_compile_features(LaTeX PUBLIC cxx_std_17)
 else ()
 
     # check if compiler has c++11/c++17 support
@@ -44,7 +45,7 @@ file(COPY res DESTINATION .)
 if (MSVC)
     find_package(tinyxml2 CONFIG REQUIRED)
     target_link_libraries(LaTeX PRIVATE tinyxml2::tinyxml2)
-else()
+else ()
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(tinyxml2 REQUIRED IMPORTED_TARGET tinyxml2)
     target_link_libraries(LaTeX PRIVATE tinyxml2)
@@ -54,13 +55,23 @@ endif ()
 target_sources(LaTeX PRIVATE
         # atom folder
         src/atom/atom_basic.cpp
+        src/atom/atom_char.cpp
         src/atom/atom_impl.cpp
-        src/atom/box.cpp
+        src/atom/atom_matrix.cpp
+        src/atom/atom_row.cpp
+        src/atom/atom_space.cpp
         src/atom/colors_def.cpp
+        src/atom/unit_conversion.cpp
+        # box folder
+        src/box/box.cpp
+        src/box/box_factory.cpp
+        src/box/box_group.cpp
+        src/box/box_single.cpp
         # core folder
         src/core/core.cpp
         src/core/formula.cpp
         src/core/formula_def.cpp
+        src/core/glue.cpp
         src/core/localized_num.cpp
         src/core/macro.cpp
         src/core/macro_def.cpp
@@ -71,9 +82,12 @@ target_sources(LaTeX PRIVATE
         src/fonts/font_basic.cpp
         src/fonts/font_info.cpp
         src/fonts/fonts.cpp
+        # utils folder
+        src/utils/string_utils.cpp
+        src/utils/utf.cpp
+        src/utils/utils.cpp
         # res folder
         src/res/builtin/formula_mappings.res.cpp
-        src/res/builtin/glue.res.cpp
         src/res/builtin/symbol_mapping.res.cpp
         src/res/builtin/tex_param.res.cpp
         src/res/builtin/tex_symbols.res.cpp
@@ -136,7 +150,7 @@ if (QT)
     find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Gui Widgets REQUIRED)
     target_sources(LaTeX PRIVATE
             src/platform/qt/graphic_qt.cpp
-    )
+            )
     target_link_libraries(LaTeX PRIVATE
             Qt${QT_VERSION_MAJOR}::Gui
             )
@@ -156,7 +170,7 @@ elseif (SKIA)
     if (MSVC)
         find_package(skia REQUIRED)
         target_link_libraries(LaTeX INTERFACE skia skia::skia)
-    else()
+    else ()
         include_directories(../skia ../skia/include)
         link_directories(../skia)
     endif ()
@@ -164,7 +178,7 @@ elseif (SKIA)
     find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets REQUIRED)
     target_sources(LaTeX PRIVATE
             src/platform/skia/graphic_skia.cpp
-    )
+            )
     target_link_libraries(LaTeX PRIVATE
             Qt${QT_VERSION_MAJOR}::Core
             )
@@ -172,7 +186,7 @@ elseif (SKIA)
             src/samples/qt_skiatexwidget.cpp
             src/samples/qt_mainwindow.cpp
             src/samples/qt_main.cpp
-    )
+            )
     target_link_libraries(LaTeXQtSkiaSample PRIVATE
             Qt${QT_VERSION_MAJOR}::Widgets LaTeX)
     set_target_properties(LaTeXQtSkiaSample PROPERTIES OUTPUT_NAME LaTeX)
@@ -195,7 +209,7 @@ elseif (UNIX)
     pkg_check_modules(CairoMM REQUIRED IMPORTED_TARGET cairomm-1.0)
     target_sources(LaTeX PRIVATE
             src/platform/cairo/graphic_cairo.cpp
-    )
+            )
     target_link_libraries(LaTeX PRIVATE
             PkgConfig::GTKMM #include <pangomm/fontdescription.h>
             PkgConfig::CairoMM #include <cairomm/context.h>
@@ -237,5 +251,5 @@ option(QT "Compile using Qt instead of Win32/Gtk" OFF)
 option(BUILD_EXAMPLE "Build examples" OFF)
 if (BUILD_EXAMPLE)
     add_subdirectory(example)
-endif()
+endif ()
 

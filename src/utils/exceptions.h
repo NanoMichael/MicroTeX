@@ -46,27 +46,27 @@ public:
    * attribute problem
    */
   explicit ex_xml_parse(
-      const std::string& resName,
-      const std::string& elName,
-      const std::string& attrName,
-      const std::string& msg)
+    const std::string& resName,
+    const std::string& elName,
+    const std::string& attrName,
+    const std::string& msg)
       : ex_res_parse(
-            resName + ": invalid <" + elName + ">-element found: attribute '" +
-            attrName + "' " + msg) {}
+          resName + ": invalid <" + elName + ">-element found: attribute '" +
+          attrName + "' " + msg) {}
 
   /**
    * attribute problem
    */
   explicit ex_xml_parse(
-      const std::string& resName,
-      const std::string& elName,
-      const std::string& attrName,
-      const std::string& msg,
-      const exception& cause)
+    const std::string& resName,
+    const std::string& elName,
+    const std::string& attrName,
+    const std::string& msg,
+    const std::exception& cause)
       : ex_res_parse(
-            resName + ": invalid <" + elName + ">-element found: attribute '" +
-                attrName + "' " + msg,
-            cause) {}
+          resName + ": invalid <" + elName + ">-element found: attribute '" +
+            attrName + "' " + msg,
+          cause) {}
   /**
    * other exceptions
    */
@@ -77,7 +77,7 @@ public:
    */
   explicit ex_xml_parse(const std::string& resName, const std::string& elName)
       : ex_res_parse(
-            resName + ": the required <" + elName + ">-elment not found!") {}
+          resName + ": the required <" + elName + ">-elment not found!") {}
 
   explicit ex_xml_parse(const std::string& msg) : ex_res_parse(msg) {}
 };
@@ -110,7 +110,7 @@ public:
 };
 
 /**
- * Unknown predefined TeXFormula name was used
+ * Unknown predefined Formula name was used
  */
 class ex_formula_not_found : public ex_tex {
 public:
@@ -137,8 +137,8 @@ public:
 
   explicit ex_invalid_delimiter(const char& ch, const std::string& symbolName)
       : ex_tex(
-            "The character '" + std::string({ch}) + "' is not mapped to a symbol with the name '" +
-            symbolName + "', but that symbol is not defined as a delimiter.") {}
+          "The character '" + std::string({ch}) + "' is not mapped to a symbol with the name '" +
+          symbolName + "', but that symbol is not defined as a delimiter.") {}
 };
 
 /**
@@ -166,7 +166,7 @@ public:
 };
 
 /**
- * Invalid TeXFormula
+ * Invalid Formula
  */
 class ex_invalid_formula : public ex_tex {
 public:
@@ -227,6 +227,16 @@ public:
 class ex_invalid_param : public ex_tex {
 public:
   explicit ex_invalid_param(const std::string& e) : ex_tex(e) {}
+};
+
+class ex_file_not_found : public ex_tex {
+public:
+  explicit ex_file_not_found(const std::string& e) : ex_tex(e) {}
+};
+
+class ex_eof : public ex_tex {
+public:
+  explicit ex_eof(const std::string& filePath) : ex_tex("EOF of " + filePath) {}
 };
 
 }  // namespace tex

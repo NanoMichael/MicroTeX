@@ -16,7 +16,7 @@ public:
   }
 
   sptr<Font> deriveFont(int style) const override {
-    return sptr<Font>(new Font_none());
+    return sptrOf<Font_none>();
   }
 
   bool operator==(const Font& f) const override {
@@ -35,7 +35,7 @@ Font* Font::create(const string& file, float size) {
 }
 
 sptr<Font> Font::_create(const string& name, int style, float size) {
-  return sptr<Font>(new Font_none());
+  return sptrOf<Font_none>();
 }
 
 /**************************************************************************************************/
@@ -44,7 +44,7 @@ class TextLayout_none : public TextLayout {
 public:
   TextLayout_none() {}
 
-  void getBounds(_out_ Rect& bounds) override {
+  void getBounds(Rect& bounds) override {
     bounds.x = bounds.y = bounds.w = bounds.h = 0.f;
   }
 

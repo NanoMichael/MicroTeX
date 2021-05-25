@@ -1,5 +1,14 @@
+# clatexmath runtime generated files
+macro.txt
+rp.txt
+symbols.txt
+
+# meson
+_build/
+
 #ignore obj
 obj/
+
 #ignore bin
 bin/
 *.cbp
@@ -16,3 +25,4 @@ src/Doxyfile
 prebuilt-scripts/
 .idea
 cmake-build-*
+.vs

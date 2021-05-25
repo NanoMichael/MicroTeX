@@ -23,17 +23,17 @@ const int* const FontInfo::getExtension(wchar_t ch) const {
   return _extensions.isEmpty() ? nullptr : _extensions((int)ch) + 1;
 }
 
-sptr<CharFont> FontInfo::getNextLarger(wchar_t ch) const {
-  const int* const item = _nextLargers((int)ch);
-  if (item == nullptr) return nullptr;
-  return sptr<CharFont>(new CharFont(item[1], item[2]));
-}
+//sptr<CharFont> FontInfo::getNextLarger(wchar_t ch) const {
+//  const int* const item = _nextLargers((int)ch);
+//  if (item == nullptr) return nullptr;
+//  return sptrOf<CharFont>(item[1], item[2]);
+//}
 
-sptr<CharFont> FontInfo::getLigture(wchar_t left, wchar_t right) const {
-  const wchar_t* const item = _lig(left, right);
-  if (item == nullptr) return nullptr;
-  return sptr<CharFont>(new CharFont(item[2], _id));
-}
+//sptr<CharFont> FontInfo::getLigture(wchar_t left, wchar_t right) const {
+//  const wchar_t* const item = _lig(left, right);
+//  if (item == nullptr) return nullptr;
+//  return sptrOf<CharFont>(item[2], _id);
+//}
 
 float FontInfo::getKern(wchar_t left, wchar_t right, float factor) const {
   const float* const item = _kern((float)left, (float)right);
@@ -55,7 +55,7 @@ void FontInfo::setVariousId(
 }
 
 const Font* FontInfo::getFont() {
-  if (_font == nullptr) _font = Font::create(_path, TeXFormula::PIXELS_PER_POINT);
+  if (_font == nullptr) _font = Font::create(_path, Formula::PIXELS_PER_POINT);
   return _font;
 }
 

@@ -142,7 +142,7 @@ Font* Font::create(const string& file, float s) {
 }
 
 sptr<Font> Font::_create(const string& name, int style, float size) {
-  return sptr<Font>(new Font_win32(name, style, size));
+  return sptrOf<Font_win32>(name, style, size);
 }
 
 /**************************************************************************************************/
@@ -160,7 +160,7 @@ TextLayout_win32::TextLayout_win32(const wstring& src, const sptr<Font_win32>& f
   }
 }
 
-void TextLayout_win32::getBounds(_out_ Rect& r) {
+void TextLayout_win32::getBounds(Rect& r) {
   int em = _font->_family->GetEmHeight(_font->_style);
   int ascent = _font->_family->GetCellAscent(_font->_style);
   float ap = _font->getSize() * ascent / em;
@@ -182,7 +182,7 @@ void TextLayout_win32::draw(Graphics2D& g2, float x, float y) {
 
 sptr<TextLayout> TextLayout::create(const wstring& src, const sptr<Font>& font) {
   sptr<Font_win32> f = static_pointer_cast<Font_win32>(font);
-  return sptr<TextLayout>(new TextLayout_win32(src, f));
+  return sptrOf<TextLayout_win32>(src, f);
 }
 
 /**************************************************************************************************/

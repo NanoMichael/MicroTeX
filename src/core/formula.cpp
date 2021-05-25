@@ -1,22 +1,22 @@
 #include "core/formula.h"
+
 #include "common.h"
 #include "core/core.h"
 #include "core/parser.h"
 #include "fonts/alphabet.h"
 #include "fonts/fonts.h"
-#include "graphic/graphic.h"
 #include "res/parser/formula_parser.h"
 
 using namespace std;
 using namespace tex;
 
-map<wstring, sptr<TeXFormula>> TeXFormula::_predefinedTeXFormulas;
+map<wstring, sptr<Formula>> Formula::_predefinedTeXFormulas;
 
-map<UnicodeBlock, FontInfos*> TeXFormula::_externalFontMap;
+map<UnicodeBlock, FontInfos*> Formula::_externalFontMap;
 
-float TeXFormula::PIXELS_PER_POINT = 1.f;
+float Formula::PIXELS_PER_POINT = 1.f;
 
-void TeXFormula::_init_() {
+void Formula::_init_() {
 #ifdef HAVE_LOG
   __dbg("%s\n", "init formula");
 #endif  // HAVE_LOG
@@ -36,51 +36,30 @@ void TeXFormula::_init_() {
 #endif  // HAVE_LOG
 }
 
-TeXFormula::TeXFormula(const TeXParser& tp)
-    : _parser(tp.getIsPartial(), L"", this, false) {
-  _xmlMap = tp._formula->_xmlMap;
-}
-
-TeXFormula::TeXFormula(
-    const TeXParser& tp,
-    const wstring& s,
-    const string& textStyle,
-    bool firstpass, bool space)
-    : _parser(tp.getIsPartial(), s, this, firstpass, space) {
+Formula::Formula(
+  const TeXParser& tp,
+  const wstring& latex,
+  const string& textStyle,
+  bool preprocess, bool isMathMode
+) : _parser(tp.isPartial(), latex, this, preprocess, isMathMode) {
   _textStyle = textStyle;
   _xmlMap = tp._formula->_xmlMap;
-  if (tp.getIsPartial()) {
+  if (tp.isPartial()) {
     try {
       _parser.parse();
     } catch (exception& e) {
-      if (_root == nullptr) _root = sptr<Atom>(new EmptyAtom());
+      if (_root == nullptr) _root = sptrOf<EmptyAtom>();
     }
   } else {
     _parser.parse();
   }
 }
 
-TeXFormula::TeXFormula(
-    const TeXParser& tp, const wstring& s, const string& textStyle)
-    : _parser(tp.getIsPartial(), s, this) {
-  _textStyle = textStyle;
-  _xmlMap = tp._formula->_xmlMap;
-  if (tp.getIsPartial()) {
-    try {
-      _parser.parse();
-    } catch (exception& e) {
-      if (_root == nullptr) _root = sptr<Atom>(new EmptyAtom());
-    }
-  } else {
-    _parser.parse();
-  }
-}
-
-TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s, bool firstpass)
-    : _parser(tp.getIsPartial(), s, this, firstpass) {
+Formula::Formula(const TeXParser& tp, const wstring& latex, bool preprocess)
+  : _parser(tp.isPartial(), latex, this, preprocess) {
   _textStyle = "";
   _xmlMap = tp._formula->_xmlMap;
-  if (tp.getIsPartial()) {
+  if (tp.isPartial()) {
     try {
       _parser.parse();
     } catch (exception& e) {}
@@ -89,144 +68,77 @@ TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s, bool firstpass)
   }
 }
 
-TeXFormula::TeXFormula(const TeXParser& tp, const wstring& s)
-    : _parser(tp.getIsPartial(), s, this) {
+Formula::Formula(const TeXParser& tp, const wstring& latex)
+  : _parser(tp.isPartial(), latex, this) {
   _textStyle = "";
   _xmlMap = tp._formula->_xmlMap;
-  if (tp.getIsPartial()) {
+  if (tp.isPartial()) {
     try {
       _parser.parse();
     } catch (exception& e) {
-      if (_root == nullptr) _root = sptr<Atom>(new EmptyAtom());
+      if (_root == nullptr) _root = sptrOf<EmptyAtom>();
     }
   } else {
     _parser.parse();
   }
 }
 
-TeXFormula::TeXFormula() : _parser(L"", this, false) {}
+Formula::Formula() : _parser(L"", this, false) {}
 
-TeXFormula::TeXFormula(const wstring& s) : _parser(s, this) {
+Formula::Formula(const wstring& latex) : _parser(latex, this) {
   _textStyle = "";
   _parser.parse();
 }
 
-TeXFormula::TeXFormula(const wstring& s, bool firstpass)
-    : _parser(s, this, firstpass) {
+Formula::Formula(const wstring& latex, bool preprocess) : _parser(latex, this, preprocess) {
   _textStyle = "";
   _parser.parse();
 }
 
-TeXFormula::TeXFormula(const wstring& s, const string& textStyle)
-    : _parser(s, this) {
-  _textStyle = textStyle;
-  _parser.parse();
-}
-
-TeXFormula::TeXFormula(
-    const wstring& s, const string& textStyle, bool firstpass, bool space)
-    : _parser(s, this, firstpass, space) {
-  _textStyle = textStyle;
-  _parser.parse();
-}
-
-TeXFormula::TeXFormula(const TeXFormula* f) {
-  if (f != nullptr) addImpl(f);
-}
-
-void TeXFormula::setLaTeX(const wstring& latex) {
+void Formula::setLaTeX(const wstring& latex) {
   _parser.reset(latex);
   if (!latex.empty()) _parser.parse();
 }
 
-TeXFormula* TeXFormula::add(const sptr<Atom>& el) {
-  if (el == nullptr) return this;
-  auto atom = dynamic_pointer_cast<MiddleAtom>(el);
+Formula* Formula::add(const sptr<Atom>& a) {
+  if (a == nullptr) return this;
+  auto atom = dynamic_pointer_cast<MiddleAtom>(a);
   if (atom != nullptr) _middle.push_back(atom);
   if (_root == nullptr) {
-    _root = el;
+    _root = a;
     return this;
   }
-  RowAtom* rm = dynamic_cast<RowAtom*>(_root.get());
-  if (rm == nullptr) _root = sptr<Atom>(new RowAtom(_root));
+  auto* rm = dynamic_cast<RowAtom*>(_root.get());
+  if (rm == nullptr) _root = sptrOf<RowAtom>(_root);
   rm = static_cast<RowAtom*>(_root.get());
-  rm->add(el);
-  TypedAtom* ta = dynamic_cast<TypedAtom*>(el.get());
+  rm->add(a);
+  auto* ta = dynamic_cast<TypedAtom*>(a.get());
   if (ta != nullptr) {
-    int rt = ta->getRightType();
-    if (rt == TYPE_BINARY_OPERATOR || rt == TYPE_RELATION)
-      rm->add(sptr<Atom>(new BreakMarkAtom()));
+    AtomType rt = ta->rightType();
+    if (rt == AtomType::binaryOperator || rt == AtomType::relation) {
+      rm->add(sptrOf<BreakMarkAtom>());
+    }
   }
   return this;
 }
 
-TeXFormula* TeXFormula::append(bool isPartial, const wstring& s) {
-  if (!s.empty()) {
-    TeXParser tp(isPartial, s, this);
-    tp.parse();
-  }
-  return this;
-}
-
-TeXFormula* TeXFormula::append(const wstring& s) {
-  return append(false, s);
-}
-
-void TeXFormula::addImpl(const TeXFormula* f) {
-  if (f != nullptr) {
-    RowAtom* rm = dynamic_cast<RowAtom*>(f->_root.get());
-    if (rm != nullptr)
-      add(sptr<Atom>(new RowAtom(f->_root)));
-    else
-      add(f->_root);
-  }
-}
-
-sptr<Box> TeXFormula::createBox(_out_ TeXEnvironment& style) {
-  if (_root == nullptr) return sptr<Box>(new StrutBox(0, 0, 0, 0));
+sptr<Box> Formula::createBox(Environment& style) {
+  if (_root == nullptr) return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
   return _root->createBox(style);
 }
 
-void TeXFormula::setDEBUG(bool b) {
-#ifdef DEBUG
-#undef DEBUG
+void Formula::setDEBUG(bool b) {
   Box::DEBUG = b;
-#endif
 }
 
-TeXFormula* TeXFormula::setBackground(color c) {
-  if (istrans(c)) return this;
-  ColorAtom* ca = dynamic_cast<ColorAtom*>(_root.get());
-  if (ca != nullptr)
-    _root = sptr<Atom>(new ColorAtom(c, TRANS, _root));
-  else
-    _root = sptr<Atom>(new ColorAtom(_root, c, TRANS));
-  return this;
-}
-
-TeXFormula* TeXFormula::setColor(color c) {
-  if (istrans(c)) return this;
-  ColorAtom* ca = dynamic_cast<ColorAtom*>(_root.get());
-  if (ca != nullptr)
-    _root = sptr<Atom>(new ColorAtom(TRANS, c, _root));
-  else
-    _root = sptr<Atom>(new ColorAtom(_root, TRANS, c));
-  return this;
-}
-
-TeXFormula* TeXFormula::setFixedTypes(int left, int right) {
-  _root = sptr<Atom>(new TypedAtom(left, right, _root));
-  return this;
-}
-
-sptr<TeXFormula> TeXFormula::get(const wstring& name) {
+sptr<Formula> Formula::get(const wstring& name) {
   auto it = _predefinedTeXFormulas.find(name);
   if (it == _predefinedTeXFormulas.end()) {
     auto i = _predefinedTeXFormulasAsString.find(name);
     if (i == _predefinedTeXFormulasAsString.end())
-      throw ex_formula_not_found(wide2utf8(name.c_str()));
-    sptr<TeXFormula> tf(new TeXFormula(i->second));
-    RowAtom* ra = dynamic_cast<RowAtom*>(tf->_root.get());
+      throw ex_formula_not_found(wide2utf8(name));
+    auto tf = sptrOf<Formula>(i->second);
+    auto* ra = dynamic_cast<RowAtom*>(tf->_root.get());
     if (ra == nullptr) {
       _predefinedTeXFormulas[name] = tf;
     }
@@ -235,15 +147,15 @@ sptr<TeXFormula> TeXFormula::get(const wstring& name) {
   return it->second;
 }
 
-void TeXFormula::setDPITarget(float dpi) {
+void Formula::setDPITarget(float dpi) {
   PIXELS_PER_POINT = dpi / 72.f;
 }
 
-bool TeXFormula::isRegisteredBlock(const UnicodeBlock& block) {
+bool Formula::isRegisteredBlock(const UnicodeBlock& block) {
   return _externalFontMap.find(block) != _externalFontMap.end();
 }
 
-FontInfos* TeXFormula::getExternalFont(const UnicodeBlock& block) {
+FontInfos* Formula::getExternalFont(const UnicodeBlock& block) {
   auto it = _externalFontMap.find(block);
   FontInfos* infos = nullptr;
   if (it == _externalFontMap.end()) {
@@ -255,29 +167,29 @@ FontInfos* TeXFormula::getExternalFont(const UnicodeBlock& block) {
   return infos;
 }
 
-void TeXFormula::addSymbolMappings(const string& file) {
+void Formula::addSymbolMappings(const string& file) {
   TeXFormulaSettingParser parser(file);
   parser.parseSymbol(_symbolMappings, _symbolTextMappings);
   parser.parseSymbol2Formula(_symbolFormulaMappings, _symbolTextMappings);
 }
 
-void TeXFormula::_free_() {
+void Formula::_free_() {
   for (auto i : _externalFontMap) delete i.second;
 }
 
-/*************************************** ArrayOfAtoms implementation ******************************/
+/*************************************** ArrayFormula implementation ******************************/
 
-ArrayOfAtoms::ArrayOfAtoms() : _row(0), _col(0) {
-  _array.push_back(vector<sptr<Atom>>());
+ArrayFormula::ArrayFormula() : _row(0), _col(0) {
+  _array.emplace_back();
 }
 
-void ArrayOfAtoms::addCol() {
+void ArrayFormula::addCol() {
   _array[_row].push_back(_root);
   _root = nullptr;
   _col++;
 }
 
-void ArrayOfAtoms::addCol(int n) {
+void ArrayFormula::addCol(int n) {
   _array[_row].push_back(_root);
   for (int i = 1; i < n - 1; i++) {
     _array[_row].push_back(nullptr);
@@ -286,7 +198,7 @@ void ArrayOfAtoms::addCol(int n) {
   _col += n;
 }
 
-void ArrayOfAtoms::insertAtomIntoCol(int col, const sptr<Atom>& atom) {
+void ArrayFormula::insertAtomIntoCol(int col, const sptr<Atom>& atom) {
   _col++;
   for (size_t j = 0; j < _row; j++) {
     auto it = _array[j].begin();
@@ -294,48 +206,49 @@ void ArrayOfAtoms::insertAtomIntoCol(int col, const sptr<Atom>& atom) {
   }
 }
 
-void ArrayOfAtoms::addRow() {
+void ArrayFormula::addRow() {
   addCol();
-  _array.push_back(vector<sptr<Atom>>());
+  _array.emplace_back();
   _row++;
   _col = 0;
 }
 
-void ArrayOfAtoms::addRowSpecifier(const sptr<CellSpecifier>& spe) {
+void ArrayFormula::addRowSpecifier(const sptr<CellSpecifier>& spe) {
   auto it = _rowSpecifiers.find(_row);
-  if (it == _rowSpecifiers.end())
+  if (it == _rowSpecifiers.end()) {
     _rowSpecifiers[_row] = vector<sptr<CellSpecifier>>();
+  }
   _rowSpecifiers[_row].push_back(spe);
 }
 
-void ArrayOfAtoms::addCellSpecifier(const sptr<CellSpecifier>& spe) {
+void ArrayFormula::addCellSpecifier(const sptr<CellSpecifier>& spe) {
   string str = tostring(_row) + tostring(_col);
   auto it = _cellSpecifiers.find(str);
-  if (it == _cellSpecifiers.end())
+  if (it == _cellSpecifiers.end()) {
     _cellSpecifiers[str] = vector<sptr<CellSpecifier>>();
+  }
   _cellSpecifiers[str].push_back(spe);
 }
 
-int ArrayOfAtoms::rows() const {
+int ArrayFormula::rows() const {
   return _row;
 }
 
-int ArrayOfAtoms::cols() const {
+int ArrayFormula::cols() const {
   return _col;
 }
 
-sptr<VRowAtom> ArrayOfAtoms::getAsVRow() {
-  VRowAtom* vr = new VRowAtom();
+sptr<VRowAtom> ArrayFormula::getAsVRow() {
+  auto* vr = new VRowAtom();
   vr->setAddInterline(true);
-  for (size_t i = 0; i < _array.size(); i++) {
-    vector<sptr<Atom>>& c = _array[i];
-    for (size_t j = 0; j < c.size(); j++) vr->append(c[j]);
+  for (auto& c : _array) {
+    for (auto& j : c) vr->append(j);
   }
   return sptr<VRowAtom>(vr);
 }
 
-void ArrayOfAtoms::checkDimensions() {
-  if (_array.back().size() != 0 || _root != nullptr) addRow();
+void ArrayFormula::checkDimensions() {
+  if (!_array.back().empty() || _root != nullptr) addRow();
 
   _row = _array.size() - 1;
   _col = _array[0].size();
@@ -347,9 +260,7 @@ void ArrayOfAtoms::checkDimensions() {
 
   for (size_t i = 0; i < _row; i++) {
     size_t j = _array[i].size();
-    if (j != _col &&
-        _array[i][0] != nullptr &&
-        _array[i][0]->_type != TYPE_INTERTEXT) {
+    if (j != _col && _array[i][0] != nullptr && _array[i][0]->_type != AtomType::interText) {
       // Fill the row with null atom
       vector<sptr<Atom>>& r = _array[i];
       for (; j < _col; j++) r.push_back(nullptr);

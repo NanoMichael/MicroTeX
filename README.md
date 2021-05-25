@@ -113,19 +113,19 @@ If HAVE_LOG is defined, the program will output some logs (e.g.: the symbols par
 will produce the following box tree:
 
 ```
-0    HorizontalBox
-1    ├── HorizontalBox
+0    HBox
+1    ├── HBox
 2    │   ├── StrutBox
 2    │   ├── CharBox
 2    │   ├── StrutBox
-2    │   └── HorizontalBox
+2    │   └── HBox
 3    │       ├── CharBox
 3    │       └── OverBar
 4    │           ├── StrutBox
-4    │           ├── HorizontalRule
+4    │           ├── RuleBox
 4    │           ├── StrutBox
-4    │           └── HorizontalBox
-5    │               ├── HorizontalBox
+4    │           └── HBox
+5    │               ├── HBox
 6    │               │   ├── CharBox
 6    │               │   ├── GlueBox
 6    │               │   ├── CharBox
@@ -134,9 +134,9 @@ will produce the following box tree:
 6    │               │   ├── GlueBox
 6    │               │   ├── CharBox
 6    │               │   ├── GlueBox
-6    │               │   └── HorizontalBox
+6    │               │   └── HBox
 7    │               │       ├── CharBox
-7    │               │       ├── HorizontalBox
+7    │               │       ├── HBox
 8    │               │       │   ├── CharBox
 8    │               │       │   └── StrutBox
 7    │               │       └── StrutBox
@@ -225,7 +225,7 @@ will produce:
 
 You can also build the cairo version of cLaTeXMath with Meson:
 ```sh
-meson _build -DTARGET_DEMO=true # you can specify TARGET_DEMO=true if you want a GUI to test cLaTeXMath, otherwise only the library (TARGET_LIB) will be built.
+meson _build -DTARGET_DEMO=NONE # you can specify TARGET_DEMO=GTK if you want a GTK+ GUI to test cLaTeXMath, otherwise only the library (TARGET_DEVEL) will be built.
 ninja -C _build
 _build/clatexmath
 ```
@@ -335,7 +335,7 @@ auto r = builder
     // text size (in point)
     .setSize(20)
     // the logical width and the alignment of the graphics context
-    .setWidth(UNIT_PIXEL, 720, ALIGN_LEFT)
+    .setWidth(UnitType::pixel, 720, Alignment::left)
     // set if the logical width of the graphics context specified
     // above is the max width to display the formula, the formula
     // will be centered if set to true; you must call this method
@@ -343,7 +343,7 @@ auto r = builder
     // exception will be thrown
     .setIsMaxWidth(false)
     // space between 2 lines
-    .setLineSpace(UNIT_PIXEL, 10)
+    .setLineSpace(UnitType::pixel, 10)
     .setForground(tex::BLACK)
     // convert the formula to a paintable object (TeXRender)
     .build(formula);
@@ -417,7 +417,7 @@ Font* Font::create(const string& file, float size) {
 }
 
 sptr<Font> Font::_create(const string& name, int style, float size) {
-    return sptr<Font>(new Font_impl(name, style, size));
+    return sptrOf<Font_impl>(name, style, size);
 }
 
 } // namespace tex

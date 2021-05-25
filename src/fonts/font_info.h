@@ -13,16 +13,16 @@ class FontSet;
 class FontInfo {
 private:
   static std::vector<FontInfo*> _infos;
-  static std::vector<std::string>    _names;
+  static std::vector<std::string> _names;
 
-  const int    _id;    // id of this font info
-  const Font*  _font;  // font of this info
+  const int _id;    // id of this font info
+  const Font* _font;  // font of this info
   const std::string _path;  // font file path
 
-  IndexedArray<int, 5, 1>     _extensions;   // extensions for big delimiter
-  IndexedArray<int, 3, 1>     _nextLargers;  // largers, e.g. sigma
-  IndexedArray<float, 5, 1>   _metrics;      // metrics
-  IndexedArray<float, 3, 2>   _kern;         // kerning
+  IndexedArray<int, 5, 1> _extensions;   // extensions for big delimiter
+  IndexedArray<int, 3, 1> _nextLargers;  // largers, e.g. sigma
+  IndexedArray<float, 5, 1> _metrics;      // metrics
+  IndexedArray<float, 3, 2> _kern;         // kerning
   IndexedArray<wchar_t, 3, 2> _lig;          // ligatures
 
   wchar_t _skewChar;
@@ -37,12 +37,12 @@ private:
   FontInfo(const FontInfo&);
 
   FontInfo(int id, const std::string& path, float xHeight, float space, float quad)
-      : _id(id), _path(path), _xHeight(xHeight), _space(space), _quad(quad) {
+    : _id(id), _path(path), _xHeight(xHeight), _space(space), _quad(quad) {
     // default various ids
     _boldId = _romanId = _ssId = _ttId = _itId = _id;
     // the skew char
-    _skewChar = (wchar_t)-1;
-    _font     = nullptr;
+    _skewChar = (wchar_t) -1;
+    _font = nullptr;
   }
 
   static void __add(FontInfo* info) {
@@ -58,8 +58,8 @@ private:
 public:
   /************************************** INTERNAL USE ******************************************/
   static FontInfo* __create(
-      int id, const std::string& path,
-      float xHeight = 0, float space = 0, float quad = 0) {
+    int id, const std::string& path,
+    float xHeight = 0, float space = 0, float quad = 0) {
     auto i = new FontInfo(id, path, xHeight, space, quad);
     __add(i);
     return i;
@@ -121,18 +121,32 @@ public:
 
   const int* const getExtension(wchar_t ch) const;
 
-  sptr<CharFont> getNextLarger(wchar_t ch) const;
+  // FIXME
+  // workaround for the MSVC's LNK2019 error
+  // it should be implemented in the font_info.cpp file
+  sptr<CharFont> getNextLarger(wchar_t ch) const {
+    const int* const item = _nextLargers((int) ch);
+    if (item == nullptr) return nullptr;
+    return sptrOf<CharFont>(item[1], item[2]);
+  }
 
-  sptr<CharFont> getLigture(wchar_t left, wchar_t right) const;
+  // FIXME
+  // workaround for the MSVS's LNK2019 error
+  // it should be implemented in the font_info.cpp file
+  sptr<CharFont> getLigture(wchar_t left, wchar_t right) const {
+    const wchar_t* const item = _lig(left, right);
+    if (item == nullptr) return nullptr;
+    return sptrOf<CharFont>(item[2], _id);
+  }
 
   float getKern(wchar_t left, wchar_t right, float factor) const;
 
   void setVariousId(
-      const std::string& bold,
-      const std::string& roman,
-      const std::string& ss,
-      const std::string& tt,
-      const std::string& it);
+    const std::string& bold,
+    const std::string& roman,
+    const std::string& ss,
+    const std::string& tt,
+    const std::string& it);
 
   const Font* getFont();
 
@@ -167,7 +181,9 @@ public:
   }
 
 #ifdef HAVE_LOG
+
   friend std::ostream& operator<<(std::ostream& os, const FontInfo& info);
+
 #endif
 };
 

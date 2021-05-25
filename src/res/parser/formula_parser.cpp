@@ -9,15 +9,16 @@ const std::string TeXSymbolParser::RESOURCE_NAME = "TeXSymbols";
 const std::string TeXSymbolParser::DELIMITER_ATTR = "del";
 const std::string TeXSymbolParser::TYPE_ATTR = "type";
 
-const std::map<std::string, int> TeXSymbolParser::_typeMappings = {
-    {"ord", TYPE_ORDINARY},
-    {"op", TYPE_BIG_OPERATOR},
-    {"bin", TYPE_BINARY_OPERATOR},
-    {"rel", TYPE_RELATION},
-    {"open", TYPE_OPENING},
-    {"close", TYPE_CLOSING},
-    {"punct", TYPE_PUNCTUATION},
-    {"acc", TYPE_ACCENT}};
+const std::map<std::string, tex::AtomType> TeXSymbolParser::_typeMappings = {
+  {"ord", AtomType::ordinary},
+  {"op", AtomType::bigOperator},
+  {"bin", AtomType::binaryOperator},
+  {"rel", AtomType::relation},
+  {"open", AtomType::opening},
+  {"close", AtomType::closing},
+  {"punct", AtomType::punctuation},
+  {"acc", AtomType::accent},
+};
 
 std::string TeXSymbolParser::getAttr(const char* attr, const XMLElement* e) {
   const char* x = e->Attribute(attr);
@@ -32,7 +33,7 @@ TeXSymbolParser::TeXSymbolParser(const std::string& file)
   _root = _doc.RootElement();
 }
 
-void TeXSymbolParser::readSymbols(_out_ std::map<std::string, sptr<SymbolAtom>>& res) {
+void TeXSymbolParser::readSymbols(std::map<std::string, sptr<SymbolAtom>>& res) {
   const XMLElement* e = _root->FirstChildElement("Symbol");
   while (e != nullptr) {
     const std::string name = getAttr("name", e);
@@ -44,7 +45,7 @@ void TeXSymbolParser::readSymbols(_out_ std::map<std::string, sptr<SymbolAtom>>&
     if (it == _typeMappings.end()) {
       throw ex_xml_parse(RESOURCE_NAME, "Symbol", "type", "has an unknown value '" + type + "'!");
     }
-    res[name] = sptr<SymbolAtom>(new SymbolAtom(name, it->second, isDelimiter));
+    res[name] = sptrOf<SymbolAtom>(name, it->second, isDelimiter);
     e = e->NextSiblingElement("Symbol");
   }
 }
@@ -63,8 +64,7 @@ int TeXFormulaSettingParser::getUtf(const XMLElement* e, const char* attr) {
   if (val == nullptr || strlen(val) == 0) {
     throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "no mapping!");
   }
-  std::wstring wstr;
-  tex::utf82wide(val, wstr);
+  const std::wstring wstr = tex::utf82wide(val);
   if (wstr.empty() || wstr.length() != 1) {
     throw ex_xml_parse(RESOURCE_NAME, e->Name(), attr, "unknown code point!");
   }
@@ -72,9 +72,10 @@ int TeXFormulaSettingParser::getUtf(const XMLElement* e, const char* attr) {
 }
 
 void TeXFormulaSettingParser::add2map(
-    const XMLElement* r,
-    _out_ std::map<int, std::string>& math,
-    _out_ std::map<int, std::string>& txt) {
+  const XMLElement* r,
+  std::map<int, std::string>& math,
+  std::map<int, std::string>& txt  //
+) {
   while (r != nullptr) {
     int ch = getUtf(r, "char");
     const char* symbol = r->Attribute("symbol");
@@ -90,9 +91,10 @@ void TeXFormulaSettingParser::add2map(
 }
 
 void TeXFormulaSettingParser::addFormula2map(
-    const XMLElement* r,
-    _out_ std::map<int, std::string>& math,
-    _out_ std::map<int, std::string>& txt) {
+  const XMLElement* r,
+  std::map<int, std::string>& math,
+  std::map<int, std::string>& txt  //
+) {
   while (r != nullptr) {
     int ch = getUtf(r, "char");
     const char* formula = r->Attribute("formula");
@@ -108,7 +110,8 @@ void TeXFormulaSettingParser::addFormula2map(
 }
 
 void TeXFormulaSettingParser::parseSymbol2Formula(
-    _out_ std::map<int, std::string>& mappings, _out_ std::map<int, std::string>& txt) {
+  std::map<int, std::string>& mappings, std::map<int, std::string>& txt  //
+) {
   const XMLElement* e = _root->FirstChildElement("CharacterToFormulaMappings");
   if (e != nullptr) {
     e = e->FirstChildElement("Map");
@@ -117,7 +120,8 @@ void TeXFormulaSettingParser::parseSymbol2Formula(
 }
 
 void TeXFormulaSettingParser::parseSymbol(
-    _out_ std::map<int, std::string>& mappings, _out_ std::map<int, std::string>& txt) {
+  std::map<int, std::string>& mappings, std::map<int, std::string>& txt  //
+) {
   const XMLElement* e = _root->FirstChildElement("CharacterToSymbolMappings");
   if (e != nullptr) {
     e = e->FirstChildElement("Map");
