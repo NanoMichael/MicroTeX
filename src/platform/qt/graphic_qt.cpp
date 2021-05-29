@@ -20,6 +20,7 @@
 #include <QStringList>
 #include <QTransform>
 #include <QtMath>
+#include <QFile>
 
 using namespace tex;
 using namespace std;
@@ -31,7 +32,7 @@ namespace tex {
 QString wstring_to_QString(const std::wstring& ws)
 {
   QString out = QString::fromStdWString(ws);
-  auto index = out.indexOf('\0');
+  auto index = out.indexOf(QChar('\0'));
   if (index != -1)
     out.truncate(index);
   return out;
@@ -40,7 +41,7 @@ QString wstring_to_QString(const std::wstring& ws)
 
 Font_qt::Font_qt(const string& family, int style, float size) {
 
-  //qInfo() << "new font" << QString::fromStdString(family) << style << size;
+//  qInfo() << "new font" << QString::fromStdString(family) << style << size;
 
   _font.setFamily(QString::fromStdString(family));
   _font.setPointSizeF(size);
@@ -51,12 +52,16 @@ Font_qt::Font_qt(const string& family, int style, float size) {
 
 Font_qt::Font_qt(const string& file, float size)
 {
-  //qInfo() << "new font" << QString::fromStdString(file) << size;
+//  qInfo() << "new font" << QString::fromStdString(file) << size;
 
   // set size for newly loaded and previously loaded font
   _font.setPointSizeF(size);
 
   QString filename(QString::fromStdString(file));
+  if(!QFile::exists(filename)) {
+      filename.prepend(":/");
+//      qInfo() << "new filename" << filename;
+  }
 
   if(_loaded_families.contains(filename)) {
     // file already loaded
@@ -68,7 +73,7 @@ Font_qt::Font_qt(const string& file, float size)
   }
 
   QFontDatabase db;
-  int id = db.addApplicationFont(QString::fromStdString(file));
+  int id = db.addApplicationFont(filename);
   if( id == -1 ) {
 #ifdef HAVE_LOG
     __log << file << " failed to load\n";
@@ -159,7 +164,7 @@ sptr<TextLayout> TextLayout::create(const std::wstring& src, const sptr<Font>& f
 
 /**************************************************************************************************/
 
-Font_qt Graphics2D_qt::_default_font("SansSerif", PLAIN, 20.f);
+//Font_qt Graphics2D_qt::_default_font("SansSerif", PLAIN, 20.f);
 
 Graphics2D_qt::Graphics2D_qt(QPainter* painter)
     : _painter(painter) {

@@ -3,7 +3,7 @@
 
 #include "atom/atom_basic.h"
 #include "common.h"
-#include "xml/tinyxml2.h"
+#include <tinyxml2.h>
 
 namespace tex {
 

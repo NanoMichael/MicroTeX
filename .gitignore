@@ -23,6 +23,6 @@ src/doc
 src/Doxyfile
 .vscode/
 prebuilt-scripts/
-.idea/
-cmake-build-debug/
-cmake-build-debug-coverage/
+.idea
+cmake-build-*
+.vs

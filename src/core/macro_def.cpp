@@ -37,6 +37,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(2, 2, macro_scalebox, "scalebox"),
     mac(2, 2, macro_raisebox, "raisebox"),
     mac(1, 1, macro_dynamic, "dynamic"),
+#undef mac
 #define mac mac3
     mac(1, macro_fatalIfCmdConflict, "fatalIfCmdConflict"),
     mac(1, macro_breakEverywhere, "breakEverywhere"),
@@ -347,7 +348,7 @@ inline static void cmd(
 }
 
 void NewCommandMacro::_init_() {
-  // Predefined environments
+  // region Predefined environments
   env(1, L"array", L"\\array@@env{#1}{", L"}");
   env(1, L"tabular", L"\\array@@env{#1}{", L"}");
   env(0, L"matrix", L"\\matrix@@env{", L"}");
@@ -370,7 +371,9 @@ void NewCommandMacro::_init_() {
   env(0, L"gathered", L"\\gathered@@env{", L"}");
   env(0, L"math", L"\\(", L"\\)");
   env(0, L"displaymath", L"\\[", L"\\]");
-  // Predefined commands
+  env(0, L"equation", L"\\begin{align}", L"\\end{align}");
+  // endregion
+  // region Predefined commands
   cmd(1, L"operatorname", L"\\mathop{\\mathrm{#1}}\\nolimits ");
   cmd(2, L"DeclareMathOperator", L"\\newcommand{#1}{\\mathop{\\mathrm{#2}}\\nolimits}");
   cmd(1, L"substack", L"{\\scriptstyle\\begin{array}{c}#1\\end{array}}");
@@ -408,4 +411,5 @@ void NewCommandMacro::_init_() {
   cmd(0, L"L", L"\\mathrm{\\polishlcross L}");
   cmd(0, L"l", L"\\mathrm{\\polishlcross l}");
   cmd(0, L"Join", L"\\mathop{\\rlap{\\ltimes}\\rtimes}");
+  // endregion
 }

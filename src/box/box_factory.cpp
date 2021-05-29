@@ -107,13 +107,13 @@ sptr<Box> XLeftRightArrowFactory::create(Environment& env, float width) {
 
   if (width < swidth) {
     auto* hb = new HBox(left);
-    hb->add(sptrOf<StrutBox>(-min(swidth - width, left->_width), 0, 0, 0));
+    hb->add(sptrOf<StrutBox>(-min(swidth - width, left->_width), 0.f, 0.f, 0.f));
     hb->add(right);
     return sptr<Box>(hb);
   }
 
   sptr<Box> minu = SmashedAtom(MINUS, "").createBox(env);
-  sptr<Box> kern = SpaceAtom(UnitType::mu, -3.4f, 0, 0).createBox(env);
+  sptr<Box> kern = SpaceAtom(UnitType::mu, -3.4f, 0.f, 0.f).createBox(env);
 
   float mwidth = minu->_width + kern->_width;
   swidth += 2 * kern->_width;
@@ -125,7 +125,7 @@ sptr<Box> XLeftRightArrowFactory::create(Environment& env, float width) {
     hb->add(kern);
   }
 
-  hb->add(sptrOf<ScaleBox>(minu, (width - swidth - w) / minu->_width, 1));
+  hb->add(sptrOf<ScaleBox>(minu, (width - swidth - w) / minu->_width, 1.f));
 
   hb->add(0, kern);
   hb->add(0, left);

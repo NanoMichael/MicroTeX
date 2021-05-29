@@ -28,9 +28,6 @@ src += fonts_src
 
 subdir('graphic')
 
-subdir('otf')
-src += otf_src
-
 subdir('platform')
 src += platform_src
 deps += platform_deps
@@ -38,14 +35,8 @@ deps += platform_deps
 subdir('res')
 src += res_src
 
-subdir('unimath')
-src += unimath_src
-
 subdir('utils')
 src += utils_src
-
-subdir('xml')
-src += xml_src
 
 # GCC versions earlier than 9 require linking with stdc++fs to use
 # std::filesystem functionality.
@@ -61,6 +52,8 @@ else
 	add_project_arguments('-std=c++11', language : 'cpp')
 endif
 
+deps += [dependency('tinyxml2')]
+
 clatexmath_lib = library('clatexmath', src,
 	include_directories: inc,
 	dependencies: deps,
@@ -69,7 +62,7 @@ clatexmath_lib = library('clatexmath', src,
 	install: true
 )
 
-clatexmath = declare_dependency(
+clatexmath_dep = declare_dependency(
 	link_with: clatexmath_lib,
 	include_directories: inc,
 	version: meson.project_version()

@@ -11,7 +11,7 @@ TeXWidget::TeXWidget(QWidget* parent, float text_size)
     _padding(20)
 {
   QPalette pal = palette();
-  pal.setColor(QPalette::Background, Qt::white);
+  pal.setColor(QPalette::Window, Qt::white);
   setPalette(pal);
 }
 

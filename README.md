@@ -221,6 +221,22 @@ will produce:
 ==26443== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 ```
 
+## Meson build manifest
+
+You can also build the cairo version of cLaTeXMath with Meson:
+```sh
+meson _build -DTARGET_DEMO=NONE # you can specify TARGET_DEMO=GTK if you want a GTK+ GUI to test cLaTeXMath, otherwise only the library (TARGET_DEVEL) will be built.
+ninja -C _build
+_build/clatexmath
+```
+
+<!-- WIP: clatexmath is not yet in home:sp1rit:notekit, its only in testing
+# Prebuilt packages
+
+[@sp1ritCS](https://github.com/sp1ritCS) maintains more or less upto date packages of cLaTeXMath/cairo for Arch, CentOS, Debian, Fedora, Mageia, SLE, openSUSE & Ubuntu on the openSUSE Buildservice: [home:sp1rit:notekit/clatexmath](https://build.opensuse.org/package/show/home:sp1rit:notekit/clatexmath). You can install them from here: [software.opensuse.org//download.html?project=home:sp1rit:notekit&package=clatexmath](https://software.opensuse.org//download.html?project=home%3Asp1rit%3Anotekit&package=clatexmath)
+
+If you just want to use cLaTeXMath for your GTK/Cairo project, this may be best way to get started. 
+-->
 # How to use
 
 This section shows how to use this library to display mathematical formulas.
@@ -557,7 +573,7 @@ that will produce:
 
 # License
 
-Excluding the font resources (under the directory `res/font`) that under different licenses (check out `res/fonts/license`), this project is under the [MIT](https://opensource.org/licenses/MIT) license.
+Excluding the fonts and xml resources (under the directory `res`) that under different licenses (check out `res/fonts/license`, `res/greek` and `res/cyrillic`), this project is under the [MIT](https://opensource.org/licenses/MIT) license.
 
 ```
  The MIT License (MIT)

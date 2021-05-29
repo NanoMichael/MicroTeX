@@ -1,4 +1,4 @@
-#if defined(BUILD_QT) && !defined(MEM_CHECK)
+#if (defined(BUILD_QT) || defined(BUILD_SKIA)) && !defined(MEM_CHECK)
 
 #include <string>
 
@@ -93,6 +93,9 @@ void MainWindow::renderClicked()
 
 void MainWindow::saveClicked()
 {
+#ifdef BUILD_SKIA
+  _texwidget->saveSVG("out.svg");
+#endif
 }
 
 #endif

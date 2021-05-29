@@ -56,7 +56,7 @@ public:
       e.getTeXFont()->setBold(true);
       return _base->createBox(e);
     }
-    return sptrOf<StrutBox>(0, 0, 0, 0);
+    return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
   }
 
   __decl_clone(BoldAtom)
@@ -81,7 +81,7 @@ public:
     Box* cedilla = new CharBox(ch);
     Box* y;
     if (std::abs(italic) > PREC) {
-      auto hbox = new HBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
+      auto hbox = new HBox(sptrOf<StrutBox>(-italic, 0.f, 0.f, 0.f));
       hbox->add(sptr<Box>(cedilla));
       y = hbox;
     } else {
@@ -90,7 +90,7 @@ public:
 
     Box* ce = new HBox(sptr<Box>(y), b->_width, Alignment::center);
     float x = 0.4f * SpaceAtom::getFactor(UnitType::mu, env);
-    vb->add(sptrOf<StrutBox>(0, -x, 0, 0));
+    vb->add(sptrOf<StrutBox>(0.f, -x, 0.f, 0.f));
     vb->add(sptr<Box>(ce));
     float f = vb->_height + vb->_depth;
     vb->_height = b->_height;
@@ -416,7 +416,7 @@ public:
       e.getTeXFont()->setIt(true);
       box = _base->createBox(e);
     } else {
-      box = sptrOf<StrutBox>(0, 0, 0, 0);
+      box = sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
     }
 
     return box;
@@ -529,7 +529,7 @@ public:
     Box* y = nullptr;
 
     if (std::abs(italic) > PREC) {
-      auto hbox = new HBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
+      auto hbox = new HBox(sptrOf<StrutBox>(-italic, 0.f, 0.f, 0.f));
       hbox->add(sptr<Box>(ogonek));
       y = hbox;
     } else {
@@ -537,7 +537,7 @@ public:
     }
 
     Box* og = new HBox(sptr<Box>(y), b->_width, Alignment::right);
-    vb->add(sptrOf<StrutBox>(0, -ogonek->_height, 0, 0));
+    vb->add(sptrOf<StrutBox>(0.f, -ogonek->_height, 0.f, 0.f));
     vb->add(sptr<Box>(og));
     float f = vb->_height + vb->_depth;
     vb->_height = b->_height;
@@ -566,7 +566,7 @@ public:
     // vertical box
     auto b = (
       _base == nullptr
-      ? sptrOf<StrutBox>(0, 0, 0, 0)
+      ? sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f)
       : _base->createBox(*(env.crampStyle()))
     );
     auto* ob = new OverBar(b, 3 * drt, drt);
@@ -810,7 +810,7 @@ public:
     auto* rule = new RuleBox(drt, b->_width, -axis + drt, false);
     auto* hb = new HBox();
     hb->add(b);
-    hb->add(sptrOf<StrutBox>(-b->_width, 0, 0, 0));
+    hb->add(sptrOf<StrutBox>(-b->_width, 0.f, 0.f, 0.f));
     hb->add(sptr<Box>(rule));
 
     return sptr<Box>(hb);
@@ -857,7 +857,7 @@ public:
     Char t = env.getTeXFont()->getChar('t', "mathnormal", env.getStyle());
     auto* T = new CharBox(t);
     auto* hb = new HBox(sptr<Box>(T));
-    hb->add(SpaceAtom(UnitType::em, -0.3f, 0, 0).createBox(env));
+    hb->add(SpaceAtom(UnitType::em, -0.3f, 0.f, 0.f).createBox(env));
     hb->add(sptr<Box>(A));
     return sptr<Box>(hb);
   }
@@ -879,7 +879,7 @@ public:
     circle->_shift = -0.07f * SpaceAtom::getFactor(UnitType::ex, env);
     auto box = _at->createBox(env);
     auto* hb = new HBox(box, circle->_width, Alignment::center);
-    hb->add(sptrOf<StrutBox>(-hb->_width, 0, 0, 0));
+    hb->add(sptrOf<StrutBox>(-hb->_width, 0.f, 0.f, 0.f));
     hb->add(circle);
     return sptr<Box>(hb);
   }
@@ -927,7 +927,7 @@ public:
     auto* B = new CharBox(ch);
     Box* y = nullptr;
     if (std::abs(italic) > PREC) {
-      auto hbox = new HBox(sptrOf<StrutBox>(-italic, 0, 0, 0));
+      auto hbox = new HBox(sptrOf<StrutBox>(-italic, 0.f, 0.f, 0.f));
       hbox->add(sptr<Box>(B));
       y = hbox;
     } else {
@@ -936,7 +936,7 @@ public:
     Box* b = new HBox(sptr<Box>(y), T->_width, Alignment::center);
     auto* vb = new VBox();
     vb->add(sptr<Box>(T));
-    vb->add(sptrOf<StrutBox>(0, -0.5f * T->_width, 0, 0));
+    vb->add(sptrOf<StrutBox>(0.f, -0.5f * T->_width, 0.f, 0.f));
     vb->add(sptr<Box>(b));
     return sptr<Box>(vb);
   }
@@ -983,15 +983,15 @@ public:
     // create formula box in same style
     auto b = (
       _base == nullptr
-      ? sptrOf<StrutBox>(0, 0, 0, 0)
+      ? sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f)
       : _base->createBox(env)
     );
 
     // create vertical box
     auto* vb = new VBox();
     vb->add(b);
-    vb->add(sptrOf<StrutBox>(0, 3 * drt, 0, 0));
-    vb->add(sptrOf<RuleBox>(drt, b->_width, 0));
+    vb->add(sptrOf<StrutBox>(0.f, 3 * drt, 0.f, 0.f));
+    vb->add(sptrOf<RuleBox>(drt, b->_width, 0.f));
 
     // baseline vertical box = baseline box b
     // there's also an invisible strut of height drt under the rule

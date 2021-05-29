@@ -22,16 +22,16 @@ HBox::HBox(const sptr<Box>& box, float width, Alignment aligment) {
     return;
   }
   if (aligment == Alignment::center || aligment == Alignment::none) {
-    auto s = sptrOf<StrutBox>(rest / 2, 0, 0, 0);
+    auto s = sptrOf<StrutBox>(rest / 2, 0.f, 0.f, 0.f);
     add(s);
     add(box);
     add(s);
   } else if (aligment == Alignment::left) {
     add(box);
-    auto s = sptrOf<StrutBox>(rest, 0, 0, 0);
+    auto s = sptrOf<StrutBox>(rest, 0.f, 0.f, 0.f);
     add(s);
   } else if (aligment == Alignment::right) {
-    auto s = sptrOf<StrutBox>(rest, 0, 0, 0);
+    auto s = sptrOf<StrutBox>(rest, 0.f, 0.f, 0.f);
     add(s);
     add(box);
   } else {
@@ -106,18 +106,18 @@ VBox::VBox(const sptr<Box>& box, float rest, Alignment alignment)
   : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {
   add(box);
   if (alignment == Alignment::center) {
-    auto s = sptrOf<StrutBox>(0, rest / 2, 0, 0);
+    auto s = sptrOf<StrutBox>(0.f, rest / 2, 0.f, 0.f);
     BoxGroup::add(0, s);
     _height += rest / 2.f;
     _depth += rest / 2.f;
     BoxGroup::add(s);
   } else if (alignment == Alignment::top) {
     _depth += rest;
-    auto s = sptrOf<StrutBox>(0, rest, 0, 0);
+    auto s = sptrOf<StrutBox>(0.f, rest, 0.f, 0.f);
     BoxGroup::add(s);
   } else if (alignment == Alignment::bottom) {
     _height += rest;
-    auto s = sptrOf<StrutBox>(0, rest, 0, 0);
+    auto s = sptrOf<StrutBox>(0.f, rest, 0.f, 0.f);
     BoxGroup::add(0, s);
   }
 }
@@ -141,7 +141,7 @@ void VBox::add(const sptr<Box>& box) {
 
 void VBox::add(const sptr<Box>& box, float interline) {
   if (!_children.empty()) {
-    auto s = sptrOf<StrutBox>(0, interline, 0, 0);
+    auto s = sptrOf<StrutBox>(0.f, interline, 0.f, 0.f);
     add(s);
   }
   add(box);
@@ -168,9 +168,9 @@ void VBox::draw(Graphics2D& g2, float x, float y) {
 }
 
 OverBar::OverBar(const sptr<Box>& b, float kern, float thickness) : VBox() {
-  add(sptrOf<StrutBox>(0, thickness, 0, 0));
-  add(sptrOf<RuleBox>(thickness, b->_width, 0));
-  add(sptrOf<StrutBox>(0, kern, 0, 0));
+  add(sptrOf<StrutBox>(0.f, thickness, 0.f, 0.f));
+  add(sptrOf<RuleBox>(thickness, b->_width, 0.f));
+  add(sptrOf<StrutBox>(0.f, kern, 0.f, 0.f));
   add(b);
 }
 

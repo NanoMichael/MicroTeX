@@ -1,14 +1,13 @@
 #include "atom/atom_char.h"
 #include "core/core.h"
 #include "res/parser/formula_parser.h"
-#include "unimath/uni_symbol.h"
 
 using namespace tex;
 using namespace std;
 
-sptr<CharFont> FixedCharAtom::getCharFont(TeXFont& tf) {
-  return _cf;
-}
+//sptr<CharFont> FixedCharAtom::getCharFont(TeXFont& tf) {
+//  return _cf;
+//}
 
 sptr<Box> FixedCharAtom::createBox(Environment& env) {
   const auto& i = env.getTeXFont();
@@ -46,15 +45,15 @@ sptr<Box> SymbolAtom::createBox(Environment& env) {
     cb->_shift = -(cb->_height + cb->_depth) / 2.f - tf.getAxisHeight(style);
     float delta = c.getItalic();
     auto hb = sptrOf<HBox>(cb);
-    if (delta > PREC) hb->add(sptrOf<StrutBox>(delta, 0, 0, 0));
+    if (delta > PREC) hb->add(sptrOf<StrutBox>(delta, 0.f, 0.f, 0.f));
     return hb;
   }
   return cb;
 }
 
-sptr<CharFont> SymbolAtom::getCharFont(TeXFont& tf) {
-  return tf.getChar(_name, TexStyle::display).getCharFont();
-}
+//sptr<CharFont> SymbolAtom::getCharFont(TeXFont& tf) {
+//  return tf.getChar(_name, TexStyle::display).getCharFont();
+//}
 
 void SymbolAtom::addSymbolAtom(const string& file) {
   TeXSymbolParser parser(file);
@@ -80,9 +79,10 @@ Char CharAtom::getChar(TeXFont& tf, TexStyle style, bool smallCap) {
   return tf.getChar(chr, _textStyle, style);
 }
 
-sptr<CharFont> CharAtom::getCharFont(TeXFont& tf) {
-  return getChar(tf, TexStyle::display, false).getCharFont();
-}
+//sptr<CharFont> CharAtom::getCharFont(TeXFont& tf) {
+//    std::cout << "???" << std::endl;
+//  return getChar(tf, TexStyle::display, false).getCharFont();
+//}
 
 sptr<Box> CharAtom::createBox(Environment& env) {
   if (_textStyle.empty()) {
@@ -100,5 +100,5 @@ sptr<Box> CharAtom::createBox(Environment& env) {
 }
 
 sptr<Box> BreakMarkAtom::createBox(Environment& env) {
-  return sptrOf<StrutBox>(0, 0, 0, 0);
+  return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
 }

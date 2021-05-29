@@ -90,7 +90,7 @@ sptr<Atom> RowAtom::popLastAtom() {
 }
 
 sptr<Atom> RowAtom::get(size_t pos) {
-  if (pos >= _elements.size()) return sptrOf<SpaceAtom>(UnitType::point, 0, 0, 0);
+  if (pos >= _elements.size()) return sptrOf<SpaceAtom>(UnitType::point, 0.f, 0.f, 0.f);
   return _elements[pos];
 }
 
@@ -190,7 +190,7 @@ sptr<Box> RowAtom::createBox(Environment& env) {
     auto b = atom->createBox(env);
     auto* cb = dynamic_cast<CharBox*>(b.get());
     if (cb != nullptr
-        && atom->isCharInMathMode()
+        && !atom->isCharInMathMode()
         && dynamic_cast<CharSymbol*>(nextAtom.get()) != nullptr
       ) {
       // When we have a single char, we need to add italic correction
@@ -215,7 +215,7 @@ sptr<Box> RowAtom::createBox(Environment& env) {
     env.setLastFontId(b->lastFontId());
 
     // insert kerning
-    if (abs(kern) > PREC) hbox->add(sptrOf<StrutBox>(kern, 0, 0, 0));
+    if (abs(kern) > PREC) hbox->add(sptrOf<StrutBox>(kern, 0.f, 0.f, 0.f));
 
     // kerning do not interfere with the normal glue-rules without kerning
     if (!atom->isKern()) _previousAtom = atom;

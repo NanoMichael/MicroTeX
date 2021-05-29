@@ -414,37 +414,6 @@ int runHelp() {
   return 0;
 }
 
-#include "core/formula.h"
-#include "core/macro.h"
-
-void show_symbols() {
-  // plain symbols
-  FILE* f = fopen("symbols.txt", "w");
-  for (const auto&[name, ignore] : SymbolAtom::_symbols) {
-    fwrite((name + "\n").c_str(), 1, name.size() + 1, f);
-  }
-  fflush(f);
-  fclose(f);
-  // replacement symbols
-  f = fopen("rp.txt", "w");
-  for (const auto&[name, ignore] : Formula::_predefinedTeXFormulasAsString) {
-    auto x = wide2utf8(name);
-    fwrite((x + "\n").c_str(), 1, x.size() + 1, f);
-  }
-  fflush(f);
-  fclose(f);
-  // macros
-  f = fopen("macro.txt", "w");
-  for (const auto&[name, ignore] : MacroInfo::_commands) {
-    auto x = wide2utf8(name);
-    fwrite((x + "\n").c_str(), 1, x.size() + 1, f);
-  }
-  fflush(f);
-  fclose(f);
-}
-
-#include "core/env.h"
-
 int main(int argc, char* argv[]) {
   vector<string> opts;
   opts.reserve(argc);
@@ -454,8 +423,6 @@ int main(int argc, char* argv[]) {
 
   Pango::init();
   LaTeX::init();
-
-  show_symbols();
 
   int result = 0;
   if (indexOf(opts, string("-headless")) >= 0) {

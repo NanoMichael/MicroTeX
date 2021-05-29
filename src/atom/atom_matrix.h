@@ -14,7 +14,7 @@ public:
   virtual void apply(WrapperBox& box) = 0;
 
   sptr<Box> createBox(Environment& env) override {
-    return sptrOf<StrutBox>(0, 0, 0, 0);
+    return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
   }
 };
 
@@ -164,11 +164,11 @@ public:
   }
 
   sptr<Box> createBox(Environment& env) override {
-    if (_n == 0) return sptrOf<StrutBox>(0, 0, 0, 0);
+    if (_n == 0) return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
 
     float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
     auto b = sptrOf<RuleBox>(_height, drt, _shift, MatrixAtom::LINE_COLOR, true);
-    auto sep = sptrOf<StrutBox>(2 * drt, 0, 0, 0);
+    auto sep = sptrOf<StrutBox>(2 * drt, 0.f, 0.f, 0.f);
     auto* hb = new HBox();
     for (int i = 0; i < _n - 1; i++) {
       hb->add(b);

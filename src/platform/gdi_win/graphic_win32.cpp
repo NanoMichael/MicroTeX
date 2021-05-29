@@ -5,7 +5,8 @@
 #include "platform/gdi_win/graphic_win32.h"
 
 #include <sstream>
-
+// fix error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+#include <comdef.h>
 #include <gdiplus.h>
 #include <windows.h>
 
@@ -141,7 +142,7 @@ Font* Font::create(const string& file, float s) {
 }
 
 sptr<Font> Font::_create(const string& name, int style, float size) {
-  return sptrOf<Font_win>32(name, style, size));
+  return sptrOf<Font_win32>(name, style, size);
 }
 
 /**************************************************************************************************/
@@ -181,7 +182,7 @@ void TextLayout_win32::draw(Graphics2D& g2, float x, float y) {
 
 sptr<TextLayout> TextLayout::create(const wstring& src, const sptr<Font>& font) {
   sptr<Font_win32> f = static_pointer_cast<Font_win32>(font);
-  return sptrOf<TextLayout_win>32(src, f));
+  return sptrOf<TextLayout_win32>(src, f);
 }
 
 /**************************************************************************************************/

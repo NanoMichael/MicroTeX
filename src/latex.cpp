@@ -21,7 +21,6 @@ string LaTeX::queryResourceLocation(string& custom_path) {
   queue<string> paths;
   paths.push(custom_path);
 
-#ifndef _WIN32
   // checks if XDG_DATA_HOME exists. If it does, it pushes it to potential paths.
   char* userdata = getenv("XDG_DATA_HOME");
   if (userdata != NULL && strcmp(userdata, "") != 0) {
@@ -29,7 +28,8 @@ string LaTeX::queryResourceLocation(string& custom_path) {
   }
   delete userdata;
 
-  // checks if XDG_DATA_DIRS is set. If it is, it splits XDG_DATA_DIRS at : and pushes each part of it to potential paths.
+  // checks if XDG_DATA_DIRS is set. If it is, it splits XDG_DATA_DIRS at : and
+  // pushes each part of it to potential paths.
   char* xdg = getenv("XDG_DATA_DIRS");
   if (xdg != NULL && strcmp(xdg, "") != 0) {
     stringstream xdg_paths(xdg);
@@ -38,7 +38,9 @@ string LaTeX::queryResourceLocation(string& custom_path) {
       paths.push(xdg_path);
     }
   }
-  // checks if HOME env var is unset. if it isn't it pushes ~/.local/share/clatexmath to potential paths.
+#ifndef _WIN32
+  // checks if HOME env var is unset. if it isn't it pushes ~/.local/share/clatexmath
+  // to potential paths.
   char* home = getenv("HOME");
   if (home != NULL && strcmp(home, "") != 0) {
     char* userdata_fallback;
@@ -49,7 +51,8 @@ string LaTeX::queryResourceLocation(string& custom_path) {
   paths.push("/usr/share/clatexmath/");
   paths.push("/usr/local/share/clatexmath/");
 #endif
-  // goes through the list of potential paths. if it finds a path that contains .clatexmath-res_root, it returns it. Otherwise return an empty string.
+  // goes through the list of potential paths. if it finds a path that contains
+  // .clatexmath-res_root, it returns it. Otherwise return an empty string.
   while (!paths.empty()) {
 #if CLATEX_CXX17
     filesystem::path p = paths.front();

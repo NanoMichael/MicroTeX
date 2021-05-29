@@ -29,7 +29,7 @@ class Formula;
 class EmptyAtom : public Atom {
 public:
   sptr<Box> createBox(Environment& env) override {
-    return sptrOf<StrutBox>(0, 0, 0, 0);
+    return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
   }
 
   __decl_clone(EmptyAtom)
