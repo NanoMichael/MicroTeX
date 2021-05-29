@@ -134,4 +134,3 @@ int main(int argc, char* argv[]) {
   delete font;
   return 0;
 }
-//keep

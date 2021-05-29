@@ -29,4 +29,3 @@ public:
 }
 
 #endif //LATEX_UNI_SYMBOL_H
-//keep

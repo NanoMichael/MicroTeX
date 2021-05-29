@@ -12,4 +12,3 @@ executable('clm', src,
     include_directories: include,
 	link_with: clatexmath_lib
 )
-//keep

@@ -2112,4 +2112,3 @@ private:
 #endif
 
 #endif // TINYXML2_INCLUDED
-//keep

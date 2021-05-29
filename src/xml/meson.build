@@ -5,4 +5,3 @@ if install_headerfiles
 		'tinyxml2.h'
 	], subdir: 'clatexmath/xml')
 endif
-//keep
