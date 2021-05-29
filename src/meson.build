@@ -38,6 +38,12 @@ src += res_src
 subdir('utils')
 src += utils_src
 
+subdir('otf')
+src += otf_src
+
+subdir('unimath')
+src += unimath_src
+
 # GCC versions earlier than 9 require linking with stdc++fs to use
 # std::filesystem functionality.
 cc = meson.get_compiler('cpp')
