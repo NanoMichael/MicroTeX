@@ -1,6 +1,6 @@
 #include "config.h"
 
-#ifdef __USE_SAMPLES
+#ifdef CLATEX_USE_SAMPLES
 
 #ifndef SAMPLES_H_INCLUDED
 #define SAMPLES_H_INCLUDED
@@ -68,4 +68,4 @@ public:
 }  // namespace tex
 
 #endif  // SAMPLES_H_INCLUDED
-#endif  // __USE_SAMPLES
+#endif  // CLATEX_USE_SAMPLES
