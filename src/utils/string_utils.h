@@ -9,6 +9,7 @@
 #include <string>
 #include <functional>
 #include <map>
+#include <vector>
 
 namespace tex {
 

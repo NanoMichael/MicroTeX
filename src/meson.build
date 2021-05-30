@@ -45,11 +45,11 @@ if cc.get_id() == 'gcc' and cc.version().version_compare('<9')
     deps += [ cc.find_library('stdc++fs') ]
 endif
 if cc.get_id() == 'gcc' and cc.version().version_compare('<8')
-	add_project_arguments('-std=c++11', language : 'cpp')
+	add_project_arguments('-std=c++14', language : 'cpp')
 elif cc.has_argument('--std=c++17')
 	add_project_arguments('-std=c++17', language : 'cpp')
 else
-	add_project_arguments('-std=c++11', language : 'cpp')
+	add_project_arguments('-std=c++14', language : 'cpp')
 endif
 
 deps += [dependency('tinyxml2')]
