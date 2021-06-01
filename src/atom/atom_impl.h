@@ -377,28 +377,6 @@ public:
   __decl_clone(IddotsAtom)
 };
 
-/** An atom representing an IJ */
-class IJAtom : public Atom {
-private:
-  bool _upper;
-
-public:
-  IJAtom() = delete;
-
-  explicit IJAtom(bool upper) : _upper(upper) {}
-
-  sptr<Box> createBox(Environment& env) override {
-    auto* I = new CharBox(env.getTeXFont()->getChar(_upper ? 'I' : 'i', "mathnormal", env.getStyle()));
-    auto* J = new CharBox(env.getTeXFont()->getChar(_upper ? 'J' : 'j', "mathnormal", env.getStyle()));
-    auto* hb = new HBox(sptr<Box>(I));
-    hb->add(SpaceAtom(UnitType::em, -0.065f, 0, 0).createBox(env));
-    hb->add(sptr<Box>(J));
-    return sptr<Box>(hb);
-  }
-
-  __decl_clone(IJAtom)
-};
-
 /** An atom representing a italic atom */
 class ItAtom : public Atom {
 private:
@@ -457,33 +435,6 @@ public:
   }
 
   __decl_clone(LapedAtom)
-};
-
-/**
- * An atom representing an L with a Caron
- */
-class LCaronAtom : public Atom {
-private:
-  bool _upper;
-
-public:
-  LCaronAtom() = delete;
-
-  explicit LCaronAtom(bool upper) : _upper(upper) {}
-
-  sptr<Box> createBox(Environment& env) override {
-    auto* A = new CharBox(env.getTeXFont()->getChar("textapos", env.getStyle()));
-    auto* L = new CharBox(env.getTeXFont()->getChar(_upper ? 'L' : 'l', "mathnormal", env.getStyle()));
-    auto* hb = new HBox(sptr<Box>(L));
-    if (_upper)
-      hb->add(SpaceAtom(UnitType::em, -0.3f, 0, 0).createBox(env));
-    else
-      hb->add(SpaceAtom(UnitType::em, -0.13f, 0, 0).createBox(env));
-    hb->add(sptr<Box>(A));
-    return sptr<Box>(hb);
-  }
-
-  __decl_clone(LCaronAtom)
 };
 
 /** An atom representing a mono scale atom */
@@ -848,23 +799,6 @@ public:
   __decl_clone(StyleAtom)
 };
 
-/** An atom representing an t with a Caron */
-class TCaronAtom : public Atom {
-public:
-  sptr<Box> createBox(Environment& env) override {
-    Char a = env.getTeXFont()->getChar("textapos", env.getStyle());
-    auto* A = new CharBox(a);
-    Char t = env.getTeXFont()->getChar('t', "mathnormal", env.getStyle());
-    auto* T = new CharBox(t);
-    auto* hb = new HBox(sptr<Box>(T));
-    hb->add(SpaceAtom(UnitType::em, -0.3f, 0.f, 0.f).createBox(env));
-    hb->add(sptr<Box>(A));
-    return sptr<Box>(hb);
-  }
-
-  __decl_clone(TCaronAtom)
-};
-
 class TextCircledAtom : public Atom {
 private:
   sptr<Atom> _at;
@@ -907,41 +841,6 @@ public:
   }
 
   __decl_clone(TextStyleAtom)
-};
-
-/** An atom with a stroked T */
-class TStrokeAtom : public Atom {
-private:
-  bool _upper;
-
-public:
-  TStrokeAtom() = delete;
-
-  explicit TStrokeAtom(bool u) : _upper(u) {}
-
-  sptr<Box> createBox(Environment& env) override {
-    Char ch = env.getTeXFont()->getChar("bar", env.getStyle());
-    float italic = ch.getItalic();
-    Char t = env.getTeXFont()->getChar(_upper ? 'T' : 't', "mathnormal", env.getStyle());
-    auto* T = new CharBox(t);
-    auto* B = new CharBox(ch);
-    Box* y = nullptr;
-    if (std::abs(italic) > PREC) {
-      auto hbox = new HBox(sptrOf<StrutBox>(-italic, 0.f, 0.f, 0.f));
-      hbox->add(sptr<Box>(B));
-      y = hbox;
-    } else {
-      y = B;
-    }
-    Box* b = new HBox(sptr<Box>(y), T->_width, Alignment::center);
-    auto* vb = new VBox();
-    vb->add(sptr<Box>(T));
-    vb->add(sptrOf<StrutBox>(0.f, -0.5f * T->_width, 0.f, 0.f));
-    vb->add(sptr<Box>(b));
-    return sptr<Box>(vb);
-  }
-
-  __decl_clone(TStrokeAtom)
 };
 
 /** An atom representing a typewriter atom */

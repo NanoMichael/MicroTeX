@@ -13,7 +13,7 @@ private:
   float _textWidth = POS_INF;
   std::string _textStyle;
   bool _smallCap = false;
-  float _scaleFactor = 1;
+  float _scaleFactor = 1.f;
 
   i32 _lastFontId = FontContext::NO_FONT;
   sptr<FontContext> _tf;

@@ -68,6 +68,7 @@ target_sources(LaTeX PRIVATE
         src/box/box_group.cpp
         src/box/box_single.cpp
         # core folder
+        src/core/env.cpp
         src/core/core.cpp
         src/core/formula.cpp
         src/core/formula_def.cpp
@@ -88,17 +89,11 @@ target_sources(LaTeX PRIVATE
         src/utils/utils.cpp
         # otf folder
         src/otf/clm.cpp
-        src/otf/clm.h
         src/otf/glyph.cpp
-        src/otf/glyph.h
-        src/otf/math.h
         src/otf/otf.cpp
-        src/otf/otf.h
         # unimath folder
         src/unimath/uni_font.cpp
-        src/unimath/uni_font.h
         src/unimath/uni_symbol.cpp
-        src/unimath/uni_symbol.h
         # res folder
         src/res/builtin/formula_mappings.res.cpp
         src/res/builtin/symbol_mapping.res.cpp

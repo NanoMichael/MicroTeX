@@ -273,22 +273,6 @@ inline macro(cedilla) {
   return sptrOf<CedillaAtom>(Formula(tp, args[1])._root);
 }
 
-inline macro(IJ) {
-  return sptrOf<IJAtom>(args[0][0] == 'I');
-}
-
-inline macro(TStroke) {
-  return sptrOf<TStrokeAtom>(args[0][0] == 'T');
-}
-
-inline macro(LCaron) {
-  return sptrOf<LCaronAtom>(args[0][0] == 'L');
-}
-
-inline macro(tcaron) {
-  return sptrOf<TCaronAtom>();
-}
-
 inline macro(ogonek) {
   return sptrOf<OgonekAtom>(Formula(tp, args[1])._root);
 }
@@ -1241,46 +1225,6 @@ inline macro(smallfrowneq) {
     true
   );
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, u);
-}
-
-inline macro(hstrok) {
-  auto ra = sptrOf<RowAtom>(sptrOf<SpaceAtom>(UnitType::ex, -0.1f, 0.f, 0.f));
-  ra->add(SymbolAtom::get("bar"));
-  auto* vra = new VRowAtom(sptrOf<LapedAtom>(ra, 'r'));
-  vra->setRaise(UnitType::ex, -0.1f);
-  auto* a = new RowAtom(sptr<Atom>(vra));
-  a->add(sptrOf<RomanAtom>(sptrOf<CharAtom>('h', tp._formula->_textStyle)));
-  return sptr<Atom>(a);
-}
-
-inline macro(Hstrok) {
-  auto* ra = new RowAtom(sptrOf<SpaceAtom>(UnitType::ex, -0.28f, 0.f, 0.f));
-  ra->add(SymbolAtom::get("textendash"));
-  auto* vra = new VRowAtom(sptrOf<LapedAtom>(sptr<Atom>(ra), 'r'));
-  vra->setRaise(UnitType::ex, 0.55f);
-  auto* a = new RowAtom(sptr<Atom>(vra));
-  a->add(sptrOf<RomanAtom>(sptrOf<CharAtom>('H', tp._formula->_textStyle)));
-  return sptr<Atom>(a);
-}
-
-inline macro(dstrok) {
-  auto* ra = new RowAtom(sptrOf<SpaceAtom>(UnitType::ex, 0.25f, 0.f, 0.f));
-  ra->add(SymbolAtom::get("bar"));
-  auto* vra = new VRowAtom(sptrOf<LapedAtom>(sptr<Atom>(ra), 'r'));
-  vra->setRaise(UnitType::ex, -0.1f);
-  auto* a = new RowAtom(sptr<Atom>(vra));
-  a->add(sptrOf<RomanAtom>(sptrOf<CharAtom>('d', tp._formula->_textStyle)));
-  return sptr<Atom>(a);
-}
-
-inline macro(Dstrok) {
-  auto* ra = new RowAtom(sptrOf<SpaceAtom>(UnitType::ex, -0.1f, 0.f, 0.f));
-  ra->add(SymbolAtom::get("bar"));
-  auto* vra = new VRowAtom(sptrOf<LapedAtom>(sptr<Atom>(ra), 'r'));
-  vra->setRaise(UnitType::ex, -0.55f);
-  auto* a = new RowAtom(sptr<Atom>(vra));
-  a->add(sptrOf<RomanAtom>(sptrOf<CharAtom>('D', tp._formula->_textStyle)));
-  return sptr<Atom>(a);
 }
 
 inline macro(char) {
