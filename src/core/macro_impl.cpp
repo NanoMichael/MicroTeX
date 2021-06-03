@@ -270,7 +270,7 @@ macro(intertext) {
   replaceall(str, L"^{\\prime}", L"\'");
   replaceall(str, L"^{\\prime\\prime}", L"\'\'");
 
-  auto ra = sptrOf<RomanAtom>(Formula(tp, str, "mathnormal", false, false)._root);
+  auto ra = sptrOf<RomanAtom>(Formula(tp, str, false, false)._root);
   ra->_type = AtomType::interText;
   tp.addAtom(ra);
   tp.addRow();
@@ -378,7 +378,7 @@ macro(sizes) {
   else if (args[0] == L"Huge")
     f = 2.5f;
 
-  auto a = Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root;
+  auto a = Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root;
   return sptrOf<MonoScaleAtom>(a, f);
 }
 

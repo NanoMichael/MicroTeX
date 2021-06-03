@@ -81,7 +81,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_text, "text"),
     mac(1, macro_intertext, "intertext"),
     mac(2, macro_binom, "binom"),
-    // math text styles
+  // math text styles
     mac(1, macro_mathbf, "mathbf"),
     mac(0, macro_bf, "bf"),
     mac(1, macro_mathit, "mathit"),
@@ -92,7 +92,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_sf, "sf"),
     mac(1, macro_mathtt, "mathtt"),
     mac(0, macro_tt, "tt"),
-    // text styles
+  // text styles
     mac(1, macro_textstyles, "mathscr"),
     mac(1, macro_textstyles, "mathbb"),
     mac(1, macro_textstyles, "mathcal"),
@@ -103,7 +103,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_textstyles, "Bbb"),
     mac(1, macro_textstyles, "oldstylenums"),
     mac(1, macro_textstyles, "bold"),
-    // accents
+  // accents
     mac(1, macro_accentbiss, "^"),
     mac(1, macro_accentbiss, "\'"),
     mac(1, macro_accentbiss, "\""),
@@ -185,7 +185,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_Set, "Set"),
     mac(2, macro_underset, "underset"),
     mac(1, macro_boldsymbol, "boldsymbol"),
-    mac(0, macro_GeoGebra, "GeoGebra"),
     mac(1, macro_big, "big"),
     mac(1, macro_Big, "Big"),
     mac(1, macro_bigg, "bigg"),

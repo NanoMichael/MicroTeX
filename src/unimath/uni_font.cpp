@@ -192,9 +192,9 @@ Char FontContext::getChar(c32 code, const string& styleName, bool isMathMode) co
 }
 
 Char FontContext::getChar(c32 code, FontStyle style, bool isMathMode) const {
+  // TODO
+  // pick a closest style
   if (isMathMode) {
-    // TODO
-    // pick a closest style
     const auto it = _mathVersions.find(style);
     const MathVersion& version = (
       it == _mathVersions.end()
@@ -204,6 +204,9 @@ Char FontContext::getChar(c32 code, FontStyle style, bool isMathMode) const {
     const c32 unicode = version.map(code);
     return {code, unicode, _mathFont->_id, _mathFont->otf().glyphId(unicode)};
   } else {
-    // TODO
+    sptr<const OtfFont> font = _mainFont->get(style);
+    if (font == nullptr) font = _mainFont->get(FontStyle::none);
+    if (font == nullptr) font = _mathFont;
+    return {code, code, font->_id, font->otf().glyphId(code)};
   }
 }

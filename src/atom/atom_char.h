@@ -178,6 +178,8 @@ public:
   CharAtom(wchar_t c, std::string textStyle, bool mathMode)
     : _c(c), _textStyle(std::move(textStyle)), _mathMode(mathMode) {}
 
+  CharAtom(wchar_t c, bool mathMode) : _c(c), _mathMode(mathMode) {}
+
   inline wchar_t getCharacter() {
     return _c;
   }

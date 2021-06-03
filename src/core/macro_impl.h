@@ -237,12 +237,12 @@ inline macro(above) {
 }
 
 inline macro(mbox) {
-  auto group = sptrOf<RomanAtom>(Formula(tp, args[1], "mathnormal", false, false)._root);
+  auto group = sptrOf<RomanAtom>(Formula(tp, args[1], false, false)._root);
   return sptrOf<StyleAtom>(TexStyle::text, group);
 }
 
 inline macro(text) {
-  return sptrOf<RomanAtom>(Formula(tp, args[1], "mathnormal", false, false)._root);
+  return sptrOf<RomanAtom>(Formula(tp, args[1], false, false)._root);
 }
 
 inline macro(underscore) {
@@ -605,7 +605,7 @@ inline macro(multlineATATenv) {
   p.parse();
   arr->checkDimensions();
   if (arr->cols() > 1) {
-    throw ex_parse("Requires exact one column in multiline envrionment!");
+    throw ex_parse("Requires exact one column in multiline environment!");
   }
   if (arr->cols() == 0) return nullptr;
 
@@ -617,7 +617,7 @@ inline macro(gatherATATenv) {
   TeXParser p(tp.isPartial(), args[1], arr, false);
   p.parse();
   arr->checkDimensions();
-  if (arr->cols() > 1) throw ex_parse("Requires exact one column in gather envrionment!");
+  if (arr->cols() > 1) throw ex_parse("Requires exact one column in gather environment!");
   if (arr->cols() == 0) return nullptr;
 
   return sptrOf<MultlineAtom>(
@@ -629,7 +629,7 @@ inline macro(gatheredATATenv) {
   TeXParser p(tp.isPartial(), args[1], arr, false);
   p.parse();
   arr->checkDimensions();
-  if (arr->cols() > 1) throw ex_parse("Requires exact one column in gathered envrionment!");
+  if (arr->cols() > 1) throw ex_parse("Requires exact one column in gathered environment!");
   if (arr->cols() == 0) return nullptr;
 
   return sptrOf<MultlineAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MultiLineType::gathered);
@@ -773,7 +773,7 @@ inline macro(mathrm) {
 }
 
 inline macro(rm) {
-  return sptrOf<RomanAtom>(Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root);
+  return sptrOf<RomanAtom>(Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root);
 }
 
 inline macro(mathbf) {
@@ -782,7 +782,7 @@ inline macro(mathbf) {
 
 inline macro(bf) {
   return sptrOf<BoldAtom>(
-    sptrOf<RomanAtom>(Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root)
+    sptrOf<RomanAtom>(Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root)
   );
 }
 
@@ -791,7 +791,7 @@ inline macro(mathtt) {
 }
 
 inline macro(tt) {
-  return sptrOf<TtAtom>(Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root);
+  return sptrOf<TtAtom>(Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root);
 }
 
 inline macro(mathit) {
@@ -799,7 +799,7 @@ inline macro(mathit) {
 }
 
 inline macro(it) {
-  return sptrOf<ItAtom>(Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root);
+  return sptrOf<ItAtom>(Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root);
 }
 
 inline macro(mathsf) {
@@ -807,7 +807,7 @@ inline macro(mathsf) {
 }
 
 inline macro(sf) {
-  return sptrOf<SsAtom>(Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root);
+  return sptrOf<SsAtom>(Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root);
 }
 
 inline macro(hphantom) {
@@ -1038,7 +1038,8 @@ inline macro(mathcumsub) {
 inline sptr<Atom> _underover(
   const std::string& base,
   const std::string& script,
-  float space) {
+  float space
+) {
   return sptrOf<UnderOverAtom>(
     SymbolAtom::get(base),
     SymbolAtom::get(script),
@@ -1258,7 +1259,7 @@ inline macro(textsc) {
 }
 
 inline macro(sc) {
-  return sptrOf<SmallCapAtom>(Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root);
+  return sptrOf<SmallCapAtom>(Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root);
 }
 
 inline macro(quad) {
@@ -1427,10 +1428,6 @@ inline macro(includegraphics) {
 }
 
 inline macro(fcscore) {
-  return nullptr;
-}
-
-inline macro(GeoGebra) {
   return nullptr;
 }
 

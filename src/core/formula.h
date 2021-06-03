@@ -68,27 +68,6 @@ public:
   std::list<sptr<MiddleAtom>> _middle;
   // the root atom of the "atom tree" that represents the formula
   sptr<Atom> _root;
-  // the current text style
-  std::string _textStyle;
-
-  /**
-   * Creates a new Formula by parsing the given string (using a primitive
-   * TeX parser).
-   *
-   * @param tp the given TeXParser
-   * @param latex the string to be parsed
-   *
-   * @throw ex_parse if the string could not be parsed correctly
-   */
-  Formula(const TeXParser& tp, const std::wstring& latex);
-
-  Formula(const TeXParser& tp, const std::wstring& latex, bool preprocess);
-
-  Formula(
-    const TeXParser& tp, const std::wstring& latex,
-    const std::string& textStyle, bool preprocess,
-    bool isMathMode
-  );
 
   /** Create an empty Formula */
   Formula();
@@ -97,13 +76,28 @@ public:
    * Creates a new Formula by parsing the given string (using a primitive
    * TeX parser).
    *
+   * @param tp the given TeXParser
    * @param latex the string to be parsed
+   * @param preprocess if do preprocessing
+   * @param isMathMode if parse in math mode
    *
    * @throw ex_parse if the string could not be parsed correctly
    */
-  explicit Formula(const std::wstring& latex);
+  Formula(
+    const TeXParser& tp, const std::wstring& latex,
+    bool preprocess = true, bool isMathMode = true
+  );
 
-  Formula(const std::wstring& latex, bool preprocess);
+  /**
+   * Creates a new Formula by parsing the given string (using a primitive
+   * TeX parser).
+   *
+   * @param latex the string to be parsed
+   * @param preprocess if do preprocessing
+   *
+   * @throw ex_parse if the string could not be parsed correctly
+   */
+  explicit Formula(const std::wstring& latex, bool preprocess = true);
 
   /**
    * Change the text of the Formula and regenerate the root atom.

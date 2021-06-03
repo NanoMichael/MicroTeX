@@ -1053,5 +1053,5 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
       return sptrOf<TextRenderingAtom>(_latex.substr(start, en - start + 1), infos);
     }
   }
-  return sptrOf<CharAtom>(c, _formula->_textStyle, _isMathMode);
+  return sptrOf<CharAtom>(c, _isMathMode);
 }
