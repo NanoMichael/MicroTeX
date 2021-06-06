@@ -36,13 +36,14 @@ void Formula::_init_() {
 #endif  // HAVE_LOG
 }
 
+Formula::Formula() : _parser(L"", this, false) {}
+
 Formula::Formula(
   const TeXParser& tp,
   const wstring& latex,
-  const string& textStyle,
-  bool preprocess, bool isMathMode
+  bool preprocess,
+  bool isMathMode
 ) : _parser(tp.isPartial(), latex, this, preprocess, isMathMode) {
-  _textStyle = textStyle;
   _xmlMap = tp._formula->_xmlMap;
   if (tp.isPartial()) {
     try {
@@ -53,45 +54,9 @@ Formula::Formula(
   } else {
     _parser.parse();
   }
-}
-
-Formula::Formula(const TeXParser& tp, const wstring& latex, bool preprocess)
-  : _parser(tp.isPartial(), latex, this, preprocess) {
-  _textStyle = "";
-  _xmlMap = tp._formula->_xmlMap;
-  if (tp.isPartial()) {
-    try {
-      _parser.parse();
-    } catch (exception& e) {}
-  } else {
-    _parser.parse();
-  }
-}
-
-Formula::Formula(const TeXParser& tp, const wstring& latex)
-  : _parser(tp.isPartial(), latex, this) {
-  _textStyle = "";
-  _xmlMap = tp._formula->_xmlMap;
-  if (tp.isPartial()) {
-    try {
-      _parser.parse();
-    } catch (exception& e) {
-      if (_root == nullptr) _root = sptrOf<EmptyAtom>();
-    }
-  } else {
-    _parser.parse();
-  }
-}
-
-Formula::Formula() : _parser(L"", this, false) {}
-
-Formula::Formula(const wstring& latex) : _parser(latex, this) {
-  _textStyle = "";
-  _parser.parse();
 }
 
 Formula::Formula(const wstring& latex, bool preprocess) : _parser(latex, this, preprocess) {
-  _textStyle = "";
   _parser.parse();
 }
 
@@ -123,7 +88,7 @@ Formula* Formula::add(const sptr<Atom>& a) {
 }
 
 sptr<Box> Formula::createBox(Environment& style) {
-  if (_root == nullptr) return sptrOf<StrutBox>(0, 0, 0, 0);
+  if (_root == nullptr) return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
   return _root->createBox(style);
 }
 

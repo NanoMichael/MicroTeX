@@ -112,13 +112,13 @@ sptr<Box> TextRenderingAtom::createBox(Environment& env) {
   return sptrOf<TextRenderingBox>(_str, type, DefaultTeXFont::getSizeFactor(env.getStyle()), font, kerning);
 }
 
-SpaceAtom UnderScoreAtom::_w(UnitType::em, 0.7f, 0, 0);
-SpaceAtom UnderScoreAtom::_s(UnitType::em, 0.06f, 0, 0);
+SpaceAtom UnderScoreAtom::_w(UnitType::em, 0.7f, 0.f, 0.f);
+SpaceAtom UnderScoreAtom::_s(UnitType::em, 0.06f, 0.f, 0.f);
 
 sptr<Box> UnderScoreAtom::createBox(Environment& env) {
   float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
   auto* hb = new HBox(_s.createBox(env));
-  hb->add(sptrOf<RuleBox>(drt, _w.createBox(env)->_width, 0));
+  hb->add(sptrOf<RuleBox>(drt, _w.createBox(env)->_width, 0.f));
   return sptr<Box>(hb);
 }
 
@@ -128,14 +128,14 @@ VRowAtom::VRowAtom() {
   _addInterline = false;
   _valign = Alignment::center;
   _halign = Alignment::none;
-  _raise = sptrOf<SpaceAtom>(UnitType::ex, 0, 0, 0);
+  _raise = sptrOf<SpaceAtom>(UnitType::ex, 0.f, 0.f, 0.f);
 }
 
 VRowAtom::VRowAtom(const sptr<Atom>& el) {
   _addInterline = false;
   _valign = Alignment::center;
   _halign = Alignment::none;
-  _raise = sptrOf<SpaceAtom>(UnitType::ex, 0, 0, 0);
+  _raise = sptrOf<SpaceAtom>(UnitType::ex, 0.f, 0.f, 0.f);
   if (el != nullptr) {
     auto* a = dynamic_cast<VRowAtom*>(el.get());
     if (a != nullptr) {
@@ -147,7 +147,7 @@ VRowAtom::VRowAtom(const sptr<Atom>& el) {
 }
 
 void VRowAtom::setRaise(UnitType unit, float r) {
-  _raise = sptrOf<SpaceAtom>(unit, r, 0, 0);
+  _raise = sptrOf<SpaceAtom>(unit, r, 0.f, 0.f);
 }
 
 sptr<Atom> VRowAtom::popLastAtom() {
@@ -166,7 +166,7 @@ void VRowAtom::append(const sptr<Atom>& el) {
 
 sptr<Box> VRowAtom::createBox(Environment& env) {
   auto* vb = new VBox();
-  auto interline = sptrOf<StrutBox>(0, env.getInterline(), 0, 0);
+  auto interline = sptrOf<StrutBox>(0.f, env.getInterline(), 0.f, 0.f);
 
   if (_halign != Alignment::none) {
     float maxWidth = F_MIN;
@@ -231,7 +231,7 @@ sptr<Box> ColorAtom::createBox(Environment& env) {
 }
 
 sptr<Box> RomanAtom::createBox(Environment& env) {
-  if (_base == nullptr) return sptrOf<StrutBox>(0, 0, 0, 0);
+  if (_base == nullptr) return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
   Environment& c = *(env.copy(env.getTeXFont()->copy()));
   c.getTeXFont()->setRoman(true);
   return _base->createBox(c);
@@ -319,7 +319,7 @@ sptr<Box> AccentedAtom::createBox(Environment& env) {
   // set base in cramped style
   auto b = (
     _base == nullptr
-    ? sptrOf<StrutBox>(0, 0, 0, 0)
+    ? sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f)
     : _base->createBox(*(env.crampStyle()))
   );
 
@@ -351,7 +351,7 @@ sptr<Box> AccentedAtom::createBox(Environment& env) {
   if (_acc) cb = _accent->createBox(_changeSize ? *(env.subStyle()) : env);
 
   if (abs(italic) > PREC) {
-    auto hbox = sptrOf<HBox>(sptrOf<StrutBox>(-italic, 0, 0, 0));
+    auto hbox = sptrOf<HBox>(sptrOf<StrutBox>(-italic, 0.f, 0.f, 0.f));
     hbox->add(cb);
     y = hbox;
   } else {
@@ -365,7 +365,7 @@ sptr<Box> AccentedAtom::createBox(Environment& env) {
   vBox->add(y);
 
   // kerning
-  vBox->add(sptrOf<StrutBox>(0, _changeSize ? -delta : -b->_width, 0, 0));
+  vBox->add(sptrOf<StrutBox>(0.f, _changeSize ? -delta : -b->_width, 0.f, 0.f));
   // base
   vBox->add(b);
 
@@ -375,7 +375,7 @@ sptr<Box> AccentedAtom::createBox(Environment& env) {
   vBox->_height = total - d;
 
   if (diff < 0) {
-    auto* hb = new HBox(sptrOf<StrutBox>(diff, 0, 0, 0));
+    auto* hb = new HBox(sptrOf<StrutBox>(diff, 0.f, 0.f, 0.f));
     hb->add(sptr<Box>(vBox));
     hb->_width = u;
     return sptr<Box>(hb);
@@ -394,7 +394,7 @@ sptr<Box> UnderOverAtom::changeWidth(const sptr<Box>& b, float maxWidth) {
 
 sptr<Box> UnderOverAtom::createBox(Environment& env) {
   // create boxes in right style and calculate maximum width
-  auto b = (_base == nullptr ? sptrOf<StrutBox>(0, 0, 0, 0) : _base->createBox(env));
+  auto b = (_base == nullptr ? sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f) : _base->createBox(env));
   sptr<Box> o(nullptr);
   sptr<Box> u(nullptr);
   float mx = b->_width;
@@ -416,7 +416,7 @@ sptr<Box> UnderOverAtom::createBox(Environment& env) {
   // over script + space
   if (_over != nullptr) {
     vBox->add(changeWidth(o, mx));
-    vBox->add(sptr<Box>(SpaceAtom(_overUnit, 0, _overSpace, 0).createBox(env)));
+    vBox->add(sptr<Box>(SpaceAtom(_overUnit, 0.f, _overSpace, 0).createBox(env)));
   }
 
   // base
@@ -429,7 +429,7 @@ sptr<Box> UnderOverAtom::createBox(Environment& env) {
 
   // under script + space
   if (_under != nullptr) {
-    vBox->add(SpaceAtom(_underUnit, 0, _underSpace, 0).createBox(env));
+    vBox->add(SpaceAtom(_underUnit, 0.f, _underSpace, 0.f).createBox(env));
     vBox->add(changeWidth(u, mx));
   }
 
@@ -441,7 +441,7 @@ sptr<Box> UnderOverAtom::createBox(Environment& env) {
 
 /************************************ ScriptsAtom implementation **********************************/
 
-SpaceAtom ScriptsAtom::SCRIPT_SPACE(UnitType::point, 0.5f, 0, 0);
+SpaceAtom ScriptsAtom::SCRIPT_SPACE(UnitType::point, 0.5f, 0.f, 0.f);
 
 sptr<Box> ScriptsAtom::createBox(Environment& env) {
   if (_base == nullptr) {
@@ -450,7 +450,7 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
   }
 
   auto b = _base->createBox(env);
-  sptr<Box> deltaSymbol = sptrOf<StrutBox>(0, 0, 0, 0);
+  sptr<Box> deltaSymbol = sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
   if (_sub == nullptr && _sup == nullptr) return b;
 
   TeXFont* tf = env.getTeXFont().get();
@@ -495,7 +495,7 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
     // include delta in width or not?
     delta = c.getItalic();
     deltaSymbol = SpaceAtom(SpaceType::medMuSkip).createBox(env);
-    if (delta > PREC && _sub == nullptr) hor->add(sptrOf<StrutBox>(delta, 0, 0, 0));
+    if (delta > PREC && _sub == nullptr) hor->add(sptrOf<StrutBox>(delta, 0.f, 0.f, 0.f));
 
     shiftUp = hor->_height - tf->getSupDrop(supStyle.getStyle());
     shiftDown = hor->_depth + tf->getSubDrop(subStyle.getStyle());
@@ -507,7 +507,7 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
       delta = tf->getChar(cf, style).getItalic();
     }
     if (delta > PREC && _sub == nullptr) {
-      hor->add(sptrOf<StrutBox>(delta, 0, 0, 0));
+      hor->add(sptrOf<StrutBox>(delta, 0.f, 0.f, 0.f));
       delta = 0;
     }
   } else {
@@ -579,7 +579,7 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
     vBox->add(sup);
     // recalculate inter-space
     interspace = shiftUp - x->_depth + shiftDown - y->_height;
-    vBox->add(sptrOf<StrutBox>(0, interspace, 0, 0));
+    vBox->add(sptrOf<StrutBox>(0.f, interspace, 0.f, 0.f));
     vBox->add(sub);
     vBox->_height = shiftUp + x->_height;
     vBox->_depth = shiftDown + y->_depth;
@@ -615,7 +615,7 @@ sptr<Box> BigOperatorAtom::createSideSets(Environment& env) {
   }
 
   auto opbox = sb->createBox(env);
-  auto pa = sptrOf<PlaceholderAtom>(0, opbox->_height, opbox->_depth, opbox->_shift);
+  auto pa = sptrOf<PlaceholderAtom>(0.f, opbox->_height, opbox->_depth, opbox->_shift);
   pa->_limitsType = LimitsType::noLimits;
   pa->_type = AtomType::bigOperator;
 
@@ -660,21 +660,21 @@ sptr<Box> BigOperatorAtom::createSideSets(Environment& env) {
   float bigop5 = tf->getBigOpSpacing5(style), kern = 0;
 
   if (_over != nullptr) {
-    vbox->add(sptrOf<StrutBox>(0, bigop5, 0, 0));
+    vbox->add(sptrOf<StrutBox>(0.f, bigop5, 0.f, 0.f));
     x->_shift = limitsShift - x->_width / 2 + delta / 2;
     vbox->add(x);
     kern = max(tf->getBigOpSpacing1(style), tf->getBigOpSpacing3(style) - x->_depth);
-    vbox->add(sptrOf<StrutBox>(0, kern, 0, 0));
+    vbox->add(sptrOf<StrutBox>(0.f, kern, 0.f, 0.f));
   }
 
   vbox->add(y);
 
   if (_under != nullptr) {
     float k = max(tf->getBigOpSpacing2(style), tf->getBigOpSpacing4(style) - z->_height);
-    vbox->add(sptrOf<StrutBox>(0, k, 0, 0));
+    vbox->add(sptrOf<StrutBox>(0.f, k, 0.f, 0.f));
     z->_shift = limitsShift - z->_width / 2 - delta / 2;
     vbox->add(z);
-    vbox->add(sptrOf<StrutBox>(0, bigop5, 0, 0));
+    vbox->add(sptrOf<StrutBox>(0.f, bigop5, 0.f, 0.f));
   }
 
   float h = y->_height, total = vbox->_height + vbox->_depth;
@@ -739,7 +739,7 @@ sptr<Box> BigOperatorAtom::createBox(Environment& env) {
     delta = 0;
     auto in = (
       _base == nullptr
-      ? sptrOf<StrutBox>(0, 0, 0, 0)
+      ? sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f)
       : _base->createBox(env)
     );
     y = sptrOf<HBox>(in);
@@ -766,11 +766,11 @@ sptr<Box> BigOperatorAtom::createBox(Environment& env) {
 
   // over
   if (_over != nullptr) {
-    vBox->add(sptrOf<StrutBox>(0, bigop5, 0, 0));
+    vBox->add(sptrOf<StrutBox>(0.f, bigop5, 0.f, 0.f));
     x->_shift = delta / 2;
     vBox->add(x);
     kern = max(tf->getBigOpSpacing1(style), tf->getBigOpSpacing3(style) - x->_depth);
-    vBox->add(sptrOf<StrutBox>(0, kern, 0, 0));
+    vBox->add(sptrOf<StrutBox>(0.f, kern, 0.f, 0.f));
   }
 
   // base
@@ -779,10 +779,10 @@ sptr<Box> BigOperatorAtom::createBox(Environment& env) {
   // under
   if (_under != nullptr) {
     float k = max(tf->getBigOpSpacing2(style), tf->getBigOpSpacing4(style) - z->_height);
-    vBox->add(sptrOf<StrutBox>(0, k, 0, 0));
+    vBox->add(sptrOf<StrutBox>(0.f, k, 0.f, 0.f));
     z->_shift = -delta / 2;
     vBox->add(z);
-    vBox->add(sptrOf<StrutBox>(0, bigop5, 0, 0));
+    vBox->add(sptrOf<StrutBox>(0.f, bigop5, 0.f, 0.f));
   }
 
   // set height and depth of vertical box
@@ -811,7 +811,7 @@ sptr<Box> SideSetsAtom::createBox(Environment& env) {
   }
 
   auto bb = _base->createBox(env);
-  auto pa = sptrOf<PlaceholderAtom>(0, bb->_height, bb->_depth, bb->_shift);
+  auto pa = sptrOf<PlaceholderAtom>(0.f, bb->_height, bb->_depth, bb->_shift);
 
   auto* l = dynamic_cast<ScriptsAtom*>(_left.get());
   auto* r = dynamic_cast<ScriptsAtom*>(_right.get());
@@ -841,11 +841,11 @@ float OverUnderDelimiter::getMaxWidth(const Box* b, const Box* del, const Box* s
 }
 
 sptr<Box> OverUnderDelimiter::createBox(Environment& env) {
-  auto base = (_base == nullptr ? sptrOf<StrutBox>(0, 0, 0, 0) : _base->createBox(env));
+  auto base = (_base == nullptr ? sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f) : _base->createBox(env));
   sptr<Box> del = DelimiterFactory::create(_symbol->getName(), env, base->_width);
   // TODO
   // no rotation needed
-  del = sptrOf<RotateBox>(del, -90, Rotation::cc);
+  del = sptrOf<RotateBox>(del, -90.f, Rotation::cc);
 
   sptr<Box> sb(nullptr);
   if (_script != nullptr) {

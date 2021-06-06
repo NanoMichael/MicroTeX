@@ -9,6 +9,7 @@
 #include <string>
 #include <functional>
 #include <map>
+#include <vector>
 
 namespace tex {
 
@@ -20,6 +21,13 @@ inline std::string tostring(T val) {
   std::ostringstream os;
   os << val;
   return os.str();
+}
+
+template<>
+inline std::string tostring(wchar_t val) {
+  char buf[16];
+  auto len = wctomb(buf, val);
+  return std::string(buf, len);
 }
 
 /** Convert a value to wide string */

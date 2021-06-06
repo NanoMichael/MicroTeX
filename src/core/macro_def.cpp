@@ -37,6 +37,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(2, 2, macro_scalebox, "scalebox"),
     mac(2, 2, macro_raisebox, "raisebox"),
     mac(1, 1, macro_dynamic, "dynamic"),
+#undef mac
 #define mac mac3
     mac(1, macro_fatalIfCmdConflict, "fatalIfCmdConflict"),
     mac(1, macro_breakEverywhere, "breakEverywhere"),
@@ -80,7 +81,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_text, "text"),
     mac(1, macro_intertext, "intertext"),
     mac(2, macro_binom, "binom"),
-    // math text styles
+  // math text styles
     mac(1, macro_mathbf, "mathbf"),
     mac(0, macro_bf, "bf"),
     mac(1, macro_mathit, "mathit"),
@@ -91,7 +92,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_sf, "sf"),
     mac(1, macro_mathtt, "mathtt"),
     mac(0, macro_tt, "tt"),
-    // text styles
+  // text styles
     mac(1, macro_textstyles, "mathscr"),
     mac(1, macro_textstyles, "mathbb"),
     mac(1, macro_textstyles, "mathcal"),
@@ -102,7 +103,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_textstyles, "Bbb"),
     mac(1, macro_textstyles, "oldstylenums"),
     mac(1, macro_textstyles, "bold"),
-    // accents
+  // accents
     mac(1, macro_accentbiss, "^"),
     mac(1, macro_accentbiss, "\'"),
     mac(1, macro_accentbiss, "\""),
@@ -184,7 +185,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_Set, "Set"),
     mac(2, macro_underset, "underset"),
     mac(1, macro_boldsymbol, "boldsymbol"),
-    mac(0, macro_GeoGebra, "GeoGebra"),
     mac(1, macro_big, "big"),
     mac(1, macro_Big, "Big"),
     mac(1, macro_bigg, "bigg"),
@@ -221,13 +221,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(2, macro_colorbox, "colorbox"),
     mac(3, macro_fcolorbox, "fcolorbox"),
     mac(1, macro_cedilla, "c"),
-    mac(0, macro_IJ, "IJ"),
-    mac(0, macro_IJ, "ij"),
-    mac(0, macro_TStroke, "TStroke"),
-    mac(0, macro_TStroke, "tStroke"),
-    mac(0, macro_LCaron, "Lcaron"),
-    mac(0, macro_tcaron, "tcaron"),
-    mac(0, macro_LCaron, "lcaron"),
     mac(1, macro_ogonek, "k"),
     mac(0, macro_cong, "cong"),
     mac(0, macro_doteq, "doteq"),
@@ -251,10 +244,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_sizes, "Huge"),
     mac(1, macro_mathcumsup, "mathcumsup"),
     mac(1, macro_mathcumsub, "mathcumsub"),
-    mac(0, macro_hstrok, "hstrok"),
-    mac(0, macro_Hstrok, "Hstrok"),
-    mac(0, macro_dstrok, "dstrok"),
-    mac(0, macro_Dstrok, "Dstrok"),
     mac(0, macro_dotminus, "dotminus"),
     mac(0, macro_ratio, "ratio"),
     mac(0, macro_smallfrowneq, "smallfrowneq"),
@@ -347,7 +336,7 @@ inline static void cmd(
 }
 
 void NewCommandMacro::_init_() {
-  // Predefined environments
+  // region Predefined environments
   env(1, L"array", L"\\array@@env{#1}{", L"}");
   env(1, L"tabular", L"\\array@@env{#1}{", L"}");
   env(0, L"matrix", L"\\matrix@@env{", L"}");
@@ -370,7 +359,9 @@ void NewCommandMacro::_init_() {
   env(0, L"gathered", L"\\gathered@@env{", L"}");
   env(0, L"math", L"\\(", L"\\)");
   env(0, L"displaymath", L"\\[", L"\\]");
-  // Predefined commands
+  env(0, L"equation", L"\\begin{align}", L"\\end{align}");
+  // endregion
+  // region Predefined commands
   cmd(1, L"operatorname", L"\\mathop{\\mathrm{#1}}\\nolimits ");
   cmd(2, L"DeclareMathOperator", L"\\newcommand{#1}{\\mathop{\\mathrm{#2}}\\nolimits}");
   cmd(1, L"substack", L"{\\scriptstyle\\begin{array}{c}#1\\end{array}}");
@@ -408,4 +399,5 @@ void NewCommandMacro::_init_() {
   cmd(0, L"L", L"\\mathrm{\\polishlcross L}");
   cmd(0, L"l", L"\\mathrm{\\polishlcross l}");
   cmd(0, L"Join", L"\\mathop{\\rlap{\\ltimes}\\rtimes}");
+  // endregion
 }

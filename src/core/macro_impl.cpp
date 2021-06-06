@@ -11,15 +11,15 @@ namespace tex {
 
 macro(kern) {
   auto[unit, value] = tp.getLength();
-  return sptrOf<SpaceAtom>(unit, value, 0, 0);
+  return sptrOf<SpaceAtom>(unit, value, 0.f, 0.f);
 }
 
 macro(hvspace) {
   auto[unit, value] = SpaceAtom::getLength(args[1]);
   return (
     args[0][0] == L'h'
-    ? sptrOf<SpaceAtom>(unit, value, 0, 0)
-    : sptrOf<SpaceAtom>(unit, 0, value, 0)
+    ? sptrOf<SpaceAtom>(unit, value, 0.f, 0.f)
+    : sptrOf<SpaceAtom>(unit, 0.f, value, 0.f)
   );
 }
 
@@ -74,9 +74,9 @@ macro(sfrac) {
   auto* snum = new VRowAtom(sptrOf<ScaleAtom>(num._root, sx, sy));
   snum->setRaise(UnitType::ex, r);
   auto* ra = new RowAtom(sptr<Atom>(snum));
-  ra->add(sptrOf<SpaceAtom>(UnitType::em, sL, 0, 0));
+  ra->add(sptrOf<SpaceAtom>(UnitType::em, sL, 0.f, 0.f));
   ra->add(slash);
-  ra->add(sptrOf<SpaceAtom>(UnitType::em, sR, 0, 0));
+  ra->add(sptrOf<SpaceAtom>(UnitType::em, sR, 0.f, 0.f));
   ra->add(sptrOf<ScaleAtom>(den._root, sx, sy));
 
   return sptr<Atom>(ra);
@@ -270,7 +270,7 @@ macro(intertext) {
   replaceall(str, L"^{\\prime}", L"\'");
   replaceall(str, L"^{\\prime\\prime}", L"\'\'");
 
-  auto ra = sptrOf<RomanAtom>(Formula(tp, str, "mathnormal", false, false)._root);
+  auto ra = sptrOf<RomanAtom>(Formula(tp, str, false, false)._root);
   ra->_type = AtomType::interText;
   tp.addAtom(ra);
   tp.addRow();
@@ -280,16 +280,16 @@ macro(intertext) {
 
 macro(newcommand) {
   wstring newcmd(args[1]);
-  int nbArgs = 0;
+  int argc = 0;
   if (!tp.isValidName(newcmd))
     throw ex_parse("Invalid name for the command '" + wide2utf8(newcmd));
 
-  if (!args[3].empty()) valueof(args[3], nbArgs);
+  if (!args[3].empty()) valueof(args[3], argc);
 
   if (args[4].empty()) {
-    NewCommandMacro::addNewCommand(newcmd.substr(1), args[2], nbArgs);
+    NewCommandMacro::addNewCommand(newcmd.substr(1), args[2], argc);
   } else {
-    NewCommandMacro::addNewCommand(newcmd.substr(1), args[2], nbArgs, args[4]);
+    NewCommandMacro::addNewCommand(newcmd.substr(1), args[2], argc, args[4]);
   }
 
   return nullptr;
@@ -297,16 +297,16 @@ macro(newcommand) {
 
 macro(renewcommand) {
   wstring newcmd(args[1]);
-  int nbArgs = 0;
+  int argc = 0;
   if (!tp.isValidName(newcmd))
     throw ex_parse("Invalid name for the command: " + wide2utf8(newcmd));
 
-  if (!args[3].empty()) valueof(args[3], nbArgs);
+  if (!args[3].empty()) valueof(args[3], argc);
 
   if (args[4].empty()) {
-    NewCommandMacro::addRenewCommand(newcmd.substr(1), args[2], nbArgs);
+    NewCommandMacro::addRenewCommand(newcmd.substr(1), args[2], argc);
   } else {
-    NewCommandMacro::addRenewCommand(newcmd.substr(1), args[2], nbArgs, args[4]);
+    NewCommandMacro::addRenewCommand(newcmd.substr(1), args[2], argc, args[4]);
   }
 
   return nullptr;
@@ -378,7 +378,7 @@ macro(sizes) {
   else if (args[0] == L"Huge")
     f = 2.5f;
 
-  auto a = Formula(tp, tp.getOverArgument(), "", false, tp.isMathMode())._root;
+  auto a = Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root;
   return sptrOf<MonoScaleAtom>(a, f);
 }
 

@@ -7,53 +7,64 @@
 
 namespace tex {
 
-class Environment2 {
+class Env {
 private:
+  // point-to-pixel conversion
+  static float PIXELS_PER_POINT;
+
   TexStyle _style = TexStyle::display;
   float _textWidth = POS_INF;
   std::string _textStyle;
   bool _smallCap = false;
-  float _scaleFactor = 1;
+  float _scaleFactor = 1.f;
 
   i32 _lastFontId = FontContext::NO_FONT;
-  sptr<FontContext> _tf;
+  sptr<FontContext> _fc;
 
   UnitType _lineSpaceUnit = UnitType::ex;
   float _lineSpace = 1.f;
 
+  /** The text size in point */
   float _textSize = 1.f;
 
-public:
-  Environment2(TexStyle style, const sptr<FontContext>& fc, float textSize)
-    : _style(style), _tf(fc), _textSize(textSize) {}
+  FontStyle _fontStyle = FontStyle::none;
 
-  inline Environment2& setTextWidth(UnitType unit, float width) {
+  /** Get the scale factor of the given style */
+  float scale(TexStyle style) const;
+
+public:
+  no_copy_assign(Env);
+
+  Env(TexStyle style, const sptr<FontContext>& fc, float textSize)
+    : _style(style), _fc(fc), _textSize(textSize) {}
+
+  inline Env& setTextWidth(UnitType unit, float width) {
     // TODO
     return *this;
   }
 
-  inline Environment2& setLineSpace(UnitType unit, float space) {
+  inline Env& setLineSpace(UnitType unit, float space) {
     _lineSpaceUnit = unit;
     _lineSpace = space;
     return *this;
   }
 
-  inline Environment2& setScaleFactor(float factor) {
+  inline Env& setScaleFactor(float factor) {
     _scaleFactor = factor;
     return *this;
   }
 
-  inline Environment2& setStyle(TexStyle style) {
+  inline Env& setStyle(TexStyle style) {
     _style = style;
     return *this;
   }
 
-  inline Environment2& setSmallCap(bool smallCap) {
+  inline Env& setSmallCap(bool smallCap) {
     _smallCap = smallCap;
     return *this;
   }
 
-  inline Environment2& setLastFontId(i32 lastFontId) {
+  inline Env& setLastFontId(i32 lastFontId) {
     _lastFontId = lastFontId;
     return *this;
   }
@@ -75,9 +86,34 @@ public:
   }
 
   inline i32 lastFontId() const {
-    return _lastFontId == FontContext::NO_FONT ? _tf->mathFontId() : _lastFontId;
+    return _lastFontId == FontContext::NO_FONT ? _fc->mathFontId() : _lastFontId;
   }
 
+  /** Set the dot per inch target */
+  static void setDpi(float dpi);
+
+  static float pixelsPerPoint();
+
+  /** Helper function to get math constants */
+  const MathConsts& mathConsts() const;
+
+  /** units per em, environment independent */
+  float upem() const;
+
+  /** The em size of the current environment */
+  float em() const;
+
+  /** pixels per em */
+  float ppem() const;
+
+  /** The x-height of the current environment */
+  float xHeight() const;
+
+  float ruleThickness() const;
+
+  Char getChar(c32 code, bool isMathMode) const;
+
+  Char getChar(const std::string& symbolName) const;
 };
 
 }

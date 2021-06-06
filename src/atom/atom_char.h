@@ -4,6 +4,8 @@
 #include "common.h"
 #include "atom/atom.h"
 #include "box/box_group.h"
+#include "fonts/font_basic.h"
+#include "fonts/tex_font.h"
 
 namespace tex {
 
@@ -67,7 +69,12 @@ public:
 
   explicit FixedCharAtom(const sptr<CharFont>& c) : _cf(c) {}
 
-  sptr<CharFont> getCharFont(TeXFont& tf) override;
+  // FIXME
+  // workaround for the MSVS's LNK2019 error
+  // it should be implemented in the atom_char.cpp file
+  sptr<CharFont> getCharFont(TeXFont& tf) override {
+    return _cf;
+  }
 
   sptr<Box> createBox(Environment& env) override;
 
@@ -112,7 +119,12 @@ public:
 
   sptr<Box> createBox(Environment& env) override;
 
-  sptr<CharFont> getCharFont(TeXFont& tf) override;
+  // FIXME
+  // workaround for the MSVS's LNK2019 error
+  // it should be implemented in the atom_char.cpp file
+  sptr<CharFont> getCharFont(TeXFont& tf) override {
+    return tf.getChar(_name, TexStyle::display).getCharFont();
+  }
 
   static void addSymbolAtom(const std::string& file);
 
@@ -166,6 +178,8 @@ public:
   CharAtom(wchar_t c, std::string textStyle, bool mathMode)
     : _c(c), _textStyle(std::move(textStyle)), _mathMode(mathMode) {}
 
+  CharAtom(wchar_t c, bool mathMode) : _c(c), _mathMode(mathMode) {}
+
   inline wchar_t getCharacter() {
     return _c;
   }
@@ -176,7 +190,12 @@ public:
 
   sptr<Box> createBox(Environment& env) override;
 
-  sptr<CharFont> getCharFont(TeXFont& tf) override;
+  // FIXME
+  // workaround for the MSVS's LNK2019 error
+  // it should be implemented in the atom_char.cpp file
+  sptr<CharFont> getCharFont(TeXFont& tf) override {
+    return getChar(tf, TexStyle::display, false).getCharFont();
+  }
 
   __decl_clone(CharAtom)
 };

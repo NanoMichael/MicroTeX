@@ -23,17 +23,17 @@ const int* const FontInfo::getExtension(wchar_t ch) const {
   return _extensions.isEmpty() ? nullptr : _extensions((int)ch) + 1;
 }
 
-sptr<CharFont> FontInfo::getNextLarger(wchar_t ch) const {
-  const int* const item = _nextLargers((int)ch);
-  if (item == nullptr) return nullptr;
-  return sptrOf<CharFont>(item[1], item[2]);
-}
+//sptr<CharFont> FontInfo::getNextLarger(wchar_t ch) const {
+//  const int* const item = _nextLargers((int)ch);
+//  if (item == nullptr) return nullptr;
+//  return sptrOf<CharFont>(item[1], item[2]);
+//}
 
-sptr<CharFont> FontInfo::getLigture(wchar_t left, wchar_t right) const {
-  const wchar_t* const item = _lig(left, right);
-  if (item == nullptr) return nullptr;
-  return sptrOf<CharFont>(item[2], _id);
-}
+//sptr<CharFont> FontInfo::getLigture(wchar_t left, wchar_t right) const {
+//  const wchar_t* const item = _lig(left, right);
+//  if (item == nullptr) return nullptr;
+//  return sptrOf<CharFont>(item[2], _id);
+//}
 
 float FontInfo::getKern(wchar_t left, wchar_t right, float factor) const {
   const float* const item = _kern((float)left, (float)right);
@@ -71,32 +71,34 @@ void FontInfo::__free() {
 
 #ifdef HAVE_LOG
 #include <iomanip>
-ostream& tex::operator<<(ostream& os, const FontInfo& info) {
-  // base information
-  os << "\nID: " << info._id;
-  os << " path: " << info._path << endl;
-  // font information
-  os << "---------------------------------------------------" << endl;
-  os << "x height    space     quad  bold  roman  ss  tt  it" << endl;
-  os << setw(8) << info._xHeight << setw(9) << info._space;
-  os << setw(9) << info._quad << setw(6) << info._boldId;
-  os << setw(7) << info._romanId << setw(4) << info._ssId;
-  os << setw(4) << info._ttId << setw(4) << info._itId;
-  os << endl;
+namespace tex {
+    ostream& operator<<(ostream& os, const FontInfo& info) {
+        // base information
+        os << "\nID: " << info._id;
+        os << " path: " << info._path << endl;
+        // font information
+        os << "---------------------------------------------------" << endl;
+        os << "x height    space     quad  bold  roman  ss  tt  it" << endl;
+        os << setw(8) << info._xHeight << setw(9) << info._space;
+        os << setw(9) << info._quad << setw(6) << info._boldId;
+        os << setw(7) << info._romanId << setw(4) << info._ssId;
+        os << setw(4) << info._ttId << setw(4) << info._itId;
+        os << endl;
 
-  if (!info._lig.isEmpty()) {
-    os << "ligatures:" << endl;
-    const int rows = info._lig.rows();
-    for (int i = 0; i < rows; i++) {
-      const wchar_t* t = info._lig[i];
-      os << "\t["
-         << setw(3) << t[0] << ", "
-         << setw(3) << t[1] << "] = "
-         << t[2] << endl;
+        if (!info._lig.isEmpty()) {
+            os << "ligatures:" << endl;
+            const int rows = info._lig.rows();
+            for (int i = 0; i < rows; i++) {
+                const wchar_t* t = info._lig[i];
+                os << "\t["
+                    << setw(3) << t[0] << ", "
+                    << setw(3) << t[1] << "] = "
+                    << t[2] << endl;
+            }
+        }
+
+        os << "---------------------------------------------------" << endl;
+        return os;
     }
-  }
-
-  os << "---------------------------------------------------" << endl;
-  return os;
 }
 #endif

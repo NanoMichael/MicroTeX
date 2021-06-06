@@ -6,7 +6,7 @@
 
 using namespace std;
 using namespace tex;
-using namespace tex::tinyxml2;
+using namespace tinyxml2;
 
 const string DefaultTeXFontParser::FONTS_RES_BASE = "fonts";
 /** document define  */
@@ -23,7 +23,7 @@ const map<string, int> DefaultTeXFontParser::_rangeTypeMappings = {
     {"numbers", DefaultTeXFont::NUMBERS},
     {"capitals", DefaultTeXFont::CAPITAL},
     {"small", DefaultTeXFont::SMALL},
-    {"unicode", DefaultTeXFont::UNICODE},
+    {"unicode", DefaultTeXFont::IS_UNICODE},
 };  // range mapping
 
 const map<string, ChildParser> DefaultTeXFontParser::_charChildParsers = {
@@ -195,7 +195,7 @@ void DefaultTeXFontParser::parseFontDescriptions(const string& file) {
 
   XMLDocument doc(true, COLLAPSE_WHITESPACE);
   const int   err = doc.LoadFile(file.c_str());
-  if (err != XML_NO_ERROR) throw ex_xml_parse("Cannot open file " + file + "!");
+  if (err != XML_SUCCESS) throw ex_xml_parse("Cannot open file " + file + "!");
   // get root
   const XMLElement* font = doc.RootElement();
 
@@ -351,7 +351,7 @@ void DefaultTeXFontParser::parseSymbolMappings(
 #endif
 
     int err = doc.LoadFile(path.c_str());
-    if (err != XML_NO_ERROR)
+    if (err != XML_SUCCESS)
       throw ex_xml_parse("Cannot open the file '" + path + "'!");
     const XMLElement* symbol = doc.RootElement()->FirstChildElement("SymbolMapping");
 

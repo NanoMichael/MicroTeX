@@ -32,6 +32,10 @@ OtfFont::OtfFont(i32 id, string fontFile, const string& clmFile)
   : _id(id), _fontFile(std::move(fontFile)), _otf(sptr<const Otf>(Otf::fromFile(clmFile.c_str()))) {}
 
 
+bool Char::isValid() const {
+  return _glyph >= 0;
+}
+
 FontStyle FontFamily::fontStyleOf(const std::string& name) {
   static map<string, FontStyle> nameStyle{
     {"",   FontStyle::none},
@@ -52,6 +56,11 @@ inline void FontFamily::add(const std::string& styleName, const sptr<const OtfFo
 
 inline sptr<const OtfFont> FontFamily::get(const std::string& styleName) const {
   const auto it = _styles.find(fontStyleOf(styleName));
+  return it == _styles.end() ? nullptr : it->second;
+}
+
+inline sptr<const OtfFont> FontFamily::get(FontStyle style) const {
+  const auto it = _styles.find(style);
   return it == _styles.end() ? nullptr : it->second;
 }
 
@@ -183,6 +192,8 @@ Char FontContext::getChar(c32 code, const string& styleName, bool isMathMode) co
 }
 
 Char FontContext::getChar(c32 code, FontStyle style, bool isMathMode) const {
+  // TODO
+  // pick a closest style
   if (isMathMode) {
     const auto it = _mathVersions.find(style);
     const MathVersion& version = (
@@ -193,6 +204,9 @@ Char FontContext::getChar(c32 code, FontStyle style, bool isMathMode) const {
     const c32 unicode = version.map(code);
     return {code, unicode, _mathFont->_id, _mathFont->otf().glyphId(unicode)};
   } else {
-    // TODO
+    sptr<const OtfFont> font = _mainFont->get(style);
+    if (font == nullptr) font = _mainFont->get(FontStyle::none);
+    if (font == nullptr) font = _mathFont;
+    return {code, code, font->_id, font->otf().glyphId(code)};
   }
 }

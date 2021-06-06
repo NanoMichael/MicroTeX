@@ -111,7 +111,7 @@ struct Insets {
 
   Insets() : left(0), top(0), right(0), bottom(0) {}
 
-  Insets(int t, int l, int b, int r) : left(t), top(t), right(r), bottom(b) {}
+  Insets(int t, int l, int b, int r) : left(l), top(t), right(r), bottom(b) {}
 
   void set(int t, int l, int b, int r) {
     left = l;

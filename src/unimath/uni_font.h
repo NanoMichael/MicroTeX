@@ -48,12 +48,21 @@ struct OtfFont final {
   inline const Otf& otf() const { return *_otf; }
 };
 
-/** Represents a character with its font and glyph id */
+/** Represents a character with its font, glyph id and size */
 struct Char final {
-  c32 _originCode;
-  c32 _mappedCode;
-  i32 _fontId;
-  i32 _glyphId;
+  /** The original code point of the character */
+  const c32 _code = 0;
+  /** The mapped code point (by math style) of the character */
+  const c32 _mappedCode = 0;
+  /** The font id */
+  const i32 _font = -1;
+  /** The glyph id, -1 if no corresponding glyph in the font */
+  const i32 _glyph = -1;
+
+  float _size = 1.f;
+
+  /** Test if current glyph is valid, basically the #_glyph >= 0 */
+  bool isValid() const;
 };
 
 /**
@@ -94,8 +103,11 @@ public:
   /** Add a font to this family with given style */
   void add(const std::string& styleName, const sptr<const OtfFont>& font);
 
-  /** Get the font corresponding to the style */
+  /** Get the font corresponding to the given style name, return null if not found */
   sptr<const OtfFont> get(const std::string& styleName) const;
+
+  /** Get the font corresponding to the given style, return null if not found */
+  sptr<const OtfFont> get(FontStyle style) const;
 };
 
 /**
