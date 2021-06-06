@@ -1,10 +1,10 @@
 src = [
-    'test_clm.cpp'
+    'test_env.cpp'
 ]
 
 include = include_directories('../../src')
 
-executable('clm', src,
+executable('env', src,
     include_directories: include,
-	link_with: clatexmath_lib
+    link_with: clatexmath_lib
 )

@@ -48,14 +48,20 @@ struct OtfFont final {
   inline const Otf& otf() const { return *_otf; }
 };
 
-/** Represents a character with its font and glyph id */
+/** Represents a character with its font, glyph id and size */
 struct Char final {
-  c32 _originCode = 0;
-  c32 _mappedCode = 0;
-  i32 _fontId = -1;
-  i32 _glyphId = -1;
+  /** The original code point of the character */
+  const c32 _code = 0;
+  /** The mapped code point (by math style) of the character */
+  const c32 _mappedCode = 0;
+  /** The font id */
+  const i32 _font = -1;
+  /** The glyph id, -1 if no corresponding glyph in the font */
+  const i32 _glyph = -1;
 
-  /** Test if current glyph is valid, basically the #_glyphId >= 0 */
+  float _size = 1.f;
+
+  /** Test if current glyph is valid, basically the #_glyph >= 0 */
   bool isValid() const;
 };
 

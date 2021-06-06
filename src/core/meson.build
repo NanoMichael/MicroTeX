@@ -1,5 +1,7 @@
 core_src = [
 	'core/core.cpp',
+	'core/units.cpp',
+	'core/env.cpp',
 	'core/formula.cpp',
 	'core/formula_def.cpp',
 	'core/glue.cpp',
@@ -13,6 +15,8 @@ core_src = [
 if install_headerfiles
 	install_headers([
 		'core.h',
+		'units.h',
+		'env.h',
 		'formula.h',
 		'glue.h',
 		'macro.h',

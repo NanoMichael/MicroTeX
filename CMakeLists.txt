@@ -69,6 +69,7 @@ target_sources(LaTeX PRIVATE
         src/box/box_single.cpp
         # core folder
         src/core/env.cpp
+        src/core/units.cpp
         src/core/core.cpp
         src/core/formula.cpp
         src/core/formula_def.cpp

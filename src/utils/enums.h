@@ -102,9 +102,9 @@ enum class UnitType : i8 {
   /** 1 ex = the height of the character 'x' in the current font */
   ex,
   pixel,
-  /** postscript point */
+  /** postscript point (also known as big-point (bp) in TeX) */
   point,
-  /** 1 pica = 12 point*/
+  /** 1 pica = 12 point */
   pica,
   /** 1 mu = 1/18 em */
   mu,
@@ -114,10 +114,13 @@ enum class UnitType : i8 {
   mm,
   /** 1 in = 72 point */
   in,
-  /** 1 sp = 65536 point */
+  /** 1 sp = 65536 point, sortcut for `scaled-point` */
   sp,
+  /** 1 pt = 0.99626401 point (pt means point in printer's) */
   pt,
+  /** 1157 dd = 1238 pt, shortcut for `didot` */
   dd,
+  /** 1 cc = 12 dd, shortcut for `cicero` */
   cc,
   /** 1 x8 = 1 default rule thickness */
   x8,

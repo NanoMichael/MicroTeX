@@ -3,3 +3,6 @@ option('TARGET_DEVEL', type : 'boolean', value : true)
 
 # if, and what demo/sample application to build --- Todo: add (QT &) Win32
 option('TARGET_DEMO', type : 'combo', choices : ['NONE', 'GTK'], value : 'NONE')
+
+# if build  tests
+option('TARGET_TEST', type: 'boolean', value: true)

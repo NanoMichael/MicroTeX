@@ -33,7 +33,7 @@ OtfFont::OtfFont(i32 id, string fontFile, const string& clmFile)
 
 
 bool Char::isValid() const {
-  return _glyphId >= 0;
+  return _glyph >= 0;
 }
 
 FontStyle FontFamily::fontStyleOf(const std::string& name) {

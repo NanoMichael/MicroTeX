@@ -5,6 +5,10 @@ project('clatexmath', 'cpp',
 
 subdir('src')
 
+if get_option('TARGET_TEST')
+    subdir('test')
+endif
+
 install_subdir('res/fonts', install_dir: get_option('datadir')/'clatexmath')
 install_subdir('res/greek', install_dir: get_option('datadir')/'clatexmath')
 install_subdir('res/cyrillic', install_dir: get_option('datadir')/'clatexmath')
