@@ -108,7 +108,7 @@ def read_metrics(glyph):
     bounding_box = glyph.boundingBox()
     return (
         glyph.width,
-        bounding_box[2],
+        bounding_box[3],
         -bounding_box[1]
     )
 
