@@ -6,38 +6,12 @@
 #include "common.h"
 #include "utils/utils.h"
 #include "otf/otf.h"
+#include "unimath/math_type.h"
+#include "unimath/uni_char.h"
 
 namespace tex {
 
-enum class MathType : u8 {
-  none,
-  digit,
-  latinSmall,
-  latinCapital,
-  greekSmall,
-  greekCapital,
-};
-
-/** Represents math-version for digit, latin and greek alphabets */
-struct MathVersion {
-private:
-  c32 _codepoints[6];
-
-  /** Get the MathType and the version-specific offset of the given codepoint. */
-  static std::pair<MathType, c32> ofChar(c32 codepoint);
-
-public:
-  no_copy_assign(MathVersion);
-
-  MathVersion(
-    c32 digit, c32 latinSmall, c32 latinCapital, c32 greekSmall, c32 greekCapital
-  ) noexcept;
-
-  /** Map an Unicode char to version-specific Unicode char. */
-  c32 map(c32 codepoint) const;
-};
-
-/** Represents a open-type font with font-file and font-spec */
+/** Represents an open-type font with font-file and font-spec */
 struct OtfFont final {
   const i32 _id;
   const std::string _fontFile;
@@ -46,23 +20,6 @@ struct OtfFont final {
   OtfFont(i32 id, std::string fontFile, const std::string& clmFile);
 
   inline const Otf& otf() const { return *_otf; }
-};
-
-/** Represents a character with its font, glyph id and size */
-struct Char final {
-  /** The original code point of the character */
-  const c32 _code = 0;
-  /** The mapped code point (by math style) of the character */
-  const c32 _mappedCode = 0;
-  /** The font id */
-  const i32 _font = -1;
-  /** The glyph id, -1 if no corresponding glyph in the font */
-  const i32 _glyph = -1;
-
-  float _size = 1.f;
-
-  /** Test if current glyph is valid, basically the #_glyph >= 0 */
-  bool isValid() const;
 };
 
 /**

@@ -1,5 +1,5 @@
-#ifndef MATH_INCLUDED
-#define MATH_INCLUDED
+#ifndef LATEX_MATH_CONSTS_H
+#define LATEX_MATH_CONSTS_H
 
 #include "utils/utils.h"
 
@@ -148,4 +148,4 @@ public:
 
 }  // namespace tex
 
-#endif
+#endif // LATEX_MATH_CONSTS_H

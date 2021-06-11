@@ -2,7 +2,7 @@
 #define OTF_INCLUDED
 
 #include "otf/glyph.h"
-#include "otf/math.h"
+#include "otf/math_consts.h"
 #include "utils/utils.h"
 
 namespace tex {
@@ -52,6 +52,8 @@ private:
 
   u16 _em = 0;
   u16 _xHeight = 0;
+  u16 _ascent = 0;
+  u16 _descent = 0;
 
   bool _isMathFont = false;
   MathConsts* _mathConsts = nullptr;
@@ -89,14 +91,35 @@ public:
   /** Get the x-height of this font. */
   inline u16 xHeight() const { return _xHeight; }
 
+  /** Get the ascent of this font. */
+  inline u16 ascent() const { return _ascent; }
+
+  /** Get the descent of this font. */
+  inline u16 descent() const { return _descent; }
+
   /** Get the math-consts table, return null if absent. */
   inline const MathConsts* mathConsts() const { return _mathConsts; }
 
-  /** Get the glyph id from the given unicode-codepoint, return -1 if not found. */
-  i32 glyphId(u32 codepoint) const;
+  /**
+   * Get the glyph id from the given Unicode-codepoint, return -1 if not found.
+   *
+   * <p>
+   * The glyph id actually represents the index of the glyph in font file.
+   * <strong>Does not support CID-keyed fonts (either in PS or in CFF format).</strong>
+   *
+   * <p>
+   * See
+   * <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cff">
+   * CFF - Compact Font Format Table</a> for details.
+   *
+   * And
+   * <a href="https://freetype-py.readthedocs.io/en/latest/ft_face_flags.html#FT_FACE_FLAG_CID_KEYED">
+   * FT_FACE_FLAG_CID_KEYED</a> explains why.
+   */
+  i32 glyphId(c32 codepoint) const;
 
   /** Get the glyph from the given unicode-codepoint, return null if not found. */
-  const Glyph* glyphOfUnicode(u32 codepoint) const;
+  const Glyph* glyphOfUnicode(c32 codepoint) const;
 
   /** Get the glyph from the given glyph id, return null if absent. */
   const Glyph* glyph(i32 id) const;

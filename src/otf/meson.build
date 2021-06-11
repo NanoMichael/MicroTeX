@@ -8,7 +8,7 @@ if install_headerfiles
 	install_headers([
 		'clm.h',
 		'glyph.h',
-		'math.h',
+		'math_consts.h',
 		'otf.h'
 	], subdir: 'clatexmath/otf')
 endif

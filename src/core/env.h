@@ -3,7 +3,6 @@
 
 #include "unimath/uni_symbol.h"
 #include "unimath/uni_font.h"
-#include "atom/atom_space.h"
 
 namespace tex {
 
@@ -13,7 +12,6 @@ private:
   static float PIXELS_PER_POINT;
 
   TexStyle _style = TexStyle::display;
-  float _textWidth = POS_INF;
   std::string _textStyle;
   bool _smallCap = false;
   float _scaleFactor = 1.f;
@@ -21,7 +19,7 @@ private:
   i32 _lastFontId = FontContext::NO_FONT;
   sptr<FontContext> _fc;
 
-  UnitType _lineSpaceUnit = UnitType::ex;
+  float _textWidth = POS_INF;
   float _lineSpace = 1.f;
 
   /** The text size in point */
@@ -38,16 +36,17 @@ public:
   Env(TexStyle style, const sptr<FontContext>& fc, float textSize)
     : _style(style), _fc(fc), _textSize(textSize) {}
 
-  inline Env& setTextWidth(UnitType unit, float width) {
-    // TODO
-    return *this;
-  }
+  // region statics
+  /** Set the dot per inch target */
+  static void setDpi(float dpi);
 
-  inline Env& setLineSpace(UnitType unit, float space) {
-    _lineSpaceUnit = unit;
-    _lineSpace = space;
-    return *this;
-  }
+  static float pixelsPerPoint();
+  // endregion
+
+  // region getters and setters
+  Env& setTextWidth(UnitType unit, float width);
+
+  Env& setLineSpace(UnitType unit, float space);
 
   inline Env& setScaleFactor(float factor) {
     _scaleFactor = factor;
@@ -81,18 +80,13 @@ public:
 
   inline float textSize() const { return _textSize; }
 
-  inline float lineSpace() const {
-    // TODO
-  }
+  inline float lineSpace() const { return _lineSpace; }
+  // endregion
 
+  /** The last used font's id, or the math font's id if no font was used */
   inline i32 lastFontId() const {
     return _lastFontId == FontContext::NO_FONT ? _fc->mathFontId() : _lastFontId;
   }
-
-  /** Set the dot per inch target */
-  static void setDpi(float dpi);
-
-  static float pixelsPerPoint();
 
   /** Helper function to get math constants */
   const MathConsts& mathConsts() const;
@@ -109,10 +103,31 @@ public:
   /** The x-height of the current environment */
   float xHeight() const;
 
+  /** The rule thickness, equals to the fraction rule thickness */
   float ruleThickness() const;
 
+  /** Add a font style to this environment */
+  void addFontStyle(FontStyle style);
+
+  /**
+   * Get a Char specifying the given character with scale information depending
+   * on the current environment.
+   *
+   * @param code the alphanumeric character code
+   * @param isMathMode if is in math-mode
+   *
+   * @return the Char, the method Char#isValid() will return false if not found
+   */
   Char getChar(c32 code, bool isMathMode) const;
 
+  /**
+   * Get a Char specifying the given symbol name with scale information depending
+   * on the current environment.
+   *
+   * @param symbolName the symbol name
+   *
+   * @return the Char, the method Char#isValid() will return false if not found
+   */
   Char getChar(const std::string& symbolName) const;
 };
 

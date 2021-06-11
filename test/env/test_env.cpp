@@ -8,6 +8,20 @@
 using namespace std;
 using namespace tex;
 
+void show_char(c32 code, const Env& env, bool isMathMode = true) {
+  const auto&& chr = env.getChar(code, isMathMode);
+  std::u32string str;
+  str.append(1, chr._mappedCode);
+  printf(
+    "{ code: %X, map: %X, font: %d, glyph: %d, scale: %f }\n",
+    chr._code,
+    chr._mappedCode,
+    chr._font,
+    chr._glyph,
+    chr._scale
+  );
+}
+
 int main(int argc, char* argv[]) {
   if (argc < 4) {
     printf(
@@ -57,5 +71,23 @@ int main(int argc, char* argv[]) {
     Units::fsize(UnitType::cc, 1.f, env),
     Units::fsize(UnitType::x8, 1.f, env)
   );
+  printf("\n");
+
+  env.setStyle(TexStyle::scriptScript);
+  printf("varies char with TexStyle::scriptScript in 20 point size:\n");
+  show_char('a', env);
+  show_char('h', env);
+  show_char('z', env);
+  show_char('{', env);
+  show_char(0x1d53a, env);
+  printf("\n");
+
+  env.addFontStyle(FontStyle::rm);
+  printf("varies char with TexStyle::scriptScript and FontStyle::rm in 20 point size:\n");
+  show_char('a', env);
+  show_char('h', env);
+  show_char('z', env);
+  show_char('{', env);
+  printf("\n");
   return 0;
 }

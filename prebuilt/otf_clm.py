@@ -13,6 +13,7 @@ import struct
 def chain(*fs):
     def _chain(f, g):
         return lambda x: g(f(x))
+
     return reduce(_chain, fs, lambda x: x)
 
 
@@ -209,6 +210,7 @@ def _read_lookup_subtables(
     '''
     Return a function to get the subtable names
     '''
+
     def _is_target_lookup(lookup_name):
         lookup_info = font.getLookupInfo(lookup_name)
         return lookup_info and is_target_lookup(lookup_info)
@@ -306,7 +308,7 @@ def write_clm_kerning_class(f, kerning_classes, glyph_name_id_map):
     write_classes = chain(
         partial(
             map,
-            lambda (i, xs,): map(lambda x: (x, i,), xs)
+            lambda (i, xs, ): map(lambda x: (x, i,), xs)
         ),
         partial(
             do,
@@ -315,7 +317,7 @@ def write_clm_kerning_class(f, kerning_classes, glyph_name_id_map):
         partial(fmap, lambda x: x),
         partial(
             map,
-            lambda (name, index,): (glyph_name_id_map[name], index,)
+            lambda (name, index, ): (glyph_name_id_map[name], index,)
         ),
         partial(sorted, key=lambda x: x[0]),
         partial(
@@ -324,7 +326,7 @@ def write_clm_kerning_class(f, kerning_classes, glyph_name_id_map):
         ),
         partial(
             map,
-            lambda (glyph, index,): struct.pack('!HH', glyph, index)
+            lambda (glyph, index, ): struct.pack('!HH', glyph, index)
         ),
         partial(
             do_loop,
@@ -489,12 +491,16 @@ def parse_otf(file_path, is_math_font, output_file_path):
 
     em = font.em
     xheight = font.xHeight
+    ascent = font.ascent
+    descent = font.descent
     font.close()
 
     with open(output_file_path, 'wb') as f:
         f.write(struct.pack('?', is_math_font))
         f.write(struct.pack('!H', em))
         f.write(struct.pack('!H', xheight))
+        f.write(struct.pack('!H', ascent))
+        f.write(struct.pack('!H', descent))
         write_clm_unicode_glyph_map(f, unicode_glyph_map)
         write_clm_kerning_class(f, kern_class_tables, glyph_name_id_map)
         write_ligas(f, ligas, glyph_name_id_map)

@@ -15,6 +15,10 @@ private:
   static const std::function<float(const Env&)> _unitConversions[];
   static const u32 _unitsCount;
 
+  /**
+   * Helper function to get the size of 1 point (big-point) corresponds to
+   * the font design unit.
+   */
   static float pt(const Env& env);
 
 public:

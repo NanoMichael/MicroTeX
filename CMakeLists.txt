@@ -93,6 +93,8 @@ target_sources(LaTeX PRIVATE
         src/otf/glyph.cpp
         src/otf/otf.cpp
         # unimath folder
+        src/unimath/math_type.cpp
+        src/unimath/uni_char.cpp
         src/unimath/uni_font.cpp
         src/unimath/uni_symbol.cpp
         # res folder

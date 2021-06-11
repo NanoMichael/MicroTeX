@@ -27,7 +27,7 @@ Otf* Otf::fromFile(const char* filePath) {
   return reader.read(filePath);
 }
 
-i32 Otf::glyphId(u32 codepoint) const {
+i32 Otf::glyphId(c32 codepoint) const {
   const int index = binIndexOf(
     _unicodeCount,
     [&](int i) { return codepoint - _unicodes[i]; }
@@ -36,7 +36,7 @@ i32 Otf::glyphId(u32 codepoint) const {
   return _unicodeGlyphs[index];
 }
 
-const Glyph* Otf::glyphOfUnicode(u32 codepoint) const {
+const Glyph* Otf::glyphOfUnicode(c32 codepoint) const {
   const int id = glyphId(codepoint);
   if (id < 0) return nullptr;
   return _glyphs[id];

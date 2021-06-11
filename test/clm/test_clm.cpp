@@ -89,12 +89,16 @@ int main(int argc, char* argv[]) {
   tex::Otf* font = tex::Otf::fromFile(argv[1]);
   printf("font from %s\n", argv[1]);
   printf(
-    "unicodes count: %u, glyphs count: %u, is math font: %d, em: %u, x-height: %u\n",
+    "unicodes count: %u, glyphs count: %u\n"
+    "is math font: %d, em: %u, x-height: %u\n"
+    "ascent: %d, descent:%d\n",
     font->unicodesCount(),
     font->glyphsCount(),
     font->isMathFont(),
     font->em(),
-    font->xHeight()
+    font->xHeight(),
+    font->ascent(),
+    font->descent()
   );
   printf("\n");
 

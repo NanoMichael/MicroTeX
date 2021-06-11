@@ -6,35 +6,8 @@
 using namespace tex;
 using namespace std;
 
-MathVersion::MathVersion(
-  c32 digit, c32 latinSmall, c32 latinCapital, c32 greekSmall, c32 greekCapital
-) noexcept: _codepoints{0, digit, latinSmall, latinCapital, greekSmall, greekCapital} {}
-
-pair<MathType, c32> MathVersion::ofChar(c32 codepoint) {
-  if (codepoint >= '0' && codepoint <= '9') return {MathType::digit, codepoint - '0'};
-  if (codepoint >= 'a' && codepoint <= 'z') return {MathType::latinSmall, codepoint - 'a'};
-  if (codepoint >= 'A' && codepoint <= 'Z') return {MathType::latinCapital, codepoint - 'A'};
-  if (codepoint >= 0x03B1 && codepoint <= 0x03C9) {  // α - ω
-    return {MathType::greekSmall, codepoint - 0x03B1};
-  }
-  if (codepoint >= 0x0391 && codepoint <= 0x03A9) {  // Α - Ω
-    return {MathType::greekCapital, codepoint - 0x0391};
-  }
-  return {MathType::none, codepoint};
-}
-
-c32 MathVersion::map(const c32 codepoint) const {
-  auto[type, offset] = ofChar(codepoint);
-  return _codepoints[static_cast<u8>(type)] + offset;
-}
-
 OtfFont::OtfFont(i32 id, string fontFile, const string& clmFile)
   : _id(id), _fontFile(std::move(fontFile)), _otf(sptr<const Otf>(Otf::fromFile(clmFile.c_str()))) {}
-
-
-bool Char::isValid() const {
-  return _glyph >= 0;
-}
 
 FontStyle FontFamily::fontStyleOf(const std::string& name) {
   static map<string, FontStyle> nameStyle{
