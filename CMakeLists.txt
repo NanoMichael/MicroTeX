@@ -68,8 +68,6 @@ target_sources(LaTeX PRIVATE
         src/box/box_group.cpp
         src/box/box_single.cpp
         # core folder
-        src/core/env.cpp
-        src/core/units.cpp
         src/core/core.cpp
         src/core/formula.cpp
         src/core/formula_def.cpp
@@ -79,6 +77,9 @@ target_sources(LaTeX PRIVATE
         src/core/macro_def.cpp
         src/core/macro_impl.cpp
         src/core/parser.cpp
+        # env folder
+        src/env/env.cpp
+        src/env/units.cpp
         # fonts folder
         src/fonts/alphabet.cpp
         src/fonts/font_basic.cpp

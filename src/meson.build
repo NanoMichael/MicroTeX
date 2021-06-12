@@ -44,6 +44,9 @@ src += otf_src
 subdir('unimath')
 src += unimath_src
 
+subdir('env')
+src += env_src
+
 # GCC versions earlier than 9 require linking with stdc++fs to use
 # std::filesystem functionality.
 cc = meson.get_compiler('cpp')
