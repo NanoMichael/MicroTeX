@@ -81,6 +81,8 @@ public:
   inline float textSize() const { return _textSize; }
 
   inline float lineSpace() const { return _lineSpace; }
+
+  inline FontStyle fontStyle() const { return _fontStyle; }
   // endregion
 
   /** The last used font's id, or the math font's id if no font was used */

@@ -2,6 +2,7 @@
 
 #include "unimath/uni_font.h"
 #include "unimath/uni_symbol.h"
+#include "utils/utils.h"
 
 using namespace tex;
 using namespace std;
@@ -10,7 +11,8 @@ OtfFont::OtfFont(i32 id, string fontFile, const string& clmFile)
   : _id(id), _fontFile(std::move(fontFile)), _otf(sptr<const Otf>(Otf::fromFile(clmFile.c_str()))) {}
 
 FontStyle FontFamily::fontStyleOf(const std::string& name) {
-  static map<string, FontStyle> nameStyle{
+  // TODO: add composed styles
+  static const map<string, FontStyle> nameStyle{
     {"",   FontStyle::none},
     {"rm", FontStyle::rm},
     {"bf", FontStyle::bf},
@@ -25,11 +27,6 @@ FontStyle FontFamily::fontStyleOf(const std::string& name) {
 
 inline void FontFamily::add(const std::string& styleName, const sptr<const OtfFont>& font) {
   _styles[fontStyleOf(styleName)] = font;
-}
-
-inline sptr<const OtfFont> FontFamily::get(const std::string& styleName) const {
-  const auto it = _styles.find(fontStyleOf(styleName));
-  return it == _styles.end() ? nullptr : it->second;
 }
 
 inline sptr<const OtfFont> FontFamily::get(FontStyle style) const {
@@ -59,17 +56,18 @@ map<FontStyle, sptr<const MathVersion>> FontContext::_mathVersions{
   version(FontStyle::rm, '0', 'a', 'A', 0x03B1, 0x0391),
   version(FontStyle::bf, 0x1D7CE, 0x1D41A, 0x1D400, 0x1D6C2, 0x1D6A8),
   version(FontStyle::it, '0', 0x1D44E, 0x1D434, 0x1D6FC, 0x1D6E2),
-  version(FontStyle::bfit, '0', 0x1D482, 0x1D468, 0x1D736, 0x1D71C),
   version(FontStyle::cal, '0', 0x1D4B6, 0x1D49C, 0x03B1, 0x0391),
-  version(FontStyle::bfcal, '0', 0x1D4EA, 0x1D4D0, 0x03B1, 0x0391),
   version(FontStyle::frak, '0', 0x1D51E, 0x1D504, 0x03B1, 0x0391),
   version(FontStyle::bb, 0x1D7D8, 0x1D552, 0x1D538, 0x03B1, 0x0391),
-  version(FontStyle::bffrak, '0', 0x1D586, 0x1D552, 0x03B1, 0x0391),
   version(FontStyle::sf, 0x1D7E2, 0x1D5BA, 0x1D5A0, 0x03B1, 0x0391),
+  version(FontStyle::tt, 0x1D7F6, 0x1D68A, 0x1D670, 0x03B1, 0x0391),
+  // composed styles
+  version(FontStyle::bfit, '0', 0x1D482, 0x1D468, 0x1D736, 0x1D71C),
+  version(FontStyle::bfcal, '0', 0x1D4EA, 0x1D4D0, 0x03B1, 0x0391),
+  version(FontStyle::bffrak, '0', 0x1D586, 0x1D552, 0x03B1, 0x0391),
   version(FontStyle::sfbf, 0x1D7EC, 0x1D5EE, 0x1D5D4, 0x1D770, 0x1D756),
   version(FontStyle::sfit, '0', 0x1D622, 0x1D608, 0x03B1, 0x0391),
   version(FontStyle::sfbfit, '0', 0x1D656, 0x1D63C, 0x1D7AA, 0x1D790),
-  version(FontStyle::tt, 0x1D7F6, 0x1D68A, 0x1D670, 0x03B1, 0x0391),
 };
 
 int FontContext::_lastId = 0;
@@ -79,30 +77,51 @@ map<string, sptr<FontFamily>> FontContext::_mainFonts;
 map<string, sptr<const OtfFont>> FontContext::_mathFonts;
 
 FontStyle FontContext::mathFontStyleOf(const std::string& name) {
-  static map<string, FontStyle> nameStyle{
+  static const map<string, FontStyle> nameStyle{
     {"",           FontStyle::none},
     {"mathnormal", FontStyle::none},
     {"mathrm",     FontStyle::rm},
     {"mathbf",     FontStyle::bf},
     {"mathit",     FontStyle::it},
-    {"mathbfit",   FontStyle::bfit},
     {"mathcal",    FontStyle::cal},
     {"mathscr",    FontStyle::cal},
-    {"mathbfcal",  FontStyle::bfcal},
     {"mathfrak",   FontStyle::frak},
     {"mathbb",     FontStyle::bb},
-    {"mathbffrak", FontStyle::bffrak},
     {"mathsf",     FontStyle::sf},
+    {"mathtt",     FontStyle::tt},
+    {"mathbfit",   FontStyle::bfit},
+    {"mathbfcal",  FontStyle::bfcal},
+    {"mathbffrak", FontStyle::bffrak},
     {"mathsfbf",   FontStyle::sfbf},
     {"mathbfsf",   FontStyle::sfbf},
     {"mathsfit",   FontStyle::sfit},
     {"mathsfbfit", FontStyle::sfbfit},
     {"mathbfsfit", FontStyle::sfbfit},
-    {"mathtt",     FontStyle::tt},
   };
   const auto it = nameStyle.find(name);
   if (it != nameStyle.end()) return it->second;
-  return nameStyle[""];
+  return FontStyle::none;
+}
+
+inline FontStyle FontContext::mainFontStyleOf(const std::string& name) {
+  return FontFamily::fontStyleOf(name);
+}
+
+FontStyle FontContext::findClosestStyle(const FontStyle src) {
+  static const FontStyle composedStyles[]{
+    FontStyle::bfit, FontStyle::bfcal, FontStyle::bffrak,
+    FontStyle::sfbf, FontStyle::sfit, FontStyle::sfbfit,
+  };
+  u32 similarity = 0;
+  FontStyle target = FontStyle::none;
+  for (FontStyle style: composedStyles) {
+    const auto n = countSetBits(static_cast<u16>(src) & static_cast<u16>(style));
+    if (n > similarity) {
+      target = style;
+      similarity = n;
+    }
+  }
+  return target;
 }
 
 void FontContext::addMainFont(const string& versionName, const vector<FontSpec>& params) {
@@ -151,34 +170,24 @@ Char FontContext::getChar(const std::string& symbol) const {
 }
 
 Char FontContext::getChar(c32 code, const string& styleName, bool isMathMode) const {
-  if (isMathMode) {
-    const auto style = mathFontStyleOf(styleName);
-    const MathVersion& version = *_mathVersions[style];
-    const c32 unicode = version.map(code);
-    return {code, unicode, _mathFont->_id, _mathFont->otf().glyphId(unicode)};
-  } else {
-    sptr<const OtfFont> font = _mainFont->get(styleName);
-    if (font == nullptr) font = _mainFont->get("");
-    if (font == nullptr) font = _mathFont;
-    return {code, code, font->_id, font->otf().glyphId(code)};
-  }
+  const auto style = isMathMode ? mathFontStyleOf(styleName) : mainFontStyleOf(styleName);
+  return getChar(code, style, isMathMode);
 }
 
 Char FontContext::getChar(c32 code, FontStyle style, bool isMathMode) const {
-  // TODO
-  // pick a closest style
   if (isMathMode) {
     const auto it = _mathVersions.find(style);
     const MathVersion& version = (
       it == _mathVersions.end()
-      ? *_mathVersions[FontStyle::none]
+      ? *_mathVersions[findClosestStyle(style)]
       : *it->second
     );
     const c32 unicode = version.map(code);
     return {code, unicode, _mathFont->_id, _mathFont->otf().glyphId(unicode)};
   } else {
-    sptr<const OtfFont> font = _mainFont->get(style);
+    sptr<const OtfFont> font = _mainFont == nullptr ? nullptr : _mainFont->get(style);
     if (font == nullptr) font = _mainFont->get(FontStyle::none);
+    // fallback to math font
     if (font == nullptr) font = _mathFont;
     return {code, code, font->_id, font->otf().glyphId(code)};
   }

@@ -13,7 +13,9 @@ void show_char(c32 code, const Env& env, bool isMathMode = true) {
   std::u32string str;
   str.append(1, chr._mappedCode);
   printf(
+    "font style: %x: "
     "{ code: %X, map: %X, font: %d, glyph: %d, scale: %f }\n",
+    env.fontStyle(),
     chr._code,
     chr._mappedCode,
     chr._font,
@@ -83,7 +85,14 @@ int main(int argc, char* argv[]) {
   printf("\n");
 
   env.addFontStyle(FontStyle::rm);
-  printf("varies char with TexStyle::scriptScript and FontStyle::rm in 20 point size:\n");
+  env.addFontStyle(FontStyle::bf);
+  env.addFontStyle(FontStyle::it);
+  env.addFontStyle(FontStyle::cal);
+  env.addFontStyle(FontStyle::frak);
+  env.addFontStyle(FontStyle::bb);
+  env.addFontStyle(FontStyle::sf);
+  env.addFontStyle(FontStyle::tt);
+  printf("varies char with TexStyle::scriptScript and full FontStyle in 20 point size:\n");
   show_char('a', env);
   show_char('h', env);
   show_char('z', env);
