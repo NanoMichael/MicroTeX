@@ -2,12 +2,9 @@
 #define LATEX_BOX_SINGLE_H
 
 #include "atom/atom.h"
+#include "unimath/uni_char.h"
 
 namespace tex {
-
-class Char;
-
-class CharFont;
 
 /** A box representing whitespace */
 class StrutBox : public Box {
@@ -56,8 +53,7 @@ public:
 /** A box representing a single character */
 class CharBox : public Box {
 private:
-  sptr<CharFont> _cf;
-  float _size;
+  Char _chr;
   float _italic;
 
 public:

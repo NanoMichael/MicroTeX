@@ -4,13 +4,11 @@
 using namespace std;
 using namespace tex;
 
-CharBox::CharBox(const Char& c) {
-  _cf = c.getCharFont();
-  _size = c.getSize();
-  _width = c.getWidth();
-  _height = c.getHeight();
-  _depth = c.getDepth();
-  _italic = c.getItalic();
+CharBox::CharBox(const Char& chr) : _chr(chr) {
+  _width = chr.width();
+  _height = chr.height();
+  _depth = chr.depth();
+  _italic = chr.italic();
 }
 
 void CharBox::addItalicCorrectionToWidth() {
@@ -19,18 +17,19 @@ void CharBox::addItalicCorrectionToWidth() {
 }
 
 void CharBox::draw(Graphics2D& g2, float x, float y) {
-  g2.translate(x, y);
-  const Font* font = FontInfo::getFont(_cf->fontId);
-  if (_size != 1) g2.scale(_size, _size);
-  if (g2.getFont() != font) g2.setFont(font);
-  g2.drawChar(_cf->chr, 0, 0);
-  // reset
-  if (_size != 1) g2.scale(1.f / _size, 1.f / _size);
-  g2.translate(-x, -y);
+  // TODO draw glyph
+//  g2.translate(x, y);
+//  const Font* font = FontInfo::getFont(_cf->fontId);
+//  if (_size != 1) g2.scale(_size, _size);
+//  if (g2.getFont() != font) g2.setFont(font);
+//  g2.drawChar(_cf->chr, 0, 0);
+//  // reset
+//  if (_size != 1) g2.scale(1.f / _size, 1.f / _size);
+//  g2.translate(-x, -y);
 }
 
 int CharBox::lastFontId() {
-  return _cf->fontId;
+  return _chr._font;
 }
 
 sptr<Font> TextRenderingBox::_font(nullptr);
