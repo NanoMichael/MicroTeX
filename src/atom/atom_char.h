@@ -3,17 +3,13 @@
 
 #include "common.h"
 #include "atom/atom.h"
-#include "box/box_group.h"
-#include "fonts/font_basic.h"
-#include "fonts/tex_font.h"
+#include "box/box.h"
+#include "utils/utils.h"
+#include "unimath/uni_char.h"
+#include "unimath/uni_symbol.h"
+#include "unimath/uni_font.h"
 
 namespace tex {
-
-struct CharFont;
-
-struct Char;
-
-class TeXFont;
 
 /**
  * An common superclass for atoms that represent one single character and access
@@ -41,7 +37,7 @@ public:
   }
 
   /**
-   * Tests if this atom is marked as a text symbol (used by Msubsup)
+   * Tests if this atom is marked as a text symbol (used by subsup)
    *
    * @return whether this CharSymbol is marked as a text symbol
    */
@@ -50,96 +46,57 @@ public:
   }
 
   /**
-   * Get the CharFont-object that uniquely identifies the character that is
+   * Get the Char-object that uniquely identifies the character that is
    * represented by this atom.
-   *
-   * @param tf the TeXFont containing all font related information
-   * @return a CharFont
    */
-  virtual sptr<CharFont> getCharFont(TeXFont& tf) = 0;
+  virtual Char getChar(Env& env) const = 0;
 };
 
 /** An atom representing a fixed character (not depending on a text style). */
 class FixedCharAtom : public CharSymbol {
 private:
-  const sptr<CharFont> _cf;
+  const Char _chr;
 
 public:
   FixedCharAtom() = delete;
 
-  explicit FixedCharAtom(const sptr<CharFont>& c) : _cf(c) {}
+  explicit FixedCharAtom(const Char& chr) : _chr(chr) {}
 
-  // FIXME
-  // workaround for the MSVS's LNK2019 error
-  // it should be implemented in the atom_char.cpp file
-  sptr<CharFont> getCharFont(TeXFont& tf) override {
-    return _cf;
+  Char getChar(Env& env) const override {
+    return _chr;
   }
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(FixedCharAtom)
 };
 
 class SymbolAtom : public CharSymbol {
 private:
-
-  // symbol name
-  std::string _name;
-  wchar_t _unicode;
+  const Symbol* _symbol = nullptr;
 
 public:
-  // contains all defined symbols
-  static std::map<std::string, sptr<SymbolAtom>> _symbols;
-
   SymbolAtom() = delete;
 
   /**
-   * Constructs a new symbol. This used by "TeXSymbolParser" and the symbol
-   * types are guaranteed to be valid.
+   * Constructs a new symbol.
    *
    * @param name symbol name
-   * @param type symbol type constant
-   * @param del whether the symbol is a delimiter
    */
-  SymbolAtom(const std::string& name, AtomType type, bool del) noexcept;
+  explicit SymbolAtom(const std::string&& name) noexcept;
 
-  inline SymbolAtom& setUnicode(wchar_t c) {
-    _unicode = c;
-    return *this;
-  }
+  /** Unicode code point of this symbol */
+  c32 unicode() const;
 
-  inline wchar_t getUnicode() const {
-    return _unicode;
-  }
+  /** Name of this symbol */
+  std::string name() const;
 
-  inline const std::string& getName() const {
-    return _name;
-  }
+  /** Test if this symbol is valid */
+  bool isValid() const;
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
-  // FIXME
-  // workaround for the MSVS's LNK2019 error
-  // it should be implemented in the atom_char.cpp file
-  sptr<CharFont> getCharFont(TeXFont& tf) override {
-    return tf.getChar(_name, TexStyle::display).getCharFont();
-  }
-
-  static void addSymbolAtom(const std::string& file);
-
-  static void addSymbolAtom(const sptr<SymbolAtom>& sym);
-
-  /**
-   * Looks up the name in the table and returns the corresponding SymbolAtom
-   * representing the symbol (if it's found).
-   *
-   * @param name the name of the symbol
-   * @return a SymbolAtom representing the found symbol
-   * @throw ex_symbol_not_found
-   *      if no symbol with the given name was found
-   */
-  static sptr<SymbolAtom> get(const std::string& name);
+  Char getChar(Env& env) const override;
 
   __decl_clone(SymbolAtom)
 };
@@ -151,51 +108,27 @@ public:
 class CharAtom : public CharSymbol {
 private:
   // alphanumeric character
-  wchar_t _c;
-  // text style (empty means the default text style)
-  std::string _textStyle;
-  bool _mathMode;
-
-  /**
-   * Get the Char-object representing this character ("c") in the right text
-   * style
-   */
-  Char getChar(TeXFont& tf, TexStyle style, bool smallCap);
+  const c32 _unicode;
+  // the font style, invalid means use the environment default
+  FontStyle _fontStyle = FontStyle::invalid;
+  bool _mathMode = false;
 
 public:
   CharAtom() = delete;
 
-  /**
-   * Creates a CharAtom that will represent the given character in the given
-   * text style. Null for the text style means the default text style.
-   *
-   * @param c the alphanumeric character
-   * @param textStyle the text style in which the character should be drawn
-   */
-  CharAtom(wchar_t c, std::string textStyle)
-    : _c(c), _textStyle(std::move(textStyle)), _mathMode(false) {}
+  CharAtom(c32 unicode, FontStyle style)
+    : _unicode(unicode), _fontStyle(style) {}
 
-  CharAtom(wchar_t c, std::string textStyle, bool mathMode)
-    : _c(c), _textStyle(std::move(textStyle)), _mathMode(mathMode) {}
+  CharAtom(c32 unicode, bool mathMode)
+    : _unicode(unicode), _mathMode(mathMode) {}
 
-  CharAtom(wchar_t c, bool mathMode) : _c(c), _mathMode(mathMode) {}
+  inline c32 unicode() const { return _unicode; }
 
-  inline wchar_t getCharacter() {
-    return _c;
-  }
+  inline bool isMathMode() const { return _mathMode; }
 
-  inline bool isMathMode() {
-    return _mathMode;
-  }
+  Char getChar(Env& env) const override;
 
-  sptr<Box> createBox(Environment& env) override;
-
-  // FIXME
-  // workaround for the MSVS's LNK2019 error
-  // it should be implemented in the atom_char.cpp file
-  sptr<CharFont> getCharFont(TeXFont& tf) override {
-    return getChar(tf, TexStyle::display, false).getCharFont();
-  }
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(CharAtom)
 };
@@ -203,7 +136,7 @@ public:
 /** An empty atom just to add a mark. */
 class BreakMarkAtom : public Atom {
 public:
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(BreakMarkAtom)
 };
