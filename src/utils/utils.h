@@ -5,6 +5,7 @@
 #include <functional>
 #include <memory>
 #include <vector>
+#include <locale>
 
 #define no_copy_assign(T) \
   T(const T&) = delete;   \
@@ -48,12 +49,24 @@ u32 countSetBits(T n) {
   return cnt;
 }
 
+static const std::locale UTF8_LOCALE("en_US.utf8");
+
+/** Test if a Unicode code point is lower case */
+bool isUnicodeLower(c32 code);
+
+/** Convert given Unicode code point to upper case */
+c32 toUnicodeUppper(c32 code);
+
+/** Convert given Unicode code point to lower case */
+c32 toUnicodeLower(c32 code);
+
 /** 
- * Binary search for index of the given target in a container.
+ * Binary-search for the index of the given target in a container. The items in the container must be
+ * sorted ascending.
  * 
  * @param count total count of elements in the container
- * @param compare function to compare between the target value and the value at given index
- * @param returnClosest if return the closest index while not found, default is false
+ * @param compare function to compare between the target value and the value at the given index
+ * @param returnClosest whether return the closest index while not found, default is false
  *
  * @return the index which the target value found at, or the closest index if returnClosest is true,
  * or -1 otherwise
