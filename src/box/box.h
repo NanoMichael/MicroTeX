@@ -6,7 +6,6 @@
 #include "utils/enums.h"
 
 namespace tex {
-class Environment;
 
 /**
  * An abstract graphical representation of a formula, that can be painted. All

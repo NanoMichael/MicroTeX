@@ -9,6 +9,8 @@
 
 namespace tex {
 
+class Env;
+
 /**
  * An abstract superclass for all logical mathematical constructions that can be
  * a part of a Formula. All subclasses must implement the abstract
@@ -64,7 +66,7 @@ public:
    *
    * @return the resulting box.
    */
-  virtual sptr<Box> createBox(Environment& env) = 0;
+  virtual sptr<Box> createBox(Env& env) = 0;
 
   /** Shallow clone a atom from this atom. */
   virtual sptr<Atom> clone() const = 0;
