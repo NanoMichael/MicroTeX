@@ -1,5 +1,7 @@
-#include "core/core.h"
-#include "glue.h"
+#include "core/glue.h"
+#include "env/env.h"
+#include "env/units.h"
+#include "box/box_single.h"
 
 using namespace std;
 using namespace tex;
@@ -48,27 +50,24 @@ const char Glue::_table[TYPE_COUNT][TYPE_COUNT][STYLE_COUNT]{
   {"1100", "1111", "2200", "3300", "1100", "0000", "1100", "1100"},
 };
 
-float Glue::getFactor(const Environment& env) {
-  const auto& tf = env.getTeXFont();
-  // use "quad" from a font marked as an "mu font"
-  float quad = tf->getQuad(env.getStyle(), tf->getMuFontId());
-  return quad / 18.f;
+float Glue::getFactor(const Env& env) {
+  return Units::fsize(UnitType::mu, 1.f, env);
 }
 
-sptr<Box> Glue::createBox(const Environment& env) const {
+sptr<Box> Glue::createBox(const Env& env) const {
   float factor = getFactor(env);
   return sptrOf<GlueBox>(_space * factor, _stretch * factor, _shrink * factor);
 }
 
-int Glue::indexOf(AtomType ltype, AtomType rtype, const Environment& env) {
+int Glue::indexOf(AtomType ltype, AtomType rtype, const Env& env) {
   // types > INNER are considered of type ORD for glue calculations
   AtomType l = (ltype > AtomType::inner ? AtomType::ordinary : ltype);
   AtomType r = (rtype > AtomType::inner ? AtomType::ordinary : rtype);
-  const i8 k = static_cast<i8>(env.getStyle()) / 2;
+  const i8 k = static_cast<i8>(env.style()) / 2;
   return _table[static_cast<u8>(l)][static_cast<u8>(r)][k] - '0';
 }
 
-sptr<Box> Glue::get(AtomType ltype, AtomType rtype, const Environment& env) {
+sptr<Box> Glue::get(AtomType ltype, AtomType rtype, const Env& env) {
   int i = indexOf(ltype, rtype, env);
   return _glueTypes[i].createBox(env);
 }
@@ -78,20 +77,20 @@ const Glue& Glue::getGlue(SpaceType skipType) {
   return _glueTypes[i < 0 ? -i : i];
 }
 
-sptr<Box> Glue::get(SpaceType skipType, const Environment& env) {
+sptr<Box> Glue::get(SpaceType skipType, const Env& env) {
   const Glue& glue = getGlue(skipType);
   auto b = glue.createBox(env);
   if (static_cast<i8>(skipType) < 0) b->negWidth();
   return b;
 }
 
-float Glue::getSpace(AtomType ltype, AtomType rtype, const Environment& env) {
+float Glue::getSpace(AtomType ltype, AtomType rtype, const Env& env) {
   int i = indexOf(ltype, rtype, env);
   const Glue& glueType = _glueTypes[i];
   return glueType._space * glueType.getFactor(env);
 }
 
-float Glue::getSpace(SpaceType skipType, const Environment& env) {
+float Glue::getSpace(SpaceType skipType, const Env& env) {
   const Glue& glue = getGlue(skipType);
   const auto v = glue._space * glue.getFactor(env);
   return static_cast<i8>(skipType) < 0 ? -v : v;

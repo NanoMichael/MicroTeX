@@ -6,7 +6,7 @@
 
 namespace tex {
 
-class Environment;
+class Env;
 
 class Box;
 
@@ -21,18 +21,18 @@ private:
   // the glue table represents the "glue rules"
   static const char _table[TYPE_COUNT][TYPE_COUNT][STYLE_COUNT];
 
-  // the glue components
+  // the glue components, in "mu" unit
   u16 _space, _stretch, _shrink;
 
-  sptr<Box> createBox(const Environment& env) const;
+  sptr<Box> createBox(const Env& env) const;
 
-  static float getFactor(const Environment& env);
+  static float getFactor(const Env& env);
 
   static const Glue& getGlue(SpaceType skipType);
 
-  static int indexOf(AtomType ltype, AtomType rtype, const Environment& env);
+  static int indexOf(AtomType ltype, AtomType rtype, const Env& env);
 
-  Glue(float space, float stretch, float shrink) noexcept
+  Glue(u16 space, u16 stretch, u16 shrink) noexcept
     : _space(space), _stretch(stretch), _shrink(shrink) {}
 
 public:
@@ -44,27 +44,27 @@ public:
    *
    * @param ltype left atom type
    * @param rtype right atom type
-   * @param env the Environment
+   * @param env the Env
    * @return a box containing representing the glue
    */
-  static sptr<Box> get(AtomType ltype, AtomType rtype, const Environment& env);
+  static sptr<Box> get(AtomType ltype, AtomType rtype, const Env& env);
 
   /**
    * Creates a box representing the glue type according to the "glue rules" based
    * on the skip-type
    */
-  static sptr<Box> get(SpaceType skipType, const Environment& env);
+  static sptr<Box> get(SpaceType skipType, const Env& env);
 
   /**
    * Get the space amount from the given left-type and right-type of atoms
    * according to the "glue rules".
    */
-  static float getSpace(AtomType ltype, AtomType rtype, const Environment& env);
+  static float getSpace(AtomType ltype, AtomType rtype, const Env& env);
 
   /**
    * Get the space amount from the given skip-type according to the "glue rules"
    */
-  static float getSpace(SpaceType skipType, const Environment& env);
+  static float getSpace(SpaceType skipType, const Env& env);
 };
 
 }
