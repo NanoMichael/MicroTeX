@@ -2,8 +2,6 @@
 #define LATEX_ATOM_SPACE_H
 
 #include "atom/atom.h"
-#include "box/box_group.h"
-#include "utils/utils.h"
 
 namespace tex {
 
@@ -13,10 +11,6 @@ namespace tex {
  */
 class SpaceAtom : public Atom {
 private:
-  static const std::pair<const char*, UnitType> _units[];
-  static const i32 _unitsCount;
-  static const std::function<float(const Environment&)> _unitConversions[];
-
   // whether a hard space should be represented
   bool _blankSpace = false;
   // thin-mu-skip, med-mu-skip, thick-mu-skip
@@ -38,30 +32,7 @@ public:
   SpaceAtom(UnitType wu, float w, UnitType hu, float h, UnitType du, float d) noexcept
     : _wUnit(wu), _hUnit(hu), _dUnit(du), _width(w), _height(h), _depth(d) {}
 
-  static UnitType getUnit(const std::string& unit);
-
-  /** Get the scale factor from the given unit and environment */
-  inline static float getFactor(UnitType unit, const Environment& env) {
-    return _unitConversions[static_cast<i8>(unit)](env);
-  }
-
-  inline static float getSize(UnitType unit, float size, const Environment& env) {
-    return _unitConversions[static_cast<i8>(unit)](env) * size;
-  }
-
-  sptr<Box> createBox(Environment& env) override;
-
-  /**
-   * Get the unit and length from given string. The string must be in the format: a number
-   * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or (UnitType::pixel, 0) will be returned.
-   */
-  static std::pair<UnitType, float> getLength(const std::string& lgth);
-
-  /**
-   * Get the unit and length from given string. The string must be in the format: a number
-   * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or (UnitType::pixel, 0) will be returned.
-   */
-  static std::pair<UnitType, float> getLength(const std::wstring& lgth);
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(SpaceAtom)
 };
