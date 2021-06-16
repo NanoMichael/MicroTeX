@@ -230,13 +230,18 @@ ninja -C _build
 _build/clatexmath
 ```
 
-<!-- WIP: clatexmath is not yet in home:sp1rit:notekit, its only in testing
 # Prebuilt packages
 
-[@sp1ritCS](https://github.com/sp1ritCS) maintains more or less upto date packages of cLaTeXMath/cairo for Arch, CentOS, Debian, Fedora, Mageia, SLE, openSUSE & Ubuntu on the openSUSE Buildservice: [home:sp1rit:notekit/clatexmath](https://build.opensuse.org/package/show/home:sp1rit:notekit/clatexmath). You can install them from here: [software.opensuse.org//download.html?project=home:sp1rit:notekit&package=clatexmath](https://software.opensuse.org//download.html?project=home%3Asp1rit%3Anotekit&package=clatexmath)
+[@sp1ritCS](https://github.com/sp1ritCS) maintains more or less upto date packages of cLaTeXMath/cairo for Arch, CentOS, Debian, Fedora, Mageia, SLE, openSUSE & Ubuntu on the openSUSE Buildservice: [home:sp1rit:notekit/clatexmath](https://build.opensuse.org/package/show/home:sp1rit:notekit/clatexmath).
+
+The binaries (built packages) are publicly (without SUSE univention account) available here: [download.opensuse.org/repositories/home:/sp1rit:/notekit/](https://download.opensuse.org/repositories/home:/sp1rit:/notekit/).
+Install instructions can be found on openSUSE's [software-o-o](https://github.com/openSUSE/software-o-o) instance:
+* Arch (and SRPMs): [software.opensuse.org//download.html?project=home:sp1rit:notekit&package=clatexmath](https://software.opensuse.org//download.html?project=home%3Asp1rit%3Anotekit&package=clatexmath)
+* RPM (CentOS, Fedora, Mageia, SLE & openSUSE): [software.opensuse.org//download.html?project=home:sp1rit:notekit&package=clatexmath-devel](https://software.opensuse.org//download.html?project=home%3Asp1rit%3Anotekit&package=clatexmath-devel)
+* DPKG (Debian, Raspbian & xUbuntu): [software.opensuse.org//download.html?project=home:sp1rit:notekit&package=libclatexmath-dev](https://software.opensuse.org//download.html?project=home%3Asp1rit%3Anotekit&package=libclatexmath-dev)
 
 If you just want to use cLaTeXMath for your GTK/Cairo project, this may be best way to get started. 
--->
+
 # How to use
 
 This section shows how to use this library to display mathematical formulas.
