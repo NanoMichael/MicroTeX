@@ -10,8 +10,12 @@ sptr<Box> FixedCharAtom::createBox(Env& env) {
   return sptrOf<CharBox>(_chr);
 }
 
-SymbolAtom::SymbolAtom(const string&& name) noexcept {
-  _symbol = Symbol::get(name.c_str());
+sptr<SymbolAtom> SymbolAtom::get(const std::string&& name) noexcept {
+  const auto symbol = Symbol::get(name.c_str());
+  return symbol == nullptr ? nullptr : sptrOf<SymbolAtom>(symbol);
+}
+
+SymbolAtom::SymbolAtom(const Symbol* symbol) noexcept: _symbol(symbol) {
   _type = _symbol == nullptr ? AtomType::none : _symbol->type;
   if (_type == AtomType::bigOperator) {
     _limitsType = LimitsType::normal;
@@ -33,7 +37,7 @@ inline bool SymbolAtom::isValid() const {
 Char SymbolAtom::getChar(Env& env) const {
   if (_symbol == nullptr) return {};
   if (env.isSmallCap() && unicode() != 0 && isUnicodeLower(unicode())) {
-    const auto upper = toUnicodeUppper(unicode());
+    const auto upper = toUnicodeUpper(unicode());
     if (upper == unicode()) return env.getChar(*_symbol);
     const auto chr = env.getChar(upper, true); // TODO math mode?
     return chr.isValid() ? chr : env.getChar(*_symbol);
@@ -62,7 +66,7 @@ sptr<Box> SymbolAtom::createBox(Env& env) {
 Char CharAtom::getChar(Env& env) const {
   c32 code = unicode();
   if (env.isSmallCap() && isUnicodeLower(code)) {
-    code = toUnicodeUppper(code);
+    code = toUnicodeUpper(code);
   }
   return env.getChar(code, isMathMode(), _fontStyle);
 }

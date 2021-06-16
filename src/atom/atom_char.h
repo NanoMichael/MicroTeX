@@ -73,17 +73,12 @@ public:
 
 class SymbolAtom : public CharSymbol {
 private:
-  const Symbol* _symbol = nullptr;
+  const Symbol* const _symbol = nullptr;
 
 public:
   SymbolAtom() = delete;
 
-  /**
-   * Constructs a new symbol.
-   *
-   * @param name symbol name
-   */
-  explicit SymbolAtom(const std::string&& name) noexcept;
+  explicit SymbolAtom(const Symbol* symbol) noexcept;
 
   /** Unicode code point of this symbol */
   c32 unicode() const;
@@ -97,6 +92,9 @@ public:
   sptr<Box> createBox(Env& env) override;
 
   Char getChar(Env& env) const override;
+
+  /** Get symbol from the given name, return null if not found */
+  static sptr<SymbolAtom> get(const std::string&& name) noexcept;
 
   __decl_clone(SymbolAtom)
 };
