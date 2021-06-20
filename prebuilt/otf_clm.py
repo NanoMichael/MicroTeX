@@ -106,11 +106,16 @@ def read_metrics(glyph):
     '''
     Return a tuple to represents metrics, in (width, height, depth) order
     '''
+    # [xmin, ymin, xmax, ymax]
+    # 0 is the baseline
     bounding_box = glyph.boundingBox()
     return (
+        # width
         glyph.width,
-        bounding_box[3],
-        -bounding_box[1]
+        # height = max(0, ymax)
+        max(0, bounding_box[3]),
+        # depth = -min(0, ymin)
+        -min(0, bounding_box[1])
     )
 
 
