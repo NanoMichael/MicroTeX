@@ -94,7 +94,7 @@ public:
   Char getChar(Env& env) const override;
 
   /** Get symbol from the given name, return null if not found */
-  static sptr<SymbolAtom> get(const std::string&& name) noexcept;
+  static sptr<SymbolAtom> get(const std::string& name) noexcept;
 
   __decl_clone(SymbolAtom)
 };

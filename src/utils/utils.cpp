@@ -6,7 +6,11 @@ bool tex::isUnicodeLower(c32 code) {
   return std::islower((wchar_t) code, UTF8_LOCALE);
 }
 
-tex::c32 tex::toUnicodeUppper(c32 code) {
+bool tex::isUnicodeDigit(c32 code) {
+  return std::isdigit((wchar_t) code, UTF8_LOCALE);
+}
+
+tex::c32 tex::toUnicodeUpper(c32 code) {
   return std::toupper((wchar_t) code, UTF8_LOCALE);
 }
 

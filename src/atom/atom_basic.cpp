@@ -9,6 +9,8 @@
 #include "fonts/fonts.h"
 #include "graphic/graphic.h"
 #include "res/parser/formula_parser.h"
+#include "env/env.h"
+#include "env/units.h"
 
 using namespace std;
 using namespace tex;
@@ -17,27 +19,27 @@ using namespace tex;
  *                                     basic atom implementation                                   *
  ***************************************************************************************************/
 
-sptr<Box> ScaleAtom::createBox(Environment& env) {
+sptr<Box> ScaleAtom::createBox(Env& env) {
   return sptrOf<ScaleBox>(_base->createBox(env), _sx, _sy);
 }
 
-sptr<Box> MathAtom::createBox(Environment& env) {
-  Environment& e = *(env.copy(env.getTeXFont()->copy()));
-  e.getTeXFont()->setRoman(false);
-  TexStyle style = e.getStyle();
-  // if parent style greater than "this style",
-  // that means the parent uses smaller font size,
+sptr<Box> MathAtom::createBox(Env& env) {
+  const auto fontStyle = env.fontStyle();
+  env.removeFontStyle(FontStyle::rm);
+  const auto style = env.style();
+  // if parent style greater than "this style", that means the parent uses smaller font size,
   // then uses parent style instead
   if (_style > style) {
-    e.setStyle(_style);
+    env.setStyle(_style);
   }
-  auto box = _base->createBox(e);
-  e.setStyle(style);
+  auto box = _base->createBox(env);
+  env.addFontStyle(fontStyle);
+  env.setStyle(style);
   return box;
 }
 
-sptr<Box> HlineAtom::createBox(Environment& env) {
-  float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
+sptr<Box> HlineAtom::createBox(Env& env) {
+  const auto drt = env.ruleThickness();
   Box* b = new RuleBox(drt, _width, _shift, _color, false);
   auto* vb = new VBox();
   vb->add(sptr<Box>(b));
@@ -48,15 +50,13 @@ sptr<Box> HlineAtom::createBox(Environment& env) {
 CumulativeScriptsAtom::CumulativeScriptsAtom(
   const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup
 ) {
-  auto* ca = dynamic_cast<CumulativeScriptsAtom*>(base.get());
-  ScriptsAtom* sa = nullptr;
-  if (ca != nullptr) {
+  if (auto ca = dynamic_cast<CumulativeScriptsAtom*>(base.get()); ca != nullptr) {
     _base = ca->_base;
     ca->_sup->add(sup);
     ca->_sub->add(sub);
     _sup = ca->_sup;
     _sub = ca->_sub;
-  } else if ((sa = dynamic_cast<ScriptsAtom*>(base.get()))) {
+  } else if (auto sa = dynamic_cast<ScriptsAtom*>(base.get()); sa != nullptr) {
     _base = sa->_base;
     _sup = sptrOf<RowAtom>(sa->_sup);
     _sub = sptrOf<RowAtom>(sa->_sub);
@@ -81,11 +81,11 @@ sptr<Atom> CumulativeScriptsAtom::getScriptsAtom() const {
   return sptrOf<ScriptsAtom>(_base, _sub, _sup);
 }
 
-sptr<Box> CumulativeScriptsAtom::createBox(Environment& env) {
+sptr<Box> CumulativeScriptsAtom::createBox(Env& env) {
   return ScriptsAtom(_base, _sub, _sup).createBox(env);
 }
 
-sptr<Box> TextRenderingAtom::createBox(Environment& env) {
+sptr<Box> TextRenderingAtom::createBox(Env& env) {
   if (_infos == nullptr) {
     return sptrOf<TextRenderingBox>(
       _str, _type, DefaultTeXFont::getSizeFactor(env.getStyle()));
@@ -115,8 +115,8 @@ sptr<Box> TextRenderingAtom::createBox(Environment& env) {
 SpaceAtom UnderScoreAtom::_w(UnitType::em, 0.7f, 0.f, 0.f);
 SpaceAtom UnderScoreAtom::_s(UnitType::em, 0.06f, 0.f, 0.f);
 
-sptr<Box> UnderScoreAtom::createBox(Environment& env) {
-  float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
+sptr<Box> UnderScoreAtom::createBox(Env& env) {
+  const auto drt = env.ruleThickness();
   auto* hb = new HBox(_s.createBox(env));
   hb->add(sptrOf<RuleBox>(drt, _w.createBox(env)->_width, 0.f));
   return sptr<Box>(hb);
@@ -131,17 +131,17 @@ VRowAtom::VRowAtom() {
   _raise = sptrOf<SpaceAtom>(UnitType::ex, 0.f, 0.f, 0.f);
 }
 
-VRowAtom::VRowAtom(const sptr<Atom>& el) {
+VRowAtom::VRowAtom(const sptr<Atom>& base) {
   _addInterline = false;
   _valign = Alignment::center;
   _halign = Alignment::none;
   _raise = sptrOf<SpaceAtom>(UnitType::ex, 0.f, 0.f, 0.f);
-  if (el != nullptr) {
-    auto* a = dynamic_cast<VRowAtom*>(el.get());
+  if (base != nullptr) {
+    auto* a = dynamic_cast<VRowAtom*>(base.get());
     if (a != nullptr) {
       _elements.insert(_elements.end(), a->_elements.begin(), a->_elements.end());
     } else {
-      _elements.push_back(el);
+      _elements.push_back(base);
     }
   }
 }
@@ -164,9 +164,9 @@ void VRowAtom::append(const sptr<Atom>& el) {
   if (el != nullptr) _elements.push_back(el);
 }
 
-sptr<Box> VRowAtom::createBox(Environment& env) {
+sptr<Box> VRowAtom::createBox(Env& env) {
   auto* vb = new VBox();
-  auto interline = sptrOf<StrutBox>(0.f, env.getInterline(), 0.f, 0.f);
+  auto interline = sptrOf<StrutBox>(0.f, env.lineSpace(), 0.f, 0.f);
 
   if (_halign != Alignment::none) {
     float maxWidth = F_MIN;
@@ -200,8 +200,8 @@ sptr<Box> VRowAtom::createBox(Environment& env) {
     vb->_height = t;
     vb->_depth = vb->_depth + vb->_height - t;
   } else if (_valign == Alignment::center) {
-    float axis = env.getTeXFont()->getAxisHeight(env.getStyle());
-    float h = vb->_height + vb->_depth;
+    const float axis = env.axisHeight();
+    const float h = vb->_height + vb->_depth;
     vb->_height = h / 2 + axis;
     vb->_depth = h / 2 - axis;
   } else {
@@ -225,14 +225,14 @@ void ColorAtom::defineColor(const string& name, color c) {
   _colors[name] = c;
 }
 
-sptr<Box> ColorAtom::createBox(Environment& env) {
+sptr<Box> ColorAtom::createBox(Env& env) {
   const auto box = _elements->createBox(env);
   return sptrOf<ColorBox>(box, _color, _background);
 }
 
-sptr<Box> RomanAtom::createBox(Environment& env) {
-  if (_base == nullptr) return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
-  Environment& c = *(env.copy(env.getTeXFont()->copy()));
+sptr<Box> RomanAtom::createBox(Env& env) {
+  if (_base == nullptr) return StrutBox::empty();
+  Env& c = *(env.copy(env.getTeXFont()->copy()));
   c.getTeXFont()->setRoman(true);
   return _base->createBox(c);
 }
@@ -249,7 +249,7 @@ PhantomAtom::PhantomAtom(const sptr<Atom>& el, bool w, bool h, bool d) {
   _w = w, _h = h, _d = d;
 }
 
-sptr<Box> PhantomAtom::createBox(Environment& env) {
+sptr<Box> PhantomAtom::createBox(Env& env) {
   auto res = _elements->createBox(env);
   float w = (_w ? res->_width : 0);
   float h = (_h ? res->_height : 0);
@@ -260,67 +260,129 @@ sptr<Box> PhantomAtom::createBox(Environment& env) {
 
 /************************************ AccentedAtom implementation *********************************/
 
+void AccentedAtom::setupBase(const sptr<Atom>& base) {
+  auto a = dynamic_cast<AccentedAtom*>(base.get());
+  if (a != nullptr) _base = a->_base;
+  else _base = base;
+}
+
 void AccentedAtom::init(const sptr<Atom>& base, const sptr<Atom>& accent) {
-  _base = base;
-  auto* a = dynamic_cast<AccentedAtom*>(base.get());
-  if (a != nullptr) _underbase = a->_underbase;
-  else _underbase = base;
+  _accentee = base;
+  setupBase(base);
 
-  _accent = dynamic_pointer_cast<SymbolAtom>(accent);
-  if (_accent == nullptr) throw ex_invalid_symbol_type("Invalid accent!");
+  _accenter = dynamic_pointer_cast<SymbolAtom>(accent);
+  if (_accenter == nullptr) throw ex_invalid_symbol_type("Invalid accent!");
 
-  _acc = true;
+  _directAccent = true;
   _changeSize = true;
 }
 
 AccentedAtom::AccentedAtom(const sptr<Atom>& base, const string& name) {
-  _accent = SymbolAtom::get(name);
-  if (_accent->_type == AtomType::accent) {
-    _base = base;
-    auto* a = dynamic_cast<AccentedAtom*>(base.get());
-    if (a != nullptr) _underbase = a->_underbase;
-    else _underbase = base;
+  _accenter = SymbolAtom::get(name);
+  if (_accenter->_type == AtomType::accent) {
+    _accentee = base;
+    setupBase(base);
   } else {
     throw ex_invalid_symbol_type(
       "The symbol with the name '"
-      + name + "' is not defined as an accent ("
-      + TeXSymbolParser::TYPE_ATTR + "='acc') in '"
-      + TeXSymbolParser::RESOURCE_NAME + "'!"
+      + name + "' is not defined as an accent (type='acc')!"
     );
   }
   _changeSize = true;
-  _acc = false;
+  _directAccent = false;
 }
 
 AccentedAtom::AccentedAtom(const sptr<Atom>& base, const sptr<Formula>& acc) {
   if (acc == nullptr) throw ex_invalid_formula("the accent Formula can't be null!");
   _changeSize = true;
-  _acc = false;
+  _directAccent = false;
   auto root = acc->_root;
-  _accent = dynamic_pointer_cast<SymbolAtom>(root);
-  if (_accent == nullptr)
-    throw ex_invalid_formula("The accent Formula does not represet a single symbol!");
-  if (_accent->_type == AtomType::accent) {
-    _base = base;
+  _accenter = dynamic_pointer_cast<SymbolAtom>(root);
+  if (_accenter == nullptr) {
+    throw ex_invalid_formula("The accent formula does not represents a single symbol!");
+  }
+  if (_accenter->_type == AtomType::accent) {
+    _accentee = base;
   } else {
     throw ex_invalid_symbol_type(
       "The accent Formula represents a single symbol with the name '"
-      + _accent->getName() + "', but this symbol is not defined as accent ("
-      + TeXSymbolParser::TYPE_ATTR + "='acc') in '"
-      + TeXSymbolParser::RESOURCE_NAME + "'!"
+      + _accenter->name() + "', but this symbol is not defined as accent (type='acc')!"
     );
   }
 }
 
-sptr<Box> AccentedAtom::createBox(Environment& env) {
+sptr<Box> AccentedAtom::createBox(Env& env) {
+  // create accentee box in cramped style
+  auto accentee = (
+    _accentee == nullptr
+    ? StrutBox::empty()
+    : env.withStyle(env.crampStyle(), [&](Env& cramp) { return _accentee->createBox(cramp); })
+  );
+
+  auto topAccent = 0.f;
+  if (auto sym = dynamic_cast<CharSymbol*>(_base.get()); sym != nullptr) {
+    topAccent = sym->getChar(env).topAccentAttachment();
+  }
+  topAccent = topAccent == Otf::undefinedMathValue ? accentee->_width / 2.f : topAccent;
+
+  // function to retrieve best char from the accent symbol to match the accentee box's width
+  const auto& getChar = [&]() {
+    const auto& chr = ((SymbolAtom*) _accenter.get())->getChar(env);
+    int i = 1;
+    for (; i < chr.hLargerCount(); i++) {
+      const auto& larger = chr.hLarger(i);
+      if (larger.width() > accentee->_width) break;
+    }
+    return chr.hLarger(i - 1);
+  };
+
+  // accenter
+  sptr<Box> accenter;
+  if (_directAccent) {
+    accenter = (
+      _changeSize
+      ? env.withStyle(env.subStyle(), [&](Env& sub) { return _accenter->createBox(sub); })
+      : _accenter->createBox(env)
+    );
+    accenter->_shift = topAccent - accenter->_width / 2.f;
+  } else {
+    const auto& chr = getChar();
+    accenter = sptrOf<CharBox>(chr);
+    const auto pos = chr.topAccentAttachment();
+    const auto shift = pos == Otf::undefinedMathValue ? accenter->_width / 2.f : pos;
+    accenter->_shift = topAccent - shift;
+  }
+
+  // add to vertical box
+  auto vbox = new VBox();
+  vbox->add(accenter);
+  // kerning
+  const auto delta = (
+    _directAccent
+    ? Units::fsize(UnitType::mu, 1, env)
+    : -min(accentee->_height, env.xHeight())
+  );
+  vbox->add(sptrOf<StrutBox>(0.f, delta, 0.f, 0.f));
+  // accentee
+  vbox->add(accentee);
+
+  // set height and depth of the vertical box
+  const auto total = vbox->_height + vbox->_depth;
+  vbox->_depth = accentee->_depth;
+  vbox->_height = total - accentee->_depth;
+
+  return sptr<Box>(vbox);
+}
+
+sptr<Box> AccentedAtom::createBox1(Env& env) {
   TeXFont* tf = env.getTeXFont().get();
   const TexStyle style = env.getStyle();
 
   // set base in cramped style
   auto b = (
-    _base == nullptr
+    _accentee == nullptr
     ? sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f)
-    : _base->createBox(*(env.crampStyle()))
+    : _accentee->createBox(*(env.crampStyle()))
   );
 
   float u = b->_width;
@@ -329,7 +391,7 @@ sptr<Box> AccentedAtom::createBox(Environment& env) {
   if (sym != nullptr) s = tf->getSkew(*(sym->getCharFont(*tf)), style);
 
   // retrieve best char from the accent symbol
-  auto* acc = (SymbolAtom*) _accent.get();
+  auto* acc = (SymbolAtom*) _accenter.get();
   Char ch = tf->getChar(acc->getName(), style);
   while (tf->hasNextLarger(ch)) {
     Char larger = tf->getNextLarger(ch, style);
@@ -339,7 +401,7 @@ sptr<Box> AccentedAtom::createBox(Environment& env) {
 
   // calculate delta
   float ec = -SpaceAtom::getFactor(UnitType::mu, env);
-  float delta = _acc ? ec : min(b->_height, tf->getXHeight(style, ch.getFontCode()));
+  float delta = _directAccent ? ec : min(b->_height, tf->getXHeight(style, ch.getFontCode()));
 
   // create vertical box
   auto* vBox = new VBox();
@@ -348,7 +410,7 @@ sptr<Box> AccentedAtom::createBox(Environment& env) {
   sptr<Box> y(nullptr);
   float italic = ch.getItalic();
   sptr<Box> cb = sptrOf<CharBox>(ch);
-  if (_acc) cb = _accent->createBox(_changeSize ? *(env.subStyle()) : env);
+  if (_directAccent) cb = _accenter->createBox(_changeSize ? *(env.subStyle()) : env);
 
   if (abs(italic) > PREC) {
     auto hbox = sptrOf<HBox>(sptrOf<StrutBox>(-italic, 0.f, 0.f, 0.f));
@@ -392,7 +454,7 @@ sptr<Box> UnderOverAtom::changeWidth(const sptr<Box>& b, float maxWidth) {
   return b;
 }
 
-sptr<Box> UnderOverAtom::createBox(Environment& env) {
+sptr<Box> UnderOverAtom::createBox(Env& env) {
   // create boxes in right style and calculate maximum width
   auto b = (_base == nullptr ? sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f) : _base->createBox(env));
   sptr<Box> o(nullptr);
@@ -443,7 +505,7 @@ sptr<Box> UnderOverAtom::createBox(Environment& env) {
 
 SpaceAtom ScriptsAtom::SCRIPT_SPACE(UnitType::point, 0.5f, 0.f, 0.f);
 
-sptr<Box> ScriptsAtom::createBox(Environment& env) {
+sptr<Box> ScriptsAtom::createBox(Env& env) {
   if (_base == nullptr) {
     auto in = sptrOf<CharAtom>(L'M', "mathnormal");
     _base = sptrOf<PhantomAtom>(in, false, true, true);
@@ -468,7 +530,7 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
   // if no last font found (whitespace box), use default "mu font"
   if (lastFontId == TeXFont::NO_FONT) lastFontId = tf->getMuFontId();
 
-  Environment subStyle = *(env.subStyle()), supStyle = *(env.supStyle());
+  Env subStyle = *(env.subStyle()), supStyle = *(env.supStyle());
 
   // set delta and preliminary shift-up and shift-down values
   float delta = 0, shiftUp = 0, shiftDown = 0;
@@ -478,7 +540,7 @@ sptr<Box> ScriptsAtom::createBox(Environment& env) {
   auto* cs = dynamic_cast<CharSymbol*>(_base.get());
   if (acc != nullptr) {
     // special case: accent
-    auto box = acc->_base->createBox(*(env.crampStyle()));
+    auto box = acc->_accentee->createBox(*(env.crampStyle()));
     shiftUp = box->_height - tf->getSupDrop(supStyle.getStyle());
     shiftDown = box->_depth + tf->getSubDrop(subStyle.getStyle());
   } else if (sym != nullptr && _base->_type == AtomType::bigOperator) {
@@ -606,7 +668,7 @@ sptr<Box> BigOperatorAtom::changeWidth(const sptr<Box>& b, float maxWidth) {
   return b;
 }
 
-sptr<Box> BigOperatorAtom::createSideSets(Environment& env) {
+sptr<Box> BigOperatorAtom::createSideSets(Env& env) {
   auto* sa = static_cast<SideSetsAtom*>(_base.get());
   auto sl = sa->_left, sr = sa->_right, sb = sa->_base;
   if (sb == nullptr) {
@@ -685,7 +747,7 @@ sptr<Box> BigOperatorAtom::createSideSets(Environment& env) {
   return sptr<Box>(vbox);
 }
 
-sptr<Box> BigOperatorAtom::createBox(Environment& env) {
+sptr<Box> BigOperatorAtom::createBox(Env& env) {
   if (dynamic_cast<SideSetsAtom*>(_base.get())) return createSideSets(env);
 
   TeXFont* tf = env.getTeXFont().get();
@@ -803,7 +865,7 @@ sptr<Box> BigOperatorAtom::createBox(Environment& env) {
 
 /*********************************** SideSetsAtom implementation **********************************/
 
-sptr<Box> SideSetsAtom::createBox(Environment& env) {
+sptr<Box> SideSetsAtom::createBox(Env& env) {
   if (_base == nullptr) {
     // create a phantom to place side-sets
     auto in = sptrOf<CharAtom>(L'M', "mathnormal");
@@ -840,7 +902,7 @@ float OverUnderDelimiter::getMaxWidth(const Box* b, const Box* del, const Box* s
   return mx;
 }
 
-sptr<Box> OverUnderDelimiter::createBox(Environment& env) {
+sptr<Box> OverUnderDelimiter::createBox(Env& env) {
   auto base = (_base == nullptr ? sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f) : _base->createBox(env));
   sptr<Box> del = DelimiterFactory::create(_symbol->getName(), env, base->_width);
   // TODO

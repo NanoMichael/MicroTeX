@@ -54,8 +54,11 @@ static const std::locale UTF8_LOCALE("en_US.utf8");
 /** Test if a Unicode code point is lower case */
 bool isUnicodeLower(c32 code);
 
+/** Test if a Unicode code point is digit */
+bool isUnicodeDigit(c32 code);
+
 /** Convert given Unicode code point to upper case */
-c32 toUnicodeUppper(c32 code);
+c32 toUnicodeUpper(c32 code);
 
 /** Convert given Unicode code point to lower case */
 c32 toUnicodeLower(c32 code);

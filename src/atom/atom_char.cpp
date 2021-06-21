@@ -10,7 +10,7 @@ sptr<Box> FixedCharAtom::createBox(Env& env) {
   return sptrOf<CharBox>(_chr);
 }
 
-sptr<SymbolAtom> SymbolAtom::get(const std::string&& name) noexcept {
+sptr<SymbolAtom> SymbolAtom::get(const std::string& name) noexcept {
   const auto symbol = Symbol::get(name.c_str());
   return symbol == nullptr ? nullptr : sptrOf<SymbolAtom>(symbol);
 }

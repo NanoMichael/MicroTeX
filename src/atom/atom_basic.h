@@ -1,5 +1,5 @@
-#ifndef ATOM_BASIC_H_INCLUDED
-#define ATOM_BASIC_H_INCLUDED
+#ifndef LATEX_ATOM_BASIC_H
+#define LATEX_ATOM_BASIC_H
 
 #include <bitset>
 #include <map>
@@ -17,18 +17,12 @@
 
 namespace tex {
 
-struct CharFont;
-
-class TeXFont;
-
-struct FontInfos;
-
 class Formula;
 
 /** An empty atom */
 class EmptyAtom : public Atom {
 public:
-  sptr<Box> createBox(Environment& env) override {
+  sptr<Box> createBox(Env& env) override {
     return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
   }
 
@@ -44,7 +38,7 @@ public:
   PlaceholderAtom(float width, float height, float depth, float shift)
     : _width(width), _height(height), _depth(depth), _shift(shift) {}
 
-  sptr<Box> createBox(Environment& env) override {
+  sptr<Box> createBox(Env& env) override {
     return sptrOf<StrutBox>(_width, _height, _depth, _shift);
   }
 
@@ -67,7 +61,7 @@ public:
   TextRenderingAtom(std::wstring str, const FontInfos* info)
     : _str(std::move(str)), _type(0), _infos(info) {}
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(TextRenderingAtom)
 };
@@ -89,7 +83,7 @@ public:
 
   explicit SmashedAtom(const sptr<Atom>& a) : _atom(a), _h(true), _d(true) {}
 
-  sptr<Box> createBox(Environment& env) override {
+  sptr<Box> createBox(Env& env) override {
     sptr<Box> b = _atom->createBox(env);
     if (_h) b->_height = 0;
     if (_d) b->_depth = 0;
@@ -121,7 +115,7 @@ public:
 
   AtomType rightType() const override { return _base->rightType(); }
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(ScaleAtom)
 };
@@ -138,7 +132,7 @@ public:
   MathAtom(const sptr<Atom>& base, TexStyle style) noexcept
     : _base(base), _style(style) {}
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(MathAtom)
 };
@@ -158,7 +152,7 @@ public:
 
   inline void setColor(color c) { _color = c; }
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(HlineAtom)
 };
@@ -184,7 +178,7 @@ public:
 
   sptr<Atom> getScriptsAtom() const;
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(CumulativeScriptsAtom)
 };
@@ -197,7 +191,7 @@ private:
 public:
   UnderScoreAtom() = default;
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(UnderScoreAtom)
 };
@@ -216,7 +210,7 @@ public:
   explicit MiddleAtom(const sptr<Atom>& a)
     : _base(a), _box(new StrutBox(0, 0, 0, 0)) {}
 
-  sptr<Box> createBox(Environment& env) override {
+  sptr<Box> createBox(Env& env) override {
     return _box;
   }
 
@@ -236,7 +230,7 @@ public:
 
   VRowAtom();
 
-  explicit VRowAtom(const sptr<Atom>& el);
+  explicit VRowAtom(const sptr<Atom>& base);
 
   inline void setAddInterline(bool addInterline) {
     _addInterline = addInterline;
@@ -264,7 +258,7 @@ public:
   /** Add an atom at the tail */
   void append(const sptr<Atom>& el);
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(VRowAtom)
 };
@@ -284,7 +278,7 @@ public:
 
   ColorAtom(const sptr<Atom>& atom, color bg, color c);
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   AtomType leftType() const override {
     return _elements->leftType();
@@ -320,7 +314,7 @@ public:
 
   explicit RomanAtom(const sptr<Atom>& base) : _base(base) {}
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(RomanAtom)
 };
@@ -351,7 +345,7 @@ public:
     _elements->setPreviousAtom(prev);
   }
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(PhantomAtom)
 };
@@ -380,7 +374,7 @@ public:
     return _atom;
   }
 
-  sptr<Box> createBox(Environment& env) override {
+  sptr<Box> createBox(Env& env) override {
     return _atom->createBox(env);
   }
 
@@ -398,15 +392,16 @@ public:
 /** An atom representing another atom with an accent symbol above it */
 class AccentedAtom : public Atom {
 public:
-  // accent symbol
-  sptr<SymbolAtom> _accent;
-  bool _acc{};
-  bool _changeSize{};
+  sptr<SymbolAtom> _accenter;
+  sptr<Atom> _accentee;
+  sptr<Atom> _base;
 
-  // base atom
-  sptr<Atom> _base, _underbase;
+  bool _directAccent = false;
+  bool _changeSize = true;
 
   void init(const sptr<Atom>& base, const sptr<Atom>& acc);
+
+  void setupBase(const sptr<Atom>& base);
 
 public:
   AccentedAtom() = delete;
@@ -437,10 +432,11 @@ public:
 
   /**
    * Creates an AccentedAtom from a base atom and an accent symbol defined as
-   * a Formula. This is used for parsing MathML.
+   * a Formula.
    *
    * @param base base atom
    * @param acc Formula representing an accent (SymbolAtom)
+   *
    * @throw ex_invalid_formula
    *      if the given Formula does not represent a single
    *      SymbolAtom (type "TeXConstants.AtomType::accent")
@@ -449,7 +445,7 @@ public:
    */
   AccentedAtom(const sptr<Atom>& base, const sptr<Formula>& acc);
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(AccentedAtom)
 };
@@ -532,7 +528,7 @@ public:
     return _base->rightType();
   }
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(UnderOverAtom)
 };
@@ -569,7 +565,7 @@ public:
     return _base == nullptr ? _type : _base->rightType();
   }
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(ScriptsAtom)
 };
@@ -592,7 +588,7 @@ private:
 
   void init(const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over);
 
-  sptr<Box> createSideSets(Environment& env);
+  sptr<Box> createSideSets(Env& env);
 
   /** Center the given box in a new box that has the given width */
   static sptr<Box> changeWidth(const sptr<Box>& b, float maxWidth);
@@ -631,7 +627,7 @@ public:
     _limitsSet = true;
   }
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(BigOperatorAtom)
 };
@@ -649,7 +645,7 @@ public:
     _limitsType = LimitsType::noLimits;
   }
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(SideSetsAtom)
 };
@@ -688,15 +684,15 @@ public:
     _script = script;
   }
 
-  inline bool isOver() {
+  inline bool isOver() const {
     return _over;
   }
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(OverUnderDelimiter)
 };
 
 }  // namespace tex
 
-#endif  // ATOM_BASIC_H_INCLUDED
+#endif  // LATEX_ATOM_BASIC_H

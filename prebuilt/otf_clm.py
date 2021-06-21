@@ -163,6 +163,7 @@ def read_math_kern_record(glyph):
 def read_math(glyph):
     return (
         glyph.italicCorrection,
+        # if no top accent attachment, the value == 32767 (undefined math value)
         glyph.topaccent,
         read_variants(lambda: glyph.horizontalVariants),
         read_variants(lambda: glyph.verticalVariants),

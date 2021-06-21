@@ -2,18 +2,21 @@
 #define LATEX_ATOM_MATRIX_H
 
 #include "atom/atom.h"
+#include "box/box_single.h"
 #include "box/box_group.h"
-#include "core/core.h"
-#include "graphic/graphic.h"
+#include "atom/atom_space.h"
+#include "atom/atom_char.h"
 
 namespace tex {
+
+class ArrayFormula;
 
 /** Atom to justify cells in array */
 class CellSpecifier : public Atom {
 public:
   virtual void apply(WrapperBox& box) = 0;
 
-  sptr<Box> createBox(Environment& env) override {
+  sptr<Box> createBox(Env& env) override {
     return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
   }
 };
@@ -84,7 +87,7 @@ private:
   void parsePositions(std::wstring opt, std::vector<Alignment>& lpos);
 
   sptr<Box> generateMulticolumn(
-    Environment& env,
+    Env& env,
     const sptr<Box>& b,
     const float* hsep,
     const float* colWidth,
@@ -95,14 +98,16 @@ private:
   static void recalculateLine(
     int rows,
     sptr<Box>** boxarr,
-    std::vector<sptr<Atom>>& multiRows,
+    std::vector<sptr<Atom>>
+
+    & multiRows,
     float* height,
     float* depth,
     float drt,
     float vspace
   );
 
-  float* getColumnSep(Environment& env, float width);
+  float* getColumnSep(Env& env, float width);
 
   void applyCell(WrapperBox& box, int i, int j);
 
@@ -135,14 +140,14 @@ public:
     MatrixType type
   );
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   static void defineColumnSpecifier(const std::wstring& rep, const std::wstring& spe);
 
   __decl_clone(MatrixAtom)
 };
 
-/** An atom representing vertical-line in matrix environment */
+/** An atom representing vertical-line in matrix Env */
 class VlineAtom : public Atom {
 private:
   // Number of lines to draw
@@ -155,30 +160,9 @@ public:
 
   explicit VlineAtom(int n) : _n(n), _height(0), _shift(0) {}
 
-  inline float getWidth(Environment& env) const {
-    if (_n != 0) {
-      float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-      return drt * (3 * _n - 2);
-    }
-    return 0;
-  }
+  float getWidth(Env& env) const;
 
-  sptr<Box> createBox(Environment& env) override {
-    if (_n == 0) return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
-
-    float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-    auto b = sptrOf<RuleBox>(_height, drt, _shift, MatrixAtom::LINE_COLOR, true);
-    auto sep = sptrOf<StrutBox>(2 * drt, 0.f, 0.f, 0.f);
-    auto* hb = new HBox();
-    for (int i = 0; i < _n - 1; i++) {
-      hb->add(b);
-      hb->add(sep);
-    }
-
-    if (_n > 0) hb->add(b);
-
-    return sptr<Box>(hb);
-  }
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(VlineAtom)
 };
@@ -227,7 +211,7 @@ public:
 
   inline int col() const { return _col; }
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(MulticolumnAtom)
 };
@@ -240,7 +224,7 @@ private:
   static sptr<Box> createBox(
     float space,
     const sptr<Box>& b,
-    Environment& env
+    Env& env
   );
 
 public:
@@ -253,7 +237,7 @@ public:
     return true;
   }
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(HdotsforAtom)
 };
@@ -276,7 +260,7 @@ public:
     _j = c;
   }
 
-  sptr<Box> createBox(Environment& env) override {
+  sptr<Box> createBox(Env& env) override {
     auto b = _rows->createBox(env);
     b->_type = AtomType::multiRow;
     return b;
@@ -314,7 +298,7 @@ public:
     _column = col;
   }
 
-  sptr<Box> createBox(Environment& env) override;
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(MultlineAtom)
 };

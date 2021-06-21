@@ -70,6 +70,9 @@ private:
 public:
   no_copy_assign(Otf);
 
+  /** Undefined value */
+  static constexpr auto undefinedMathValue = 0x7FFF;
+
   /** Read otf font from file */
   static Otf* fromFile(const char* filePath);
 
@@ -99,6 +102,9 @@ public:
 
   /** Get the math-consts table, return null if absent. */
   inline const MathConsts* mathConsts() const { return _mathConsts; }
+
+  /** Get the space size of this font. */
+  u16 space() const;
 
   /**
    * Get the glyph id from the given Unicode-codepoint, return -1 if not found.

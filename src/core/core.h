@@ -44,7 +44,7 @@ public:
  * which a formula must be drawn. It's used in the createBox-methods. Contains
  * methods that apply the style changing rules for subformula's.
  */
-class Environment {
+class Environment_0 {
 private:
   // current style
   TexStyle _style;
@@ -52,7 +52,7 @@ private:
   sptr<TeXFont> _tf;
   // last used font
   int _lastFontId{};
-  // Environment width
+  // Environment_0 width
   float _textWidth{};
 
   // The text style to use
@@ -66,8 +66,8 @@ private:
   float _interline{};
 
   // Member to store copies to prevent destruct
-  sptr<Environment> _copy, _copytf, _cramp, _dnom;
-  sptr<Environment> _num, _root, _sub, _sup;
+  sptr<Environment_0> _copy, _copytf, _cramp, _dnom;
+  sptr<Environment_0> _num, _root, _sub, _sup;
 
   inline void init() {
     _style = TexStyle::display;
@@ -79,7 +79,7 @@ private:
     _interline = 0;
   }
 
-  Environment(
+  Environment_0(
     TexStyle style, float scaleFactor,
     const sptr<TeXFont>& tf,
     const std::string& textstyle, bool smallCap  //
@@ -94,14 +94,14 @@ private:
   }
 
 public:
-  Environment(TexStyle style, const sptr<TeXFont>& tf) {
+  Environment_0(TexStyle style, const sptr<TeXFont>& tf) {
     init();
     _style = style;
     _tf = tf;
     setInterline(UnitType::ex, 1.f);
   }
 
-  Environment(TexStyle style, const sptr<TeXFont>& tf, UnitType widthUnit, float textWidth);
+  Environment_0(TexStyle style, const sptr<TeXFont>& tf, UnitType widthUnit, float textWidth);
 
   inline void setInterline(UnitType unit, float len) {
     _interline = len;
@@ -118,39 +118,39 @@ public:
 
   inline float getScaleFactor() const { return _scaleFactor; }
 
-  sptr<Environment>& copy();
+  sptr<Environment_0>& copy();
 
-  sptr<Environment>& copy(const sptr<TeXFont>& tf);
+  sptr<Environment_0>& copy(const sptr<TeXFont>& tf);
 
   /**
    * Copy of this envrionment in cramped style.
    */
-  sptr<Environment>& crampStyle();
+  sptr<Environment_0>& crampStyle();
 
   /**
    * Style to display denominator.
    */
-  sptr<Environment>& dnomStyle();
+  sptr<Environment_0>& dnomStyle();
 
   /**
    * Style to display numerator.
    */
-  sptr<Environment>& numStyle();
+  sptr<Environment_0>& numStyle();
 
   /**
    * Style to display roots.
    */
-  sptr<Environment>& rootStyle();
+  sptr<Environment_0>& rootStyle();
 
   /**
    * Style to display subscripts.
    */
-  sptr<Environment>& subStyle();
+  sptr<Environment_0>& subStyle();
 
   /**
    * Style to display superscripts.
    */
-  sptr<Environment>& supStyle();
+  sptr<Environment_0>& supStyle();
 
   inline float getSize() const { return _tf->getSize(); }
 

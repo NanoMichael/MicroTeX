@@ -27,6 +27,15 @@ Otf* Otf::fromFile(const char* filePath) {
   return reader.read(filePath);
 }
 
+u16 Otf::space() const {
+  auto glyph = glyphOfUnicode(' ');
+  if (glyph != nullptr) {
+    return glyph->metrics().width();
+  }
+  // If no space glyph was found, we use the 1/3 em size
+  return em() / 3;
+}
+
 i32 Otf::glyphId(c32 codepoint) const {
   const int index = binIndexOf(
     _unicodeCount,

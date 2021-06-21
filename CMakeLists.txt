@@ -61,7 +61,6 @@ target_sources(LaTeX PRIVATE
         src/atom/atom_row.cpp
         src/atom/atom_space.cpp
         src/atom/colors_def.cpp
-        src/atom/unit_conversion.cpp
         # box folder
         src/box/box.cpp
         src/box/box_factory.cpp

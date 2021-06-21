@@ -8,6 +8,7 @@
 #include "otf/otf.h"
 #include "unimath/math_type.h"
 #include "unimath/uni_char.h"
+#include "unimath/uni_symbol.h"
 
 namespace tex {
 
@@ -22,11 +23,7 @@ struct OtfFont final {
   inline const Otf& otf() const { return *_otf; }
 };
 
-/**
- * Enum represents all font style
- *
- * Current only support following font styles
- */
+/** Enum represents all supported font style */
 enum class FontStyle : u16 {
   none = 0,
   rm = 0b1,
@@ -43,7 +40,9 @@ enum class FontStyle : u16 {
   bffrak = bf | frak,
   sfbf = bf | sf,
   sfit = it | sf,
-  sfbfit = bf | it | sf
+  sfbfit = bf | it | sf,
+  // invalid
+  invalid = 0xffff
 };
 
 struct FontFamily final {
@@ -158,7 +157,7 @@ public:
   inline i32 mathFontId() const { return _mathFont->_id; }
 
   /** Get the char-object from given symbol */
-  Char getChar(const std::string& symbol) const;
+  Char getChar(const Symbol& symbol) const;
 
   /** Get the char-object from given code and styleName */
   Char getChar(c32 code, const std::string& styleName, bool isMathMode) const;

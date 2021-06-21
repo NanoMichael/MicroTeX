@@ -10,8 +10,8 @@ namespace tex {
 /**
  * An abstract graphical representation of a formula, that can be painted. All
  * characters, font sizes, positions are fixed. Only special Glue boxes could
- * possibly stretch or shrink. A box has 3 dimensions (width, height and depth),
- * will be used for further layout calculations.
+ * possibly stretch or shrink (not supported by now). A box has 3 dimensions
+ * (width, height and depth), will be used for further layout calculations.
  * <p>
  * Subclasses must implement the abstract
  * Box#draw(Graphics2D, float, float) method (that paints the box).
@@ -54,7 +54,7 @@ public:
    */
   float _shift = 0;
 
-  /** The box type (default = -1, no type) */
+  /** The box type (default = none, no type) */
   AtomType _type = AtomType::none;
 
   /** Create a new box with default options */
@@ -130,7 +130,7 @@ public:
    * of this composed box.
    * <p>
    * You shall not use this method to compose child boxes, it is for
-   * special uses.
+   * special uses (for add debug information).
    *
    * @param box the box to be append
    */
@@ -151,7 +151,7 @@ public:
 };
 
 /**
- * A box contains another box will add some decorations when to draw
+ * A box contains another box that will add some decorations when to draw
  * <p>
  * e.g. rotation, scale and so on
  */

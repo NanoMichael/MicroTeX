@@ -2,7 +2,8 @@
 
 #include <memory>
 #include "atom/atom_basic.h"
-#include "core/core.h"
+#include "env/env.h"
+#include "core/glue.h"
 
 using namespace std;
 using namespace tex;
@@ -17,8 +18,8 @@ inline bool Dummy::isCharInMathMode() const {
   return at != nullptr && at->isMathMode();
 }
 
-inline sptr<CharFont> Dummy::getCharFont(TeXFont& tf) const {
-  return ((CharSymbol*) _atom.get())->getCharFont(tf);
+inline Char Dummy::getChar(Env& env) const {
+  return ((CharSymbol*) _atom.get())->getChar(env);
 }
 
 void Dummy::changeAtom(const sptr<FixedCharAtom>& atom) {
@@ -27,7 +28,7 @@ void Dummy::changeAtom(const sptr<FixedCharAtom>& atom) {
   _type = AtomType::none;
 }
 
-sptr<Box> Dummy::createBox(Environment& env) {
+sptr<Box> Dummy::createBox(Env& env) {
   if (_textSymbol) ((CharSymbol*) _atom.get())->markAsTextSymbol();
   auto box = _atom->createBox(env);
   if (_textSymbol) ((CharSymbol*) _atom.get())->removeMark();
@@ -101,7 +102,8 @@ void RowAtom::add(const sptr<Atom>& atom) {
 void RowAtom::changeToOrd(Dummy* cur, Dummy* prev, Atom* next) {
   AtomType type = cur->leftType();
   if ((type == AtomType::binaryOperator)
-      && ((prev == nullptr || _binSet[static_cast<i8>(prev->rightType())]) || next == nullptr)) {
+      && ((prev == nullptr || _binSet[static_cast<i8>(prev->rightType())]) || next == nullptr)
+    ) {
     cur->_type = AtomType::ordinary;
   } else if (next != nullptr && cur->rightType() == AtomType::binaryOperator) {
     AtomType nextType = next->leftType();
@@ -123,102 +125,129 @@ AtomType RowAtom::rightType() const {
   return _elements.back()->rightType();
 }
 
-sptr<Box> RowAtom::createBox(Environment& env) {
-  auto x = env.getTeXFont();
-  TeXFont& tf = *x;
-  auto* hbox = new HBox();
-
+sptr<Box> RowAtom::createBox(Env& env) {
+  auto hbox = new HBox();
   // convert atoms to boxes and add to the horizontal box
   const int end = _elements.size() - 1;
   for (int i = -1; i < end;) {
-    auto at = _elements[++i];
+    auto raw = _elements[++i];
+
+    // 1. Skip break marks
     bool markAdded = false;
-    auto* ba = dynamic_cast<BreakMarkAtom*>(at.get());
+    auto ba = dynamic_cast<BreakMarkAtom*>(raw.get());
     while (ba != nullptr) {
-      if (!markAdded) markAdded = true;
+      markAdded = true;
       if (i < end) {
-        at = _elements[++i];
-        ba = dynamic_cast<BreakMarkAtom*>(at.get());
+        raw = _elements[++i];
+        ba = dynamic_cast<BreakMarkAtom*>(raw.get());
       } else {
         break;
       }
     }
 
-    auto atom = sptrOf<Dummy>(at);
-    // if necessary, change BIN type to ORD
-    // i.e. for formula: $+ e - f$, the plus sign should be treat as an ordinary type
-    sptr<Atom> nextAtom(nullptr);
+    // 2. Change atom type
+    auto curr = sptrOf<Dummy>(raw);
+    // if necessary, change BIN to ORD
+    // i.e. for formula: $+ e - f$, the plus sign should be treated as an ordinary atom
+    sptr<Atom> nextAtom = nullptr;
     if (i < end) nextAtom = _elements[i + 1];
-    changeToOrd(atom.get(), _previousAtom.get(), nextAtom.get());
+    changeToOrd(curr.get(), _previousAtom.get(), nextAtom.get());
 
-    // check for ligature or kerning
-    float kern = 0;
-    while (i < end && atom->rightType() == AtomType::ordinary && atom->isCharSymbol()) {
-      auto next = _elements[++i];
-      auto* c = dynamic_cast<CharSymbol*>(next.get());
-      if (c != nullptr && _ligKernSet[static_cast<i8>(next->leftType())]) {
-        atom->markAsTextSymbol();
-        auto l = atom->getCharFont(tf);
-        auto r = c->getCharFont(tf);
-        auto lig = tf.getLigature(*l, *r);
-        if (lig == nullptr) {
-          kern = tf.getKern(*l, *r, env.getStyle());
-          i--;
-          break;  // iterator remains unchanged (no ligature!)
-        } else {
-          // fixed with ligature
-          atom->changeAtom(std::make_shared<FixedCharAtom>(lig));
+    // 3. Check for ligatures and kerning
+    float kern = 0.f;
+    if (curr->rightType() == AtomType::ordinary && curr->isCharSymbol()) {
+      curr->markAsTextSymbol();
+      // initialize
+      auto chr = curr->getChar(env);
+      const auto font = chr._font;
+      auto ligs = FontContext::getFont(font)->otf().ligatures();
+      auto lig = ligs == nullptr ? nullptr : (*ligs)[chr._glyph];
+      // find target from the ligatures table
+      int index = i;
+      const LigaTable* target = nullptr;
+      i32 nextGlyph = -1;
+      while (i < end && lig != nullptr) {
+        auto next = _elements[++i];
+        auto nextChar = dynamic_cast<CharSymbol*>(next.get());
+        if (nextChar == nullptr || !_ligKernSet[static_cast<i8>(next->leftType())]) {
+          break;
         }
-      } else {
-        i--;
-        break;
-      }  // iterator remains unchanged
+        auto c = nextChar->getChar(env);
+        if (c._font != font) {
+          break;
+        }
+        // record the first following glyph
+        if (nextGlyph == -1) nextGlyph = c._glyph;
+        // is ligature found?
+        lig = (*lig)[c._glyph];
+        if (lig != nullptr && lig->value() > 0) {
+          target = lig;
+          index = i;
+        }
+      }
+      // reset the current index
+      i = index;
+      if (target != nullptr) {
+        // We found it! Replace with ligature char
+        const auto& fixed = Char::onlyGlyph(chr._font, target->value(), chr._scale);
+        curr->changeAtom(sptrOf<FixedCharAtom>(fixed));
+        // TODO record the original code-points?
+      } else if (nextGlyph != -1) {
+        // The glyph is guaranteed to be valid
+        kern = FontContext::getFont(font)->otf().glyph(chr._glyph)->kernRecord()[nextGlyph];
+        if (kern == 0.f) {
+          // Try find from class-kerning
+          kern = FontContext::getFont(font)->otf().classKerning(chr._glyph, nextGlyph);
+        }
+      }
     }
 
-    // insert glue, unless it's the first element of the row
-    // or this element or the next is a kerning
+    // 4. Insert glue, unless it's the first element of the row
+    //    or the previous element or the current is a kerning
     if (i != 0
         && _previousAtom != nullptr
         && !_previousAtom->isKern()
-        && !atom->isKern()
+        && !curr->isKern()
       ) {
-      hbox->add(Glue::get(_previousAtom->rightType(), atom->leftType(), env));
+      hbox->add(Glue::get(_previousAtom->rightType(), curr->leftType(), env));
     }
 
-    // insert atom's box
-    atom->setPreviousAtom(_previousAtom);
-    auto b = atom->createBox(env);
-    auto* cb = dynamic_cast<CharBox*>(b.get());
-    if (cb != nullptr
-        && !atom->isCharInMathMode()
+    // 5. Create box
+    curr->setPreviousAtom(_previousAtom);
+    auto box = curr->createBox(env);
+    auto charBox = dynamic_cast<CharBox*>(box.get());
+    if (charBox != nullptr
+        && !curr->isCharInMathMode()
         && dynamic_cast<CharSymbol*>(nextAtom.get()) != nullptr
       ) {
       // When we have a single char, we need to add italic correction
-      // As an example: (TVY) looks crappy...
-      cb->addItalicCorrectionToWidth();
+      // As an example, (TVY) looks crappy
+      charBox->addItalicCorrectionToWidth();
     }
 
+    // 6. Add break mark to box
     if (_breakable) {
       if (_breakEveywhere) {
-        hbox->addBreakPosition(hbox->_children.size());
+        hbox->addBreakPosition(hbox->size());
       } else {
-        auto ca = dynamic_cast<CharAtom*>(at.get());
-        if (markAdded || (ca != nullptr && isdigit(ca->getCharacter()))) {
-          hbox->addBreakPosition(hbox->_children.size());
+        if (markAdded) {
+          hbox->addBreakPosition(hbox->size());
+        } else {
+          auto charAtom = dynamic_cast<CharAtom*>(raw.get());
+          if (charAtom != nullptr && isUnicodeDigit(charAtom->unicode())) {
+            hbox->addBreakPosition(hbox->size());
+          }
         }
       }
     }
 
-    hbox->add(b);
+    // 7. Append atom's box and kerning to horizontal box
+    hbox->add(box);
+    if (std::abs(kern) > PREC) hbox->add(sptrOf<StrutBox>(kern, 0.f, 0.f, 0.f));
 
-    // set last used font id (for next atom)
-    env.setLastFontId(b->lastFontId());
-
-    // insert kerning
-    if (abs(kern) > PREC) hbox->add(sptrOf<StrutBox>(kern, 0.f, 0.f, 0.f));
-
+    env.setLastFontId(box->lastFontId());
     // kerning do not interfere with the normal glue-rules without kerning
-    if (!atom->isKern()) _previousAtom = atom;
+    if (!curr->isKern()) _previousAtom = curr;
   }
   // reset previous atom
   _previousAtom = nullptr;

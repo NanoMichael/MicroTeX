@@ -22,17 +22,17 @@ HBox::HBox(const sptr<Box>& box, float width, Alignment aligment) {
     return;
   }
   if (aligment == Alignment::center || aligment == Alignment::none) {
-    auto s = sptrOf<StrutBox>(rest / 2, 0.f, 0.f, 0.f);
-    add(s);
+    auto space = StrutBox::create(rest / 2);
+    add(space);
     add(box);
-    add(s);
+    add(space);
   } else if (aligment == Alignment::left) {
     add(box);
-    auto s = sptrOf<StrutBox>(rest, 0.f, 0.f, 0.f);
-    add(s);
+    auto space = StrutBox::create(rest);
+    add(space);
   } else if (aligment == Alignment::right) {
-    auto s = sptrOf<StrutBox>(rest, 0.f, 0.f, 0.f);
-    add(s);
+    auto space = StrutBox::create(rest);
+    add(space);
     add(box);
   } else {
     add(box);

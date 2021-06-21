@@ -162,10 +162,9 @@ void FontContext::selectMainFont(const string& versionName) {
   _mainFont = it == _mainFonts.end() ? nullptr : it->second;
 }
 
-Char FontContext::getChar(const std::string& symbol) const {
-  const Symbol* sym = Symbol::get(symbol.c_str());
-  if (sym == nullptr) return {};
-  const auto code = sym->unicode;
+Char FontContext::getChar(const Symbol& symbol) const {
+  // TODO take font style into account?
+  const auto code = symbol.unicode;
   return {code, code, _mathFont->_id, _mathFont->otf().glyphId(code)};
 }
 

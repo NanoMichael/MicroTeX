@@ -17,8 +17,18 @@ struct Char final {
   /** The glyph id, -1 if no corresponding glyph in the font */
   const i32 _glyph = -1;
 
-  /** The glyph scale */
+  /** The glyph scale, can be modified during using */
   float _scale = 1.f;
+
+  /**
+   * Create a char-glyph with only font and glyph, the Unicode code point is 0.
+   * <p>
+   * Notice that the char-glyph is valid even if its Unicode is 0, because many glyph has no
+   * corresponding Unicode code point.
+   */
+  static inline Char onlyGlyph(i32 font, i32 glyph, float scale = 1.f) {
+    return {0, 0, font, glyph, scale};
+  }
 
   /** Test if current glyph is valid, basically the #_glyph >= 0 */
   bool isValid() const;
@@ -34,6 +44,30 @@ struct Char final {
 
   /** The depth of this char-glyph, in positive */
   float depth() const;
+
+  /** The italic correction of this char-glyph */
+  float italic() const;
+
+  /** Get the position (shift) to attach top accent */
+  float topAccentAttachment() const;
+
+  /** Get the number of vertical larger variants */
+  u16 vLargerCount() const;
+
+  /**
+   * Get the vertical larger version of this char-glyph, return the copy of
+   * this if no larger version was found. The index 0 is this itself.
+   */
+  Char vLarger(u32 index) const;
+
+  /** Get the number of horizontal larger variants */
+  u16 hLargerCount() const;
+
+  /**
+   * Get the horizontal larger version of this char-glyph, return the copy of
+   * this if no larger version was found. The index 0 is this itself.
+   */
+  Char hLarger(u32 index) const;
 };
 
 }

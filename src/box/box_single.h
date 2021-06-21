@@ -28,6 +28,14 @@ public:
   }
 
   bool isSpace() const override { return true; }
+
+  static sptr<StrutBox> empty() noexcept {
+    return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
+  }
+
+  static sptr<StrutBox> create(float width) noexcept {
+    return sptrOf<StrutBox>(width, 0.f, 0.f, 0.f);
+  }
 };
 
 /** A box representing glue */

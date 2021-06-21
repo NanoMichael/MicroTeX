@@ -178,9 +178,9 @@ int BoxSplitter::getBreakPosition(const sptr<HBox>& hb, int i) {
   return hb->_breakPositions[pos - 1];
 }
 
-/************************************* Environment implementation ******************************/
+/************************************* Environment_0 implementation ******************************/
 
-Environment::Environment(TexStyle style, const sptr<TeXFont>& tf, UnitType wu, float tw) {
+Environment_0::Environment_0(TexStyle style, const sptr<TeXFont>& tf, UnitType wu, float tw) {
   init();
   _style = style;
   _tf = tf;
@@ -188,71 +188,71 @@ Environment::Environment(TexStyle style, const sptr<TeXFont>& tf, UnitType wu, f
   _textWidth = tw * SpaceAtom::getFactor(wu, *this);
 }
 
-float Environment::getInterline() const {
+float Environment_0::getInterline() const {
   return _interline * SpaceAtom::getFactor(_interlineUnit, *this);
 }
 
-void Environment::setTextWidth(UnitType wu, float w) {
+void Environment_0::setTextWidth(UnitType wu, float w) {
   _textWidth = w * SpaceAtom::getFactor(wu, *this);
 }
 
-sptr<Environment>& Environment::copy() {
-  Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
-  _copy = sptr<Environment>(t);
+sptr<Environment_0>& Environment_0::copy() {
+  Environment_0* t = new Environment_0(_style, _scaleFactor, _tf, _textStyle, _smallCap);
+  _copy = sptr<Environment_0>(t);
   return _copy;
 }
 
-sptr<Environment>& Environment::copy(const sptr<TeXFont>& tf) {
-  Environment* te = new Environment(_style, _scaleFactor, tf, _textStyle, _smallCap);
+sptr<Environment_0>& Environment_0::copy(const sptr<TeXFont>& tf) {
+  Environment_0* te = new Environment_0(_style, _scaleFactor, tf, _textStyle, _smallCap);
   te->_textWidth = _textWidth;
   te->_interline = _interline;
   te->_interlineUnit = _interlineUnit;
-  _copytf = sptr<Environment>(te);
+  _copytf = sptr<Environment_0>(te);
   return _copytf;
 }
 
-sptr<Environment>& Environment::crampStyle() {
-  Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
-  _cramp = sptr<Environment>(t);
+sptr<Environment_0>& Environment_0::crampStyle() {
+  Environment_0* t = new Environment_0(_style, _scaleFactor, _tf, _textStyle, _smallCap);
+  _cramp = sptr<Environment_0>(t);
   const i8 style = static_cast<i8>(_style);
   _cramp->_style = static_cast<TexStyle>(style % 2 == 1 ? style : style + 1);
   return _cramp;
 }
 
-sptr<Environment>& Environment::dnomStyle() {
-  Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
-  _dnom = sptr<Environment>(t);
+sptr<Environment_0>& Environment_0::dnomStyle() {
+  Environment_0* t = new Environment_0(_style, _scaleFactor, _tf, _textStyle, _smallCap);
+  _dnom = sptr<Environment_0>(t);
   const i8 style = static_cast<i8>(_style);
   _dnom->_style = static_cast<TexStyle>(2 * (style / 2) + 1 + 2 - 2 * (style / 6));
   return _dnom;
 }
 
-sptr<Environment>& Environment::numStyle() {
-  Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
-  _num = sptr<Environment>(t);
+sptr<Environment_0>& Environment_0::numStyle() {
+  Environment_0* t = new Environment_0(_style, _scaleFactor, _tf, _textStyle, _smallCap);
+  _num = sptr<Environment_0>(t);
   const i8 style = static_cast<i8>(_style);
   _num->_style = static_cast<TexStyle>(style + 2 - 2 * (style / 6));
   return _num;
 }
 
-sptr<Environment>& Environment::rootStyle() {
-  Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
-  _root = sptr<Environment>(t);
+sptr<Environment_0>& Environment_0::rootStyle() {
+  Environment_0* t = new Environment_0(_style, _scaleFactor, _tf, _textStyle, _smallCap);
+  _root = sptr<Environment_0>(t);
   _root->_style = TexStyle::scriptScript;
   return _root;
 }
 
-sptr<Environment>& Environment::subStyle() {
-  Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
-  _sub = sptr<Environment>(t);
+sptr<Environment_0>& Environment_0::subStyle() {
+  Environment_0* t = new Environment_0(_style, _scaleFactor, _tf, _textStyle, _smallCap);
+  _sub = sptr<Environment_0>(t);
   const i8 style = static_cast<i8>(_style);
   _sub->_style = static_cast<TexStyle>(2 * (style / 4) + 4 + 1);
   return _sub;
 }
 
-sptr<Environment>& Environment::supStyle() {
-  Environment* t = new Environment(_style, _scaleFactor, _tf, _textStyle, _smallCap);
-  _sup = sptr<Environment>(t);
+sptr<Environment_0>& Environment_0::supStyle() {
+  Environment_0* t = new Environment_0(_style, _scaleFactor, _tf, _textStyle, _smallCap);
+  _sup = sptr<Environment_0>(t);
   const i8 style = static_cast<i8>(_style);
   _sup->_style = static_cast<TexStyle>(2 * (style / 4) + 4 + (style % 2));
   return _sup;

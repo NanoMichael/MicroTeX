@@ -1,6 +1,9 @@
 #include <memory>
 
-#include "atom/atom_impl.h"
+#include "atom/atom_matrix.h"
+#include "core/formula.h"
+#include "env/env.h"
+#include "core/glue.h"
 
 using namespace std;
 using namespace tex;
@@ -16,7 +19,7 @@ SpaceAtom MatrixAtom::_vsep_ext_top(UnitType::ex, 0.f, 0.5f, 0.f);
 SpaceAtom MatrixAtom::_vsep_ext_bot(UnitType::ex, 0.f, 0.5f, 0.f);
 SpaceAtom MatrixAtom::_align(SpaceType::medMuSkip);
 
-sptr<Box> MatrixAtom::_nullbox(new StrutBox(0.f, 0.f, 0.f, 0.f));
+sptr<Box> MatrixAtom::_nullbox = StrutBox::empty();
 
 void MatrixAtom::defineColumnSpecifier(const wstring& rep, const wstring& spe) {
   _colspeReplacement[rep] = spe;
@@ -124,11 +127,11 @@ void MatrixAtom::parsePositions(wstring opt, vector<Alignment>& lpos) {
   if (lpos.empty()) lpos.push_back(Alignment::center);
 }
 
-float* MatrixAtom::getColumnSep(Environment& env, float width) {
+float* MatrixAtom::getColumnSep(Env& env, float width) {
   const int cols = _matrix->cols();
   auto* arr = new float[cols + 1]();
   sptr<Box> Align, AlignSep, Hsep;
-  float h, w = env.getTextWidth();
+  float h, w = env.textWidth();
   int i = 0;
 
   if (_matType == MatrixType::aligned || _matType == MatrixType::alignedAt) w = POS_INF;
@@ -301,7 +304,7 @@ void MatrixAtom::recalculateLine(
 }
 
 sptr<Box> MatrixAtom::generateMulticolumn(
-  Environment& env,
+  Env& env,
   const sptr<Box>& b,
   const float* hsep,
   const float* colWidth,
@@ -389,7 +392,7 @@ void MatrixAtom::applyCell(WrapperBox& box, int i, int j) {
   if (row != _matrix->_rowSpecifiers.end()) {
     for (const auto& s : row->second) s->apply(box);
   }
-  // 3. cell specifier
+  // 3. apply cell specifier
   const string key = tostring(i) + tostring(j);
   auto cell = _matrix->_cellSpecifiers.find(key);
   if (cell != _matrix->_cellSpecifiers.end()) {
@@ -397,19 +400,19 @@ void MatrixAtom::applyCell(WrapperBox& box, int i, int j) {
   }
 }
 
-sptr<Box> MatrixAtom::createBox(Environment& e) {
-  Environment& env = e;
+sptr<Box> MatrixAtom::createBox(Env& e) {
+  Env& env = e;
   const int rows = _matrix->rows();
   const int cols = _matrix->cols();
 
-  auto* lineDepth = new float[rows]();
-  auto* lineHeight = new float[rows]();
-  auto* colWidth = new float[cols]();
-  auto** boxarr = new sptr<Box>* [rows]();
+  auto lineDepth = new float[rows]();
+  auto lineHeight = new float[rows]();
+  auto colWidth = new float[cols]();
+  auto boxarr = new sptr<Box>* [rows]();
   for (int i = 0; i < rows; i++) boxarr[i] = new sptr<Box>[cols]();
 
   float matW = 0;
-  float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
+  const auto drt = env.ruleThickness();
 
   if (_matType == MatrixType::smallMatrix) {
     env = *(e.copy());
@@ -548,7 +551,7 @@ sptr<Box> MatrixAtom::createBox(Environment& e) {
           break;
 
         case AtomType::interText: {
-          float f = env.getTextWidth();
+          float f = env.textWidth();
           f = f == POS_INF ? colWidth[j] : f;
           hb = sptrOf<HBox>(boxarr[i][j], f, Alignment::left);
           j = cols;
@@ -579,7 +582,7 @@ sptr<Box> MatrixAtom::createBox(Environment& e) {
 
   totalHeight = vb->_height + vb->_depth;
 
-  const float axis = env.getTeXFont()->getAxisHeight(env.getStyle());
+  const auto axis = env.axisHeight();
   vb->_height = totalHeight / 2 + axis;
   vb->_depth = totalHeight / 2 - axis;
 
@@ -644,7 +647,7 @@ Alignment MulticolumnAtom::parseAlign(const string& str) {
   return align;
 }
 
-sptr<Box> MulticolumnAtom::createBox(Environment& env) {
+sptr<Box> MulticolumnAtom::createBox(Env& env) {
   sptr<Box> b = (
     _width == 0
     ? _cols->createBox(env)
@@ -654,7 +657,7 @@ sptr<Box> MulticolumnAtom::createBox(Environment& env) {
   return b;
 }
 
-sptr<Box> HdotsforAtom::createBox(float space, const sptr<Box>& b, Environment& env) {
+sptr<Box> HdotsforAtom::createBox(float space, const sptr<Box>& b, Env& env) {
   auto sb = sptrOf<StrutBox>(0.f, space, 0.f, 0.f);
   auto vb = sptrOf<VBox>();
   vb->add(sb);
@@ -664,7 +667,7 @@ sptr<Box> HdotsforAtom::createBox(float space, const sptr<Box>& b, Environment& 
   return vb;
 }
 
-sptr<Box> HdotsforAtom::createBox(Environment& env) {
+sptr<Box> HdotsforAtom::createBox(Env& env) {
   auto dot = _cols->createBox(env);
   float space = Glue::getSpace(SpaceType::thinMuSkip, env) * _coeff * 2;
 
@@ -694,10 +697,29 @@ sptr<Box> HdotsforAtom::createBox(Environment& env) {
   return createBox(space, hb, env);
 }
 
+inline float VlineAtom::getWidth(Env& env) const {
+  return _n == 0 ? 0 : env.ruleThickness() * (3 * _n - 2);
+}
+
+sptr<Box> VlineAtom::createBox(Env& env) {
+  if (_n == 0) return StrutBox::empty();
+
+  const auto drt = env.ruleThickness();
+  auto rb = sptrOf<RuleBox>(_height, drt, _shift, MatrixAtom::LINE_COLOR, true);
+  auto sep = sptrOf<StrutBox>(2 * drt, 0.f, 0.f, 0.f);
+  auto hb = new HBox();
+  for (int i = 0; i < _n - 1; i++) {
+    hb->add(rb);
+    hb->add(sep);
+  }
+  if (_n > 0) hb->add(rb);
+  return sptr<Box>(hb);
+}
+
 SpaceAtom MultlineAtom::_vsep_in(UnitType::ex, 0.f, 1.f, 0.f);
 
-sptr<Box> MultlineAtom::createBox(Environment& env) {
-  float tw = env.getTextWidth();
+sptr<Box> MultlineAtom::createBox(Env& env) {
+  float tw = env.textWidth();
   if (tw == POS_INF || _lineType == MultiLineType::gathered)
     return MatrixAtom(_isPartial, _column, L"").createBox(env);
 

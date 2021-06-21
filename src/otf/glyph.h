@@ -58,11 +58,11 @@ public:
   friend CLMReader;
 };
 
-/** Defines variants for one glyph */
+/** Defines variant for one glyph */
 struct Variants final {
 private:
   u16 _count = 0;
-  /** Array of glyph id in font to represents varints */
+  /** Array of glyph id in font to represents variant */
   u16* _glyphs = nullptr;
 
   explicit Variants(u16 count) noexcept
@@ -75,11 +75,14 @@ public:
   /** To represents an empty Variants that the number of its glyphs is 0 */
   static const Variants empty;
 
-  /** Glyph count for this variants */
+  /** Glyph count for this variant */
   inline u16 count() const { return _count; }
 
+  /** Test if the variant is empty */
+  inline bool isEmpty() const { return _count == 0; }
+
   /** Get glyph id at index i */
-  inline u16 operator[](int i) const { return _glyphs[i]; }
+  inline u16 operator[](u32 i) const { return _glyphs[i]; }
 
   ~Variants() { delete[] _glyphs; }
 
@@ -313,7 +316,7 @@ public:
   inline const GlyphAssembly& horizontalAssembly() const { return *_horizontalAssembly; }
 
   /**
-   * This allows constructing very large versions of the glyph by stacking the componants together
+   * This allows constructing very large versions of the glyph by stacking the components together
    * vertically. Some components may be repeated so there is no bound on the size.
    *
    * This is different from verticalVariants which expects prebuilt glyphs of various fixed sizes.
@@ -329,7 +332,7 @@ public:
   friend CLMReader;
 };
 
-/** Defines info for one glyph, divice-table is JUST IGNORED. */
+/** Defines info for one glyph, device-table is JUST IGNORED. */
 struct Glyph final {
 private:
   Metrics _metrics{};

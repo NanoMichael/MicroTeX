@@ -27,8 +27,8 @@ private:
 
   FontStyle _fontStyle = FontStyle::none;
 
-  /** Get the scale factor of the given style */
-  float scale(TexStyle style) const;
+  /** Get the scale factor of the current environment */
+  float scale() const;
 
 public:
   no_copy_assign(Env);
@@ -90,6 +90,8 @@ public:
     return _lastFontId == FontContext::NO_FONT ? _fc->mathFontId() : _lastFontId;
   }
 
+  // region Font related
+
   /** Helper function to get math constants */
   const MathConsts& mathConsts() const;
 
@@ -105,11 +107,43 @@ public:
   /** The x-height of the current environment */
   float xHeight() const;
 
+  /** The space size of the current environment */
+  float space() const;
+
   /** The rule thickness, equals to the fraction rule thickness */
   float ruleThickness() const;
 
+  /** The axis height */
+  float axisHeight() const;
+
   /** Add a font style to this environment */
   void addFontStyle(FontStyle style);
+
+  /** Remove a font style from this environment */
+  void removeFontStyle(FontStyle style);
+
+  // endregion
+
+  // region Styles
+
+  TexStyle crampStyle() const;
+
+  /** Style to display denominator */
+  TexStyle dnomStyle() const;
+
+  /** Style to display numerator */
+  TexStyle numStyle() const;
+
+  /** Style to display radical roots */
+  TexStyle rootStyle() const;
+
+  /** Style to display subscripts */
+  TexStyle subStyle() const;
+
+  /** Style to display superscripts */
+  TexStyle supStyle() const;
+
+  // endregion
 
   /**
    * Get a Char specifying the given character with scale information depending
@@ -117,20 +151,39 @@ public:
    *
    * @param code the alphanumeric character code
    * @param isMathMode if is in math-mode
+   * @param style the font style, if is invalid, use the environment font style
    *
    * @return the Char, the method Char#isValid() will return false if not found
    */
-  Char getChar(c32 code, bool isMathMode) const;
+  Char getChar(c32 code, bool isMathMode, FontStyle style = FontStyle::invalid) const;
 
   /**
-   * Get a Char specifying the given symbol name with scale information depending
+   * Get a Char specifying the given symbol with scale information depending
    * on the current environment.
    *
-   * @param symbolName the symbol name
+   * @param sym the symbol
    *
    * @return the Char, the method Char#isValid() will return false if not found
    */
-  Char getChar(const std::string& symbolName) const;
+  Char getChar(const Symbol& sym) const;
+
+  /**
+   * Do something with given TexStyle. This will reset the style after function
+   * return.
+   *
+   * @tparam F function type to do something
+   * @param style the given style
+   * @param f the function
+   * @return the function return type
+   */
+  template<typename F>
+  auto withStyle(const TexStyle style, F&& f) -> decltype(f(*this)) {
+    auto oldStyle = _style;
+    setStyle(style);
+    auto result = f(*this);
+    setStyle(oldStyle);
+    return result;
+  }
 };
 
 }
