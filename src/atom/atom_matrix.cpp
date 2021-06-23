@@ -400,8 +400,7 @@ void MatrixAtom::applyCell(WrapperBox& box, int i, int j) {
   }
 }
 
-sptr<Box> MatrixAtom::createBox(Env& e) {
-  Env& env = e;
+sptr<Box> MatrixAtom::createBoxInner(Env& env) {
   const int rows = _matrix->rows();
   const int cols = _matrix->cols();
 
@@ -413,14 +412,6 @@ sptr<Box> MatrixAtom::createBox(Env& e) {
 
   float matW = 0;
   const auto drt = env.ruleThickness();
-
-  if (_matType == MatrixType::smallMatrix) {
-    env = *(e.copy());
-    env.setStyle(TexStyle::script);
-  } /* else if (_matType == MatrixType::matrix) {
-    env = *(e.copy());
-    env.setStyle(STYLE_TEXT);
-  }*/
 
   // multi-column & multi-row atoms
   vector<sptr<Atom>> listMultiCol;
@@ -594,6 +585,21 @@ sptr<Box> MatrixAtom::createBox(Env& e) {
   delete[] boxarr;
 
   return sptr<Box>(vb);
+}
+
+sptr<Box> MatrixAtom::createBox(Env& env) {
+  if (_matType == MatrixType::smallMatrix) {
+    return env.withStyle(
+      TexStyle::script,
+      [this](auto& script) { return createBoxInner(script); }
+    );
+  } /* else if (_matType == MatrixType::matrix) {
+    return env.withStyle(
+      TexStyle::text,
+      [this](auto& text) { return createBoxInner(text); }
+    );
+  }*/
+  return createBoxInner(env);
 }
 
 /*************************************** multicolumn atoms ****************************************/

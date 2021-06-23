@@ -1,5 +1,5 @@
 #include "box/box.h"
-#include "fonts/fonts.h"
+#include "unimath/uni_font.h"
 
 using namespace tex;
 using namespace std;
@@ -14,12 +14,12 @@ void Box::copyMetrics(const sptr<Box>& box) {
 }
 
 int Box::lastFontId() {
-  return TeXFont::NO_FONT;
+  return FontContext::NO_FONT;
 }
 
 int BoxGroup::lastFontId() {
-  int id = TeXFont::NO_FONT;
-  for (int i = _children.size() - 1; i >= 0 && id == TeXFont::NO_FONT; i--) {
+  int id = FontContext::NO_FONT;
+  for (int i = _children.size() - 1; i >= 0 && id == FontContext::NO_FONT; i--) {
     id = _children[i]->lastFontId();
   }
   return id;

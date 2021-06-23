@@ -1,7 +1,7 @@
 #include "atom/atom_char.h"
 #include "core/core.h"
 #include "env/env.h"
-#include "res/parser/formula_parser.h"
+#include "box/box_single.h"
 
 using namespace tex;
 using namespace std;
@@ -22,15 +22,15 @@ SymbolAtom::SymbolAtom(const Symbol* symbol) noexcept: _symbol(symbol) {
   }
 }
 
-inline c32 SymbolAtom::unicode() const {
+c32 SymbolAtom::unicode() const {
   return _symbol == nullptr ? 0 : _symbol->unicode;
 }
 
-inline string SymbolAtom::name() const {
+string SymbolAtom::name() const {
   return _symbol == nullptr ? "" : _symbol->name;
 }
 
-inline bool SymbolAtom::isValid() const {
+bool SymbolAtom::isValid() const {
   return _symbol != nullptr;
 }
 
@@ -42,7 +42,7 @@ Char SymbolAtom::getChar(Env& env) const {
     const auto chr = env.getChar(upper, true); // TODO math mode?
     return chr.isValid() ? chr : env.getChar(*_symbol);
   }
-  return getChar(env);
+  return env.getChar(*_symbol);
 }
 
 sptr<Box> SymbolAtom::createBox(Env& env) {
@@ -64,10 +64,11 @@ sptr<Box> SymbolAtom::createBox(Env& env) {
 }
 
 Char CharAtom::getChar(Env& env) const {
-  c32 code = unicode();
-  if (env.isSmallCap() && isUnicodeLower(code)) {
-    code = toUnicodeUpper(code);
-  }
+  const auto code = (
+    env.isSmallCap() && isUnicodeLower(unicode())
+    ? toUnicodeUpper(unicode())
+    : unicode()
+  );
   return env.getChar(code, isMathMode(), _fontStyle);
 }
 

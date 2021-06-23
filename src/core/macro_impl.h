@@ -10,7 +10,6 @@
 #include "core/formula.h"
 #include "core/macro.h"
 #include "core/parser.h"
-#include "fonts/alphabet.h"
 #include "graphic/graphic.h"
 
 namespace tex {
@@ -173,8 +172,11 @@ inline sptr<Atom> _choose(
   if (num == nullptr || den == nullptr)
     throw ex_parse("Both numerator and denominator of choose can't be empty!");
   auto f = sptrOf<FractionAtom>(num, den, false);
-  auto l = sptrOf<SymbolAtom>(left, AtomType::opening, true);
-  auto r = sptrOf<SymbolAtom>(right, AtomType::closing, true);
+  auto l = SymbolAtom::get(left);
+  auto r = SymbolAtom::get(right);
+  // modify its type to opening and closing
+  l->_type = AtomType::opening;
+  r->_type = AtomType::closing;
   return sptrOf<FencedAtom>(f, l, r);
 }
 
@@ -221,8 +223,11 @@ inline macro(binom) {
   if (num._root == nullptr || den._root == nullptr)
     throw ex_parse("Both binomial coefficients must be not empty!");
   auto f = sptrOf<FractionAtom>(num._root, den._root, false);
-  sptr<SymbolAtom> l(new SymbolAtom("lbrack", AtomType::opening, true));
-  sptr<SymbolAtom> r(new SymbolAtom("rbrack", AtomType::closing, true));
+  auto l = SymbolAtom::get("lbrack");
+  auto r = SymbolAtom::get("rbrack");
+  // modify its type to opening and closing
+  l->_type = AtomType::opening;
+  r->_type = AtomType::closing;
   return sptrOf<FencedAtom>(f, l, r);
 }
 
@@ -678,11 +683,7 @@ inline macro(fbox) {
 }
 
 inline macro(questeq) {
-  auto eq = SymbolAtom::get(Formula::_symbolMappings['=']);
-  auto quest = SymbolAtom::get(Formula::_symbolMappings['?']);
-  auto sq = sptrOf<ScaleAtom>(quest, 0.75f);
-  auto at = sptrOf<UnderOverAtom>(eq, sq, UnitType::mu, 2.5f, true, true);
-  return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, at);
+  return sptrOf<EmptyAtom>();
 }
 
 inline macro(stackrel) {
@@ -984,32 +985,36 @@ inline macro(externalfont) {
 }
 
 inline macro(ctext) {
-  return sptrOf<TextRenderingAtom>(args[1], PLAIN);
+  // TODO text
+  return sptrOf<EmptyAtom>();
 }
 
 inline macro(textit) {
-  return sptrOf<TextRenderingAtom>(args[1], ITALIC);
+  // TODO text
+  return sptrOf<EmptyAtom>();
 }
 
 inline macro(textbf) {
-  return sptrOf<TextRenderingAtom>(args[1], BOLD);
+  // TODO text
+  return sptrOf<EmptyAtom>();
 }
 
 inline macro(textitbf) {
-  return sptrOf<TextRenderingAtom>(args[1], BOLD | ITALIC);
+  // TODO text
+  return sptrOf<EmptyAtom>();
 }
 
 inline macro(declaremathsizes) {
   float a, b, c, d;
   valueof(args[1], a), valueof(args[2], b), valueof(args[3], c), valueof(args[4], d);
-  DefaultTeXFont::setMathSizes(a, b, c, c);
+  // DefaultTeXFont::setMathSizes(a, b, c, c);
   return nullptr;
 }
 
 inline macro(magnification) {
   float x;
   valueof(args[1], x);
-  DefaultTeXFont::setMagnification(x);
+  // DefaultTeXFont::setMagnification(x);
   return nullptr;
 }
 
@@ -1243,7 +1248,7 @@ inline macro(char) {
   }
   int n = 0;
   str2int(x, n, radix);
-  return tp.convertCharacter((wchar_t) n, true);
+  return tp.convertCharacter((wchar_t) n);
 }
 
 inline macro(T) {

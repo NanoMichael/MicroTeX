@@ -1,5 +1,4 @@
 #include "box_single.h"
-#include "fonts/fonts.h"
 
 using namespace std;
 using namespace tex;

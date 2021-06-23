@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "graphic/graphic.h"
+#include "env/env.h"
 
 using namespace tex;
 using namespace std;
@@ -15,7 +16,7 @@ macro(kern) {
 }
 
 macro(hvspace) {
-  auto[unit, value] = SpaceAtom::getLength(args[1]);
+  auto[unit, value] = Units::getLength(args[1]);
   return (
     args[0][0] == L'h'
     ? sptrOf<SpaceAtom>(unit, value, 0.f, 0.f)
@@ -24,9 +25,9 @@ macro(hvspace) {
 }
 
 macro(rule) {
-  auto[wu, w] = SpaceAtom::getLength(args[1]);
-  auto[hu, h] = SpaceAtom::getLength(args[2]);
-  auto[ru, r] = SpaceAtom::getLength(args[3]);
+  auto[wu, w] = Units::getLength(args[1]);
+  auto[hu, h] = Units::getLength(args[2]);
+  auto[ru, r] = Units::getLength(args[3]);
 
   return sptrOf<RuleAtom>(wu, w, hu, h, ru, -r);
 }
@@ -92,7 +93,7 @@ macro(genfrac) {
   R = dynamic_pointer_cast<SymbolAtom>(right._root);
 
   bool rule = true;
-  auto[unit, value] = SpaceAtom::getLength(args[3]);
+  auto[unit, value] = Units::getLength(args[3]);
   if (args[3].empty()) {
     unit = UnitType::em;
     value = 0.f;
@@ -168,25 +169,26 @@ macro(abovewithdelims) {
 }
 
 macro(textstyles) {
+  // TODO text styles
   wstring style(args[0]);
   if (style == L"frak") style = L"mathfrak";
   else if (style == L"Bbb") style = L"mathbb";
   else if (style == L"bold") return sptrOf<BoldAtom>(Formula(tp, args[1], false)._root);
   else if (style == L"cal") style = L"mathcal";
 
-  FontInfos* info = nullptr;
-  auto it = Formula::_externalFontMap.find(UnicodeBlock::BASIC_LATIN);
-  if (it != Formula::_externalFontMap.end()) {
-    info = it->second;
-    Formula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = nullptr;
-  }
-  auto atom = Formula(tp, args[1], false)._root;
-  if (info != nullptr) {
-    Formula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = info;
-  }
+//  FontInfos* info = nullptr;
+//  auto it = Formula::_externalFontMap.find(UnicodeBlock::BASIC_LATIN);
+//  if (it != Formula::_externalFontMap.end()) {
+//    info = it->second;
+//    Formula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = nullptr;
+//  }
+//  auto atom = Formula(tp, args[1], false)._root;
+//  if (info != nullptr) {
+//    Formula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = info;
+//  }
 
   string s = wide2utf8(style);
-  return sptrOf<TextStyleAtom>(atom, s);
+  return sptrOf<TextStyleAtom>(sptrOf<EmptyAtom>(), s);
 }
 
 macro(accentbiss) {
@@ -313,9 +315,9 @@ macro(renewcommand) {
 }
 
 macro(raisebox) {
-  auto[ru, r] = SpaceAtom::getLength(args[1]);
-  auto[hu, h] = SpaceAtom::getLength(args[3]);
-  auto[du, d] = SpaceAtom::getLength(args[4]);
+  auto[ru, r] = Units::getLength(args[1]);
+  auto[hu, h] = Units::getLength(args[3]);
+  auto[du, d] = Units::getLength(args[4]);
   return sptrOf<RaiseAtom>(Formula(tp, args[2])._root, ru, r, hu, h, du, d);
 }
 

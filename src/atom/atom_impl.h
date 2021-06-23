@@ -1,6 +1,8 @@
 #ifndef ATOM_IMPL_H_INCLUDED
 #define ATOM_IMPL_H_INCLUDED
 
+#include <list>
+
 #include "common.h"
 #include "box/box_factory.h"
 #include "box/box_group.h"
@@ -8,9 +10,9 @@
 #include "atom/atom_matrix.h"
 #include "core/core.h"
 #include "core/formula.h"
-#include "fonts/fonts.h"
 #include "graphic/graphic.h"
 #include "env/env.h"
+#include "env/units.h"
 
 namespace tex {
 
@@ -28,14 +30,7 @@ public:
     : _delim(delim), _size(size) {}
 
   sptr<Box> createBox(Env& env) override {
-    auto b = DelimiterFactory::create(*_delim, env, _size);
-    auto* hb = new HBox();
-    float h = b->_height;
-    float total = h + b->_depth;
-    float axis = env.axisHeight();
-    b->_shift = -total / 2 + h - axis;
-    hb->add(b);
-    return sptr<Box>(hb);
+    return StrutBox::empty();
   }
 
   __decl_clone(BigDelimiterAtom)
@@ -52,12 +47,7 @@ public:
   explicit BoldAtom(const sptr<Atom>& base) : _base(base) {}
 
   sptr<Box> createBox(Env& env) override {
-    if (_base != nullptr) {
-      Env& e = *(env.copy(env.getTeXFont()->copy()));
-      e.getTeXFont()->setBold(true);
-      return _base->createBox(e);
-    }
-    return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
+    return StrutBox::empty();
   }
 
   __decl_clone(BoldAtom)
@@ -74,29 +64,7 @@ public:
   explicit CedillaAtom(const sptr<Atom>& base) : _base(base) {}
 
   sptr<Box> createBox(Env& env) override {
-    auto b = _base->createBox(env);
-    auto* vb = new VBox();
-    vb->add(b);
-    Char ch = env.getTeXFont()->getChar("mathcedilla", env.getStyle());
-    float italic = ch.getItalic();
-    Box* cedilla = new CharBox(ch);
-    Box* y;
-    if (std::abs(italic) > PREC) {
-      auto hbox = new HBox(sptrOf<StrutBox>(-italic, 0.f, 0.f, 0.f));
-      hbox->add(sptr<Box>(cedilla));
-      y = hbox;
-    } else {
-      y = cedilla;
-    }
-
-    Box* ce = new HBox(sptr<Box>(y), b->_width, Alignment::center);
-    float x = 0.4f * SpaceAtom::getFactor(UnitType::mu, env);
-    vb->add(sptrOf<StrutBox>(0.f, -x, 0.f, 0.f));
-    vb->add(sptr<Box>(ce));
-    float f = vb->_height + vb->_depth;
-    vb->_height = b->_height;
-    vb->_depth = f - b->_height;
-    return sptr<Box>(vb);
+    return StrutBox::empty();
   }
 
   __decl_clone(CedillaAtom)
@@ -106,24 +74,7 @@ public:
 class DdtosAtom : public Atom {
 public:
   sptr<Box> createBox(Env& env) override {
-    auto ldots = Formula::get(L"ldots")->_root->createBox(env);
-    float w = ldots->_width;
-    auto dot = SymbolAtom::get("ldotp")->createBox(env);
-    auto* hb1 = new HBox(dot, w, Alignment::left);
-    auto* hb2 = new HBox(dot, w, Alignment::center);
-    auto* hb3 = new HBox(dot, w, Alignment::right);
-    sptr<Box> pt4(SpaceAtom(UnitType::mu, 0, 4, 0).createBox(env));
-    auto* vb = new VBox();
-    vb->add(sptr<Box>(hb1));
-    vb->add(pt4);
-    vb->add(sptr<Box>(hb2));
-    vb->add(pt4);
-    vb->add(sptr<Box>(hb3));
-
-    float h = vb->_height + vb->_depth;
-    vb->_height = h;
-    vb->_depth = 0;
-    return sptr<Box>(vb);
+    return StrutBox::empty();
   }
 
   __decl_clone(DdtosAtom)
@@ -151,11 +102,7 @@ public:
   }
 
   sptr<Box> createBox(Env& env) override {
-    auto bbase = _base->createBox(env);
-    float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-    float space = INTERSPACE * SpaceAtom::getFactor(UnitType::em, env);
-    if (isTransparent(_bg)) return sptrOf<FramedBox>(bbase, drt, space);
-    return sptrOf<FramedBox>(bbase, drt, space, _line, _bg);
+    return StrutBox::empty();
   }
 
   __decl_clone(FBoxAtom)
@@ -169,11 +116,7 @@ public:
   explicit DoubleFramedAtom(const sptr<Atom>& base) : FBoxAtom(base) {}
 
   sptr<Box> createBox(Env& env) override {
-    auto bbase = _base->createBox(env);
-    float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-    float space = INTERSPACE * SpaceAtom::getFactor(UnitType::em, env);
-    float sspace = 1.5f * drt + 0.5f * SpaceAtom::getFactor(UnitType::point, env);
-    return sptrOf<FramedBox>(sptrOf<FramedBox>(bbase, 0.75f * drt, space), 1.5f * drt, sspace);
+    return StrutBox::empty();
   }
 
   __decl_clone(DoubleFramedAtom)
@@ -187,10 +130,7 @@ public:
   explicit ShadowAtom(const sptr<Atom>& base) : FBoxAtom(base) {}
 
   sptr<Box> createBox(Env& env) override {
-    auto x = FBoxAtom::createBox(env);
-    auto box = std::dynamic_pointer_cast<FramedBox>(x);
-    float t = env.getTeXFont()->getDefaultRuleThickness(env.getStyle()) * 4;
-    return sptrOf<ShadowBox>(box, t);
+    return StrutBox::empty();
   }
 
   __decl_clone(ShadowAtom)
@@ -389,16 +329,7 @@ public:
   explicit ItAtom(const sptr<Atom>& base) : _base(base) {}
 
   sptr<Box> createBox(Env& env) override {
-    sptr<Box> box;
-    if (_base != nullptr) {
-      Env& e = *(env.copy(env.getTeXFont()->copy()));
-      e.getTeXFont()->setIt(true);
-      box = _base->createBox(e);
-    } else {
-      box = sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
-    }
-
-    return box;
+    return StrutBox::empty();
   }
 
   __decl_clone(ItAtom)
@@ -450,12 +381,7 @@ public:
     : ScaleAtom(base, factor, factor), _factor(factor) {}
 
   sptr<Box> createBox(Env& env) override {
-    Env& e = *(env.copy());
-    float f = e.getScaleFactor();
-    e.setScaleFactor(_factor);
-    auto box = sptrOf<ScaleBox>(_base->createBox(e), _factor / f);
-    e.setScaleFactor(f);
-    return box;
+    return StrutBox::empty();
   }
 
   __decl_clone(MonoScaleAtom)
@@ -472,29 +398,7 @@ public:
   explicit OgonekAtom(const sptr<Atom>& base) : _base(base) {}
 
   sptr<Box> createBox(Env& env) override {
-    auto b = _base->createBox(env);
-    auto* vb = new VBox();
-    vb->add(b);
-    Char ch = env.getTeXFont()->getChar("ogonek", env.getStyle());
-    float italic = ch.getItalic();
-    Box* ogonek = new CharBox(ch);
-    Box* y = nullptr;
-
-    if (std::abs(italic) > PREC) {
-      auto hbox = new HBox(sptrOf<StrutBox>(-italic, 0.f, 0.f, 0.f));
-      hbox->add(sptr<Box>(ogonek));
-      y = hbox;
-    } else {
-      y = ogonek;
-    }
-
-    Box* og = new HBox(sptr<Box>(y), b->_width, Alignment::right);
-    vb->add(sptrOf<StrutBox>(0.f, -ogonek->_height, 0.f, 0.f));
-    vb->add(sptr<Box>(og));
-    float f = vb->_height + vb->_depth;
-    vb->_height = b->_height;
-    vb->_depth = f - b->_height;
-    return sptr<Box>(vb);
+    return StrutBox::empty();
   }
 
   __decl_clone(OgonekAtom)
@@ -513,21 +417,7 @@ public:
   }
 
   sptr<Box> createBox(Env& env) override {
-    float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-    // cramp the style of the formula to be over-lined and create
-    // vertical box
-    auto b = (
-      _base == nullptr
-      ? sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f)
-      : _base->createBox(*(env.crampStyle()))
-    );
-    auto* ob = new OverBar(b, 3 * drt, drt);
-
-    // baseline vertical box = baseline box b
-    ob->_depth = b->_depth;
-    ob->_height = b->_height + 5 * drt;
-
-    return sptr<Box>(ob);
+    return StrutBox::empty();
   }
 
   __decl_clone(OverlinedAtom)
@@ -554,16 +444,7 @@ public:
   AtomType rightType() const override { return _base->rightType(); }
 
   sptr<Box> createBox(Env& env) override {
-    auto base = _base->createBox(env);
-    base->_shift = _ru == UnitType::none ? 0 : SpaceAtom::getSize(_ru, -_r, env);
-
-    if (_hu == UnitType::none) return base;
-
-    auto* hbox = new HBox(base);
-    hbox->_height = SpaceAtom::getSize(_hu, _h, env);
-    hbox->_depth = _du == UnitType::none ? 0 : SpaceAtom::getSize(_du, _d, env);
-
-    return sptr<Box>(hbox);
+    return StrutBox::empty();
   }
 
   __decl_clone(RaiseAtom)
@@ -603,8 +484,8 @@ public:
     _type = base->_type;
     _base = base;
     _keepAspectRatio = keepAspectRatio;
-    auto[wu, w] = SpaceAtom::getLength(ws);
-    auto[hu, h] = SpaceAtom::getLength(hs);
+    auto[wu, w] = Units::getLength(ws);
+    auto[hu, h] = Units::getLength(hs);
     _wu = wu, _w = w;
     _hu = hu, _h = h;
   }
@@ -614,25 +495,7 @@ public:
   AtomType rightType() const override { return _base->rightType(); }
 
   sptr<Box> createBox(Env& env) override {
-    auto bbox = _base->createBox(env);
-    if (_wu == UnitType::none && _hu == UnitType::none) return bbox;
-    float sx = 1.f, sy = 1.f;
-    if (_wu != UnitType::none && _hu != UnitType::none) {
-      sx = _w * SpaceAtom::getFactor(_wu, env) / bbox->_width;
-      sy = _h * SpaceAtom::getFactor(_hu, env) / bbox->_height;
-      if (_keepAspectRatio) {
-        sx = std::min(sx, sy);
-        sy = sx;
-      }
-    } else if (_wu != UnitType::none && _hu == UnitType::none) {
-      sx = _w * SpaceAtom::getFactor(_wu, env) / bbox->_width;
-      sy = sx;
-    } else {
-      sx = _h * SpaceAtom::getFactor(_hu, env) / bbox->_height;
-      sy = sx;
-    }
-
-    return sptrOf<ScaleBox>(bbox, sx, sy);
+    return StrutBox::empty();
   }
 
   __decl_clone(ResizeAtom)
@@ -694,9 +557,9 @@ public:
     : _wu(wu), _hu(hu), _ru(ru), _w(w), _h(h), _r(r) {}
 
   sptr<Box> createBox(Env& env) override {
-    float w = SpaceAtom::getFactor(_wu, env) * _w;
-    float h = SpaceAtom::getFactor(_hu, env) * _h;
-    float r = SpaceAtom::getFactor(_ru, env) * _r;
+    float w = Units::fsize(_wu, _w, env);
+    float h = Units::fsize(_hu, _h, env);
+    float r = Units::fsize(_ru, _r, env);
     return sptrOf<RuleBox>(h, w, r);
   }
 
@@ -714,11 +577,7 @@ public:
   explicit SmallCapAtom(const sptr<Atom>& base) : _base(base) {}
 
   sptr<Box> createBox(Env& env) override {
-    bool prev = env.getSmallCap();
-    env.setSmallCap(true);
-    auto box = _base->createBox(env);
-    env.setSmallCap(prev);
-    return box;
+    return StrutBox::empty();
   }
 
   __decl_clone(SmallCapAtom)
@@ -735,11 +594,7 @@ public:
   explicit SsAtom(const sptr<Atom>& base) : _base(base) {}
 
   sptr<Box> createBox(Env& env) override {
-    bool prev = env.getTeXFont()->isSs();
-    env.getTeXFont()->setSs(true);
-    auto box = _base->createBox(env);
-    env.getTeXFont()->setSs(prev);
-    return box;
+    return StrutBox::empty();
   }
 
   __decl_clone(SsAtom)
@@ -754,18 +609,7 @@ public:
   explicit StrikeThroughAtom(const sptr<Atom>& a) : _at(a) {}
 
   sptr<Box> createBox(Env& env) override {
-    TeXFont& tf = *(env.getTeXFont());
-    TexStyle style = env.getStyle();
-    float axis = tf.getAxisHeight(style);
-    float drt = tf.getDefaultRuleThickness(style);
-    auto b = _at->createBox(env);
-    auto* rule = new RuleBox(drt, b->_width, -axis + drt, false);
-    auto* hb = new HBox();
-    hb->add(b);
-    hb->add(sptrOf<StrutBox>(-b->_width, 0.f, 0.f, 0.f));
-    hb->add(sptr<Box>(rule));
-
-    return sptr<Box>(hb);
+    return StrutBox::empty();
   }
 
   __decl_clone(StrikeThroughAtom)
@@ -790,11 +634,7 @@ public:
   }
 
   sptr<Box> createBox(Env& env) override {
-    TexStyle style = env.getStyle();
-    env.setStyle(_style);
-    auto box = _at->createBox(env);
-    env.setStyle(style);
-    return box;
+    return StrutBox::empty();
   }
 
   __decl_clone(StyleAtom)
@@ -810,13 +650,7 @@ public:
   explicit TextCircledAtom(const sptr<Atom>& a) : _at(a) {}
 
   sptr<Box> createBox(Env& env) override {
-    auto circle = SymbolAtom::get("bigcirc")->createBox(env);
-    circle->_shift = -0.07f * SpaceAtom::getFactor(UnitType::ex, env);
-    auto box = _at->createBox(env);
-    auto* hb = new HBox(box, circle->_width, Alignment::center);
-    hb->add(sptrOf<StrutBox>(-hb->_width, 0.f, 0.f, 0.f));
-    hb->add(circle);
-    return sptr<Box>(hb);
+    return StrutBox::empty();
   }
 
   __decl_clone(TextCircledAtom)
@@ -834,11 +668,7 @@ public:
   TextStyleAtom(const sptr<Atom>& a, std::string style) : _style(std::move(style)), _at(a) {}
 
   sptr<Box> createBox(Env& env) override {
-    std::string prev = env.getTextStyle();
-    env.setTextStyle(_style);
-    auto box = _at->createBox(env);
-    env.setTextStyle(prev);
-    return box;
+    return StrutBox::empty();
   }
 
   __decl_clone(TextStyleAtom)
@@ -855,11 +685,7 @@ public:
   explicit TtAtom(const sptr<Atom>& base) : _base(base) {}
 
   sptr<Box> createBox(Env& env) override {
-    bool prev = env.getTeXFont()->isTt();
-    env.getTeXFont()->setTt(true);
-    auto box = _base->createBox(env);
-    env.getTeXFont()->setTt(prev);
-    return box;
+    return StrutBox::empty();
   }
 
   __decl_clone(TtAtom)
@@ -878,27 +704,7 @@ public:
   }
 
   sptr<Box> createBox(Env& env) override {
-    float drt = env.getTeXFont()->getDefaultRuleThickness(env.getStyle());
-
-    // create formula box in same style
-    auto b = (
-      _base == nullptr
-      ? sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f)
-      : _base->createBox(env)
-    );
-
-    // create vertical box
-    auto* vb = new VBox();
-    vb->add(b);
-    vb->add(sptrOf<StrutBox>(0.f, 3 * drt, 0.f, 0.f));
-    vb->add(sptrOf<RuleBox>(drt, b->_width, 0.f));
-
-    // baseline vertical box = baseline box b
-    // there's also an invisible strut of height drt under the rule
-    vb->_depth = b->_depth + 5 * drt;
-    vb->_height = b->_height;
-
-    return sptr<Box>(vb);
+    return StrutBox::empty();
   }
 
   __decl_clone(UnderlinedAtom)
@@ -949,15 +755,7 @@ public:
   explicit VCenteredAtom(const sptr<Atom>& a) : _at(a) {}
 
   sptr<Box> createBox(Env& env) override {
-    auto b = _at->createBox(env);
-
-    float total = b->_height + b->_depth;
-    float axis = env.getTeXFont()->getAxisHeight(env.getStyle());
-
-    // center on axis
-    b->_shift = -(total / 2) - axis;
-
-    return sptrOf<HBox>(b);
+    return StrutBox::empty();
   }
 
   __decl_clone(VCenteredAtom)

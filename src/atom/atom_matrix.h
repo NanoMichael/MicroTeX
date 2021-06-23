@@ -98,9 +98,7 @@ private:
   static void recalculateLine(
     int rows,
     sptr<Box>** boxarr,
-    std::vector<sptr<Atom>>
-
-    & multiRows,
+    std::vector<sptr<Atom>>& multiRows,
     float* height,
     float* depth,
     float drt,
@@ -110,6 +108,8 @@ private:
   float* getColumnSep(Env& env, float width);
 
   void applyCell(WrapperBox& box, int i, int j);
+
+  sptr<Box> createBoxInner(Env& env);
 
 public:
   // The color to draw the rule of the matrix

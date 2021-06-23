@@ -149,17 +149,6 @@ void TeXRender::draw(Graphics2D& g2, int x, int y) {
   g2.setColor(old);
 }
 
-DefaultTeXFont* TeXRenderBuilder::createFont(float size, int type) {
-  DefaultTeXFont* tf = new DefaultTeXFont(size);
-  if (type == 0) tf->setSs(false);
-  if ((type & ROMAN) != 0) tf->setRoman(true);
-  if ((type & TYPEWRITER) != 0) tf->setTt(true);
-  if ((type & SANSSERIF) != 0) tf->setSs(true);
-  if ((type & ITALIC) != 0) tf->setIt(true);
-  if ((type & BOLD) != 0) tf->setBold(true);
-  return tf;
-}
-
 TeXRender* TeXRenderBuilder::build(Formula& f) {
   return build(f._root);
 }
@@ -170,42 +159,5 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
   if (_textSize == -1) {
     throw ex_invalid_state("A size is required, call function setSize before build.");
   }
-
-  DefaultTeXFont* font = (
-    _type == -1
-    ? new DefaultTeXFont(_textSize)
-    : createFont(_textSize, _type)
-  );
-  sptr<TeXFont> tf(font);
-  Environment* env;
-  if (_widthUnit != UnitType::none && _textWidth != 0) {
-    env = new Environment(_style, tf, _widthUnit, _textWidth);
-  } else {
-    env = new Environment(_style, tf);
-  }
-
-  if (_lineSpaceUnit != UnitType::none) {
-    env->setInterline(_lineSpaceUnit, _lineSpace);
-  }
-
-  auto box = f->createBox(*env);
-  TeXRender* render;
-  if (_widthUnit != UnitType::none && _textWidth != 0) {
-    HBox* hb;
-    if (_lineSpaceUnit != UnitType::none && _lineSpace != 0) {
-      float space = _lineSpace * SpaceAtom::getFactor(_lineSpaceUnit, *env);
-      auto split = BoxSplitter::split(box, env->getTextWidth(), space);
-      hb = new HBox(split, _isMaxWidth ? split->_width : env->getTextWidth(), _align);
-    } else {
-      hb = new HBox(box, _isMaxWidth ? box->_width : env->getTextWidth(), _align);
-    }
-    render = new TeXRender(sptr<Box>(hb), _textSize, _trueValues);
-  } else {
-    render = new TeXRender(box, _textSize, _trueValues);
-  }
-
-  if (!isTransparent(_fg)) render->setForeground(_fg);
-
-  delete env;
-  return render;
+  return nullptr;
 }

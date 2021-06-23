@@ -9,8 +9,6 @@
 
 namespace tex {
 
-class DefaultTeXFont;
-
 class Formula;
 
 class Box;
@@ -170,8 +168,6 @@ public:
   TeXRender* build(const sptr<Atom>& f);
 
   TeXRender* build(Formula& f);
-
-  static DefaultTeXFont* createFont(float size, int type);
 };
 
 }  // namespace tex

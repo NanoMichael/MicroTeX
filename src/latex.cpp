@@ -3,9 +3,11 @@
 #include "core/core.h"
 #include "core/formula.h"
 #include "core/macro.h"
-#include "fonts/fonts.h"
+
 #if CLATEX_CXX17
+
 #include <filesystem>
+
 #endif
 
 using namespace std;
@@ -95,8 +97,6 @@ void LaTeX::init(string res_root_path) {
   if (_formula != nullptr) return;
 
   NewCommandMacro::_init_();
-  DefaultTeXFont::_init_();
-  Formula::_init_();
   TextRenderingBox::_init_();
 
   _formula = new Formula();
@@ -104,14 +104,12 @@ void LaTeX::init(string res_root_path) {
 }
 
 void LaTeX::release() {
-  DefaultTeXFont::_free_();
-  Formula::_free_();
   MacroInfo::_free_();
   NewCommandMacro::_free_();
   TextRenderingBox::_free_();
 
-  if (_formula != nullptr) delete _formula;
-  if (_builder != nullptr) delete _builder;
+  delete _formula;
+  delete _builder;
 }
 
 const string& LaTeX::getResRootPath() {

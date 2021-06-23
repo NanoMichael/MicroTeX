@@ -1,13 +1,11 @@
+#include "common.h"
 #include "core/parser.h"
-
 #include "atom/atom.h"
 #include "atom/atom_basic.h"
-#include "common.h"
 #include "core/formula.h"
 #include "core/macro.h"
-#include "fonts/alphabet.h"
-#include "fonts/fonts.h"
 #include "graphic/graphic.h"
+#include "env/units.h"
 
 using namespace std;
 using namespace tex;
@@ -621,7 +619,7 @@ sptr<Atom> TeXParser::getArgument() {
     return atom;
   }
 
-  auto atom = convertCharacter(ch, true);
+  auto atom = convertCharacter(ch);
   _pos++;
   return atom;
 }
@@ -640,7 +638,7 @@ pair<UnitType, float> TeXParser::getLength() {
   if (ch == '\\') _pos--;
   else skipWhiteSpace();
 
-  return SpaceAtom::getLength(_latex.substr(start, end - start - 1));
+  return Units::getLength(_latex.substr(start, end - start - 1));
 }
 
 bool TeXParser::replaceScript() {
@@ -803,7 +801,7 @@ void TeXParser::parse() {
         break;
       case ' ': {
         _pos++;
-        if (!_isMathMode) {  // we are in mbox
+        if (!_isMathMode) {  // we are in text mode
           _formula->add(sptrOf<SpaceAtom>());
           _formula->add(sptrOf<BreakMarkAtom>());
           while (_pos < _len) {
@@ -816,7 +814,7 @@ void TeXParser::parse() {
         break;
       case DOLLAR: {
         _pos++;
-        if (!_isMathMode) {  // we are in mbox
+        if (!_isMathMode) {  // we are in text mode
           TexStyle style = TexStyle::text;
           bool doubleDollar = false;
           if (_latex[_pos] == DOLLAR) {
@@ -898,7 +896,7 @@ void TeXParser::parse() {
           );
           _formula->add(atom);
         } else {
-          _formula->add(convertCharacter(ch, true));
+          _formula->add(convertCharacter(ch));
         }
         _pos++;
       }
@@ -912,14 +910,14 @@ void TeXParser::parse() {
             popLastAtom(), nullptr, SymbolAtom::get("prime"))
           );
         } else {
-          _formula->add(convertCharacter(PRIME, true));
-          _formula->add(convertCharacter(PRIME, true));
+          _formula->add(convertCharacter(PRIME));
+          _formula->add(convertCharacter(PRIME));
         }
         _pos++;
       }
         break;
       default: {
-        _formula->add(convertCharacter(ch, false));
+        _formula->add(convertCharacter(ch));
         _pos++;
       }
         break;
@@ -927,131 +925,7 @@ void TeXParser::parse() {
   }
 }
 
-sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
-  if (_isMathMode) {
-    // the unicode Greek Letters in math mode are not drawn with the Greek font
-    if (c >= 945 && c <= 969) {
-      // Greek small letter
-      return SymbolAtom::get(Formula::_symbolMappings[c]);
-    } else if (c >= 913 && c <= 937) {
-      // Greek capital letter
-      wstring ltx = utf82wide(Formula::_symbolFormulaMappings[c]);
-      return Formula(ltx)._root;
-    }
-  }
-
-  c = tex::convertToRomanNumber(c);
-
-  /*
-   * None alphanumeric character
-   */
-  if ((c < '0' || c > '9') && (c < 'a' || c > 'z') && (c < 'A' || c > 'Z')) {
-    /*
-       * Find from registered UNICODE-table
-       */
-    const UnicodeBlock& block = UnicodeBlock::of(c);
-#ifdef HAVE_LOG
-    int idx = indexOf(DefaultTeXFont::_loadedAlphabets, block);
-    __log << "block of char: " << c << " is " << idx << endl;
-#endif  // HAVE_LOG
-    bool exist = (indexOf(DefaultTeXFont::_loadedAlphabets, block) != -1);
-    if (!_isLoading && !exist) {
-      auto it = DefaultTeXFont::_registeredAlphabets.find(block);
-      if (it != DefaultTeXFont::_registeredAlphabets.end())
-        DefaultTeXFont::addAlphabet(DefaultTeXFont::_registeredAlphabets[block]);
-    }
-
-    auto sit = Formula::_symbolMappings.find(c);
-    auto fit = Formula::_symbolFormulaMappings.find(c);
-
-    /*
-       * Character not in the symbol-mapping and not in the formula-mapping, find from
-       * external font-mapping
-       */
-    if (sit == Formula::_symbolMappings.end() &&
-        fit == Formula::_symbolFormulaMappings.end()) {
-      FontInfos* fontInfos = nullptr;
-      bool isLatin = UnicodeBlock::BASIC_LATIN == block;
-      if ((isLatin && Formula::isRegisteredBlock(UnicodeBlock::BASIC_LATIN)) || !isLatin) {
-        fontInfos = Formula::getExternalFont(block);
-      }
-      if (fontInfos != nullptr) {
-        if (oneChar) return sptrOf<TextRenderingAtom>(towstring(c), fontInfos);
-        int start = _pos++;
-        int en = _len - 1;
-        while (_pos < _len) {
-          c = _latex[_pos];
-          if (!block.contains(c)) {
-            en = --_pos;
-            break;
-          }
-          _pos++;
-        }
-        return sptrOf<TextRenderingAtom>(
-          _latex.substr(start, en - start + 1), fontInfos);
-      }
-
-      if (!_isPartial)
-        throw ex_parse("Unknown character : '" + tostring(c) + "'");
-      else {
-        if (_hideUnknownChar) return nullptr;
-        sptr<Atom> rm(new RomanAtom(
-          Formula(L"\\text{(unknown char " + towstring((int) c) + L")}")._root));
-        return sptrOf<ColorAtom>(rm, TRANSPARENT, RED);
-      }
-    } else {
-      /*
-           * In text mode (with command \text{})
-           */
-      if (!_isMathMode) {
-        auto it = Formula::_symbolTextMappings.find(c);
-        if (it != Formula::_symbolTextMappings.end()) {
-          auto atom = SymbolAtom::get(it->second);
-          atom->setUnicode(c);
-          return atom;
-        }
-      }
-      auto it = Formula::_symbolFormulaMappings.find(c);
-      if (it != Formula::_symbolFormulaMappings.end()) {
-        wstring wstr = utf82wide(it->second);
-        return Formula(wstr)._root;
-      }
-
-      if (sit != Formula::_symbolMappings.end()) {
-        string symbolName = sit->second;
-        try {
-          return SymbolAtom::get(symbolName);
-        } catch (ex_symbol_not_found& e) {
-          throw ex_parse(
-            "The character '" + tostring(c) +
-            "' was mapped to an unknown symbol with the name '" + symbolName + "'!",
-            e
-          );
-        }
-      }
-    }
-  } else {
-    /*
-       * Alphanumeric character
-       */
-    FontInfos* infos = nullptr;
-    auto it = Formula::_externalFontMap.find(UnicodeBlock::BASIC_LATIN);
-    if (it != Formula::_externalFontMap.end()) {
-      infos = it->second;
-      if (oneChar) return sptrOf<TextRenderingAtom>(towstring(c), infos);
-
-      int start = _pos++;
-      int en = _len - 1;
-      while (_pos < _len) {
-        c = _latex[_pos];
-        if ((c < '0' || c > '9') && (c < 'a' || c > 'z') && (c < 'A' || c > 'Z')) {
-          en = --_pos;
-          break;
-        }
-        _pos++;
-      }
-      return sptrOf<TextRenderingAtom>(_latex.substr(start, en - start + 1), infos);
-    }
-  }
-  return sptrOf<CharAtom>(c, _isMathMode);
+sptr<Atom> TeXParser::convertCharacter(wchar_t chr) {
+  const c32 code = tex::convertToRomanNumber(chr);
+  return sptrOf<CharAtom>(code, _isMathMode);
 }

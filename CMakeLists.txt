@@ -79,11 +79,6 @@ target_sources(LaTeX PRIVATE
         # env folder
         src/env/env.cpp
         src/env/units.cpp
-        # fonts folder
-        src/fonts/alphabet.cpp
-        src/fonts/font_basic.cpp
-        src/fonts/font_info.cpp
-        src/fonts/fonts.cpp
         # utils folder
         src/utils/string_utils.cpp
         src/utils/utf.cpp
@@ -97,55 +92,6 @@ target_sources(LaTeX PRIVATE
         src/unimath/uni_char.cpp
         src/unimath/uni_font.cpp
         src/unimath/uni_symbol.cpp
-        # res folder
-        src/res/builtin/formula_mappings.res.cpp
-        src/res/builtin/symbol_mapping.res.cpp
-        src/res/builtin/tex_param.res.cpp
-        src/res/builtin/tex_symbols.res.cpp
-        src/res/font/bi10.def.cpp
-        src/res/font/bx10.def.cpp
-        src/res/font/cmbsy10.def.cpp
-        src/res/font/cmbx10.def.cpp
-        src/res/font/cmbxti10.def.cpp
-        src/res/font/cmex10.def.cpp
-        src/res/font/cmmi10.def.cpp
-        src/res/font/cmmi10_unchanged.def.cpp
-        src/res/font/cmmib10.def.cpp
-        src/res/font/cmmib10_unchanged.def.cpp
-        src/res/font/cmr10.def.cpp
-        src/res/font/cmss10.def.cpp
-        src/res/font/cmssbx10.def.cpp
-        src/res/font/cmssi10.def.cpp
-        src/res/font/cmsy10.def.cpp
-        src/res/font/cmti10.def.cpp
-        src/res/font/cmti10_unchanged.def.cpp
-        src/res/font/cmtt10.def.cpp
-        src/res/font/dsrom10.def.cpp
-        src/res/font/eufb10.def.cpp
-        src/res/font/eufm10.def.cpp
-        src/res/font/i10.def.cpp
-        src/res/font/moustache.def.cpp
-        src/res/font/msam10.def.cpp
-        src/res/font/msbm10.def.cpp
-        src/res/font/r10.def.cpp
-        src/res/font/r10_unchanged.def.cpp
-        src/res/font/rsfs10.def.cpp
-        src/res/font/sb10.def.cpp
-        src/res/font/sbi10.def.cpp
-        src/res/font/si10.def.cpp
-        src/res/font/special.def.cpp
-        src/res/font/ss10.def.cpp
-        src/res/font/stmary10.def.cpp
-        src/res/font/tt10.def.cpp
-        src/res/parser/font_parser.cpp
-        src/res/parser/formula_parser.cpp
-        src/res/reg/builtin_font_reg.cpp
-        src/res/reg/builtin_syms_reg.cpp
-        src/res/sym/amsfonts.def.cpp
-        src/res/sym/amssymb.def.cpp
-        src/res/sym/base.def.cpp
-        src/res/sym/stmaryrd.def.cpp
-        src/res/sym/symspecial.def.cpp
 
         src/latex.cpp
         src/render.cpp

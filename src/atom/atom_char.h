@@ -131,7 +131,7 @@ public:
   __decl_clone(CharAtom)
 };
 
-/** An empty atom just to add a mark. */
+/** An empty atom just to add a line-break mark. */
 class BreakMarkAtom : public Atom {
 public:
   sptr<Box> createBox(Env& env) override;

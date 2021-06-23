@@ -3,26 +3,17 @@
 
 #include <string>
 #include <utility>
+#include <list>
 
 #include "atom/atom_basic.h"
 #include "core/parser.h"
-#include "fonts/alphabet.h"
 #include "graphic/graphic.h"
 
 namespace tex {
 
-class TeXFont;
-
 class CellSpecifier;
 
 class TeXParser;
-
-struct FontInfos {
-  const std::string _sansserif;
-  const std::string _serif;
-
-  FontInfos(std::string ss, std::string s) : _sansserif(std::move(ss)), _serif(std::move(s)) {}
-};
 
 /**
  * Represents a logical mathematical formula that will be displayed (by creating
@@ -52,8 +43,6 @@ private:
 
 public:
   std::map<std::string, std::string> _xmlMap;
-  // point-to-pixel conversion
-  static float PIXELS_PER_POINT;
 
   // predefined TeX formulas
   static std::map<std::wstring, sptr<Formula>> _predefinedTeXFormulas;
@@ -63,7 +52,6 @@ public:
   static std::map<int, std::string> _symbolMappings;
   static std::map<int, std::string> _symbolTextMappings;
   static std::map<int, std::string> _symbolFormulaMappings;
-  static std::map<UnicodeBlock, FontInfos*> _externalFontMap;
 
   std::list<sptr<MiddleAtom>> _middle;
   // the root atom of the "atom tree" that represents the formula
@@ -110,7 +98,7 @@ public:
   Formula* add(const sptr<Atom>& a);
 
   /** Convert this Formula into a box, with the given style */
-  sptr<Box> createBox(Environment& style);
+  sptr<Box> createBox(Env& env);
 
   /** Test if this formula is in array mode. */
   virtual bool isArrayMode() const { return false; }
@@ -126,26 +114,8 @@ public:
    */
   static sptr<Formula> get(const std::wstring& name);
 
-  /**
-   * Set the DPI of target
-   *
-   * @param dpi the target DPI
-   */
-  static void setDPITarget(float dpi);
-
-  /** Check if the given unicode-block is registered. */
-  static bool isRegisteredBlock(const UnicodeBlock& block);
-
-  static FontInfos* getExternalFont(const UnicodeBlock& block);
-
-  static void addSymbolMappings(const std::string& file);
-
   /** Enable or disable debug mode. */
   static void setDEBUG(bool b);
-
-  static void _init_();
-
-  static void _free_();
 
   virtual ~Formula() = default;
 };
@@ -183,7 +153,7 @@ public:
 
   virtual bool isArrayMode() const override { return true; }
 
-  virtual ~ArrayFormula() {}
+  ~ArrayFormula() override = default;
 };
 
 }  // namespace tex

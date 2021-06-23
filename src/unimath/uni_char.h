@@ -31,7 +31,7 @@ struct Char final {
   }
 
   /** Test if current glyph is valid, basically the #_glyph >= 0 */
-  bool isValid() const;
+  inline bool isValid() const { return _glyph >= 0; }
 
   /** The glyph of this char-glyph */
   const Glyph* glyph() const;

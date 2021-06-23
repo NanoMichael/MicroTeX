@@ -309,16 +309,12 @@ public:
   std::pair<UnitType, float> getLength();
 
   /**
-   * Convert a character in the corresponding atom in using the file
-   * TeXFormulaSettings.xml for non-alphanumeric characters
+   * Convert a character in the corresponding atom
    *
-   * @param c the character to be converted
-   * @param onChar if convert only one char in the parse string
+   * @param chr the character to be converted
    * @return the corresponding atom
-   *
-   * @throw ex_parse if the character is unknown
    */
-  sptr<Atom> convertCharacter(wchar_t c, bool oneChar);
+  sptr<Atom> convertCharacter(wchar_t chr);
 
   /**
    * Get the arguments and the options of a command

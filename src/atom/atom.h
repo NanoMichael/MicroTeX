@@ -3,8 +3,6 @@
 
 #undef DEBUG
 
-#include <list>
-
 #include "box/box.h"
 
 namespace tex {

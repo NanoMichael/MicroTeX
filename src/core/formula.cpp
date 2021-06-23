@@ -1,40 +1,10 @@
-#include "core/formula.h"
-
 #include "common.h"
-#include "core/core.h"
-#include "core/parser.h"
-#include "fonts/alphabet.h"
-#include "fonts/fonts.h"
-#include "res/parser/formula_parser.h"
+#include "core/formula.h"
 
 using namespace std;
 using namespace tex;
 
 map<wstring, sptr<Formula>> Formula::_predefinedTeXFormulas;
-
-map<UnicodeBlock, FontInfos*> Formula::_externalFontMap;
-
-float Formula::PIXELS_PER_POINT = 1.f;
-
-void Formula::_init_() {
-#ifdef HAVE_LOG
-  __dbg("%s\n", "init formula");
-#endif  // HAVE_LOG
-  // Register external alphabet
-  DefaultTeXFont::registerAlphabet(new CyrillicRegistration());
-  DefaultTeXFont::registerAlphabet(new GreekRegistration());
-#ifdef HAVE_LOG
-  __log << "elements in _symbolMappings:" << endl;
-  for (auto i : _symbolMappings)
-    __log << "\t" << i.first << "->" << i.second << endl;
-  __log << "elements in _symbolTextMappings:" << endl;
-  for (auto i : _symbolTextMappings)
-    __log << "\t" << i.first << "->" << i.second << endl;
-  __log << "elements in _symbolFormulaMappings:" << endl;
-  for (auto i : _symbolFormulaMappings)
-    __log << "\t" << i.first << "->" << i.second << endl;
-#endif  // HAVE_LOG
-}
 
 Formula::Formula() : _parser(L"", this, false) {}
 
@@ -87,9 +57,9 @@ Formula* Formula::add(const sptr<Atom>& a) {
   return this;
 }
 
-sptr<Box> Formula::createBox(Environment& style) {
-  if (_root == nullptr) return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
-  return _root->createBox(style);
+sptr<Box> Formula::createBox(Env& env) {
+  if (_root == nullptr) return StrutBox::empty();
+  return _root->createBox(env);
 }
 
 void Formula::setDEBUG(bool b) {
@@ -110,36 +80,6 @@ sptr<Formula> Formula::get(const wstring& name) {
     return tf;
   }
   return it->second;
-}
-
-void Formula::setDPITarget(float dpi) {
-  PIXELS_PER_POINT = dpi / 72.f;
-}
-
-bool Formula::isRegisteredBlock(const UnicodeBlock& block) {
-  return _externalFontMap.find(block) != _externalFontMap.end();
-}
-
-FontInfos* Formula::getExternalFont(const UnicodeBlock& block) {
-  auto it = _externalFontMap.find(block);
-  FontInfos* infos = nullptr;
-  if (it == _externalFontMap.end()) {
-    infos = new FontInfos("SansSerif", "Serif");
-    _externalFontMap[block] = infos;
-  } else {
-    infos = it->second;
-  }
-  return infos;
-}
-
-void Formula::addSymbolMappings(const string& file) {
-  TeXFormulaSettingParser parser(file);
-  parser.parseSymbol(_symbolMappings, _symbolTextMappings);
-  parser.parseSymbol2Formula(_symbolFormulaMappings, _symbolTextMappings);
-}
-
-void Formula::_free_() {
-  for (auto i : _externalFontMap) delete i.second;
 }
 
 /*************************************** ArrayFormula implementation ******************************/
