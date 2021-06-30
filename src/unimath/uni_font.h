@@ -64,12 +64,12 @@ public:
   sptr<const OtfFont> get(FontStyle style) const;
 };
 
-/**
- * Parameters to load fonts.
- *
- * [style-name, font-file, clm-file]
- */
-using FontSpec = std::tuple<std::string, std::string, std::string>;
+/** Parameters to load a font */
+struct FontSpec {
+  const std::string name;
+  const std::string fontFile;
+  const std::string clmFile;
+};
 
 class FontContext {
 private:
@@ -133,6 +133,9 @@ public:
 
   /** Add math font to context. */
   static void addMathFont(const FontSpec& params);
+
+  /** Check if has math font */
+  static bool hasMathFont();
 
   /**
    * Set math style to display formulas.

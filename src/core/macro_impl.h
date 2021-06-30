@@ -21,12 +21,12 @@ namespace tex {
 #ifdef GRAPHICS_DEBUG
 
 inline macro(debug) {
-  Formula::setDEBUG(true);
+  Formula::setDebug(true);
   return nullptr;
 }
 
 inline macro(undebug) {
-  Formula::setDEBUG(false);
+  Formula::setDebug(false);
   return nullptr;
 }
 

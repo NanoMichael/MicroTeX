@@ -3,23 +3,18 @@
 #include "atom/atom.h"
 #include "core/core.h"
 #include "core/formula.h"
+#include "unimath/uni_font.h"
+#include "env/env.h"
+#include "env/units.h"
 
 using namespace std;
 using namespace tex;
 
-const color TeXRender::_defaultcolor = black;
-float TeXRender::_defaultSize = -1;
-float TeXRender::_magFactor = 0;
-
-TeXRender::TeXRender(const sptr<Box>& box, float textSize, bool trueValues) {
+TeXRender::TeXRender(const sptr<Box>& box, float textSize, bool hasPadding) {
   _box = box;
-  if (_defaultSize != -1) _textSize = _defaultSize;
-  if (_magFactor != 0) {
-    _textSize = textSize * std::abs(_magFactor);
-  } else {
-    _textSize = textSize;
-  }
-  if (!trueValues) _insets += (int) (0.18f * textSize);
+  _textSize = textSize;
+  _fixedScale = _textSize / Env::fixedTextSize();
+  if (!hasPadding) _insets += (int) (0.18f * textSize);
   if (Box::DEBUG) {
     const auto group = wrap(box);
     _box = group;
@@ -70,35 +65,36 @@ void TeXRender::buildDebug(
   }
 }
 
-inline float TeXRender::getTextSize() const {
+float TeXRender::getTextSize() const {
   return _textSize;
 }
 
 int TeXRender::getHeight() const {
   return (int) (
-    _box->_height * _textSize +
-    _box->_depth * _textSize +
+    _box->_height * _fixedScale +
+    _box->_depth * _fixedScale +
     _insets.top + _insets.bottom
   );
 }
 
 int TeXRender::getDepth() const {
-  return (int) (_box->_depth * _textSize + _insets.bottom);
+  return (int) (_box->_depth * _fixedScale + _insets.bottom);
 }
 
 int TeXRender::getWidth() const {
-  return (int) (_box->_width * _textSize + _insets.left + _insets.right);
+  return (int) (_box->_width * _fixedScale + _insets.left + _insets.right);
 }
 
 float TeXRender::getBaseline() const {
   return (
-    (_box->_height * _textSize + _insets.top) /
-    ((_box->_height + _box->_depth) * _textSize + _insets.top + _insets.bottom)
+    (_box->_height * _fixedScale + _insets.top) /
+    ((_box->_height + _box->_depth) * _fixedScale + _insets.top + _insets.bottom)
   );
 }
 
 void TeXRender::setTextSize(float textSize) {
   _textSize = textSize;
+  _fixedScale = _textSize / Env::fixedTextSize();
 }
 
 void TeXRender::setForeground(color fg) {
@@ -109,9 +105,9 @@ Insets TeXRender::getInsets() {
   return _insets;
 }
 
-void TeXRender::setInsets(const Insets& insets, bool trueval) {
+void TeXRender::setInsets(const Insets& insets, bool hasPadding) {
   _insets = insets;
-  if (!trueval) _insets += (int) (0.18f * _textSize);
+  if (!hasPadding) _insets += (int) (0.18f * _textSize);
 }
 
 void TeXRender::setWidth(int width, Alignment align) {
@@ -134,15 +130,19 @@ void TeXRender::setHeight(int height, Alignment align) {
 
 void TeXRender::draw(Graphics2D& g2, int x, int y) {
   color old = g2.getColor();
-  g2.scale(_textSize, _textSize);
+  g2.scale(_fixedScale, _fixedScale);
   if (!isTransparent(_fg)) {
     g2.setColor(_fg);
   } else {
-    g2.setColor(_defaultcolor);
+    g2.setColor(DFT_COLOR);
   }
 
   // draw formula box
-  _box->draw(g2, (x + _insets.left) / _textSize, (y + _insets.top) / _textSize + _box->_height);
+  _box->draw(
+    g2,
+    (x + _insets.left) * _fixedScale,
+    (y + _insets.top) * _fixedScale + _box->_height
+  );
 
   // restore
   g2.reset();
@@ -159,5 +159,38 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
   if (_textSize == -1) {
     throw ex_invalid_state("A size is required, call function setSize before build.");
   }
-  return nullptr;
+  if (_mathVersion.empty()) {
+    throw ex_invalid_state("A math version is required, call function setMathVersion before build.");
+  }
+
+  auto fctx = sptrOf<FontContext>();
+  fctx->selectMathFont(_mathVersion);
+
+  Env env(_style, fctx);
+  const auto isLimitedWidth = _widthUnit != UnitType::none && _textWidth != 0;
+  if (isLimitedWidth) {
+    env.setTextWidth(_widthUnit, _textWidth);
+  }
+  if (_lineSpaceUnit != UnitType::none) {
+    env.setLineSpace(_lineSpaceUnit, _lineSpace);
+  }
+
+  TeXRender* render;
+  auto box = f->createBox(env);
+  if (isLimitedWidth) {
+    HBox* hb;
+    if (_lineSpaceUnit != UnitType::none && _lineSpace != 0) {
+      auto space = Units::fsize(_lineSpaceUnit, _lineSpace, env);
+      auto split = BoxSplitter::split(box, env.textWidth(), space);
+      hb = new HBox(split, _isMaxWidth ? split->_width : env.textWidth(), _align);
+    } else {
+      hb = new HBox(box, _isMaxWidth ? box->_width : env.textWidth(), _align);
+    }
+    render = new TeXRender(sptr<Box>(hb), _textSize);
+  } else {
+    render = new TeXRender(box, _textSize);
+  }
+
+  if (!isTransparent(_fg)) render->setForeground(_fg);
+  return render;
 }

@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
     exit(1);
   }
   // load math font to context
-  FontSpec spec = make_tuple(string(argv[1]), string(argv[2]), string(argv[3]));
+  FontSpec spec{string(argv[1]), string(argv[2]), string(argv[3])};
   FontContext::addMathFont(spec);
   // create a font context and env
   auto fc = sptrOf<FontContext>();

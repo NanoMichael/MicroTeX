@@ -18,17 +18,16 @@ private:
   int _index;
   vector<std::wstring> _samples;
 
-  void readSamples(const string& file = "") {
-    string path = file;
-    if (path.empty()) path = LaTeX::getResRootPath() + "/SAMPLES.tex";
-    string line = "";
-    string sample = "";
+  void readSamples(const string& path) {
+    string line;
+    string sample;
     std::ifstream f(path);
     if (f.is_open()) {
       while (getline(f, line)) {
         if (!line.empty() &&
             !isSpace(line) &&
-            std::all_of(line.begin(), line.end(), [](char c) { return c == '%'; })) {
+            std::all_of(line.begin(), line.end(), [](char c) { return c == '%'; })
+          ) {
           add(sample);
           sample = "";
         } else {
@@ -51,7 +50,7 @@ private:
   }
 
 public:
-  Samples(const string& file = "") : _index(0) { readSamples(file); }
+  Samples(const string& file) : _index(0) { readSamples(file); }
 
   const std::wstring& next() {
     if (_index >= _samples.size()) _index = 0;

@@ -19,10 +19,11 @@ using BoxFilter = std::function<bool(const sptr<Box>&)>;
 
 class TeXRender {
 private:
-  static const color _defaultcolor;
+  static constexpr color DFT_COLOR = black;
 
   sptr<Box> _box;
   float _textSize;
+  float _fixedScale;
   color _fg = black;
   Insets _insets;
 
@@ -35,10 +36,8 @@ private:
   static sptr<BoxGroup> wrap(const sptr<Box>& box);
 
 public:
-  static float _defaultSize;
-  static float _magFactor;
 
-  TeXRender(const sptr<Box>& box, float textSize, bool trueValues = false);
+  TeXRender(const sptr<Box>& box, float textSize, bool hasPadding = false);
 
   float getTextSize() const;
 
@@ -56,7 +55,7 @@ public:
 
   Insets getInsets();
 
-  void setInsets(const Insets& insets, bool trueval = false);
+  void setInsets(const Insets& insets, bool hasPadding = false);
 
   void setWidth(int width, Alignment align);
 
@@ -68,25 +67,15 @@ public:
 class TeXRenderBuilder {
 private:
   TexStyle _style = TexStyle::display;
-  int _type = -1;
   UnitType _widthUnit = UnitType::none;
   UnitType _lineSpaceUnit = UnitType::none;
   float _textSize = 0, _textWidth = 0, _lineSpace = 0;
-  bool _trueValues = false, _isMaxWidth = false;
+  bool _isMaxWidth = false;
   color _fg = black;
   Alignment _align = Alignment::none;
+  std::string _mathVersion;
 
 public:
-  // TODO declaration conflict with TypefaceStyle defined in graphic/graphic.h
-  enum TeXFontStyle {
-    SERIF = 0,
-    SANSSERIF = 1,
-    BOLD = 2,
-    ITALIC = 4,
-    ROMAN = 8,
-    TYPEWRITER = 16
-  };
-
   TeXRenderBuilder() {}
 
   inline TeXRenderBuilder& setStyle(TexStyle style) {
@@ -99,18 +88,8 @@ public:
     return *this;
   }
 
-  inline TeXRenderBuilder& setType(int type) {
-    _type = type;
-    return *this;
-  }
-
   inline TeXRenderBuilder& setForeground(color c) {
     _fg = c;
-    return *this;
-  }
-
-  inline TeXRenderBuilder& setTrueValues(bool t) {
-    _trueValues = t;
     return *this;
   }
 
@@ -118,7 +97,11 @@ public:
     _widthUnit = unit;
     _textWidth = width;
     _align = align;
-    _trueValues = true;
+    return *this;
+  }
+
+  inline TeXRenderBuilder& setMathVersion(const std::string& version) {
+    _mathVersion = version;
     return *this;
   }
 

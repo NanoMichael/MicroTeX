@@ -6,6 +6,8 @@
 
 namespace tex {
 
+struct OtfFont;
+
 /** Represents a character-glyph to be measured and drawn with its font, glyph id and scale */
 struct Char final {
   /** The original code point of the character */
@@ -32,6 +34,9 @@ struct Char final {
 
   /** Test if current glyph is valid, basically the #_glyph >= 0 */
   inline bool isValid() const { return _glyph >= 0; }
+
+  /** The otf font spec the char belongs to */
+  sptr<const OtfFont> otfFont() const;
 
   /** The glyph of this char-glyph */
   const Glyph* glyph() const;

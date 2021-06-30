@@ -8,6 +8,7 @@ namespace tex {
 
 class Env {
 private:
+  static constexpr float FIXED_TEXT_SIZE = 1000;
   // point-to-pixel conversion
   static float PIXELS_PER_POINT;
 
@@ -17,13 +18,10 @@ private:
   float _scaleFactor = 1.f;
 
   i32 _lastFontId = FontContext::NO_FONT;
-  sptr<FontContext> _fc;
+  sptr<FontContext> _fctx;
 
   float _textWidth = POS_INF;
   float _lineSpace = 1.f;
-
-  /** The text size in point */
-  float _textSize = 1.f;
 
   FontStyle _fontStyle = FontStyle::none;
 
@@ -33,61 +31,83 @@ private:
 public:
   no_copy_assign(Env);
 
-  Env(TexStyle style, const sptr<FontContext>& fc, float textSize)
-    : _style(style), _fc(fc), _textSize(textSize) {}
+  Env(TexStyle style, const sptr<FontContext>& fctx)
+    : _style(style), _fctx(fctx) {}
 
   // region statics
   /** Set the dot per inch target */
-  static void setDpi(float dpi);
+  static inline void setDpi(float dpi) {
+    PIXELS_PER_POINT = dpi / 72.f;
+  }
 
-  static float pixelsPerPoint();
+  static inline float pixelsPerPoint() {
+    return PIXELS_PER_POINT;
+  }
+
+  static inline float fixedTextSize() {
+    return FIXED_TEXT_SIZE;
+  }
   // endregion
 
   // region getters and setters
+
+  /** Set environment width with given unit */
   Env& setTextWidth(UnitType unit, float width);
 
+  /** Set line space with given unit */
   Env& setLineSpace(UnitType unit, float space);
 
+  /** Set scale factor, this is used for scale atoms */
   inline Env& setScaleFactor(float factor) {
     _scaleFactor = factor;
     return *this;
   }
 
+  /** Set current style to display formulas */
   inline Env& setStyle(TexStyle style) {
     _style = style;
     return *this;
   }
 
+  /** Set if draw formula with small capitals */
   inline Env& setSmallCap(bool smallCap) {
     _smallCap = smallCap;
     return *this;
   }
 
+  /** Set the last font id will be used later when box is to be painted */
   inline Env& setLastFontId(i32 lastFontId) {
     _lastFontId = lastFontId;
     return *this;
   }
 
+  /** The scale factor */
   inline float scaleFactor() const { return _scaleFactor; }
 
+  /** If draw formula with small capitals */
   inline bool isSmallCap() const { return _smallCap; }
 
+  /** The environment width */
   inline float textWidth() const { return _textWidth; }
 
+  /** The style to display formulas */
   inline TexStyle style() const { return _style; }
 
   inline const std::string& textStyle() const { return _textStyle; }
 
-  inline float textSize() const { return _textSize; }
+  /** The text size, in point */
+  inline float textSize() const { return FIXED_TEXT_SIZE; }
 
+  /** The line space to layout boxes vertically */
   inline float lineSpace() const { return _lineSpace; }
 
+  /** The font style to display formulas */
   inline FontStyle fontStyle() const { return _fontStyle; }
   // endregion
 
   /** The last used font's id, or the math font's id if no font was used */
   inline i32 lastFontId() const {
-    return _lastFontId == FontContext::NO_FONT ? _fc->mathFontId() : _lastFontId;
+    return _lastFontId == FontContext::NO_FONT ? _fctx->mathFontId() : _lastFontId;
   }
 
   // region Font related
@@ -126,6 +146,7 @@ public:
 
   // region Styles
 
+  /** Style to display formulas in smaller size */
   TexStyle crampStyle() const;
 
   /** Style to display denominator */

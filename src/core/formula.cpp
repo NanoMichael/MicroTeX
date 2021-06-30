@@ -62,8 +62,8 @@ sptr<Box> Formula::createBox(Env& env) {
   return _root->createBox(env);
 }
 
-void Formula::setDEBUG(bool b) {
-  Box::DEBUG = b;
+void Formula::setDebug(bool debug) {
+  Box::DEBUG = debug;
 }
 
 sptr<Formula> Formula::get(const wstring& name) {

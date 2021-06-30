@@ -3,6 +3,10 @@
 
 using namespace tex;
 
+sptr<const OtfFont> Char::otfFont() const {
+  return FontContext::getFont(_font);
+}
+
 const Glyph* Char::glyph() const {
   auto font = FontContext::getFont(_font);
   return font == nullptr ? nullptr : font->otf().glyph(_glyph);

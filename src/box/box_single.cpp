@@ -1,4 +1,5 @@
 #include "box_single.h"
+#include "env/env.h"
 
 using namespace std;
 using namespace tex;
@@ -16,15 +17,10 @@ void CharBox::addItalicCorrectionToWidth() {
 }
 
 void CharBox::draw(Graphics2D& g2, float x, float y) {
-  // TODO draw glyph
-//  g2.translate(x, y);
-//  const Font* font = FontInfo::getFont(_cf->fontId);
-//  if (_size != 1) g2.scale(_size, _size);
-//  if (g2.getFont() != font) g2.setFont(font);
-//  g2.drawChar(_cf->chr, 0, 0);
-//  // reset
-//  if (_size != 1) g2.scale(1.f / _size, 1.f / _size);
-//  g2.translate(-x, -y);
+  const auto font = Font::create(_chr.otfFont()->_fontFile);
+  g2.setFont(font);
+  g2.setFontSize(Env::fixedTextSize() * _chr._scale);
+  g2.drawGlyph(_chr._glyph, x, y);
 }
 
 int CharBox::lastFontId() {
@@ -34,7 +30,8 @@ int CharBox::lastFontId() {
 sptr<Font> TextRenderingBox::_font(nullptr);
 
 void TextRenderingBox::_init_() {
-  _font = Font::_create("Serif", PLAIN, 10);
+  // TODO
+  // _font = Font::_create("Serif", PLAIN, 10);
 }
 
 void TextRenderingBox::_free_() {
@@ -44,7 +41,8 @@ void TextRenderingBox::_free_() {
 }
 
 void TextRenderingBox::setFont(const string& name) {
-  _font = Font::_create(name, PLAIN, 10);
+  // TODO
+  // _font = Font::_create(name, PLAIN, 10);
 }
 
 void TextRenderingBox::init(

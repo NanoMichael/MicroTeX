@@ -34,9 +34,6 @@
 
 namespace tex {
 
-/** The root directory of the "TeX resources" (defined in latex.cpp) */
-extern std::string RES_BASE;
-
 /** Return the real name of the function, class or struct name. */
 #ifdef HAVE_LOG
 #ifdef __GNUC__

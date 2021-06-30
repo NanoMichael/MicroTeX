@@ -6,17 +6,9 @@ using namespace tex;
 
 float Env::PIXELS_PER_POINT = 1.f;
 
-void Env::setDpi(float dpi) {
-  PIXELS_PER_POINT = dpi / 72.f;
-}
-
-float Env::pixelsPerPoint() {
-  return PIXELS_PER_POINT;
-}
-
 float Env::scale() const {
   if (_style < TexStyle::script) return 1;
-  auto math = _fc->mathFont().otf().mathConsts();
+  auto math = _fctx->mathFont().otf().mathConsts();
   i16 percent = (
     _style < TexStyle::scriptScript
     ? math->scriptPercentScaleDown()
@@ -25,22 +17,22 @@ float Env::scale() const {
   return percent / 100.f;
 }
 
-inline Env& Env::setTextWidth(UnitType unit, float width) {
+Env& Env::setTextWidth(UnitType unit, float width) {
   _textWidth = Units::fsize(unit, width, *this);
   return *this;
 }
 
-inline Env& Env::setLineSpace(UnitType unit, float space) {
+Env& Env::setLineSpace(UnitType unit, float space) {
   _lineSpace = Units::fsize(unit, space, *this);
   return *this;
 }
 
-inline const MathConsts& Env::mathConsts() const {
-  return *_fc->mathFont().otf().mathConsts();
+const MathConsts& Env::mathConsts() const {
+  return *_fctx->mathFont().otf().mathConsts();
 }
 
 float Env::upem() const {
-  return _fc->mathFont().otf().em();
+  return _fctx->mathFont().otf().em();
 }
 
 float Env::em() const {
@@ -48,15 +40,15 @@ float Env::em() const {
 }
 
 float Env::ppem() const {
-  return PIXELS_PER_POINT * _textSize;
+  return PIXELS_PER_POINT * textSize();
 }
 
 float Env::xHeight() const {
-  return _fc->getFont(lastFontId())->otf().xHeight() * scale();
+  return _fctx->getFont(lastFontId())->otf().xHeight() * scale();
 }
 
 float Env::space() const {
-  return _fc->mathFont().otf().space() * scale();
+  return _fctx->mathFont().otf().space() * scale();
 }
 
 float Env::ruleThickness() const {
@@ -108,13 +100,13 @@ TexStyle Env::supStyle() const {
 
 Char Env::getChar(c32 code, bool isMathMode, FontStyle style) const {
   const auto targetStyle = style == FontStyle::invalid ? _fontStyle : style;
-  auto chr = _fc->getChar(code, targetStyle, isMathMode);
+  auto chr = _fctx->getChar(code, targetStyle, isMathMode);
   chr._scale = scale();
   return chr;
 }
 
 Char Env::getChar(const Symbol& sym) const {
-  auto chr = _fc->getChar(sym);
+  auto chr = _fctx->getChar(sym);
   chr._scale = scale();
   return chr;
 }

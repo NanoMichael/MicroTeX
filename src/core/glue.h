@@ -8,7 +8,7 @@ namespace tex {
 
 class Env;
 
-class Box;
+class GlueBox;
 
 /** Represents glue by its 3 components. Contains the "glue rules" */
 class Glue {
@@ -24,7 +24,7 @@ private:
   // the glue components, in "mu" unit
   u16 _space, _stretch, _shrink;
 
-  sptr<Box> createBox(const Env& env) const;
+  sptr<GlueBox> createBox(const Env& env) const;
 
   static float getFactor(const Env& env);
 
@@ -47,13 +47,13 @@ public:
    * @param env the Env
    * @return a box containing representing the glue
    */
-  static sptr<Box> get(AtomType ltype, AtomType rtype, const Env& env);
+  static sptr<GlueBox> get(AtomType ltype, AtomType rtype, const Env& env);
 
   /**
    * Creates a box representing the glue type according to the "glue rules" based
    * on the skip-type
    */
-  static sptr<Box> get(SpaceType skipType, const Env& env);
+  static sptr<GlueBox> get(SpaceType skipType, const Env& env);
 
   /**
    * Get the space amount from the given left-type and right-type of atoms
@@ -61,9 +61,7 @@ public:
    */
   static float getSpace(AtomType ltype, AtomType rtype, const Env& env);
 
-  /**
-   * Get the space amount from the given skip-type according to the "glue rules"
-   */
+  /** Get the space amount from the given skip-type according to the "glue rules" */
   static float getSpace(SpaceType skipType, const Env& env);
 };
 

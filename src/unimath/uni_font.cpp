@@ -25,11 +25,11 @@ FontStyle FontFamily::fontStyleOf(const std::string& name) {
   return it->second;
 }
 
-inline void FontFamily::add(const std::string& styleName, const sptr<const OtfFont>& font) {
+void FontFamily::add(const std::string& styleName, const sptr<const OtfFont>& font) {
   _styles[fontStyleOf(styleName)] = font;
 }
 
-inline sptr<const OtfFont> FontFamily::get(FontStyle style) const {
+sptr<const OtfFont> FontFamily::get(FontStyle style) const {
   const auto it = _styles.find(style);
   return it == _styles.end() ? nullptr : it->second;
 }
@@ -103,7 +103,7 @@ FontStyle FontContext::mathFontStyleOf(const std::string& name) {
   return FontStyle::none;
 }
 
-inline FontStyle FontContext::mainFontStyleOf(const std::string& name) {
+FontStyle FontContext::mainFontStyleOf(const std::string& name) {
   return FontFamily::fontStyleOf(name);
 }
 
@@ -139,6 +139,10 @@ void FontContext::addMathFont(const FontSpec& params) {
   auto otf = sptrOf<OtfFont>(_lastId++, font, clm);
   _fonts.push_back(otf);
   _mathFonts[version] = otf;
+}
+
+bool FontContext::hasMathFont() {
+  return !_mathFonts.empty();
 }
 
 void FontContext::setMathStyle(const string& styleName) {

@@ -4,103 +4,25 @@
 #include "core/formula.h"
 #include "core/macro.h"
 
-#if CLATEX_CXX17
-
-#include <filesystem>
-
-#endif
-
 using namespace std;
 using namespace tex;
 
-string tex::RES_BASE = "res";
-static string CHECK_FILE = ".clatexmath-res_root";
-
+volatile bool LaTeX::_isInited = false;
+std::string LaTeX::_defaultMathVersion;
 Formula* LaTeX::_formula = nullptr;
 TeXRenderBuilder* LaTeX::_builder = nullptr;
 
-string LaTeX::queryResourceLocation(string& custom_path) {
-  queue<string> paths;
-  paths.push(custom_path);
-
-  // checks if XDG_DATA_HOME exists. If it does, it pushes it to potential paths.
-  char* userdata = getenv("XDG_DATA_HOME");
-  if (userdata != NULL && strcmp(userdata, "") != 0) {
-    paths.push(string(userdata));
-  }
-  delete userdata;
-
-  // checks if XDG_DATA_DIRS is set. If it is, it splits XDG_DATA_DIRS at : and
-  // pushes each part of it to potential paths.
-  char* xdg = getenv("XDG_DATA_DIRS");
-  if (xdg != NULL && strcmp(xdg, "") != 0) {
-    stringstream xdg_paths(xdg);
-    string xdg_path;
-    while (getline(xdg_paths, xdg_path, ':')) {
-      paths.push(xdg_path);
-    }
-  }
-#ifndef _WIN32
-  // checks if HOME env var is unset. if it isn't it pushes ~/.local/share/clatexmath
-  // to potential paths.
-  char* home = getenv("HOME");
-  if (home != NULL && strcmp(home, "") != 0) {
-    char* userdata_fallback;
-    asprintf(&userdata_fallback, "%s/.local/share/clatexmath/", home);
-    paths.push(string(userdata_fallback));
-    delete userdata_fallback;
-  }
-  paths.push("/usr/share/clatexmath/");
-  paths.push("/usr/local/share/clatexmath/");
-#endif
-  // goes through the list of potential paths. if it finds a path that contains
-  // .clatexmath-res_root, it returns it. Otherwise return an empty string.
-  while (!paths.empty()) {
-#if CLATEX_CXX17
-    filesystem::path p = paths.front();
-    p.append(CHECK_FILE);
-    if (filesystem::exists(p)) {
-      p.remove_filename();
-      return p.u8string();
-    }
-#elif defined(_MSC_VER)
-    std::string path = paths.front();
-    std::string file = path + "/" + CHECK_FILE;
-    FILE* fp = NULL;
-    errno_t err = fopen_s(&fp, file.c_str(), "rb");
-    if (err == 0 && fp) {
-      fclose(fp);
-      return path;
-    }
-#else
-    std::string path = paths.front();
-    std::string file = path + "/" + CHECK_FILE;
-    FILE* fp = fopen(file.c_str(), "rb");
-    if (fp) {
-      fclose(fp);
-      return path;
-    }
-#endif
-    paths.pop();
-  }
-  return "";
-}
-
-void LaTeX::init(string res_root_path) {
-  try {
-    auto path = queryResourceLocation(res_root_path);
-    if (!path.empty()) {
-      RES_BASE = path;
-    }
-  } catch (std::exception&) {
-  }
-  if (_formula != nullptr) return;
-
+void LaTeX::init(const FontSpec& mathFontSpec) {
+  FontContext::addMathFont(mathFontSpec);
+  _defaultMathVersion = mathFontSpec.name;
+  if (_isInited) return;
+  _isInited = true;
   NewCommandMacro::_init_();
   TextRenderingBox::_init_();
+}
 
-  _formula = new Formula();
-  _builder = new TeXRenderBuilder();
+bool LaTeX::isInited() {
+  return _isInited;
 }
 
 void LaTeX::release() {
@@ -112,15 +34,25 @@ void LaTeX::release() {
   delete _builder;
 }
 
-const string& LaTeX::getResRootPath() {
-  return RES_BASE;
-}
-
 void LaTeX::setDebug(bool debug) {
-  Formula::setDEBUG(debug);
+  Formula::setDebug(debug);
 }
 
-TeXRender* LaTeX::parse(const wstring& latex, int width, float textSize, float lineSpace, color fg) {
+void LaTeX::addMainFont(const std::string& versionName, const std::vector<FontSpec>& params) {
+  FontContext::addMainFont(versionName, params);
+}
+
+void LaTeX::addMathFont(const FontSpec& params) {
+  FontContext::addMathFont(params);
+}
+
+TeXRender* LaTeX::parse(
+  const wstring& latex, int width, float textSize, float lineSpace, color fg,
+  const string& mathVersion
+) {
+  if (_formula == nullptr) _formula = new Formula();
+  if (_builder == nullptr) _builder = new TeXRenderBuilder();
+
   bool lined = true;
   if (startswith(latex, L"$$") || startswith(latex, L"\\[")) {
     lined = false;
@@ -130,6 +62,7 @@ TeXRender* LaTeX::parse(const wstring& latex, int width, float textSize, float l
   TeXRender* render =
     _builder->setStyle(TexStyle::display)
       .setTextSize(textSize)
+      .setMathVersion(mathVersion.empty() ? _defaultMathVersion : mathVersion)
       .setWidth(UnitType::pixel, width, align)
       .setIsMaxWidth(lined)
       .setLineSpace(UnitType::pixel, lineSpace)

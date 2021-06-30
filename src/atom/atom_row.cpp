@@ -8,17 +8,17 @@
 using namespace std;
 using namespace tex;
 
-inline bool Dummy::isCharSymbol() const {
+bool Dummy::isCharSymbol() const {
   auto* x = dynamic_cast<CharSymbol*>(_atom.get());
   return (x != nullptr);
 }
 
-inline bool Dummy::isCharInMathMode() const {
+bool Dummy::isCharInMathMode() const {
   auto* at = dynamic_cast<CharAtom*>(_atom.get());
   return at != nullptr && at->isMathMode();
 }
 
-inline Char Dummy::getChar(Env& env) const {
+Char Dummy::getChar(Env& env) const {
   return ((CharSymbol*) _atom.get())->getChar(env);
 }
 
@@ -35,7 +35,7 @@ sptr<Box> Dummy::createBox(Env& env) {
   return box;
 }
 
-inline bool Dummy::isKern() const {
+bool Dummy::isKern() const {
   auto* x = dynamic_cast<SpaceAtom*>(_atom.get());
   return (x != nullptr);
 }
@@ -209,7 +209,10 @@ sptr<Box> RowAtom::createBox(Env& env) {
         && !_previousAtom->isKern()
         && !curr->isKern()
       ) {
-      hbox->add(Glue::get(_previousAtom->rightType(), curr->leftType(), env));
+      const auto glue = Glue::get(_previousAtom->rightType(), curr->leftType(), env);
+      if (std::abs(glue->_width) > PREC) {
+        hbox->add(glue);
+      }
     }
 
     // 5. Create box

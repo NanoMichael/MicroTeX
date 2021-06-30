@@ -145,7 +145,7 @@ public:
       _rendering("Rendering"),
       _save("Save as SVG"),
       _side_box(Gtk::ORIENTATION_VERTICAL),
-      _samples() {
+      _samples("res/SAMPLES.tex") { // TODO
     // init before use
     Gsv::init();
 
@@ -422,7 +422,13 @@ int main(int argc, char* argv[]) {
   if (indexOf(opts, string("-h")) >= 0) return runHelp();
 
   Pango::init();
-  LaTeX::init();
+  // TODO dialog to choose font file
+  const FontSpec spec{
+    "xits",
+    "/home/nano/Downloads/xits/XITSMath-Regular.otf",
+    "./res/XITSMath-Regular.clm"
+  };
+  LaTeX::init(spec);
 
   int result = 0;
   if (indexOf(opts, string("-headless")) >= 0) {

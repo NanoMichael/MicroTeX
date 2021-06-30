@@ -14,10 +14,10 @@ using namespace std;
 map<string, string> Font_cairo::_families;
 map<string, Cairo::RefPtr<Cairo::FtFontFace>> Font_cairo::_cairoFtFaces;
 
-Font_cairo::Font_cairo(string family, int style, float size)
-  : _family(std::move(family)), _style(style), _size((double) size) {}
+Font_cairo::Font_cairo(string family, int style)
+  : _family(std::move(family)), _style(style) {}
 
-Font_cairo::Font_cairo(const string& file, float size) : Font_cairo("", PLAIN, size) {
+Font_cairo::Font_cairo(const string& file) : Font_cairo("", PLAIN) {
   loadFont(file);
 }
 
@@ -29,18 +29,18 @@ void Font_cairo::loadFont(const string& file) {
     _family = familyEntry->second;
     _fface = ffaceEntry->second;
 #ifdef HAVE_LOG
-    __log << file << " already loaded, skip\n";
+    __dbg("%s already loaded, skip\n", file.c_str());
 #endif
     return;
   }
 
   // query font via fontconfig
-  const FcChar8* f = (const FcChar8*) file.c_str();
+  const auto f = (const FcChar8*) file.c_str();
 
   // get font family from file first
   int count;
-  FcChar8* family = NULL;
-  FcBlanks* blanks = FcConfigGetBlanks(NULL);
+  FcChar8* family = nullptr;
+  FcBlanks* blanks = FcConfigGetBlanks(nullptr);
   FcPattern* p = FcFreeTypeQuery(f, 0, blanks, &count);
   FcPatternGetString(p, FC_FAMILY, 0, &family);
 #ifdef HAVE_LOG
@@ -49,7 +49,7 @@ void Font_cairo::loadFont(const string& file) {
 #endif
 
   // load font to fontconfig
-  FcBool status = FcConfigAppFontAddFile(NULL, f);
+  FcBool status = FcConfigAppFontAddFile(nullptr, f);
 #ifdef HAVE_LOG
   if (!status) __dbg(ANSI_COLOR_RED "Load %s failed\n" ANSI_RESET, file.c_str());
 #endif
@@ -76,29 +76,21 @@ int Font_cairo::getStyle() const {
   return _style;
 }
 
-float Font_cairo::getSize() const {
-  return (float) _size;
-}
-
 sptr<Font> Font_cairo::deriveFont(int style) const {
-  return sptrOf<Font_cairo>(_family, style, _size);
+  return sptrOf<Font_cairo>(_family, style);
 }
 
 bool Font_cairo::operator==(const Font& ft) const {
-  const Font_cairo& f = static_cast<const Font_cairo&>(ft);
-  return _size == f._size && _style == f._style && _family == f._family;
+  const auto& f = static_cast<const Font_cairo&>(ft);
+  return _style == f._style && _family == f._family;
 }
 
 bool Font_cairo::operator!=(const Font& f) const {
   return !(*this == f);
 }
 
-Font* Font::create(const string& file, float size) {
-  return new Font_cairo(file, size);
-}
-
-sptr<Font> Font::_create(const string& name, int style, float size) {
-  return sptrOf<Font_cairo>(name, style, size);
+sptr<Font> Font::create(const std::string& file) {
+  return sptrOf<Font_cairo>(file);
 }
 
 /**************************************************************************************************/
@@ -115,7 +107,8 @@ TextLayout_cairo::TextLayout_cairo(const wstring& src, const sptr<Font_cairo>& f
 
   Pango::FontDescription fd;
   fd.set_family(f->getFamily());
-  fd.set_absolute_size(f->getSize() * Pango::SCALE);
+  // TODO
+  fd.set_absolute_size(10 * Pango::SCALE);
   fd.set_style(Pango::STYLE_NORMAL);
   fd.set_weight(Pango::WEIGHT_NORMAL);
 
@@ -169,14 +162,11 @@ sptr<TextLayout> TextLayout::create(const wstring& src, const sptr<Font>& font) 
 
 /**************************************************************************************************/
 
-Font_cairo Graphics2D_cairo::_default_font("SansSerif", PLAIN, 20.f);
-
 Graphics2D_cairo::Graphics2D_cairo(const Cairo::RefPtr<Cairo::Context>& context)
-  : _context(context) {
+  : _context(context), _font() {
   _sx = _sy = 1.f;
   setColor(BLACK);
   setStroke(Stroke());
-  setFont(&_default_font);
 }
 
 const Cairo::RefPtr<Cairo::Context>& Graphics2D_cairo::getCairoContext() const {
@@ -242,12 +232,20 @@ void Graphics2D_cairo::setStrokeWidth(float w) {
   _context->set_line_width((double) w);
 }
 
-const Font* Graphics2D_cairo::getFont() const {
+sptr<Font> Graphics2D_cairo::getFont() const {
   return _font;
 }
 
-void Graphics2D_cairo::setFont(const Font* font) {
-  _font = static_cast<const Font_cairo*>(font);
+void Graphics2D_cairo::setFont(const sptr<Font>& font) {
+  _font = static_pointer_cast<Font_cairo>(font);
+}
+
+float Graphics2D_cairo::getFontSize() const {
+  return _fontSize;
+}
+
+void Graphics2D_cairo::setFontSize(float size) {
+  _fontSize = size;
 }
 
 void Graphics2D_cairo::translate(float dx, float dy) {
@@ -283,6 +281,13 @@ float Graphics2D_cairo::sy() const {
   return _sy;
 }
 
+void Graphics2D_cairo::drawGlyph(u16 glyph, float x, float y) {
+  _context->set_font_face(_font->getCairoFontFace());
+  _context->set_font_size(_fontSize);
+  Cairo::Glyph g{glyph, x, y};
+  _context->show_glyphs({g});
+}
+
 void Graphics2D_cairo::drawChar(wchar_t c, float x, float y) {
   wstring str = {c, L'\0'};
   drawText(str, x, y);
@@ -290,7 +295,7 @@ void Graphics2D_cairo::drawChar(wchar_t c, float x, float y) {
 
 void Graphics2D_cairo::drawText(const wstring& t, float x, float y) {
   _context->set_font_face(_font->getCairoFontFace());
-  _context->set_font_size(_font->getSize());
+  _context->set_font_size(_fontSize);
   _context->move_to(x, y);
   _context->show_text(wide2utf8(t));
 }

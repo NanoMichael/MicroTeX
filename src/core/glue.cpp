@@ -54,7 +54,7 @@ float Glue::getFactor(const Env& env) {
   return Units::fsize(UnitType::mu, 1.f, env);
 }
 
-sptr<Box> Glue::createBox(const Env& env) const {
+sptr<GlueBox> Glue::createBox(const Env& env) const {
   float factor = getFactor(env);
   return sptrOf<GlueBox>(_space * factor, _stretch * factor, _shrink * factor);
 }
@@ -67,7 +67,7 @@ int Glue::indexOf(AtomType ltype, AtomType rtype, const Env& env) {
   return _table[static_cast<u8>(l)][static_cast<u8>(r)][k] - '0';
 }
 
-sptr<Box> Glue::get(AtomType ltype, AtomType rtype, const Env& env) {
+sptr<GlueBox> Glue::get(AtomType ltype, AtomType rtype, const Env& env) {
   int i = indexOf(ltype, rtype, env);
   return _glueTypes[i].createBox(env);
 }
@@ -77,7 +77,7 @@ const Glue& Glue::getGlue(SpaceType skipType) {
   return _glueTypes[i < 0 ? -i : i];
 }
 
-sptr<Box> Glue::get(SpaceType skipType, const Env& env) {
+sptr<GlueBox> Glue::get(SpaceType skipType, const Env& env) {
   const Glue& glue = getGlue(skipType);
   auto b = glue.createBox(env);
   if (static_cast<i8>(skipType) < 0) b->negWidth();

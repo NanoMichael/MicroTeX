@@ -2,13 +2,10 @@
 #define LATEX_H_INCLUDED
 
 #include "common.h"
-#include "graphic/graphic.h"
-#include "graphic/graphic_basic.h"
+#include "unimath/uni_font.h"
 #include "render.h"
 
 #include <string>
-#include <queue>
-#include <sstream>
 
 namespace tex {
 
@@ -16,29 +13,40 @@ class Formula;
 
 class LaTeX {
 private:
+  static volatile bool _isInited;
+  static std::string _defaultMathVersion;
   static Formula* _formula;
   static TeXRenderBuilder* _builder;
 
-protected:
-  static std::string queryResourceLocation(std::string& custom_path);
-
 public:
   /**
-   * Initialize TeX context with given root path of the TeX resources
+   * Initialize LaTeX context with given math font spec, at least we need
+   * a math font to layout formulas.
    *
-   * @param res_root_path root path of the resources, default is 'res'
+   * @param mathFontSpec the font spec to load math font
    */
-  static void init(std::string res_root_path = "res");
+  static void init(const FontSpec& mathFontSpec);
 
-  /**
-   * Get the root path of the "TeX resources"
-   */
-  static const std::string& getResRootPath();
+  /** Check if context is initialized */
+  static bool isInited();
 
-  /**
-   * If open debug
-   */
+  /** If open debug */
   static void setDebug(bool debug);
+
+  /**
+   * Add main font (collection) to context.
+   *
+   * @param versionName the name of the font (collection)
+   * @param params font spec to load
+   */
+  static void addMainFont(const std::string& versionName, const std::vector<FontSpec>& params);
+
+  /**
+   * Add math font to context.
+   *
+   * @param params font spec to load
+   */
+  static void addMathFont(const FontSpec& params);
 
   /**
    * Parse TeX formatted string to TeXRender
@@ -48,12 +56,18 @@ public:
    * @param textSize the text size
    * @param lineSpace the line space
    * @param fg the foreground color
+   * @param mathVersion the math version
    */
-  static TeXRender* parse(const std::wstring& tex, int width, float textSize, float lineSpace, color fg);
+  static TeXRender* parse(
+    const std::wstring& tex,
+    int width,
+    float textSize,
+    float lineSpace,
+    color fg,
+    const std::string& mathVersion = ""
+  );
 
-  /**
-   * Release the LaTeX context
-   */
+  /** Release the LaTeX context */
   static void release();
 };
 

@@ -17,9 +17,6 @@ enum TypefaceStyle {
 /** Abstract class represents a font. */
 class Font {
 public:
-  /** Get the font size */
-  virtual float getSize() const = 0;
-
   /**
    * Derive font from current font with given style
    *
@@ -38,21 +35,12 @@ public:
   virtual ~Font() = default;;
 
   /**
-   * Create font from file
+   * Create font from file. You may cache the loaded platform specific font
+   * to avoid repetitive loading.
    * 
-   * @param file the path of the font file
-   * @param size required font size
+   * @param file file path to load
    */
-  static Font* create(const std::string& file, float size);
-
-  /**
-   * Create font with given name, style and size
-   *
-   * @param name the font name
-   * @param style the font style
-   * @param size the font size
-   */
-  static sptr<Font> _create(const std::string& name, int style, float size);
+  static sptr<Font> create(const std::string& file);
 };
 
 /** To layout the text that the program cannot recognize. */
@@ -113,10 +101,16 @@ public:
   virtual void setStrokeWidth(float w) = 0;
 
   /** Get the current font */
-  virtual const Font* getFont() const = 0;
+  virtual sptr<Font> getFont() const = 0;
 
   /** Set the font of the context */
-  virtual void setFont(const Font* font) = 0;
+  virtual void setFont(const sptr<Font>& font) = 0;
+
+  /** Get the font size */
+  virtual float getFontSize() const = 0;
+
+  /** Set font size */
+  virtual void setFontSize(float size) = 0;
 
   /**
    * Translate the context with distance dx, dy
@@ -166,6 +160,15 @@ public:
    * @return the scale in y-direction
    */
   virtual float sy() const = 0;
+
+  /**
+   * Draw glyph, is baseline aligned
+   *
+   * @param glyph glyph index in the current font
+   * @param x x-coordinate
+   * @param y y-coordinate, is baseline aligned
+   */
+  virtual void drawGlyph(u16 glyph, float x, float y) = 0;
 
   /**
    * Draw character, is baseline aligned

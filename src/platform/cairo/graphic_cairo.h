@@ -21,24 +21,21 @@ private:
   static map<string, string> _families;
 
   int _style;
-  double _size;
   string _family;
   Cairo::RefPtr<Cairo::FtFontFace> _fface;
 
   void loadFont(const string& file);
 
 public:
-  explicit Font_cairo(string family = "", int style = PLAIN, float size = 1.f);
+  explicit Font_cairo(const string& file);
 
-  Font_cairo(const string& file, float size);
+  Font_cairo(string family, int style);
 
   string getFamily() const;
 
   int getStyle() const;
 
   Cairo::RefPtr<Cairo::FtFontFace> getCairoFontFace() const;
-
-  float getSize() const override;
 
   sptr<Font> deriveFont(int style) const override;
 
@@ -69,12 +66,11 @@ public:
 
 class Graphics2D_cairo : public Graphics2D {
 private:
-  static Font_cairo _default_font;
-
   Cairo::RefPtr<Cairo::Context> _context;
   color _color;
   Stroke _stroke;
-  const Font_cairo* _font;
+  sptr<Font_cairo> _font;
+  float _fontSize;
   float _sx, _sy;
 
   void roundRect(float x, float y, float w, float h, float rx, float ry);
@@ -94,9 +90,13 @@ public:
 
   void setStrokeWidth(float w) override;
 
-  const Font* getFont() const override;
+  sptr<Font> getFont() const override;
 
-  void setFont(const Font* font) override;
+  void setFont(const sptr<Font>& font) override;
+
+  float getFontSize() const override;
+
+  void setFontSize(float size) override;
 
   void translate(float dx, float dy) override;
 
@@ -111,6 +111,8 @@ public:
   float sx() const override;
 
   float sy() const override;
+
+  void drawGlyph(u16 glyph, float x, float y) override;
 
   void drawChar(wchar_t c, float x, float y) override;
 

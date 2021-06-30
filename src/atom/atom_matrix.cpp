@@ -703,7 +703,7 @@ sptr<Box> HdotsforAtom::createBox(Env& env) {
   return createBox(space, hb, env);
 }
 
-inline float VlineAtom::getWidth(Env& env) const {
+float VlineAtom::getWidth(Env& env) const {
   return _n == 0 ? 0 : env.ruleThickness() * (3 * _n - 2);
 }
 
