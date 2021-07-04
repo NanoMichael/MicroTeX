@@ -8,13 +8,13 @@ using namespace std;
 using namespace tex;
 
 volatile bool LaTeX::_isInited = false;
-std::string LaTeX::_defaultMathVersion;
+std::string LaTeX::_defaultMathFontName;
 Formula* LaTeX::_formula = nullptr;
 TeXRenderBuilder* LaTeX::_builder = nullptr;
 
 void LaTeX::init(const FontSpec& mathFontSpec) {
   FontContext::addMathFont(mathFontSpec);
-  _defaultMathVersion = mathFontSpec.name;
+  _defaultMathFontName = mathFontSpec.name;
   if (_isInited) return;
   _isInited = true;
   NewCommandMacro::_init_();
@@ -38,8 +38,8 @@ void LaTeX::setDebug(bool debug) {
   Formula::setDebug(debug);
 }
 
-void LaTeX::addMainFont(const std::string& versionName, const std::vector<FontSpec>& params) {
-  FontContext::addMainFont(versionName, params);
+void LaTeX::addMainFont(const std::string& name, const std::vector<FontSpec>& params) {
+  FontContext::addMainFont(name, params);
 }
 
 void LaTeX::addMathFont(const FontSpec& params) {
@@ -48,23 +48,24 @@ void LaTeX::addMathFont(const FontSpec& params) {
 
 TeXRender* LaTeX::parse(
   const wstring& latex, int width, float textSize, float lineSpace, color fg,
-  const string& mathVersion
+  const string& mathFontName, const string& mainFontName
 ) {
   if (_formula == nullptr) _formula = new Formula();
   if (_builder == nullptr) _builder = new TeXRenderBuilder();
 
-  bool lined = true;
+  bool isInline = true;
   if (startswith(latex, L"$$") || startswith(latex, L"\\[")) {
-    lined = false;
+    isInline = false;
   }
-  Alignment align = lined ? Alignment::left : Alignment::center;
+  Alignment align = isInline ? Alignment::left : Alignment::center;
   _formula->setLaTeX(latex);
   TeXRender* render =
-    _builder->setStyle(TexStyle::display)
+    _builder->setStyle(isInline ? TexStyle::text : TexStyle::display)
       .setTextSize(textSize)
-      .setMathVersion(mathVersion.empty() ? _defaultMathVersion : mathVersion)
+      .setMathFontName(mathFontName.empty() ? _defaultMathFontName : mathFontName)
+      .setMainFontName(mainFontName)
       .setWidth(UnitType::pixel, width, align)
-      .setIsMaxWidth(lined)
+      .setIsMaxWidth(isInline)
       .setLineSpace(UnitType::pixel, lineSpace)
       .setForeground(fg)
       .build(*_formula);

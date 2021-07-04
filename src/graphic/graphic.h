@@ -32,7 +32,7 @@ public:
   /** Check if current font not equals another */
   virtual bool operator!=(const Font& f) const = 0;
 
-  virtual ~Font() = default;;
+  virtual ~Font() = default;
 
   /**
    * Create font from file. You may cache the loaded platform specific font
@@ -76,7 +76,7 @@ public:
  * Abstract class to represents a graphics (2D) context, all the TeX drawing operations will on it.
  * It must have scale, translation, and rotation support. You should notice that the scaling on
  * y-direction will be selected as the base if they are different on x and y-direction when drawing
- * characters. In most cases, you should never use different scalings, unless you are really sure the
+ * characters. In most cases, you should never use different scaling, unless you are really sure the
  * coordinates are correct (i.e. draw a hyphen).
  */
 class Graphics2D {

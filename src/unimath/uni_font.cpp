@@ -166,10 +166,10 @@ void FontContext::selectMainFont(const string& versionName) {
   _mainFont = it == _mainFonts.end() ? nullptr : it->second;
 }
 
-Char FontContext::getChar(const Symbol& symbol) const {
-  // TODO take font style into account?
+Char FontContext::getChar(const Symbol& symbol, FontStyle style) const {
+  // TODO custom symbol
   const auto code = symbol.unicode;
-  return {code, code, _mathFont->_id, _mathFont->otf().glyphId(code)};
+  return getChar(code, style, true);
 }
 
 Char FontContext::getChar(c32 code, const string& styleName, bool isMathMode) const {
@@ -189,8 +189,8 @@ Char FontContext::getChar(c32 code, FontStyle style, bool isMathMode) const {
     return {code, unicode, _mathFont->_id, _mathFont->otf().glyphId(unicode)};
   } else {
     sptr<const OtfFont> font = _mainFont == nullptr ? nullptr : _mainFont->get(style);
-    if (font == nullptr) font = _mainFont->get(FontStyle::none);
-    // fallback to math font
+    if (font == nullptr && _mainFont != nullptr) font = _mainFont->get(FontStyle::none);
+    // fallback to math font, at least we have a math font
     if (font == nullptr) font = _mathFont;
     return {code, code, font->_id, font->otf().glyphId(code)};
   }

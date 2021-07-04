@@ -160,7 +160,7 @@ public:
   inline i32 mathFontId() const { return _mathFont->_id; }
 
   /** Get the char-object from given symbol */
-  Char getChar(const Symbol& symbol) const;
+  Char getChar(const Symbol& symbol, FontStyle style) const;
 
   /** Get the char-object from given code and styleName */
   Char getChar(c32 code, const std::string& styleName, bool isMathMode) const;

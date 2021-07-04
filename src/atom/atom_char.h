@@ -31,7 +31,7 @@ public:
     _textSymbol = true;
   }
 
-  /** Remove the mark so the atom remains unchanged (used by Dummy) */
+  /** Remove the mark so the atom remains unchanged (used by AtomDecor) */
   inline void removeMark() {
     _textSymbol = false;
   }
@@ -44,6 +44,8 @@ public:
   inline bool isMarkedAsTextSymbol() const {
     return _textSymbol;
   }
+
+  bool isChar() const override { return true; }
 
   /**
    * Get the Char-object that uniquely identifies the character that is
@@ -94,7 +96,7 @@ public:
   Char getChar(Env& env) const override;
 
   /** Get symbol from the given name, return null if not found */
-  static sptr<SymbolAtom> get(const std::string& name) noexcept;
+  static sptr<SymbolAtom> get(const std::string& name);
 
   __decl_clone(SymbolAtom)
 };

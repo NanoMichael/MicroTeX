@@ -202,7 +202,12 @@ sptr<Box> ColorAtom::createBox(Env& env) {
 }
 
 sptr<Box> RomanAtom::createBox(Env& env) {
-  return StrutBox::empty();
+  if (_base == nullptr) return StrutBox::empty();
+  // TODO nested style?
+  return env.withFontStyle(
+    FontStyle::rm,
+    [&](auto& v) { return _base->createBox(v); }
+  );
 }
 
 PhantomAtom::PhantomAtom(const sptr<Atom>& el) {

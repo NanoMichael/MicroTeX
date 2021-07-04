@@ -29,7 +29,8 @@ float Char::depth() const {
 
 float Char::italic() const {
   auto g = glyph();
-  return g == nullptr ? 0.f : g->math().italicsCorrection() * _scale;
+  auto italic = g == nullptr ? 0 : g->math().italicsCorrection();
+  return italic == Otf::undefinedMathValue ? 0.f : italic * _scale;
 }
 
 float Char::topAccentAttachment() const {

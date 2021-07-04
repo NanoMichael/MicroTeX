@@ -14,7 +14,7 @@ class Formula;
 class LaTeX {
 private:
   static volatile bool _isInited;
-  static std::string _defaultMathVersion;
+  static std::string _defaultMathFontName;
   static Formula* _formula;
   static TeXRenderBuilder* _builder;
 
@@ -36,10 +36,10 @@ public:
   /**
    * Add main font (collection) to context.
    *
-   * @param versionName the name of the font (collection)
+   * @param name the name of the font (collection)
    * @param params font spec to load
    */
-  static void addMainFont(const std::string& versionName, const std::vector<FontSpec>& params);
+  static void addMainFont(const std::string& name, const std::vector<FontSpec>& params);
 
   /**
    * Add math font to context.
@@ -56,7 +56,7 @@ public:
    * @param textSize the text size
    * @param lineSpace the line space
    * @param fg the foreground color
-   * @param mathVersion the math version
+   * @param mathFontName the math font name
    */
   static TeXRender* parse(
     const std::wstring& tex,
@@ -64,7 +64,8 @@ public:
     float textSize,
     float lineSpace,
     color fg,
-    const std::string& mathVersion = ""
+    const std::string& mathFontName = "",
+    const std::string& mainFontName = ""
   );
 
   /** Release the LaTeX context */

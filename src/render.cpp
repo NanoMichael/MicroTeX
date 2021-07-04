@@ -14,7 +14,6 @@ TeXRender::TeXRender(const sptr<Box>& box, float textSize, bool hasPadding) {
   _box = box;
   _textSize = textSize;
   _fixedScale = _textSize / Env::fixedTextSize();
-  if (!hasPadding) _insets += (int) (0.18f * textSize);
   if (Box::DEBUG) {
     const auto group = wrap(box);
     _box = group;
@@ -70,26 +69,19 @@ float TeXRender::getTextSize() const {
 }
 
 int TeXRender::getHeight() const {
-  return (int) (
-    _box->_height * _fixedScale +
-    _box->_depth * _fixedScale +
-    _insets.top + _insets.bottom
-  );
+  return (int) ((_box->_height + _box->_depth) * _fixedScale);
 }
 
 int TeXRender::getDepth() const {
-  return (int) (_box->_depth * _fixedScale + _insets.bottom);
+  return (int) (_box->_depth * _fixedScale);
 }
 
 int TeXRender::getWidth() const {
-  return (int) (_box->_width * _fixedScale + _insets.left + _insets.right);
+  return (int) (_box->_width * _fixedScale);
 }
 
 float TeXRender::getBaseline() const {
-  return (
-    (_box->_height * _fixedScale + _insets.top) /
-    ((_box->_height + _box->_depth) * _fixedScale + _insets.top + _insets.bottom)
-  );
+  return _box->_height / (_box->_height + _box->_depth);
 }
 
 void TeXRender::setTextSize(float textSize) {
@@ -101,18 +93,8 @@ void TeXRender::setForeground(color fg) {
   _fg = fg;
 }
 
-Insets TeXRender::getInsets() {
-  return _insets;
-}
-
-void TeXRender::setInsets(const Insets& insets, bool hasPadding) {
-  _insets = insets;
-  if (!hasPadding) _insets += (int) (0.18f * _textSize);
-}
-
 void TeXRender::setWidth(int width, Alignment align) {
   float diff = width - getWidth();
-  // FIXME
   // only care if new width larger than old
   if (diff > 0) {
     _box = sptrOf<HBox>(_box, (float) width, align);
@@ -121,7 +103,6 @@ void TeXRender::setWidth(int width, Alignment align) {
 
 void TeXRender::setHeight(int height, Alignment align) {
   float diff = height - getHeight();
-  // FIXME
   // only care if new height larger than old
   if (diff > 0) {
     _box = sptrOf<VBox>(_box, diff, align);
@@ -130,22 +111,16 @@ void TeXRender::setHeight(int height, Alignment align) {
 
 void TeXRender::draw(Graphics2D& g2, int x, int y) {
   color old = g2.getColor();
+  g2.setColor(isTransparent(_fg) ? DFT_COLOR : _fg);
+  g2.translate(x, y);
   g2.scale(_fixedScale, _fixedScale);
-  if (!isTransparent(_fg)) {
-    g2.setColor(_fg);
-  } else {
-    g2.setColor(DFT_COLOR);
-  }
 
   // draw formula box
-  _box->draw(
-    g2,
-    (x + _insets.left) * _fixedScale,
-    (y + _insets.top) * _fixedScale + _box->_height
-  );
+  _box->draw(g2, 0, _box->_height);
 
   // restore
-  g2.reset();
+  g2.scale(1.f / _fixedScale, 1.f / _fixedScale);
+  g2.translate(-x, -y);
   g2.setColor(old);
 }
 
@@ -159,14 +134,15 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
   if (_textSize == -1) {
     throw ex_invalid_state("A size is required, call function setSize before build.");
   }
-  if (_mathVersion.empty()) {
-    throw ex_invalid_state("A math version is required, call function setMathVersion before build.");
+  if (_mathFontName.empty()) {
+    throw ex_invalid_state("A math font is required, call function setMathFontName before build.");
   }
 
   auto fctx = sptrOf<FontContext>();
-  fctx->selectMathFont(_mathVersion);
+  fctx->selectMathFont(_mathFontName);
+  fctx->selectMainFont(_mainFontName);
 
-  Env env(_style, fctx);
+  Env env(_style, fctx, _textSize);
   const auto isLimitedWidth = _widthUnit != UnitType::none && _textWidth != 0;
   if (isLimitedWidth) {
     env.setTextWidth(_widthUnit, _textWidth);

@@ -11,7 +11,7 @@
 
 namespace tex {
 
-class Dummy;
+class AtomDecor;
 
 class FixedCharAtom;
 
@@ -31,21 +31,21 @@ public:
    * first child atom of this nested composed atom and the atom that the dummy
    * contains.
    *
-   * @param dummy
-   *      the dummy that comes just before this "composed atom"
+   * @param decor
+   *      the atom that comes just before this "composed atom"
    */
-  virtual void setPreviousAtom(const sptr<Dummy>& dummy) = 0;
+  virtual void setPreviousAtom(const sptr<AtomDecor>& decor) = 0;
 };
 
 /**
  * Used by RowAtom. The "textSymbol"-property and the type of an atom can changed
  * (according to the TeX-algorithms used). Or this atom can be replaced by a
  * ligature, (if it was a CharAtom). But atoms cannot be changed, otherwise
- * different boxes could be made from the same Formula, and that is not
- * desired! This "dummy atom" makes sure that changes to an atom (during the
+ * different boxes could be made from the same formula, and that is not
+ * desired! This "atom decor" makes sure that changes to an atom (during the
  * createBox-method of a RowAtom) will be reset.
  */
-class Dummy {
+class AtomDecor {
 private:
   sptr<Atom> _atom;
   bool _textSymbol = false;
@@ -53,10 +53,9 @@ private:
 public:
   AtomType _type = AtomType::none;
 
-  Dummy() = delete;
+  AtomDecor() = delete;
 
-  /** Create a new dummy for the given atom */
-  explicit Dummy(const sptr<Atom>& atom) {
+  explicit AtomDecor(const sptr<Atom>& atom) {
     _textSymbol = false;
     _atom = atom;
     _type = AtomType::none;
@@ -78,7 +77,7 @@ public:
   /** Test if this char is in math mode. */
   bool isCharInMathMode() const;
 
-  /** This method will only be called if isCharSymbol returns true. */
+  /** This method will only be called if #isCharSymbol returns true. */
   Char getChar(Env& env) const;
 
   /** Changes this atom into the given "ligature atom". */
@@ -94,7 +93,7 @@ public:
   bool isKern() const;
 
   /** Only for row-elements, for nested rows */
-  void setPreviousAtom(const sptr<Dummy>& prev);
+  void setPreviousAtom(const sptr<AtomDecor>& prev);
 };
 
 /**
@@ -114,7 +113,7 @@ private:
   // atoms to be displayed horizontally next to each-other
   std::vector<sptr<Atom>> _elements;
   // previous atom (for nested Row atoms)
-  sptr<Dummy> _previousAtom;
+  sptr<AtomDecor> _previousAtom;
 
   /**
    * Change the atom-type to ORD if necessary
@@ -122,7 +121,7 @@ private:
    * i.e. for formula: `$+ e - f$`, the plus sign should be treat as
    * an ordinary type
    */
-  static void changeToOrd(Dummy* cur, Dummy* prev, Atom* next);
+  static void changeToOrd(AtomDecor* cur, AtomDecor* prev, Atom* next);
 
 public:
   static bool _breakEveywhere;
@@ -165,7 +164,7 @@ public:
 
   sptr<Box> createBox(Env& env) override;
 
-  void setPreviousAtom(const sptr<Dummy>& prev) override;
+  void setPreviousAtom(const sptr<AtomDecor>& prev) override;
 
   AtomType leftType() const override;
 

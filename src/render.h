@@ -17,6 +17,12 @@ class Atom;
 
 using BoxFilter = std::function<bool(const sptr<Box>&)>;
 
+/**
+ * Object to paint formula, is baseline aligned.
+ * <p>
+ * You can change the size via method #setWidth and #setHeight, but only the new
+ * size is larger will be handled.
+ */
 class TeXRender {
 private:
   static constexpr color DFT_COLOR = black;
@@ -25,7 +31,6 @@ private:
   float _textSize;
   float _fixedScale;
   color _fg = black;
-  Insets _insets;
 
   void buildDebug(
     const sptr<BoxGroup>& parent,
@@ -39,12 +44,16 @@ public:
 
   TeXRender(const sptr<Box>& box, float textSize, bool hasPadding = false);
 
+  /** Get the text size of this render */
   float getTextSize() const;
 
+  /** Get the size amount above the baseline */
   int getHeight() const;
 
+  /** Get the size amount below the baseline */
   int getDepth() const;
 
+  /** Get the width of this render */
   int getWidth() const;
 
   float getBaseline() const;
@@ -52,10 +61,6 @@ public:
   void setTextSize(float textSize);
 
   void setForeground(color fg);
-
-  Insets getInsets();
-
-  void setInsets(const Insets& insets, bool hasPadding = false);
 
   void setWidth(int width, Alignment align);
 
@@ -73,7 +78,8 @@ private:
   bool _isMaxWidth = false;
   color _fg = black;
   Alignment _align = Alignment::none;
-  std::string _mathVersion;
+  std::string _mathFontName;
+  std::string _mainFontName;
 
 public:
   TeXRenderBuilder() {}
@@ -100,8 +106,13 @@ public:
     return *this;
   }
 
-  inline TeXRenderBuilder& setMathVersion(const std::string& version) {
-    _mathVersion = version;
+  inline TeXRenderBuilder& setMathFontName(const std::string& name) {
+    _mathFontName = name;
+    return *this;
+  }
+
+  inline TeXRenderBuilder& setMainFontName(const std::string& name) {
+    _mainFontName = name;
     return *this;
   }
 

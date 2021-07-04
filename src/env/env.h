@@ -22,6 +22,7 @@ private:
 
   float _textWidth = POS_INF;
   float _lineSpace = 1.f;
+  float _fixedScale = 1.f;
 
   FontStyle _fontStyle = FontStyle::none;
 
@@ -31,8 +32,8 @@ private:
 public:
   no_copy_assign(Env);
 
-  Env(TexStyle style, const sptr<FontContext>& fctx)
-    : _style(style), _fctx(fctx) {}
+  Env(TexStyle style, const sptr<FontContext>& fctx, float pointSize)
+    : _style(style), _fctx(fctx), _fixedScale(FIXED_TEXT_SIZE / pointSize) {}
 
   // region statics
   /** Set the dot per inch target */
@@ -97,6 +98,9 @@ public:
 
   /** The text size, in point */
   inline float textSize() const { return FIXED_TEXT_SIZE; }
+
+  /** The fixed scale */
+  inline float fixedScale() const { return _fixedScale; }
 
   /** The line space to layout boxes vertically */
   inline float lineSpace() const { return _lineSpace; }
@@ -170,11 +174,12 @@ public:
    * Get a Char specifying the given character with scale information depending
    * on the current environment.
    *
-   * @param code the alphanumeric character code
+   * @param code the alphanumeric character code-point
    * @param isMathMode if is in math-mode
-   * @param style the font style, if is invalid, use the environment font style
+   * @param style the font style, will use the environment font style instead if
+   *        it is FontStyle::invalid, default is FontStyle::invalid
    *
-   * @return the Char, the method Char#isValid() will return false if not found
+   * @return the Char, Char#isValid() will return false if not found
    */
   Char getChar(c32 code, bool isMathMode, FontStyle style = FontStyle::invalid) const;
 
@@ -189,13 +194,8 @@ public:
   Char getChar(const Symbol& sym) const;
 
   /**
-   * Do something with given TexStyle. This will reset the style after function
+   * Do something with given TexStyle. This will reset the style after function #f
    * return.
-   *
-   * @tparam F function type to do something
-   * @param style the given style
-   * @param f the function
-   * @return the function return type
    */
   template<typename F>
   auto withStyle(const TexStyle style, F&& f) -> decltype(f(*this)) {
@@ -203,6 +203,19 @@ public:
     setStyle(style);
     auto result = f(*this);
     setStyle(oldStyle);
+    return result;
+  }
+
+  /**
+   * Do something with given FontStyle. This will reset the FontStyle after function #f
+   * return.
+   */
+  template<typename F>
+  auto withFontStyle(const FontStyle style, F&& f) -> decltype(f(*this)) {
+    auto oldStyle = _fontStyle;
+    _fontStyle = style;
+    auto result = f(*this);
+    _fontStyle = oldStyle;
     return result;
   }
 };

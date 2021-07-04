@@ -39,7 +39,7 @@ const function<float(const Env&)> Units::_unitConversions[]{
   },
   // pixel
   [](const Env& env) -> float {
-    return env.upem() / env.ppem();
+    return pt(env) / Env::pixelsPerPoint();
   },
   // point
   [](const Env& env) -> float {
@@ -88,7 +88,7 @@ const function<float(const Env&)> Units::_unitConversions[]{
 };
 
 float Units::pt(const Env& env) {
-  return Env::pixelsPerPoint() * env.upem() / env.ppem();
+  return Env::pixelsPerPoint() * env.upem() / env.ppem() * env.fixedScale();
 }
 
 float Units::fsize(UnitType unit, float size, const Env& env) {
@@ -96,7 +96,7 @@ float Units::fsize(UnitType unit, float size, const Env& env) {
 }
 
 UnitType Units::getUnit(const std::string& unit) {
-  const auto&& i = binIndexOf(
+  const auto i = binIndexOf(
     _unitsCount,
     [&](int i) { return strcmp(unit.c_str(), _units[i].first); }
   );

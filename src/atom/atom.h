@@ -67,6 +67,9 @@ public:
   /** Shallow clone a atom from this atom. */
   virtual sptr<Atom> clone() const = 0;
 
+  /** Test if this atom is a single character */
+  virtual bool isChar() const { return false; }
+
   virtual ~Atom() = default;
 
 #ifndef __decl_clone

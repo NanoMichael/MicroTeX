@@ -8,39 +8,38 @@
 using namespace std;
 using namespace tex;
 
-bool Dummy::isCharSymbol() const {
-  auto* x = dynamic_cast<CharSymbol*>(_atom.get());
-  return (x != nullptr);
+bool AtomDecor::isCharSymbol() const {
+  return _atom->isChar();
 }
 
-bool Dummy::isCharInMathMode() const {
+bool AtomDecor::isCharInMathMode() const {
   auto* at = dynamic_cast<CharAtom*>(_atom.get());
   return at != nullptr && at->isMathMode();
 }
 
-Char Dummy::getChar(Env& env) const {
+Char AtomDecor::getChar(Env& env) const {
   return ((CharSymbol*) _atom.get())->getChar(env);
 }
 
-void Dummy::changeAtom(const sptr<FixedCharAtom>& atom) {
+void AtomDecor::changeAtom(const sptr<FixedCharAtom>& atom) {
   _textSymbol = false;
   _atom = atom;
   _type = AtomType::none;
 }
 
-sptr<Box> Dummy::createBox(Env& env) {
+sptr<Box> AtomDecor::createBox(Env& env) {
   if (_textSymbol) ((CharSymbol*) _atom.get())->markAsTextSymbol();
   auto box = _atom->createBox(env);
   if (_textSymbol) ((CharSymbol*) _atom.get())->removeMark();
   return box;
 }
 
-bool Dummy::isKern() const {
+bool AtomDecor::isKern() const {
   auto* x = dynamic_cast<SpaceAtom*>(_atom.get());
   return (x != nullptr);
 }
 
-void Dummy::setPreviousAtom(const sptr<Dummy>& prev) {
+void AtomDecor::setPreviousAtom(const sptr<AtomDecor>& prev) {
   auto* row = dynamic_cast<Row*>(_atom.get());
   if (row != nullptr) row->setPreviousAtom(prev);
 }
@@ -87,11 +86,11 @@ sptr<Atom> RowAtom::popLastAtom() {
     _elements.pop_back();
     return x;
   }
-  return sptrOf<SpaceAtom>(UnitType::point, 0.f, 0.f, 0.f);
+  return SpaceAtom::empty();
 }
 
 sptr<Atom> RowAtom::get(size_t pos) {
-  if (pos >= _elements.size()) return sptrOf<SpaceAtom>(UnitType::point, 0.f, 0.f, 0.f);
+  if (pos >= _elements.size()) return SpaceAtom::empty();
   return _elements[pos];
 }
 
@@ -99,7 +98,7 @@ void RowAtom::add(const sptr<Atom>& atom) {
   if (atom != nullptr) _elements.push_back(atom);
 }
 
-void RowAtom::changeToOrd(Dummy* cur, Dummy* prev, Atom* next) {
+void RowAtom::changeToOrd(AtomDecor* cur, AtomDecor* prev, Atom* next) {
   AtomType type = cur->leftType();
   if ((type == AtomType::binaryOperator)
       && ((prev == nullptr || _binSet[static_cast<i8>(prev->rightType())]) || next == nullptr)
@@ -109,7 +108,8 @@ void RowAtom::changeToOrd(Dummy* cur, Dummy* prev, Atom* next) {
     AtomType nextType = next->leftType();
     if (nextType == AtomType::relation
         || nextType == AtomType::closing
-        || nextType == AtomType::punctuation) {
+        || nextType == AtomType::punctuation
+      ) {
       cur->_type = AtomType::ordinary;
     }
   }
@@ -146,7 +146,7 @@ sptr<Box> RowAtom::createBox(Env& env) {
     }
 
     // 2. Change atom type
-    auto curr = sptrOf<Dummy>(raw);
+    auto curr = sptrOf<AtomDecor>(raw);
     // if necessary, change BIN to ORD
     // i.e. for formula: $+ e - f$, the plus sign should be treated as an ordinary atom
     sptr<Atom> nextAtom = nullptr;
@@ -155,10 +155,13 @@ sptr<Box> RowAtom::createBox(Env& env) {
 
     // 3. Check for ligatures and kerning
     float kern = 0.f;
-    if (curr->rightType() == AtomType::ordinary && curr->isCharSymbol()) {
+    if (nextAtom != nullptr
+        && curr->rightType() == AtomType::ordinary
+        && curr->isCharSymbol()
+      ) {
       curr->markAsTextSymbol();
       // initialize
-      auto chr = curr->getChar(env);
+      const auto& chr = curr->getChar(env);
       const auto font = chr._font;
       auto ligs = FontContext::getFont(font)->otf().ligatures();
       auto lig = ligs == nullptr ? nullptr : (*ligs)[chr._glyph];
@@ -168,11 +171,13 @@ sptr<Box> RowAtom::createBox(Env& env) {
       i32 nextGlyph = -1;
       while (i < end && lig != nullptr) {
         auto next = _elements[++i];
-        auto nextChar = dynamic_cast<CharSymbol*>(next.get());
-        if (nextChar == nullptr || !_ligKernSet[static_cast<i8>(next->leftType())]) {
+        if (!next->isChar() || !_ligKernSet[static_cast<i8>(next->leftType())]) {
           break;
         }
+        // is safe to cast the atom to CharSymbol since it is a char
+        auto nextChar = static_cast<CharSymbol*>(next.get());
         auto c = nextChar->getChar(env);
+        // not in same font, break the iteration
         if (c._font != font) {
           break;
         }
@@ -187,18 +192,25 @@ sptr<Box> RowAtom::createBox(Env& env) {
       }
       // reset the current index
       i = index;
+      auto rawKern = [](const Char& p, i32 q) {
+        // The glyph is guaranteed to be valid
+        auto kern = FontContext::getFont(p._font)->otf().glyph(p._glyph)->kernRecord()[q];
+        if (kern == 0) {
+          // Try find from class-kerning
+          kern = FontContext::getFont(p._font)->otf().classKerning(p._glyph, q);
+        }
+        return kern;
+      };
       if (target != nullptr) {
         // We found it! Replace with ligature char
         const auto& fixed = Char::onlyGlyph(chr._font, target->value(), chr._scale);
         curr->changeAtom(sptrOf<FixedCharAtom>(fixed));
         // TODO record the original code-points?
       } else if (nextGlyph != -1) {
-        // The glyph is guaranteed to be valid
-        kern = FontContext::getFont(font)->otf().glyph(chr._glyph)->kernRecord()[nextGlyph];
-        if (kern == 0.f) {
-          // Try find from class-kerning
-          kern = FontContext::getFont(font)->otf().classKerning(chr._glyph, nextGlyph);
-        }
+        kern = rawKern(chr, nextGlyph) * chr._scale;
+      } else if (nextAtom->isChar() && _ligKernSet[static_cast<i8>(nextAtom->leftType())]) {
+        auto nextChar = static_cast<CharSymbol*>(nextAtom.get());
+        kern = rawKern(chr, nextChar->getChar(env)._glyph) * chr._scale;
       }
     }
 
@@ -257,6 +269,6 @@ sptr<Box> RowAtom::createBox(Env& env) {
   return sptr<Box>(hbox);
 }
 
-void RowAtom::setPreviousAtom(const sptr<Dummy>& prev) {
+void RowAtom::setPreviousAtom(const sptr<AtomDecor>& prev) {
   _previousAtom = prev;
 }

@@ -106,7 +106,7 @@ Char Env::getChar(c32 code, bool isMathMode, FontStyle style) const {
 }
 
 Char Env::getChar(const Symbol& sym) const {
-  auto chr = _fctx->getChar(sym);
+  auto chr = _fctx->getChar(sym, _fontStyle);
   chr._scale = scale();
   return chr;
 }

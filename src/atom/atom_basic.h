@@ -267,7 +267,7 @@ public:
     return _elements->rightType();
   }
 
-  void setPreviousAtom(const sptr<Dummy>& prev) override {
+  void setPreviousAtom(const sptr<AtomDecor>& prev) override {
     _elements->setPreviousAtom(prev);
   }
 
@@ -320,7 +320,7 @@ public:
     return _elements->rightType();
   }
 
-  void setPreviousAtom(const sptr<Dummy>& prev) override {
+  void setPreviousAtom(const sptr<AtomDecor>& prev) override {
     _elements->setPreviousAtom(prev);
   }
 

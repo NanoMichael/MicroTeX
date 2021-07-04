@@ -114,7 +114,7 @@ enum class UnitType : i8 {
   mm,
   /** 1 in = 72 point */
   in,
-  /** 1 sp = 65536 point, sortcut for `scaled-point` */
+  /** 1 sp = 65536 point, shortcut for `scaled-point` */
   sp,
   /** 1 pt = 0.99626401 point (pt means point in printer's) */
   pt,

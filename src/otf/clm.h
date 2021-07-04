@@ -20,7 +20,7 @@ private:
 
   static std::pair<u16, u16*> readClassKerningGlyphs(BinaryFileReader& reader);
 
-  LigaTable* readLigatures(BinaryFileReader& reader) const;
+  static LigaTable* readLigatures(BinaryFileReader& reader);
 
   static MathConsts* readMathConsts(BinaryFileReader& reader);
 

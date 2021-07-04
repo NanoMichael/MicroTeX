@@ -34,6 +34,10 @@ public:
 
   sptr<Box> createBox(Env& env) override;
 
+  static sptr<SpaceAtom> empty() {
+    return sptrOf<SpaceAtom>(UnitType::em, 0.f, 0.f, 0.f);
+  }
+
   __decl_clone(SpaceAtom)
 };
 

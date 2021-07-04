@@ -83,7 +83,9 @@ public:
       get_allocated_width() - _padding * 2,
       _text_size,
       _text_size / 3.f,
-      0xff424242
+      0xff424242,
+      "xits",
+      "xits"
     );
 
     checkInvalidate();
@@ -423,12 +425,18 @@ int main(int argc, char* argv[]) {
 
   Pango::init();
   // TODO dialog to choose font file
-  const FontSpec spec{
+  const FontSpec math{
     "xits",
     "/home/nano/Downloads/xits/XITSMath-Regular.otf",
     "./res/XITSMath-Regular.clm"
   };
-  LaTeX::init(spec);
+  LaTeX::init(math);
+  const FontSpec main{
+    "rm",
+    "/home/nano/Downloads/xits/XITS-Regular.otf",
+    "./res/XITS-Regular.clm"
+  };
+  LaTeX::addMainFont("xits", {main});
 
   int result = 0;
   if (indexOf(opts, string("-headless")) >= 0) {

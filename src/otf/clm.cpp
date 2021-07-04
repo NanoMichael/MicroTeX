@@ -118,7 +118,7 @@ void CLMReader::readClassKernings(Otf& font, BinaryFileReader& reader) {
   }
 }
 
-LigaTable* CLMReader::readLigatures(BinaryFileReader& reader) const {
+LigaTable* CLMReader::readLigatures(BinaryFileReader& reader) {
   const u16 glyph = reader.read<u16>();
   const u32 liga = reader.read<i32>();
   const u16 childCount = reader.read<u16>();
@@ -215,8 +215,9 @@ Glyph* CLMReader::readGlyph(bool isMathFont, BinaryFileReader& reader) {
   glyph->_metrics._width = reader.read<i16>();
   glyph->_metrics._height = reader.read<i16>();
   glyph->_metrics._depth = reader.read<i16>();
-  // reader kern record, optional
-  glyph->_kernRecord = readKerns(reader);
+  // read kern record, optional
+  auto kern = readKerns(reader);
+  glyph->_kernRecord = kern == nullptr ? &KernRecord::empty : kern;
   // read math, optional
   glyph->_math = isMathFont ? readMath(reader) : &Math::empty;
   return glyph;
