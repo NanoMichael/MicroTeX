@@ -221,17 +221,11 @@ macro(accentbiss) {
     case 'v':
       acc = "check";
       break;
-    case 'H':
-      acc = "doubleacute";
-      break;
     case 't':
       acc = "tie";
       break;
     case 'r':
       acc = "mathring";
-      break;
-    case 'U':
-      acc = "cyrbreve";
       break;
   }
 

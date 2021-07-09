@@ -38,8 +38,8 @@ sptr<Box> MathAtom::createBox(Env& env) {
 
 sptr<Box> HlineAtom::createBox(Env& env) {
   const auto drt = env.ruleThickness();
-  Box* b = new RuleBox(drt, _width, _shift, _color, false);
-  auto* vb = new VBox();
+  auto b = new RuleBox(drt, _width, _shift, _color, false);
+  auto vb = new VBox();
   vb->add(sptr<Box>(b));
   vb->_type = AtomType::hline;
   return sptr<Box>(vb);
@@ -239,47 +239,25 @@ void AccentedAtom::setupBase(const sptr<Atom>& base) {
   else _base = base;
 }
 
-void AccentedAtom::init(const sptr<Atom>& base, const sptr<Atom>& accent) {
-  _accentee = base;
-  setupBase(base);
-
-  _accenter = dynamic_pointer_cast<SymbolAtom>(accent);
-  if (_accenter == nullptr) throw ex_invalid_symbol_type("Invalid accent!");
-
-  _directAccent = true;
-  _changeSize = true;
-}
-
-AccentedAtom::AccentedAtom(const sptr<Atom>& base, const string& name) {
+AccentedAtom::AccentedAtom(const sptr<Atom>& base, const string& name, bool fitSize, bool fake) {
   _accenter = SymbolAtom::get(name);
+  if (_accenter == nullptr) {
+    throw ex_symbol_not_found(name);
+  }
+  _fitSize = fitSize;
+  _fakeAccent = fake;
   if (_accenter->_type == AtomType::accent) {
+    _accentee = base;
+    setupBase(base);
+    // the symbol is a real accent but specified as fake accent
+    _fakeAccent = false;
+  } else if (fake) {
     _accentee = base;
     setupBase(base);
   } else {
     throw ex_invalid_symbol_type(
       "The symbol with the name '"
       + name + "' is not defined as an accent (type='acc')!"
-    );
-  }
-  _changeSize = true;
-  _directAccent = false;
-}
-
-AccentedAtom::AccentedAtom(const sptr<Atom>& base, const sptr<Formula>& acc) {
-  if (acc == nullptr) throw ex_invalid_formula("the accent Formula can't be null!");
-  _changeSize = true;
-  _directAccent = false;
-  auto root = acc->_root;
-  _accenter = dynamic_pointer_cast<SymbolAtom>(root);
-  if (_accenter == nullptr) {
-    throw ex_invalid_formula("The accent formula does not represents a single symbol!");
-  }
-  if (_accenter->_type == AtomType::accent) {
-    _accentee = base;
-  } else {
-    throw ex_invalid_symbol_type(
-      "The accent Formula represents a single symbol with the name '"
-      + _accenter->name() + "', but this symbol is not defined as accent (type='acc')!"
     );
   }
 }
@@ -292,7 +270,7 @@ sptr<Box> AccentedAtom::createBox(Env& env) {
     : env.withStyle(env.crampStyle(), [&](Env& cramp) { return _accentee->createBox(cramp); })
   );
 
-  auto topAccent = 0.f;
+  float topAccent = Otf::undefinedMathValue;
   if (auto sym = dynamic_cast<CharSymbol*>(_base.get()); sym != nullptr) {
     topAccent = sym->getChar(env).topAccentAttachment();
   }
@@ -301,6 +279,7 @@ sptr<Box> AccentedAtom::createBox(Env& env) {
   // function to retrieve best char from the accent symbol to match the accentee box's width
   const auto& getChar = [&]() {
     const auto& chr = ((SymbolAtom*) _accenter.get())->getChar(env);
+    if (!_fitSize) return chr;
     int i = 1;
     for (; i < chr.hLargerCount(); i++) {
       const auto& larger = chr.hLarger(i);
@@ -311,12 +290,8 @@ sptr<Box> AccentedAtom::createBox(Env& env) {
 
   // accenter
   sptr<Box> accenter;
-  if (_directAccent) {
-    accenter = (
-      _changeSize
-      ? env.withStyle(env.subStyle(), [&](Env& sub) { return _accenter->createBox(sub); })
-      : _accenter->createBox(env)
-    );
+  if (_fakeAccent) {
+    accenter = env.withStyle(env.subStyle(), [&](Env& sub) { return _accenter->createBox(sub); });
     accenter->_shift = topAccent - accenter->_width / 2.f;
   } else {
     const auto& chr = getChar();
@@ -331,7 +306,7 @@ sptr<Box> AccentedAtom::createBox(Env& env) {
   vbox->add(accenter);
   // kerning
   const auto delta = (
-    _directAccent
+    _fakeAccent
     ? Units::fsize(UnitType::mu, 1, env)
     : -min(accentee->_height, env.xHeight())
   );

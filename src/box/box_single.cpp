@@ -17,7 +17,7 @@ void CharBox::addItalicCorrectionToWidth() {
 }
 
 void CharBox::draw(Graphics2D& g2, float x, float y) {
-  const auto font = Font::create(_chr.otfFont()->_fontFile);
+  const auto font = Font::create(_chr.otfFont()->fontFile);
   g2.setFont(font);
   g2.setFontSize(Env::fixedTextSize() * _chr._scale);
   g2.drawGlyph(_chr._glyph, x, y);

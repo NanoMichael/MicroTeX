@@ -23,7 +23,7 @@ class Formula;
 class EmptyAtom : public Atom {
 public:
   sptr<Box> createBox(Env& env) override {
-    return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
+    return StrutBox::empty();
   }
 
   __decl_clone(EmptyAtom)
@@ -375,28 +375,13 @@ public:
   sptr<Atom> _accentee;
   sptr<Atom> _base;
 
-  bool _directAccent = false;
-  bool _changeSize = true;
-
-  void init(const sptr<Atom>& base, const sptr<Atom>& acc);
+  bool _fakeAccent = false;
+  bool _fitSize = false;
 
   void setupBase(const sptr<Atom>& base);
 
 public:
   AccentedAtom() = delete;
-
-  AccentedAtom(const sptr<Atom>& base, const sptr<Atom>& accent) {
-    init(base, accent);
-  }
-
-  AccentedAtom(
-    const sptr<Atom>& base,
-    const sptr<Atom>& accent,
-    bool changeSize
-  ) {
-    init(base, accent);
-    _changeSize = changeSize;
-  }
 
   /**
    * Create an AccentedAtom from a base atom and an accent symbol defined by
@@ -404,25 +389,17 @@ public:
    *
    * @param base base atom
    * @param name name of the accent symbol to be put over the base atom
+   * @param fitSize if accent fit the base atom's width
+   * @param fake if is a fake accent
+   *
    * @throw ex_invalid_symbol_type if the symbol is not defined as An accent ('acc')
    * @throw ex_symbol_not_found if there's no symbol defined with the given name
    */
-  AccentedAtom(const sptr<Atom>& base, const std::string& name);
-
-  /**
-   * Creates an AccentedAtom from a base atom and an accent symbol defined as
-   * a Formula.
-   *
-   * @param base base atom
-   * @param acc Formula representing an accent (SymbolAtom)
-   *
-   * @throw ex_invalid_formula
-   *      if the given Formula does not represent a single
-   *      SymbolAtom (type "TeXConstants.AtomType::accent")
-   * @throw ex_invalid_symbol_type
-   *      if the symbol is not defined as an accent ('acc')
-   */
-  AccentedAtom(const sptr<Atom>& base, const sptr<Formula>& acc);
+  AccentedAtom(
+    const sptr<Atom>& base, const std::string& name,
+    bool fitSize = false,
+    bool fake = false
+  );
 
   sptr<Box> createBox(Env& env) override;
 

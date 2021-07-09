@@ -255,22 +255,19 @@ inline macro(underscore) {
 }
 
 inline macro(accents) {
-  const std::string x = wide2utf8(args[0]);
-  return sptrOf<AccentedAtom>(Formula(tp, args[1], false)._root, x);
+  const auto name = wide2utf8(args[0]);
+  const auto&[acc, fit] = [&]() {
+    if (name == "widehat") return std::make_pair<std::string>("hat", true);
+    if (name == "widetilde") return std::make_pair<std::string>("tilde", true);
+    return std::make_pair(name, false);
+  }();
+  return sptrOf<AccentedAtom>(Formula(tp, args[1], false)._root, acc, fit);
 }
 
-inline macro(grkaccent) {
+inline macro(accentset) {
   return sptrOf<AccentedAtom>(
     Formula(tp, args[2], false)._root,
-    Formula(tp, args[1], false)._root,
-    false
-  );
-}
-
-inline macro(accent) {
-  return sptrOf<AccentedAtom>(
-    Formula(tp, args[2], false)._root,
-    Formula(tp, args[1], false)._root
+    wide2utf8(args[1]).substr(1), false, true
   );
 }
 
@@ -738,13 +735,6 @@ inline macro(underset) {
     false
   );
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, a);
-}
-
-inline macro(accentset) {
-  return sptrOf<AccentedAtom>(
-    Formula(tp, args[2], false)._root,
-    Formula(tp, args[1], false)._root
-  );
 }
 
 inline macro(underaccent) {

@@ -2,10 +2,30 @@
 #define LATEX_MATH_TYPE_H
 
 #include "utils/utils.h"
+#include "unimath/font_style.h"
+
+#include <map>
 
 namespace tex {
 
-enum class MathType : u8 {
+/*
+ * The math styles. The math glyphs are painted in following styles:
+ *
+ * style    latin  Latin  greek  Greek
+ * -----------------------------------
+ * TeX      it     it     it     up
+ * ISO      it     it     it     it
+ * French   it     up     up     up
+ * upright  up     up     up     up
+ */
+enum class MathStyle : u8 {
+  TeX,
+  ISO,
+  French,
+  upright,
+};
+
+enum class LetterType : u8 {
   none,
   digit,
   latinSmall,
@@ -42,26 +62,61 @@ enum class MathType : u8 {
  * </a>
  * for details.
  */
-struct MathVersion {
+class MathVersion {
 private:
-  /** The reserved code map */
+
+  struct Orphan {
+    LetterType type;
+    c32 code;
+    std::map<FontStyle, c32> styles;
+  };
+
+  /** The reserved code map, thanks to the Unicode Consortium */
   static const std::pair<c32, c32> _reserved[];
   static const int _reservedCount;
+  /** The orphans */
+  static const Orphan _orphans[];
+  static const int _orphansCount;
+
+  /** style to version map */
+  static sptr<const MathVersion> _mathStyles[4];
+  /** font style to version map */
+  static std::map<FontStyle, sptr<const MathVersion>> _mathVersions;
+  /** current math style */
+  static MathStyle _mathStyle;
 
   c32 _codepoints[6];
+  FontStyle _fontStyle;
 
   /** Get the MathType and the version-specific offset of the given codepoint. */
-  static std::pair<MathType, c32> ofChar(c32 codepoint);
+  static std::pair<LetterType, c32> ofChar(c32 codepoint);
 
 public:
   no_copy_assign(MathVersion);
 
   MathVersion(
-    c32 digit, c32 latinSmall, c32 latinCapital, c32 greekSmall, c32 greekCapital
+    c32 digit, c32 latinSmall, c32 latinCapital, c32 greekSmall, c32 greekCapital,
+    FontStyle fontStyle = FontStyle::none
   ) noexcept;
 
   /** Map an Unicode char to version-specific Unicode char. */
   c32 map(c32 codepoint) const;
+
+  /**
+   * Set math style to display formulas.
+   *
+   * @param style one of the TeX, ISO, French, and upright
+   */
+  static void setMathStyle(MathStyle style);
+
+  /**
+   * Map an Unicode char to version-specific Unicode char.
+   *
+   * @param style the font style
+   * @param code the given code
+   * @return the mapped version-specific Unicode code-point
+   */
+  static c32 map(FontStyle style, c32 code);
 };
 
 }
