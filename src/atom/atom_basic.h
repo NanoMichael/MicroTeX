@@ -19,6 +19,21 @@ namespace tex {
 
 class Formula;
 
+/** Atom to modify math font and style */
+class MathFontAtom : public Atom {
+private:
+  MathStyle _mathStyle;
+  std::string _fontName;
+
+public:
+  MathFontAtom(MathStyle style, std::string fontName)
+    : _mathStyle(style), _fontName(std::move(fontName)) {}
+
+  sptr<Box> createBox(Env& env) override;
+
+  __decl_clone(MathFontAtom);
+};
+
 /** An empty atom */
 class EmptyAtom : public Atom {
 public:

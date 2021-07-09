@@ -427,6 +427,25 @@ macro(muskips) {
   return sptrOf<SpaceAtom>(type);
 }
 
+macro(setmathfont) {
+  auto mathStyle = MathStyle::TeX;
+  const auto& options = parseOption(wide2utf8(args[2]));
+  const auto it = options.find("math-style");
+  if (it != options.end()) {
+    const auto& value = it->second;
+    if (value == "TeX") {
+      mathStyle = MathStyle::TeX;
+    } else if (value == "ISO") {
+      mathStyle = MathStyle::ISO;
+    } else if (value == "French") {
+      mathStyle = MathStyle::French;
+    } else if (value == "upright") {
+      mathStyle = MathStyle::upright;
+    }
+  }
+  return sptrOf<MathFontAtom>(mathStyle, wide2utf8(args[1]));
+}
+
 macro(xml) {
   map<string, string>& m = tp._formula->_xmlMap;
   wstring str(args[1]);

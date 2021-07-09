@@ -146,6 +146,9 @@ public:
   /** Remove a font style from this environment */
   void removeFontStyle(FontStyle style);
 
+  /** Select math font to paint formulas from given name and style */
+  void selectMathFont(const std::string& name, MathStyle style);
+
   // endregion
 
   // region Styles

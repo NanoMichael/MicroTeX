@@ -69,6 +69,11 @@ void Env::removeFontStyle(FontStyle style) {
   _fontStyle = static_cast<FontStyle>(dummy);
 }
 
+void Env::selectMathFont(const std::string& name, MathStyle style) {
+  _fctx->selectMathFont(name);
+  MathVersion::setMathStyle(style);
+}
+
 TexStyle Env::crampStyle() const {
   const i8 style = static_cast<i8>(_style);
   return static_cast<TexStyle>(style % 2 == 1 ? style : style + 1);

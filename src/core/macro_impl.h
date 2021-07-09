@@ -1416,6 +1416,8 @@ macro(muskips);
 
 macro(xml);
 
+macro(setmathfont);
+
 /**************************************** not implemented *****************************************/
 
 inline macro(includegraphics) {

@@ -97,13 +97,13 @@ sptr<const OtfFont> FontContext::getFont(i32 id) {
   return _fonts[id];
 }
 
-void FontContext::selectMathFont(const string& versionName) {
-  const auto it = _mathFonts.find(versionName);
+void FontContext::selectMathFont(const string& name) {
+  const auto it = _mathFonts.find(name);
   _mathFont = it == _mathFonts.end() ? nullptr : it->second;
 }
 
-void FontContext::selectMainFont(const string& versionName) {
-  const auto it = _mainFonts.find(versionName);
+void FontContext::selectMainFont(const string& name) {
+  const auto it = _mainFonts.find(name);
   _mainFont = it == _mainFonts.end() ? nullptr : it->second;
 }
 

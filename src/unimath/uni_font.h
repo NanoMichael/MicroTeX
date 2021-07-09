@@ -105,13 +105,13 @@ public:
   static sptr<const OtfFont> getFont(i32 id);
 
   /** Select math font by the given version name */
-  void selectMathFont(const std::string& versionName);
+  void selectMathFont(const std::string& name);
 
   /** Select main font by the given version name */
-  void selectMainFont(const std::string& versionName);
+  void selectMainFont(const std::string& name);
 
   /** Get the math font currently in use */
-  inline const OtfFont& mathFont() { return *_mathFont; }
+  inline const OtfFont& mathFont() const { return *_mathFont; }
 
   /** Get the id of the math font currently in use */
   inline i32 mathFontId() const { return _mathFont->id; }
