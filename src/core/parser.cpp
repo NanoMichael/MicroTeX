@@ -865,7 +865,7 @@ void TeXParser::parse() {
         if (_isMathMode) {
           _formula->add(getScripts(ch));
         } else {
-          _formula->add(sptrOf<UnderScoreAtom>());
+          _formula->add(convertCharacter(ch));
           _pos++;
         }
       }

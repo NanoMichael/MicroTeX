@@ -251,7 +251,7 @@ inline macro(text) {
 }
 
 inline macro(underscore) {
-  return sptrOf<UnderScoreAtom>();
+  return SymbolAtom::get("_");
 }
 
 inline macro(accents) {

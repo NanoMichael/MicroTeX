@@ -88,16 +88,6 @@ sptr<Box> CumulativeScriptsAtom::createBox(Env& env) {
   return ScriptsAtom(_base, _sub, _sup).createBox(env);
 }
 
-SpaceAtom UnderScoreAtom::_w(UnitType::em, 0.7f, 0.f, 0.f);
-SpaceAtom UnderScoreAtom::_s(UnitType::em, 0.06f, 0.f, 0.f);
-
-sptr<Box> UnderScoreAtom::createBox(Env& env) {
-  const auto drt = env.ruleThickness();
-  auto* hb = new HBox(_s.createBox(env));
-  hb->add(sptrOf<RuleBox>(drt, _w.createBox(env)->_width, 0.f));
-  return sptr<Box>(hb);
-}
-
 /************************************ VRowAtom implementation *************************************/
 
 VRowAtom::VRowAtom() {

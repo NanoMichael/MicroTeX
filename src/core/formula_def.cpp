@@ -23,7 +23,6 @@ map<wstring, wstring> Formula::_predefinedTeXFormulasAsString{
   {L"|",                  L"\\Vert"},
   {L"&",                  L"\\textampersand"},
   {L"%",                  L"\\textpercent"},
-  {L"_",                  L"\\underscore"},
   {L"$",                  L"\\textdollar"},
   {L"@",                  L"\\matharobase"},
   {L"#",                  L"\\mathsharp"},

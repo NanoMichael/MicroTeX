@@ -177,19 +177,6 @@ public:
   __decl_clone(CumulativeScriptsAtom)
 };
 
-/** An atom representing an underscore */
-class UnderScoreAtom : public Atom {
-private:
-  static SpaceAtom _w, _s;
-
-public:
-  UnderScoreAtom() = default;
-
-  sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(UnderScoreAtom)
-};
-
 /**
  * An atom representing a middle atom which must be rounded by a left and right
  * delimiter.
