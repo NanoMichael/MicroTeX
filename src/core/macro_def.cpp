@@ -215,12 +215,14 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_vphantom, "vphantom"),
     mac(0, macro_spATbreve, "sp@breve"),
     mac(0, macro_spAThat, "sp@hat"),
+  // colors
     mac(3, macro_definecolor, "definecolor"),
     mac(2, macro_textcolor, "textcolor"),
     mac(2, macro_fgcolor, "fgcolor"),
     mac(2, macro_bgcolor, "bgcolor"),
     mac(2, macro_colorbox, "colorbox"),
     mac(3, macro_fcolorbox, "fcolorbox"),
+
     mac(1, macro_cedilla, "c"),
     mac(1, macro_ogonek, "k"),
     mac(0, macro_cong, "cong"),

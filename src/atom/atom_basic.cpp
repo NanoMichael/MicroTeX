@@ -122,7 +122,7 @@ sptr<Atom> VRowAtom::popLastAtom() {
   return x;
 }
 
-void VRowAtom::add(const sptr<Atom>& el) {
+void VRowAtom::prepend(const sptr<Atom>& el) {
   if (el != nullptr) _elements.insert(_elements.begin(), el);
 }
 
@@ -131,32 +131,32 @@ void VRowAtom::append(const sptr<Atom>& el) {
 }
 
 sptr<Box> VRowAtom::createBox(Env& env) {
-  auto* vb = new VBox();
-  auto interline = sptrOf<StrutBox>(0.f, env.lineSpace(), 0.f, 0.f);
+  auto vb = new VBox();
+  auto lineSpace = sptrOf<StrutBox>(0.f, env.lineSpace(), 0.f, 0.f);
 
   if (_halign != Alignment::none) {
     float maxWidth = F_MIN;
     vector<sptr<Box>> boxes;
-    const int s = _elements.size();
+    const size_t size = _elements.size();
     // find the width of the widest box
-    for (int i = 0; i < s; i++) {
-      sptr<Box> box = _elements[i]->createBox(env);
+    for (auto& atom : _elements) {
+      auto box = atom->createBox(env);
       boxes.push_back(box);
-      if (maxWidth < box->_width) maxWidth = box->_width;
+      maxWidth = std::max(maxWidth, box->_width);
     }
     // align the boxes and add it to the vertical box
-    for (int i = 0; i < s; i++) {
+    for (int i = 0; i < size; i++) {
       auto box = boxes[i];
       auto hb = sptrOf<HBox>(box, maxWidth, _halign);
       vb->add(hb);
-      if (_addInterline && i < s - 1) vb->add(interline);
+      if (_addInterline && i < size - 1) vb->add(lineSpace);
     }
   } else {
     // convert atoms to boxes and add to the vertical box
-    const int s = _elements.size();
-    for (int i = 0; i < s; i++) {
+    const size_t size = _elements.size();
+    for (int i = 0; i < size; i++) {
       vb->add(_elements[i]->createBox(env));
-      if (_addInterline && i < s - 1) vb->add(interline);
+      if (_addInterline && i < size - 1) vb->add(lineSpace);
     }
   }
 

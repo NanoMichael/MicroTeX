@@ -955,8 +955,8 @@ inline macro(fcolorbox) {
 
 inline macro(cong) {
   auto* vra = new VRowAtom(SymbolAtom::get("equals"));
-  vra->add(sptrOf<SpaceAtom>(UnitType::mu, 0.f, 1.5f, 0.f));
-  vra->add(SymbolAtom::get("sim"));
+  vra->prepend(sptrOf<SpaceAtom>(UnitType::mu, 0.f, 1.5f, 0.f));
+  vra->prepend(SymbolAtom::get("sim"));
   vra->setRaise(UnitType::mu, -1);
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(vra));
 }

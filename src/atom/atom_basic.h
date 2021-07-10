@@ -234,7 +234,7 @@ public:
   sptr<Atom> popLastAtom();
 
   /** Add an atom at the front */
-  void add(const sptr<Atom>& el);
+  void prepend(const sptr<Atom>& el);
 
   /** Add an atom at the tail */
   void append(const sptr<Atom>& el);
