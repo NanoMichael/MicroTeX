@@ -31,8 +31,8 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, 1, macro_sqrt, "sqrt"),
     mac(1, 1, macro_smash, "smash"),
     mac(1, 1, macro_hdotsfor, "hdotsfor"),
-    mac(2, 1, macro_stackrel, "stackrel"),
     mac(2, 1, macro_stackbin, "stackbin"),
+    mac(2, 1, macro_stackrel, "stackrel"),
     mac(2, 1, macro_rotatebox, "rotatebox"),
     mac(2, 2, macro_scalebox, "scalebox"),
     mac(2, 2, macro_raisebox, "raisebox"),
@@ -178,13 +178,14 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_fbox, "fbox"),
     mac(1, macro_fbox, "boxed"),
     mac(0, macro_questeq, "questeq"),
-
+  // over and under
+    mac(2, macro_overset, "overset"),
+    mac(2, macro_underset, "underset"),
     mac(2, macro_underaccent, "underaccent"),
     mac(1, macro_undertilde, "undertilde"),
-    mac(2, macro_overset, "overset"),
+
     mac(1, macro_Braket, "Braket"),
     mac(1, macro_Set, "Set"),
-    mac(2, macro_underset, "underset"),
     mac(1, macro_boldsymbol, "boldsymbol"),
     mac(1, macro_big, "big"),
     mac(1, macro_Big, "Big"),

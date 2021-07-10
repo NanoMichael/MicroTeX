@@ -320,13 +320,65 @@ sptr<Box> AccentedAtom::createBox(Env& env) {
 /************************************ UnderOverAtom implementation *******************************/
 
 sptr<Box> UnderOverAtom::changeWidth(const sptr<Box>& b, float maxWidth) {
-  if (b != nullptr && abs(maxWidth - b->_width) > PREC)
+  if (b != nullptr && abs(maxWidth - b->_width) > PREC) {
     return sptrOf<HBox>(b, maxWidth, Alignment::center);
+  }
   return b;
 }
 
 sptr<Box> UnderOverAtom::createBox(Env& env) {
-  return StrutBox::empty();
+  // create boxes in right style and calculate max width
+  auto b = _base == nullptr ? StrutBox::empty() : _base->createBox(env);
+  // over and under
+  sptr<Box> o, u;
+  float maxWidth = b->_width;
+  if (_over != nullptr) {
+    o = (
+      _overSmall
+      ? env.withStyle(env.subStyle(), [&](Env& sub) { return _over->createBox(sub); })
+      : _over->createBox(env)
+    );
+    maxWidth = std::max(maxWidth, o->_width);
+  }
+  if (_under != nullptr) {
+    u = (
+      _underSmall
+      ? env.withStyle(env.subStyle(), [&](Env& sub) { return _under->createBox(sub); })
+      : _under->createBox(env)
+    );
+    maxWidth = std::max(maxWidth, u->_width);
+  }
+
+  // vertical box
+  auto vbox = new VBox();
+
+  // last font used by base (for mono-space atoms following)
+  env.setLastFontId(b->lastFontId());
+
+  // over script + space
+  if (_over != nullptr) {
+    vbox->add(changeWidth(o, maxWidth));
+    vbox->add(SpaceAtom(_overUnit, 0.f, _overSpace, 0.f).createBox(env));
+  }
+
+  // base
+  auto center = changeWidth(b, maxWidth);
+  vbox->add(center);
+
+  // calculate future height of the vertical box, to make sure that the
+  // base stays on the baseline
+  const auto h = vbox->_height + vbox->_depth - center->_depth;
+
+  // under script + space
+  if (_under != nullptr) {
+    vbox->add(SpaceAtom(_underUnit, 0.f, _underSpace, 0.f).createBox(env));
+    vbox->add(changeWidth(u, maxWidth));
+  }
+
+  // calculate height and depth
+  vbox->_depth = vbox->_height + vbox->_depth - h;
+  vbox->_height = h;
+  return sptr<Box>(vbox);
 }
 
 /************************************ ScriptsAtom implementation **********************************/

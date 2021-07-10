@@ -688,11 +688,11 @@ inline macro(stackrel) {
     Formula(tp, args[2], false)._root,
     Formula(tp, args[3], false)._root,
     UnitType::mu,
-    0.5f,
+    1.5f,
     true,
     Formula(tp, args[1], false)._root,
     UnitType::mu,
-    2.5f,
+    2.f,
     true
   );
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, a);
