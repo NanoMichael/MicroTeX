@@ -680,79 +680,49 @@ inline macro(fbox) {
 }
 
 inline macro(questeq) {
+  // TODO quest eq
   return sptrOf<EmptyAtom>();
 }
 
+inline macro(stack) {
+  const auto& over = StackArgs::autoSpace(Formula(tp, args[1], false)._root);
+  const auto& under = StackArgs::autoSpace(Formula(tp, args[3], false)._root);
+  return sptrOf<StackAtom>(Formula(tp, args[2], false)._root, over, under);
+}
+
 inline macro(stackrel) {
-  sptr<Atom> a = sptrOf<UnderOverAtom>(
-    Formula(tp, args[2], false)._root,
-    Formula(tp, args[3], false)._root,
-    UnitType::mu,
-    1.5f,
-    true,
-    Formula(tp, args[1], false)._root,
-    UnitType::mu,
-    2.f,
-    true
-  );
-  return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, a);
+  const auto& stack = macro_stack(tp, args);
+  return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, stack);
 }
 
 inline macro(stackbin) {
-  sptr<Atom> a = sptrOf<UnderOverAtom>(
-    Formula(tp, args[2], false)._root,
-    Formula(tp, args[3], false)._root,
-    UnitType::mu,
-    0.5f,
-    true,
-    Formula(tp, args[1], false)._root,
-    UnitType::mu,
-    2.5f,
-    true
-  );
-  return sptrOf<TypedAtom>(AtomType::binaryOperator, AtomType::binaryOperator, a);
+  const auto& stack = macro_stack(tp, args);
+  return sptrOf<TypedAtom>(AtomType::binaryOperator, AtomType::binaryOperator, stack);
 }
 
 inline macro(overset) {
-  sptr<Atom> a = sptrOf<UnderOverAtom>(
-    Formula(tp, args[2], false)._root,
-    Formula(tp, args[1], false)._root,
-    UnitType::mu,
-    2.5f,
-    true,
-    true
-  );
+  const auto& over = StackArgs::autoSpace(Formula(tp, args[1], false)._root);
+  sptr<Atom> a = sptrOf<StackAtom>(Formula(tp, args[2], false)._root, over, true);
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, a);
 }
 
 inline macro(underset) {
-  sptr<Atom> a = sptrOf<UnderOverAtom>(
-    Formula(tp, args[2], false)._root,
-    Formula(tp, args[1], false)._root,
-    UnitType::mu,
-    0.5f,
-    true,
-    false
-  );
+  const auto& under = StackArgs::autoSpace(Formula(tp, args[1], false)._root);
+  sptr<Atom> a = sptrOf<StackAtom>(Formula(tp, args[2], false)._root, under, false);
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, a);
 }
 
 inline macro(underaccent) {
-  return sptrOf<UnderOverAtom>(
-    Formula(tp, args[2], false)._root,
-    Formula(tp, args[1], false)._root,
-    UnitType::mu,
-    0.3f,
-    true,
-    false
-  );
+  const StackArgs under{Formula(tp, args[1], false)._root, UnitType::mu, 1.f, true};
+  return sptrOf<StackAtom>(Formula(tp, args[2], false)._root, under, false);
 }
 
 inline macro(undertilde) {
   auto a = Formula(tp, args[1], false)._root;
   auto p = sptrOf<PhantomAtom>(a, true, false, false);
   auto acc = sptrOf<AccentedAtom>(p, "widetilde");
-  return sptrOf<UnderOverAtom>(a, acc, UnitType::mu, 0.3f, true, false);
+  const StackArgs under{acc, UnitType::mu, 0.5f, true};
+  return sptrOf<StackAtom>(a, under, false);
 }
 
 inline macro(boldsymbol) {
@@ -964,7 +934,8 @@ inline macro(cong) {
 inline macro(doteq) {
   auto e = SymbolAtom::get("equals");
   auto l = SymbolAtom::get("ldotp");
-  auto u = sptrOf<UnderOverAtom>(e, l, UnitType::mu, 3.7f, false, true);
+  const StackArgs over{l, UnitType::mu, 3.7f, false};
+  auto u = sptrOf<StackAtom>(e, over, true);
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, u);
 }
 
@@ -1035,14 +1006,13 @@ inline sptr<Atom> _underover(
   const std::string& script,
   float space
 ) {
-  return sptrOf<UnderOverAtom>(
-    SymbolAtom::get(base),
+  const StackArgs under{
     SymbolAtom::get(script),
     UnitType::mu,
     space,
-    false,
-    true
-  );
+    false
+  };
+  return sptrOf<StackAtom>(SymbolAtom::get(base), under, true);
 }
 
 inline sptr<Atom> _colon() {
@@ -1062,16 +1032,12 @@ inline macro(geoprop) {
   auto ddot = sptrOf<RowAtom>(SymbolAtom::get("normaldot"));
   ddot->add(sptrOf<SpaceAtom>(UnitType::mu, 4.f, 0.f, 0.f));
   ddot->add(SymbolAtom::get("normaldot"));
-  sptr<Atom> a = sptrOf<UnderOverAtom>(
+  const StackArgs over{ddot, UnitType::mu, -3.4f, false};
+  const StackArgs under{ddot, UnitType::mu, -3.4f, false};
+  sptr<Atom> a = sptrOf<StackAtom>(
     SymbolAtom::get("minus"),
-    ddot,
-    UnitType::mu,
-    -3.4f,
-    false,
-    ddot,
-    UnitType::mu,
-    -3.4f,
-    false
+    over,
+    under
   );
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, a);
 }
@@ -1212,12 +1178,13 @@ inline macro(coloncolonapprox) {
 }
 
 inline macro(smallfrowneq) {
-  sptr<Atom> u = sptrOf<UnderOverAtom>(
-    SymbolAtom::get("equals"),
+  const StackArgs over{
     SymbolAtom::get("smallfrown"),
-    UnitType::mu,
-    -2.f,
-    true,
+    UnitType::mu, -2.f, true
+  };
+  sptr<Atom> u = sptrOf<StackAtom>(
+    SymbolAtom::get("equals"),
+    over,
     true
   );
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, u);

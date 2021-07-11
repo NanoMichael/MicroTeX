@@ -319,32 +319,32 @@ sptr<Box> AccentedAtom::createBox(Env& env) {
 
 /************************************ UnderOverAtom implementation *******************************/
 
-sptr<Box> UnderOverAtom::changeWidth(const sptr<Box>& b, float maxWidth) {
+sptr<Box> StackAtom::changeWidth(const sptr<Box>& b, float maxWidth) {
   if (b != nullptr && abs(maxWidth - b->_width) > PREC) {
     return sptrOf<HBox>(b, maxWidth, Alignment::center);
   }
   return b;
 }
 
-sptr<Box> UnderOverAtom::createBox(Env& env) {
+sptr<Box> StackAtom::createBox(Env& env) {
   // create boxes in right style and calculate max width
   auto b = _base == nullptr ? StrutBox::empty() : _base->createBox(env);
   // over and under
   sptr<Box> o, u;
   float maxWidth = b->_width;
-  if (_over != nullptr) {
+  if (_over.isPresent()) {
     o = (
-      _overSmall
-      ? env.withStyle(env.subStyle(), [&](Env& sub) { return _over->createBox(sub); })
-      : _over->createBox(env)
+      _over.isSmall
+      ? env.withStyle(env.subStyle(), [&](Env& sub) { return _over.atom->createBox(sub); })
+      : _over.atom->createBox(env)
     );
     maxWidth = std::max(maxWidth, o->_width);
   }
-  if (_under != nullptr) {
+  if (_under.isPresent()) {
     u = (
-      _underSmall
-      ? env.withStyle(env.subStyle(), [&](Env& sub) { return _under->createBox(sub); })
-      : _under->createBox(env)
+      _under.isSmall
+      ? env.withStyle(env.subStyle(), [&](Env& sub) { return _under.atom->createBox(sub); })
+      : _under.atom->createBox(env)
     );
     maxWidth = std::max(maxWidth, u->_width);
   }
@@ -355,10 +355,21 @@ sptr<Box> UnderOverAtom::createBox(Env& env) {
   // last font used by base (for mono-space atoms following)
   env.setLastFontId(b->lastFontId());
 
+  // params to layout limits
+  const auto& math = env.mathConsts();
+
   // over script + space
-  if (_over != nullptr) {
+  if (o != nullptr) {
     vbox->add(changeWidth(o, maxWidth));
-    vbox->add(SpaceAtom(_overUnit, 0.f, _overSpace, 0.f).createBox(env));
+    if (_over.isAutoSpace) {
+      const auto gapMin = math.upperLimitGapMin() * env.scale();
+      const auto baselineRiseMin = math.upperLimitBaselineRiseMin() * env.scale();
+      const auto diff = baselineRiseMin - o->_depth;
+      const auto space = std::max(diff, gapMin);
+      vbox->add(sptrOf<StrutBox>(0.f, space, 0.f, 0.f));
+    } else {
+      vbox->add(SpaceAtom(_over.spaceUnit, 0.f, _over.space, 0.f).createBox(env));
+    }
   }
 
   // base
@@ -370,8 +381,16 @@ sptr<Box> UnderOverAtom::createBox(Env& env) {
   const auto h = vbox->_height + vbox->_depth - center->_depth;
 
   // under script + space
-  if (_under != nullptr) {
-    vbox->add(SpaceAtom(_underUnit, 0.f, _underSpace, 0.f).createBox(env));
+  if (u != nullptr) {
+    if (_under.isAutoSpace) {
+      const auto gapMin = math.lowerLimitGapMin() * env.scale();
+      const auto baselineDropMin = math.lowerLimitBaselineDropMin() * env.scale();
+      const auto diff = baselineDropMin - u->_height;
+      const auto space = std::max(diff, gapMin);
+      vbox->add(sptrOf<StrutBox>(0.f, space, 0.f, 0.f));
+    } else {
+      vbox->add(SpaceAtom(_under.spaceUnit, 0.f, _under.space, 0.f).createBox(env));
+    }
     vbox->add(changeWidth(u, maxWidth));
   }
 

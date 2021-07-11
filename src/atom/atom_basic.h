@@ -408,74 +408,57 @@ public:
   __decl_clone(AccentedAtom)
 };
 
+/** Arguments to place stacked atoms */
+struct StackArgs {
+  sptr<Atom> atom;
+  UnitType spaceUnit;
+  float space;
+  bool isSmall;
+  bool isAutoSpace;
+
+  inline bool isPresent() const {
+    return atom != nullptr;
+  }
+
+  static inline StackArgs autoSpace(const sptr<Atom>& atom, bool isSmall = true) {
+    return {atom, UnitType::none, 0.f, isSmall, true};
+  }
+};
+
 /**
  * An atom representing another atom with an atom above it (if not null)
  * separated by a kern and in a smaller size depending on "overScriptSize"
  * and/or an atom under it (if not null) separated by a kern and in a smaller
  * size depending on "underScriptSize"
  */
-class UnderOverAtom : public Atom {
+class StackAtom : public Atom {
 private:
-  // base, under script & over script
-  sptr<Atom> _base, _under, _over;
-  // kerning between base and under and over script
-  float _underSpace, _overSpace;
-  UnitType _underUnit, _overUnit;
-  // whether the under over should be drawn in a smaller size
-  bool _underSmall, _overSmall;
+  sptr<Atom> _base;
+  StackArgs _over;
+  StackArgs _under;
 
   static sptr<Box> changeWidth(const sptr<Box>& b, float maxWidth);
 
-  inline void init() {
-    _underSpace = _overSpace = 0;
-    _underUnit = _overUnit = UnitType::em;
-    _underSmall = _overSmall = false;
-  }
-
 public:
-  UnderOverAtom() = delete;
+  StackAtom() = delete;
 
-  UnderOverAtom(
-    const sptr<Atom>& base, const sptr<Atom>& script,
-    UnitType unit, float space, bool small, bool over
-  ) {
-    init();
+  StackAtom(const sptr<Atom>& base, const StackArgs& args, bool isOver) {
     _base = base;
-    if (over) {
-      _under = nullptr;
-      _underSpace = 0.f;
-      _underUnit = UnitType::em;
-      _underSmall = false;
-      _over = script;
-      _overUnit = unit;
-      _overSpace = space;
-      _overSmall = small;
+    if (isOver) {
+      _over = args;
     } else {
-      _under = script;
-      _underUnit = unit;
-      _underSpace = space;
-      _underSmall = small;
-      _overSpace = 0.f;
-      _over = nullptr;
-      _overUnit = UnitType::em;
-      _overSmall = false;
+      _under = args;
     }
   }
 
-  UnderOverAtom(
+  StackAtom(
     const sptr<Atom>& base,
-    const sptr<Atom>& under, UnitType underunit, float underspace, bool undersmall,
-    const sptr<Atom>& over, UnitType overunit, float overspace, bool oversmall
+    const StackArgs& overArgs,
+    const StackArgs& underArgs
   ) {
     _base = base;
-    _under = under;
-    _underUnit = underunit;
-    _underSpace = underspace;
-    _underSmall = undersmall;
-    _over = over;
-    _overUnit = overunit;
-    _overSpace = overspace;
-    _overSmall = oversmall;
+    _over = overArgs;
+    _under = underArgs;
   }
 
   AtomType leftType() const override {
@@ -488,7 +471,7 @@ public:
 
   sptr<Box> createBox(Env& env) override;
 
-  __decl_clone(UnderOverAtom)
+  __decl_clone(StackAtom)
 };
 
 /**

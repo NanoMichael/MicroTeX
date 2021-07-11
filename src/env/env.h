@@ -26,9 +26,6 @@ private:
 
   FontStyle _fontStyle = FontStyle::none;
 
-  /** Get the scale factor of the current environment */
-  float scale() const;
-
 public:
   no_copy_assign(Env);
 
@@ -51,6 +48,9 @@ public:
   // endregion
 
   // region getters and setters
+
+  /** Get the scale factor of the current environment */
+  float scale() const;
 
   /** Set environment width with given unit */
   Env& setTextWidth(UnitType unit, float width);
