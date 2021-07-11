@@ -7,10 +7,12 @@
 #include <utility>
 
 #include "common.h"
+#include "atom/atom.h"
 #include "atom/atom_row.h"
 #include "atom/atom_char.h"
 #include "atom/atom_space.h"
-#include "atom/atom.h"
+#include "atom/atom_stack.h"
+#include "atom/atom_accent.h"
 #include "box/box_single.h"
 #include "box/box_group.h"
 #include "graphic/graphic.h"
@@ -370,110 +372,6 @@ public:
   __decl_clone(TypedAtom)
 };
 
-/** An atom representing another atom with an accent symbol above it */
-class AccentedAtom : public Atom {
-public:
-  sptr<SymbolAtom> _accenter;
-  sptr<Atom> _accentee;
-  sptr<Atom> _base;
-
-  bool _fakeAccent = false;
-  bool _fitSize = false;
-
-  void setupBase(const sptr<Atom>& base);
-
-public:
-  AccentedAtom() = delete;
-
-  /**
-   * Create an AccentedAtom from a base atom and an accent symbol defined by
-   * its name
-   *
-   * @param base base atom
-   * @param name name of the accent symbol to be put over the base atom
-   * @param fitSize if accent fit the base atom's width
-   * @param fake if is a fake accent
-   *
-   * @throw ex_invalid_symbol_type if the symbol is not defined as An accent ('acc')
-   * @throw ex_symbol_not_found if there's no symbol defined with the given name
-   */
-  AccentedAtom(
-    const sptr<Atom>& base, const std::string& name,
-    bool fitSize = false,
-    bool fake = false
-  );
-
-  sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(AccentedAtom)
-};
-
-/** Arguments to place stacked atoms */
-struct StackArgs {
-  sptr<Atom> atom = nullptr;
-  UnitType spaceUnit = UnitType::none;
-  float space = 0.f;
-  bool isSmall = false;
-  bool isAutoSpace = false;
-
-  inline bool isPresent() const {
-    return atom != nullptr;
-  }
-
-  static inline StackArgs autoSpace(const sptr<Atom>& atom, bool isSmall = true) {
-    return {atom, UnitType::none, 0.f, isSmall, true};
-  }
-};
-
-/**
- * An atom representing another atom with an atom above it (if not null)
- * separated by a kern and in a smaller size depending on "overScriptSize"
- * and/or an atom under it (if not null) separated by a kern and in a smaller
- * size depending on "underScriptSize"
- */
-class StackAtom : public Atom {
-private:
-  sptr<Atom> _base;
-  StackArgs _over;
-  StackArgs _under;
-
-  static sptr<Box> changeWidth(const sptr<Box>& b, float maxWidth);
-
-public:
-  StackAtom() = delete;
-
-  StackAtom(const sptr<Atom>& base, const StackArgs& args, bool isOver) {
-    _base = base;
-    if (isOver) {
-      _over = args;
-    } else {
-      _under = args;
-    }
-  }
-
-  StackAtom(
-    const sptr<Atom>& base,
-    const StackArgs& overArgs,
-    const StackArgs& underArgs
-  ) {
-    _base = base;
-    _over = overArgs;
-    _under = underArgs;
-  }
-
-  AtomType leftType() const override {
-    return _base->leftType();
-  }
-
-  AtomType rightType() const override {
-    return _base->rightType();
-  }
-
-  sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(StackAtom)
-};
-
 /**
  * An atom representing scripts to be attached to another atom
  */
@@ -495,8 +393,8 @@ public:
   ScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup)
     : _base(base), _sub(sub), _sup(sup), _align(Alignment::left) {}
 
-  ScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup, bool left)
-    : _base(base), _sub(sub), _sup(sup), _align(left ? Alignment::left : Alignment::right) {}
+  ScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup, bool alignLeft)
+    : _base(base), _sub(sub), _sup(sup), _align(alignLeft ? Alignment::left : Alignment::right) {}
 
   AtomType leftType() const override {
     return _base == nullptr ? _type : _base->leftType();

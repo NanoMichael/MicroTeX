@@ -60,6 +60,8 @@ target_sources(LaTeX PRIVATE
         src/atom/atom_matrix.cpp
         src/atom/atom_row.cpp
         src/atom/atom_space.cpp
+        src/atom/atom_stack.cpp
+        src/atom/atom_accent.cpp
         src/atom/colors_def.cpp
         # box folder
         src/box/box.cpp
