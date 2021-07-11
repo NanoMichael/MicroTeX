@@ -232,6 +232,22 @@ void Graphics2D_cairo::setStrokeWidth(float w) {
   _context->set_line_width((double) w);
 }
 
+void Graphics2D_cairo::setDash(const std::vector<float>& dash) {
+  if (dash.empty()) {
+    _context->unset_dash();
+  } else {
+    const vector<double> ddash(dash.begin(), dash.end());
+    _context->set_dash(ddash, 0.);
+  }
+}
+
+std::vector<float> Graphics2D_cairo::getDash() {
+  vector<double> dash;
+  double offset;
+  _context->get_dash(dash, offset);
+  return vector<float>(dash.begin(), dash.end());
+}
+
 sptr<Font> Graphics2D_cairo::getFont() const {
   return _font;
 }

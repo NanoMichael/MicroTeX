@@ -90,6 +90,10 @@ public:
 
   void setStrokeWidth(float w) override;
 
+  void setDash(const std::vector<float> &dash) override;
+
+  std::vector<float> getDash() override;
+
   sptr<Font> getFont() const override;
 
   void setFont(const sptr<Font>& font) override;

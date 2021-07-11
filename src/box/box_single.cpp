@@ -115,10 +115,22 @@ DebugBox::DebugBox(const sptr<Box>& base) {
 
 void DebugBox::draw(Graphics2D& g2, float x, float y) {
   const color prevColor = g2.getColor();
-  const Stroke& prevStroke = g2.getStroke();
+  const auto& prevStroke = g2.getStroke();
+
   g2.setColor(red);
   g2.setStrokeWidth(std::abs(1.f / g2.sx()));
+
+  // draw box
   g2.drawRect(x, y - _height, _width, _height + _depth);
+  // draw baseline
+  if (_depth > PREC) {
+    const auto& prevDash = g2.getDash();
+    g2.setColor(blue);
+    g2.setDash({std::abs(10 / g2.sx()), std::abs(5 / g2.sx())});
+    g2.drawLine(x, y, x + _width, y);
+    g2.setDash(prevDash);
+  }
+
   g2.setColor(prevColor);
   g2.setStroke(prevStroke);
 }

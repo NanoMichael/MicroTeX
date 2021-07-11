@@ -100,6 +100,22 @@ public:
   /** Set the stroke width of the context */
   virtual void setStrokeWidth(float w) = 0;
 
+  /**
+   * Set the dash style to draw the lines.
+   * Each line can be drawn with a different pen dash. It defines the style of the line.
+   * The pattern is set by the dash array, which is an array of positive floating point values.
+   * They set the on and off parts of the dash pattern. We also specify the length of the array
+   * and the offset value. If the length is 0, the dashing is disabled. If it is 1, a symmetric
+   * pattern is assumed with alternating on and off portions of the size specified by the single
+   * value in dashes.
+   *
+   * @param dash the dash pattern
+   */
+  virtual void setDash(const std::vector<float>& dash) = 0;
+
+  /** Get the dash */
+  virtual std::vector<float> getDash() = 0;
+
   /** Get the current font */
   virtual sptr<Font> getFont() const = 0;
 
