@@ -46,7 +46,7 @@ sptr<Box> StackAtom::createBox(Env& env) {
   const auto& math = env.mathConsts();
 
   // over script + space
-  if (o != nullptr) {
+  if (o != nullptr && !o->isSpace()) {
     vbox->add(changeWidth(o, maxWidth));
     if (_over.isAutoSpace) {
       const auto gapMin = math.upperLimitGapMin() * env.scale();
@@ -68,7 +68,7 @@ sptr<Box> StackAtom::createBox(Env& env) {
   const auto h = vbox->_height + vbox->_depth - center->_depth;
 
   // under script + space
-  if (u != nullptr) {
+  if (u != nullptr && !u->isSpace()) {
     if (_under.isAutoSpace) {
       const auto gapMin = math.lowerLimitGapMin() * env.scale();
       const auto baselineDropMin = math.lowerLimitBaselineDropMin() * env.scale();
