@@ -410,11 +410,11 @@ public:
 
 /** Arguments to place stacked atoms */
 struct StackArgs {
-  sptr<Atom> atom;
-  UnitType spaceUnit;
-  float space;
-  bool isSmall;
-  bool isAutoSpace;
+  sptr<Atom> atom = nullptr;
+  UnitType spaceUnit = UnitType::none;
+  float space = 0.f;
+  bool isSmall = false;
+  bool isAutoSpace = false;
 
   inline bool isPresent() const {
     return atom != nullptr;

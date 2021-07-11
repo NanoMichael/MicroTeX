@@ -6,16 +6,16 @@ using namespace std;
 using namespace tex;
 
 #define mac3(argc, name, code) \
-  { L##code, m(argc, name) }
+  { L##code, defMac(argc, name) }
 
 #define mac4(argc, posOpts, name, code) \
-  { L##code, m(argc, posOpts, name) }
+  { L##code, defMac(argc, posOpts, name) }
 
-inline static PreDefMacro* m(int argc, int posOpts, MacroDelegate del) {
+inline static PreDefMacro* defMac(int argc, int posOpts, MacroDelegate del) {
   return new PreDefMacro(argc, posOpts, del);
 }
 
-inline static PreDefMacro* m(int argc, MacroDelegate del) {
+inline static PreDefMacro* defMac(int argc, MacroDelegate del) {
   return new PreDefMacro(argc, del);
 }
 
@@ -82,7 +82,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_text, "text"),
     mac(1, macro_intertext, "intertext"),
     mac(2, macro_binom, "binom"),
-  // math text styles
+  // math and text styles
     mac(1, macro_mathbf, "mathbf"),
     mac(0, macro_bf, "bf"),
     mac(1, macro_mathit, "mathit"),
@@ -104,7 +104,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_textstyles, "Bbb"),
     mac(1, macro_textstyles, "oldstylenums"),
     mac(1, macro_textstyles, "bold"),
-  // text accents
+  // region text accents
     mac(1, macro_accentbiss, "^"),
     mac(1, macro_accentbiss, "\'"),
     mac(1, macro_accentbiss, "\""),
@@ -116,7 +116,8 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_accentbiss, "u"),
     mac(1, macro_accentbiss, "v"),
     mac(1, macro_accentbiss, "r"),
-  // math accents
+  // endregion
+  // region math accents
     mac(1, macro_accents, "hat"),
     mac(1, macro_accents, "widehat"),
     mac(1, macro_accents, "check"),
@@ -130,11 +131,9 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_accents, "bar"),
     mac(1, macro_accents, "vec"),
     mac(1, macro_accents, "mathring"),
-  // fake accent
-    mac(2, macro_accentset, "accentset"),
-
+    mac(2, macro_accentset, "accentset"), // fake accents
+  // endregion
     mac(1, macro_T, "T"),
-
     mac(0, macro_nbsp, "nbsp"),
     mac(1, macro_overrightarrow, "overrightarrow"),
     mac(1, macro_overleftarrow, "overleftarrow"),
@@ -177,13 +176,12 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_backslashcr, "\\"),
     mac(1, macro_fbox, "fbox"),
     mac(1, macro_fbox, "boxed"),
-    mac(0, macro_questeq, "questeq"),
-  // over and under
+  // region over and under
     mac(2, macro_overset, "overset"),
     mac(2, macro_underset, "underset"),
     mac(2, macro_underaccent, "underaccent"),
     mac(1, macro_undertilde, "undertilde"),
-
+  // endregion
     mac(1, macro_Braket, "Braket"),
     mac(1, macro_Set, "Set"),
     mac(1, macro_boldsymbol, "boldsymbol"),
@@ -216,18 +214,18 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_vphantom, "vphantom"),
     mac(0, macro_spATbreve, "sp@breve"),
     mac(0, macro_spAThat, "sp@hat"),
-  // colors
+  // region colors
     mac(3, macro_definecolor, "definecolor"),
     mac(2, macro_fgcolor, "fgcolor"),
     mac(2, macro_bgcolor, "bgcolor"),
     mac(2, macro_textcolor, "textcolor"),
     mac(2, macro_colorbox, "colorbox"),
     mac(3, macro_fcolorbox, "fcolorbox"),
+  // endregion
 
     mac(1, macro_cedilla, "c"),
     mac(1, macro_ogonek, "k"),
     mac(0, macro_cong, "cong"),
-    mac(0, macro_doteq, "doteq"),
     mac(1, macro_externalfont, "externalFont"),
     mac(1, macro_text, "Text"),
     mac(1, macro_textit, "Textit"),
@@ -250,8 +248,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_mathcumsub, "mathcumsub"),
     mac(0, macro_dotminus, "dotminus"),
     mac(0, macro_ratio, "ratio"),
-    mac(0, macro_smallfrowneq, "smallfrowneq"),
-    mac(0, macro_geoprop, "geoprop"),
     mac(0, macro_minuscolon, "minuscolon"),
     mac(0, macro_minuscoloncolon, "minuscoloncolon"),
     mac(0, macro_simcolon, "simcolon"),

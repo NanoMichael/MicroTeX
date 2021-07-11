@@ -679,10 +679,7 @@ inline macro(fbox) {
   return sptrOf<FBoxAtom>(Formula(tp, args[1], false)._root);
 }
 
-inline macro(questeq) {
-  // TODO quest eq
-  return sptrOf<EmptyAtom>();
-}
+// region Stacks
 
 inline macro(stack) {
   const auto& over = StackArgs::autoSpace(Formula(tp, args[1], false)._root);
@@ -724,6 +721,8 @@ inline macro(undertilde) {
   const StackArgs under{acc, UnitType::mu, 0.5f, true};
   return sptrOf<StackAtom>(a, under, false);
 }
+
+// endregion Stacks
 
 inline macro(boldsymbol) {
   return sptrOf<BoldAtom>(Formula(tp, args[1], false)._root);
@@ -931,14 +930,6 @@ inline macro(cong) {
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(vra));
 }
 
-inline macro(doteq) {
-  auto e = SymbolAtom::get("equals");
-  auto l = SymbolAtom::get("ldotp");
-  const StackArgs over{l, UnitType::mu, 3.7f, false};
-  auto u = sptrOf<StackAtom>(e, over, true);
-  return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, u);
-}
-
 inline macro(externalfont) {
   std::string x = wide2utf8(args[1]);
   TextRenderingBox::setFont(x);
@@ -1026,20 +1017,6 @@ inline macro(dotminus) {
 
 inline macro(ratio) {
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, _colon());
-}
-
-inline macro(geoprop) {
-  auto ddot = sptrOf<RowAtom>(SymbolAtom::get("normaldot"));
-  ddot->add(sptrOf<SpaceAtom>(UnitType::mu, 4.f, 0.f, 0.f));
-  ddot->add(SymbolAtom::get("normaldot"));
-  const StackArgs over{ddot, UnitType::mu, -3.4f, false};
-  const StackArgs under{ddot, UnitType::mu, -3.4f, false};
-  sptr<Atom> a = sptrOf<StackAtom>(
-    SymbolAtom::get("minus"),
-    over,
-    under
-  );
-  return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, a);
 }
 
 inline macro(minuscolon) {
@@ -1175,19 +1152,6 @@ inline macro(coloncolonapprox) {
   ra->add(sptrOf<SpaceAtom>(UnitType::em, -0.32f, 0.f, 0.f));
   ra->add(SymbolAtom::get("approx"));
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(ra));
-}
-
-inline macro(smallfrowneq) {
-  const StackArgs over{
-    SymbolAtom::get("smallfrown"),
-    UnitType::mu, -2.f, true
-  };
-  sptr<Atom> u = sptrOf<StackAtom>(
-    SymbolAtom::get("equals"),
-    over,
-    true
-  );
-  return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, u);
 }
 
 inline macro(char) {
