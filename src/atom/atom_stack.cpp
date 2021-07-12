@@ -16,6 +16,10 @@ sptr<Box> StackAtom::changeWidth(const sptr<Box>& b, float maxWidth) {
 sptr<Box> StackAtom::createBox(Env& env) {
   // create boxes in right style and calculate max width
   auto b = _base == nullptr ? StrutBox::empty() : _base->createBox(env);
+  auto delta = 0.f;
+  if (auto cb = dynamic_cast<CharBox*>(b.get()); cb != nullptr) {
+    delta = cb->italic();
+  }
   // over and under
   sptr<Box> o, u;
   float maxWidth = b->_width;
@@ -47,7 +51,9 @@ sptr<Box> StackAtom::createBox(Env& env) {
 
   // over script + space
   if (o != nullptr && !o->isSpace()) {
-    vbox->add(changeWidth(o, maxWidth));
+    auto ob = changeWidth(o, maxWidth);
+    ob->_shift = delta / 2;
+    vbox->add(ob);
     if (_over.isAutoSpace) {
       const auto gapMin = math.upperLimitGapMin() * env.scale();
       const auto baselineRiseMin = math.upperLimitBaselineRiseMin() * env.scale();
@@ -78,7 +84,9 @@ sptr<Box> StackAtom::createBox(Env& env) {
     } else {
       vbox->add(SpaceAtom(_under.spaceUnit, 0.f, _under.space, 0.f).createBox(env));
     }
-    vbox->add(changeWidth(u, maxWidth));
+    auto ub = changeWidth(u, maxWidth);
+    ub->_shift = -delta / 2;
+    vbox->add(ub);
   }
 
   // calculate height and depth

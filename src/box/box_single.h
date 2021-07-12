@@ -75,6 +75,8 @@ public:
    */
   explicit CharBox(const Char& chr);
 
+  inline float italic() const { return _italic; }
+
   void addItalicCorrectionToWidth();
 
   void draw(Graphics2D& g2, float x, float y) override;
