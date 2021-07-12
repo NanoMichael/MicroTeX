@@ -116,8 +116,8 @@ private:
 public:
   CharAtom() = delete;
 
-  CharAtom(c32 unicode, FontStyle style)
-    : _unicode(unicode), _fontStyle(style) {}
+  CharAtom(c32 unicode, FontStyle style, bool mathMode = false)
+    : _unicode(unicode), _fontStyle(style), _mathMode(mathMode) {}
 
   CharAtom(c32 unicode, bool mathMode)
     : _unicode(unicode), _mathMode(mathMode) {}

@@ -226,14 +226,6 @@ sptr<Box> PhantomAtom::createBox(Env& env) {
   return sptrOf<StrutBox>(w, h, d, s);
 }
 
-/************************************ ScriptsAtom implementation **********************************/
-
-SpaceAtom ScriptsAtom::SCRIPT_SPACE(UnitType::point, 0.5f, 0.f, 0.f);
-
-sptr<Box> ScriptsAtom::createBox(Env& env) {
-  return StrutBox::empty();
-}
-
 /************************************ BigOperatorAtom implementation ******************************/
 
 void BigOperatorAtom::init(const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over) {

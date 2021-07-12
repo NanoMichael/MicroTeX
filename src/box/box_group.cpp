@@ -11,7 +11,7 @@ using namespace tex;
 
 /************************************* horizontal box implementation ******************************/
 
-HBox::HBox(const sptr<Box>& box, float width, Alignment aligment) {
+HBox::HBox(const sptr<Box>& box, float width, Alignment alignment) {
   if (width == POS_INF) {
     add(box);
     return;
@@ -21,16 +21,16 @@ HBox::HBox(const sptr<Box>& box, float width, Alignment aligment) {
     add(box);
     return;
   }
-  if (aligment == Alignment::center || aligment == Alignment::none) {
+  if (alignment == Alignment::center || alignment == Alignment::none) {
     auto space = StrutBox::create(rest / 2);
     add(space);
     add(box);
     add(space);
-  } else if (aligment == Alignment::left) {
+  } else if (alignment == Alignment::left) {
     add(box);
     auto space = StrutBox::create(rest);
     add(space);
-  } else if (aligment == Alignment::right) {
+  } else if (alignment == Alignment::right) {
     auto space = StrutBox::create(rest);
     add(space);
     add(box);

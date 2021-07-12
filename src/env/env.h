@@ -78,7 +78,7 @@ public:
 
   /** Set the last font id will be used later when box is to be painted */
   inline Env& setLastFontId(i32 lastFontId) {
-    _lastFontId = lastFontId;
+    _lastFontId = lastFontId == FontContext::NO_FONT ? _fctx->mathFontId() : _lastFontId;
     return *this;
   }
 
@@ -112,6 +112,11 @@ public:
   /** The last used font's id, or the math font's id if no font was used */
   inline i32 lastFontId() const {
     return _lastFontId == FontContext::NO_FONT ? _fctx->mathFontId() : _lastFontId;
+  }
+
+  /** The math font id */
+  inline i32 mathFontId() const {
+    return _fctx->mathFontId();
   }
 
   // region Font related
@@ -152,6 +157,11 @@ public:
   // endregion
 
   // region Styles
+
+  /** Test if current style is cramped */
+  inline bool isCrampedStyle() const {
+    return crampStyle() == _style;
+  }
 
   /** Style to display formulas in smaller size */
   TexStyle crampStyle() const;

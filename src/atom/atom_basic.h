@@ -13,6 +13,7 @@
 #include "atom/atom_space.h"
 #include "atom/atom_stack.h"
 #include "atom/atom_accent.h"
+#include "atom/atom_scripts.h"
 #include "box/box_single.h"
 #include "box/box_group.h"
 #include "graphic/graphic.h"
@@ -370,43 +371,6 @@ public:
   }
 
   __decl_clone(TypedAtom)
-};
-
-/**
- * An atom representing scripts to be attached to another atom
- */
-class ScriptsAtom : public Atom {
-private:
-  static SpaceAtom SCRIPT_SPACE;
-
-public:
-  // base atom
-  sptr<Atom> _base;
-  // subscript and superscript to be attached to the base
-  sptr<Atom> _sub;
-  sptr<Atom> _sup;
-  // scripts alignment
-  Alignment _align = Alignment::none;
-
-  ScriptsAtom() = delete;
-
-  ScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup)
-    : _base(base), _sub(sub), _sup(sup), _align(Alignment::left) {}
-
-  ScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup, bool alignLeft)
-    : _base(base), _sub(sub), _sup(sup), _align(alignLeft ? Alignment::left : Alignment::right) {}
-
-  AtomType leftType() const override {
-    return _base == nullptr ? _type : _base->leftType();
-  }
-
-  AtomType rightType() const override {
-    return _base == nullptr ? _type : _base->rightType();
-  }
-
-  sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(ScriptsAtom)
 };
 
 /**

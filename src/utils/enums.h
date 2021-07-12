@@ -37,8 +37,11 @@ enum class SpaceType : i8 {
 
 /** Script display type */
 enum class LimitsType : i8 {
+  /** depends on TeX style */
   normal,
+  /** scripts display on right of the base */
   noLimits,
+  /** scripts display above/under the base */
   limits
 };
 
