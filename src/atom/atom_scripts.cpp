@@ -89,18 +89,37 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
   );
 
   auto scriptSpace = SpaceAtom(UnitType::mu, 0.5f, 0.f, 0.f).createBox(env);
+  auto createBox = [&](const sptr<Atom>& atom, TexStyle style) {
+    auto box = env.withStyle(style, [&](Env& e) { return atom->createBox(e); });
+    auto h = sptrOf<HBox>(box);
+    h->add(scriptSpace);
+    return h;
+  };
+
   if (_sup != nullptr && _sub != nullptr) {
     // 1. both super and sub scripts
+    auto sup = env.withStyle(env.supStyle(), [&](Env& sup) { return _sup->createBox(sup); });
+    auto sub = env.withStyle(env.subStyle(), [&](Env& sub) { return _sub->createBox(sub); });
+    // calculate gap between super & sub script
+    const auto gapMin = math.subSuperscriptGapMin() * env.scale();
+    const auto supBottomPos = shiftUp + sup->_depth;
+    const auto subTopPos = shiftDown - sub->_height;
+    auto gap = std::max(subTopPos - supBottomPos, gapMin);
+    // add super & sub script to vertical box
+    auto v = sptrOf<VBox>();
+    sup->_shift = kernel->_width - base->_width + delta;
+    v->add(sup);
+    v->add(sptrOf<StrutBox>(0.f, gap, 0.f, 0.f));
+    v->add(sub);
+    //
   } else if (_sup == nullptr) {
     // 2. only subscript
-    auto sub = env.withStyle(env.subStyle(), [&](Env& sub) { return _sub->createBox(sub); });
-    auto hsub = sptrOf<HBox>(sub);
-    hsub->add(scriptSpace);
+    auto sub = createBox(_sub, env.subStyle());
     // calculate shift
     const auto gapMax = math.subscriptTopMax() * env.scale();
-    hsub->_shift = (
-      hsub->_height - shiftDown > gapMax
-      ? hsub->_height - gapMax
+    sub->_shift = (
+      sub->_height - shiftDown > gapMax
+      ? sub->_height - gapMax
       : shiftDown
     );
     // add to horizontal box
@@ -108,53 +127,25 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
     // add kern if kernel box and base box are different
     const auto kern = kernel->_width - base->_width;
     if (std::abs(kern) > PREC) h->add(StrutBox::create(kern));
-    h->add(hsub);
+    h->add(sub);
     return h;
   } else if (_sub == nullptr) {
     // 3. only superscript
-    auto sup = env.withStyle(env.supStyle(), [&](Env& sup) { return _sup->createBox(sup); });
-    auto hsup = sptrOf<HBox>(sup);
-    hsup->add(scriptSpace);
+    auto sup = createBox(_sup, env.supStyle());
     // calculate shift
     const auto gapMin = math.superscriptBottomMin() * env.scale();
-    hsup->_shift = (
-      shiftUp + hsup->_depth > gapMin
-      ? -hsup->_depth - gapMin
+    sup->_shift = (
+      shiftUp + sup->_depth > gapMin
+      ? -sup->_depth - gapMin
       : shiftUp
     );
     // add to horizontal box
     auto h = sptrOf<HBox>(base);
     const auto kern = kernel->_width - base->_width + delta;
     if (std::abs(kern) > PREC) h->add(StrutBox::create(kern));
-    h->add(hsup);
+    h->add(sup);
     return h;
   }
 
   return StrutBox::empty();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
