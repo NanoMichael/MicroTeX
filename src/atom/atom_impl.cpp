@@ -131,7 +131,7 @@ void LongDivAtom::calculate(vector<wstring>& results) const {
 LongDivAtom::LongDivAtom(long divisor, long dividend)
   : _divisor(divisor), _dividend(dividend) {
   _halign = Alignment::right;
-  setVtop(true);
+  setAlignTop(true);
   vector<wstring> results;
   calculate(results);
 
