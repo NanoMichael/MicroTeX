@@ -42,7 +42,7 @@ private:
 
 public:
 
-  TeXRender(const sptr<Box>& box, float textSize, bool hasPadding = false);
+  TeXRender(const sptr<Box>& box, float textSize);
 
   /** Get the text size of this render */
   float getTextSize() const;

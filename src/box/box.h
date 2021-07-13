@@ -28,8 +28,6 @@ protected:
   }
 
 public:
-  static bool DEBUG;
-
   /**
    * The width of this box, i.e. the value that will be used for further
    * calculations.

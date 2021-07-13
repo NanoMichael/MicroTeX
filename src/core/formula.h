@@ -114,9 +114,6 @@ public:
    */
   static sptr<Formula> get(const std::wstring& name);
 
-  /** Enable or disable debug mode. */
-  static void setDebug(bool debug);
-
   virtual ~Formula() = default;
 };
 

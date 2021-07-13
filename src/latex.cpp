@@ -34,10 +34,6 @@ void LaTeX::release() {
   delete _builder;
 }
 
-void LaTeX::setDebug(bool debug) {
-  Formula::setDebug(debug);
-}
-
 void LaTeX::addMainFont(const std::string& name, const std::vector<FontSpec>& params) {
   FontContext::addMainFont(name, params);
 }

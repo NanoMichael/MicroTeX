@@ -1,5 +1,6 @@
 #include "box_single.h"
 #include "env/env.h"
+#include "core/debug_config.h"
 
 using namespace std;
 using namespace tex;
@@ -114,10 +115,12 @@ DebugBox::DebugBox(const sptr<Box>& base) {
 }
 
 void DebugBox::draw(Graphics2D& g2, float x, float y) {
+  const auto& config = DebugConfig::INSTANCE;
+
   const color prevColor = g2.getColor();
   const auto& prevStroke = g2.getStroke();
 
-  g2.setColor(red);
+  g2.setColor(config.boundColor);
   g2.setStrokeWidth(std::abs(1.f / g2.sx()));
 
   // draw box
@@ -125,8 +128,8 @@ void DebugBox::draw(Graphics2D& g2, float x, float y) {
   // draw baseline
   if (_depth > PREC) {
     const auto& prevDash = g2.getDash();
-    g2.setColor(blue);
-    g2.setDash({std::abs(10 / g2.sx()), std::abs(5 / g2.sx())});
+    g2.setColor(config.baselineColor);
+    g2.setDash({std::abs(5 / g2.sx()), std::abs(5 / g2.sx())});
     g2.drawLine(x, y, x + _width, y);
     g2.setDash(prevDash);
   }

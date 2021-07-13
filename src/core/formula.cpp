@@ -62,10 +62,6 @@ sptr<Box> Formula::createBox(Env& env) {
   return _root->createBox(env);
 }
 
-void Formula::setDebug(bool debug) {
-  Box::DEBUG = debug;
-}
-
 sptr<Formula> Formula::get(const wstring& name) {
   auto it = _predefinedTeXFormulas.find(name);
   if (it == _predefinedTeXFormulas.end()) {

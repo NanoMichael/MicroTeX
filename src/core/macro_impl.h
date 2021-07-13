@@ -18,20 +18,6 @@ namespace tex {
 #define macro(name) sptr<Atom> macro_##name(TeXParser& tp, Args& args)
 #endif
 
-#ifdef GRAPHICS_DEBUG
-
-inline macro(debug) {
-  Formula::setDebug(true);
-  return nullptr;
-}
-
-inline macro(undebug) {
-  Formula::setDebug(false);
-  return nullptr;
-}
-
-#endif  // GRAPHICS_DEBUG
-
 inline macro(fatalIfCmdConflict) {
   NewCommandMacro::_errIfConflict = args[1] == L"true";
   return nullptr;
@@ -1349,6 +1335,14 @@ macro(muskips);
 macro(xml);
 
 macro(setmathfont);
+
+#ifdef GRAPHICS_DEBUG
+
+macro(debug);
+
+macro(undebug);
+
+#endif  // GRAPHICS_DEBUG
 
 /**************************************** not implemented *****************************************/
 

@@ -30,9 +30,6 @@ public:
   /** Check if context is initialized */
   static bool isInited();
 
-  /** If open debug */
-  static void setDebug(bool debug);
-
   /**
    * Add main font (collection) to context.
    *

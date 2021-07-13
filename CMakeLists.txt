@@ -79,6 +79,7 @@ target_sources(LaTeX PRIVATE
         src/core/macro_def.cpp
         src/core/macro_impl.cpp
         src/core/parser.cpp
+        src/core/debug_config.cpp
         # env folder
         src/env/env.cpp
         src/env/units.cpp

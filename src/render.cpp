@@ -3,6 +3,7 @@
 #include "atom/atom.h"
 #include "core/core.h"
 #include "core/formula.h"
+#include "core/debug_config.h"
 #include "unimath/uni_font.h"
 #include "env/env.h"
 #include "env/units.h"
@@ -10,15 +11,20 @@
 using namespace std;
 using namespace tex;
 
-TeXRender::TeXRender(const sptr<Box>& box, float textSize, bool hasPadding) {
+TeXRender::TeXRender(const sptr<Box>& box, float textSize) {
   _box = box;
   _textSize = textSize;
   _fixedScale = _textSize / Env::fixedTextSize();
-  if (Box::DEBUG) {
+  const auto& debugConfig = DebugConfig::INSTANCE;
+  if (debugConfig.enable) {
     const auto group = wrap(box);
     _box = group;
-    BoxFilter filter = [](auto b) {
-      return dynamic_cast<CharBox*>(b.get()) != nullptr;
+    BoxFilter filter = [](const sptr<Box>& b) {
+      return (
+        debugConfig.showOnlyChar
+        ? dynamic_cast<CharBox*>(b.get()) != nullptr
+        : !b->isSpace()
+      );
     };
     buildDebug(nullptr, group, std::move(filter));
   }

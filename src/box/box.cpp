@@ -4,8 +4,6 @@
 using namespace tex;
 using namespace std;
 
-bool Box::DEBUG = false;
-
 void Box::copyMetrics(const sptr<Box>& box) {
   _width = box->_width;
   _height = box->_height;
