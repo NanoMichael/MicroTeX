@@ -49,12 +49,7 @@ sptr<Box> SymbolAtom::createBox(Env& env) {
   const auto& chr = getChar(env);
   if (_type == AtomType::bigOperator) {
     const auto& larger = env.style() > TexStyle::text ? chr.vLarger(1) : chr;
-    auto box = sptrOf<CharBox>(larger);
-    box->_shift = -(box->_height + box->_depth) / 2.f - env.axisHeight();
-    const float delta = larger.italic();
-    auto hb = sptrOf<HBox>(box);
-    if (delta > PREC) hb->add(sptrOf<StrutBox>(delta, 0.f, 0.f, 0.f));
-    return hb;
+    return sptrOf<CharBox>(larger);
   } else {
     const bool doScale = unicode() != chr._code;
     auto box = sptrOf<CharBox>(chr);
