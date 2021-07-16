@@ -6,6 +6,7 @@
 #include <memory>
 #include <vector>
 #include <locale>
+#include <sstream>
 
 #define no_copy_assign(T) \
   T(const T&) = delete;   \
@@ -42,6 +43,14 @@ inline int indexOf(const std::vector<T>& v, const T& x) {
 template<typename T, typename ... Args>
 inline T maxOf(Args&& ... args) {
   return std::max({args...});
+}
+
+/** Convert args to string */
+template<typename... Args>
+inline std::string sstr(Args&& ... args) {
+  std::ostringstream str;
+  (str <<  ... << args);
+  return str.str();
 }
 
 /** Get number of set bits in binary representation of the given number */

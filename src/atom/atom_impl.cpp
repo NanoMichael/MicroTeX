@@ -1,6 +1,8 @@
-#include "atom/atom_impl.h"
-
 #include <memory>
+
+#include "atom/atom_impl.h"
+#include "utils/utf.h"
+#include "utils/string_utils.h"
 
 using namespace std;
 using namespace tex;

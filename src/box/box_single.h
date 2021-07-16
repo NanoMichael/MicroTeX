@@ -29,6 +29,8 @@ public:
 
   bool isSpace() const override { return true; }
 
+  boxname(StrutBox);
+
   static sptr<StrutBox> empty() noexcept {
     return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
   }
@@ -60,6 +62,8 @@ public:
   }
 
   bool isSpace() const override { return true; }
+
+  boxname(GlueBox);
 };
 
 /** A box representing a single character */
@@ -86,6 +90,10 @@ public:
   void draw(Graphics2D& g2, float x, float y) override;
 
   int lastFontId() override;
+
+  std::string toString() const override;
+
+  boxname(CharBox);
 };
 
 /** A box representing a text rendering box */
@@ -113,6 +121,8 @@ public:
 
   void draw(Graphics2D& g2, float x, float y) override;
 
+  boxname(TextRenderingBox);
+
   static void setFont(const std::string& name);
 
   static void _init_();
@@ -133,6 +143,8 @@ public:
   LineBox(const std::vector<float>& lines, float thickness);
 
   void draw(Graphics2D& g2, float x, float y) override;
+
+  boxname(LineBox);
 };
 
 /** A box representing a line. */
@@ -150,6 +162,8 @@ public:
   );
 
   void draw(Graphics2D& g2, float x, float y) override;
+
+  boxname(RuleBox);
 };
 
 class DebugBox : public Box {
@@ -157,6 +171,8 @@ public:
   explicit DebugBox(const sptr<Box>& base);
 
   void draw(Graphics2D& g2, float x, float y) override;
+
+  boxname(DebugBox);
 };
 
 }

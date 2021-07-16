@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <fstream>
 #include "latex.h"
+#include "utils/utf.h"
 
 namespace tex {
 

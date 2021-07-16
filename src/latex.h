@@ -1,11 +1,10 @@
 #ifndef LATEX_H_INCLUDED
 #define LATEX_H_INCLUDED
 
-#include "common.h"
+#include <string>
+
 #include "unimath/uni_font.h"
 #include "render.h"
-
-#include <string>
 
 namespace tex {
 

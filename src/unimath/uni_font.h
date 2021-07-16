@@ -3,7 +3,6 @@
 
 #include <map>
 
-#include "common.h"
 #include "utils/utils.h"
 #include "otf/otf.h"
 #include "unimath/math_type.h"

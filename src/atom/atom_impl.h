@@ -3,12 +3,11 @@
 
 #include <list>
 
-#include "common.h"
 #include "box/box_factory.h"
 #include "box/box_group.h"
 #include "atom/atom.h"
 #include "atom/atom_matrix.h"
-#include "core/core.h"
+#include "core/split.h"
 #include "core/formula.h"
 #include "graphic/graphic.h"
 #include "env/env.h"

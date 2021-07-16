@@ -1,6 +1,8 @@
-#include "env/units.h"
 #include <cstring>
 #include <cmath>
+#include "env/units.h"
+#include "utils/string_utils.h"
+#include "utils/utf.h"
 
 using namespace tex;
 using namespace std;

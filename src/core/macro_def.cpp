@@ -1,4 +1,3 @@
-#include "common.h"
 #include "core/macro.h"
 #include "macro_impl.h"
 

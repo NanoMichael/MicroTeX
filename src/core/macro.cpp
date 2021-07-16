@@ -1,5 +1,4 @@
 #include "core/macro.h"
-#include "common.h"
 #include "core/macro_impl.h"
 
 #include <string>

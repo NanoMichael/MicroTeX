@@ -1,6 +1,7 @@
 #include "box_single.h"
 #include "env/env.h"
 #include "core/debug_config.h"
+#include <codecvt>
 
 using namespace std;
 using namespace tex;
@@ -26,6 +27,12 @@ void CharBox::draw(Graphics2D& g2, float x, float y) {
 
 int CharBox::lastFontId() {
   return _chr._font;
+}
+
+std::string CharBox::toString() const {
+  // TODO
+  std::wstring_convert<std::codecvt_utf8<c32>, c32> cvt;
+  return sstr(Box::toString(), " '", cvt.to_bytes(_chr._mappedCode), "'");
 }
 
 sptr<Font> TextRenderingBox::_font(nullptr);

@@ -3,7 +3,6 @@
 
 #include <bitset>
 
-#include "common.h"
 #include "utils/utils.h"
 #include "atom/atom.h"
 #include "box/box.h"

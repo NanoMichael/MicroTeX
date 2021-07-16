@@ -1,4 +1,3 @@
-#include "common.h"
 #include "core/parser.h"
 #include "atom/atom.h"
 #include "atom/atom_basic.h"
@@ -6,6 +5,8 @@
 #include "core/macro.h"
 #include "graphic/graphic.h"
 #include "env/units.h"
+#include "utils/string_utils.h"
+#include "utils/utf.h"
 
 using namespace std;
 using namespace tex;

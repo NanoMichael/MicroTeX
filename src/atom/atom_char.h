@@ -1,7 +1,6 @@
 #ifndef LATEX_ATOM_CHAR_H
 #define LATEX_ATOM_CHAR_H
 
-#include "common.h"
 #include "atom/atom.h"
 #include "box/box.h"
 #include "utils/utils.h"

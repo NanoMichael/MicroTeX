@@ -2,7 +2,6 @@
 
 #include <utility>
 
-#include "common.h"
 #include "graphic/graphic.h"
 #include "box/box_single.h"
 

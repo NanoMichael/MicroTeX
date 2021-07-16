@@ -3,7 +3,6 @@
 
 #include <sstream>
 #include <string>
-#include "common.h"
 
 namespace tex {
 

@@ -3,6 +3,7 @@
 
 #include "unimath/uni_symbol.h"
 #include "unimath/uni_font.h"
+#include "utils/nums.h"
 
 namespace tex {
 

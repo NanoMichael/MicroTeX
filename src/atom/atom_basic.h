@@ -6,7 +6,6 @@
 #include <string>
 #include <utility>
 
-#include "common.h"
 #include "atom/atom.h"
 #include "atom/atom_row.h"
 #include "atom/atom_char.h"

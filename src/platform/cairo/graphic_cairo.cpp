@@ -2,11 +2,11 @@
 
 #if defined(BUILD_GTK) && !defined(MEM_CHECK)
 
-#include "platform/cairo/graphic_cairo.h"
-
 #include <fontconfig/fontconfig.h>
-
 #include <utility>
+#include "platform/cairo/graphic_cairo.h"
+#include "utils/log.h"
+#include "utils/utf.h"
 
 using namespace tex;
 using namespace std;

@@ -5,6 +5,8 @@
 #include "latex.h"
 #include "platform/cairo/graphic_cairo.h"
 #include "samples.h"
+#include "utils/log.h"
+#include "utils/string_utils.h"
 
 #include <gdkmm/rgba.h>
 #include <gtkmm/adjustment.h>

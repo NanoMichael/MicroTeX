@@ -1,4 +1,5 @@
 #include "atom_basic.h"
+#include "utils/string_utils.h"
 
 #define c(name, c, m, y, k) \
   { name, cmyk(c, m, y, k) }

@@ -72,7 +72,7 @@ target_sources(LaTeX PRIVATE
         src/box/box_group.cpp
         src/box/box_single.cpp
         # core folder
-        src/core/core.cpp
+        src/core/split.cpp
         src/core/formula.cpp
         src/core/formula_def.cpp
         src/core/glue.cpp

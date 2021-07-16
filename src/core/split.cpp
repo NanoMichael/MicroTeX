@@ -1,14 +1,14 @@
-#include "core/core.h"
+#include "core/split.h"
 
 #include "box/box_group.h"
-#include "common.h"
+#include "utils/log.h"
 
 using namespace std;
 using namespace tex;
 
 #ifdef HAVE_LOG
 
-void print_box(const sptr<Box>& b, int dep, vector<bool>& lines) {
+static void printBox(const sptr<Box>& b, int dep, vector<bool>& lines) {
   __print("%-4d", dep);
   if (lines.size() < dep + 1) lines.resize(dep + 1, false);
 
@@ -29,29 +29,31 @@ void print_box(const sptr<Box>& b, int dep, vector<bool>& lines) {
   }
 
   if (b == nullptr) {
-    __print(ANSI_COLOR_RED " NULL\n");
+    __print(ANSI_COLOR_RED
+            " NULL\n");
     return;
   }
 
   const vector<sptr<Box>>& children = b->descendants();
-  const size_t c = children.size();
-  const string& str = demangle_name(typeid(*(b)).name());
-  string name = str.substr(str.find_last_of("::") + 1);
-  if (c > 0) {
-    __print(ANSI_COLOR_CYAN " %s\n" ANSI_RESET, name.c_str());
+  const auto size = children.size();
+  const string& str = b->toString();
+  if (size > 0) {
+    __print(ANSI_COLOR_CYAN
+            " %s\n"
+            ANSI_RESET, str.c_str());
   } else {
-    __print(" %s\n", name.c_str());
+    __print(" %s\n", str.c_str());
   }
 
-  for (size_t i = 0; i < c; i++) {
-    lines[dep] = i == c - 1;
-    print_box(children[i], dep + 1, lines);
+  for (size_t i = 0; i < size; i++) {
+    lines[dep] = i == size - 1;
+    printBox(children[i], dep + 1, lines);
   }
 }
 
-void tex::print_box(const sptr<Box>& b) {
+void tex::printBox(const sptr<Box>& box) {
   vector<bool> lines;
-  ::print_box(b, 0, lines);
+  ::printBox(box, 0, lines);
   __print("\n");
 }
 
@@ -65,19 +67,19 @@ sptr<Box> BoxSplitter::split(const sptr<Box>& b, float width, float lineSpace) {
 #ifdef HAVE_LOG
     if (box != b) {
       __print("[BEFORE SPLIT]:\n");
-      print_box(b);
+      printBox(b);
       __print("[AFTER SPLIT]:\n");
-      print_box(box);
+      printBox(box);
     } else {
       __print("[BOX TREE]:\n");
-      print_box(box);
+      printBox(box);
     }
 #endif
     return box;
   }
 #ifdef HAVE_LOG
   __print("[BOX TREE]:\n");
-  print_box(b);
+  printBox(b);
 #endif
   return b;
 }

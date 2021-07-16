@@ -6,6 +6,7 @@
 #include "utils/enums.h"
 #include "box/box.h"
 #include "graphic/graphic.h"
+#include "utils/exceptions.h"
 
 namespace tex {
 

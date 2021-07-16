@@ -1,8 +1,10 @@
 #include "latex.h"
 
-#include "core/core.h"
+#include "core/split.h"
 #include "core/formula.h"
 #include "core/macro.h"
+#include "utils/utf.h"
+#include "utils/string_utils.h"
 
 using namespace std;
 using namespace tex;

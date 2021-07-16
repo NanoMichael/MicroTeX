@@ -1,5 +1,5 @@
 #include "atom/atom_char.h"
-#include "core/core.h"
+#include "core/split.h"
 #include "env/env.h"
 #include "box/box_single.h"
 

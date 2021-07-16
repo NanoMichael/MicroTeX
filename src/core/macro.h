@@ -2,7 +2,6 @@
 #define MACRO_H_INCLUDED
 
 #include "atom/atom.h"
-#include "common.h"
 
 #include <map>
 #include <string>

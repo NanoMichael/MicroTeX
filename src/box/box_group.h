@@ -2,6 +2,7 @@
 #define LATEX_BOX_GROUP_H
 
 #include "atom/atom.h"
+#include "utils/nums.h"
 
 namespace tex {
 
@@ -44,6 +45,8 @@ public:
   }
 
   void draw(Graphics2D& g2, float x, float y) override;
+
+  boxname(HBox);
 };
 
 /** A box composed of other boxes, put one above the other */
@@ -65,6 +68,8 @@ public:
   void add(int pos, const sptr<Box>& box) override;
 
   void draw(Graphics2D& g2, float x, float y) override;
+
+  boxname(VBox);
 };
 
 /**
@@ -76,6 +81,8 @@ public:
   OverBar() = delete;
 
   OverBar(const sptr<Box>& b, float kern, float thickness);
+
+  boxname(OverBar);
 };
 
 /***************************************************************************************************
@@ -93,6 +100,8 @@ public:
   explicit ColorBox(const sptr<Box>& box, color fg = transparent, color bg = transparent);
 
   void draw(Graphics2D& g2, float x, float y) override;
+
+  boxname(ColorBox);
 };
 
 /** A box representing a scale operation */
@@ -114,6 +123,8 @@ public:
   }
 
   void draw(Graphics2D& g2, float x, float y) override;
+
+  boxname(ScaleBox);
 };
 
 /** A box representing a reflected box */
@@ -124,6 +135,8 @@ public:
   explicit ReflectBox(const sptr<Box>& b);
 
   void draw(Graphics2D& g2, float x, float y) override;
+
+  boxname(ReflectBox);
 };
 
 /** Enumeration representing rotation origin */
@@ -187,6 +200,8 @@ public:
 
   void draw(Graphics2D& g2, float x, float y) override;
 
+  boxname(RotateBox);
+
   static Rotation getOrigin(std::string option);
 };
 
@@ -220,6 +235,8 @@ public:
   }
 
   void draw(Graphics2D& g2, float x, float y) override;
+
+  boxname(FramedBox);
 };
 
 /** A box representing a wrapped box by oval frame */
@@ -239,6 +256,8 @@ public:
       _diameter(diameter) {}
 
   void draw(Graphics2D& g2, float x, float y) override;
+
+  boxname(OvalBox);
 };
 
 /** A box representing a wrapped box by shadowed frame */
@@ -257,6 +276,8 @@ public:
   }
 
   void draw(Graphics2D& g2, float x, float y) override;
+
+  boxname(ShadowBox);
 };
 
 /** A box representing 'wrapper' that with insets in left, top, right and bottom */
@@ -288,6 +309,8 @@ public:
   void addInsets(float l, float t, float r, float b);
 
   void draw(Graphics2D& g2, float x, float y) override;
+
+  boxname(WrapperBox);
 };
 
 }  // namespace tex

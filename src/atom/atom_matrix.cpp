@@ -4,6 +4,7 @@
 #include "core/formula.h"
 #include "env/env.h"
 #include "core/glue.h"
+#include "utils/string_utils.h"
 
 using namespace std;
 using namespace tex;

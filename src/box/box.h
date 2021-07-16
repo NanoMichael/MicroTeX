@@ -1,7 +1,6 @@
 #ifndef LATEX_BOX_H
 #define LATEX_BOX_H
 
-#include "common.h"
 #include "graphic/graphic.h"
 #include "utils/enums.h"
 
@@ -90,7 +89,18 @@ public:
   /** Test if this box represents a space that only has metrics and has no visual effect. */
   virtual bool isSpace() const { return false; }
 
+  /** The box name */
+  virtual std::string name() const;
+
+  /** String to print this box */
+  virtual std::string toString() const;
+
   virtual ~Box() = default;
+
+#ifndef boxname
+#define boxname(x) \
+  virtual std::string name() const override { return #x; }
+#endif
 };
 
 /**

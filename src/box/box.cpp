@@ -15,6 +15,14 @@ int Box::lastFontId() {
   return FontContext::NO_FONT;
 }
 
+std::string Box::name() const {
+  return "Box";
+}
+
+std::string Box::toString() const {
+  return sstr(name(), " [", _width, ", ", _height, ", ", _depth, ", ", _shift, "]");
+}
+
 int BoxGroup::lastFontId() {
   int id = FontContext::NO_FONT;
   for (int i = _children.size() - 1; i >= 0 && id == FontContext::NO_FONT; i--) {

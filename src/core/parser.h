@@ -3,9 +3,9 @@
 
 #include <set>
 #include <string>
+#include <map>
 
 #include "atom/atom.h"
-#include "common.h"
 
 namespace tex {
 

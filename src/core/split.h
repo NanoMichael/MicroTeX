@@ -1,10 +1,8 @@
-#ifndef CORE_H_INCLUDED
-#define CORE_H_INCLUDED
+#ifndef LATEX_SPLIT_H
+#define LATEX_SPLIT_H
 
-#include <cstring>
 #include <stack>
 
-#include "common.h"
 #include "core/glue.h"
 #include "box/box.h"
 #include "box/box_group.h"
@@ -13,7 +11,7 @@ namespace tex {
 
 #ifdef HAVE_LOG
 
-void print_box(const sptr<Box>& box);
+void printBox(const sptr<Box>& box);
 
 #endif  // HAVE_LOG
 
@@ -40,4 +38,4 @@ public:
 
 }  // namespace tex
 
-#endif  // CORE_H_INCLUDED
+#endif  // LATEX_SPLIT_H

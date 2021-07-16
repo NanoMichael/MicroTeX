@@ -1,7 +1,7 @@
 #include "render.h"
 
 #include "atom/atom.h"
-#include "core/core.h"
+#include "core/split.h"
 #include "core/formula.h"
 #include "core/debug_config.h"
 #include "unimath/uni_font.h"
