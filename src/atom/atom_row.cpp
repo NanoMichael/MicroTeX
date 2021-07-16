@@ -28,7 +28,7 @@ void AtomDecor::changeAtom(const sptr<FixedCharAtom>& atom) {
 }
 
 sptr<Box> AtomDecor::createBox(Env& env) {
-  if (_textSymbol) ((CharSymbol*) _atom.get())->markAsTextSymbol();
+  if (_textSymbol) ((CharSymbol*) _atom.get())->markAsText();
   auto box = _atom->createBox(env);
   if (_textSymbol) ((CharSymbol*) _atom.get())->removeMark();
   return box;
@@ -80,7 +80,7 @@ sptr<Atom> RowAtom::getFirstAtom() {
   return nullptr;
 }
 
-sptr<Atom> RowAtom::popLastAtom() {
+sptr<Atom> RowAtom::popBack() {
   if (!_elements.empty()) {
     sptr<Atom> x = _elements.back();
     _elements.pop_back();

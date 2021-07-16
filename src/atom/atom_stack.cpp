@@ -26,7 +26,7 @@ sptr<Box> StackAtom::createBox(Env& env) {
   if (_over.isPresent()) {
     o = (
       _over.isSmall
-      ? env.withStyle(env.subStyle(), [&](Env& sub) { return _over.atom->createBox(sub); })
+      ? env.withStyle(env.supStyle(), [&](Env& sub) { return _over.atom->createBox(sub); })
       : _over.atom->createBox(env)
     );
     maxWidth = std::max(maxWidth, o->_width);

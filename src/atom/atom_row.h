@@ -136,7 +136,7 @@ public:
   sptr<Atom> getFirstAtom();
 
   /** Get and remove the atom at the tail in the elements */
-  sptr<Atom> popLastAtom();
+  sptr<Atom> popBack();
 
   /**
    * Get the atom at position

@@ -36,6 +36,10 @@ public:
   static sptr<StrutBox> create(float width) noexcept {
     return sptrOf<StrutBox>(width, 0.f, 0.f, 0.f);
   }
+
+  static sptr<StrutBox> onlyHeight(float height) noexcept {
+    return sptrOf<StrutBox>(0.f, height, 0.f, 0.f);
+  }
 };
 
 /** A box representing glue */

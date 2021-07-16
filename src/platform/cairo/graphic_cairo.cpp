@@ -28,9 +28,6 @@ void Font_cairo::loadFont(const string& file) {
     // already loaded
     _family = familyEntry->second;
     _fface = ffaceEntry->second;
-#ifdef HAVE_LOG
-    __dbg("%s already loaded, skip\n", file.c_str());
-#endif
     return;
   }
 

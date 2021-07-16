@@ -21,19 +21,19 @@ private:
    * Row will mark certain CharSymbol atoms as a text symbol. Subsup wil use
    * this property for a certain spacing rule.
    */
-  bool _textSymbol;
+  bool _isText;
 
 public:
-  CharSymbol() : _textSymbol(false) {}
+  CharSymbol() : _isText(false) {}
 
   /** Mark as text symbol (used by Dummy) */
-  inline void markAsTextSymbol() {
-    _textSymbol = true;
+  inline void markAsText() {
+    _isText = true;
   }
 
   /** Remove the mark so the atom remains unchanged (used by AtomDecor) */
   inline void removeMark() {
-    _textSymbol = false;
+    _isText = false;
   }
 
   /**
@@ -41,8 +41,8 @@ public:
    *
    * @return whether this CharSymbol is marked as a text symbol
    */
-  inline bool isMarkedAsTextSymbol() const {
-    return _textSymbol;
+  inline bool isText() const {
+    return _isText;
   }
 
   bool isChar() const override { return true; }

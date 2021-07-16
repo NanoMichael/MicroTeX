@@ -38,6 +38,12 @@ inline int indexOf(const std::vector<T>& v, const T& x) {
   return (i >= v.size() ? -1 : i);
 }
 
+/** Template version to find the max value of the given list */
+template<typename T, typename ... Args>
+inline T maxOf(Args&& ... args) {
+  return std::max({args...});
+}
+
 /** Get number of set bits in binary representation of the given number */
 template<typename T>
 u32 countSetBits(T n) {

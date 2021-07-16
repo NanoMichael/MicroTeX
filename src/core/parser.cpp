@@ -120,7 +120,7 @@ void TeXParser::reset(const wstring& latex) {
 sptr<Atom> TeXParser::popLastAtom() const {
   auto a = _formula->_root;
   auto* ra = dynamic_cast<RowAtom*>(a.get());
-  if (ra != nullptr) return ra->popLastAtom();
+  if (ra != nullptr) return ra->popBack();
   _formula->_root = nullptr;
   return a;
 }
@@ -554,7 +554,7 @@ sptr<Atom> TeXParser::getScripts(wchar_t first) {
     // the ScriptsAtom will handle it
     return sptrOf<ScriptsAtom>(nullptr, sub, sup);
   } else if ((rm = dynamic_cast<RowAtom*>(_formula->_root.get()))) {
-    atom = rm->popLastAtom();
+    atom = rm->popBack();
   } else {
     atom = _formula->_root;
     _formula->_root = nullptr;
@@ -569,7 +569,7 @@ sptr<Atom> TeXParser::getScripts(wchar_t first) {
   }
 
   if (atom->rightType() == AtomType::bigOperator) {
-    return sptrOf<BigOperatorAtom>(atom, sub, sup);
+    return sptrOf<OperatorAtom>(atom, sub, sup);
   }
 
   auto* del = dynamic_cast<OverUnderDelimiter*>(atom.get());

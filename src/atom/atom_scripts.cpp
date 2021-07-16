@@ -6,6 +6,7 @@
 using namespace tex;
 using namespace std;
 
+// TODO math kern
 sptr<Box> ScriptsAtom::createBox(Env& env) {
   // if no base was given, use a phantom 'M' to place scripts
   if (_base == nullptr) {
@@ -30,14 +31,14 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
   // params to place scripts
   sptr<Box> kernel, base;
   float delta = 0.f;
-  bool isSymbol = false;
+  bool isText = false;
 
-  auto checkSym = [&delta, &isSymbol](const sptr<Atom>& atom, Env& targetEnv) {
+  auto checkSym = [&delta, &isText](const sptr<Atom>& atom, Env& targetEnv) {
     if (auto cs = dynamic_cast<CharSymbol*>(atom.get()); cs != nullptr) {
-      if (!cs->isMarkedAsTextSymbol()) {
+      if (!cs->isText()) {
         delta = cs->getChar(targetEnv).italic();
       }
-      isSymbol = true;
+      isText = atom->_type != AtomType::bigOperator;
     }
   };
 
@@ -52,122 +53,81 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
       }
     );
     base = _base->createBox(env);
-  } else if (auto sym = dynamic_cast<SymbolAtom*>(_base.get());
-    sym != nullptr && sym->_type == AtomType::bigOperator) {
-    // 2. single big operator symbol
-    const auto& chr = (
-      env.style() < TexStyle::text
-      ? sym->getChar(env).vLarger(1)
-      : sym->getChar(env)
-    );
-    delta = chr.italic();
-    kernel = base = sptrOf<CharBox>(chr);
-    isSymbol = true;
   } else {
-    // 3. char symbol or boxed
+    // 2. char symbol or boxed
     checkSym(_base, env);
     kernel = base = _base->createBox(env);
   }
 
   const auto& math = env.mathConsts();
-  // functions calculate the raw shift
-  const auto calSupShift = [isSymbol, &math, &kernel, &env](const sptr<Box>& box) {
-    float shift = 0.f;
-    if (isSymbol) {
-      shift = -(
-        env.isCrampedStyle()
-        ? math.superscriptShiftUpCramped() * env.scale()
-        : math.superscriptShiftUp() * env.scale()
-      );
-    } else {
-      shift = -kernel->_height + math.superscriptBaselineDropMax() * env.scale();
-    }
-    const auto gapMin = math.superscriptBottomMin() * env.scale();
-    return (
-      shift + box->_depth > gapMin
-      ? -box->_depth - gapMin
-      : shift
-    );
-  };
-  const auto calSubShift = [isSymbol, &math, &kernel, &env](const sptr<Box>& box) {
-    const auto shift = (
-      isSymbol
-      ? math.subscriptShiftDown() * env.scale()
-      : math.subscriptBaselineDropMin() * env.scale() + kernel->_depth
-    );
-    const auto gapMax = math.subscriptTopMax() * env.scale();
-    return (
-      box->_height - shift > gapMax
-      ? box->_height - gapMax
-      : shift
-    );
-  };
+  const auto scriptSpace = StrutBox::create(math.spaceAfterScript() * env.scale());
 
-  auto scriptSpace = SpaceAtom(UnitType::mu, 0.5f, 0.f, 0.f).createBox(env);
-  auto createBox = [&](const sptr<Atom>& atom, TexStyle style) {
-    auto box = env.withStyle(style, [&](Env& e) { return atom->createBox(e); });
-    auto h = sptrOf<HBox>(box);
-    h->add(scriptSpace);
-    return h;
-  };
-
-  if (_sup != nullptr && _sub != nullptr) {
-    // 1. both super and sub scripts
-    auto sup = env.withStyle(env.supStyle(), [&](Env& sup) { return _sup->createBox(sup); });
-    auto sub = env.withStyle(env.subStyle(), [&](Env& sub) { return _sub->createBox(sub); });
-    // calculate shift
-    const auto shiftUp = calSupShift(sup);
-    const auto shiftDown = calSubShift(sub);
-    // calculate gap between super & sub script
-    const auto supBottomPos = shiftUp + sup->_depth;
-    const auto subTopPos = shiftDown - sub->_height;
-    const auto gap = subTopPos - supBottomPos;
-    // add super & sub script to vertical box
-    auto v = sptrOf<VBox>();
-    sup->_shift = delta;
-    v->add(sup);
-    const auto gapMin = math.subSuperscriptGapMin() * env.scale();
-    v->add(sptrOf<StrutBox>(0.f, std::max(gap, gapMin), 0.f, 0.f));
-    v->add(sub);
-    // shift vertical box
-    const auto height = v->_height + v->_depth;
-    if (gap > gapMin) {
-      v->_depth = sub->_depth;
-      v->_height = height - sub->_depth;
-      v->_shift = shiftDown;
-    } else {
-      v->_height = sup->_height;
-      v->_depth = height - sup->_height;
-      v->_shift = -math.superscriptBottomMaxWithSubscript() * env.scale() - sup->_depth;
-    }
-    // add to horizontal box
-    auto h = sptrOf<HBox>(base);
-    const auto kern = kernel->_width - base->_width;
-    if (std::abs(kern) > PREC) h->add(StrutBox::create(kern));
-    h->add(v);
-    h->add(scriptSpace);
-    return h;
-  } else if (_sup == nullptr) {
-    // 2. only subscript
-    auto sub = createBox(_sub, env.subStyle());
-    sub->_shift = calSubShift(sub);
-    auto h = sptrOf<HBox>(base);
-    // add kern if kernel box and base box are different
-    const auto kern = kernel->_width - base->_width;
-    if (std::abs(kern) > PREC) h->add(StrutBox::create(kern));
-    h->add(sub);
-    return h;
-  } else if (_sub == nullptr) {
-    // 3. only superscript
-    auto sup = createBox(_sup, env.supStyle());
-    sup->_shift = calSupShift(sup);
-    // add to horizontal box
-    auto h = sptrOf<HBox>(base);
-    const auto kern = kernel->_width - base->_width + delta;
-    if (std::abs(kern) > PREC) h->add(StrutBox::create(kern));
-    h->add(sup);
-    return h;
+  auto u = 0.f, v = 0.f;
+  if (!isText) {
+    u = kernel->_height - math.superscriptBaselineDropMax() * env.scale();
+    v = kernel->_depth + math.subscriptBaselineDropMin() * env.scale();
   }
 
-  return StrutBox::empty();
+  auto hbox = sptrOf<HBox>(base);
+  const auto compose = [&](const sptr<Box>& box, float extra = 0) {
+    const auto kern = kernel->_width - base->_width + extra;
+    if (std::abs(kern) > PREC) hbox->add(StrutBox::create(kern));
+    hbox->add(box);
+    hbox->add(scriptSpace);
+    return hbox;
+  };
+
+  if (_sup == nullptr) {
+    // case 1. only subscript
+    auto x = env.withStyle(env.subStyle(), [&](Env& sub) { return _sub->createBox(sub); });
+    x->_shift = maxOf<float>(
+      v,
+      math.subscriptShiftDown() * env.scale(),
+      x->_height - math.subscriptTopMax() * env.scale()
+    );
+    return compose(x);
+  }
+
+  auto x = env.withStyle(env.supStyle(), [&](Env& sup) { return _sup->createBox(sup); });
+  u = maxOf<float>(
+    u,
+    (float) (
+      env.isCrampedStyle()
+      ? math.superscriptShiftUpCramped()
+      : math.superscriptShiftUp()
+    ) * env.scale(),
+    x->_depth + math.superscriptBottomMin() * env.scale()
+  );
+
+  if (_sub == nullptr) {
+    // case 2. only superscript
+    x->_shift = -u;
+    return compose(x, delta);
+  }
+
+  // case 3. both super & sub scripts
+  auto y = env.withStyle(env.subStyle(), [&](Env& sub) { return _sub->createBox(sub); });
+  v = maxOf<float>(v, math.subscriptShiftDown() * env.scale());
+  const auto theta = math.subSuperscriptGapMin() * env.scale();
+
+  auto sigma = (u - x->_depth) - (y->_height - v);
+  if (sigma < theta) {
+//    u += (theta - sigma) / 2;
+//    v += (theta - sigma) / 2;
+    auto psi = math.superscriptBottomMaxWithSubscript() * env.scale() - (u - x->_depth);
+    if (psi > 0) {
+      u += psi;
+      v -= psi;
+    }
+    sigma = theta;
+  }
+
+  auto vbox = sptrOf<VBox>();
+  x->_shift = delta;
+  vbox->add(x);
+  vbox->add(y, sigma);
+  vbox->_height = x->_height + u;
+  vbox->_depth = y->_depth + v;
+
+  return compose(vbox);
 }

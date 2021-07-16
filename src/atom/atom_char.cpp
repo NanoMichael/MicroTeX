@@ -48,8 +48,11 @@ Char SymbolAtom::getChar(Env& env) const {
 sptr<Box> SymbolAtom::createBox(Env& env) {
   const auto& chr = getChar(env);
   if (_type == AtomType::bigOperator) {
-    const auto& larger = env.style() > TexStyle::text ? chr.vLarger(1) : chr;
-    return sptrOf<CharBox>(larger);
+    const auto& larger = env.style() < TexStyle::text ? chr.vLarger(1) : chr;
+    auto box = sptrOf<CharBox>(larger);
+    const auto axis = env.axisHeight();
+    box->_shift = (box->_height - box->_depth) / 2 - axis;
+    return sptrOf<HBox>(box);
   } else {
     const bool doScale = unicode() != chr._code;
     auto box = sptrOf<CharBox>(chr);

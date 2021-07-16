@@ -132,31 +132,6 @@ sptr<Box> PhantomAtom::createBox(Env& env) {
   return sptrOf<StrutBox>(w, h, d, s);
 }
 
-/************************************ BigOperatorAtom implementation ******************************/
-
-void BigOperatorAtom::init(const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over) {
-  _base = base;
-  _under = under;
-  _over = over;
-  _limits = false;
-  _limitsSet = false;
-  _type = AtomType::bigOperator;
-}
-
-sptr<Box> BigOperatorAtom::changeWidth(const sptr<Box>& b, float maxWidth) {
-  if (b != nullptr && abs(maxWidth - b->_width) > PREC)
-    return sptrOf<HBox>(b, maxWidth, Alignment::center);
-  return b;
-}
-
-sptr<Box> BigOperatorAtom::createSideSets(Env& env) {
-  return StrutBox::empty();
-}
-
-sptr<Box> BigOperatorAtom::createBox(Env& env) {
-  return StrutBox::empty();
-}
-
 /*********************************** SideSetsAtom implementation **********************************/
 
 sptr<Box> SideSetsAtom::createBox(Env& env) {

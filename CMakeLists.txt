@@ -64,6 +64,7 @@ target_sources(LaTeX PRIVATE
         src/atom/atom_accent.cpp
         src/atom/atom_scripts.cpp
         src/atom/atom_vrow.cpp
+        src/atom/atom_operator.cpp
         src/atom/colors_def.cpp
         # box folder
         src/box/box.cpp

@@ -15,6 +15,7 @@
 #include "atom/atom_accent.h"
 #include "atom/atom_scripts.h"
 #include "atom/atom_vrow.h"
+#include "atom/atom_operator.h"
 #include "box/box_single.h"
 #include "box/box_group.h"
 #include "graphic/graphic.h"
@@ -308,7 +309,7 @@ public:
     _limitsType = atom->_limitsType;
   }
 
-  sptr<Atom> getBase() {
+  sptr<Atom> base() {
     _atom->_limitsType = _limitsType;
     return _atom;
   }
@@ -326,68 +327,6 @@ public:
   }
 
   __decl_clone(TypedAtom)
-};
-
-/**
- * An atom representing a "big operator" (or an atom that acts as one) together
- * with its limits
- */
-class BigOperatorAtom : public Atom {
-private:
-  // limits
-  sptr<Atom> _under{}, _over{};
-  // atom representing a big operator
-  sptr<Atom> _base{};
-  // whether the "limits"-value should be taken into account
-  // (otherwise the default rules will be applied)
-  bool _limitsSet = false;
-  // whether limits should be drawn over and under the base (<-> as scripts)
-  bool _limits = false;
-
-  void init(const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over);
-
-  sptr<Box> createSideSets(Env& env);
-
-  /** Center the given box in a new box that has the given width */
-  static sptr<Box> changeWidth(const sptr<Box>& b, float maxWidth);
-
-public:
-  BigOperatorAtom() = delete;
-
-  /**
-   * Create a new BigOperatorAtom from the given atoms. The default rules the
-   * positioning of the limits will be applied.
-   *
-   * @param base atom representing the big operator
-   * @param under atom representing the under limit
-   * @param over atom representing the over limit
-   */
-  BigOperatorAtom(const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over) {
-    init(base, under, over);
-  }
-
-  /**
-   * Create a new BigOperatorAtom from the given atoms. Limits will be drawn
-   * according to the "limits"-value
-   *
-   * @param base atom representing the big operator
-   * @param under atom representing the under limit
-   * @param over atom representing the over limit
-   * @param limits
-   *      whether limits should be drawn over and under the base (<-> as
-   *      scripts)
-   */
-  BigOperatorAtom(
-    const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over, bool limits
-  ) {
-    init(base, under, over);
-    _limits = limits;
-    _limitsSet = true;
-  }
-
-  sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(BigOperatorAtom)
 };
 
 /** An atom representing scripts around a base atom */
