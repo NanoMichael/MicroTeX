@@ -8,52 +8,54 @@ using namespace tex;
 
 #ifdef HAVE_LOG
 
-static void printBox(const sptr<Box>& b, int dep, vector<bool>& lines) {
+static void printBox(const sptr<Box>& b, int dep, vector<bool>& lines, int max = 0) {
   __print("%-4d", dep);
   if (lines.size() < dep + 1) lines.resize(dep + 1, false);
 
   for (int i = 0; i < dep - 1; i++) {
-    if (lines[i]) {
-      __print("    ");
-    } else {
-      __print(" │  ");
-    }
+    __print(lines[i] ? "    " : " │  ");
   }
 
   if (dep > 0) {
-    if (lines[dep - 1]) {
-      __print(" └──");
-    } else {
-      __print(" ├──");
-    }
+    __print(lines[dep - 1] ? " └──" : " ├──");
   }
 
   if (b == nullptr) {
-    __print(ANSI_COLOR_RED
-            " NULL\n");
+    __print(ANSI_COLOR_RED " NULL\n" ANSI_RESET);
     return;
   }
 
   const vector<sptr<Box>>& children = b->descendants();
   const auto size = children.size();
-  const string& str = b->toString();
-  if (size > 0) {
-    __print(ANSI_COLOR_CYAN
-            " %s\n"
-            ANSI_RESET, str.c_str());
-  } else {
-    __print(" %s\n", str.c_str());
+  const auto& name = b->name();
+  const char* fmt = (
+    size > 0
+    ? ANSI_COLOR_CYAN " %-*s " ANSI_RESET
+    : " %-*s "
+  );
+  __print(fmt, size > 0 ? name.size() : max, name.c_str());
+  // show metrics and additional info
+  __print(
+    "[%g, (%g + %g) = %g, %g] %s\n",
+    b->_width, b->_height, b->_depth, b->_height + b->_depth, b->_shift,
+    b->toString().c_str()
+  );
+  if (size == 0) return;
+
+  size_t limit = 0;
+  for (const auto& x : children) {
+    limit = std::max(limit, x->name().size());
   }
 
   for (size_t i = 0; i < size; i++) {
     lines[dep] = i == size - 1;
-    printBox(children[i], dep + 1, lines);
+    printBox(children[i], dep + 1, lines, limit);
   }
 }
 
 void tex::printBox(const sptr<Box>& box) {
   vector<bool> lines;
-  ::printBox(box, 0, lines);
+  ::printBox(box, 0, lines, box->name().size());
   __print("\n");
 }
 

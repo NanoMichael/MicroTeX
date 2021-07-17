@@ -32,7 +32,7 @@ int CharBox::lastFontId() {
 std::string CharBox::toString() const {
   // TODO
   std::wstring_convert<std::codecvt_utf8<c32>, c32> cvt;
-  return sstr(Box::toString(), " '", cvt.to_bytes(_chr._mappedCode), "'");
+  return cvt.to_bytes(_chr._mappedCode);
 }
 
 sptr<Font> TextRenderingBox::_font(nullptr);
