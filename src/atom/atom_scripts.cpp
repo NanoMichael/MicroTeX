@@ -112,8 +112,7 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
 
   auto sigma = (u - x->_depth) - (y->_height - v);
   if (sigma < theta) {
-//    u += (theta - sigma) / 2;
-//    v += (theta - sigma) / 2;
+    v = theta + y->_height + x->_depth - u;
     auto psi = math.superscriptBottomMaxWithSubscript() * env.scale() - (u - x->_depth);
     if (psi > 0) {
       u += psi;
