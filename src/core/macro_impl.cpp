@@ -5,6 +5,7 @@
 #include "graphic/graphic.h"
 #include "env/env.h"
 #include "core/debug_config.h"
+#include "atom/atom_zstack.h"
 
 using namespace tex;
 using namespace std;
@@ -470,6 +471,33 @@ macro(undebug) {
   auto& config = DebugConfig::INSTANCE;
   config.enable = false;
   return nullptr;
+}
+
+macro(zstack) {
+  auto halign = Alignment::left;
+  if (args[1] == L"c") {
+    halign = Alignment::center;
+  } else if (args[1] == L"r") {
+    halign = Alignment::right;
+  }
+  const auto&[hu, hv] = Units::getLength(args[2]);
+  const ZStackArgs hargs{halign, hu, hv};
+
+  auto valign = Alignment::top;
+  if (args[3] == L"c") {
+    valign = Alignment::center;
+  } else if (args[3] == L"b") {
+    valign = Alignment::bottom;
+  } else if (args[3] == L"B") {
+    valign = Alignment::none;
+  }
+  const auto&[vu, vv] = Units::getLength(args[4]);
+  const ZStackArgs& vargs{valign, vu, vv};
+
+  const auto atom = Formula(tp, args[5], false)._root;
+  const auto anchor = Formula(tp, args[6], false)._root;
+
+  return sptrOf<ZStackAtom>(hargs, vargs, atom, anchor);
 }
 
 macro(xml) {

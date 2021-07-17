@@ -1337,6 +1337,8 @@ macro(xml);
 
 macro(setmathfont);
 
+macro(zstack);
+
 #ifdef GRAPHICS_DEBUG
 
 macro(debug);

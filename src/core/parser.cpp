@@ -632,7 +632,7 @@ pair<UnitType, float> TeXParser::getLength() {
 
   skipWhiteSpace();
   const int start = _pos;
-  while (_pos < _len && ch != ' ' && ch != ESCAPE) {
+  while (_pos < _len && ch != ' ' && ch != '\t' && ch != '\r' && ch != '\n' && ch != ESCAPE) {
     ch = _latex[_pos++];
   }
   const int end = _pos;

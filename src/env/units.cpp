@@ -115,7 +115,8 @@ std::pair<UnitType, float> Units::getLength(const std::string& lgth) {
   valueof(lgth.substr(0, i), f);
 
   UnitType unit = UnitType::pixel;
-  string x = lgth.substr(i);
+  string str = lgth.substr(i);
+  string x = trim(str);
   tolower(x);
   if (i != lgth.size()) unit = getUnit(x);
 

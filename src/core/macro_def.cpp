@@ -307,6 +307,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_cancel, "cancel"),
     mac(1, macro_bcancel, "bcancel"),
     mac(1, macro_xcancel, "xcancel"),
+    mac(6, macro_zstack, "stackinset"),
 #ifdef GRAPHICS_DEBUG
     mac(1, macro_debug, "debug"),
     mac(0, macro_undebug, "undebug"),

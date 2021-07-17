@@ -63,6 +63,9 @@ public:
   /** Transform the width of box to negative */
   inline void negWidth() { _width = -_width; }
 
+  /** The length in vertical direction, basically equals to #_height + #_depth */
+  inline float vlen() const { return _height + _depth; }
+
   /**
    * Paints this box at the given coordinates using the given 2D graphics
    * context.
