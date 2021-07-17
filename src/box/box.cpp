@@ -20,7 +20,13 @@ std::string Box::name() const {
 }
 
 std::string Box::toString() const {
-  return sstr(name(), " [", _width, ", ", _height, ", ", _depth, ", ", _shift, "]");
+  const auto h = _height + _depth;
+  return sstr(
+    name(), " [",
+    _width,
+    ", h(", _height, " + ", _depth, ")=", h, ", ",
+    _shift, "]"
+  );
 }
 
 int BoxGroup::lastFontId() {
