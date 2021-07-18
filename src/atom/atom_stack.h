@@ -1,6 +1,8 @@
 #ifndef LATEX_ATOM_STACK_H
 #define LATEX_ATOM_STACK_H
 
+#include <utility>
+
 #include "atom/atom.h"
 #include "env/units.h"
 
@@ -51,13 +53,9 @@ public:
 
   StackAtom(
     const sptr<Atom>& base,
-    const StackArgs& overArgs,
-    const StackArgs& underArgs
-  ) {
-    _base = base;
-    _over = overArgs;
-    _under = underArgs;
-  }
+    StackArgs overArgs,
+    StackArgs underArgs
+  ) : _base(base), _over(std::move(overArgs)), _under(std::move(underArgs)) {}
 
   AtomType leftType() const override {
     return _base->leftType();

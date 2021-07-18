@@ -1184,57 +1184,6 @@ inline macro(surd) {
   return sptrOf<VCenteredAtom>(SymbolAtom::get("surdsign"));
 }
 
-inline macro(int) {
-  auto* integral = new SymbolAtom(*(SymbolAtom::get("int")));
-  integral->_limitsType = LimitsType::noLimits;
-  return sptr<Atom>(integral);
-}
-
-inline macro(oint) {
-  auto* integral = new SymbolAtom(*(SymbolAtom::get("oint")));
-  integral->_limitsType = LimitsType::noLimits;
-  return sptr<Atom>(integral);
-}
-
-inline macro(iint) {
-  auto* integral = new SymbolAtom(*(SymbolAtom::get("int")));
-  integral->_limitsType = LimitsType::noLimits;
-  sptr<Atom> i(integral);
-  auto* ra = new RowAtom(i);
-  ra->add(sptrOf<SpaceAtom>(UnitType::mu, -8.f, 0.f, 0.f));
-  ra->add(i);
-  ra->_lookAtLastAtom = true;
-  return sptrOf<TypedAtom>(AtomType::bigOperator, AtomType::bigOperator, sptr<Atom>(ra));
-}
-
-inline macro(iiint) {
-  auto* integral = new SymbolAtom(*(SymbolAtom::get("int")));
-  integral->_limitsType = LimitsType::noLimits;
-  sptr<Atom> i(integral);
-  auto* ra = new RowAtom(i);
-  ra->add(sptrOf<SpaceAtom>(UnitType::mu, -8.f, 0.f, 0.f));
-  ra->add(i);
-  ra->add(sptrOf<SpaceAtom>(UnitType::mu, -8.f, 0.f, 0.f));
-  ra->add(i);
-  ra->_lookAtLastAtom = true;
-  return sptrOf<TypedAtom>(AtomType::bigOperator, AtomType::bigOperator, sptr<Atom>(ra));
-}
-
-inline macro(iiiint) {
-  auto* integral = new SymbolAtom(*(SymbolAtom::get("int")));
-  integral->_limitsType = LimitsType::noLimits;
-  sptr<Atom> i(integral);
-  auto* ra = new RowAtom(i);
-  ra->add(sptrOf<SpaceAtom>(UnitType::mu, -8.f, 0.f, 0.f));
-  ra->add(i);
-  ra->add(sptrOf<SpaceAtom>(UnitType::mu, -8.f, 0.f, 0.f));
-  ra->add(i);
-  ra->add(sptrOf<SpaceAtom>(UnitType::mu, -8.f, 0.f, 0.f));
-  ra->add(i);
-  ra->_lookAtLastAtom = true;
-  return sptrOf<TypedAtom>(AtomType::bigOperator, AtomType::bigOperator, sptr<Atom>(ra));
-}
-
 inline macro(idotsint) {
   auto* integral = new SymbolAtom(*(SymbolAtom::get("int")));
   integral->_limitsType = LimitsType::noLimits;

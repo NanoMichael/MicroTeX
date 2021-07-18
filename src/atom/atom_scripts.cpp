@@ -30,7 +30,7 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
   // params to place scripts
   sptr<Box> kernel, base;
   float delta = 0.f;
-  bool isText = false;
+  bool isText = false, isOperator = false;
   const MathKernRecord* kernRecord = nullptr;
 
   const auto checkSym = [&](const sptr<Atom>& atom, Env& targetEnv) {
@@ -39,6 +39,7 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
       kernRecord = &(chr.glyph()->math().kernRecord());
       if (!cs->isText()) delta = chr.italic();
       isText = atom->_type != AtomType::bigOperator;
+      isOperator = atom->_type == AtomType::bigOperator;
     }
   };
   const auto getMathKern = [&](float height, bool isTop) {
@@ -82,6 +83,10 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
     hbox->add(scriptSpace);
     return hbox;
   };
+
+  if (isOperator && delta > PREC) {
+    hbox->add(StrutBox::create(-delta));
+  }
 
   if (_sup == nullptr) {
     // case 1. only subscript
