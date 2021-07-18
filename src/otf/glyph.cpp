@@ -23,7 +23,7 @@ u16 MathKern::indexOf(i32 height) const {
   if (_count == 0) return 0;
   return binIndexOf(
     _count,
-    [&](int i) { return height - _fields[i << 1]; },
+    [&](int i) { return height - _fields[(i << 1) + 1]; },
     true
   );
 }

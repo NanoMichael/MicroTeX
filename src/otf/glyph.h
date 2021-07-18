@@ -197,6 +197,7 @@ public:
 struct MathKern final {
 private:
   const u16 _count = 0;
+  /** in (kern, correctionHeight) pair format */
   i16* _fields = nullptr;
 
   explicit MathKern(u16 count) noexcept
@@ -210,9 +211,9 @@ public:
 
   inline u16 count() const { return _count; }
 
-  inline i16 correctionHeight(u16 i) const { return _count == 0 ? 0 : _fields[i << 1]; }
+  inline i16 correctionHeight(u16 i) const { return _count == 0 ? 0 : _fields[(i << 1) + 1]; }
 
-  inline i16 value(u16 i) const { return _count == 0 ? 0 : _fields[(i << 1) + 1]; }
+  inline i16 value(u16 i) const { return _count == 0 ? 0 : _fields[i << 1]; }
 
   /** Find the index of the kern values that its correction height closest to the given height. */
   u16 indexOf(i32 height) const;

@@ -6,7 +6,6 @@
 using namespace tex;
 using namespace std;
 
-// TODO math kern
 sptr<Box> ScriptsAtom::createBox(Env& env) {
   // if no base was given, use a phantom 'M' to place scripts
   if (_base == nullptr) {
@@ -32,14 +31,21 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
   sptr<Box> kernel, base;
   float delta = 0.f;
   bool isText = false;
+  const MathKernRecord* kernRecord = nullptr;
 
-  auto checkSym = [&delta, &isText](const sptr<Atom>& atom, Env& targetEnv) {
+  const auto checkSym = [&](const sptr<Atom>& atom, Env& targetEnv) {
     if (auto cs = dynamic_cast<CharSymbol*>(atom.get()); cs != nullptr) {
-      if (!cs->isText()) {
-        delta = cs->getChar(targetEnv).italic();
-      }
+      const auto& chr = cs->getChar(targetEnv);
+      kernRecord = &(chr.glyph()->math().kernRecord());
+      if (!cs->isText()) delta = chr.italic();
       isText = atom->_type != AtomType::bigOperator;
     }
+  };
+  const auto getMathKern = [&](float height, bool isTop) {
+    if (kernRecord == nullptr) return 0.f;
+    const auto& mathKern = isTop ? kernRecord->topRight() : kernRecord->bottomRight();
+    const auto i = mathKern.indexOf(height);
+    return mathKern.value(i) * env.scale();
   };
 
   if (auto acc = dynamic_cast<AccentedAtom*>(_base.get()); acc != nullptr) {
@@ -85,7 +91,8 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
       math.subscriptShiftDown() * env.scale(),
       x->_height - math.subscriptTopMax() * env.scale()
     );
-    return compose(x);
+    const auto kern = getMathKern(-x->_shift, false);
+    return compose(x, kern);
   }
 
   auto x = env.withStyle(env.supStyle(), [&](Env& sup) { return _sup->createBox(sup); });
@@ -102,7 +109,8 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
   if (_sub == nullptr) {
     // case 2. only superscript
     x->_shift = -u;
-    return compose(x, delta);
+    const auto kern = getMathKern(-x->_shift, true);
+    return compose(x, kern + delta);
   }
 
   // case 3. both super & sub scripts
@@ -121,12 +129,17 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
     sigma = theta;
   }
 
+  const auto topKern = getMathKern(u, true) + delta;
+  const auto bottomKern = getMathKern(-v, false);
+  const auto kern = std::min(topKern, bottomKern);
+
   auto vbox = sptrOf<VBox>();
-  x->_shift = delta;
+  x->_shift = topKern - kern;
   vbox->add(x);
+  y->_shift = bottomKern - kern;
   vbox->add(y, sigma);
   vbox->_height = x->_height + u;
   vbox->_depth = y->_depth + v;
 
-  return compose(vbox);
+  return compose(vbox, kern);
 }
