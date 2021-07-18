@@ -60,7 +60,6 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
   }
 
   const auto& math = env.mathConsts();
-  const auto scriptSpace = StrutBox::create(math.spaceAfterScript() * env.scale());
 
   auto u = 0.f, v = 0.f;
   if (!isText) {
@@ -69,6 +68,7 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
   }
 
   auto hbox = sptrOf<HBox>(base);
+  const auto scriptSpace = StrutBox::create(math.spaceAfterScript() * env.scale());
   const auto compose = [&](const sptr<Box>& box, float extra = 0) {
     const auto kern = kernel->_width - base->_width + extra;
     if (std::abs(kern) > PREC) hbox->add(StrutBox::create(kern));
@@ -108,13 +108,13 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
   // case 3. both super & sub scripts
   auto y = env.withStyle(env.subStyle(), [&](Env& sub) { return _sub->createBox(sub); });
   v = maxOf<float>(v, math.subscriptShiftDown() * env.scale());
-  const auto theta = math.subSuperscriptGapMin() * env.scale();
 
+  const auto theta = math.subSuperscriptGapMin() * env.scale();
   auto sigma = (u - x->_depth) - (y->_height - v);
   if (sigma < theta) {
     v = theta + y->_height + x->_depth - u;
-    auto psi = math.superscriptBottomMaxWithSubscript() * env.scale() - (u - x->_depth);
-    if (psi > 0) {
+    const auto psi = math.superscriptBottomMaxWithSubscript() * env.scale() - (u - x->_depth);
+    if (psi > 0 && (v - psi + y->_depth) > kernel->_depth) {
       u += psi;
       v -= psi;
     }

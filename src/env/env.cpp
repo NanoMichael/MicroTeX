@@ -6,15 +6,19 @@ using namespace tex;
 
 float Env::PIXELS_PER_POINT = 1.f;
 
-float Env::scale() const {
-  if (_style < TexStyle::script) return 1;
+float Env::scale(TexStyle style) const {
+  if (style < TexStyle::script) return 1;
   auto math = _fctx->mathFont().otf().mathConsts();
   i16 percent = (
-    _style < TexStyle::scriptScript
+    style < TexStyle::scriptScript
     ? math->scriptPercentScaleDown()
     : math->scriptScriptPercentScaleDown()
   );
   return percent / 100.f;
+}
+
+float Env::scale() const {
+  return scale(_style);
 }
 
 Env& Env::setTextWidth(UnitType unit, float width) {

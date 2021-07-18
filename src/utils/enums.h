@@ -12,7 +12,7 @@ enum class Alignment : i8 {
   /** Extra space will be added to the left of the formula. */
   right,
   /**
-   * The formula will be centered in the middle. This constant can
+   * The formula will be centered in the middle. This can
    * be used for both horizontal and vertical alignment.
    */
   center,

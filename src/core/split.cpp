@@ -37,7 +37,7 @@ static void printBox(const sptr<Box>& b, int dep, vector<bool>& lines, int max =
   // show metrics and additional info
   __print(
     "[%g, (%g + %g) = %g, %g] %s\n",
-    b->_width, b->_height, b->_depth, b->_height + b->_depth, b->_shift,
+    b->_width, b->_height, b->_depth, b->vlen(), b->_shift,
     b->toString().c_str()
   );
   if (size == 0) return;

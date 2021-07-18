@@ -53,6 +53,9 @@ public:
   /** Get the scale factor of the current environment */
   float scale() const;
 
+  /** Get the scale factor of the given style */
+  float scale(TexStyle style) const;
+
   /** Set environment width with given unit */
   Env& setTextWidth(UnitType unit, float width);
 
