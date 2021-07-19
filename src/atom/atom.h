@@ -26,7 +26,7 @@ public:
   /** The type of the atom (default value: ordinary atom) */
   AtomType _type = AtomType::ordinary;
   /** The limits type of the atom (default value: nolimits) */
-  LimitsType _limitsType = LimitsType::normal;
+  LimitsType _limitsType = LimitsType::noLimits;
   /** The alignment type of the atom (default value: none) */
   Alignment _alignment = Alignment::none;
 

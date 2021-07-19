@@ -1,5 +1,6 @@
 #include "atom/atom_stack.h"
 #include "atom/atom_space.h"
+#include "atom/atom_char.h"
 #include "box/box_single.h"
 #include "box/box_group.h"
 
@@ -17,8 +18,8 @@ sptr<Box> StackAtom::createBox(Env& env) {
   // create boxes in right style and calculate max width
   auto b = _base == nullptr ? StrutBox::empty() : _base->createBox(env);
   auto delta = 0.f;
-  if (auto cb = dynamic_cast<CharBox*>(b.get()); cb != nullptr) {
-    delta = cb->italic();
+  if (auto cs = dynamic_cast<CharSymbol*>(_base.get()); cs != nullptr) {
+    delta = cs->getChar(env).italic();
   }
   // over and under
   sptr<Box> o, u;
@@ -41,7 +42,7 @@ sptr<Box> StackAtom::createBox(Env& env) {
   }
 
   // vertical box
-  auto vbox = new VBox();
+  auto vbox = sptrOf<VBox>();
 
   // last font used by base (for mono-space atoms following)
   env.setLastFontId(b->lastFontId());
@@ -92,5 +93,6 @@ sptr<Box> StackAtom::createBox(Env& env) {
   // calculate height and depth
   vbox->_depth = vbox->_height + vbox->_depth - h;
   vbox->_height = h;
-  return sptr<Box>(vbox);
+
+  return vbox;
 }

@@ -14,8 +14,14 @@ private:
 
 public:
   const c32 unicode;
-  const AtomType type;
+  const u32 flag;
   const char* name;
+
+  AtomType type() const;
+
+  LimitsType limitsType() const;
+
+  bool isVariable() const;
 
   /**
    * Get the symbol from the given name.

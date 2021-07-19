@@ -16,9 +16,11 @@ sptr<SymbolAtom> SymbolAtom::get(const std::string& name) {
 }
 
 SymbolAtom::SymbolAtom(const Symbol* symbol) noexcept: _symbol(symbol) {
-  _type = _symbol == nullptr ? AtomType::none : _symbol->type;
-  if (_type == AtomType::bigOperator) {
-    _limitsType = LimitsType::normal;
+  if (_symbol == nullptr) {
+    _type = AtomType::none;
+  } else {
+    _type = _symbol->type();
+    _limitsType = _symbol->limitsType();
   }
 }
 
@@ -36,6 +38,10 @@ bool SymbolAtom::isValid() const {
 
 Char SymbolAtom::getChar(Env& env) const {
   if (_symbol == nullptr) return {};
+  if (_type == AtomType::bigOperator) {
+    const auto& chr = env.getChar(*_symbol);
+    return env.style() < TexStyle::text ? chr.vLarger(1) : chr;
+  }
   if (env.isSmallCap() && unicode() != 0 && isUnicodeLower(unicode())) {
     const auto upper = toUnicodeUpper(unicode());
     if (upper == unicode()) return env.getChar(*_symbol);
@@ -48,8 +54,7 @@ Char SymbolAtom::getChar(Env& env) const {
 sptr<Box> SymbolAtom::createBox(Env& env) {
   const auto& chr = getChar(env);
   if (_type == AtomType::bigOperator) {
-    const auto& larger = env.style() < TexStyle::text ? chr.vLarger(1) : chr;
-    auto box = sptrOf<CharBox>(larger);
+    auto box = sptrOf<CharBox>(chr);
     const auto axis = env.axisHeight();
     box->_shift = (box->_height - box->_depth) / 2 - axis;
     return sptrOf<HBox>(box);
