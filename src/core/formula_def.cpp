@@ -11,7 +11,6 @@ map<wstring, wstring> Formula::_predefinedTeXFormulasAsString{
   {L"ldots",              L"\\mathinner{\\ldotp\\ldotp\\ldotp}"},
   {L"dotsc",              L"\\ldots"},
   {L"dots",               L"\\ldots"},
-  {L"cdots",              L"\\mathinner{\\cdotp\\cdotp\\cdotp}"},
   {L"dotsb",              L"\\cdots"},
   {L"dotso",              L"\\ldots"},
   {L"dotsi",              L"\\!\\cdots"},
@@ -135,4 +134,5 @@ map<wstring, wstring> Formula::_predefinedTeXFormulasAsString{
   {L"LaTeX",              L"\\text{L\\kern-0.4em\\raisebox{.45ex}{\\scalebox{0.7}{A}}\\kern-.2em T\\kern-.15em\\raisebox{-.5ex}{E}\\kern-.15em X}"},
   {L"IJ",                 L"{I\\kern-0.065em J}"},
   {L"ij",                 L"{i\\kern-0.065em j}"},
+  {L"idotsint",           L"\\int\\cdots\\int"},
 };
