@@ -10,12 +10,6 @@ CharBox::CharBox(const Char& chr) : _chr(chr) {
   _width = chr.width();
   _height = chr.height();
   _depth = chr.depth();
-  _italic = chr.italic();
-}
-
-void CharBox::addItalicCorrectionToWidth() {
-  _width += _italic;
-  _italic = 0;
 }
 
 void CharBox::draw(Graphics2D& g2, float x, float y) {

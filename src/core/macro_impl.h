@@ -1184,23 +1184,6 @@ inline macro(surd) {
   return sptrOf<VCenteredAtom>(SymbolAtom::get("surdsign"));
 }
 
-inline macro(idotsint) {
-  auto* integral = new SymbolAtom(*(SymbolAtom::get("int")));
-  integral->_limitsType = LimitsType::noLimits;
-  sptr<Atom> i(integral);
-  auto* ra = new RowAtom(i);
-  ra->add(sptrOf<SpaceAtom>(UnitType::mu, -1.f, 0.f, 0.f));
-  auto cdotp = SymbolAtom::get("cdotp");
-  auto* cdots = new RowAtom(cdotp);
-  cdots->add(cdotp);
-  cdots->add(cdotp);
-  ra->add(sptrOf<TypedAtom>(AtomType::inner, AtomType::inner, sptr<Atom>(cdots)));
-  ra->add(sptrOf<SpaceAtom>(UnitType::mu, -1.f, 0.f, 0.f));
-  ra->add(i);
-  ra->_lookAtLastAtom = true;
-  return sptrOf<TypedAtom>(AtomType::bigOperator, AtomType::bigOperator, sptr<Atom>(ra));
-}
-
 inline macro(lmoustache) {
   auto* s = new SymbolAtom(*(SymbolAtom::get("lmoustache")));
   auto b = sptrOf<BigDelimiterAtom>(sptr<SymbolAtom>(s), 1);

@@ -25,7 +25,7 @@ private:
 public:
   CharSymbol() : _isText(false) {}
 
-  /** Mark as text symbol (used by Dummy) */
+  /** Mark as text symbol */
   inline void markAsText() {
     _isText = true;
   }

@@ -45,6 +45,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(3, macro_renewenvironment, "renewenvironment"),
     mac(0, macro_makeatletter, "makeatletter"),
     mac(0, macro_makeatother, "makeatother"),
+  // region array environments
     mac(1, macro_smallmatrixATATenv, "smallmatrix@@env"),
     mac(1, macro_matrixATATenv, "matrix@@env"),
     mac(2, macro_arrayATATenv, "array@@env"),
@@ -56,6 +57,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(2, macro_multlineATATenv, "multline@@env"),
     mac(2, macro_gatherATATenv, "gather@@env"),
     mac(2, macro_gatheredATATenv, "gathered@@env"),
+  // endregion
     mac(1, macro_hvspace, "hspace"),
     mac(1, macro_hvspace, "vspace"),
     mac(1, macro_clrlap, "llap"),
@@ -283,8 +285,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_muskips, "negthickspace"),
     mac(0, macro_quad, "quad"),
     mac(0, macro_surd, "surd"),
-
-    // mac(0, macro_idotsint, "idotsint"),
 
     mac(0, macro_lmoustache, "lmoustache"),
     mac(0, macro_rmoustache, "rmoustache"),

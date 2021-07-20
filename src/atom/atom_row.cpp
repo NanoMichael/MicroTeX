@@ -227,20 +227,7 @@ sptr<Box> RowAtom::createBox(Env& env) {
       }
     }
 
-    // 5. Create box
-    curr->setPreviousAtom(_previousAtom);
-    auto box = curr->createBox(env);
-    auto charBox = dynamic_cast<CharBox*>(box.get());
-    if (charBox != nullptr
-        && !curr->isCharInMathMode()
-        && dynamic_cast<CharSymbol*>(nextAtom.get()) != nullptr
-      ) {
-      // When we have a single char, we need to add italic correction
-      // As an example, (TVY) looks crappy
-      charBox->addItalicCorrectionToWidth();
-    }
-
-    // 6. Add break mark to box
+    // 5. Add break mark to box
     if (_breakable) {
       if (_breakEveywhere) {
         hbox->addBreakPosition(hbox->size());
@@ -256,9 +243,19 @@ sptr<Box> RowAtom::createBox(Env& env) {
       }
     }
 
+    // 6. Add italic
+    curr->setPreviousAtom(_previousAtom);
+    auto box = curr->createBox(env);
+    if (auto cb = dynamic_cast<CharBox*>(box.get());
+      cb != nullptr
+      && nextAtom != nullptr
+      && nextAtom->isChar()) {
+      kern += cb->italic();
+    }
+
     // 7. Append atom's box and kerning to horizontal box
     hbox->add(box);
-    if (std::abs(kern) > PREC) hbox->add(sptrOf<StrutBox>(kern, 0.f, 0.f, 0.f));
+    if (std::abs(kern) > PREC) hbox->add(StrutBox::create(kern));
 
     env.setLastFontId(box->lastFontId());
     // kerning do not interfere with the normal glue-rules without kerning

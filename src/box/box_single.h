@@ -70,7 +70,6 @@ public:
 class CharBox : public Box {
 private:
   Char _chr;
-  float _italic;
 
 public:
   CharBox() = delete;
@@ -83,9 +82,7 @@ public:
    */
   explicit CharBox(const Char& chr);
 
-  inline float italic() const { return _italic; }
-
-  void addItalicCorrectionToWidth();
+  inline float italic() const { return _chr.italic(); }
 
   void draw(Graphics2D& g2, float x, float y) override;
 
