@@ -8,7 +8,7 @@ using namespace tex;
 using namespace std;
 
 sptr<Box> StackAtom::changeWidth(const sptr<Box>& b, float maxWidth) {
-  if (b != nullptr && abs(maxWidth - b->_width) > PREC) {
+  if (b != nullptr && maxWidth - b->_width > PREC) {
     return sptrOf<HBox>(b, maxWidth, Alignment::center);
   }
   return b;
@@ -52,7 +52,7 @@ sptr<Box> StackAtom::createBox(Env& env) {
 
   // over script + space
   if (o != nullptr && !o->isSpace()) {
-    auto ob = changeWidth(o, maxWidth);
+    auto ob = changeWidth(o, maxWidth - delta / 2);
     ob->_shift = delta / 2;
     vbox->add(ob);
     if (_over.isAutoSpace) {
@@ -85,7 +85,7 @@ sptr<Box> StackAtom::createBox(Env& env) {
     } else {
       vbox->add(SpaceAtom(_under.spaceUnit, 0.f, _under.space, 0.f).createBox(env));
     }
-    auto ub = changeWidth(u, maxWidth);
+    auto ub = changeWidth(u, maxWidth - delta / 2);
     ub->_shift = -delta / 2;
     vbox->add(ub);
   }

@@ -17,7 +17,7 @@ static const float F_MIN = -F_MAX;
 /** Pi */
 static const double PI = atan(1.0) * 4;
 /** Precision, for compare with 0.0f, if a value < PREC, we trade it as 0.0f */
-static const float PREC = 0.0000001f;
+static const float PREC = 0.01;
 
 }  // namespace tex
 
