@@ -69,16 +69,6 @@ public:
   __decl_clone(CedillaAtom)
 };
 
-/** An atom representing ddots */
-class DdtosAtom : public Atom {
-public:
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
-
-  __decl_clone(DdtosAtom)
-};
-
 /** An atom representing a boxed base atom */
 class FBoxAtom : public Atom {
 protected:
@@ -288,35 +278,6 @@ public:
   __decl_clone(FractionAtom)
 };
 
-/** An atom representing id-dots */
-class IddotsAtom : public Atom {
-public:
-  sptr<Box> createBox(Env& env) override {
-    auto ldots = Formula::get(L"ldots")->_root->createBox(env);
-    float w = ldots->_width;
-    auto dot = SymbolAtom::get("ldotp")->createBox(env);
-    sptr<Box> hb1(new HBox(dot, w, Alignment::right));
-    sptr<Box> hb2(new HBox(dot, w, Alignment::center));
-    sptr<Box> hb3(new HBox(dot, w, Alignment::left));
-    sptr<Box> pt4 = SpaceAtom(UnitType::mu, 0, 4, 0).createBox(env);
-
-    auto* vb = new VBox();
-    vb->add(hb1);
-    vb->add(pt4);
-    vb->add(hb2);
-    vb->add(pt4);
-    vb->add(hb3);
-
-    float h = vb->_height + vb->_depth;
-    vb->_height = h;
-    vb->_depth = 0;
-
-    return sptr<Box>(vb);
-  }
-
-  __decl_clone(IddotsAtom)
-};
-
 /** An atom representing a italic atom */
 class ItAtom : public Atom {
 private:
@@ -443,7 +404,13 @@ public:
   AtomType rightType() const override { return _base->rightType(); }
 
   sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
+    auto base = _base->createBox(env);
+    base->_shift = _ru == UnitType::none ? 0 : Units::fsize(_ru, -_r, env);
+    if (_hu == UnitType::none) return base;
+    auto hb = sptrOf<HBox>(base);
+    hb->_height = Units::fsize(_hu, _h, env);
+    hb->_depth = _du == UnitType::none ? 0 : Units::fsize(_du, _d, env);
+    return hb;
   }
 
   __decl_clone(RaiseAtom)
@@ -758,28 +725,6 @@ public:
   }
 
   __decl_clone(VCenteredAtom)
-};
-
-/** An atom representing vertical-dots */
-class VdotsAtom : public Atom {
-public:
-  sptr<Box> createBox(Env& env) override {
-    auto dot = SymbolAtom::get("ldotp")->createBox(env);
-    auto* vb = new VBox(dot, 0, Alignment::bottom);
-    auto b = SpaceAtom(UnitType::mu, 0, 4, 0).createBox(env);
-    vb->add(b);
-    vb->add(dot);
-    vb->add(b);
-    vb->add(dot);
-    float d = vb->_depth;
-    float h = vb->_height;
-    vb->_depth = 0;
-    vb->_height = d + h;
-
-    return sptr<Box>(vb);
-  }
-
-  __decl_clone(VdotsAtom)
 };
 
 /**

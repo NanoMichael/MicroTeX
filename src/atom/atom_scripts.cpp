@@ -33,7 +33,7 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
   bool isText = false, isOperator = false;
   const MathKernRecord* kernRecord = nullptr;
 
-  const auto checkSym = [&](const sptr<Atom>& atom, Env& targetEnv) {
+  const auto checkAtom = [&](const sptr<Atom>& atom, Env& targetEnv) {
     if (auto cs = dynamic_cast<CharSymbol*>(atom.get()); cs != nullptr) {
       const auto& chr = cs->getChar(targetEnv);
       kernRecord = &(chr.glyph()->math().kernRecord());
@@ -55,14 +55,14 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
     kernel = env.withStyle(
       env.crampStyle(),
       [&](Env& cramp) {
-        checkSym(acc->_base, cramp);
+        checkAtom(acc->_base, cramp);
         return acc->_base->createBox(cramp);
       }
     );
     base = _base->createBox(env);
   } else {
     // 2. char symbol or boxed
-    checkSym(_base, env);
+    checkAtom(_base, env);
     kernel = base = _base->createBox(env);
   }
 

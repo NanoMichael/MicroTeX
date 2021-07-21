@@ -36,33 +36,3 @@ sptr<Box> OperatorAtom::createBox(Env& env) {
   const StackArgs& under = StackArgs::autoSpace(_under);
   return StackAtom(_base, over, under).createBox(env);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

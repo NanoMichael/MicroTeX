@@ -66,6 +66,7 @@ target_sources(LaTeX PRIVATE
         src/atom/atom_vrow.cpp
         src/atom/atom_operator.cpp
         src/atom/atom_zstack.cpp
+        src/atom/atom_sideset.cpp
         src/atom/colors_def.cpp
         # box folder
         src/box/box.cpp

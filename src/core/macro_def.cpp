@@ -128,6 +128,8 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_accents, "grave"),
     mac(1, macro_accents, "dot"),
     mac(1, macro_accents, "ddot"),
+    mac(1, macro_accents, "dddot"),
+    mac(1, macro_accents, "ddddot"),
     mac(1, macro_accents, "breve"),
     mac(1, macro_accents, "bar"),
     mac(1, macro_accents, "vec"),
@@ -160,9 +162,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_mathopen, "mathopen"),
     mac(1, macro_mathclose, "mathclose"),
     mac(0, macro_joinrel, "joinrel"),
-    mac(0, macro_vdots, "vdots"),
-    mac(0, macro_ddots, "ddots"),
-    mac(0, macro_iddots, "iddots"),
     mac(0, macro_nolimits, "nolimits"),
     mac(0, macro_limits, "limits"),
     mac(0, macro_normal, "normal"),
@@ -198,10 +197,12 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_Bigr, "Bigr"),
     mac(1, macro_biggr, "biggr"),
     mac(1, macro_Biggr, "Biggr"),
+  // region styles
     mac(0, macro_displaystyle, "displaystyle"),
     mac(0, macro_textstyle, "textstyle"),
     mac(0, macro_scriptstyle, "scriptstyle"),
     mac(0, macro_scriptscriptstyle, "scriptscriptstyle"),
+  // endregion
     mac(3, macro_sideset, "sideset"),
     mac(3, macro_prescript, "prescript"),
     mac(1, macro_reflectbox, "reflectbox"),
@@ -214,7 +215,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_hphantom, "hphantom"),
     mac(1, macro_vphantom, "vphantom"),
     mac(0, macro_spATbreve, "sp@breve"),
-    mac(0, macro_spAThat, "sp@hat"),
   // region colors
     mac(3, macro_definecolor, "definecolor"),
     mac(2, macro_fgcolor, "fgcolor"),
@@ -226,7 +226,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
 
     mac(1, macro_cedilla, "c"),
     mac(1, macro_ogonek, "k"),
-    mac(0, macro_cong, "cong"),
     mac(1, macro_externalfont, "externalFont"),
     mac(1, macro_text, "Text"),
     mac(1, macro_textit, "Textit"),
@@ -247,7 +246,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_sizes, "Huge"),
     mac(1, macro_mathcumsup, "mathcumsup"),
     mac(1, macro_mathcumsub, "mathcumsub"),
-    mac(0, macro_dotminus, "dotminus"),
     mac(0, macro_ratio, "ratio"),
     mac(0, macro_minuscolon, "minuscolon"),
     mac(0, macro_minuscoloncolon, "minuscoloncolon"),
@@ -369,14 +367,8 @@ void NewCommandMacro::_init_() {
   cmd(1, L"pmod", L"\\qquad\\mathbin{(\\mathrm{mod}\\ #1)}");
   cmd(1, L"mod", L"\\qquad\\mathbin{\\mathrm{mod}\\ #1}");
   cmd(1, L"pod", L"\\qquad\\mathbin{(#1)}");
-  cmd(1, L"dddot", L"\\mathop{#1}\\limits^{...}");
-  cmd(1, L"ddddot", L"\\mathop{#1}\\limits^{....}");
-  cmd(0, L"spdddot", L"^{\\mathrm{...}}");
   cmd(0, L"spbreve", L"^{\\makeatletter\\sp@breve\\makeatother}");
-  cmd(0, L"sphat", L"^{\\makeatletter\\sp@hat\\makeatother}");
-  cmd(0, L"spddot", L"^{\\displaystyle..}");
   cmd(0, L"spcheck", L"^{\\vee}");
-  cmd(0, L"sptilde", L"^{\\sim}");
   cmd(0, L"spdot", L"^{\\displaystyle.}");
   cmd(1, L"d", L"\\underaccent{\\dot}{#1}");
   cmd(1, L"b", L"\\underaccent{\\bar}{#1}");
@@ -395,6 +387,5 @@ void NewCommandMacro::_init_() {
   cmd(0, L"copyright", L"\\textcircled{\\raisebox{0.2ex}{c}}");
   cmd(0, L"L", L"\\mathrm{\\polishlcross L}");
   cmd(0, L"l", L"\\mathrm{\\polishlcross l}");
-  cmd(0, L"Join", L"\\mathop{\\rlap{\\ltimes}\\rtimes}");
   // endregion
 }

@@ -132,35 +132,6 @@ sptr<Box> PhantomAtom::createBox(Env& env) {
   return sptrOf<StrutBox>(w, h, d, s);
 }
 
-/*********************************** SideSetsAtom implementation **********************************/
-
-sptr<Box> SideSetsAtom::createBox(Env& env) {
-  if (_base == nullptr) {
-    // create a phantom to place side-sets
-    auto in = sptrOf<CharAtom>(L'M', "mathnormal");
-    _base = sptrOf<PhantomAtom>(in, false, true, true);
-  }
-
-  auto bb = _base->createBox(env);
-  auto pa = sptrOf<PlaceholderAtom>(0.f, bb->_height, bb->_depth, bb->_shift);
-
-  auto* l = dynamic_cast<ScriptsAtom*>(_left.get());
-  auto* r = dynamic_cast<ScriptsAtom*>(_right.get());
-
-  if (l != nullptr && l->_base == nullptr) {
-    l->_base = pa;
-    l->_align = Alignment::right;
-  }
-  if (r != nullptr && r->_base == nullptr) r->_base = pa;
-
-  auto hb = new HBox();
-  if (_left != nullptr) hb->add(_left->createBox(env));
-  hb->add(bb);
-  if (_right != nullptr) hb->add(_right->createBox(env));
-
-  return sptr<Box>(hb);
-}
-
 /******************************** OverUnderDelimiter implementation *******************************/
 
 float OverUnderDelimiter::getMaxWidth(const Box* b, const Box* del, const Box* script) {

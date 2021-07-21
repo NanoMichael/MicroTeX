@@ -5,6 +5,7 @@
 
 #include "atom/atom_basic.h"
 #include "atom/atom_impl.h"
+#include "atom/atom_sideset.h"
 #include "core/split.h"
 #include "core/formula.h"
 #include "core/macro.h"
@@ -108,12 +109,6 @@ inline macro(Set) {
 
 inline macro(spATbreve) {
   auto* vra = new VRowAtom(Formula(L"\\displaystyle\\!\\breve{}")._root);
-  vra->setRaise(UnitType::ex, 0.6f);
-  return sptrOf<SmashedAtom>(sptr<Atom>(vra), "");
-}
-
-inline macro(spAThat) {
-  auto* vra = new VRowAtom(Formula(L"\\displaystyle\\widehat{}")._root);
   vra->setRaise(UnitType::ex, 0.6f);
   return sptrOf<SmashedAtom>(sptr<Atom>(vra), "");
 }
@@ -439,18 +434,6 @@ inline macro(joinrel) {
 inline macro(smash) {
   const std::string x = wide2utf8(args[2]);
   return sptrOf<SmashedAtom>(Formula(tp, args[1], false)._root, x);
-}
-
-inline macro(vdots) {
-  return sptrOf<VdotsAtom>();
-}
-
-inline macro(ddots) {
-  return sptrOf<TypedAtom>(AtomType::inner, AtomType::inner, sptrOf<DdtosAtom>());
-}
-
-inline macro(iddots) {
-  return sptrOf<TypedAtom>(AtomType::inner, AtomType::inner, sptrOf<IddotsAtom>());
 }
 
 inline macro(leftparenthesis) {
@@ -910,14 +893,6 @@ inline macro(fcolorbox) {
   return sptrOf<FBoxAtom>(Formula(tp, args[3])._root, f, b);
 }
 
-inline macro(cong) {
-  auto* vra = new VRowAtom(SymbolAtom::get("equals"));
-  vra->prepend(sptrOf<SpaceAtom>(UnitType::mu, 0.f, 1.5f, 0.f));
-  vra->prepend(SymbolAtom::get("sim"));
-  vra->setRaise(UnitType::mu, -1);
-  return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, sptr<Atom>(vra));
-}
-
 inline macro(externalfont) {
   std::string x = wide2utf8(args[1]);
   TextRenderingBox::setFont(x);
@@ -996,11 +971,6 @@ inline sptr<Atom> _underover(
 
 inline sptr<Atom> _colon() {
   return _underover("normaldot", "normaldot", 5.2f);
-}
-
-inline macro(dotminus) {
-  sptr<Atom> a = _underover("minus", "normaldot", -3.3f);
-  return sptrOf<TypedAtom>(AtomType::binaryOperator, AtomType::binaryOperator, a);
 }
 
 inline macro(ratio) {
