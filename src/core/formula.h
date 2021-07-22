@@ -49,7 +49,7 @@ public:
   static std::map<std::wstring, std::wstring> _predefinedTeXFormulasAsString;
 
   // character-to-symbol and character-to-delimiter mappings
-  static std::map<int, std::string> _symbolMappings;
+  static std::map<c32, std::string> _symbolMappings;
   static std::map<int, std::string> _symbolTextMappings;
   static std::map<int, std::string> _symbolFormulaMappings;
 

@@ -928,5 +928,11 @@ void TeXParser::parse() {
 
 sptr<Atom> TeXParser::convertCharacter(wchar_t chr) {
   const c32 code = tex::convertToRomanNumber(chr);
+  if (_isMathMode) {
+    const auto it = Formula::_symbolMappings.find(code);
+    if (it != Formula::_symbolMappings.end()) {
+      return SymbolAtom::get(it->second);
+    }
+  }
   return sptrOf<CharAtom>(code, _isMathMode);
 }
