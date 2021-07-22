@@ -2741,7 +2741,7 @@ const Symbol Symbol::_symbols[]{
   {0x02934, ord,     "uprightcurvearrow"},
   {0x003E1, ord | F, "upsampi"},
   {0x003C3, ord | F, "upsigma"},
-  {0x003C5, ord | F, "upsilon"},
+  {0x003C5, ord,     "upsilon"},
   {0x003C5, ord | F, "upsilonup"},
   {0x003DB, ord | F, "upstigma"},
   {0x003C4, ord | F, "uptau"},
