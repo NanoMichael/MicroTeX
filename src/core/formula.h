@@ -42,8 +42,6 @@ private:
   TeXParser _parser;
 
 public:
-  std::map<std::string, std::string> _xmlMap;
-
   // predefined TeX formulas
   static std::map<std::wstring, sptr<Formula>> _predefinedTeXFormulas;
   static std::map<std::wstring, std::wstring> _predefinedTeXFormulasAsString;

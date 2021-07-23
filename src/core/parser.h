@@ -57,8 +57,6 @@ private:
   static const std::map<wchar_t, char> SUP_SCRIPT_MAP;
   static const std::map<wchar_t, char> SUB_SCRIPT_MAP;
 
-  static const std::set<std::wstring> _unparsedContents;
-
   /** Preprocess parse string */
   void preprocess();
 
@@ -105,8 +103,6 @@ private:
   );
 
 public:
-  static bool _isLoading;
-
   Formula* _formula;
 
   /**

@@ -15,7 +15,6 @@ Formula::Formula(
   bool preprocess,
   bool isMathMode
 ) : _parser(tp.isPartial(), latex, this, preprocess, isMathMode) {
-  _xmlMap = tp._formula->_xmlMap;
   if (tp.isPartial()) {
     try {
       _parser.parse();
@@ -118,7 +117,8 @@ void ArrayFormula::addRow() {
 void ArrayFormula::addRowSpecifier(const sptr<CellSpecifier>& spe) {
   auto it = _rowSpecifiers.find(_row);
   if (it == _rowSpecifiers.end()) {
-    _rowSpecifiers[_row] = vector<sptr<CellSpecifier>>();
+    _rowSpecifiers[_row] = vector<sptr<CellSpecifier>>
+      ();
   }
   _rowSpecifiers[_row].push_back(spe);
 }
@@ -127,7 +127,8 @@ void ArrayFormula::addCellSpecifier(const sptr<CellSpecifier>& spe) {
   string str = tostring(_row) + tostring(_col);
   auto it = _cellSpecifiers.find(str);
   if (it == _cellSpecifiers.end()) {
-    _cellSpecifiers[str] = vector<sptr<CellSpecifier>>();
+    _cellSpecifiers[str] = vector<sptr<CellSpecifier>>
+      ();
   }
   _cellSpecifiers[str].push_back(spe);
 }
@@ -164,7 +165,8 @@ void ArrayFormula::checkDimensions() {
     size_t j = _array[i].size();
     if (j != _col && _array[i][0] != nullptr && _array[i][0]->_type != AtomType::interText) {
       // Fill the row with null atom
-      vector<sptr<Atom>>& r = _array[i];
+      vector<sptr<Atom>>
+        & r = _array[i];
       for (; j < _col; j++) r.push_back(nullptr);
     }
   }

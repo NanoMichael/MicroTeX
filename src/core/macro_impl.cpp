@@ -500,36 +500,4 @@ macro(zstack) {
   return sptrOf<ZStackAtom>(hargs, vargs, atom, anchor);
 }
 
-macro(xml) {
-  map<string, string>& m = tp._formula->_xmlMap;
-  wstring str(args[1]);
-  wstring buf;
-  size_t start = 0;
-  size_t pos;
-  while ((pos = str.find(L'$')) != wstring::npos) {
-    if (pos < str.length() - 1) {
-      start = pos;
-      while (++start < str.length() && isalpha(str[start]));
-      wstring key = str.substr(pos + 1, start - pos - 1);
-      string x = wide2utf8(key);
-      auto it = m.find(x);
-      if (it != m.end()) {
-        buf.append(str.substr(0, pos));
-        wstring x = utf82wide(it->second.c_str());
-        buf.append(x);
-      } else {
-        buf.append(str.substr(0, start));
-      }
-      str = str.substr(start);
-    } else {
-      buf.append(str);
-      str = L"";
-    }
-  }
-  buf.append(str);
-  str = buf;
-
-  return Formula(tp, str)._root;
-}
-
 }  // namespace tex

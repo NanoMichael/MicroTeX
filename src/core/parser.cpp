@@ -62,17 +62,6 @@ const map<wchar_t, char> TeXParser::SUB_SCRIPT_MAP = {
   {0x208E, ')'},
 };
 
-const set<wstring> TeXParser::_unparsedContents = {
-  L"dynamic",
-  L"Text",
-  L"Textit",
-  L"Textbf",
-  L"Textitbf",
-  L"externalFont",
-};
-
-bool TeXParser::_isLoading = false;
-
 void TeXParser::init(
   bool isPartial,
   const wstring& latex,
@@ -676,8 +665,6 @@ void TeXParser::preprocess(wstring& cmd, Args& args, int& pos) {
     _atIsLetter++;
   } else if (cmd == L"makeatother") {
     _atIsLetter--;
-  } else if (_unparsedContents.find(cmd) != _unparsedContents.end()) {
-    getOptsArgs(1, 0, args);
   }
 }
 

@@ -1235,8 +1235,6 @@ macro(romannumeral);
 
 macro(muskips);
 
-macro(xml);
-
 macro(setmathfont);
 
 macro(zstack);
