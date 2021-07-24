@@ -43,8 +43,8 @@ private:
 
 public:
   // predefined TeX formulas
-  static std::map<std::wstring, sptr<Formula>> _predefinedTeXFormulas;
-  static std::map<std::wstring, std::wstring> _predefinedTeXFormulasAsString;
+  static std::map<std::wstring, sptr<Formula>> _predefFormulas;
+  static std::map<std::wstring, std::wstring> _predefFormulaStrs;
 
   // character-to-symbol and character-to-delimiter mappings
   static std::map<c32, std::string> _symbolMappings;
@@ -105,10 +105,7 @@ public:
    * Get a predefined Formula.
    *
    * @param name the name of the predefined Formula
-   * @return a <b>copy</b> of the predefined Formula
-   *
-   * @throw ex_formula_not_found
-   *      if no predefined Formula is found with the given name
+   * @return a <b>copy</b> of the predefined Formula or nullptr if not found
    */
   static sptr<Formula> get(const std::wstring& name);
 

@@ -5,7 +5,7 @@
 using namespace std;
 using namespace tex;
 
-map<wstring, sptr<Formula>> Formula::_predefinedTeXFormulas;
+map<wstring, sptr<Formula>> Formula::_predefFormulas;
 
 Formula::Formula() : _parser(L"", this, false) {}
 
@@ -63,19 +63,18 @@ sptr<Box> Formula::createBox(Env& env) {
 }
 
 sptr<Formula> Formula::get(const wstring& name) {
-  auto it = _predefinedTeXFormulas.find(name);
-  if (it == _predefinedTeXFormulas.end()) {
-    auto i = _predefinedTeXFormulasAsString.find(name);
-    if (i == _predefinedTeXFormulasAsString.end())
-      throw ex_formula_not_found(wide2utf8(name));
-    auto tf = sptrOf<Formula>(i->second);
-    auto* ra = dynamic_cast<RowAtom*>(tf->_root.get());
-    if (ra == nullptr) {
-      _predefinedTeXFormulas[name] = tf;
-    }
-    return tf;
+  auto it = _predefFormulas.find(name);
+  if (it != _predefFormulas.end()) return it->second;
+
+  auto i = _predefFormulaStrs.find(name);
+  if (i == _predefFormulaStrs.end()) return nullptr;
+
+  auto tf = sptrOf<Formula>(i->second);
+  auto* ra = dynamic_cast<RowAtom*>(tf->_root.get());
+  if (ra == nullptr) {
+    _predefFormulas[name] = tf;
   }
-  return it->second;
+  return tf;
 }
 
 /*************************************** ArrayFormula implementation ******************************/

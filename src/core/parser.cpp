@@ -475,24 +475,21 @@ sptr<Atom> TeXParser::processEscape() {
     return processCommands(command, mac);
   }
 
-  // TODO
+  sptr<Formula> predef = Formula::get(command);
+  if (predef != nullptr) return predef->_root;
+
   const string cmd = wide2utf8(command);
-  try {
-    return Formula::get(command)->_root;
-  } catch (ex_formula_not_found& e) {
-    try {
-      return SymbolAtom::get(cmd);
-    } catch (ex_symbol_not_found& ex) {}
-  }
+  sptr<Atom> sym = SymbolAtom::get(cmd);
+  if (sym != nullptr) return sym;
 
   // not a valid command or symbol or predefined Formula found
   if (!_isPartial) {
     throw ex_parse("Unknown symbol or command or predefined Formula: '" + cmd + "'");
   }
   auto rm = sptrOf<FontStyleAtom>(
-    FontStyle::rm,
+    FontStyle::tt,
     false,
-    Formula(L"\\text{\\}" + command)._root
+    Formula(L"\\text{{\\backslash}" + command + L"}")._root
   );
   return sptrOf<ColorAtom>(rm, TRANSPARENT, RED);
 }

@@ -25,89 +25,11 @@ public:
 };
 
 /**
- * Signals that an error occurred while loading the necessary resources into
- * memory.
- */
-class ex_res_parse : public ex_tex {
-public:
-  explicit ex_res_parse(const std::string& msg)
-    : ex_tex(msg) {}
-
-  explicit ex_res_parse(const std::string& msg, const exception& cause)
-    : ex_tex(msg, cause) {}
-};
-
-/**
- * Unknown predefined Formula name was used
- */
-class ex_formula_not_found : public ex_tex {
-public:
-  explicit ex_formula_not_found(const std::string& name)
-    : ex_tex("There's no predefined formula with the name '" + name + "'") {}
-};
-
-/**
- * Unknown atom type
- */
-class ex_invalid_atom_type : public ex_tex {
-public:
-  explicit ex_invalid_atom_type(const std::string& msg) : ex_tex(msg) {}
-};
-
-/**
- * Unknown delimiter
- */
-class ex_invalid_delimiter : public ex_tex {
-public:
-  explicit ex_invalid_delimiter(const std::string& symbolName)
-    : ex_tex("The symbol with the name '" + symbolName +
-             "' is not defined as a delimiter") {}
-
-  explicit ex_invalid_delimiter(const char& ch, const std::string& symbolName)
-    : ex_tex(
-    "The character '" + std::string({ch}) + "' is not mapped to a symbol with the name '" +
-    symbolName + "', but that symbol is not defined as a delimiter.") {}
-};
-
-/**
- * Unknown delimiter type
- */
-class ex_invalid_delimiter_type : public ex_tex {
-public:
-  explicit ex_invalid_delimiter_type() : ex_tex("The delimiter type was not valid!") {}
-};
-
-/**
- * Matrix dimension not valid
- */
-class ex_invalid_matrix : public ex_tex {
-public:
-  explicit ex_invalid_matrix(const std::string& msg) : ex_tex(msg) {}
-};
-
-/**
  * Invalid symbol
  */
 class ex_invalid_symbol_type : public ex_tex {
 public:
   explicit ex_invalid_symbol_type(const std::string& msg) : ex_tex(msg) {}
-};
-
-/**
- * Invalid Formula
- */
-class ex_invalid_formula : public ex_tex {
-public:
-  explicit ex_invalid_formula(const std::string& msg) : ex_tex(msg) {}
-};
-
-/**
- * Unknown unit constant was used
- */
-class ex_invalid_unit : public ex_tex {
-public:
-  explicit ex_invalid_unit()
-    : ex_tex("The unit was not valid! use the unit defined in 'TeXConstants'.") {}
 };
 
 /**
@@ -121,30 +43,12 @@ public:
 };
 
 /**
- * Symbol mapping not found
- */
-class ex_symbol_mapping_not_found : public ex_tex {
-public:
-  explicit ex_symbol_mapping_not_found(const std::string& symbolName)
-    : ex_tex("No mapping found for the symbol '" + symbolName + "'!") {}
-};
-
-/**
  * Unknown symbol
  */
 class ex_symbol_not_found : public ex_tex {
 public:
   explicit ex_symbol_not_found(const std::string& name)
     : ex_tex("There's no symbol with the name '" + name + "' defined.") {}
-};
-
-/**
- * Text style mapping not found
- */
-class ex_text_style_mapping_not_found : public ex_tex {
-public:
-  explicit ex_text_style_mapping_not_found(const std::string& name)
-    : ex_tex("No mapping found for the text style '" + name + "'!") {}
 };
 
 class ex_invalid_state : public ex_tex {

@@ -25,7 +25,7 @@ map<c32, string> Formula::_symbolMappings{
   {'<', "less"},
 };
 
-map<wstring, wstring> Formula::_predefinedTeXFormulasAsString{
+map<wstring, wstring> Formula::_predefFormulaStrs{
   {L"qquad",      L"\\quad\\quad"},
   {L" ",          L"\\nbsp"},
   // region dots

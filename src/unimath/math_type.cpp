@@ -213,7 +213,7 @@ map<FontStyle, sptr<const MathVersion>> MathVersion::_mathVersions{
   // composed styles
   version(FontStyle::bfit, '0', 0x1D482, 0x1D468, 0x1D736, 0x1D71C),
   version(FontStyle::bfcal, '0', 0x1D4EA, 0x1D4D0, 0x03B1, 0x0391),
-  version(FontStyle::bffrak, '0', 0x1D586, 0x1D552, 0x03B1, 0x0391),
+  version(FontStyle::bffrak, '0', 0x1D586, 0x1D56C, 0x03B1, 0x0391),
   version(FontStyle::sfbf, 0x1D7EC, 0x1D5EE, 0x1D5D4, 0x1D770, 0x1D756),
   version(FontStyle::sfit, '0', 0x1D622, 0x1D608, 0x03B1, 0x0391),
   version(FontStyle::sfbfit, '0', 0x1D656, 0x1D63C, 0x1D7AA, 0x1D790),
