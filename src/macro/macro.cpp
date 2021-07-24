@@ -1,5 +1,5 @@
-#include "core/macro.h"
-#include "core/macro_impl.h"
+#include "macro/macro.h"
+#include "macro/macro_impl.h"
 
 #include <string>
 

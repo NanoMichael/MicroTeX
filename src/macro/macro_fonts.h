@@ -1,7 +1,7 @@
 #ifndef LATEX_MACRO_FONTS_H
 #define LATEX_MACRO_FONTS_H
 
-#include "core/macro_decl.h"
+#include "macro/macro_decl.h"
 #include "atom/atom_impl.h"
 #include "atom/atom_font.h"
 #include "unimath/uni_font.h"

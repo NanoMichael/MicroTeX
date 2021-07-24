@@ -80,11 +80,12 @@ target_sources(LaTeX PRIVATE
         src/core/formula_def.cpp
         src/core/glue.cpp
         src/core/localized_num.cpp
-        src/core/macro.cpp
-        src/core/macro_def.cpp
-        src/core/macro_impl.cpp
         src/core/parser.cpp
         src/core/debug_config.cpp
+        # macro folder
+        src/macro/macro.cpp
+        src/macro/macro_def.cpp
+        src/macro/macro_impl.cpp
         # env folder
         src/env/env.cpp
         src/env/units.cpp

@@ -3,7 +3,7 @@
 #include "atom/atom_basic.h"
 #include "atom/atom_font.h"
 #include "core/formula.h"
-#include "core/macro.h"
+#include "macro/macro.h"
 #include "graphic/graphic.h"
 #include "env/units.h"
 #include "utils/string_utils.h"

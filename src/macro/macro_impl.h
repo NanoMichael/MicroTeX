@@ -3,14 +3,14 @@
 
 #include <memory>
 
-#include "core/macro_decl.h"
 #include "atom/atom_basic.h"
 #include "atom/atom_impl.h"
 #include "atom/atom_sideset.h"
 #include "core/split.h"
 #include "core/formula.h"
-#include "core/macro.h"
 #include "core/parser.h"
+#include "macro/macro.h"
+#include "macro/macro_decl.h"
 #include "graphic/graphic.h"
 #include "utils/string_utils.h"
 #include "utils/utf.h"
@@ -24,14 +24,6 @@ inline macro(fatalIfCmdConflict) {
 
 inline macro(breakEverywhere) {
   RowAtom::_breakEveywhere = args[1] == L"true";
-  return nullptr;
-}
-
-inline macro(multirow) {
-  if (!tp.isArrayMode()) throw ex_parse("Command \\multirow must used in array environment!");
-  int n = 0;
-  valueof(args[1], n);
-  tp.addAtom(sptrOf<MultiRowAtom>(n, args[2], Formula(tp, args[3])._root));
   return nullptr;
 }
 
@@ -464,137 +456,6 @@ inline macro(backslashcr) {
   return macro_cr(tp, args);
 }
 
-inline macro(smallmatrixATATenv) {
-  auto* arr = new ArrayFormula();
-  TeXParser parser(tp.isPartial(), args[1], arr, false);
-  parser.parse();
-  arr->checkDimensions();
-  return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::smallMatrix);
-}
-
-inline macro(matrixATATenv) {
-  auto* arr = new ArrayFormula();
-  TeXParser parser(tp.isPartial(), args[1], arr, false);
-  parser.parse();
-  arr->checkDimensions();
-  return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::matrix);
-}
-
-inline macro(multicolumn) {
-  int n = 0;
-  valueof(args[1], n);
-  const std::string x = wide2utf8(args[2]);
-  tp.addAtom(sptrOf<MulticolumnAtom>(n, x, Formula(tp, args[3])._root));
-  ((ArrayFormula*) tp._formula)->addCol(n);
-  return nullptr;
-}
-
-inline macro(hdotsfor) {
-  if (!tp.isArrayMode())
-    throw ex_parse("Command 'hdotsfor' only available in array mode!");
-  int n = 0;
-  valueof(args[1], n);
-  float f = 1.f;
-  if (!args[2].empty()) valueof(args[2], f);
-  tp.addAtom(sptrOf<HdotsforAtom>(n, f));
-  ((ArrayFormula*) tp._formula)->addCol(n);
-  return nullptr;
-}
-
-inline macro(arrayATATenv) {
-  auto* arr = new ArrayFormula();
-  TeXParser parser(tp.isPartial(), args[2], arr, false);
-  parser.parse();
-  arr->checkDimensions();
-  return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), args[1], true);
-}
-
-inline macro(alignATATenv) {
-  auto* arr = new ArrayFormula();
-  TeXParser parser(tp.isPartial(), args[1], arr, false);
-  parser.parse();
-  arr->checkDimensions();
-  return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::align);
-}
-
-inline macro(flalignATATenv) {
-  auto* arr = new ArrayFormula();
-  TeXParser parser(tp.isPartial(), args[1], arr, false);
-  parser.parse();
-  arr->checkDimensions();
-  return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::flAlign);
-}
-
-inline macro(alignatATATenv) {
-  auto* arr = new ArrayFormula();
-  TeXParser par(tp.isPartial(), args[2], arr, false);
-  par.parse();
-  arr->checkDimensions();
-  size_t n = 0;
-  valueof(args[1], n);
-  if (arr->cols() != 2 * n) throw ex_parse("Bad number of equations in alignat environment!");
-
-  return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::alignAt);
-}
-
-inline macro(alignedATATenv) {
-  auto* arr = new ArrayFormula();
-  TeXParser p(tp.isPartial(), args[1], arr, false);
-  p.parse();
-  arr->checkDimensions();
-  return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::aligned);
-}
-
-inline macro(alignedatATATenv) {
-  auto* arr = new ArrayFormula();
-  TeXParser p(tp.isPartial(), args[2], arr, false);
-  p.parse();
-  arr->checkDimensions();
-  size_t n = 0;
-  valueof(args[1], n);
-  if (arr->cols() != 2 * n) {
-    throw ex_parse("Bad number of equations in alignedat environment!");
-  }
-
-  return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::alignedAt);
-}
-
-inline macro(multlineATATenv) {
-  auto* arr = new ArrayFormula();
-  TeXParser p(tp.isPartial(), args[1], arr, false);
-  p.parse();
-  arr->checkDimensions();
-  if (arr->cols() > 1) {
-    throw ex_parse("Requires exact one column in multiline environment!");
-  }
-  if (arr->cols() == 0) return nullptr;
-
-  return sptrOf<MultlineAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MultiLineType::multiline);
-}
-
-inline macro(gatherATATenv) {
-  auto* arr = new ArrayFormula();
-  TeXParser p(tp.isPartial(), args[1], arr, false);
-  p.parse();
-  arr->checkDimensions();
-  if (arr->cols() > 1) throw ex_parse("Requires exact one column in gather environment!");
-  if (arr->cols() == 0) return nullptr;
-
-  return sptrOf<MultlineAtom>(
-    tp.isPartial(), sptr<ArrayFormula>(arr), MultiLineType::gather);
-}
-
-inline macro(gatheredATATenv) {
-  auto* arr = new ArrayFormula();
-  TeXParser p(tp.isPartial(), args[1], arr, false);
-  p.parse();
-  arr->checkDimensions();
-  if (arr->cols() > 1) throw ex_parse("Requires exact one column in gathered environment!");
-  if (arr->cols() == 0) return nullptr;
-
-  return sptrOf<MultlineAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MultiLineType::gathered);
-}
-
 inline macro(shoveright) {
   auto a = Formula(tp, args[1])._root;
   a->_alignment = Alignment::right;
@@ -734,26 +595,6 @@ inline macro(biggr) { return _big(tp, args, 3, AtomType::closing); }
 
 inline macro(Biggr) { return _big(tp, args, 4, AtomType::closing); }
 
-inline macro(displaystyle) {
-  auto g = Formula(tp, tp.getOverArgument(), false)._root;
-  return sptrOf<StyleAtom>(TexStyle::display, g);
-}
-
-inline macro(scriptstyle) {
-  auto g = Formula(tp, tp.getOverArgument(), false)._root;
-  return sptrOf<StyleAtom>(TexStyle::script, g);
-}
-
-inline macro(textstyle) {
-  auto g = Formula(tp, tp.getOverArgument(), false)._root;
-  return sptrOf<StyleAtom>(TexStyle::text, g);
-}
-
-inline macro(scriptscriptstyle) {
-  auto g = Formula(tp, tp.getOverArgument(), false)._root;
-  return sptrOf<StyleAtom>(TexStyle::scriptScript, g);
-}
-
 inline macro(rotatebox) {
   float angle = 0;
   if (!args[1].empty()) valueof(args[1], angle);
@@ -816,7 +657,7 @@ inline macro(bgcolor) {
 }
 
 inline macro(textcolor) {
-  auto a = Formula(tp, args[2])._root;
+  auto a = Formula(tp, args[2], false, false)._root;
   std::string x = wide2utf8(args[1]);
   return sptrOf<ColorAtom>(a, TRANSPARENT, ColorAtom::getColor(x));
 }
@@ -858,12 +699,6 @@ inline macro(magnification) {
   valueof(args[1], x);
   // DefaultTeXFont::setMagnification(x);
   return nullptr;
-}
-
-inline macro(hline) {
-  if (!tp.isArrayMode())
-    throw ex_parse("The macro \\hline only available in array mode!");
-  return sptrOf<HlineAtom>();
 }
 
 inline macro(mathcumsup) {
