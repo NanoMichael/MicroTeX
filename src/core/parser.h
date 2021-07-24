@@ -82,8 +82,6 @@ private:
    */
   sptr<Atom> processCommands(const std::wstring& cmd, MacroInfo* mac);
 
-  void skipWhiteSpace();
-
   /** Replace the script-characters with command. */
   bool replaceScript();
 
@@ -178,6 +176,8 @@ public:
     init(isPartial, latex, formula, preprocess);
     _isMathMode = isMathMode;
   }
+
+  void skipWhiteSpace(int count = -1);
 
   /** Reset the parser with a new latex expression */
   void reset(const std::wstring& latex);

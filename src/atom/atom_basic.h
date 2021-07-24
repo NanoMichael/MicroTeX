@@ -244,20 +244,6 @@ public:
   __decl_clone(ColorAtom)
 };
 
-/** An atom representing a roman atom */
-class RomanAtom : public Atom {
-public:
-  sptr<Atom> _base;
-
-  RomanAtom() = delete;
-
-  explicit RomanAtom(const sptr<Atom>& base) : _base(base) {}
-
-  sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(RomanAtom)
-};
-
 /** An atom representing another atom that should be drawn invisibly */
 class PhantomAtom : public Atom, public Row {
 private:

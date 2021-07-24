@@ -1,6 +1,7 @@
 #include "core/parser.h"
 #include "atom/atom.h"
 #include "atom/atom_basic.h"
+#include "atom/atom_font.h"
 #include "core/formula.h"
 #include "core/macro.h"
 #include "graphic/graphic.h"
@@ -361,9 +362,10 @@ wstring TeXParser::getCommandWithArgs(const wstring& command) {
   return mac_arg;
 }
 
-void TeXParser::skipWhiteSpace() {
+void TeXParser::skipWhiteSpace(int count) {
+  count = count >= 0 ? count : std::numeric_limits<int>::max();
   wchar_t c;
-  while (_pos < _len) {
+  while (_pos < _len && count > 0) {
     c = _latex[_pos];
     if (c != ' ' && c != '\t' && c != '\n' && c != '\r') break;
     if (c == '\n') {
@@ -371,6 +373,7 @@ void TeXParser::skipWhiteSpace() {
       _col = _pos;
     }
     _pos++;
+    count--;
   }
 }
 
@@ -472,6 +475,7 @@ sptr<Atom> TeXParser::processEscape() {
     return processCommands(command, mac);
   }
 
+  // TODO
   const string cmd = wide2utf8(command);
   try {
     return Formula::get(command)->_root;
@@ -485,8 +489,11 @@ sptr<Atom> TeXParser::processEscape() {
   if (!_isPartial) {
     throw ex_parse("Unknown symbol or command or predefined Formula: '" + cmd + "'");
   }
-  // Show invalid command
-  auto rm = sptrOf<RomanAtom>(Formula(L"\\backslash " + command)._root);
+  auto rm = sptrOf<FontStyleAtom>(
+    FontStyle::rm,
+    false,
+    Formula(L"\\text{\\}" + command)._root
+  );
   return sptrOf<ColorAtom>(rm, TRANSPARENT, RED);
 }
 

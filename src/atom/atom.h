@@ -3,6 +3,7 @@
 
 #undef DEBUG
 
+#include "utils/utils.h"
 #include "box/box.h"
 
 namespace tex {

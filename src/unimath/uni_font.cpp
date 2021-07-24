@@ -13,12 +13,14 @@ OtfFont::OtfFont(i32 id, string fontFile, const string& clmFile)
 FontStyle FontFamily::fontStyleOf(const std::string& name) {
   // TODO: add composed styles
   static const map<string, FontStyle> nameStyle{
-    {"",   FontStyle::none},
-    {"rm", FontStyle::rm},
-    {"bf", FontStyle::bf},
-    {"it", FontStyle::it},
-    {"sf", FontStyle::sf},
-    {"tt", FontStyle::tt},
+    {"",     FontStyle::rm},
+    {"rm",   FontStyle::rm},
+    {"bf",   FontStyle::bf},
+    {"it",   FontStyle::it},
+    {"sf",   FontStyle::sf},
+    {"tt",   FontStyle::tt},
+    {"cal",  FontStyle::cal},
+    {"frak", FontStyle::frak},
   };
   const auto it = nameStyle.find(name);
   if (it == nameStyle.end()) return FontStyle::none;
@@ -31,7 +33,11 @@ void FontFamily::add(const std::string& styleName, const sptr<const OtfFont>& fo
 
 sptr<const OtfFont> FontFamily::get(FontStyle style) const {
   const auto it = _styles.find(style);
-  return it == _styles.end() ? nullptr : it->second;
+  if (it == _styles.end()) {
+    const auto rm = _styles.find(FontStyle::rm);
+    return rm == _styles.end() ? nullptr : rm->second;
+  }
+  return it->second;
 }
 
 int FontContext::_lastId = 0;

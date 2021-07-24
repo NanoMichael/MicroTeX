@@ -14,7 +14,6 @@ private:
   static float PIXELS_PER_POINT;
 
   TexStyle _style = TexStyle::display;
-  std::string _textStyle;
   bool _smallCap = false;
   float _scaleFactor = 1.f;
 
@@ -25,7 +24,12 @@ private:
   float _lineSpace = 1.f;
   float _fixedScale = 1.f;
 
-  FontStyle _fontStyle = FontStyle::none;
+  FontStyle _textFontStyle = FontStyle::none;
+  FontStyle _mathFontStyle = FontStyle::none;
+
+  void addFontStyle(FontStyle style, FontStyle& target);
+
+  void removeFontStyle(FontStyle style, FontStyle& target);
 
 public:
   no_copy_assign(Env);
@@ -49,7 +53,6 @@ public:
   // endregion
 
   // region getters and setters
-
   /** Get the scale factor of the current environment */
   float scale() const;
 
@@ -98,8 +101,6 @@ public:
   /** The style to display formulas */
   inline TexStyle style() const { return _style; }
 
-  inline const std::string& textStyle() const { return _textStyle; }
-
   /** The text size, in point */
   inline float textSize() const { return FIXED_TEXT_SIZE; }
 
@@ -110,8 +111,10 @@ public:
   inline float lineSpace() const { return _lineSpace; }
 
   /** The font style to display formulas */
-  inline FontStyle fontStyle() const { return _fontStyle; }
-  // endregion
+  inline FontStyle mathFontStyle() const { return _mathFontStyle; }
+
+  /** The font style to display text */
+  inline FontStyle textFontStyle() const { return _textFontStyle; }
 
   /** The last used font's id, or the math font's id if no font was used */
   inline i32 lastFontId() const {
@@ -122,9 +125,9 @@ public:
   inline i32 mathFontId() const {
     return _fctx->mathFontId();
   }
+  // endregion
 
   // region Font related
-
   /** Helper function to get math constants */
   const MathConsts& mathConsts() const;
 
@@ -149,19 +152,23 @@ public:
   /** The axis height */
   float axisHeight() const;
 
-  /** Add a font style to this environment */
-  void addFontStyle(FontStyle style);
+  /** Add a math font style to this environment */
+  void addMathFontStyle(FontStyle style);
 
-  /** Remove a font style from this environment */
-  void removeFontStyle(FontStyle style);
+  /** Remove a math font style from this environment */
+  void removeMathFontStyle(FontStyle style);
+
+  /** Add a text font style to this environment */
+  void addTextFontStyle(FontStyle style);
+
+  /** Remove a text font style from this environment */
+  void removeTextFontStyle(FontStyle style);
 
   /** Select math font to paint formulas from given name and style */
   void selectMathFont(const std::string& name, MathStyle style);
-
   // endregion
 
   // region Styles
-
   /** Test if current style is cramped */
   inline bool isCrampedStyle() const {
     return crampStyle() == _style;
@@ -184,11 +191,10 @@ public:
 
   /** Style to display superscripts */
   TexStyle supStyle() const;
-
   // endregion
 
   /**
-   * Get a Char specifying the given character with scale information depending
+   * Get a Char describe the given character with scale information depending
    * on the current environment.
    *
    * @param code the alphanumeric character code-point
@@ -201,7 +207,7 @@ public:
   Char getChar(c32 code, bool isMathMode, FontStyle style = FontStyle::invalid) const;
 
   /**
-   * Get a Char specifying the given symbol with scale information depending
+   * Get a Char describe the given symbol with scale information depending
    * on the current environment.
    *
    * @param sym the symbol
@@ -228,11 +234,12 @@ public:
    * return.
    */
   template<typename F>
-  auto withFontStyle(const FontStyle style, F&& f) -> decltype(f(*this)) {
-    auto oldStyle = _fontStyle;
-    _fontStyle = style;
+  auto withFontStyle(const FontStyle style, bool isMathMode, F&& f) -> decltype(f(*this)) {
+    auto oldStyle = isMathMode ? _mathFontStyle : _textFontStyle;
+    auto& target = isMathMode ? _mathFontStyle : _textFontStyle;
+    target = style;
     auto result = f(*this);
-    _fontStyle = oldStyle;
+    target = oldStyle;
     return result;
   }
 };

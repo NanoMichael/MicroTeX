@@ -9,10 +9,6 @@
 using namespace std;
 using namespace tex;
 
-/***************************************************************************************************
- *                                     basic atom implementation                                   *
- ***************************************************************************************************/
-
 sptr<Box> MathFontAtom::createBox(Env& env) {
   env.selectMathFont(_fontName, _mathStyle);
   return StrutBox::empty();
@@ -23,8 +19,6 @@ sptr<Box> ScaleAtom::createBox(Env& env) {
 }
 
 sptr<Box> MathAtom::createBox(Env& env) {
-  const auto fontStyle = env.fontStyle();
-  env.removeFontStyle(FontStyle::rm);
   const auto style = env.style();
   // if parent style greater than "this style", that means the parent uses smaller font size,
   // then uses parent style instead
@@ -32,7 +26,6 @@ sptr<Box> MathAtom::createBox(Env& env) {
     env.setStyle(_style);
   }
   auto box = _base->createBox(env);
-  env.addFontStyle(fontStyle);
   env.setStyle(style);
   return box;
 }
@@ -100,15 +93,6 @@ void ColorAtom::defineColor(const string& name, color c) {
 sptr<Box> ColorAtom::createBox(Env& env) {
   const auto box = _elements->createBox(env);
   return sptrOf<ColorBox>(box, _color, _background);
-}
-
-sptr<Box> RomanAtom::createBox(Env& env) {
-  if (_base == nullptr) return StrutBox::empty();
-  // TODO nested style?
-  return env.withFontStyle(
-    FontStyle::rm,
-    [&](auto& v) { return _base->createBox(v); }
-  );
 }
 
 PhantomAtom::PhantomAtom(const sptr<Atom>& el) {

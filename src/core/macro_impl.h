@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include "core/macro_decl.h"
 #include "atom/atom_basic.h"
 #include "atom/atom_impl.h"
 #include "atom/atom_sideset.h"
@@ -15,10 +16,6 @@
 #include "utils/utf.h"
 
 namespace tex {
-
-#ifndef macro
-#define macro(name) sptr<Atom> macro_##name(TeXParser& tp, Args& args)
-#endif
 
 inline macro(fatalIfCmdConflict) {
   NewCommandMacro::_errIfConflict = args[1] == L"true";
@@ -221,15 +218,6 @@ inline macro(above) {
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
 
   return sptrOf<FractionAtom>(num, den, unit, value);
-}
-
-inline macro(mbox) {
-  auto group = sptrOf<RomanAtom>(Formula(tp, args[1], false, false)._root);
-  return sptrOf<StyleAtom>(TexStyle::text, group);
-}
-
-inline macro(text) {
-  return sptrOf<RomanAtom>(Formula(tp, args[1], false, false)._root);
 }
 
 inline macro(underscore) {
@@ -695,52 +683,6 @@ inline macro(undertilde) {
 
 // endregion Stacks
 
-inline macro(boldsymbol) {
-  return sptrOf<BoldAtom>(Formula(tp, args[1], false)._root);
-}
-
-inline macro(mathrm) {
-  return sptrOf<RomanAtom>(Formula(tp, args[1], false)._root);
-}
-
-inline macro(rm) {
-  return sptrOf<RomanAtom>(Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root);
-}
-
-inline macro(mathbf) {
-  return sptrOf<BoldAtom>(sptrOf<RomanAtom>(Formula(tp, args[1], false)._root));
-}
-
-inline macro(bf) {
-  return sptrOf<BoldAtom>(
-    sptrOf<RomanAtom>(Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root)
-  );
-}
-
-inline macro(mathtt) {
-  return sptrOf<TtAtom>(Formula(tp, args[1], false)._root);
-}
-
-inline macro(tt) {
-  return sptrOf<TtAtom>(Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root);
-}
-
-inline macro(mathit) {
-  return sptrOf<ItAtom>(Formula(tp, args[1], false)._root);
-}
-
-inline macro(it) {
-  return sptrOf<ItAtom>(Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root);
-}
-
-inline macro(mathsf) {
-  return sptrOf<SsAtom>(Formula(tp, args[1], false)._root);
-}
-
-inline macro(sf) {
-  return sptrOf<SsAtom>(Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root);
-}
-
 inline macro(hphantom) {
   return sptrOf<PhantomAtom>(Formula(tp, args[1], false)._root, true, false, false);
 }
@@ -900,21 +842,6 @@ inline macro(externalfont) {
 }
 
 inline macro(ctext) {
-  // TODO text
-  return sptrOf<EmptyAtom>();
-}
-
-inline macro(textit) {
-  // TODO text
-  return sptrOf<EmptyAtom>();
-}
-
-inline macro(textbf) {
-  // TODO text
-  return sptrOf<EmptyAtom>();
-}
-
-inline macro(textitbf) {
   // TODO text
   return sptrOf<EmptyAtom>();
 }
@@ -1135,7 +1062,8 @@ inline macro(T) {
 }
 
 inline macro(textcircled) {
-  return sptrOf<TextCircledAtom>(sptrOf<RomanAtom>(Formula(tp, args[1])._root));
+  // TODO
+  // return sptrOf<TextCircledAtom>(sptrOf<RomanAtom>(Formula(tp, args[1])._root));
 }
 
 inline macro(textsc) {
@@ -1212,8 +1140,6 @@ macro(overwithdelims);
 macro(atopwithdelims);
 
 macro(abovewithdelims);
-
-macro(textstyles);
 
 macro(accentbiss);
 

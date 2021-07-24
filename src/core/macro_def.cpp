@@ -1,5 +1,6 @@
 #include "core/macro.h"
-#include "macro_impl.h"
+#include "core/macro_fonts.h"
+#include "core/macro_impl.h"
 
 using namespace std;
 using namespace tex;
@@ -79,32 +80,51 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_brack, "brack"),
     mac(0, macro_bangle, "bangle"),
     mac(0, macro_underscore, "underscore"),
-    mac(1, macro_mbox, "mbox"),
+    mac(2, macro_binom, "binom"),
+  // region math and text styles
+    mac(0, macro_textfont, "bf"),
+    mac(0, macro_textfont, "it"),
+    mac(0, macro_textfont, "rm"),
+    mac(0, macro_textfont, "sf"),
+    mac(0, macro_textfont, "tt"),
+    mac(1, macro_textfont, "cal"),
+    mac(1, macro_textfont, "frak"),
+    mac(1, macro_textfont, "oldstylenums"),
+    mac(1, macro_mathfont, "mathnormal"),
+    mac(1, macro_mathfont, "mathrm"),
+    mac(1, macro_mathfont, "mathbf"),
+    mac(1, macro_mathfont, "mathit"),
+    mac(1, macro_mathfont, "mathcal"),
+    mac(1, macro_mathfont, "mathscr"),
+    mac(1, macro_mathfont, "mathfrak"),
+    mac(1, macro_mathfont, "mathbb"),
+    mac(1, macro_mathfont, "mathsf"),
+    mac(1, macro_mathfont, "mathtt"),
+    mac(1, macro_mathfont, "mathbfit"),
+    mac(1, macro_mathfont, "mathbfcal"),
+    mac(1, macro_mathfont, "mathbffrak"),
+    mac(1, macro_mathfont, "mathsfbf"),
+    mac(1, macro_mathfont, "mathbfsf"),
+    mac(1, macro_mathfont, "mathsfit"),
+    mac(1, macro_mathfont, "mathsfbfit"),
+    mac(1, macro_mathfont, "mathbfsfit"),
+  // endregion
+  // region deprecated
+    mac(1, macro_Bbb, "Bbb"),
+    mac(1, macro_mathds, "mathds"),
+    mac(1, macro_bold, "bold"),
+    mac(1, macro_bold, "boldsymbol"),
+  // endregion
+  // region nested styles
+    mac(1, macro_text, "mbox"),
     mac(1, macro_text, "text"),
     mac(1, macro_intertext, "intertext"),
-    mac(2, macro_binom, "binom"),
-  // math and text styles
-    mac(1, macro_mathbf, "mathbf"),
-    mac(0, macro_bf, "bf"),
-    mac(1, macro_mathit, "mathit"),
-    mac(0, macro_it, "it"),
-    mac(1, macro_mathrm, "mathrm"),
-    mac(0, macro_rm, "rm"),
-    mac(1, macro_mathsf, "mathsf"),
-    mac(0, macro_sf, "sf"),
-    mac(1, macro_mathtt, "mathtt"),
-    mac(0, macro_tt, "tt"),
-  // text styles
-    mac(1, macro_textstyles, "mathscr"),
-    mac(1, macro_textstyles, "mathbb"),
-    mac(1, macro_textstyles, "mathcal"),
-    mac(1, macro_textstyles, "cal"),
-    mac(1, macro_textstyles, "mathfrak"),
-    mac(1, macro_textstyles, "mathds"),
-    mac(1, macro_textstyles, "frak"),
-    mac(1, macro_textstyles, "Bbb"),
-    mac(1, macro_textstyles, "oldstylenums"),
-    mac(1, macro_textstyles, "bold"),
+    mac(1, macro_textit, "textit"),
+    mac(1, macro_textbf, "textbf"),
+    mac(1, macro_textsf, "textsf"),
+    mac(1, macro_texttt, "texttt"),
+    mac(1, macro_textrm, "textrm"),
+  // endregion
   // region text accents
     mac(1, macro_accentbiss, "^"),
     mac(1, macro_accentbiss, "\'"),
@@ -184,7 +204,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
   // endregion
     mac(1, macro_Braket, "Braket"),
     mac(1, macro_Set, "Set"),
-    mac(1, macro_boldsymbol, "boldsymbol"),
     mac(1, macro_big, "big"),
     mac(1, macro_Big, "Big"),
     mac(1, macro_bigg, "bigg"),
@@ -226,11 +245,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
 
     mac(1, macro_cedilla, "c"),
     mac(1, macro_ogonek, "k"),
-    mac(1, macro_externalfont, "externalFont"),
-    mac(1, macro_text, "Text"),
-    mac(1, macro_textit, "Textit"),
-    mac(1, macro_textbf, "Textbf"),
-    mac(1, macro_textitbf, "Textitbf"),
     mac(4, macro_declaremathsizes, "DeclareMathSizes"),
     mac(1, macro_magnification, "magnification"),
     mac(0, macro_hline, "hline"),
@@ -375,11 +389,6 @@ void NewCommandMacro::_init_() {
   cmd(1, L"Ket", L"\\left\\vert{#1}\\right\\rangle");
   cmd(1, L"textsuperscript", L"{}^{\\text{#1}}");
   cmd(1, L"textsubscript", L"{}_{\\text{#1}}");
-  cmd(1, L"textit", L"\\mathit{\\text{#1}}");
-  cmd(1, L"textbf", L"\\mathbf{\\text{#1}}");
-  cmd(1, L"textsf", L"\\mathsf{\\text{#1}}");
-  cmd(1, L"texttt", L"\\mathtt{\\text{#1}}");
-  cmd(1, L"textrm", L"\\text{#1}");
   cmd(0, L"degree", L"^\\circ");
   cmd(0, L"with", L"\\mathbin{\\&}");
   cmd(0, L"parr", L"\\mathbin{\\rotatebox[origin=c]{180}{\\&}}");

@@ -63,14 +63,30 @@ float Env::axisHeight() const {
   return mathConsts().axisHeight() * scale();
 }
 
-void Env::addFontStyle(FontStyle style) {
-  auto dummy = static_cast<u16>(_fontStyle) | static_cast<u16>(style);
-  _fontStyle = static_cast<FontStyle>(dummy);
+void Env::addFontStyle(FontStyle style, FontStyle& target) {
+  auto dummy = static_cast<u16>(target) | static_cast<u16>(style);
+  target = static_cast<FontStyle>(dummy);
 }
 
-void Env::removeFontStyle(FontStyle style) {
-  auto dummy = static_cast<u16>(_fontStyle) & (~static_cast<u16>(style));
-  _fontStyle = static_cast<FontStyle>(dummy);
+void Env::removeFontStyle(FontStyle style, FontStyle& target) {
+  auto dummy = static_cast<u16>(target) & (~static_cast<u16>(style));
+  target = static_cast<FontStyle>(dummy);
+}
+
+void Env::addMathFontStyle(FontStyle style) {
+  addFontStyle(style, _mathFontStyle);
+}
+
+void Env::removeMathFontStyle(FontStyle style) {
+  removeFontStyle(style, _mathFontStyle);
+}
+
+void Env::addTextFontStyle(FontStyle style) {
+  addFontStyle(style, _textFontStyle);
+}
+
+void Env::removeTextFontStyle(FontStyle style) {
+  removeFontStyle(style, _textFontStyle);
 }
 
 void Env::selectMathFont(const std::string& name, MathStyle style) {
@@ -108,14 +124,17 @@ TexStyle Env::supStyle() const {
 }
 
 Char Env::getChar(c32 code, bool isMathMode, FontStyle style) const {
-  const auto targetStyle = style == FontStyle::invalid ? _fontStyle : style;
+  auto targetStyle = style;
+  if (style == FontStyle::invalid) {
+    targetStyle = isMathMode ? _mathFontStyle : _textFontStyle;
+  }
   auto chr = _fctx->getChar(code, targetStyle, isMathMode);
   chr._scale = scale();
   return chr;
 }
 
 Char Env::getChar(const Symbol& sym) const {
-  auto chr = _fctx->getChar(sym, _fontStyle);
+  auto chr = _fctx->getChar(sym, _mathFontStyle);
   chr._scale = scale();
   return chr;
 }

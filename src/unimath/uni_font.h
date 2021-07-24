@@ -57,6 +57,16 @@ private:
   static std::map<std::string, sptr<FontFamily>> _mainFonts;
   static std::map<std::string, sptr<const OtfFont>> _mathFonts;
 
+  sptr<FontFamily> _mainFont = nullptr;
+  sptr<const OtfFont> _mathFont = nullptr;
+
+public:
+  no_copy_assign(FontContext);
+
+  FontContext() = default;
+
+  static constexpr i32 NO_FONT = -1;
+
   /**
    * Get the math font style from the given name
    *
@@ -72,16 +82,6 @@ private:
    * @return the corresponding FontStyle or FontStyle::none if not found
    */
   static FontStyle mainFontStyleOf(const std::string& name);
-
-  sptr<FontFamily> _mainFont = nullptr;
-  sptr<const OtfFont> _mathFont = nullptr;
-
-public:
-  no_copy_assign(FontContext);
-
-  FontContext() = default;
-
-  static constexpr i32 NO_FONT = -1;
 
   /**
    * Add main font (collection) to context.

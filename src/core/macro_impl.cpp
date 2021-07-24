@@ -170,29 +170,6 @@ macro(abovewithdelims) {
   return _frac_with_delims(tp, args, true, true);
 }
 
-macro(textstyles) {
-  // TODO text styles
-  wstring style(args[0]);
-  if (style == L"frak") style = L"mathfrak";
-  else if (style == L"Bbb") style = L"mathbb";
-  else if (style == L"bold") return sptrOf<BoldAtom>(Formula(tp, args[1], false)._root);
-  else if (style == L"cal") style = L"mathcal";
-
-//  FontInfos* info = nullptr;
-//  auto it = Formula::_externalFontMap.find(UnicodeBlock::BASIC_LATIN);
-//  if (it != Formula::_externalFontMap.end()) {
-//    info = it->second;
-//    Formula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = nullptr;
-//  }
-//  auto atom = Formula(tp, args[1], false)._root;
-//  if (info != nullptr) {
-//    Formula::_externalFontMap[UnicodeBlock::BASIC_LATIN] = info;
-//  }
-
-  string s = wide2utf8(style);
-  return sptrOf<TextStyleAtom>(sptrOf<EmptyAtom>(), s);
-}
-
 macro(accentbiss) {
   string acc;
   switch (args[0][0]) {
@@ -268,7 +245,9 @@ macro(intertext) {
   replaceall(str, L"^{\\prime}", L"\'");
   replaceall(str, L"^{\\prime\\prime}", L"\'\'");
 
-  auto ra = sptrOf<RomanAtom>(Formula(tp, str, false, false)._root);
+  // TODO
+  // auto ra = sptrOf<RomanAtom>(Formula(tp, str, false, false)._root);
+  sptr<Atom> ra = nullptr;
   ra->_type = AtomType::interText;
   tp.addAtom(ra);
   tp.addRow();
