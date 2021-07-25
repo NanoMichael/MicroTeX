@@ -3,6 +3,9 @@
 #include "macro/macro_impl.h"
 #include "macro/macro_env.h"
 #include "macro/macro_styles.h"
+#include "macro/macro_sizes.h"
+#include "macro/macro_types.h"
+#include "macro/macro_delims.h"
 
 using namespace std;
 using namespace tex;
@@ -83,25 +86,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_sizes, "LARGE"),
     mac(0, macro_sizes, "huge"),
     mac(0, macro_sizes, "Huge"),
-  // endregion
-  // region fake symbols
-    mac(0, macro_minuscolon, "minuscolon"),
-    mac(0, macro_minuscoloncolon, "minuscoloncolon"),
-    mac(0, macro_simcolon, "simcolon"),
-    mac(0, macro_simcoloncolon, "simcoloncolon"),
-    mac(0, macro_approxcolon, "approxcolon"),
-    mac(0, macro_approxcoloncolon, "approxcoloncolon"),
-    mac(0, macro_coloncolon, "coloncolon"),
-    mac(0, macro_equalscolon, "equalscolon"),
-    mac(0, macro_equalscoloncolon, "equalscoloncolon"),
-    mac(0, macro_colonminus, "colonminus"),
-    mac(0, macro_coloncolonminus, "coloncolonminus"),
-    mac(0, macro_colonequals, "colonequals"),
-    mac(0, macro_coloncolonequals, "coloncolonequals"),
-    mac(0, macro_colonsim, "colonsim"),
-    mac(0, macro_coloncolonsim, "coloncolonsim"),
-    mac(0, macro_colonapprox, "colonapprox"),
-    mac(0, macro_coloncolonapprox, "coloncolonapprox"),
   // endregion
   // region scripts & limits
     mac(2, macro_frac, "frac"),
@@ -284,7 +268,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
 
     mac(1, macro_cedilla, "c"),
     mac(1, macro_ogonek, "k"),
-    mac(0, macro_ratio, "ratio"),
     mac(0, macro_kern, "kern"),
     mac(1, macro_char, "char"),
     mac(1, macro_romannumeral, "roman"),
@@ -331,6 +314,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_hphantom, "hphantom"),
     mac(1, macro_vphantom, "vphantom"),
     mac(0, macro_spATbreve, "sp@breve"),
+    mac(0, macro_nokern, "nokern"),
 #ifdef GRAPHICS_DEBUG
     mac(1, macro_debug, "debug"),
     mac(0, macro_undebug, "undebug"),

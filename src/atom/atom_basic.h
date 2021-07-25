@@ -23,6 +23,20 @@ namespace tex {
 
 class Formula;
 
+/** Atom to mark do not add kern between */
+class NokernAtom : public Atom {
+public:
+  NokernAtom() {
+    _type = AtomType::none;
+  }
+
+  sptr<Box> createBox(Env& env) override {
+    return StrutBox::empty();
+  }
+
+  __decl_clone(NokernAtom)
+};
+
 /** Atom to modify math font and style */
 class MathFontAtom : public Atom {
 private:

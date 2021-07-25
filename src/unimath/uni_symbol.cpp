@@ -684,7 +684,7 @@ const Symbol Symbol::_symbols[]{
   {0x003F5, ord,     "epsilon"},
   {0x003F5, ord,     "epsilonup"},
   {0x02256, rel,     "eqcirc"},
-  {0x02239, rel,     "eqcolon"},
+  {0x02255, rel,     "eqcolon"},
   {0x0225D, rel,     "eqdef"},
   {0x02A66, rel,     "eqdot"},
   {0x02A75, rel,     "eqeq"},

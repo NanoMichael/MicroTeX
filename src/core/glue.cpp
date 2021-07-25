@@ -68,6 +68,9 @@ int Glue::indexOf(AtomType ltype, AtomType rtype, const Env& env) {
 }
 
 sptr<GlueBox> Glue::get(AtomType ltype, AtomType rtype, const Env& env) {
+  if (ltype == AtomType::none || rtype == AtomType::none) {
+    return sptrOf<GlueBox>(0.f, 0.f, 0.f);
+  }
   int i = indexOf(ltype, rtype, env);
   return _glueTypes[i].createBox(env);
 }

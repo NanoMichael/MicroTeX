@@ -332,33 +332,6 @@ macro(definecolor) {
   return nullptr;
 }
 
-macro(sizes) {
-  float f = 1;
-  if (args[0] == L"tiny")
-    f = 0.5f;
-  else if (args[0] == L"scriptsize")
-    f = 0.7f;
-  else if (args[0] == L"footnotesize")
-    f = 0.8f;
-  else if (args[0] == L"small")
-    f = 0.9f;
-  else if (args[0] == L"normalsize")
-    f = 1.f;
-  else if (args[0] == L"large")
-    f = 1.2f;
-  else if (args[0] == L"Large")
-    f = 1.4f;
-  else if (args[0] == L"LARGE")
-    f = 1.8f;
-  else if (args[0] == L"huge")
-    f = 2.f;
-  else if (args[0] == L"Huge")
-    f = 2.5f;
-
-  auto a = Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root;
-  return sptrOf<MonoScaleAtom>(a, f);
-}
-
 macro(romannumeral) {
   int numbers[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
   string letters[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
