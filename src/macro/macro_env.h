@@ -154,6 +154,49 @@ inline macro(multirow) {
   return nullptr;
 }
 
+inline macro(cellcolor) {
+  if (!tp.isArrayMode()) throw ex_parse("Command \\cellcolor must used in array environment!");
+  color c = ColorAtom::getColor(wide2utf8(args[1]));
+  auto atom = sptrOf<CellColorAtom>(c);
+  ((ArrayFormula*) tp._formula)->addCellSpecifier(atom);
+  return nullptr;
+}
+
+inline macro(color) {
+  // We do not care the \color command in non-array mode, since we did pass a color as a parameter
+  // when parsing a LaTeX string, it is useless to specify a global foreground color again, but in
+  // array mode, the \color command is useful to specify the foreground color of the columns.
+  if (tp.isArrayMode()) {
+    color c = ColorAtom::getColor(wide2utf8(args[1]));
+    return sptrOf<CellForegroundAtom>(c);
+  }
+  return nullptr;
+}
+
+inline macro(newcolumntype) {
+  MatrixAtom::defineColumnSpecifier(args[1], args[2]);
+  return nullptr;
+}
+
+inline macro(arrayrulecolor) {
+  color c = ColorAtom::getColor(wide2utf8(args[1]));
+  MatrixAtom::LINE_COLOR = c;
+  return nullptr;
+}
+
+inline macro(columnbg) {
+  color c = ColorAtom::getColor(wide2utf8(args[1]));
+  return sptrOf<CellColorAtom>(c);
+}
+
+inline macro(rowcolor) {
+  if (!tp.isArrayMode()) throw ex_parse("Command \\rowcolor must used in array environment!");
+  color c = ColorAtom::getColor(wide2utf8(args[1]));
+  auto spe = sptrOf<CellColorAtom>(c);
+  ((ArrayFormula*) tp._formula)->addRowSpecifier(spe);
+  return nullptr;
+}
+
 }
 
 #endif //LATEX_MACRO_ENV_H

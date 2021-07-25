@@ -1,0 +1,63 @@
+#ifndef LATEX_MACRO_BOXES_H
+#define LATEX_MACRO_BOXES_H
+
+#include "macro/macro_decl.h"
+
+namespace tex {
+
+inline macro(rotatebox) {
+  float angle = 0;
+  if (!args[1].empty()) valueof(args[1], angle);
+  return sptrOf<RotateAtom>(Formula(tp, args[2])._root, angle, args[3]);
+}
+
+inline macro(reflectbox) {
+  return sptrOf<ReflectAtom>(Formula(tp, args[1])._root);
+}
+
+inline macro(scalebox) {
+  float sx = 1, sy = 1;
+  valueof(args[1], sx);
+
+  if (args[3].empty()) sy = sx;
+  else valueof(args[3], sy);
+
+  if (sx == 0) sx = 1;
+  if (sy == 0) sy = 1;
+  return sptrOf<ScaleAtom>(Formula(tp, args[2])._root, sx, sy);
+}
+
+inline macro(resizebox) {
+  const std::string ws = wide2utf8(args[1]);
+  const std::string hs = wide2utf8(args[2]);
+  return sptrOf<ResizeAtom>(Formula(tp, args[3])._root, ws, hs, ws == "!" || hs == "!");
+}
+
+inline macro(shadowbox) {
+  return sptrOf<ShadowAtom>(Formula(tp, args[1])._root);
+}
+
+inline macro(ovalbox) {
+  return sptrOf<OvalAtom>(Formula(tp, args[1])._root);
+}
+
+inline macro(cornersize) {
+  float size = 0.5f;
+  valueof(args[1], size);
+  if (size <= 0 || size > 0.5f) size = 0.5f;
+  OvalAtom::_multiplier = size;
+  OvalAtom::_diameter = 0;
+  return nullptr;
+}
+
+inline macro(doublebox) {
+  return sptrOf<DoubleFramedAtom>(Formula(tp, args[1])._root);
+}
+
+inline macro(fbox) {
+  return sptrOf<FBoxAtom>(Formula(tp, args[1], false)._root);
+}
+
+}
+
+#endif //LATEX_MACRO_BOXES_H

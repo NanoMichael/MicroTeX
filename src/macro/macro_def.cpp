@@ -1,11 +1,16 @@
 #include "macro/macro.h"
-#include "macro/macro_fonts.h"
 #include "macro/macro_impl.h"
 #include "macro/macro_env.h"
-#include "macro/macro_styles.h"
 #include "macro/macro_sizes.h"
-#include "macro/macro_types.h"
+#include "macro/macro_scripts.h"
 #include "macro/macro_delims.h"
+#include "macro/macro_types.h"
+#include "macro/macro_fonts.h"
+#include "macro/macro_accent.h"
+#include "macro/macro_styles.h"
+#include "macro/macro_colors.h"
+#include "macro/macro_space.h"
+#include "macro/macro_boxes.h"
 
 using namespace std;
 using namespace tex;
@@ -86,6 +91,18 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_sizes, "LARGE"),
     mac(0, macro_sizes, "huge"),
     mac(0, macro_sizes, "Huge"),
+    mac(1, macro_big, "big"),
+    mac(1, macro_Big, "Big"),
+    mac(1, macro_bigg, "bigg"),
+    mac(1, macro_Bigg, "Bigg"),
+    mac(1, macro_bigl, "bigl"),
+    mac(1, macro_Bigl, "Bigl"),
+    mac(1, macro_biggl, "biggl"),
+    mac(1, macro_Biggl, "Biggl"),
+    mac(1, macro_bigr, "bigr"),
+    mac(1, macro_Bigr, "Bigr"),
+    mac(1, macro_biggr, "biggr"),
+    mac(1, macro_Biggr, "Biggr"),
   // endregion
   // region scripts & limits
     mac(2, macro_frac, "frac"),
@@ -117,6 +134,16 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_overparen, "overparen"),
     mac(1, macro_overline, "overline"),
     mac(1, macro_underline, "underline"),
+    mac(1, macro_Braket, "Braket"),
+    mac(1, macro_Set, "Set"),
+    mac(0, macro_leftparenthesis, "("),
+    mac(0, macro_leftbracket, "["),
+    mac(0, macro_choose, "choose"),
+    mac(0, macro_brace, "brace"),
+    mac(0, macro_brack, "brack"),
+    mac(0, macro_bangle, "bangle"),
+    mac(1, macro_left, "left"),
+    mac(1, macro_middle, "middle"),
   // endregion
   // region atom types
     mac(1, macro_mathop, "mathop"),
@@ -200,8 +227,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_accents, "vec"),
     mac(1, macro_accents, "mathring"),
     mac(2, macro_accentset, "accentset"), // fake accents
-  // endregion
-  // region over and under
     mac(2, macro_overset, "overset"),
     mac(2, macro_underset, "underset"),
     mac(2, macro_underaccent, "underaccent"),
@@ -233,27 +258,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_muskips, "negmedspace"),
     mac(0, macro_muskips, "negthickspace"),
     mac(0, macro_quad, "quad"),
-  // endregion
-  // region delimiters
-    mac(1, macro_Braket, "Braket"),
-    mac(1, macro_Set, "Set"),
-    mac(1, macro_big, "big"),
-    mac(1, macro_Big, "Big"),
-    mac(1, macro_bigg, "bigg"),
-    mac(1, macro_Bigg, "Bigg"),
-    mac(1, macro_bigl, "bigl"),
-    mac(1, macro_Bigl, "Bigl"),
-    mac(1, macro_biggl, "biggl"),
-    mac(1, macro_Biggl, "Biggl"),
-    mac(1, macro_bigr, "bigr"),
-    mac(1, macro_Bigr, "Bigr"),
-    mac(1, macro_biggr, "biggr"),
-    mac(1, macro_Biggr, "Biggr"),
-    mac(0, macro_leftparenthesis, "("),
-    mac(0, macro_leftbracket, "["),
-    mac(0, macro_brace, "brace"),
-    mac(0, macro_brack, "brack"),
-    mac(0, macro_bangle, "bangle"),
   // endregion
   // region boxes
     mac(1, macro_reflectbox, "reflectbox"),
@@ -293,8 +297,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_nolimits, "nolimits"),
     mac(0, macro_limits, "limits"),
     mac(0, macro_normal, "normal"),
-    mac(1, macro_left, "left"),
-    mac(1, macro_middle, "middle"),
     mac(0, macro_cr, "cr"),
     mac(1, macro_shoveright, "shoveright"),
     mac(1, macro_shoveleft, "shoveleft"),
@@ -307,7 +309,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_mathclrlap, "mathllap"),
     mac(1, macro_mathclrlap, "mathrlap"),
     mac(1, macro_mathclrlap, "mathclap"),
-    mac(0, macro_choose, "choose"),
     mac(0, macro_underscore, "underscore"),
     mac(2, macro_binom, "binom"),
     mac(1, macro_phantom, "phantom"),

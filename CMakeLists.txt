@@ -86,6 +86,11 @@ target_sources(LaTeX PRIVATE
         src/macro/macro.cpp
         src/macro/macro_def.cpp
         src/macro/macro_impl.cpp
+        src/macro/macro_scripts.cpp
+        src/macro/macro_accent.cpp
+        src/macro/macro_colors.cpp
+        src/macro/macro_space.cpp
+        src/macro/macro_delims.cpp
         # env folder
         src/env/env.cpp
         src/env/units.cpp
