@@ -5,10 +5,12 @@
 
 namespace tex {
 
-/** An atom representing scripts around a base atom */
+/** An atom representing scripts around of a base atom */
 class SideSetsAtom : public Atom {
 public:
+  // _base is guaranteed to be valid
   sptr<Atom> _left, _right, _base;
+  sptr<Atom> _under, _over;
 
   SideSetsAtom() = delete;
 

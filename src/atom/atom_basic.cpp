@@ -77,8 +77,6 @@ sptr<Box> CumulativeScriptsAtom::createBox(Env& env) {
   return ScriptsAtom(_base, _sub, _sup).createBox(env);
 }
 
-/*************************************** color atom implementation ********************************/
-
 const color ColorAtom::_default = black;
 
 ColorAtom::ColorAtom(const sptr<Atom>& atom, color bg, color c)

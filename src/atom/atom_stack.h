@@ -25,6 +25,11 @@ struct StackArgs {
   }
 };
 
+struct StackResult {
+  sptr<Box> box;
+  float kernelShift;
+};
+
 /**
  * An atom representing another atom with an atom above it (if not null)
  * separated by a kern and in a smaller size depending on "overScriptSize"
@@ -36,8 +41,6 @@ private:
   sptr<Atom> _base;
   StackArgs _over;
   StackArgs _under;
-
-  static sptr<Box> changeWidth(const sptr<Box>& b, float maxWidth);
 
 public:
   StackAtom() = delete;
@@ -66,6 +69,8 @@ public:
   }
 
   sptr<Box> createBox(Env& env) override;
+
+  StackResult createStack(Env& env);
 
   __decl_clone(StackAtom)
 };

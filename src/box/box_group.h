@@ -22,7 +22,11 @@ public:
 
   HBox() = default;
 
+  /** Create a horizontal box with alignment */
   HBox(const sptr<Box>& box, float width, Alignment alignment);
+
+  /** Create a horizontal box that child box aligned at center with bias */
+  HBox(const sptr<Box>& box, float width, float bias);
 
   explicit HBox(const sptr<Box>& box);
 
@@ -60,6 +64,8 @@ public:
   VBox() : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {}
 
   VBox(const sptr<Box>& box, float rest, Alignment alignment);
+
+  inline float leftMostPos() const { return _leftMostPos; }
 
   void add(const sptr<Box>& box) override;
 

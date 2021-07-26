@@ -94,6 +94,7 @@ float Units::pt(const Env& env) {
 }
 
 float Units::fsize(UnitType unit, float size, const Env& env) {
+  if (unit == UnitType::none) return size;
   return _unitConversions[static_cast<i8>(unit)](env) * size;
 }
 

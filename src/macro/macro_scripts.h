@@ -52,9 +52,11 @@ inline macro(sideset) {
   auto r = Formula(tp, args[2])._root;
   auto op = Formula(tp, args[3])._root;
   if (op == nullptr) {
-    auto in = sptrOf<CharAtom>(L'M', "mathnormal");
+    auto in = sptrOf<CharAtom>('M', FontStyle::rm, true);
     op = sptrOf<PhantomAtom>(in, false, true, true);
   }
+  op->_limitsType = LimitsType::limits;
+  op->_type = AtomType::bigOperator;
   auto cl = dynamic_cast<CumulativeScriptsAtom*>(l.get());
   auto cr = dynamic_cast<CumulativeScriptsAtom*>(r.get());
   if (cl != nullptr) l = cl->getScriptsAtom();

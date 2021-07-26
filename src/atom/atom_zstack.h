@@ -3,13 +3,14 @@
 
 #include "atom/atom.h"
 #include "utils/utils.h"
+#include "env/units.h"
 
 namespace tex {
 
 struct ZStackArgs {
   Alignment align;
-  UnitType offsetUnit;
-  float offset;
+  UnitType offsetUnit = UnitType::em;
+  float offset = 0.f;
 };
 
 class ZStackAtom : public Atom {

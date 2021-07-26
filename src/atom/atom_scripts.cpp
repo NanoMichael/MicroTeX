@@ -15,6 +15,7 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
 
   // no scripts
   if (_sub == nullptr && _sup == nullptr) {
+    return {_base->createBox(env)};
     return _base->createBox(env);
   }
 
@@ -27,6 +28,26 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
     return StackAtom(_base, over, under).createBox(env);
   }
 
+  const auto&[base, scripts, space, kern, reduce, italic] = createScripts(env);
+  const auto hbox = sptrOf<HBox>();
+  if (_onRight) {
+    hbox->add(base);
+    if (std::abs(reduce) > PREC) hbox->add(StrutBox::create(reduce));
+    if (std::abs(kern) > PREC) hbox->add(StrutBox::create(kern));
+    hbox->add(scripts);
+    hbox->add(StrutBox::create(space));
+  } else {
+    hbox->add(StrutBox::create(space));
+    hbox->add(scripts);
+    if (std::abs(kern) > PREC) hbox->add(StrutBox::create(kern));
+    if (std::abs(reduce) > PREC) hbox->add(StrutBox::create(reduce));
+    hbox->add(base);
+  }
+
+  return hbox;
+}
+
+ScriptResult ScriptsAtom::createScripts(Env& env) {
   // params to place scripts
   sptr<Box> kernel, base;
   float delta = 0.f;
@@ -44,7 +65,11 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
   };
   const auto getMathKern = [&](float height, bool isTop) {
     if (kernRecord == nullptr) return 0.f;
-    const auto& mathKern = isTop ? kernRecord->topRight() : kernRecord->bottomRight();
+    const auto& mathKern = (
+      _onRight
+      ? (isTop ? kernRecord->topRight() : kernRecord->bottomRight())
+      : (isTop ? kernRecord->topLeft() : kernRecord->bottomLeft())
+    );
     const auto i = mathKern.indexOf(height);
     return mathKern.value(i) * env.scale();
   };
@@ -74,19 +99,12 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
     v = kernel->_depth + math.subscriptBaselineDropMin() * env.scale();
   }
 
-  auto hbox = sptrOf<HBox>(base);
-  const auto scriptSpace = StrutBox::create(math.spaceAfterScript() * env.scale());
-  const auto compose = [&](const sptr<Box>& box, float extra = 0) {
+  const auto compose = [&](const sptr<Box>& box, float extra = 0) -> ScriptResult {
+    const auto scriptSpace = math.spaceAfterScript() * env.scale();
     const auto kern = kernel->_width - base->_width + extra;
-    if (std::abs(kern) > PREC) hbox->add(StrutBox::create(kern));
-    hbox->add(box);
-    hbox->add(scriptSpace);
-    return hbox;
+    const auto widthReduce = isOperator && delta > PREC ? -delta : 0.f;
+    return {base, box, scriptSpace, kern, widthReduce, delta};
   };
-
-  if (isOperator && delta > PREC) {
-    hbox->add(StrutBox::create(-delta));
-  }
 
   if (_sup == nullptr) {
     // case 1. only subscript
@@ -140,6 +158,9 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
 
   auto vbox = sptrOf<VBox>();
   x->_shift = topKern - kern;
+  if (!_onRight && std::abs(x->_shift) < PREC && x->_width - y->_width < 0) {
+    x->_shift = y->_width - x->_width;
+  }
   vbox->add(x);
   y->_shift = bottomKern - kern;
   vbox->add(y, sigma);

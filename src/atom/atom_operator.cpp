@@ -1,12 +1,20 @@
 #include "atom/atom_operator.h"
 #include "atom/atom_row.h"
 #include "atom/atom_basic.h"
+#include "atom/atom_sideset.h"
 #include "env/env.h"
 
 using namespace tex;
 
 sptr<Box> OperatorAtom::createBox(Env& env) {
-  // case 1: limits are shown as scripts
+  // case 1: side sets
+  if (auto ss = dynamic_cast<SideSetsAtom*>(_base.get()); ss != nullptr) {
+    ss->_under = _under;
+    ss->_over = _over;
+    return ss->createBox(env);
+  }
+
+  // case 2: limits are shown as scripts
   if ((_limitsType == LimitsType::noLimits)
       || (_limitsType == LimitsType::normal && env.style() >= TexStyle::text)
     ) {
@@ -31,7 +39,7 @@ sptr<Box> OperatorAtom::createBox(Env& env) {
     return ScriptsAtom(base, _under, _over).createBox(env);
   }
 
-  // case 2: limits are put over/under the base
+  // case 3: limits are put over/under the base
   const StackArgs& over = StackArgs::autoSpace(_over);
   const StackArgs& under = StackArgs::autoSpace(_under);
   return StackAtom(_base, over, under).createBox(env);

@@ -1,25 +1,26 @@
 #include "atom/atom_stack.h"
 #include "atom/atom_space.h"
 #include "atom/atom_char.h"
+#include "atom/atom_basic.h"
 #include "box/box_single.h"
 #include "box/box_group.h"
 
 using namespace tex;
 using namespace std;
 
-sptr<Box> StackAtom::changeWidth(const sptr<Box>& b, float maxWidth) {
-  if (b != nullptr && maxWidth - b->_width > PREC) {
-    return sptrOf<HBox>(b, maxWidth, Alignment::center);
-  }
-  return b;
+sptr<Box> StackAtom::createBox(Env& env) {
+  const auto&[box, _] = createStack(env);
+  return box;
 }
 
-sptr<Box> StackAtom::createBox(Env& env) {
+StackResult StackAtom::createStack(Env& env) {
   // create boxes in right style and calculate max width
   auto b = _base == nullptr ? StrutBox::empty() : _base->createBox(env);
   auto delta = 0.f;
   if (auto cs = dynamic_cast<CharSymbol*>(_base.get()); cs != nullptr) {
     delta = cs->getChar(env).italic();
+  } else if (auto pa = dynamic_cast<PlaceholderAtom*>(_base.get()); pa != nullptr) {
+    delta = pa->italic();
   }
   // over and under
   sptr<Box> o, u;
@@ -41,6 +42,11 @@ sptr<Box> StackAtom::createBox(Env& env) {
     maxWidth = std::max(maxWidth, u->_width);
   }
 
+  const auto wrap = [&](const sptr<Box>& box, float bias) -> sptr<Box> {
+    box->_shift = (maxWidth - box->_width) / 2 + bias;
+    return box;
+  };
+
   // vertical box
   auto vbox = sptrOf<VBox>();
 
@@ -52,22 +58,23 @@ sptr<Box> StackAtom::createBox(Env& env) {
 
   // over script + space
   if (o != nullptr && !o->isSpace()) {
-    auto ob = changeWidth(o, maxWidth - delta / 2);
-    ob->_shift = delta / 2;
+    auto ob = wrap(o, delta / 2);
     vbox->add(ob);
+    float space = 0.f;
     if (_over.isAutoSpace) {
       const auto gapMin = math.upperLimitGapMin() * env.scale();
       const auto baselineRiseMin = math.upperLimitBaselineRiseMin() * env.scale();
-      const auto diff = baselineRiseMin - o->_depth;
-      const auto space = std::max(diff, gapMin);
-      vbox->add(sptrOf<StrutBox>(0.f, space, 0.f, 0.f));
+      space = std::max(baselineRiseMin - o->_depth, gapMin);
     } else {
-      vbox->add(SpaceAtom(_over.spaceUnit, 0.f, _over.space, 0.f).createBox(env));
+      space = Units::fsize(_over.spaceUnit, _over.space, env);
     }
+    const auto kern = sptrOf<StrutBox>(0.f, space, 0.f, 0.f);
+    kern->_shift = delta / 2;
+    vbox->add(kern);
   }
 
   // base
-  auto center = changeWidth(b, maxWidth);
+  auto center = wrap(b, 0.f);
   vbox->add(center);
 
   // calculate future height of the vertical box, to make sure that the
@@ -76,17 +83,18 @@ sptr<Box> StackAtom::createBox(Env& env) {
 
   // under script + space
   if (u != nullptr && !u->isSpace()) {
+    float space = 0.f;
     if (_under.isAutoSpace) {
       const auto gapMin = math.lowerLimitGapMin() * env.scale();
       const auto baselineDropMin = math.lowerLimitBaselineDropMin() * env.scale();
-      const auto diff = baselineDropMin - u->_height;
-      const auto space = std::max(diff, gapMin);
-      vbox->add(sptrOf<StrutBox>(0.f, space, 0.f, 0.f));
+      space = std::max(baselineDropMin - u->_height, gapMin);
     } else {
-      vbox->add(SpaceAtom(_under.spaceUnit, 0.f, _under.space, 0.f).createBox(env));
+      space = Units::fsize(_under.spaceUnit, _under.space, env);
     }
-    auto ub = changeWidth(u, maxWidth - delta / 2);
-    ub->_shift = -delta / 2;
+    const auto kern = sptrOf<StrutBox>(0.f, space, 0.f, 0.f);
+    kern->_shift = delta / 2;
+    vbox->add(kern);
+    auto ub = wrap(u, -delta / 2);
     vbox->add(ub);
   }
 
@@ -94,5 +102,5 @@ sptr<Box> StackAtom::createBox(Env& env) {
   vbox->_depth = vbox->_height + vbox->_depth - h;
   vbox->_height = h;
 
-  return vbox;
+  return {vbox, center->_shift - vbox->leftMostPos()};
 }

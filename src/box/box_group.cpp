@@ -10,6 +10,28 @@ using namespace tex;
 
 /************************************* horizontal box implementation ******************************/
 
+HBox::HBox(const sptr<Box>& box, float width, float bias) {
+  if (width == POS_INF) {
+    add(box);
+    return;
+  }
+  float rest = width - box->_width;
+  if (rest < 0) {
+    add(box);
+    return;
+  }
+  if (std::abs(bias) < PREC) {
+    auto space = StrutBox::create(rest / 2);
+    add(space);
+    add(box);
+    add(space);
+  } else {
+    add(StrutBox::create(rest / 2 + bias));
+    add(box);
+    add(StrutBox::create(rest / 2 - bias));
+  }
+}
+
 HBox::HBox(const sptr<Box>& box, float width, Alignment alignment) {
   if (width == POS_INF) {
     add(box);

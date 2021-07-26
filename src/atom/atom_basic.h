@@ -65,15 +65,23 @@ public:
 /** A placeholder atom */
 class PlaceholderAtom : public Atom {
 private:
-  float _width, _height, _depth, _shift;
+  sptr<Box> _box;
+  float _italic;
 
 public:
-  PlaceholderAtom(float width, float height, float depth, float shift)
-    : _width(width), _height(height), _depth(depth), _shift(shift) {}
+  PlaceholderAtom(float width, float height, float depth, float italic = 0.f)
+    : _italic(italic) {
+    _box = sptrOf<StrutBox>(width, height, depth, 0.f);
+  }
+
+  PlaceholderAtom(const sptr<Box>& box, float italic = 0.f)
+    : _box(box), _italic(italic) {}
 
   sptr<Box> createBox(Env& env) override {
-    return sptrOf<StrutBox>(_width, _height, _depth, _shift);
+    return _box;
   }
+
+  inline float italic() const { return _italic; }
 
   __decl_clone(PlaceholderAtom)
 };
