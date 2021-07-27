@@ -185,6 +185,8 @@ Math* CLMReader::readMath(BinaryFileReader& reader) {
   math._horizontalVariants = hv == nullptr ? &Variants::empty : hv;
   Variants* vv = readVariants(reader);
   math._verticalVariants = vv == nullptr ? &Variants::empty : vv;
+  Variants* ss = readVariants(reader);
+  math._scriptsVariants = ss == nullptr ? &Variants::empty : ss;
   // glyph assembly
   GlyphAssembly* hg = readGlyphAssembly(reader);
   math._horizontalAssembly = hg == nullptr ? &GlyphAssembly::empty : hg;

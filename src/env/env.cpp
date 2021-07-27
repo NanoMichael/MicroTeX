@@ -129,12 +129,12 @@ Char Env::getChar(c32 code, bool isMathMode, FontStyle style) const {
     targetStyle = isMathMode ? _mathFontStyle : _textFontStyle;
   }
   auto chr = _fctx->getChar(code, targetStyle, isMathMode);
-  chr._scale = scale();
+  chr.scale = scale();
   return chr;
 }
 
 Char Env::getChar(const Symbol& sym) const {
   auto chr = _fctx->getChar(sym, _mathFontStyle);
-  chr._scale = scale();
+  chr.scale = scale();
   return chr;
 }

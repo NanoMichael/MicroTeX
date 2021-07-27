@@ -59,7 +59,7 @@ sptr<Box> SymbolAtom::createBox(Env& env) {
     box->_shift = (box->_height - box->_depth) / 2 - axis;
     return sptrOf<HBox>(box);
   } else {
-    const bool doScale = unicode() != chr._code;
+    const bool doScale = unicode() != chr.code;
     auto box = sptrOf<CharBox>(chr);
     if (doScale) return sptrOf<ScaleBox>(box, 0.8f, 0.8f);
     return box;
@@ -78,7 +78,7 @@ Char CharAtom::getChar(Env& env) const {
 sptr<Box> CharAtom::createBox(Env& env) {
   const auto& chr = getChar(env);
   sptr<Box> box = sptrOf<CharBox>(chr);
-  if (env.isSmallCap() && unicode() != chr._code) {
+  if (env.isSmallCap() && unicode() != chr.code) {
     box = sptrOf<ScaleBox>(box, 0.8f, 0.8f);
   }
   return box;

@@ -927,3 +927,29 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t chr) {
   }
   return sptrOf<CharAtom>(code, _isMathMode);
 }
+
+sptr<Atom> TeXParser::getSimpleScripts(const wchar_t chr) {
+  int count = 1;
+  wchar_t ch = L'\0';
+  int spos = ++_pos;
+  while (_pos < _len) {
+    ch = _latex[_pos];
+    if (ch == chr) {
+      ++count;
+    } else if (ch != ' ') {
+      --_pos;
+      break;
+    }
+    ++_pos;
+  }
+  static const c32 primes[] = {0x02032, 0x02033, 0x02034, 02057};
+  static const c32 backprimes[] = {0x02035, 0x02036, 02037};
+  // prime
+  if (chr == '\'') {
+    const auto pc = count / 4;
+    const auto rc = count % 4;
+    if (pc > 1) {
+      
+    }
+  }
+}

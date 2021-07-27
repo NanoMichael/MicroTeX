@@ -15,18 +15,18 @@ CharBox::CharBox(const Char& chr) : _chr(chr) {
 void CharBox::draw(Graphics2D& g2, float x, float y) {
   const auto font = Font::create(_chr.otfFont()->fontFile);
   g2.setFont(font);
-  g2.setFontSize(Env::fixedTextSize() * _chr._scale);
-  g2.drawGlyph(_chr._glyph, x, y);
+  g2.setFontSize(Env::fixedTextSize() * _chr.scale);
+  g2.drawGlyph(_chr.glyphId, x, y);
 }
 
 int CharBox::lastFontId() {
-  return _chr._font;
+  return _chr.fontId;
 }
 
 std::string CharBox::toString() const {
   // TODO
   std::wstring_convert<std::codecvt_utf8<c32>, c32> cvt;
-  return sstr(cvt.to_bytes(_chr._mappedCode), " scale: ", _chr._scale);
+  return sstr(cvt.to_bytes(_chr.mappedCode), " scale: ", _chr.scale);
 }
 
 sptr<Font> TextRenderingBox::_font(nullptr);

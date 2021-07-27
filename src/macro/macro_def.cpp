@@ -114,8 +114,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(2, macro_overwithdelims, "overwithdelims"),
     mac(2, macro_atopwithdelims, "atopwithdelims"),
     mac(2, macro_abovewithdelims, "abovewithdelims"),
-    mac(1, macro_mathcumsup, "mathcumsup"),
-    mac(1, macro_mathcumsub, "mathcumsub"),
     mac(3, macro_sideset, "sideset"),
     mac(3, macro_prescript, "prescript"),
   // endregion

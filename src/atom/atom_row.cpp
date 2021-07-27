@@ -162,9 +162,9 @@ sptr<Box> RowAtom::createBox(Env& env) {
       curr->markAsTextSymbol();
       // initialize
       const auto& chr = curr->getChar(env);
-      const auto font = chr._font;
+      const auto font = chr.fontId;
       auto ligs = FontContext::getFont(font)->otf().ligatures();
-      auto lig = ligs == nullptr ? nullptr : (*ligs)[chr._glyph];
+      auto lig = ligs == nullptr ? nullptr : (*ligs)[chr.glyphId];
       // find target from the ligatures table
       int index = i;
       const LigaTable* target = nullptr;
@@ -178,13 +178,13 @@ sptr<Box> RowAtom::createBox(Env& env) {
         auto nextChar = static_cast<CharSymbol*>(next.get());
         auto c = nextChar->getChar(env);
         // not in same font, break the iteration
-        if (c._font != font) {
+        if (c.fontId != font) {
           break;
         }
         // record the first following glyph
-        if (nextGlyph == -1) nextGlyph = c._glyph;
+        if (nextGlyph == -1) nextGlyph = c.glyphId;
         // is ligature found?
-        lig = (*lig)[c._glyph];
+        lig = (*lig)[c.glyphId];
         if (lig != nullptr && lig->value() > 0) {
           target = lig;
           index = i;
@@ -194,23 +194,23 @@ sptr<Box> RowAtom::createBox(Env& env) {
       i = index;
       auto rawKern = [](const Char& p, i32 q) {
         // The glyph is guaranteed to be valid
-        auto kern = FontContext::getFont(p._font)->otf().glyph(p._glyph)->kernRecord()[q];
+        auto kern = FontContext::getFont(p.fontId)->otf().glyph(p.glyphId)->kernRecord()[q];
         if (kern == 0) {
           // Try find from class-kerning
-          kern = FontContext::getFont(p._font)->otf().classKerning(p._glyph, q);
+          kern = FontContext::getFont(p.fontId)->otf().classKerning(p.glyphId, q);
         }
         return kern;
       };
       if (target != nullptr) {
         // We found it! Replace with ligature char
-        const auto& fixed = Char::onlyGlyph(chr._font, target->value(), chr._scale);
+        const auto& fixed = Char::onlyGlyph(chr.fontId, target->value(), chr.scale);
         curr->changeAtom(sptrOf<FixedCharAtom>(fixed));
         // TODO record the original code-points?
       } else if (nextGlyph != -1) {
-        kern = rawKern(chr, nextGlyph) * chr._scale;
+        kern = rawKern(chr, nextGlyph) * chr.scale;
       } else if (nextAtom->isChar() && _ligKernSet[static_cast<i8>(nextAtom->leftType())]) {
         auto nextChar = static_cast<CharSymbol*>(nextAtom.get());
-        kern = rawKern(chr, nextChar->getChar(env)._glyph) * chr._scale;
+        kern = rawKern(chr, nextChar->getChar(env).glyphId) * chr.scale;
       }
     }
 

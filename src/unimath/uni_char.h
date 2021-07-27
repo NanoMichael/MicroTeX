@@ -11,16 +11,16 @@ struct OtfFont;
 /** Represents a character-glyph to be measured and drawn with its font, glyph id and scale */
 struct Char final {
   /** The original code point of the character */
-  const c32 _code = 0;
+  const c32 code = 0;
   /** The mapped code point (by math style) of the character */
-  const c32 _mappedCode = 0;
+  const c32 mappedCode = 0;
   /** The font id */
-  const i32 _font = -1;
+  const i32 fontId = -1;
   /** The glyph id, -1 if no corresponding glyph in the font */
-  const i32 _glyph = -1;
+  const i32 glyphId = -1;
 
   /** The glyph scale, can be modified during using */
-  float _scale = 1.f;
+  float scale = 1.f;
 
   /**
    * Create a char-glyph with only font and glyph, the Unicode code point is 0.
@@ -33,7 +33,7 @@ struct Char final {
   }
 
   /** Test if current glyph is valid, basically the #_glyph >= 0 */
-  inline bool isValid() const { return _glyph >= 0; }
+  inline bool isValid() const { return glyphId >= 0; }
 
   /** The otf font spec the char belongs to */
   sptr<const OtfFont> otfFont() const;
@@ -73,6 +73,12 @@ struct Char final {
    * this if no larger version was found. The index 0 is this itself.
    */
   Char hLarger(u32 index) const;
+
+  /**
+   * Get the script version of this char-glyph, return the copy of this if
+   * no script version was found.
+   */
+  Char script(u32 index) const;
 };
 
 }

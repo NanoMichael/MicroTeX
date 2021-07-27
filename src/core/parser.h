@@ -312,6 +312,9 @@ public:
    */
   sptr<Atom> convertCharacter(wchar_t chr);
 
+  /** Get the simple scripts from given character */
+  sptr<Atom> getSimpleScripts(wchar_t chr);
+
   /**
    * Get the arguments and the options of a command
    *

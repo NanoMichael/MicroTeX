@@ -4,38 +4,38 @@
 using namespace tex;
 
 sptr<const OtfFont> Char::otfFont() const {
-  return FontContext::getFont(_font);
+  return FontContext::getFont(fontId);
 }
 
 const Glyph* Char::glyph() const {
-  auto font = FontContext::getFont(_font);
-  return font == nullptr ? nullptr : font->otf().glyph(_glyph);
+  auto font = FontContext::getFont(fontId);
+  return font == nullptr ? nullptr : font->otf().glyph(glyphId);
 }
 
 float Char::width() const {
   auto g = glyph();
-  return g == nullptr ? 0.f : g->metrics().width() * _scale;
+  return g == nullptr ? 0.f : g->metrics().width() * scale;
 }
 
 float Char::height() const {
   auto g = glyph();
-  return g == nullptr ? 0.f : g->metrics().height() * _scale;
+  return g == nullptr ? 0.f : g->metrics().height() * scale;
 }
 
 float Char::depth() const {
   auto g = glyph();
-  return g == nullptr ? 0.f : g->metrics().depth() * _scale;
+  return g == nullptr ? 0.f : g->metrics().depth() * scale;
 }
 
 float Char::italic() const {
   auto g = glyph();
   auto italic = g == nullptr ? 0 : g->math().italicsCorrection();
-  return italic == Otf::undefinedMathValue ? 0.f : italic * _scale;
+  return italic == Otf::undefinedMathValue ? 0.f : italic * scale;
 }
 
 float Char::topAccentAttachment() const {
   auto g = glyph();
-  return g == nullptr ? 0.f : g->math().topAccentAttachment() * _scale;
+  return g == nullptr ? 0.f : g->math().topAccentAttachment() * scale;
 }
 
 static Char variant(const Char& chr, u32 index, std::function<const Variants&(const Glyph*)>&& f) {
@@ -44,7 +44,7 @@ static Char variant(const Char& chr, u32 index, std::function<const Variants&(co
   const auto& v = f(g);
   if (index >= v.count()) return Char(chr);
   // only changes the glyph version, other fields remain unchanged
-  return {chr._code, chr._mappedCode, chr._font, v[index], chr._scale};
+  return {chr.code, chr.mappedCode, chr.fontId, v[index], chr.scale};
 }
 
 u16 Char::vLargerCount() const {
@@ -70,5 +70,13 @@ Char Char::hLarger(u32 index) const {
     *this,
     index,
     [](const Glyph* g) -> const Variants& { return g->math().horizontalVariants(); }
+  );
+}
+
+Char Char::script(u32 index) const {
+  return variant(
+    *this,
+    index,
+    [](const Glyph* g) -> const Variants& { return g->math().scriptsVariants(); }
   );
 }

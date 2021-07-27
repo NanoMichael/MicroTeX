@@ -270,6 +270,8 @@ private:
   const Variants* _horizontalVariants = &Variants::empty;
   /** MUST NOT BE NULL, equals to &Variants::empty if absent */
   const Variants* _verticalVariants = &Variants::empty;
+  /** MUST NOT BE NULL, equals to &Variants::empty if absent */
+  const Variants* _scriptsVariants = &Variants::empty;
   /** MUST NOT BE NULL, equals to &GlyphAssembly::empty if absent */
   const GlyphAssembly* _horizontalAssembly = &GlyphAssembly::empty;
   /** MUST NOT BE NULL, equals to &GlyphAssembly::empty if absent */
@@ -305,6 +307,14 @@ public:
    * If absent, return Variants::empty
    */
   inline const Variants& verticalVariants() const { return *_verticalVariants; }
+
+  /***
+   * Alternate forms of the current glyph for use in typesetting math,
+   * are of different sizes to place scripts.
+   *
+   * If absent, return Variants::empty
+   */
+  inline const Variants& scriptsVariants() const { return *_scriptsVariants; }
 
   /**
    * This allows constructing very large versions of the glyph by stacking the componants together

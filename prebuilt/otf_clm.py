@@ -121,12 +121,22 @@ def read_metrics(glyph):
 
 def read_variants(get_variants):
     '''
-    Return a array of glyph names to represents variants
+    Return an array of glyph names to represents variants
     '''
     variants = get_variants()
     if not variants:
         return []
     return variants.split(' ')
+
+
+def read_scripts(glyph, subtable_names):
+    '''
+    Return an array of glyph names to represents scripts variants 
+    '''
+    return chain(
+        partial(fmap, lambda subtable_name: glyph.getPosSub(subtable_name)),
+        partial(fmap, lambda infos: infos[2:])
+    )(subtable_names)
 
 
 def read_glyph_assembly(get_assembly):
@@ -160,13 +170,14 @@ def read_math_kern_record(glyph):
     )
 
 
-def read_math(glyph):
+def read_math(glyph, scripts_subtable_names):
     return (
         glyph.italicCorrection,
         # if no top accent attachment, the value == 32767 (undefined math value)
         glyph.topaccent,
         read_variants(lambda: glyph.horizontalVariants),
         read_variants(lambda: glyph.verticalVariants),
+        read_scripts(glyph, scripts_subtable_names),
         read_glyph_assembly(lambda: (
             glyph.horizontalComponentItalicCorrection,
             glyph.horizontalComponents,
@@ -195,7 +206,7 @@ def read_kern(glyph, kern_subtable_names):
     )(kern_subtable_names)
 
 
-def read_glyph(glyph, is_math_font, kern_subtable_names):
+def read_glyph(glyph, is_math_font, kern_subtable_names, scripts_subtable_names):
     '''
     Return a tuple
     (
@@ -207,7 +218,7 @@ def read_glyph(glyph, is_math_font, kern_subtable_names):
     return (
         read_metrics(glyph),
         read_kern(glyph, kern_subtable_names),
-        None if not is_math_font else read_math(glyph),
+        None if not is_math_font else read_math(glyph, scripts_subtable_names),
     )
 
 
@@ -226,6 +237,18 @@ def _read_lookup_subtables(
         partial(fmap, lambda lookup_name: font.getLookupSubtables(lookup_name)),
         partial(filter, is_target_subtable)
     )
+
+
+def read_scripts_subtables(font):
+    '''
+    Return array of scripts variants subtable name
+    The feature tag is 'ssty'
+    '''
+    return _read_lookup_subtables(
+        font,
+        lambda info: info[0] == 'gsub_alternate' and any(
+            t[0] == 'ssty' for t in info[2])
+    )(font.gsub_lookups)
 
 
 def read_kern_subtables(font):
@@ -416,9 +439,9 @@ def write_glyphs(f, glyphs, glyph_name_id_map, is_math_font):
         f.write(struct.pack('!H', length))
         if length == 0:
             return
-        ids = map(lambda x: glyph_name_id_map[x], variants)
-        for i in ids:
-            f.write(struct.pack('!H', i))
+        for v in variants:
+            gid = glyph_name_id_map[v]
+            f.write(struct.pack('!H', gid))
 
     def write_glyph_assembly(assembly):
         if not assembly or not assembly[1]:
@@ -446,9 +469,10 @@ def write_glyphs(f, glyphs, glyph_name_id_map, is_math_font):
         f.write(struct.pack('!h', math[1]))  # topaccent attachment
         write_variants(math[2])  # horizontal variants
         write_variants(math[3])  # vertical variants
-        write_glyph_assembly(math[4])  # horizontal assembly
-        write_glyph_assembly(math[5])  # vertical assembly
-        write_math_kern(math[6])  # math kern
+        write_variants(math[4])  # scripts variants
+        write_glyph_assembly(math[5])  # horizontal assembly
+        write_glyph_assembly(math[6])  # vertical assembly
+        write_math_kern(math[7])  # math kern
 
     for glyph in glyphs:
         write_metrics(glyph[0])
@@ -471,6 +495,8 @@ def parse_otf(file_path, is_math_font, output_file_path):
     liga_subtable_names = read_ligature_subtables(font)
     # read kern class tables
     kern_class_tables = read_kerning_class(font)
+    # read scripts subtables
+    scripts_subtable_names = read_scripts_subtables(font)
 
     unicode_glyph_map = []
     glyph_name_id_map = {}
@@ -485,10 +511,12 @@ def parse_otf(file_path, is_math_font, output_file_path):
         if glyph.unicode != -1:
             unicode_glyph_map.append((glyph.unicode, glyph.originalgid,))
 
-        print(glyph.originalgid, glyph_name)
         glyph_name_id_map[glyph_name] = glyph.originalgid
         # glyph info
-        glyphs.append(read_glyph(glyph, is_math_font, kern_subtable_names))
+        glyphs.append(read_glyph(
+            glyph, is_math_font,
+            kern_subtable_names, scripts_subtable_names
+        ))
 
         # read ligature
         liga_info = read_ligatures(glyph, liga_subtable_names)

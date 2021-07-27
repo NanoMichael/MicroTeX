@@ -31,22 +31,6 @@ inline macro(atop) {
   return sptrOf<FractionAtom>(num, den, false);
 }
 
-inline macro(mathcumsup) {
-  return sptrOf<CumulativeScriptsAtom>(
-    tp.popLastAtom(),
-    nullptr,
-    Formula(tp, args[1])._root
-  );
-}
-
-inline macro(mathcumsub) {
-  return sptrOf<CumulativeScriptsAtom>(
-    tp.popLastAtom(),
-    Formula(tp, args[1])._root,
-    nullptr
-  );
-}
-
 macro(prescript);
 
 macro(sideset);
