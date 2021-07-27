@@ -15,7 +15,6 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
 
   // no scripts
   if (_sub == nullptr && _sup == nullptr) {
-    return {_base->createBox(env)};
     return _base->createBox(env);
   }
 
@@ -32,15 +31,13 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
   const auto hbox = sptrOf<HBox>();
   if (_onRight) {
     hbox->add(base);
-    if (std::abs(reduce) > PREC) hbox->add(StrutBox::create(reduce));
-    if (std::abs(kern) > PREC) hbox->add(StrutBox::create(kern));
+    if (std::abs(reduce + kern) > PREC) hbox->add(StrutBox::create(reduce + kern));
     hbox->add(scripts);
     hbox->add(StrutBox::create(space));
   } else {
     hbox->add(StrutBox::create(space));
     hbox->add(scripts);
-    if (std::abs(kern) > PREC) hbox->add(StrutBox::create(kern));
-    if (std::abs(reduce) > PREC) hbox->add(StrutBox::create(reduce));
+    if (std::abs(reduce + kern) > PREC) hbox->add(StrutBox::create(reduce + kern));
     hbox->add(base);
   }
 
@@ -152,15 +149,22 @@ ScriptResult ScriptsAtom::createScripts(Env& env) {
     sigma = theta;
   }
 
-  const auto topKern = getMathKern(u, true) + delta;
-  const auto bottomKern = getMathKern(-v, false);
-  const auto kern = std::min(topKern, bottomKern);
+  const auto topKern =
+    (
+      _onRight
+      ? 0
+      : std::max(0.f, y->_width - x->_width)
+    ) + getMathKern(u, true) + delta;
+  const auto bottomKern =
+    (
+      _onRight
+      ? 0
+      : std::max(0.f, x->_width - y->_width)
+    ) + getMathKern(-v, false);
+  const auto kern = _onRight ? std::min(topKern, bottomKern) : 0;
 
   auto vbox = sptrOf<VBox>();
   x->_shift = topKern - kern;
-  if (!_onRight && std::abs(x->_shift) < PREC && x->_width - y->_width < 0) {
-    x->_shift = y->_width - x->_width;
-  }
   vbox->add(x);
   y->_shift = bottomKern - kern;
   vbox->add(y, sigma);
