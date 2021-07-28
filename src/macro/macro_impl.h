@@ -234,7 +234,7 @@ inline macro(char) {
   }
   int n = 0;
   str2int(x, n, radix);
-  return tp.convertCharacter((wchar_t) n);
+  return tp.getCharAtom((wchar_t) n);
 }
 
 inline macro(T) {

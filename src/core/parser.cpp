@@ -24,7 +24,8 @@ const wchar_t TeXParser::SUB_SCRIPT = '_';
 const wchar_t TeXParser::SUPER_SCRIPT = '^';
 const wchar_t TeXParser::PRIME = '\'';
 const wchar_t TeXParser::PRIME_UTF = 0x2019;
-const wchar_t TeXParser::BACKPRIME = 0x2035;
+const wchar_t TeXParser::BACKPRIME = '`';
+const wchar_t TeXParser::BACKPRIME_UTF = 0x2035;
 const wchar_t TeXParser::DEGRE = 0x00B0;
 
 const map<wchar_t, char> TeXParser::SUP_SCRIPT_MAP = {
@@ -613,7 +614,7 @@ sptr<Atom> TeXParser::getArgument() {
     return atom;
   }
 
-  auto atom = convertCharacter(ch);
+  auto atom = getCharAtom(ch);
   _pos++;
   return atom;
 }
@@ -849,15 +850,12 @@ void TeXParser::parse() {
         // End of a group
         return;
       }
-      case SUPER_SCRIPT: {
-        _formula->add(getScripts(ch));
-      }
-        break;
+      case SUPER_SCRIPT:
       case SUB_SCRIPT: {
         if (_isMathMode) {
           _formula->add(getScripts(ch));
         } else {
-          _formula->add(convertCharacter(ch));
+          _formula->add(getCharAtom(ch));
           _pos++;
         }
       }
@@ -875,41 +873,40 @@ void TeXParser::parse() {
         _pos++;
       }
         break;
-      case PRIME_UTF:
       case PRIME:
-      case BACKPRIME: {
+      case PRIME_UTF:
+      case BACKPRIME:
+      case BACKPRIME_UTF: {
         // special case for ` and '
-        const string symbol = ch == BACKPRIME ? "backprime" : "prime";
         if (_isMathMode) {
           auto atom = sptrOf<CumulativeScriptsAtom>(
             popLastAtom(),
             nullptr,
-            SymbolAtom::get(symbol)
+            getSimpleScripts(ch != BACKPRIME && ch != BACKPRIME_UTF)
           );
           _formula->add(atom);
         } else {
-          _formula->add(convertCharacter(ch));
+          _formula->add(getCharAtom(ch));
+          _pos++;
         }
-        _pos++;
       }
         break;
       case DQUOTE: {
         if (_isMathMode) {
-          _formula->add(sptrOf<CumulativeScriptsAtom>(
-            popLastAtom(), nullptr, SymbolAtom::get("prime"))
+          auto atom = sptrOf<CumulativeScriptsAtom>(
+            popLastAtom(),
+            nullptr,
+            sptrOf<CharAtom>(0x02033, _isMathMode)
           );
-          _formula->add(sptrOf<CumulativeScriptsAtom>(
-            popLastAtom(), nullptr, SymbolAtom::get("prime"))
-          );
+          _formula->add(atom);
         } else {
-          _formula->add(convertCharacter(PRIME));
-          _formula->add(convertCharacter(PRIME));
+          _formula->add(getCharAtom(ch));
+          _pos++;
         }
-        _pos++;
       }
         break;
       default: {
-        _formula->add(convertCharacter(ch));
+        _formula->add(getCharAtom(ch));
         _pos++;
       }
         break;
@@ -917,7 +914,7 @@ void TeXParser::parse() {
   }
 }
 
-sptr<Atom> TeXParser::convertCharacter(wchar_t chr) {
+sptr<Atom> TeXParser::getCharAtom(wchar_t chr) {
   const c32 code = tex::convertToRomanNumber(chr);
   if (_isMathMode) {
     const auto it = Formula::_symbolMappings.find(code);
@@ -928,28 +925,32 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t chr) {
   return sptrOf<CharAtom>(code, _isMathMode);
 }
 
-sptr<Atom> TeXParser::getSimpleScripts(const wchar_t chr) {
+sptr<Atom> TeXParser::getSimpleScripts(bool isPrime) {
   int count = 1;
-  wchar_t ch = L'\0';
-  int spos = ++_pos;
-  while (_pos < _len) {
-    ch = _latex[_pos];
-    if (ch == chr) {
-      ++count;
-    } else if (ch != ' ') {
-      --_pos;
+  while (true) {
+    ++_pos;
+    if (_pos >= _len) break;
+    const auto chr = _latex[_pos];
+    if ((isPrime && chr != PRIME && chr != PRIME_UTF)
+        || (!isPrime && chr != BACKPRIME && chr != BACKPRIME_UTF)
+      ) {
       break;
     }
-    ++_pos;
+    ++count;
   }
-  static const c32 primes[] = {0x02032, 0x02033, 0x02034, 02057};
-  static const c32 backprimes[] = {0x02035, 0x02036, 02037};
-  // prime
-  if (chr == '\'') {
-    const auto pc = count / 4;
-    const auto rc = count % 4;
-    if (pc > 1) {
-      
-    }
+
+  static const c32 primes[] = {0x02032, 0x02033, 0x02034, 0x02057};
+  static const c32 backprimes[] = {0x02035, 0x02036, 0x02037};
+
+  const auto arr = isPrime ? primes : backprimes;
+  const auto cnt = isPrime ? 4 : 3;
+
+  if (count <= cnt) {
+    return sptrOf<CharAtom>(arr[count - 1], _isMathMode);
   }
+  const auto row = sptrOf<RowAtom>();
+  for (int i = 0; i < count; i++) {
+    row->add(sptrOf<CharAtom>(arr[0], _isMathMode));
+  }
+  return row;
 }

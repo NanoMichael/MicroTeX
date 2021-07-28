@@ -38,6 +38,10 @@ bool SymbolAtom::isValid() const {
 
 Char SymbolAtom::getChar(Env& env) const {
   if (_symbol == nullptr) return {};
+  if (env.style() >= TexStyle::script) {
+    const auto& chr = env.getChar(*_symbol);
+    return chr.script(0);
+  }
   if (_type == AtomType::bigOperator) {
     const auto& chr = env.getChar(*_symbol);
     return env.style() < TexStyle::text ? chr.vLarger(1) : chr;
@@ -67,6 +71,10 @@ sptr<Box> SymbolAtom::createBox(Env& env) {
 }
 
 Char CharAtom::getChar(Env& env) const {
+  if (_mathMode && env.style() >= TexStyle::script) {
+    const auto& chr = env.getChar(_unicode, true, _fontStyle);
+    return chr.script(0);
+  }
   const auto code = (
     env.isSmallCap() && isUnicodeLower(unicode())
     ? toUnicodeUpper(unicode())

@@ -52,6 +52,7 @@ private:
   static const wchar_t PRIME;
   static const wchar_t PRIME_UTF;
   static const wchar_t BACKPRIME;
+  static const wchar_t BACKPRIME_UTF;
   static const wchar_t DEGRE;
   /** scripts to formula map */
   static const std::map<wchar_t, char> SUP_SCRIPT_MAP;
@@ -310,10 +311,10 @@ public:
    * @param chr the character to be converted
    * @return the corresponding atom
    */
-  sptr<Atom> convertCharacter(wchar_t chr);
+  sptr<Atom> getCharAtom(wchar_t chr);
 
   /** Get the simple scripts from given character */
-  sptr<Atom> getSimpleScripts(wchar_t chr);
+  sptr<Atom> getSimpleScripts(bool isPrime);
 
   /**
    * Get the arguments and the options of a command
