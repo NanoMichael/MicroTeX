@@ -29,7 +29,7 @@ public:
     : _delim(delim), _size(size) {}
 
   sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
+    return tex::createVDelim(_delim, env, _size);
   }
 
   __decl_clone(BigDelimiterAtom)

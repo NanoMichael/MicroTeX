@@ -637,6 +637,7 @@ pair<UnitType, float> TeXParser::getLength() {
 }
 
 bool TeXParser::replaceScript() {
+  // TODO
   wchar_t ch = _latex[_pos];
   auto it = SUP_SCRIPT_MAP.find(ch);
   if (it != SUP_SCRIPT_MAP.end()) {

@@ -42,7 +42,8 @@ static Char variant(const Char& chr, u32 index, std::function<const Variants&(co
   auto g = chr.glyph();
   if (g == nullptr) return Char(chr);
   const auto& v = f(g);
-  if (index >= v.count()) return Char(chr);
+  if (v.isEmpty()) return chr;
+  index = std::min<int>(index, v.count() - 1);
   // only changes the glyph version, other fields remain unchanged
   return {chr.code, chr.mappedCode, chr.fontId, v[index], chr.scale};
 }

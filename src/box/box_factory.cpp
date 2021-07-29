@@ -6,14 +6,20 @@
 using namespace std;
 using namespace tex;
 
-sptr<Box> tex::createDelim(SymbolAtom& sym, Env& env, int size) {
+sptr<Box> tex::createHDelim(const sptr<SymbolAtom>& sym, Env& env, int size) {
+  const auto& chr = sym->getChar(env);
+  return sptrOf<CharBox>(chr.hLarger(size));
+}
+
+sptr<Box> tex::createVDelim(const sptr<SymbolAtom>& sym, Env& env, int size) {
+  const auto& chr = sym->getChar(env);
+  return sptrOf<CharBox>(chr.vLarger(size));
+}
+
+sptr<Box> tex::createHDelim(const std::string& sym, Env& env, float width) {
   return StrutBox::empty();
 }
 
-sptr<Box> tex::createHorDelim(const std::string& sym, Env& env, float height) {
-  return StrutBox::empty();
-}
-
-sptr<Box> tex::createVerDelim(const std::string& sym, Env& env, float width) {
+sptr<Box> tex::createVDelim(const std::string& sym, Env& env, float height) {
   return StrutBox::empty();
 }

@@ -8,6 +8,7 @@ map<c32, string> Formula::_symbolMappings{
   {'-', "minus"},
   {'*', "ast"},
   {'/', "slash"},
+  {'|', "vert"},
   {'(', "lparen"},
   {')', "rparen"},
   {'[', "lbrack"},
