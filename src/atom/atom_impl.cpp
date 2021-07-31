@@ -1,6 +1,7 @@
 #include <memory>
 
 #include "atom/atom_impl.h"
+#include "atom/atom_delim.h"
 #include "utils/utf.h"
 #include "utils/string_utils.h"
 
@@ -159,7 +160,7 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
       );
       ra->add(sptrOf<SmashedAtom>(raised));
       ra->add(num);
-      auto oa = sptrOf<OverlinedAtom>(ra);
+      auto oa = sptrOf<OverUnderBar>(ra, true);
       auto row = sptrOf<RowAtom>(Formula(divisor)._root);
       row->add(sptrOf<SpaceAtom>(SpaceType::thinMuSkip));
       row->add(oa);
@@ -170,7 +171,7 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
       auto row = sptrOf<RowAtom>(num);
       row->add(rule);
       if (i == 0) append(row);
-      else append(sptrOf<UnderlinedAtom>(row));
+      else append(sptrOf<OverUnderBar>(row, true));
     } else {
       auto row = sptrOf<RowAtom>(num);
       row->add(rule);

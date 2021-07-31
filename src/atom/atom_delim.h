@@ -7,6 +7,24 @@
 
 namespace tex {
 
+class OverUnderBar : public Atom {
+private:
+  sptr<Atom> _base;
+  bool _over;
+
+public:
+  OverUnderBar() = delete;
+
+  OverUnderBar(const sptr<Atom>& base, bool over)
+    : _base(base), _over(over) {
+    _type = AtomType::ordinary;
+  }
+
+  sptr<Box> createBox(Env& env) override;
+
+  __decl_clone(OverUnderBar)
+};
+
 /**
  * An atom representing another atom with a delimiter and a script above or
  * under it, with script and delimiter separated by a kerning

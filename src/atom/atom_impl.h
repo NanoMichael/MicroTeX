@@ -364,25 +364,6 @@ public:
   __decl_clone(OgonekAtom)
 };
 
-/** An atom representing a over-lined atom */
-class OverlinedAtom : public Atom {
-private:
-  sptr<Atom> _base;
-
-public:
-  OverlinedAtom() = delete;
-
-  explicit OverlinedAtom(const sptr<Atom>& f) : _base(f) {
-    _type = AtomType::ordinary;
-  }
-
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
-
-  __decl_clone(OverlinedAtom)
-};
-
 class RaiseAtom : public Atom {
 private:
   sptr<Atom> _base;
@@ -655,25 +636,6 @@ public:
   }
 
   __decl_clone(TtAtom)
-};
-
-/** An atom representing another atom with a line under it */
-class UnderlinedAtom : public Atom {
-private:
-  sptr<Atom> _base;
-
-public:
-  UnderlinedAtom() = delete;
-
-  explicit UnderlinedAtom(const sptr<Atom>& f) : _base(f) {
-    _type = AtomType::ordinary;
-  }
-
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
-
-  __decl_clone(UnderlinedAtom)
 };
 
 /**

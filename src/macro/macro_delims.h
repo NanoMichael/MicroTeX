@@ -84,11 +84,11 @@ inline macro(overparen) {
 }
 
 inline macro(overline) {
-  return sptrOf<OverlinedAtom>(Formula(tp, args[1], false)._root);
+  return sptrOf<OverUnderBar>(Formula(tp, args[1], false)._root, true);
 }
 
 inline macro(underline) {
-  return sptrOf<UnderlinedAtom>(Formula(tp, args[1], false)._root);
+  return sptrOf<OverUnderBar>(Formula(tp, args[1], false)._root, false);
 }
 
 inline macro(Braket) {

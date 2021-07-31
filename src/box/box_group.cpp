@@ -188,13 +188,6 @@ void VBox::draw(Graphics2D& g2, float x, float y) {
   }
 }
 
-OverBar::OverBar(const sptr<Box>& b, float kern, float thickness) : VBox() {
-  add(sptrOf<StrutBox>(0.f, thickness, 0.f, 0.f));
-  add(sptrOf<RuleBox>(thickness, b->_width, 0.f));
-  add(sptrOf<StrutBox>(0.f, kern, 0.f, 0.f));
-  add(b);
-}
-
 /********************************** color box implementation ********************************/
 
 ColorBox::ColorBox(const sptr<Box>& box, color fg, color bg) : DecorBox(box) {

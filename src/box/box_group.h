@@ -78,19 +78,6 @@ public:
   boxname(VBox);
 };
 
-/**
- * A box representing another box with a horizontal rule above it, with
- * appropriate kerning.
- */
-class OverBar : public VBox {
-public:
-  OverBar() = delete;
-
-  OverBar(const sptr<Box>& b, float kern, float thickness);
-
-  boxname(OverBar);
-};
-
 /***************************************************************************************************
  *                                   operation boxes                                               *
  ***************************************************************************************************/
