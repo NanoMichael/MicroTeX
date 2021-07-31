@@ -1,4 +1,5 @@
 #include "core/formula.h"
+#include "atom/atom_char.h"
 #include "utils/utf.h"
 #include "utils/string_utils.h"
 

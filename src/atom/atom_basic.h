@@ -8,16 +8,10 @@
 
 #include "atom/atom.h"
 #include "atom/atom_row.h"
-#include "atom/atom_char.h"
-#include "atom/atom_space.h"
-#include "atom/atom_stack.h"
-#include "atom/atom_accent.h"
-#include "atom/atom_scripts.h"
-#include "atom/atom_vrow.h"
-#include "atom/atom_operator.h"
 #include "box/box_single.h"
 #include "box/box_group.h"
 #include "graphic/graphic.h"
+#include "unimath/math_type.h"
 
 namespace tex {
 

@@ -1,9 +1,12 @@
 #include "atom/atom_row.h"
-
-#include <memory>
-#include "atom/atom_basic.h"
+#include "atom/atom_char.h"
+#include "atom/atom_space.h"
+#include "box/box_group.h"
+#include "box/box_single.h"
 #include "env/env.h"
 #include "core/glue.h"
+
+#include <memory>
 
 using namespace std;
 using namespace tex;

@@ -3,6 +3,8 @@
 #include "atom/atom_basic.h"
 #include "atom/atom_font.h"
 #include "atom/atom_delim.h"
+#include "atom/atom_scripts.h"
+#include "atom/atom_operator.h"
 #include "core/formula.h"
 #include "macro/macro.h"
 #include "graphic/graphic.h"

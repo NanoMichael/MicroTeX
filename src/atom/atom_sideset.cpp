@@ -1,6 +1,7 @@
 #include "atom/atom_sideset.h"
 #include "atom/atom_scripts.h"
 #include "atom/atom_basic.h"
+#include "atom/atom_stack.h"
 #include "atom/atom_zstack.h"
 
 using namespace tex;

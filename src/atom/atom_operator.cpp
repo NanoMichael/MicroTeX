@@ -2,6 +2,8 @@
 #include "atom/atom_row.h"
 #include "atom/atom_basic.h"
 #include "atom/atom_sideset.h"
+#include "atom/atom_scripts.h"
+#include "atom/atom_stack.h"
 #include "env/env.h"
 
 using namespace tex;

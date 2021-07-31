@@ -2,6 +2,7 @@
 #include "atom/atom_stack.h"
 #include "atom/atom_char.h"
 #include "atom/atom_basic.h"
+#include "atom/atom_accent.h"
 
 using namespace tex;
 using namespace std;

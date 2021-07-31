@@ -2,6 +2,8 @@
 #define LATEX_MACRO_ACCENT_H
 
 #include "macro/macro_decl.h"
+#include "atom/atom_accent.h"
+#include "atom/atom_stack.h"
 #include "utils/utf.h"
 
 namespace tex {

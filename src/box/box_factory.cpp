@@ -2,6 +2,7 @@
 #include "atom/atom_basic.h"
 #include "utils/utils.h"
 #include "env/env.h"
+#include "atom/atom_char.h"
 
 #include <deque>
 

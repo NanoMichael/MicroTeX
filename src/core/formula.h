@@ -6,6 +6,7 @@
 #include <list>
 
 #include "atom/atom_basic.h"
+#include "atom/atom_vrow.h"
 #include "core/parser.h"
 #include "graphic/graphic.h"
 
