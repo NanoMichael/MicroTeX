@@ -121,9 +121,7 @@ public:
    *
    * @param box the box to be append
    */
-  virtual void add(const sptr<Box>& box) {
-    _children.push_back(box);
-  }
+  virtual void add(const sptr<Box>& box);
 
   /**
    * Inserts the given box at the given position in the list of child boxes.
@@ -131,9 +129,7 @@ public:
    * @param pos the position at which to insert the given box
    * @param box the box to be inserted
    */
-  virtual void add(int pos, const sptr<Box>& box) {
-    _children.insert(_children.begin() + pos, box);
-  }
+  virtual void add(int pos, const sptr<Box>& box);
 
   /**
    * Append the given box to the end of the list of the child boxes,

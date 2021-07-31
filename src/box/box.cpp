@@ -23,6 +23,14 @@ std::string Box::toString() const {
   return "";
 }
 
+void BoxGroup::add(const sptr<Box>& box) {
+  _children.push_back(box);
+}
+
+void BoxGroup::add(int pos, const sptr<Box>& box) {
+  _children.insert(_children.begin() + pos, box);
+}
+
 int BoxGroup::lastFontId() {
   int id = FontContext::NO_FONT;
   for (int i = _children.size() - 1; i >= 0 && id == FontContext::NO_FONT; i--) {

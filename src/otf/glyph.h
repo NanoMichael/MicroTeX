@@ -170,6 +170,9 @@ public:
   /** Number of parts in this assembly. */
   inline u16 partCount() const { return _partCount; }
 
+  /** Test if this assembly is empty. */
+  inline bool isEmpty() const { return _partCount == 0; }
+
   /** Get part at index i */
   inline const GlyphPart& operator[](u16 i) const { return _parts[i]; }
 

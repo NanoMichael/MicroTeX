@@ -81,3 +81,17 @@ Char Char::script(u32 index) const {
     [](const Glyph* g) -> const Variants& { return g->math().scriptsVariants(); }
   );
 }
+
+const GlyphAssembly& Char::vAssembly() const {
+  auto g = glyph();
+  return g == nullptr ? GlyphAssembly::empty : g->math().verticalAssembly();
+}
+
+const GlyphAssembly& Char::hAssembly() const {
+  auto g = glyph();
+  return g == nullptr ? GlyphAssembly::empty : g->math().horizontalAssembly();
+}
+
+const Char Char::assemblyPart(i32 id) const {
+  return onlyGlyph(fontId, id, scale);
+}

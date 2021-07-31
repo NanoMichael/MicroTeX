@@ -2,9 +2,10 @@
 #define LATEX_MACRO_DELIMS_H
 
 #include "macro/macro_decl.h"
+#include "atom/atom.h"
 #include "atom/atom_impl.h"
 #include "atom/atom_basic.h"
-#include "atom/atom.h"
+#include "atom/atom_delim.h"
 #include "utils/string_utils.h"
 
 namespace tex {
@@ -51,42 +52,35 @@ inline macro(xrightarrow) {
 
 inline sptr<Atom> _overunder(
   TeXParser& tp,
-  std::vector<std::wstring>& args,
+  Args& args,
   const std::string& name,
   bool isOver
 ) {
-  return sptrOf<OverUnderDelimiter>(
-    Formula(tp, args[1], false)._root,
-    nullptr,
-    SymbolAtom::get(name),
-    UnitType::ex,
-    0.f,
-    isOver
-  );
+  return sptrOf<OverUnderDelimiter>(Formula(tp, args[1], false)._root, name, isOver);
 }
 
 inline macro(underbrace) {
-  return _overunder(tp, args, "rbrace", false);
+  return _overunder(tp, args, "underbrace", false);
 }
 
 inline macro(overbrace) {
-  return _overunder(tp, args, "lbrace", true);
+  return _overunder(tp, args, "overbrace", true);
 }
 
 inline macro(underbrack) {
-  return _overunder(tp, args, "rsqbrack", false);
+  return _overunder(tp, args, "underbracket", false);
 }
 
 inline macro(overbrack) {
-  return _overunder(tp, args, "lsqbrack", true);
+  return _overunder(tp, args, "overbracket", true);
 }
 
 inline macro(underparen) {
-  return _overunder(tp, args, "rbrack", false);
+  return _overunder(tp, args, "underparen", false);
 }
 
 inline macro(overparen) {
-  return _overunder(tp, args, "lbrack", true);
+  return _overunder(tp, args, "overparen", true);
 }
 
 inline macro(overline) {

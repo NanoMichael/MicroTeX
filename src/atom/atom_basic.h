@@ -336,49 +336,6 @@ public:
   __decl_clone(TypedAtom)
 };
 
-/**
- * An atom representing another atom with a delimiter and a script above or
- * under it, with script and delimiter separated by a kerning
- */
-class OverUnderDelimiter : public Atom {
-private:
-  // base and script atom
-  sptr<Atom> _base, _script;
-  // delimiter symbol
-  sptr<SymbolAtom> _symbol;
-  // kerning between delimiter and script
-  SpaceAtom _kern;
-  // whether the delimiter should be positioned above or under the base
-  bool _over;
-
-  static float getMaxWidth(const Box* b, const Box* del, const Box* script);
-
-public:
-  OverUnderDelimiter() = delete;
-
-  OverUnderDelimiter(
-    const sptr<Atom>& base,
-    const sptr<Atom>& script,
-    const sptr<SymbolAtom>& symbol,
-    UnitType kernUnit, float kern, bool over
-  ) : _base(base), _script(script), _symbol(symbol), _over(over) {
-    _kern = SpaceAtom(kernUnit, 0, kern, 0);
-    _type = AtomType::inner;
-  }
-
-  inline void addScript(const sptr<Atom>& script) {
-    _script = script;
-  }
-
-  inline bool isOver() const {
-    return _over;
-  }
-
-  sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(OverUnderDelimiter)
-};
-
 }  // namespace tex
 
 #endif  // LATEX_ATOM_BASIC_H

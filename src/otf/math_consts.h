@@ -85,6 +85,7 @@ public:
 
   inline i16 stackDisplayStyleGapMin() const { return _fields[27]; }
 
+  // region TODO stretch stacks not used
   inline i16 stretchStackTopShiftUp() const { return _fields[28]; }
 
   inline i16 stretchStackBottomShiftDown() const { return _fields[29]; }
@@ -92,6 +93,7 @@ public:
   inline i16 stretchStackGapAboveMin() const { return _fields[30]; }
 
   inline i16 stretchStackGapBelowMin() const { return _fields[31]; }
+  // endregion
 
   inline i16 fractionNumeratorShiftUp() const { return _fields[32]; }
 

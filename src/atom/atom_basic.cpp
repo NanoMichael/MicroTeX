@@ -113,17 +113,3 @@ sptr<Box> PhantomAtom::createBox(Env& env) {
   float s = res->_shift;
   return sptrOf<StrutBox>(w, h, d, s);
 }
-
-/******************************** OverUnderDelimiter implementation *******************************/
-
-float OverUnderDelimiter::getMaxWidth(const Box* b, const Box* del, const Box* script) {
-  // TODO
-  // float mx = max(b->_width, del->_height + del->_depth);
-  float mx = max(b->_width, del->_width);
-  if (script != nullptr) mx = max(mx, script->_width);
-  return mx;
-}
-
-sptr<Box> OverUnderDelimiter::createBox(Env& env) {
-  return StrutBox::empty();
-}

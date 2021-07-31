@@ -79,6 +79,15 @@ struct Char final {
    * no script version was found.
    */
   Char script(u32 index) const;
+
+  /** Get the glyph assembly in vertical direction */
+  const GlyphAssembly& vAssembly() const;
+
+  /** Get the glyph assembly in horizontal direction */
+  const GlyphAssembly& hAssembly() const;
+
+  /** Get the char of the assembly part */
+  const Char assemblyPart(i32 id) const;
 };
 
 }

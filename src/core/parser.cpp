@@ -2,6 +2,7 @@
 #include "atom/atom.h"
 #include "atom/atom_basic.h"
 #include "atom/atom_font.h"
+#include "atom/atom_delim.h"
 #include "core/formula.h"
 #include "macro/macro.h"
 #include "graphic/graphic.h"
@@ -565,19 +566,6 @@ sptr<Atom> TeXParser::getScripts(wchar_t first) {
 
   if (atom->rightType() == AtomType::bigOperator) {
     return sptrOf<OperatorAtom>(atom, sub, sup);
-  }
-
-  auto* del = dynamic_cast<OverUnderDelimiter*>(atom.get());
-  if (del != nullptr) {
-    if (del->isOver()) {
-      if (sup != nullptr) {
-        del->addScript(sup);
-        return sptrOf<ScriptsAtom>(atom, sub, nullptr);
-      }
-    } else if (sub != nullptr) {
-      del->addScript(sub);
-      return sptrOf<ScriptsAtom>(atom, nullptr, sup);
-    }
   }
 
   return sptrOf<ScriptsAtom>(atom, sub, sup);
