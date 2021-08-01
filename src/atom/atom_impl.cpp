@@ -107,10 +107,6 @@ sptr<Box> RotateAtom::createBox(Env& env) {
   return sptrOf<RotateBox>(_base->createBox(env), _angle, x, y);
 }
 
-sptr<Box> XArrowAtom::createBox(Env& env) {
-  return StrutBox::empty();
-}
-
 void LongDivAtom::calculate(vector<wstring>& results) const {
   long quotient = _dividend / _divisor;
   results.push_back(towstring(quotient));

@@ -36,8 +36,23 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(2, 1, macro_rule, "rule"),
     mac(1, 1, macro_includegraphics, "includegraphics"),
     mac(2, 1, macro_cfrac, "cfrac"),
-    mac(1, 1, macro_xleftarrow, "xleftarrow"),
-    mac(1, 1, macro_xrightarrow, "xrightarrow"),
+  // region arrows
+    mac(1, 1, macro_xarrow, "xleftarrow"),
+    mac(1, 1, macro_xarrow, "xrightarrow"),
+    mac(1, 1, macro_xarrow, "xleftrightarrow"),
+    mac(1, 1, macro_xarrow, "xRightarrow"),
+    mac(1, 1, macro_xarrow, "xLeftarrow"),
+    mac(1, 1, macro_xarrow, "xLeftrightarrow"),
+    mac(1, 1, macro_xarrow, "xhookleftarrow"),
+    mac(1, 1, macro_xarrow, "xhookrightarrow"),
+    mac(1, 1, macro_xarrow, "xmapsto"),
+    mac(1, 1, macro_xarrow, "xrightharpoondown"),
+    mac(1, 1, macro_xarrow, "xrightharpoonup"),
+    mac(1, 1, macro_xarrow, "xleftharpoondown"),
+    mac(1, 1, macro_xarrow, "xleftharpoonup"),
+    mac(1, 1, macro_xarrow, "xrightleftharpoons"),
+    mac(1, 1, macro_xarrow, "xleftrightharpoons"),
+  // endregion
     mac(1, 1, macro_sqrt, "sqrt"),
     mac(1, 1, macro_smash, "smash"),
     mac(1, 1, macro_hdotsfor, "hdotsfor"),
@@ -118,20 +133,18 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(3, macro_prescript, "prescript"),
   // endregion
   // region under & over delimiters
-    mac(1, macro_overrightarrow, "overrightarrow"),
-    mac(1, macro_overleftarrow, "overleftarrow"),
-    mac(1, macro_overleftrightarrow, "overleftrightarrow"),
-    mac(1, macro_underrightarrow, "underrightarrow"),
-    mac(1, macro_underleftarrow, "underleftarrow"),
-    mac(1, macro_underleftrightarrow, "underleftrightarrow"),
-    mac(1, macro_underbrace, "underbrace"),
-    mac(1, macro_overbrace, "overbrace"),
-    mac(1, macro_underbrack, "underbrack"),
-    mac(1, macro_underbrack, "underbracket"),
-    mac(1, macro_overbrack, "overbrack"),
-    mac(1, macro_overbrack, "overbracket"),
-    mac(1, macro_underparen, "underparen"),
-    mac(1, macro_overparen, "overparen"),
+    mac(1, macro_overdelim, "overrightarrow"),
+    mac(1, macro_overdelim, "overleftarrow"),
+    mac(1, macro_overdelim, "overleftrightarrow"),
+    mac(1, macro_underdelim, "underrightarrow"),
+    mac(1, macro_underdelim, "underleftarrow"),
+    mac(1, macro_underdelim, "underleftrightarrow"),
+    mac(1, macro_overdelim, "overbrace"),
+    mac(1, macro_overdelim, "overbracket"),
+    mac(1, macro_overdelim, "overparen"),
+    mac(1, macro_underdelim, "underbrace"),
+    mac(1, macro_underdelim, "underbracket"),
+    mac(1, macro_underdelim, "underparen"),
     mac(1, macro_overline, "overline"),
     mac(1, macro_underline, "underline"),
     mac(1, macro_Braket, "Braket"),
@@ -389,6 +402,8 @@ void NewCommandMacro::_init_() {
   cmd(1, L"Ket", L"\\left\\vert{#1}\\right\\rangle");
   cmd(1, L"textsuperscript", L"{}^{\\text{#1}}");
   cmd(1, L"textsubscript", L"{}_{\\text{#1}}");
+  cmd(1, L"overbrack", L"\\overbracket{#1}");
+  cmd(1, L"underbrack", L"\\underbracket{#1}");
   cmd(0, L"degree", L"^\\circ");
   cmd(0, L"with", L"\\mathbin{\\&}");
   cmd(0, L"parr", L"\\mathbin{\\rotatebox[origin=c]{180}{\\&}}");

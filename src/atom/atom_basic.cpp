@@ -1,6 +1,7 @@
 #include "atom/atom_basic.h"
 #include "atom/atom_scripts.h"
 #include "box/box_group.h"
+#include "box/box_factory.h"
 #include "graphic/graphic.h"
 #include "env/env.h"
 
@@ -112,4 +113,13 @@ sptr<Box> PhantomAtom::createBox(Env& env) {
   float d = (_d ? res->_depth : 0);
   float s = res->_shift;
   return sptrOf<StrutBox>(w, h, d, s);
+}
+
+sptr<Box> ExtensibleAtom::createBox(Env& env) {
+  const auto len = _getLen(env);
+  return (
+    _vertical
+    ? tex::createVDelim(_sym, env, len)
+    : tex::createHDelim(_sym, env, len)
+  );
 }

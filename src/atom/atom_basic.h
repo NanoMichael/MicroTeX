@@ -330,6 +330,24 @@ public:
   __decl_clone(TypedAtom)
 };
 
+class ExtensibleAtom : public Atom {
+private:
+  std::string _sym;
+  bool _vertical;
+  std::function<float(const Env&)> _getLen;
+
+public:
+  explicit ExtensibleAtom(
+    std::string sym,
+    std::function<float(const Env&)>&& getLen,
+    bool isVertical = false
+  ) : _sym(std::move(sym)), _getLen(getLen), _vertical(isVertical) {}
+
+  sptr<Box> createBox(Env& env) override;
+
+  __decl_clone(ExtensibleAtom)
+};
+
 }  // namespace tex
 
 #endif  // LATEX_ATOM_BASIC_H

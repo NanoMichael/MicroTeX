@@ -1,6 +1,8 @@
 #ifndef LATEX_ATOM_DELIM_H
 #define LATEX_ATOM_DELIM_H
 
+#include <utility>
+
 #include "atom/atom.h"
 #include "atom/atom_char.h"
 #include "atom/atom_space.h"

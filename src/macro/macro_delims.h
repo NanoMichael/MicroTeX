@@ -7,81 +7,23 @@
 #include "atom/atom_basic.h"
 #include "atom/atom_delim.h"
 #include "utils/string_utils.h"
+#include "utils/utf.h"
 
 namespace tex {
 
-inline sptr<Atom> _overunder(
-  TeXParser& tp,
-  Args& args,
-  const std::string& name,
-  bool isOver
-) {
-  return sptrOf<OverUnderDelimiter>(Formula(tp, args[1], false)._root, name, isOver);
+inline macro(overdelim) {
+  const auto& name = wide2utf8(args[0]);
+  const auto& base = Formula(tp, args[1], false)._root;
+  return sptrOf<OverUnderDelimiter>(base, name, true);
 }
 
-inline macro(overrightarrow) {
-  return _overunder(tp, args, "Vec", true);
+inline macro(underdelim) {
+  const auto& name = wide2utf8(args[0]);
+  const auto& base = Formula(tp, args[1], false)._root;
+  return sptrOf<OverUnderDelimiter>(base, name, false);
 }
 
-inline macro(overleftarrow) {
-  return _overunder(tp, args, "overleftarrow", true);
-}
-
-inline macro(overleftrightarrow) {
-  return _overunder(tp, args, "overleftrightarrow", true);
-}
-
-inline macro(underrightarrow) {
-  return _overunder(tp, args, "underrightarrow", false);
-}
-
-inline macro(underleftarrow) {
-  return _overunder(tp, args, "underleftarrow", false);
-}
-
-inline macro(underleftrightarrow) {
-  return _overunder(tp, args, "underleftrightarrow", false);
-}
-
-inline macro(xleftarrow) {
-  return sptrOf<XArrowAtom>(
-    Formula(tp, args[1], false)._root,
-    Formula(tp, args[2])._root,
-    true
-  );
-}
-
-inline macro(xrightarrow) {
-  return sptrOf<XArrowAtom>(
-    Formula(tp, args[1], false)._root,
-    Formula(tp, args[2])._root,
-    false
-  );
-}
-
-inline macro(underbrace) {
-  return _overunder(tp, args, "underbrace", false);
-}
-
-inline macro(overbrace) {
-  return _overunder(tp, args, "overbrace", true);
-}
-
-inline macro(underbrack) {
-  return _overunder(tp, args, "underbracket", false);
-}
-
-inline macro(overbrack) {
-  return _overunder(tp, args, "overbracket", true);
-}
-
-inline macro(underparen) {
-  return _overunder(tp, args, "underparen", false);
-}
-
-inline macro(overparen) {
-  return _overunder(tp, args, "overparen", true);
-}
+macro(xarrow);
 
 inline macro(overline) {
   return sptrOf<OverUnderBar>(Formula(tp, args[1], false)._root, true);

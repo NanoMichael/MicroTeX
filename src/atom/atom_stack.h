@@ -13,15 +13,15 @@ struct StackArgs {
   sptr<Atom> atom = nullptr;
   UnitType spaceUnit = UnitType::none;
   float space = 0.f;
-  bool isSmall = false;
+  bool isScript = false;
   bool isAutoSpace = false;
 
   inline bool isPresent() const {
     return atom != nullptr;
   }
 
-  static inline StackArgs autoSpace(const sptr<Atom>& atom, bool isSmall = true) {
-    return {atom, UnitType::none, 0.f, isSmall, true};
+  static inline StackArgs autoSpace(const sptr<Atom>& atom, bool isScript = true) {
+    return {atom, UnitType::none, 0.f, isScript, true};
   }
 };
 
@@ -41,6 +41,7 @@ private:
   sptr<Atom> _base;
   StackArgs _over;
   StackArgs _under;
+  float _maxWidth = 0.f;
 
 public:
   StackAtom() = delete;
@@ -59,6 +60,14 @@ public:
     StackArgs overArgs,
     StackArgs underArgs
   ) : _base(base), _over(std::move(overArgs)), _under(std::move(underArgs)) {}
+
+  inline void setBaseAtom(const sptr<Atom>& base) {
+    _base = base;
+  }
+
+  inline float getMaxWidth() {
+    return _maxWidth;
+  }
 
   AtomType leftType() const override {
     return _base->leftType();

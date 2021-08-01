@@ -14,36 +14,36 @@ sptr<Box> StackAtom::createBox(Env& env) {
 }
 
 StackResult StackAtom::createStack(Env& env) {
-  // create boxes in right style and calculate max width
-  auto b = _base == nullptr ? StrutBox::empty() : _base->createBox(env);
+  // over and under
+  sptr<Box> o, u;
+  if (_over.isPresent()) {
+    o = (
+      _over.isScript
+      ? env.withStyle(env.supStyle(), [&](Env& sub) { return _over.atom->createBox(sub); })
+      : _over.atom->createBox(env)
+    );
+    _maxWidth = std::max(_maxWidth, o->_width);
+  }
+  if (_under.isPresent()) {
+    u = (
+      _under.isScript
+      ? env.withStyle(env.subStyle(), [&](Env& sub) { return _under.atom->createBox(sub); })
+      : _under.atom->createBox(env)
+    );
+    _maxWidth = std::max(_maxWidth, u->_width);
+  }
+
+  sptr<Box> b = _base == nullptr ? StrutBox::empty() : _base->createBox(env);
+  _maxWidth = std::max(_maxWidth, b->_width);
   auto delta = 0.f;
   if (auto cs = dynamic_cast<CharSymbol*>(_base.get()); cs != nullptr) {
     delta = cs->getChar(env).italic();
   } else if (auto pa = dynamic_cast<PlaceholderAtom*>(_base.get()); pa != nullptr) {
     delta = pa->italic();
   }
-  // over and under
-  sptr<Box> o, u;
-  float maxWidth = b->_width;
-  if (_over.isPresent()) {
-    o = (
-      _over.isSmall
-      ? env.withStyle(env.supStyle(), [&](Env& sub) { return _over.atom->createBox(sub); })
-      : _over.atom->createBox(env)
-    );
-    maxWidth = std::max(maxWidth, o->_width);
-  }
-  if (_under.isPresent()) {
-    u = (
-      _under.isSmall
-      ? env.withStyle(env.subStyle(), [&](Env& sub) { return _under.atom->createBox(sub); })
-      : _under.atom->createBox(env)
-    );
-    maxWidth = std::max(maxWidth, u->_width);
-  }
 
   const auto wrap = [&](const sptr<Box>& box, float bias) -> sptr<Box> {
-    box->_shift = (maxWidth - box->_width) / 2 + bias;
+    box->_shift = (_maxWidth - box->_width) / 2 + bias;
     return box;
   };
 

@@ -572,29 +572,6 @@ public:
   __decl_clone(VCenteredAtom)
 };
 
-/**
- * An atom representing an extensible left or right arrow to handle xleftarrow
- * and xrightarrow commands in LaTeX.
- */
-class XArrowAtom : public Atom {
-private:
-  sptr<Atom> _over, _under;
-  bool _left;
-
-public:
-  XArrowAtom() = delete;
-
-  XArrowAtom(const sptr<Atom>& over, const sptr<Atom>& under, bool left) {
-    _over = over;
-    _under = under;
-    _left = left;
-  }
-
-  sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(XArrowAtom)
-};
-
 /** An atom representing long division */
 class LongDivAtom : public VRowAtom {
 private:

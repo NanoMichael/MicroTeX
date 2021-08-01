@@ -1,8 +1,33 @@
 #include "macro/macro_delims.h"
+#include "atom/atom_stack.h"
+#include "utils/utf.h"
 
 namespace tex {
 
 using namespace std;
+
+macro(xarrow) {
+  const auto& name = wide2utf8(args[0].substr(1));
+  const auto& over = StackArgs::autoSpace(
+    Formula(tp, args[1], false, tp.isMathMode())._root,
+    false
+  );
+  const auto& under = StackArgs::autoSpace(
+    Formula(tp, args[2], false, tp.isMathMode())._root,
+    false
+  );
+  const auto& stack = sptrOf<StackAtom>(nullptr, over, under);
+  const auto& arrow = sptrOf<ExtensibleAtom>(
+    name,
+    [stack](const Env& env) -> float {
+      return stack->getMaxWidth() + Units::fsize(UnitType::ex, 1.f, env);
+    },
+    false
+  );
+  arrow->_type = AtomType::relation;
+  stack->setBaseAtom(arrow);
+  return stack;
+}
 
 macro(left) {
   wstring grep = tp.getGroup(L"\\left", L"\\right");

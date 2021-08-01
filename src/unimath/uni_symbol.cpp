@@ -2213,6 +2213,7 @@ const Symbol Symbol::_symbols[]{
   {0x020E1, acc,     "overleftrightarrow"},
   {0x00305, acc,     "overline"},
   {0x023DC, ord,     "overparen"},
+  {0x020D7, acc,     "overrightarrow"},
   {0x00309, acc,     "ovhook"},
   {0x0220B, rel,     "owns"},
   {0x02225, rel,     "parallel"},
