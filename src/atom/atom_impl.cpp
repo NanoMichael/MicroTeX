@@ -107,10 +107,6 @@ sptr<Box> RotateAtom::createBox(Env& env) {
   return sptrOf<RotateBox>(_base->createBox(env), _angle, x, y);
 }
 
-sptr<Box> UnderOverArrowAtom::createBox(Env& env) {
-  return StrutBox::empty();
-}
-
 sptr<Box> XArrowAtom::createBox(Env& env) {
   return StrutBox::empty();
 }

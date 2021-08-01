@@ -10,28 +10,37 @@
 
 namespace tex {
 
+inline sptr<Atom> _overunder(
+  TeXParser& tp,
+  Args& args,
+  const std::string& name,
+  bool isOver
+) {
+  return sptrOf<OverUnderDelimiter>(Formula(tp, args[1], false)._root, name, isOver);
+}
+
 inline macro(overrightarrow) {
-  return sptrOf<UnderOverArrowAtom>(Formula(tp, args[1], false)._root, false, true);
+  return _overunder(tp, args, "Vec", true);
 }
 
 inline macro(overleftarrow) {
-  return sptrOf<UnderOverArrowAtom>(Formula(tp, args[1], false)._root, true, true);
+  return _overunder(tp, args, "overleftarrow", true);
 }
 
 inline macro(overleftrightarrow) {
-  return sptrOf<UnderOverArrowAtom>(Formula(tp, args[1], false)._root, true);
+  return _overunder(tp, args, "overleftrightarrow", true);
 }
 
 inline macro(underrightarrow) {
-  return sptrOf<UnderOverArrowAtom>(Formula(tp, args[1], false)._root, false, false);
+  return _overunder(tp, args, "underrightarrow", false);
 }
 
 inline macro(underleftarrow) {
-  return sptrOf<UnderOverArrowAtom>(Formula(tp, args[1], false)._root, true, false);
+  return _overunder(tp, args, "underleftarrow", false);
 }
 
 inline macro(underleftrightarrow) {
-  return sptrOf<UnderOverArrowAtom>(Formula(tp, args[1], false)._root, false);
+  return _overunder(tp, args, "underleftrightarrow", false);
 }
 
 inline macro(xleftarrow) {
@@ -48,15 +57,6 @@ inline macro(xrightarrow) {
     Formula(tp, args[2])._root,
     false
   );
-}
-
-inline sptr<Atom> _overunder(
-  TeXParser& tp,
-  Args& args,
-  const std::string& name,
-  bool isOver
-) {
-  return sptrOf<OverUnderDelimiter>(Formula(tp, args[1], false)._root, name, isOver);
 }
 
 inline macro(underbrace) {

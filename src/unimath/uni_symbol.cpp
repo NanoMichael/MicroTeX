@@ -2649,6 +2649,7 @@ const Symbol Symbol::_symbols[]{
   {0x023B5, ord,     "underbracket"},
   {0x020EE, acc,     "underleftarrow"},
   {0x020ED, acc,     "underleftharpoondown"},
+  {0x0034D, acc,     "underleftrightarrow"},
   {0x00332, acc,     "underline"},
   {0x023DD, ord,     "underparen"},
   {0x020EF, acc,     "underrightarrow"},

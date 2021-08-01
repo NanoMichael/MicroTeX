@@ -35,23 +35,6 @@ public:
   __decl_clone(BigDelimiterAtom)
 };
 
-/** An atom representing a bold atom */
-class BoldAtom : public Atom {
-private:
-  sptr<Atom> _base;
-
-public:
-  BoldAtom() = delete;
-
-  explicit BoldAtom(const sptr<Atom>& base) : _base(base) {}
-
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
-
-  __decl_clone(BoldAtom)
-};
-
 /** An atom with cedilla */
 class CedillaAtom : public Atom {
 private:
@@ -276,23 +259,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 
   __decl_clone(FractionAtom)
-};
-
-/** An atom representing a italic atom */
-class ItAtom : public Atom {
-private:
-  sptr<Atom> _base;
-
-public:
-  ItAtom() = delete;
-
-  explicit ItAtom(const sptr<Atom>& base) : _base(base) {}
-
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
-
-  __decl_clone(ItAtom)
 };
 
 /** An atom representing a lapped atom (i.e. with no width) */
@@ -530,23 +496,6 @@ public:
   __decl_clone(SmallCapAtom)
 };
 
-/** An atom representing a sans-serif atom */
-class SsAtom : public Atom {
-private:
-  sptr<Atom> _base;
-
-public:
-  SsAtom() = delete;
-
-  explicit SsAtom(const sptr<Atom>& base) : _base(base) {}
-
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
-
-  __decl_clone(SsAtom)
-};
-
 /** An atom representing a strike through atom */
 class StrikeThroughAtom : public Atom {
 private:
@@ -601,72 +550,6 @@ public:
   }
 
   __decl_clone(TextCircledAtom)
-};
-
-/** An atom representing a modification of style in a formula */
-class TextStyleAtom : public Atom {
-private:
-  std::string _style;
-  sptr<Atom> _at;
-
-public:
-  TextStyleAtom() = delete;
-
-  TextStyleAtom(const sptr<Atom>& a, std::string style) : _style(std::move(style)), _at(a) {}
-
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
-
-  __decl_clone(TextStyleAtom)
-};
-
-/** An atom representing a typewriter atom */
-class TtAtom : public Atom {
-private:
-  sptr<Atom> _base;
-
-public:
-  TtAtom() = delete;
-
-  explicit TtAtom(const sptr<Atom>& base) : _base(base) {}
-
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
-
-  __decl_clone(TtAtom)
-};
-
-/**
- * An atom representing an other atom with an extensible arrow or double-arrow
- * over or under it
- */
-class UnderOverArrowAtom : public Atom {
-private:
-  sptr<Atom> _base;
-  bool _over, _left, _dble;
-
-public:
-  UnderOverArrowAtom() = delete;
-
-  UnderOverArrowAtom(const sptr<Atom>& base, bool left, bool over) {
-    _base = base;
-    _left = left;
-    _over = over;
-    _dble = false;
-  }
-
-  UnderOverArrowAtom(const sptr<Atom>& base, bool over) {
-    _base = base;
-    _over = over;
-    _dble = true;
-    _left = false;
-  }
-
-  sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(UnderOverArrowAtom)
 };
 
 /**
