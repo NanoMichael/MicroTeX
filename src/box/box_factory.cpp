@@ -44,10 +44,10 @@ static sptr<Box> createDelim(const std::string& sym, Env& env, const float len, 
   vector<sptr<Box>> r;
   auto fl = 0.f, rl = 0.f;
 
-  for (auto i = 0; i < assembly.partCount(); i++) {
+  auto run = [&](int i) {
     const auto& part = assembly[i];
     const auto b = sptrOf<CharBox>(chr.assemblyPart(part.glyph()));
-    const auto l = isVertical ? b->_height + b->_depth : b->_width;
+    const auto l = isVertical ? b->vlen() : b->_width;
     if (!part.isExtender()) {
       f.emplace_back(r.size(), b);
       fl += l;
@@ -55,6 +55,13 @@ static sptr<Box> createDelim(const std::string& sym, Env& env, const float len, 
       r.push_back(b);
       rl += l;
     }
+  };
+
+  const auto pcnt = assembly.partCount();
+  if (isVertical) {
+    for (auto i = pcnt - 1; i >= 0; --i) run(i);
+  } else {
+    for (auto i = 0; i < pcnt; i++) run(i);
   }
 
   const auto m = env.mathConsts().minConnectorOverlap() * env.scale();

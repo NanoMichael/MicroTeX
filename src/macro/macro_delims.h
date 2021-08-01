@@ -6,6 +6,7 @@
 #include "atom/atom_impl.h"
 #include "atom/atom_basic.h"
 #include "atom/atom_delim.h"
+#include "atom/atom_root.h"
 #include "utils/string_utils.h"
 #include "utils/utf.h"
 
@@ -91,6 +92,15 @@ inline macro(bangle) {
 inline macro(brace) {
   return _choose("lbrace", "rbrace", tp, args);
 }
+
+inline macro(sqrt) {
+  if (args[2].empty()) return sptrOf<NthRoot>(Formula(tp, args[1], false)._root, nullptr);
+  return sptrOf<NthRoot>(
+    Formula(tp, args[1], false)._root,
+    Formula(tp, args[2], false)._root
+  );
+}
+
 
 macro(left);
 

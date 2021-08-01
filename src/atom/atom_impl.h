@@ -414,29 +414,6 @@ public:
   __decl_clone(ResizeAtom)
 };
 
-/** An atom representing an nth-root construction */
-class NthRoot : public Atom {
-private:
-  static const std::string _sqrtSymbol;
-  static const float FACTOR;
-  // base atom to be put under the root sign
-  sptr<Atom> _base;
-  // root atom to be put in the upper left corner above the root sign
-  sptr<Atom> _root;
-
-public:
-  NthRoot() = delete;
-
-  NthRoot(const sptr<Atom>& base, const sptr<Atom>& root) {
-    _base = base == nullptr ? sptrOf<EmptyAtom>() : base;
-    _root = root == nullptr ? sptrOf<EmptyAtom>() : root;
-  }
-
-  sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(NthRoot)
-};
-
 /** An atom representing a rotated atom */
 class RotateAtom : public Atom {
 private:

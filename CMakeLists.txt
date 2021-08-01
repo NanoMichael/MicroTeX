@@ -69,6 +69,7 @@ target_sources(LaTeX PRIVATE
         src/atom/atom_sideset.cpp
         src/atom/atom_font.cpp
         src/atom/atom_delim.cpp
+        src/atom/atom_root.cpp
         src/atom/colors_def.cpp
         # box folder
         src/box/box.cpp

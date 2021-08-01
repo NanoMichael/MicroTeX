@@ -116,14 +116,6 @@ inline macro(nbsp) {
   return sptrOf<SpaceAtom>();
 }
 
-inline macro(sqrt) {
-  if (args[2].empty()) return sptrOf<NthRoot>(Formula(tp, args[1], false)._root, nullptr);
-  return sptrOf<NthRoot>(
-    Formula(tp, args[1], false)._root,
-    Formula(tp, args[2], false)._root
-  );
-}
-
 inline macro(joinrel) {
   return sptrOf<TypedAtom>(
     AtomType::relation,

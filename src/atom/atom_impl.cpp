@@ -53,13 +53,6 @@ sptr<Box> FractionAtom::createBox(Env& env) {
   return StrutBox::empty();
 }
 
-const string NthRoot::_sqrtSymbol = "sqrt";
-const float NthRoot::FACTOR = 0.55f;
-
-sptr<Box> NthRoot::createBox(Env& env) {
-  return StrutBox::empty();
-}
-
 RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const wstring& option)
   : _angle(0), _option(Rotation::bl), _xunit(UnitType::em), _yunit(UnitType::em), _x(0), _y(0) {
   _type = base->_type;

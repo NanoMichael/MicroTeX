@@ -92,6 +92,9 @@ public:
   /** Test if this box represents a space that only has metrics and has no visual effect. */
   virtual bool isSpace() const { return false; }
 
+  /** Test if this box is a single box */
+  virtual bool isSingle() const { return true; }
+
   /** The box name */
   virtual std::string name() const;
 
@@ -150,6 +153,8 @@ public:
     return _children.size();
   }
 
+  bool isSingle() const override { return false; }
+
   std::vector<sptr<Box>> descendants() const override {
     return _children;
   }
@@ -167,6 +172,8 @@ public:
   sptr<Box> _base;
 
   explicit DecorBox(const sptr<Box>& base) : _base(base) {}
+
+  bool isSingle() const override { return false; }
 
   int lastFontId() override;
 
