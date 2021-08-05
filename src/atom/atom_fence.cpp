@@ -21,18 +21,20 @@ sptr<Box> FencedAtom::createBox(Env& env) {
     r->setBreakable(false);
   }
 
-  const auto base = _base->createBox(env);
-  const auto h = base->vlen();
-
   const auto axis = env.axisHeight() * env.scale();
   const auto center = [axis](const sptr<Box>& b) {
     b->_shift = -(b->vlen() / 2 - b->_height) - axis;
   };
 
+  const auto base = _base->createBox(env);
+  center(base);
+  const auto h = base->vlen();
+
   for (const auto& m : _m) {
     m->_height = h;
     auto b = m->createBox(env);
     center(b);
+    b->_shift -= base->_shift;
     base->replaceFirst(m->_placeholder, b);
   }
 

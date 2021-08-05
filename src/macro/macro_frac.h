@@ -7,30 +7,17 @@
 
 namespace tex {
 
-inline sptr<Atom> _choose(
+sptr<Atom> _choose(
   const std::string& left, const std::string& right,
-  TeXParser& tp, std::vector<std::wstring>& args
-) {
-  auto num = tp.popFormulaAtom();
-  auto den = Formula(tp, tp.getOverArgument(), false)._root;
-  if (num == nullptr || den == nullptr)
-    throw ex_parse("Both numerator and denominator of choose can't be empty!");
-  auto f = sptrOf<FractionAtom>(num, den, false);
-  auto l = SymbolAtom::get(left);
-  auto r = SymbolAtom::get(right);
-  // modify its type to opening and closing
-  l->_type = AtomType::opening;
-  r->_type = AtomType::closing;
-  // TODO
-  // return sptrOf<FencedAtom>(f, l, r);
-}
+  TeXParser& tp, Args& args
+);
 
 inline macro(choose) {
-  return _choose("lbrack", "rbrack", tp, args);
+  return _choose("lparen", "rparen", tp, args);
 }
 
 inline macro(brack) {
-  return _choose("lsqbrack", "rsqbrack", tp, args);
+  return _choose("lbrack", "rbrack", tp, args);
 }
 
 inline macro(bangle) {

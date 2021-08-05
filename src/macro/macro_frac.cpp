@@ -6,6 +6,18 @@ using namespace std;
 
 namespace tex {
 
+sptr<Atom> _choose(
+  const std::string& left, const std::string& right,
+  TeXParser& tp, std::vector<std::wstring>& args
+) {
+  auto num = tp.popFormulaAtom();
+  auto den = Formula(tp, tp.getOverArgument(), false)._root;
+  if (num == nullptr || den == nullptr)
+    throw ex_parse("Both numerator and denominator of choose can't be empty!");
+  auto f = sptrOf<FractionAtom>(num, den, false);
+  return sptrOf<FencedAtom>(f, left, right);
+}
+
 macro(above) {
   auto num = tp.popFormulaAtom();
   auto[unit, value] = tp.getLength();
