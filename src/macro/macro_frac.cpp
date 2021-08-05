@@ -6,6 +6,15 @@ using namespace std;
 
 namespace tex {
 
+macro(binom) {
+  Formula num(tp, args[1], false);
+  Formula den(tp, args[2], false);
+  if (num._root == nullptr || den._root == nullptr)
+    throw ex_parse("Both binomial coefficients must be not empty!");
+  auto f = sptrOf<FractionAtom>(num._root, den._root, false);
+  return sptrOf<FencedAtom>(f, "lparen", "rparen");
+}
+
 sptr<Atom> _choose(
   const std::string& left, const std::string& right,
   TeXParser& tp, std::vector<std::wstring>& args
