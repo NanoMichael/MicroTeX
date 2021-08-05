@@ -1,10 +1,17 @@
-#include "atom/atom_impl.h"
+#include "atom/atom_misc.h"
 #include "atom/atom_delim.h"
 #include "utils/utf.h"
 #include "utils/string_utils.h"
 
 using namespace std;
 using namespace tex;
+
+sptr<Box> BigDelimiterAtom::createBox(Env& env) {
+  auto b = tex::createVDelim(_delim, env, _size);
+  const auto axis = env.mathConsts().axisHeight() * env.scale();
+  b->_shift = -(b->vlen() / 2 - b->_height) - axis;
+  return b;
+}
 
 float OvalAtom::_multiplier = 0.5f;
 float OvalAtom::_diameter = 0.f;

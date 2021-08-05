@@ -2,7 +2,7 @@
 #define LATEX_MACRO_FONTS_H
 
 #include "macro/macro_decl.h"
-#include "atom/atom_impl.h"
+#include "atom/atom_misc.h"
 #include "atom/atom_font.h"
 #include "unimath/uni_font.h"
 #include "utils/utf.h"

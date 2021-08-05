@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "atom/atom_basic.h"
-#include "atom/atom_impl.h"
+#include "atom/atom_misc.h"
 #include "atom/atom_sideset.h"
 #include "core/split.h"
 #include "core/formula.h"

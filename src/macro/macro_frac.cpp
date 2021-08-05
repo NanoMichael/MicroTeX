@@ -1,5 +1,5 @@
 #include "macro/macro_frac.h"
-#include "atom/atom_impl.h"
+#include "atom/atom_misc.h"
 #include "utils/utf.h"
 
 using namespace std;

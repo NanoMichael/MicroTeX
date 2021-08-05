@@ -3,7 +3,7 @@
 
 #include "macro/macro_decl.h"
 #include "atom/atom.h"
-#include "atom/atom_impl.h"
+#include "atom/atom_misc.h"
 #include "atom/atom_basic.h"
 #include "atom/atom_delim.h"
 #include "atom/atom_root.h"

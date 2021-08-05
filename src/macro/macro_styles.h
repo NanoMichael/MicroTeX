@@ -5,7 +5,7 @@
 #include "macro/macro.h"
 #include "core/parser.h"
 #include "core/formula.h"
-#include "atom/atom_impl.h"
+#include "atom/atom_misc.h"
 
 namespace tex {
 

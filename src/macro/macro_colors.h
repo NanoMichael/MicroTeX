@@ -2,7 +2,7 @@
 #define LATEX_MACRO_COLORS_H
 
 #include "macro/macro_decl.h"
-#include "atom/atom_impl.h"
+#include "atom/atom_misc.h"
 #include "utils/utf.h"
 
 namespace tex {

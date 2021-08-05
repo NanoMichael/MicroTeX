@@ -56,7 +56,7 @@ target_sources(LaTeX PRIVATE
         # atom folder
         src/atom/atom_basic.cpp
         src/atom/atom_char.cpp
-        src/atom/atom_impl.cpp
+        src/atom/atom_misc.cpp
         src/atom/atom_matrix.cpp
         src/atom/atom_row.cpp
         src/atom/atom_space.cpp

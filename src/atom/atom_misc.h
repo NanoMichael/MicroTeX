@@ -1,5 +1,5 @@
-#ifndef ATOM_IMPL_H_INCLUDED
-#define ATOM_IMPL_H_INCLUDED
+#ifndef LATEX_ATOM_MISC_H
+#define LATEX_ATOM_MISC_H
 
 #include "box/box_factory.h"
 #include "box/box_group.h"
@@ -26,9 +26,7 @@ public:
   BigDelimiterAtom(const sptr<SymbolAtom>& delim, int size)
     : _delim(delim), _size(size) {}
 
-  sptr<Box> createBox(Env& env) override {
-    return tex::createVDelim(_delim, env, _size);
-  }
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(BigDelimiterAtom)
 };
@@ -455,4 +453,4 @@ public:
 
 }  // namespace tex
 
-#endif  // ATOM_IMPL_H_INCLUDED
+#endif  // LATEX_ATOM_MISC_H
