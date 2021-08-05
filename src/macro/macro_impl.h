@@ -76,30 +76,6 @@ inline macro(xcancel) {
   return _cancel(CancelAtom::CROSS, tp, args);
 }
 
-inline macro(binom) {
-  Formula num(tp, args[1], false);
-  Formula den(tp, args[2], false);
-  if (num._root == nullptr || den._root == nullptr)
-    throw ex_parse("Both binomial coefficients must be not empty!");
-  auto f = sptrOf<FractionAtom>(num._root, den._root, false);
-  auto l = SymbolAtom::get("lbrack");
-  auto r = SymbolAtom::get("rbrack");
-  // modify its type to opening and closing
-  l->_type = AtomType::opening;
-  r->_type = AtomType::closing;
-  return sptrOf<FencedAtom>(f, l, r);
-}
-
-inline macro(above) {
-  auto num = tp.popFormulaAtom();
-  auto[unit, value] = tp.getLength();
-  auto den = Formula(tp, tp.getOverArgument(), false)._root;
-  if (num == nullptr || den == nullptr)
-    throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
-
-  return sptrOf<FractionAtom>(num, den, unit, value);
-}
-
 inline macro(underscore) {
   return SymbolAtom::get("_");
 }

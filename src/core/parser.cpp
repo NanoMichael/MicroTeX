@@ -828,7 +828,9 @@ void TeXParser::parse() {
         break;
       case L_GROUP: {
         auto atom = getArgument();
-        if (atom != nullptr) atom->_type = AtomType::ordinary;
+        if (atom != nullptr) {
+          atom->_type = AtomType::ordinary;
+        }
         _formula->add(atom);
       }
         break;
@@ -908,8 +910,8 @@ void TeXParser::parse() {
 sptr<Atom> TeXParser::getCharAtom(wchar_t chr) {
   const c32 code = tex::convertToRomanNumber(chr);
   if (_isMathMode) {
-    const auto it = Formula::_symbolMappings.find(code);
-    if (it != Formula::_symbolMappings.end()) {
+    const auto it = Formula::_charToSymbol.find(code);
+    if (it != Formula::_charToSymbol.end()) {
       return SymbolAtom::get(it->second);
     }
   }

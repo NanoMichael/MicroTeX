@@ -30,7 +30,7 @@ macro(xarrow) {
 }
 
 macro(left) {
-  wstring grep = tp.getGroup(L"\\left", L"\\right");
+  const wstring& grep = tp.getGroup(L"\\left", L"\\right");
 
   auto left = Formula(tp, args[1], false)._root;
   auto* big = dynamic_cast<BigDelimiterAtom*>(left.get());
@@ -40,11 +40,11 @@ macro(left) {
   big = dynamic_cast<BigDelimiterAtom*>(right.get());
   if (big != nullptr) right = big->_delim;
 
-  auto sl = dynamic_pointer_cast<SymbolAtom>(left);
-  auto sr = dynamic_pointer_cast<SymbolAtom>(right);
+  auto sl = dynamic_pointer_cast<CharSymbol>(left);
+  auto sr = dynamic_pointer_cast<CharSymbol>(right);
   if (sl != nullptr && sr != nullptr) {
     Formula tf(tp, grep, false);
-    return sptrOf<FencedAtom>(tf._root, sl, tf._middle, sr);
+    return sptrOf<FencedAtom>(tf._root, sl->name(), sr->name(), tf._middle);
   }
 
   auto* ra = new RowAtom();

@@ -2,9 +2,15 @@
 #include "core/split.h"
 #include "env/env.h"
 #include "box/box_single.h"
+#include <codecvt>
 
 using namespace tex;
 using namespace std;
+
+std::string FixedCharAtom::name() const {
+  // TODO name?
+  return "";
+}
 
 sptr<Box> FixedCharAtom::createBox(Env& env) {
   return sptrOf<CharBox>(_chr);
@@ -81,6 +87,12 @@ Char CharAtom::getChar(Env& env) const {
     : unicode()
   );
   return env.getChar(code, isMathMode(), _fontStyle);
+}
+
+std::string CharAtom::name() const {
+  // TODO
+  std::wstring_convert<std::codecvt_utf8<c32>, c32> cvt;
+  return cvt.to_bytes(_unicode);
 }
 
 sptr<Box> CharAtom::createBox(Env& env) {

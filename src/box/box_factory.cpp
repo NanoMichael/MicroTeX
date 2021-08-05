@@ -2,6 +2,7 @@
 #include "atom/atom_basic.h"
 #include "utils/utils.h"
 #include "env/env.h"
+#include "core/formula.h"
 #include "atom/atom_char.h"
 
 #include <deque>
@@ -9,6 +10,8 @@
 using namespace std;
 
 namespace tex {
+
+static constexpr auto ROUND_TOL = 10; // in font design unit
 
 sptr<Box> createHDelim(const sptr<SymbolAtom>& sym, Env& env, int size) {
   const auto& chr = sym->getChar(env);
@@ -20,17 +23,33 @@ sptr<Box> createVDelim(const sptr<SymbolAtom>& sym, Env& env, int size) {
   return sptrOf<CharBox>(chr.vLarger(size));
 }
 
-static sptr<Box> createDelim(const std::string& sym, Env& env, const float len, bool isVertical) {
-  const auto& atom = SymbolAtom::get(sym);
+static sptr<Box> createDelim(const std::string& sym, Env& env, const float len, bool isVertical, bool round = false) {
+  sptr<SymbolAtom> atom;
+  if (sym.length() == 1) {
+    const auto it = Formula::_charToSymbol.find(sym[0]);
+    if (it != Formula::_charToSymbol.end()) {
+      atom = SymbolAtom::get(it->second);
+    } else {
+      atom = SymbolAtom::get(sym);
+    }
+  } else {
+    atom = SymbolAtom::get(sym);
+  }
+  if (atom == nullptr) {
+    throw ex_parse(sym + " is not a delimiter!");
+  }
+
   const auto& chr = atom->getChar(env);
   // 1. try from variants
   const auto variantCount = isVertical ? chr.vLargerCount() : chr.hLargerCount();
+  const auto tolerance = ROUND_TOL * env.scale();
   // tail recursion, compiler will optimize this
   std::function<sptr<Box>(int)> v = [&](int i) -> sptr<Box> {
     if (i >= variantCount) return nullptr;
     const auto& n = isVertical ? chr.vLarger(i) : chr.hLarger(i);
     const auto l = isVertical ? n.height() + n.depth() : n.width();
     if (l >= len) return sptrOf<CharBox>(n);
+    if (round && len - l <= tolerance) return sptrOf<CharBox>(n);
     return v(i + 1);
   };
   auto vb = v(0);
@@ -114,12 +133,12 @@ static sptr<Box> createDelim(const std::string& sym, Env& env, const float len, 
   return box;
 }
 
-sptr<Box> createHDelim(const std::string& sym, Env& env, float width) {
-  return createDelim(sym, env, width, false);
+sptr<Box> createHDelim(const std::string& sym, Env& env, float width, bool round) {
+  return createDelim(sym, env, width, false, round);
 }
 
-sptr<Box> createVDelim(const std::string& sym, Env& env, float height) {
-  return createDelim(sym, env, height, true);
+sptr<Box> createVDelim(const std::string& sym, Env& env, float height, bool round) {
+  return createDelim(sym, env, height, true, round);
 }
 
 }

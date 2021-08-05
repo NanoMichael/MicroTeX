@@ -11,6 +11,7 @@
 #include "macro/macro_colors.h"
 #include "macro/macro_space.h"
 #include "macro/macro_boxes.h"
+#include "macro/macro_frac.h"
 
 using namespace std;
 using namespace tex;
@@ -119,7 +120,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_biggr, "biggr"),
     mac(1, macro_Biggr, "Biggr"),
   // endregion
-  // region scripts & limits
+  // region scripts & frac
     mac(2, macro_frac, "frac"),
     mac(2, macro_sfrac, "sfrac"),
     mac(6, macro_genfrac, "genfrac"),

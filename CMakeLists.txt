@@ -70,6 +70,8 @@ target_sources(LaTeX PRIVATE
         src/atom/atom_font.cpp
         src/atom/atom_delim.cpp
         src/atom/atom_root.cpp
+        src/atom/atom_frac.cpp
+        src/atom/atom_fence.cpp
         src/atom/colors_def.cpp
         # box folder
         src/box/box.cpp
@@ -93,6 +95,7 @@ target_sources(LaTeX PRIVATE
         src/macro/macro_colors.cpp
         src/macro/macro_space.cpp
         src/macro/macro_delims.cpp
+        src/macro/macro_frac.cpp
         # env folder
         src/env/env.cpp
         src/env/units.cpp

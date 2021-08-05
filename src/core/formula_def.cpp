@@ -3,7 +3,7 @@
 using namespace std;
 using namespace tex;
 
-map<c32, string> Formula::_symbolMappings{
+const map<c32, string> Formula::_charToSymbol{
   {'+', "plus"},
   {'-', "minus"},
   {'*', "ast"},

@@ -3,9 +3,9 @@
 
 #include <string>
 #include <utility>
-#include <list>
 
 #include "atom/atom_basic.h"
+#include "atom/atom_fence.h"
 #include "atom/atom_vrow.h"
 #include "core/parser.h"
 #include "graphic/graphic.h"
@@ -48,11 +48,11 @@ public:
   static std::map<std::wstring, std::wstring> _predefFormulaStrs;
 
   // character-to-symbol and character-to-delimiter mappings
-  static std::map<c32, std::string> _symbolMappings;
+  static const std::map<c32, std::string> _charToSymbol;
   static std::map<int, std::string> _symbolTextMappings;
   static std::map<int, std::string> _symbolFormulaMappings;
 
-  std::list<sptr<MiddleAtom>> _middle;
+  std::vector<sptr<MiddleAtom>> _middle;
   // the root atom of the "atom tree" that represents the formula
   sptr<Atom> _root;
 

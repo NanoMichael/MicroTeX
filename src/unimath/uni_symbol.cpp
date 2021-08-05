@@ -2895,7 +2895,7 @@ const Symbol Symbol::_symbols[]{
   {0x02A20, opt,     "zpipe"},
   {0x02A21, opt,     "zproject"},
   {0x0007B, opn,     "{"},
-  {0x02016, ord,     "|"},
+  {0x0007c, ord,     "|"},
   {0x0007D, cls,     "}"},
 };
 

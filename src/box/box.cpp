@@ -15,6 +15,10 @@ int Box::lastFontId() {
   return FontContext::NO_FONT;
 }
 
+void Box::replaceFirst(const sptr<Box>& from, const sptr<Box>& to) {
+  // nothing to do
+}
+
 std::string Box::name() const {
   return "Box";
 }

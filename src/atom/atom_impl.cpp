@@ -1,5 +1,3 @@
-#include <memory>
-
 #include "atom/atom_impl.h"
 #include "atom/atom_delim.h"
 #include "utils/utf.h"
@@ -8,50 +6,8 @@
 using namespace std;
 using namespace tex;
 
-/**************************************** small atoms *********************************************/
-
-const float FBoxAtom::INTERSPACE = 0.65f;
 float OvalAtom::_multiplier = 0.5f;
 float OvalAtom::_diameter = 0.f;
-
-const int FencedAtom::DELIMITER_FACTOR = 901;
-const float FencedAtom::DELIMITER_SHORTFALL = 5.f;
-
-void FencedAtom::init(const sptr<Atom>& b, const sptr<SymbolAtom>& l, const sptr<SymbolAtom>& r) {
-  _base = b == nullptr ? sptrOf<RowAtom>() : b;
-  if (l == nullptr || l->name() != "normaldot") _left = l;
-  if (r == nullptr || r->name() != "normaldot") _right = r;
-}
-
-void FencedAtom::center(Box& b, float axis) {
-  float h = b._height, total = h + b._depth;
-  b._shift = -(total / 2 - h) - axis;
-}
-
-sptr<Box> FencedAtom::createBox(Env& env) {
-  return StrutBox::empty();
-}
-
-/****************************************** fraction atom *****************************************/
-
-void FractionAtom::init(const sptr<Atom>& num, const sptr<Atom>& den, bool nodef, UnitType unit, float t) {
-  _numAlign = Alignment::center;
-  _denomAlign = Alignment::center;
-  _deffactor = 1.f;
-
-  _numerator = num;
-  _denominator = den;
-  _nodefault = nodef;
-  _thickness = t;
-  _unit = unit;
-  _type = AtomType::ordinary;
-  _useKern = true;
-  _deffactorset = false;
-}
-
-sptr<Box> FractionAtom::createBox(Env& env) {
-  return StrutBox::empty();
-}
 
 RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const wstring& option)
   : _angle(0), _option(Rotation::bl), _xunit(UnitType::em), _yunit(UnitType::em), _x(0), _y(0) {

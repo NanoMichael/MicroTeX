@@ -36,6 +36,8 @@ public:
 
   void add(int pos, const sptr<Box>& box) override;
 
+  void replaceFirst(const sptr<Box>& from, const sptr<Box>& to) override;
+
   inline void addBreakPosition(int pos) {
     _breakPositions.push_back(pos);
   }

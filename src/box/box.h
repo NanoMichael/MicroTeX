@@ -89,6 +89,9 @@ public:
     return {};
   }
 
+  /** Replace child box */
+  virtual void replaceFirst(const sptr<Box>& from, const sptr<Box>& to);
+
   /** Test if this box represents a space that only has metrics and has no visual effect. */
   virtual bool isSpace() const { return false; }
 

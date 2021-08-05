@@ -91,6 +91,26 @@ void HBox::add(int pos, const sptr<Box>& box) {
   BoxGroup::add(pos, box);
 }
 
+void HBox::replaceFirst(const sptr<Box>& from, const sptr<Box>& to) {
+  auto replaced = false;
+  for (auto& i : _children) {
+    if (i == from) {
+      replaced = true;
+      i = to;
+      break;
+    }
+  }
+  if (!replaced) return;
+  _width -= from->_width - to->_width;
+  auto mh = 0.f, md = 0.f;
+  for (auto& i : _children) {
+    mh = std::max(mh, i->_height - i->_shift);
+    md = std::max(md, i->_depth + i->_shift);
+  }
+  _height = mh;
+  _depth = md;
+}
+
 pair<sptr<HBox>, sptr<HBox>> HBox::split(int pos, int shift) {
   auto hb1 = cloneBox();
   auto hb2 = cloneBox();

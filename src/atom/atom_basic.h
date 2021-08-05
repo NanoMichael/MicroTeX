@@ -197,27 +197,6 @@ public:
   __decl_clone(CumulativeScriptsAtom)
 };
 
-/**
- * An atom representing a middle atom which must be rounded by a left and right
- * delimiter.
- */
-class MiddleAtom : public Atom {
-public:
-  sptr<Atom> _base;
-  sptr<Box> _box;
-
-  MiddleAtom() = delete;
-
-  explicit MiddleAtom(const sptr<Atom>& a)
-    : _base(a), _box(new StrutBox(0, 0, 0, 0)) {}
-
-  sptr<Box> createBox(Env& env) override {
-    return _box;
-  }
-
-  __decl_clone(MiddleAtom)
-};
-
 /** An atom representing the foreground and background color of an other atom */
 class ColorAtom : public Atom, public Row {
 private:
