@@ -31,42 +31,6 @@ const wchar_t TeXParser::BACKPRIME = '`';
 const wchar_t TeXParser::BACKPRIME_UTF = 0x2035;
 const wchar_t TeXParser::DEGRE = 0x00B0;
 
-const map<wchar_t, char> TeXParser::SUP_SCRIPT_MAP = {
-  {0x2070, '0'},
-  {0x00B9, '1'},
-  {0x00B2, '2'},
-  {0x00B3, '3'},
-  {0x2074, '4'},
-  {0x2075, '5'},
-  {0x2076, '6'},
-  {0x2077, '7'},
-  {0x2078, '8'},
-  {0x2079, '9'},
-  {0x207A, '+'},
-  {0x207B, '-'},
-  {0x207C, '='},
-  {0x207D, '('},
-  {0x207E, ')'},
-  {0x207F, 'n'},
-};
-const map<wchar_t, char> TeXParser::SUB_SCRIPT_MAP = {
-  {0x2080, '0'},
-  {0x2081, '1'},
-  {0x2082, '2'},
-  {0x2083, '3'},
-  {0x2084, '4'},
-  {0x2085, '5'},
-  {0x2086, '6'},
-  {0x2087, '7'},
-  {0x2088, '8'},
-  {0x2089, '9'},
-  {0x208A, '+'},
-  {0x208B, '-'},
-  {0x208C, '='},
-  {0x208D, '('},
-  {0x208E, ')'},
-};
-
 void TeXParser::init(
   bool isPartial,
   const wstring& latex,
@@ -627,28 +591,6 @@ Dimen TeXParser::getDimen() {
   return Units::getDimen(_latex.substr(start, end - start - 1));
 }
 
-bool TeXParser::replaceScript() {
-  // TODO
-  wchar_t ch = _latex[_pos];
-  auto it = SUP_SCRIPT_MAP.find(ch);
-  if (it != SUP_SCRIPT_MAP.end()) {
-    wstring sup = wstring(L"\\mathcumsup{").append(1, (wchar_t) (it->second)).append(L"}");
-    _latex.replace(_pos, 1, sup);
-    _len = _latex.length();
-    _pos += sup.size();
-    return true;
-  }
-  it = SUB_SCRIPT_MAP.find(ch);
-  if (it != SUB_SCRIPT_MAP.end()) {
-    wstring sub = wstring(L"\\mathcumsub{").append(1, (wchar_t) (it->second)).append(L"}");
-    _latex.replace(_pos, 1, sub);
-    _len = _latex.length();
-    _pos += sub.size();
-    return true;
-  }
-  return false;
-}
-
 void TeXParser::preprocess(wstring& cmd, Args& args, int& pos) {
   if (cmd == L"newcommand" || cmd == L"renewcommand") {
     preprocessNewCmd(cmd, args, pos);
@@ -722,8 +664,6 @@ void TeXParser::preprocess() {
   int spos;
   vector<wstring> args;
   while (_pos < _len) {
-    if (replaceScript()) continue;
-
     ch = _latex[_pos];
     switch (ch) {
       case ESCAPE: {
@@ -732,7 +672,7 @@ void TeXParser::preprocess() {
         try {
           preprocess(cmd, args, spos);
         } catch (ex_parse& e) {
-          if (!_isPartial) throw;
+          if (!_isPartial) throw e;
         }
         args.clear();
         break;

@@ -54,9 +54,6 @@ private:
   static const wchar_t BACKPRIME;
   static const wchar_t BACKPRIME_UTF;
   static const wchar_t DEGRE;
-  /** scripts to formula map */
-  static const std::map<wchar_t, char> SUP_SCRIPT_MAP;
-  static const std::map<wchar_t, char> SUB_SCRIPT_MAP;
 
   /** Preprocess parse string */
   void preprocess();
@@ -82,9 +79,6 @@ private:
    * arguments in the parse string).
    */
   sptr<Atom> processCommands(const std::wstring& cmd, MacroInfo* mac);
-
-  /** Replace the script-characters with command. */
-  bool replaceScript();
 
   void preprocess(std::wstring& cmd, Args& args, int& pos);
 
