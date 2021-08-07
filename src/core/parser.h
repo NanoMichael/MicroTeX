@@ -34,7 +34,6 @@ private:
   bool _arrayMode;
   bool _isMathMode;
   bool _isPartial;
-  bool _hideUnknownChar;
 
   /** escape character */
   static const wchar_t ESCAPE;

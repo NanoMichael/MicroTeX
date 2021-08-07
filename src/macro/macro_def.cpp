@@ -417,7 +417,7 @@ void NewCommandMacro::_init_() {
   cmd(
     2,
     L"sfrac",
-    L"\\scalebox{.9}{"
+    L"\\scalebox{.8}{"
     "\\raisebox{.5ex}{"
     "\\raisebox{.45ex}{\\numstyle{#1}}"
     "\\kern-.4ex\\nokern\\slash\\nokern\\kern-.4ex"

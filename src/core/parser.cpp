@@ -78,7 +78,7 @@ void TeXParser::init(
   _group = 0;
   _atIsLetter = 0;
   _insertion = _arrayMode = _isMathMode = false;
-  _isPartial = _hideUnknownChar = true;
+  _isPartial = true;
 
   _formula = formula;
   _isMathMode = true;
@@ -447,7 +447,8 @@ void TeXParser::getOptsArgs(int argc, int opts, Args& args) {
     for (int i = 2; i <= argc; i++) {
       getArg(i);
     }
-    if (_isMathMode) skipWhiteSpace();
+    // TODO skip whitespace?
+    // if (_isMathMode) skipWhiteSpace();
   }
 }
 
