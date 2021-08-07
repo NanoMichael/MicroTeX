@@ -10,6 +10,13 @@
 using namespace std;
 using namespace tex;
 
+sptr<Box> StyleAtom::createBox(Env& env) {
+  return env.withStyle(
+    _style,
+    [&](Env& e) { return _at->createBox(e); }
+  );
+}
+
 sptr<Box> MathFontAtom::createBox(Env& env) {
   env.selectMathFont(_fontName, _mathStyle);
   return StrutBox::empty();

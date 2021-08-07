@@ -84,22 +84,19 @@ macro(abovewithdelims) {
 }
 
 macro(cfrac) {
-//  Alignment numAlign = Alignment::center;
-//  if (args[3] == L"r") {
-//    numAlign = Alignment::right;
-//  } else if (args[3] == L"l") {
-//    numAlign = Alignment::left;
-//  }
-//  Formula num(tp, args[1], false);
-//  Formula denom(tp, args[2], false);
-//  if (num._root == nullptr || denom._root == nullptr)
-//    throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
-//  auto f = sptrOf<FractionAtom>(num._root, denom._root, true, numAlign, Alignment::center);
-//  f->_useKern = false;
-//  f->_type = AtomType::inner;
-//  auto* r = new RowAtom();
-//  r->add(sptrOf<StyleAtom>(TexStyle::display, f));
-//  return sptr<Atom>(r);
+  Alignment numAlign = Alignment::center;
+  if (args[3] == L"r") {
+    numAlign = Alignment::right;
+  } else if (args[3] == L"l") {
+    numAlign = Alignment::left;
+  }
+  Formula num(tp, args[1], false);
+  Formula denom(tp, args[2], false);
+  if (num._root == nullptr || denom._root == nullptr)
+    throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
+  const auto n = sptrOf<StyleAtom>(TexStyle::display, num._root);
+  const auto d = sptrOf<StyleAtom>(TexStyle::display, denom._root);
+  return sptrOf<FractionAtom>(n, d, numAlign, Alignment::center);
 }
 
 macro(sfrac) {

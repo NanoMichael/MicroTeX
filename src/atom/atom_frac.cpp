@@ -8,13 +8,16 @@ using namespace tex;
 
 FractionAtom::FractionAtom(
   const sptr<Atom>& num, const sptr<Atom>& den, bool rule,
-  UnitType unit, float thickness,
-  Alignment numAlign, Alignment denAlign
+  UnitType unit, float thickness
 ) : _num(num), _dnom(den), _rule(rule),
-    _unit(unit), _thickness(thickness) {
+    _unit(unit), _thickness(thickness) {}
+
+FractionAtom::FractionAtom(
+  const sptr<Atom>& num, const sptr<Atom>& den,
+  Alignment numAlign, Alignment denAlign
+) : _num(num), _dnom(den), _rule(true) {
   _numAlign = checkAlign(numAlign);
-  _denomAlign = checkAlign(denAlign);
-  _type = AtomType::inner;
+  _dnomAlign = checkAlign(denAlign);
 }
 
 sptr<Box> FractionAtom::createBox(Env& env) {
@@ -55,6 +58,7 @@ sptr<Box> FractionAtom::createBox(Env& env) {
     v = _rule ? math.fractionDenominatorShiftDown() : math.stackBottomShiftDown();
   }
 
+  const auto axis = math.axisHeight() * env.scale();
   if (!_rule) {
     const auto phi = isDisplay ? math.stackDisplayStyleGapMin() : math.stackGapMin();
     const auto psi = (u - x->_depth) - (z->_depth - v);
@@ -68,33 +72,43 @@ sptr<Box> FractionAtom::createBox(Env& env) {
       ? math.fractionNumeratorDisplayStyleGapMin()
       : math.fractionNumeratorGapMin()
     );
-    const auto a = math.axisHeight() * env.scale();
-    const auto d = (u - x->_depth) - (a + theta / 2);
+    const auto d = (u - x->_depth) - (axis + theta / 2);
     if (d < phi) {
       u += phi - d;
     }
-    const auto f = (a - theta / 2) - (z->_height - v);
-    if (f < phi) {
-      v += phi - f;
+    const auto rho = (
+      isDisplay
+      ? math.fractionDenominatorDisplayStyleGapMin()
+      : math.fractionDenominatorGapMin()
+    );
+    const auto f = (axis - theta / 2) - (z->_height - v);
+    if (f < rho) {
+      v += rho - f;
     }
   }
 
   const auto shift = [&](const sptr<Box>& b, Alignment align) {
-    b->_shift = align == Alignment::center ? (w - b->_width) / 2 : w - b->_width;
+    if (align == Alignment::center) {
+      b->_shift = (w - b->_width) / 2;
+    } else if (align == Alignment::right) {
+      b->_shift = w - b->_width;
+    }
   };
-  const auto kern = (x->_height + u + z->_depth + v) - (x->vlen() + z->vlen());
-  const auto vbox = sptrOf<VBox>();
   shift(x, _numAlign);
+  shift(z, _dnomAlign);
+
+  const auto kern = (x->_height + u + z->_depth + v) - (x->vlen() + z->vlen()) - theta;
+  const auto vbox = sptrOf<VBox>();
   vbox->add(x);
   if (_rule) {
-    const auto k = sptrOf<StrutBox>(0.f, (kern - theta) / 2, 0.f, 0.f);
-    vbox->add(k);
+    const auto dn = x->_height + u - axis - theta / 2 - x->vlen();
+    vbox->add(sptrOf<StrutBox>(0.f, dn, 0.f, 0.f));
     vbox->add(sptrOf<RuleBox>(theta, w, 0));
-    vbox->add(k);
+    const auto dd = kern - dn;
+    vbox->add(sptrOf<StrutBox>(0.f, dd, 0.f, 0.f));
   } else {
     vbox->add(sptrOf<StrutBox>(0.f, kern, 0.f, 0.f));
   }
-  shift(z, _denomAlign);
   vbox->add(z);
   vbox->_height = x->_height + u;
   vbox->_depth = z->_depth + v;

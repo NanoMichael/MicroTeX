@@ -13,7 +13,7 @@ private:
   UnitType _unit = UnitType::none;
   // thickness of the fraction line
   float _thickness = 0;
-  Alignment _numAlign = Alignment::center, _denomAlign = Alignment::center;
+  Alignment _numAlign = Alignment::center, _dnomAlign = Alignment::center;
   // the atoms representing the numerator and denominator
   sptr<Atom> _num, _dnom;
   bool _rule = false;
@@ -26,7 +26,11 @@ private:
 public:
   FractionAtom(
     const sptr<Atom>& num, const sptr<Atom>& den, bool rule,
-    UnitType unit = UnitType::none, float thickness = 0.f,
+    UnitType unit = UnitType::none, float thickness = 0.f
+  );
+
+  FractionAtom(
+    const sptr<Atom>& num, const sptr<Atom>& den,
     Alignment numAlign = Alignment::center, Alignment denAlign = Alignment::center
   );
 

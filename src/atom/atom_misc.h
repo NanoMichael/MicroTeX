@@ -352,31 +352,6 @@ public:
   __decl_clone(StrikeThroughAtom)
 };
 
-/**
- * An atom representing a modification of style in a formula
- * (e.g. text-style or display-style)
- */
-class StyleAtom : public Atom {
-private:
-  TexStyle _style;
-  sptr<Atom> _at;
-
-public:
-  StyleAtom() = delete;
-
-  StyleAtom(TexStyle style, const sptr<Atom>& a) {
-    _style = style;
-    _at = a;
-    _type = a->_type;
-  }
-
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
-
-  __decl_clone(StyleAtom)
-};
-
 class TextCircledAtom : public Atom {
 private:
   sptr<Atom> _at;
