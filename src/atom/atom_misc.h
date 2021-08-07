@@ -197,32 +197,21 @@ public:
 class RaiseAtom : public Atom {
 private:
   sptr<Atom> _base;
-  UnitType _ru, _hu, _du;
-  float _r, _h, _d;
+  Dimen _raise, _height, _depth;
 
 public:
   RaiseAtom() = delete;
 
   RaiseAtom(
     const sptr<Atom>& base,
-    UnitType ru, float r,
-    UnitType hu, float h,
-    UnitType du, float d
-  ) : _base(base), _ru(ru), _r(r), _hu(hu), _h(h), _du(du), _d(d) {}
+    Dimen raise, Dimen height, Dimen depth
+  ) : _base(base), _raise(raise), _height(height), _depth(depth) {}
 
   AtomType leftType() const override { return _base->leftType(); }
 
   AtomType rightType() const override { return _base->rightType(); }
 
-  sptr<Box> createBox(Env& env) override {
-    auto base = _base->createBox(env);
-    base->_shift = _ru == UnitType::none ? 0 : Units::fsize(_ru, -_r, env);
-    if (_hu == UnitType::none) return base;
-    auto hb = sptrOf<HBox>(base);
-    hb->_height = Units::fsize(_hu, _h, env);
-    hb->_depth = _du == UnitType::none ? 0 : Units::fsize(_du, _d, env);
-    return hb;
-  }
+  sptr<Box> createBox(Env& env) override;
 
   __decl_clone(RaiseAtom)
 };
@@ -250,8 +239,7 @@ public:
 class ResizeAtom : public Atom {
 private:
   sptr<Atom> _base;
-  UnitType _wu, _hu;
-  float _w, _h;
+  Dimen _width, _height;
   bool _keepAspectRatio;
 
 public:
@@ -261,10 +249,8 @@ public:
     _type = base->_type;
     _base = base;
     _keepAspectRatio = keepAspectRatio;
-    auto[wu, w] = Units::getLength(ws);
-    auto[hu, h] = Units::getLength(hs);
-    _wu = wu, _w = w;
-    _hu = hu, _h = h;
+    _width = Units::getDimen(ws);
+    _height = Units::getDimen(hs);
   }
 
   AtomType leftType() const override { return _base->leftType(); }
@@ -284,8 +270,7 @@ private:
   sptr<Atom> _base;
   float _angle;
   Rotation _option;
-  UnitType _xunit, _yunit;
-  float _x, _y;
+  Dimen _x, _y;
 
 public:
   RotateAtom() = delete;
@@ -301,19 +286,18 @@ public:
 
 class RuleAtom : public Atom {
 private:
-  UnitType _wu, _hu, _ru;
-  float _w, _h, _r;
+  Dimen _w, _h, _r;
 
 public:
   RuleAtom() = delete;
 
-  RuleAtom(UnitType wu, float w, UnitType hu, float h, UnitType ru, float r)
-    : _wu(wu), _hu(hu), _ru(ru), _w(w), _h(h), _r(r) {}
+  RuleAtom(const Dimen& w, const Dimen& h, const Dimen& r)
+    : _w(w), _h(h), _r(r) {}
 
   sptr<Box> createBox(Env& env) override {
-    float w = Units::fsize(_wu, _w, env);
-    float h = Units::fsize(_hu, _h, env);
-    float r = Units::fsize(_ru, _r, env);
+    float w = Units::fsize(_w, env);
+    float h = Units::fsize(_h, env);
+    float r = Units::fsize(_r, env);
     return sptrOf<RuleBox>(h, w, r);
   }
 

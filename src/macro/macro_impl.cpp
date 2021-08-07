@@ -2,8 +2,9 @@
 
 #include <memory>
 
-#include "graphic/graphic.h"
 #include "env/env.h"
+#include "env/units.h"
+#include "graphic/graphic.h"
 #include "core/debug_config.h"
 #include "atom/atom_zstack.h"
 
@@ -13,12 +14,12 @@ using namespace std;
 namespace tex {
 
 macro(kern) {
-  auto[unit, value] = tp.getLength();
+  auto[value, unit] = tp.getDimen();
   return sptrOf<SpaceAtom>(unit, value, 0.f, 0.f);
 }
 
 macro(hvspace) {
-  auto[unit, value] = Units::getLength(args[1]);
+  auto[value, unit] = Units::getDimen(args[1]);
   return (
     args[0][0] == L'h'
     ? sptrOf<SpaceAtom>(unit, value, 0.f, 0.f)
@@ -27,11 +28,11 @@ macro(hvspace) {
 }
 
 macro(rule) {
-  auto[wu, w] = Units::getLength(args[1]);
-  auto[hu, h] = Units::getLength(args[2]);
-  auto[ru, r] = Units::getLength(args[3]);
+  auto w = Units::getDimen(args[1]);
+  auto h = Units::getDimen(args[2]);
+  auto r = Units::getDimen(args[3]);
 
-  return sptrOf<RuleAtom>(wu, w, hu, h, ru, -r);
+  return sptrOf<RuleAtom>(w, h, -r);
 }
 
 macro(newcommand) {
@@ -69,10 +70,10 @@ macro(renewcommand) {
 }
 
 macro(raisebox) {
-  auto[ru, r] = Units::getLength(args[1]);
-  auto[hu, h] = Units::getLength(args[3]);
-  auto[du, d] = Units::getLength(args[4]);
-  return sptrOf<RaiseAtom>(Formula(tp, args[2])._root, ru, r, hu, h, du, d);
+  auto r = Units::getDimen(args[1]);
+  auto h = Units::getDimen(args[3]);
+  auto d = Units::getDimen(args[4]);
+  return sptrOf<RaiseAtom>(Formula(tp, args[2])._root, -r, h, d);
 }
 
 macro(romannumeral) {
@@ -149,8 +150,8 @@ macro(zstack) {
   } else if (args[1] == L"r") {
     halign = Alignment::right;
   }
-  const auto&[hu, hv] = Units::getLength(args[2]);
-  const ZStackArgs hargs{halign, hu, hv};
+  const auto& h = Units::getDimen(args[2]);
+  const ZStackArgs hargs{halign, h};
 
   auto valign = Alignment::top;
   if (args[3] == L"c") {
@@ -160,8 +161,8 @@ macro(zstack) {
   } else if (args[3] == L"B") {
     valign = Alignment::none;
   }
-  const auto&[vu, vv] = Units::getLength(args[4]);
-  const ZStackArgs& vargs{valign, vu, vv};
+  const auto& v = Units::getDimen(args[4]);
+  const ZStackArgs& vargs{valign, v};
 
   const auto atom = Formula(tp, args[5], false)._root;
   const auto anchor = Formula(tp, args[6], false)._root;

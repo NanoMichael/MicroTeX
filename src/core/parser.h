@@ -6,6 +6,7 @@
 #include <map>
 
 #include "atom/atom.h"
+#include "env/units.h"
 
 namespace tex {
 
@@ -303,7 +304,7 @@ public:
    * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or a pair (UnitType::pixel, 0) will be
    * returned.
    */
-  std::pair<UnitType, float> getLength();
+  Dimen getDimen();
 
   /**
    * Convert a character in the corresponding atom

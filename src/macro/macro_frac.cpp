@@ -1,5 +1,4 @@
 #include "macro/macro_frac.h"
-#include "atom/atom_misc.h"
 #include "utils/utf.h"
 
 using namespace std;
@@ -37,12 +36,12 @@ macro(frac) {
 
 macro(above) {
   auto num = tp.popFormulaAtom();
-  auto[unit, value] = tp.getLength();
+  const auto& thick = tp.getDimen();
   auto den = Formula(tp, tp.getOverArgument(), false)._root;
   if (num == nullptr || den == nullptr) {
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
   }
-  return sptrOf<FracAtom>(num, den, true, unit, value);
+  return sptrOf<FracAtom>(num, den, true, thick);
 }
 
 macro(atop) {
@@ -63,9 +62,7 @@ macro(over) {
 
 sptr<Atom> _frac_with_delims(TeXParser& tp, Args& args, bool rule, bool hasLength) {
   auto num = tp.popFormulaAtom();
-  std::pair<UnitType, float> l;
-  if (hasLength) l = tp.getLength();
-  auto[unit, value] = l;
+  const auto& l = hasLength ? tp.getDimen() : Dimen();
   auto den = Formula(tp, tp.getOverArgument(), false)._root;
 
   if (num == nullptr || den == nullptr)
@@ -73,7 +70,7 @@ sptr<Atom> _frac_with_delims(TeXParser& tp, Args& args, bool rule, bool hasLengt
 
   auto f = (
     hasLength
-    ? sptrOf<FracAtom>(num, den, rule, unit, value)
+    ? sptrOf<FracAtom>(num, den, rule, l)
     : sptrOf<FracAtom>(num, den, rule)
   );
   return sptrOf<FencedAtom>(f, wide2utf8(args[1]), wide2utf8(args[2]));

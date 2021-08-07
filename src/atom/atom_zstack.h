@@ -9,8 +9,7 @@ namespace tex {
 
 struct ZStackArgs {
   Alignment align;
-  UnitType offsetUnit = UnitType::em;
-  float offset = 0.f;
+  Dimen offset;
 };
 
 class ZStackAtom : public Atom {

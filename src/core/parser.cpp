@@ -609,8 +609,8 @@ sptr<Atom> TeXParser::getArgument() {
   return atom;
 }
 
-pair<UnitType, float> TeXParser::getLength() {
-  if (_pos == _len) return make_pair(UnitType::none, -1.f);
+Dimen TeXParser::getDimen() {
+  if (_pos == _len) return {0.f, UnitType::none};
 
   wchar_t ch = L'\0';
 
@@ -623,7 +623,7 @@ pair<UnitType, float> TeXParser::getLength() {
   if (ch == '\\') _pos--;
   else skipWhiteSpace();
 
-  return Units::getLength(_latex.substr(start, end - start - 1));
+  return Units::getDimen(_latex.substr(start, end - start - 1));
 }
 
 bool TeXParser::replaceScript() {

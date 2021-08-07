@@ -417,9 +417,12 @@ void NewCommandMacro::_init_() {
   cmd(
     2,
     L"sfrac",
-    L"\\raisebox{0.45ex}{\\numstyle{#1}}"
+    L"\\scalebox{.9}{"
+    "\\raisebox{.5ex}{"
+    "\\raisebox{.45ex}{\\numstyle{#1}}"
     "\\kern-.4ex\\nokern\\slash\\nokern\\kern-.4ex"
-    "\\raisebox{-0.45ex}{\\dnomstyle{#2}}"
+    "\\raisebox{-.45ex}{\\dnomstyle{#2}}"
+    "}}"
   );
   // endregion
 }

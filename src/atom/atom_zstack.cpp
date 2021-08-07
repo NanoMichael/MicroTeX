@@ -11,7 +11,7 @@ sptr<Box> ZStackAtom::createBox(Env& env) {
   const auto box = _atom->createBox(env);
 
   // calculate horizontal position
-  auto offset = Units::fsize(_hargs.offsetUnit, _hargs.offset, env);
+  auto offset = Units::fsize(_hargs.offset, env);
   auto l = 0.f;
   if (_hargs.align == Alignment::left) {
     l = offset;
@@ -32,7 +32,7 @@ sptr<Box> ZStackAtom::createBox(Env& env) {
   if (kern != 0.f) hbox->add(StrutBox::create(kern));
 
   // calculate vertical shift (default align at baseline)
-  auto shift = Units::fsize(_vargs.offsetUnit, _vargs.offset, env);
+  auto shift = Units::fsize(_vargs.offset, env);
   if (_vargs.align == Alignment::top) {
     shift += box->_height - anchor->_height;
   } else if (_vargs.align == Alignment::bottom) {

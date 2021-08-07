@@ -8,9 +8,8 @@ using namespace tex;
 
 FracAtom::FracAtom(
   const sptr<Atom>& num, const sptr<Atom>& den, bool rule,
-  UnitType unit, float thickness
-) : _num(num), _dnom(den), _rule(rule),
-    _unit(unit), _thickness(thickness) {}
+  const Dimen& thickness
+) : _num(num), _dnom(den), _rule(rule), _thickness(thickness) {}
 
 FracAtom::FracAtom(
   const sptr<Atom>& num, const sptr<Atom>& den,
@@ -25,8 +24,8 @@ sptr<Box> FracAtom::createBox(Env& env) {
 
   const auto theta = [&]() {
     if (!_rule) return 0.f;
-    if (_thickness == 0.f) return math.fractionRuleThickness() * env.scale();
-    return Units::fsize(_unit, _thickness, env);
+    if (!_thickness.isValid()) return math.fractionRuleThickness() * env.scale();
+    return Units::fsize(_thickness, env);
   }();
 
   const auto x = env.withStyle(

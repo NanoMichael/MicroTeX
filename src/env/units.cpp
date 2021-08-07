@@ -98,6 +98,10 @@ float Units::fsize(UnitType unit, float size, const Env& env) {
   return _unitConversions[static_cast<i8>(unit)](env) * size;
 }
 
+float Units::fsize(const Dimen& dimen, const Env& env) {
+  return Units::fsize(dimen.unit, dimen.val, env);
+}
+
 UnitType Units::getUnit(const std::string& unit) {
   const auto i = binIndexOf(
     _unitsCount,
@@ -107,24 +111,24 @@ UnitType Units::getUnit(const std::string& unit) {
   return _units[i].second;
 }
 
-std::pair<UnitType, float> Units::getLength(const std::string& lgth) {
-  if (lgth.empty()) return {UnitType::em, 0.f};
+Dimen Units::getDimen(const std::string& lgth) {
+  if (lgth.empty()) return {0.f, UnitType::none};
 
   size_t i = 0;
   for (; i < lgth.length() && !isalpha(lgth[i]); i++);
   float f = 0;
   valueof(lgth.substr(0, i), f);
 
-  UnitType unit = UnitType::pixel;
+  UnitType unit = UnitType::none;
   string str = lgth.substr(i);
   string x = trim(str);
   tolower(x);
   if (i != lgth.size()) unit = getUnit(x);
 
-  return {unit, f};
+  return {f, unit};
 }
 
-std::pair<UnitType, float> Units::getLength(const std::wstring& lgth) {
+Dimen Units::getDimen(const std::wstring& lgth) {
   const string str = wide2utf8(lgth);
-  return getLength(str);
+  return getDimen(str);
 }

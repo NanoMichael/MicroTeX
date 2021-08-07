@@ -2,9 +2,25 @@
 #include "atom/atom_delim.h"
 #include "utils/utf.h"
 #include "utils/string_utils.h"
+#include "env/units.h"
 
 using namespace std;
 using namespace tex;
+
+sptr<Box> RaiseAtom::createBox(Env& env) {
+  auto base = _base->createBox(env);
+  if (_raise.isValid()) {
+    base->_shift = Units::fsize(_raise, env);
+  }
+  auto hb = sptrOf<HBox>(base);
+  if (_height.isValid()) {
+    hb->_height = Units::fsize(_height, env);
+  }
+  if (_depth.isValid()) {
+    hb->_depth = Units::fsize(_depth, env);
+  }
+  return hb;
+}
 
 sptr<Box> BigDelimiterAtom::createBox(Env& env) {
   auto b = tex::createVDelim(_delim, env, _size);
@@ -17,7 +33,7 @@ float OvalAtom::_multiplier = 0.5f;
 float OvalAtom::_diameter = 0.f;
 
 RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const wstring& option)
-  : _angle(0), _option(Rotation::bl), _xunit(UnitType::em), _yunit(UnitType::em), _x(0), _y(0) {
+  : _angle(0), _option(Rotation::bl) {
   _type = base->_type;
   _base = base;
   _angle = angle;
@@ -30,22 +46,20 @@ RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const wstring& optio
   }
   it = opt.find("x");
   if (it != opt.end()) {
-    auto[u, x] = Units::getLength(it->second);
-    _xunit = u, _x = x;
+    _x = Units::getDimen(it->second);
   } else {
-    _xunit = UnitType::point, _x = 0;
+    _x = 0._em;
   }
   it = opt.find("y");
   if (it != opt.end()) {
-    auto[u, y] = Units::getLength(it->second);
-    _yunit = u, _y = y;
+    _y = Units::getDimen(it->second);
   } else {
-    _yunit = UnitType::point, _y = 0;
+    _y = 0._em;
   }
 }
 
 RotateAtom::RotateAtom(const sptr<Atom>& base, const wstring& angle, const wstring& option)
-  : _angle(0), _option(Rotation::none), _xunit(UnitType::em), _yunit(UnitType::em), _x(0), _y(0) {
+  : _angle(0), _option(Rotation::none), _x(0._em), _y(0._em) {
   _type = base->_type;
   _base = base;
   valueof(angle, _angle);
@@ -58,8 +72,8 @@ sptr<Box> RotateAtom::createBox(Env& env) {
     return sptrOf<RotateBox>(_base->createBox(env), _angle, _option);
   }
 
-  const auto x = Units::fsize(_xunit, _x, env);
-  const auto y = Units::fsize(_yunit, _y, env);
+  const auto x = Units::fsize(_x, env);
+  const auto y = Units::fsize(_y, env);
   return sptrOf<RotateBox>(_base->createBox(env), _angle, x, y);
 }
 
@@ -86,7 +100,7 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
   vector<wstring> results;
   calculate(results);
 
-  auto rule = sptrOf<RuleAtom>(UnitType::ex, 0.f, UnitType::ex, 2.6f, UnitType::ex, 0.5f);
+  auto rule = sptrOf<RuleAtom>(0._ex, 2.6_ex, 0.5_ex);
 
   const int s = results.size();
   for (int i = 0; i < s; i++) {
@@ -97,15 +111,7 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
       auto big = sptrOf<BigDelimiterAtom>(rparen, 1);
       auto ph = sptrOf<PhantomAtom>(big, false, true, true);
       auto ra = sptrOf<RowAtom>(ph);
-      auto raised = sptrOf<RaiseAtom>(
-        big,
-        UnitType::x8,
-        3.5f,
-        UnitType::x8,
-        0.f,
-        UnitType::x8,
-        0.f
-      );
+      auto raised = sptrOf<RaiseAtom>(big, 3._x8, 0._x8, 0._x8);
       ra->add(sptrOf<SmashedAtom>(raised));
       ra->add(num);
       auto oa = sptrOf<OverUnderBar>(ra, true);

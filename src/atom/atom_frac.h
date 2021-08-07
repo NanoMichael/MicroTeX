@@ -3,16 +3,14 @@
 
 #include "atom/atom.h"
 #include "utils/enums.h"
+#include "env/units.h"
 
 namespace tex {
 
 /** An atom representing a fraction */
 class FracAtom : public Atom {
 private:
-  // unit used for the thickness of the fraction line
-  UnitType _unit = UnitType::none;
-  // thickness of the fraction line
-  float _thickness = 0;
+  Dimen _thickness;
   Alignment _numAlign = Alignment::center, _dnomAlign = Alignment::center;
   // the atoms representing the numerator and denominator
   sptr<Atom> _num, _dnom;
@@ -26,7 +24,7 @@ private:
 public:
   FracAtom(
     const sptr<Atom>& num, const sptr<Atom>& den, bool rule,
-    UnitType unit = UnitType::none, float thickness = 0.f
+    const Dimen& thickness = {}
   );
 
   FracAtom(
