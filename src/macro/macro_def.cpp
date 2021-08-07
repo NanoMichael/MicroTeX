@@ -122,7 +122,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
   // endregion
   // region scripts & frac
     mac(2, macro_frac, "frac"),
-    mac(2, macro_sfrac, "sfrac"),
     mac(6, macro_genfrac, "genfrac"),
     mac(0, macro_above, "above"),
     mac(0, macro_over, "over"),
@@ -246,11 +245,15 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(2, macro_underaccent, "underaccent"),
     mac(1, macro_undertilde, "undertilde"),
   // endregion
-  // region styles
-    mac(0, macro_displaystyle, "displaystyle"),
-    mac(0, macro_textstyle, "textstyle"),
-    mac(0, macro_scriptstyle, "scriptstyle"),
-    mac(0, macro_scriptscriptstyle, "scriptscriptstyle"),
+  // region tex styles
+    mac(0, macro_texstyle, "displaystyle"),
+    mac(0, macro_texstyle, "textstyle"),
+    mac(0, macro_texstyle, "scriptstyle"),
+    mac(0, macro_texstyle, "scriptscriptstyle"),
+    mac(1, macro_atexstyle, "dnomstyle"),
+    mac(1, macro_atexstyle, "numstyle"),
+    mac(1, macro_atexstyle, "substyle"),
+    mac(1, macro_atexstyle, "supstyle"),
   // endregion
   // region colors
     mac(3, macro_definecolor, "definecolor"),
@@ -411,5 +414,12 @@ void NewCommandMacro::_init_() {
   cmd(0, L"copyright", L"\\textcircled{\\raisebox{0.2ex}{c}}");
   cmd(0, L"L", L"\\mathrm{\\polishlcross L}");
   cmd(0, L"l", L"\\mathrm{\\polishlcross l}");
+  cmd(
+    2,
+    L"sfrac",
+    L"\\raisebox{0.45ex}{\\numstyle{#1}}"
+    "\\kern-.4ex\\nokern\\slash\\nokern\\kern-.4ex"
+    "\\raisebox{-0.45ex}{\\dnomstyle{#2}}"
+  );
   // endregion
 }

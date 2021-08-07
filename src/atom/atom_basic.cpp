@@ -13,7 +13,24 @@ using namespace tex;
 sptr<Box> StyleAtom::createBox(Env& env) {
   return env.withStyle(
     _style,
-    [&](Env& e) { return _at->createBox(e); }
+    [&](Env& e) { return _atom->createBox(e); }
+  );
+}
+
+sptr<Box> AStyleAtom::createBox(Env& env) {
+  TexStyle style = TexStyle::display;
+  if (_name == "dnomstyle") {
+    style = env.dnomStyle();
+  } else if (_name == "numstyle") {
+    style = env.numStyle();
+  } else if (_name == "substyle") {
+    style = env.subStyle();
+  } else if (_name == "supstyle") {
+    style = env.supStyle();
+  }
+  return env.withStyle(
+    style,
+    [&](Env& e) { return _atom->createBox(e); }
   );
 }
 

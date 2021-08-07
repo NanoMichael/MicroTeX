@@ -30,13 +30,7 @@ inline macro(brace) {
   return _choose("lbrace", "rbrace", tp, args);
 }
 
-inline macro(frac) {
-  Formula num(tp, args[1], false);
-  Formula den(tp, args[2], false);
-  if (num._root == nullptr || den._root == nullptr)
-    throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
-  return sptrOf<FractionAtom>(num._root, den._root, true);
-}
+macro(frac);
 
 macro(above);
 
@@ -49,8 +43,6 @@ macro(abovewithdelims);
 macro(atopwithdelims);
 
 macro(overwithdelims);
-
-macro(sfrac);
 
 macro(cfrac);
 

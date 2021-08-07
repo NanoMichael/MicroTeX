@@ -6,13 +6,13 @@
 
 using namespace tex;
 
-FractionAtom::FractionAtom(
+FracAtom::FracAtom(
   const sptr<Atom>& num, const sptr<Atom>& den, bool rule,
   UnitType unit, float thickness
 ) : _num(num), _dnom(den), _rule(rule),
     _unit(unit), _thickness(thickness) {}
 
-FractionAtom::FractionAtom(
+FracAtom::FracAtom(
   const sptr<Atom>& num, const sptr<Atom>& den,
   Alignment numAlign, Alignment denAlign
 ) : _num(num), _dnom(den), _rule(true) {
@@ -20,7 +20,7 @@ FractionAtom::FractionAtom(
   _dnomAlign = checkAlign(denAlign);
 }
 
-sptr<Box> FractionAtom::createBox(Env& env) {
+sptr<Box> FracAtom::createBox(Env& env) {
   const auto& math = env.mathConsts();
 
   const auto theta = [&]() {
@@ -101,6 +101,7 @@ sptr<Box> FractionAtom::createBox(Env& env) {
   const auto vbox = sptrOf<VBox>();
   vbox->add(x);
   if (_rule) {
+    // TODO equal gaps between numerator and denominator?
     const auto dn = x->_height + u - axis - theta / 2 - x->vlen();
     vbox->add(sptrOf<StrutBox>(0.f, dn, 0.f, 0.f));
     vbox->add(sptrOf<RuleBox>(theta, w, 0));

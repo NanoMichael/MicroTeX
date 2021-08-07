@@ -7,7 +7,7 @@
 namespace tex {
 
 /** An atom representing a fraction */
-class FractionAtom : public Atom {
+class FracAtom : public Atom {
 private:
   // unit used for the thickness of the fraction line
   UnitType _unit = UnitType::none;
@@ -24,12 +24,12 @@ private:
   }
 
 public:
-  FractionAtom(
+  FracAtom(
     const sptr<Atom>& num, const sptr<Atom>& den, bool rule,
     UnitType unit = UnitType::none, float thickness = 0.f
   );
 
-  FractionAtom(
+  FracAtom(
     const sptr<Atom>& num, const sptr<Atom>& den,
     Alignment numAlign = Alignment::center, Alignment denAlign = Alignment::center
   );
@@ -44,7 +44,7 @@ public:
 
   sptr<Box> createBox(Env& env) override;
 
-  __decl_clone(FractionAtom)
+  __decl_clone(FracAtom)
 };
 
 }

@@ -38,18 +38,39 @@ public:
 class StyleAtom : public Atom {
 private:
   TexStyle _style;
-  sptr<Atom> _at;
+  sptr<Atom> _atom;
 
 public:
   StyleAtom() = delete;
 
-  StyleAtom(TexStyle style, const sptr<Atom>& a) : _style(style), _at(a) {
+  StyleAtom(TexStyle style, const sptr<Atom>& a) : _style(style), _atom(a) {
     _type = a->_type;
   }
 
   sptr<Box> createBox(Env& env) override;
 
   __decl_clone(StyleAtom)
+};
+
+/**
+ * An atom representing a modification of style in a formula
+ * relative to current style
+ */
+class AStyleAtom : public Atom {
+private:
+  std::string _name;
+  sptr<Atom> _atom;
+
+public:
+  AStyleAtom() = delete;
+
+  AStyleAtom(std::string name, const sptr<Atom>& a) : _name(name), _atom(a) {
+    _type = a->_type;
+  }
+
+  sptr<Box> createBox(Env& env) override;
+
+  __decl_clone(AStyleAtom)
 };
 
 /** Atom to modify math font and style */

@@ -147,7 +147,10 @@ map<wstring, wstring> Formula::_predefFormulaStrs{
   {L"Android",          L"\\Huge{\\android}\\normalsize"},
   {L"AndroidTeX",       L"\\Android\\large{\\dT\\dE\\dX}\\normalsize"},
   {L"TeX",              L"\\large{\\dT\\dE\\dX}\\normalsize"},
-  {L"LaTeX",            L"\\text{L\\kern-0.25em\\raisebox{.45ex}{\\scalebox{0.7}{A}}\\kern-.15em T\\kern-.15em\\raisebox{-.4ex}{E}\\kern-.15em X}"},
+  {L"LaTeX",            L"\\text{L\\kern-0.25em"
+                        "\\raisebox{.45ex}{\\scalebox{0.7}{A}}"
+                        "\\kern-.15em T\\kern-.15em"
+                        "\\raisebox{-.4ex}{E}\\kern-.15em X}"},
   {L"IJ",               L"{I\\kern-0.065em J}"},
   {L"ij",               L"{i\\kern-0.065em j}"},
   {L"idotsint",         L"\\int\\cdots\\int"},

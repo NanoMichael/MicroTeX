@@ -96,6 +96,7 @@ target_sources(LaTeX PRIVATE
         src/macro/macro_space.cpp
         src/macro/macro_delims.cpp
         src/macro/macro_frac.cpp
+        src/macro/macro_styles.cpp
         # env folder
         src/env/env.cpp
         src/env/units.cpp

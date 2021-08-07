@@ -9,25 +9,9 @@
 
 namespace tex {
 
-inline macro(displaystyle) {
-  auto g = Formula(tp, tp.getOverArgument(), false)._root;
-  return sptrOf<StyleAtom>(TexStyle::display, g);
-}
+macro(texstyle);
 
-inline macro(scriptstyle) {
-  auto g = Formula(tp, tp.getOverArgument(), false)._root;
-  return sptrOf<StyleAtom>(TexStyle::script, g);
-}
-
-inline macro(textstyle) {
-  auto g = Formula(tp, tp.getOverArgument(), false)._root;
-  return sptrOf<StyleAtom>(TexStyle::text, g);
-}
-
-inline macro(scriptscriptstyle) {
-  auto g = Formula(tp, tp.getOverArgument(), false)._root;
-  return sptrOf<StyleAtom>(TexStyle::scriptScript, g);
-}
+macro(atexstyle);
 
 }
 

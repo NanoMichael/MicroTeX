@@ -11,7 +11,7 @@ macro(binom) {
   Formula den(tp, args[2], false);
   if (num._root == nullptr || den._root == nullptr)
     throw ex_parse("Both binomial coefficients must be not empty!");
-  auto f = sptrOf<FractionAtom>(num._root, den._root, false);
+  auto f = sptrOf<FracAtom>(num._root, den._root, false);
   return sptrOf<FencedAtom>(f, "lparen", "rparen");
 }
 
@@ -23,8 +23,16 @@ sptr<Atom> _choose(
   auto den = Formula(tp, tp.getOverArgument(), false)._root;
   if (num == nullptr || den == nullptr)
     throw ex_parse("Both numerator and denominator of choose can't be empty!");
-  auto f = sptrOf<FractionAtom>(num, den, false);
+  auto f = sptrOf<FracAtom>(num, den, false);
   return sptrOf<FencedAtom>(f, left, right);
+}
+
+macro(frac) {
+  Formula num(tp, args[1], false);
+  Formula den(tp, args[2], false);
+  if (num._root == nullptr || den._root == nullptr)
+    throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
+  return sptrOf<FracAtom>(num._root, den._root, true);
 }
 
 macro(above) {
@@ -34,7 +42,7 @@ macro(above) {
   if (num == nullptr || den == nullptr) {
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
   }
-  return sptrOf<FractionAtom>(num, den, true, unit, value);
+  return sptrOf<FracAtom>(num, den, true, unit, value);
 }
 
 macro(atop) {
@@ -42,7 +50,7 @@ macro(atop) {
   auto den = Formula(tp, tp.getOverArgument(), false)._root;
   if (num == nullptr || den == nullptr)
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
-  return sptrOf<FractionAtom>(num, den, false);
+  return sptrOf<FracAtom>(num, den, false);
 }
 
 macro(over) {
@@ -50,7 +58,7 @@ macro(over) {
   auto den = Formula(tp, tp.getOverArgument(), false)._root;
   if (num == nullptr || den == nullptr)
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
-  return sptrOf<FractionAtom>(num, den, true);
+  return sptrOf<FracAtom>(num, den, true);
 }
 
 sptr<Atom> _frac_with_delims(TeXParser& tp, Args& args, bool rule, bool hasLength) {
@@ -65,8 +73,8 @@ sptr<Atom> _frac_with_delims(TeXParser& tp, Args& args, bool rule, bool hasLengt
 
   auto f = (
     hasLength
-    ? sptrOf<FractionAtom>(num, den, rule, unit, value)
-    : sptrOf<FractionAtom>(num, den, rule)
+    ? sptrOf<FracAtom>(num, den, rule, unit, value)
+    : sptrOf<FracAtom>(num, den, rule)
   );
   return sptrOf<FencedAtom>(f, wide2utf8(args[1]), wide2utf8(args[2]));
 }
@@ -96,39 +104,7 @@ macro(cfrac) {
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
   const auto n = sptrOf<StyleAtom>(TexStyle::display, num._root);
   const auto d = sptrOf<StyleAtom>(TexStyle::display, denom._root);
-  return sptrOf<FractionAtom>(n, d, numAlign, Alignment::center);
-}
-
-macro(sfrac) {
-//  Formula num(tp, args[1], false);
-//  Formula den(tp, args[2], false);
-//  if (num._root == nullptr || den._root == nullptr)
-//    throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
-//
-//  float sx = 0.75f, sy = 0.75f, r = 0.45f, sL = -0.13f, sR = -0.065f;
-//  sptr<Atom> slash = SymbolAtom::get("slash");
-//
-//  if (!tp.isMathMode()) {
-//    sx = 0.6f;
-//    sy = 0.5f;
-//    r = 0.75f;
-//    sL = -0.24f;
-//    sR = -0.24f;
-//    auto in = sptrOf<ScaleAtom>(SymbolAtom::get("textfractionsolidus"), 1.25f, 0.65f);
-//    auto* vr = new VRowAtom(in);
-//    vr->setRaise(UnitType::ex, 0.4f);
-//    slash = sptr<Atom>(vr);
-//  }
-//
-//  auto* snum = new VRowAtom(sptrOf<ScaleAtom>(num._root, sx, sy));
-//  snum->setRaise(UnitType::ex, r);
-//  auto* ra = new RowAtom(sptr<Atom>(snum));
-//  ra->add(sptrOf<SpaceAtom>(UnitType::em, sL, 0.f, 0.f));
-//  ra->add(slash);
-//  ra->add(sptrOf<SpaceAtom>(UnitType::em, sR, 0.f, 0.f));
-//  ra->add(sptrOf<ScaleAtom>(den._root, sx, sy));
-//
-//  return sptr<Atom>(ra);
+  return sptrOf<FracAtom>(n, d, numAlign, Alignment::center);
 }
 
 macro(genfrac) {
