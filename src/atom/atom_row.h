@@ -168,8 +168,6 @@ public:
   AtomType leftType() const override;
 
   AtomType rightType() const override;
-
-  __decl_clone(RowAtom)
 };
 
 }

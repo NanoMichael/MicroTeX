@@ -38,8 +38,6 @@ public:
   AtomType rightType() const override {
     return _base->rightType();
   }
-
-  __decl_clone(OperatorAtom)
 };
 
 }

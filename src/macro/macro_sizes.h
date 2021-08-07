@@ -55,7 +55,7 @@ inline sptr <Atom> _big(
   auto a = Formula(tp, args[1], false)._root;
   auto s = std::dynamic_pointer_cast<SymbolAtom>(a);
   if (s == nullptr) return a;
-  auto t = sptrOf<BigDelimiterAtom>(s, size);
+  auto t = sptrOf<BigSymbolAtom>(s, size);
   if (type != AtomType::none) t->_type = type;
   return t;
 }

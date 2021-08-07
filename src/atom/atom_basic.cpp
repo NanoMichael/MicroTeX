@@ -34,6 +34,13 @@ sptr<Box> AStyleAtom::createBox(Env& env) {
   );
 }
 
+sptr<Box> SmashedAtom::createBox(Env& env) {
+  auto b = sptrOf<HBox>(_atom->createBox(env));
+  if (_h) b->_height = 0;
+  if (_d) b->_depth = 0;
+  return b;
+}
+
 sptr<Box> MathFontAtom::createBox(Env& env) {
   env.selectMathFont(_fontName, _mathStyle);
   return StrutBox::empty();

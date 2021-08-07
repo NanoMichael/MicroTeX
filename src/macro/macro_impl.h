@@ -228,14 +228,14 @@ inline macro(surd) {
 
 inline macro(lmoustache) {
   auto* s = new SymbolAtom(*(SymbolAtom::get("lmoustache")));
-  auto b = sptrOf<BigDelimiterAtom>(sptr<SymbolAtom>(s), 1);
+  auto b = sptrOf<BigSymbolAtom>(sptr<SymbolAtom>(s), 1);
   b->_type = AtomType::opening;
   return b;
 }
 
 inline macro(rmoustache) {
   auto* s = new SymbolAtom(*(SymbolAtom::get("rmoustache")));
-  auto b = sptrOf<BigDelimiterAtom>(sptr<SymbolAtom>(s), 1);
+  auto b = sptrOf<BigSymbolAtom>(sptr<SymbolAtom>(s), 1);
   b->_type = AtomType::closing;
   return b;
 }
@@ -252,9 +252,8 @@ inline macro(nokern) {
 
 inline sptr<Atom> _limits_type(TeXParser& tp, Args& args, LimitsType type) {
   auto atom = tp.popLastAtom();
-  auto copy = atom->clone();
-  copy->_limitsType = type;
-  return copy;
+  atom->_limitsType = type;
+  return atom;
 }
 
 inline macro(nolimits) {

@@ -21,8 +21,6 @@ public:
   }
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(SideSetsAtom)
 };
 
 }

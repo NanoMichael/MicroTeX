@@ -23,8 +23,6 @@ public:
   }
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(OverUnderBar)
 };
 
 /**
@@ -48,8 +46,6 @@ public:
   }
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(OverUnderDelimiter)
 };
 
 }

@@ -1,11 +1,6 @@
 #ifndef LATEX_ATOM_BASIC_H
 #define LATEX_ATOM_BASIC_H
 
-#include <bitset>
-#include <map>
-#include <string>
-#include <utility>
-
 #include "atom/atom.h"
 #include "atom/atom_row.h"
 #include "box/box_single.h"
@@ -27,8 +22,6 @@ public:
   sptr<Box> createBox(Env& env) override {
     return StrutBox::empty();
   }
-
-  __decl_clone(NokernAtom)
 };
 
 /**
@@ -47,9 +40,11 @@ public:
     _type = a->_type;
   }
 
-  sptr<Box> createBox(Env& env) override;
+  AtomType leftType() const override { return _atom->leftType(); }
 
-  __decl_clone(StyleAtom)
+  AtomType rightType() const override { return _atom->rightType(); }
+
+  sptr<Box> createBox(Env& env) override;
 };
 
 /**
@@ -69,8 +64,6 @@ public:
   }
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(AStyleAtom)
 };
 
 /** Atom to modify math font and style */
@@ -84,8 +77,6 @@ public:
     : _mathStyle(style), _fontName(std::move(fontName)) {}
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(MathFontAtom);
 };
 
 /** An empty atom */
@@ -94,8 +85,6 @@ public:
   sptr<Box> createBox(Env& env) override {
     return StrutBox::empty();
   }
-
-  __decl_clone(EmptyAtom)
 };
 
 /** A placeholder atom */
@@ -118,8 +107,6 @@ public:
   }
 
   inline float italic() const { return _italic; }
-
-  __decl_clone(PlaceholderAtom)
 };
 
 /** An atom representing a smashed atom (i.e. with no height and no depth) */
@@ -139,14 +126,11 @@ public:
 
   explicit SmashedAtom(const sptr<Atom>& a) : _atom(a), _h(true), _d(true) {}
 
-  sptr<Box> createBox(Env& env) override {
-    sptr<Box> b = _atom->createBox(env);
-    if (_h) b->_height = 0;
-    if (_d) b->_depth = 0;
-    return b;
-  }
+  AtomType leftType() const override { return _atom->leftType(); }
 
-  __decl_clone(SmashedAtom)
+  AtomType rightType() const override { return _atom->rightType(); }
+
+  sptr<Box> createBox(Env& env) override;
 };
 
 /** An atom representing a scaled atom */
@@ -172,8 +156,6 @@ public:
   AtomType rightType() const override { return _base->rightType(); }
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(ScaleAtom)
 };
 
 /** An atom representing a math atom */
@@ -189,8 +171,6 @@ public:
     : _base(base), _style(style) {}
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(MathAtom)
 };
 
 /** An atom representing a horizontal-line in array environment */
@@ -209,8 +189,6 @@ public:
   inline void setColor(color c) { _color = c; }
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(HlineAtom)
 };
 
 /** An atom representing a cumulative scripts atom */
@@ -235,8 +213,6 @@ public:
   sptr<Atom> getScriptsAtom() const;
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(CumulativeScriptsAtom)
 };
 
 /** An atom representing the foreground and background color of an other atom */
@@ -277,8 +253,6 @@ public:
 
   /** Define a color with given name */
   static void defineColor(const std::string& name, color c);
-
-  __decl_clone(ColorAtom)
 };
 
 /** An atom representing another atom that should be drawn invisibly */
@@ -308,8 +282,6 @@ public:
   }
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(PhantomAtom)
 };
 
 /**
@@ -347,8 +319,6 @@ public:
   AtomType rightType() const override {
     return _rightType;
   }
-
-  __decl_clone(TypedAtom)
 };
 
 class ExtensibleAtom : public Atom {
@@ -365,8 +335,6 @@ public:
   ) : _sym(std::move(sym)), _getLen(getLen), _vertical(isVertical) {}
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(ExtensibleAtom)
 };
 
 }  // namespace tex

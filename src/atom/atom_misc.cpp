@@ -22,7 +22,7 @@ sptr<Box> RaiseAtom::createBox(Env& env) {
   return hb;
 }
 
-sptr<Box> BigDelimiterAtom::createBox(Env& env) {
+sptr<Box> BigSymbolAtom::createBox(Env& env) {
   auto b = tex::createVDelim(_delim, env, _size);
   const auto axis = env.mathConsts().axisHeight() * env.scale();
   b->_shift = -(b->vlen() / 2 - b->_height) - axis;
@@ -107,8 +107,8 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
     auto num = Formula(results[i])._root;
     if (i == 1) {
       wstring divisor = towstring(_divisor);
-      auto rparen = SymbolAtom::get("rparen");
-      auto big = sptrOf<BigDelimiterAtom>(rparen, 1);
+      auto rparen = SymbolAtom::get("longdivision");
+      auto big = sptrOf<BigSymbolAtom>(rparen, 1);
       auto ph = sptrOf<PhantomAtom>(big, false, true, true);
       auto ra = sptrOf<RowAtom>(ph);
       auto raised = sptrOf<RaiseAtom>(big, 3._x8, 0._x8, 0._x8);

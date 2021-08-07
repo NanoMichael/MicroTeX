@@ -33,11 +33,11 @@ macro(left) {
   const wstring& grep = tp.getGroup(L"\\left", L"\\right");
 
   auto left = Formula(tp, args[1], false)._root;
-  auto* big = dynamic_cast<BigDelimiterAtom*>(left.get());
+  auto* big = dynamic_cast<BigSymbolAtom*>(left.get());
   if (big != nullptr) left = big->_delim;
 
   auto right = tp.getArgument();
-  big = dynamic_cast<BigDelimiterAtom*>(right.get());
+  big = dynamic_cast<BigSymbolAtom*>(right.get());
   if (big != nullptr) right = big->_delim;
 
   auto sl = dynamic_pointer_cast<CharSymbol>(left);

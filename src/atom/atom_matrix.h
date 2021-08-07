@@ -34,8 +34,6 @@ public:
   void apply(WrapperBox& box) override {
     box.setBackground(_color);
   }
-
-  __decl_clone(CellColorAtom)
 };
 
 /** Atom representing column foreground in array */
@@ -51,8 +49,6 @@ public:
   void apply(WrapperBox& box) override {
     box.setForeground(_color);
   }
-
-  __decl_clone(CellForegroundAtom)
 };
 
 class VlineAtom;
@@ -143,8 +139,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 
   static void defineColumnSpecifier(const std::wstring& rep, const std::wstring& spe);
-
-  __decl_clone(MatrixAtom)
 };
 
 /** An atom representing vertical-line in matrix Env */
@@ -163,8 +157,6 @@ public:
   float getWidth(Env& env) const;
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(VlineAtom)
 };
 
 /** An atom used in array mode that across several columns */
@@ -212,8 +204,6 @@ public:
   inline int col() const { return _col; }
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(MulticolumnAtom)
 };
 
 /** An atom used in array mode representing "dots" */
@@ -238,8 +228,6 @@ public:
   }
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(HdotsforAtom)
 };
 
 /** Atom representing multi-row */
@@ -265,8 +253,6 @@ public:
     b->_type = AtomType::multiRow;
     return b;
   }
-
-  __decl_clone(MultiRowAtom)
 };
 
 enum class MultiLineType {
@@ -299,8 +285,6 @@ public:
   }
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(MultlineAtom)
 };
 
 }

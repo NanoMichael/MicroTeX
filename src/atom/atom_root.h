@@ -21,8 +21,6 @@ public:
     : _base(base), _root(root) {}
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(NthRoot)
 };
 
 }

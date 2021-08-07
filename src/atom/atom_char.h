@@ -72,8 +72,6 @@ public:
   std::string name() const override;
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(FixedCharAtom)
 };
 
 class SymbolAtom : public CharSymbol {
@@ -100,8 +98,6 @@ public:
 
   /** Get symbol from the given name, return null if not found */
   static sptr<SymbolAtom> get(const std::string& name);
-
-  __decl_clone(SymbolAtom)
 };
 
 /**
@@ -134,16 +130,12 @@ public:
   std::string name() const override;
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(CharAtom)
 };
 
 /** An empty atom just to add a line-break mark. */
 class BreakMarkAtom : public Atom {
 public:
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(BreakMarkAtom)
 };
 
 }

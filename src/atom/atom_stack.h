@@ -80,8 +80,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 
   StackResult createStack(Env& env);
-
-  __decl_clone(StackAtom)
 };
 
 }

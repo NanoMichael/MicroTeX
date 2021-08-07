@@ -39,9 +39,15 @@ public:
     bool fake = false
   );
 
-  sptr<Box> createBox(Env& env) override;
+  AtomType leftType() const override {
+    return _accentee->leftType();
+  }
 
-  __decl_clone(AccentedAtom)
+  AtomType rightType() const override {
+    return _accentee->rightType();
+  }
+
+  sptr<Box> createBox(Env& env) override;
 };
 
 }

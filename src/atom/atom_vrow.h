@@ -48,8 +48,6 @@ public:
   void append(const sptr<Atom>& el);
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(VRowAtom)
 };
 
 }

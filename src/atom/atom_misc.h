@@ -4,7 +4,6 @@
 #include "box/box_factory.h"
 #include "box/box_group.h"
 #include "atom/atom.h"
-#include "atom/atom_matrix.h"
 #include "core/split.h"
 #include "core/formula.h"
 #include "graphic/graphic.h"
@@ -13,22 +12,20 @@
 
 namespace tex {
 
-/** An atom representing a big delimiter atom (i.e. sigma) */
-class BigDelimiterAtom : public Atom {
+/** An atom representing a big symbol atom (i.e. sigma) */
+class BigSymbolAtom : public Atom {
 private:
   int _size;
 
 public:
   const sptr<SymbolAtom> _delim;
 
-  BigDelimiterAtom() = delete;
+  BigSymbolAtom() = delete;
 
-  BigDelimiterAtom(const sptr<SymbolAtom>& delim, int size)
+  BigSymbolAtom(const sptr<SymbolAtom>& delim, int size)
     : _delim(delim), _size(size) {}
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(BigDelimiterAtom)
 };
 
 /** An atom with cedilla */
@@ -44,8 +41,6 @@ public:
   sptr<Box> createBox(Env& env) override {
     return StrutBox::empty();
   }
-
-  __decl_clone(CedillaAtom)
 };
 
 /** An atom representing a boxed base atom */
@@ -72,8 +67,6 @@ public:
   sptr<Box> createBox(Env& env) override {
     return StrutBox::empty();
   }
-
-  __decl_clone(FBoxAtom)
 };
 
 /** An atom representing a boxed base atom */
@@ -86,8 +79,6 @@ public:
   sptr<Box> createBox(Env& env) override {
     return StrutBox::empty();
   }
-
-  __decl_clone(DoubleFramedAtom)
 };
 
 /** An atom representing a box-shadowed atom */
@@ -100,8 +91,6 @@ public:
   sptr<Box> createBox(Env& env) override {
     return StrutBox::empty();
   }
-
-  __decl_clone(ShadowAtom)
 };
 
 /**
@@ -121,8 +110,6 @@ public:
     auto box = std::dynamic_pointer_cast<FramedBox>(x);
     return sptrOf<OvalBox>(box, _multiplier, _diameter);
   }
-
-  __decl_clone(OvalAtom)
 };
 
 /** An atom representing a lapped atom (i.e. with no width) */
@@ -155,8 +142,6 @@ public:
 
     return sptr<Box>(vb);
   }
-
-  __decl_clone(LapedAtom)
 };
 
 /** An atom representing a mono scale atom */
@@ -173,8 +158,6 @@ public:
   sptr<Box> createBox(Env& env) override {
     return StrutBox::empty();
   }
-
-  __decl_clone(MonoScaleAtom)
 };
 
 /** An atom with an Ogonek */
@@ -190,8 +173,6 @@ public:
   sptr<Box> createBox(Env& env) override {
     return StrutBox::empty();
   }
-
-  __decl_clone(OgonekAtom)
 };
 
 class RaiseAtom : public Atom {
@@ -212,8 +193,6 @@ public:
   AtomType rightType() const override { return _base->rightType(); }
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(RaiseAtom)
 };
 
 /** An atom representing a reflected atom */
@@ -231,8 +210,6 @@ public:
   sptr<Box> createBox(Env& env) override {
     return sptrOf<ReflectBox>(_base->createBox(env));
   }
-
-  __decl_clone(ReflectAtom)
 };
 
 /** An atom representing a resize atom */
@@ -260,8 +237,6 @@ public:
   sptr<Box> createBox(Env& env) override {
     return StrutBox::empty();
   }
-
-  __decl_clone(ResizeAtom)
 };
 
 /** An atom representing a rotated atom */
@@ -280,8 +255,6 @@ public:
   RotateAtom(const sptr<Atom>& base, float angle, const std::wstring& option);
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(RotateAtom)
 };
 
 class RuleAtom : public Atom {
@@ -300,8 +273,6 @@ public:
     float r = Units::fsize(_r, env);
     return sptrOf<RuleBox>(h, w, r);
   }
-
-  __decl_clone(RuleAtom)
 };
 
 /** An atom representing a small Capital atom */
@@ -317,8 +288,6 @@ public:
   sptr<Box> createBox(Env& env) override {
     return StrutBox::empty();
   }
-
-  __decl_clone(SmallCapAtom)
 };
 
 /** An atom representing a strike through atom */
@@ -332,8 +301,6 @@ public:
   sptr<Box> createBox(Env& env) override {
     return StrutBox::empty();
   }
-
-  __decl_clone(StrikeThroughAtom)
 };
 
 class TextCircledAtom : public Atom {
@@ -348,8 +315,6 @@ public:
   sptr<Box> createBox(Env& env) override {
     return StrutBox::empty();
   }
-
-  __decl_clone(TextCircledAtom)
 };
 
 /**
@@ -368,8 +333,6 @@ public:
   sptr<Box> createBox(Env& env) override {
     return StrutBox::empty();
   }
-
-  __decl_clone(VCenteredAtom)
 };
 
 /** An atom representing long division */
@@ -383,8 +346,6 @@ public:
   LongDivAtom() = delete;
 
   LongDivAtom(long divisor, long dividend);
-
-  __decl_clone(LongDivAtom)
 };
 
 /** An atom representing an atom with lines covered */
@@ -406,8 +367,6 @@ public:
     : _base(base), _cancelType(cancelType) {}
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(CancelAtom)
 };
 
 }  // namespace tex

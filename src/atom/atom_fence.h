@@ -24,8 +24,6 @@ public:
     : _sym(std::move(sym)), _placeholder(StrutBox::empty()) {}
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(MiddleAtom)
 };
 
 /**
@@ -56,8 +54,6 @@ public:
   AtomType rightType() const override { return AtomType::inner; }
 
   sptr<Box> createBox(Env& env) override;
-
-  __decl_clone(FencedAtom)
 };
 
 }

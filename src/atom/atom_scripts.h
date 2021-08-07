@@ -45,8 +45,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 
   ScriptResult createScripts(Env& env);
-
-  __decl_clone(ScriptsAtom)
 };
 
 }
