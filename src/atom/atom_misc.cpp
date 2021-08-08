@@ -30,9 +30,6 @@ sptr<Box> BigSymbolAtom::createBox(Env& env) {
   return b;
 }
 
-float OvalAtom::_multiplier = 0.5f;
-float OvalAtom::_diameter = 0.f;
-
 RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const wstring& option)
   : _angle(0), _option(Rotation::bl) {
   _type = base->_type;

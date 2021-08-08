@@ -217,8 +217,7 @@ public:
 public:
   FramedBox() = delete;
 
-  FramedBox(const sptr<Box>& box, float thickness, float space)
-    : DecorBox(box) {
+  FramedBox(const sptr<Box>& box, float thickness, float space) : DecorBox(box) {
     init(box, thickness, space);
   }
 

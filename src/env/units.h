@@ -34,6 +34,10 @@ constexpr Dimen operator ""_x8(long double val) {
   return {static_cast<float>(val), UnitType::x8};
 }
 
+constexpr Dimen operator ""_pt(long double val) {
+  return {static_cast<float>(val), UnitType::pt};
+}
+
 class Units final {
 private:
   /** Unit name to type map */

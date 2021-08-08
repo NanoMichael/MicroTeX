@@ -3,6 +3,7 @@
 
 #include "macro/macro_decl.h"
 #include "atom/atom_misc.h"
+#include "atom/atom_box.h"
 #include "utils/utf.h"
 
 namespace tex {
