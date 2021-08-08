@@ -1,6 +1,8 @@
 #ifndef LATEX_ATOM_BASIC_H
 #define LATEX_ATOM_BASIC_H
 
+#include <utility>
+
 #include "atom/atom.h"
 #include "atom/atom_row.h"
 #include "box/box_single.h"
@@ -28,21 +30,14 @@ public:
  * An atom representing a modification of style in a formula
  * (e.g. text-style or display-style)
  */
-class StyleAtom : public Atom {
+class StyleAtom : public WrapAtom {
 private:
   TexStyle _style;
-  sptr<Atom> _atom;
 
 public:
   StyleAtom() = delete;
 
-  StyleAtom(TexStyle style, const sptr<Atom>& a) : _style(style), _atom(a) {
-    _type = a->_type;
-  }
-
-  AtomType leftType() const override { return _atom->leftType(); }
-
-  AtomType rightType() const override { return _atom->rightType(); }
+  StyleAtom(TexStyle style, const sptr<Atom>& a) : _style(style), WrapAtom(a) {}
 
   sptr<Box> createBox(Env& env) override;
 };
@@ -51,17 +46,14 @@ public:
  * An atom representing a modification of style in a formula
  * relative to current style
  */
-class AStyleAtom : public Atom {
+class AStyleAtom : public WrapAtom {
 private:
   std::string _name;
-  sptr<Atom> _atom;
 
 public:
   AStyleAtom() = delete;
 
-  AStyleAtom(std::string name, const sptr<Atom>& a) : _name(name), _atom(a) {
-    _type = a->_type;
-  }
+  AStyleAtom(std::string name, const sptr<Atom>& a) : _name(std::move(name)), WrapAtom(a) {}
 
   sptr<Box> createBox(Env& env) override;
 };
@@ -110,34 +102,25 @@ public:
 };
 
 /** An atom representing a smashed atom (i.e. with no height and no depth) */
-class SmashedAtom : public Atom {
+class SmashedAtom : public WrapAtom {
 private:
-  sptr<Atom> _atom;
   bool _h, _d;
 
 public:
   SmashedAtom() = delete;
 
-  SmashedAtom(const sptr<Atom>& a, const std::string& opt) : _h(true), _d(true) {
-    _atom = a;
+  SmashedAtom(const sptr<Atom>& a, const std::string& opt) : _h(true), _d(true), WrapAtom(a) {
     if (opt == "opt") _d = false;
     else if (opt == "b") _h = false;
   }
 
-  explicit SmashedAtom(const sptr<Atom>& a) : _atom(a), _h(true), _d(true) {}
-
-  AtomType leftType() const override { return _atom->leftType(); }
-
-  AtomType rightType() const override { return _atom->rightType(); }
+  explicit SmashedAtom(const sptr<Atom>& a) : _h(true), _d(true), WrapAtom(a) {}
 
   sptr<Box> createBox(Env& env) override;
 };
 
 /** An atom representing a scaled atom */
-class ScaleAtom : public Atom {
-protected:
-  sptr<Atom> _base;
-
+class ScaleAtom : public WrapAtom {
 private:
   float _sx, _sy;
 
@@ -145,30 +128,23 @@ public:
   ScaleAtom() = delete;
 
   ScaleAtom(const sptr<Atom>& base, float sx, float sy) noexcept
-    : _base(base), _sx(sx), _sy(sy) {
-    _type = _base->_type;
-  }
+    : WrapAtom(base), _sx(sx), _sy(sy) {}
 
   ScaleAtom(const sptr<Atom>& base, float scale) : ScaleAtom(base, scale, scale) {}
-
-  AtomType leftType() const override { return _base->leftType(); }
-
-  AtomType rightType() const override { return _base->rightType(); }
 
   sptr<Box> createBox(Env& env) override;
 };
 
 /** An atom representing a math atom */
-class MathAtom : public Atom {
+class MathAtom : public WrapAtom {
 private:
   TexStyle _style;
-  sptr<Atom> _base;
 
 public:
   MathAtom() = delete;
 
   MathAtom(const sptr<Atom>& base, TexStyle style) noexcept
-    : _base(base), _style(style) {}
+    : _style(style), WrapAtom(base) {}
 
   sptr<Box> createBox(Env& env) override;
 };
@@ -180,7 +156,9 @@ private:
   color _color;
 
 public:
-  HlineAtom() noexcept: _color(transparent), _width(0), _shift(0) {}
+  HlineAtom() noexcept: _color(transparent), _width(0), _shift(0) {
+    _type = AtomType::hline;
+  }
 
   inline void setWidth(float w) { _width = w; }
 

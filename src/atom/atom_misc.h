@@ -25,6 +25,10 @@ public:
   BigSymbolAtom(const sptr<SymbolAtom>& delim, int size)
     : _delim(delim), _size(size) {}
 
+  AtomType leftType() const override { return _delim->leftType(); }
+
+  AtomType rightType() const override { return _delim->rightType(); }
+
   sptr<Box> createBox(Env& env) override;
 };
 
@@ -267,12 +271,7 @@ public:
   RuleAtom(const Dimen& w, const Dimen& h, const Dimen& r)
     : _w(w), _h(h), _r(r) {}
 
-  sptr<Box> createBox(Env& env) override {
-    float w = Units::fsize(_w, env);
-    float h = Units::fsize(_h, env);
-    float r = Units::fsize(_r, env);
-    return sptrOf<RuleBox>(h, w, r);
-  }
+  sptr<Box> createBox(Env& env) override;
 };
 
 /** An atom representing a small Capital atom */
@@ -319,7 +318,7 @@ public:
 
 /**
  * An atom representing another atom vertically centered with respect to
- * the axis (determined by a general TeXFont parameter)
+ * the math axis
  */
 class VCenteredAtom : public Atom {
 private:
@@ -336,7 +335,7 @@ public:
 };
 
 /** An atom representing long division */
-class LongDivAtom : public VRowAtom {
+class LongDivAtom : public Atom {
 private:
   long _divisor, _dividend;
 
@@ -346,6 +345,8 @@ public:
   LongDivAtom() = delete;
 
   LongDivAtom(long divisor, long dividend);
+
+  sptr<Box> createBox(Env& env) override;
 };
 
 /** An atom representing an atom with lines covered */

@@ -45,6 +45,10 @@ public:
     _limitsType = LimitsType::limits;
   }
 
+  AtomType leftType() const override { return AtomType::inner; }
+
+  AtomType rightType() const override { return AtomType::inner; }
+
   sptr<Box> createBox(Env& env) override;
 };
 

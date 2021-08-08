@@ -71,6 +71,27 @@ public:
   virtual ~Atom() = default;
 };
 
+/** Atom decor contains another atom */
+class WrapAtom : public Atom {
+protected:
+  sptr<Atom> _base;
+
+public:
+  explicit WrapAtom(const sptr<Atom>& base) : _base(base) {
+    _type = base == nullptr ? AtomType::ordinary : base->_type;
+  }
+
+  inline sptr<Atom> base() const { return _base; }
+
+  AtomType leftType() const override {
+    return _base == nullptr ? Atom::leftType() : _base->leftType();
+  }
+
+  AtomType rightType() const override {
+    return _base == nullptr ? Atom::rightType() : _base->rightType();
+  }
+};
+
 }  // namespace tex
 
 #endif  // ATOM_H_INCLUDED

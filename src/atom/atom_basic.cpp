@@ -13,7 +13,7 @@ using namespace tex;
 sptr<Box> StyleAtom::createBox(Env& env) {
   return env.withStyle(
     _style,
-    [&](Env& e) { return _atom->createBox(e); }
+    [&](Env& e) { return _base->createBox(e); }
   );
 }
 
@@ -30,12 +30,12 @@ sptr<Box> AStyleAtom::createBox(Env& env) {
   }
   return env.withStyle(
     style,
-    [&](Env& e) { return _atom->createBox(e); }
+    [&](Env& e) { return _base->createBox(e); }
   );
 }
 
 sptr<Box> SmashedAtom::createBox(Env& env) {
-  auto b = sptrOf<HBox>(_atom->createBox(env));
+  auto b = sptrOf<HBox>(_base->createBox(env));
   if (_h) b->_height = 0;
   if (_d) b->_depth = 0;
   return b;
