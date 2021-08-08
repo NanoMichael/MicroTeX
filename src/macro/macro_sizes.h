@@ -43,7 +43,7 @@ inline macro(sizes) {
     f = 2.5f;
 
   auto a = Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root;
-  return sptrOf<MonoScaleAtom>(a, f);
+  return sptrOf<ScaleAtom>(a, f);
 }
 
 inline sptr <Atom> _big(

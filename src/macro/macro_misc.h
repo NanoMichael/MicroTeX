@@ -1,5 +1,5 @@
-#ifndef MACRO_IMPL_H_INCLUDED
-#define MACRO_IMPL_H_INCLUDED
+#ifndef LATEX_MACRO_MISC_H
+#define LATEX_MACRO_MISC_H
 
 #include <memory>
 
@@ -312,4 +312,4 @@ inline macro(dynamic) {
 
 }  // namespace tex
 
-#endif  // MACRO_IMPL_H_INCLUDED
+#endif  // LATEX_MACRO_MISC_H

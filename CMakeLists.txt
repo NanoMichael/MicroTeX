@@ -90,7 +90,7 @@ target_sources(LaTeX PRIVATE
         # macro folder
         src/macro/macro.cpp
         src/macro/macro_def.cpp
-        src/macro/macro_impl.cpp
+        src/macro/macro_misc.cpp
         src/macro/macro_scripts.cpp
         src/macro/macro_accent.cpp
         src/macro/macro_colors.cpp

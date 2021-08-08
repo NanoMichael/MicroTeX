@@ -8,6 +8,33 @@
 using namespace std;
 using namespace tex;
 
+sptr<Box> BigSymbolAtom::createBox(Env& env) {
+  auto b = tex::createVDelim(_delim, env, _size);
+  const auto axis = env.mathConsts().axisHeight() * env.scale();
+  b->_shift = -(b->vlen() / 2 - b->_height) - axis;
+  return b;
+}
+
+sptr<Box> LapedAtom::createBox(Env& env) {
+  auto b = _at->createBox(env);
+  auto* vb = new VBox();
+  vb->add(b);
+  vb->_width = 0;
+  switch (_type) {
+    case 'l':
+      b->_shift = -b->_width;
+      break;
+    case 'r':
+      b->_shift = 0;
+      break;
+    default:
+      b->_shift = -b->_width / 2;
+      break;
+  }
+
+  return sptr<Box>(vb);
+}
+
 sptr<Box> RaiseAtom::createBox(Env& env) {
   auto base = _base->createBox(env);
   if (_raise.isValid()) {
@@ -21,13 +48,6 @@ sptr<Box> RaiseAtom::createBox(Env& env) {
     hb->_depth = Units::fsize(_depth, env);
   }
   return hb;
-}
-
-sptr<Box> BigSymbolAtom::createBox(Env& env) {
-  auto b = tex::createVDelim(_delim, env, _size);
-  const auto axis = env.mathConsts().axisHeight() * env.scale();
-  b->_shift = -(b->vlen() / 2 - b->_height) - axis;
-  return b;
 }
 
 RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const wstring& option)

@@ -1,5 +1,5 @@
 #include "macro/macro.h"
-#include "macro/macro_impl.h"
+#include "macro/macro_misc.h"
 #include "macro/macro_env.h"
 #include "macro/macro_sizes.h"
 #include "macro/macro_scripts.h"
@@ -286,6 +286,14 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_fbox, "fbox"),
     mac(1, macro_fbox, "boxed"),
   // endregion
+  // region clr lap
+    mac(1, macro_clrlap, "llap"),
+    mac(1, macro_clrlap, "rlap"),
+    mac(1, macro_clrlap, "clap"),
+    mac(1, macro_mathclrlap, "mathllap"),
+    mac(1, macro_mathclrlap, "mathrlap"),
+    mac(1, macro_mathclrlap, "mathclap"),
+  // endregion
 
     mac(1, macro_cedilla, "c"),
     mac(1, macro_ogonek, "k"),
@@ -320,12 +328,6 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_backslashcr, "\\"),
     mac(1, macro_hvspace, "hspace"),
     mac(1, macro_hvspace, "vspace"),
-    mac(1, macro_clrlap, "llap"),
-    mac(1, macro_clrlap, "rlap"),
-    mac(1, macro_clrlap, "clap"),
-    mac(1, macro_mathclrlap, "mathllap"),
-    mac(1, macro_mathclrlap, "mathrlap"),
-    mac(1, macro_mathclrlap, "mathclap"),
     mac(0, macro_underscore, "underscore"),
     mac(2, macro_binom, "binom"),
     mac(1, macro_phantom, "phantom"),

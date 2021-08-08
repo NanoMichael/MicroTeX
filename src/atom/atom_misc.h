@@ -58,41 +58,7 @@ public:
 
   LapedAtom(const sptr<Atom>& a, wchar_t type) : _at(a), _type(type) {}
 
-  sptr<Box> createBox(Env& env) override {
-    auto b = _at->createBox(env);
-    auto* vb = new VBox();
-    vb->add(b);
-    vb->_width = 0;
-    switch (_type) {
-      case 'l':
-        b->_shift = -b->_width;
-        break;
-      case 'r':
-        b->_shift = 0;
-        break;
-      default:
-        b->_shift = -b->_width / 2;
-        break;
-    }
-
-    return sptr<Box>(vb);
-  }
-};
-
-/** An atom representing a mono scale atom */
-class MonoScaleAtom : public ScaleAtom {
-private:
-  float _factor;
-
-public:
-  MonoScaleAtom() = delete;
-
-  MonoScaleAtom(const sptr<Atom>& base, float factor)
-    : ScaleAtom(base, factor, factor), _factor(factor) {}
-
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
+  sptr<Box> createBox(Env& env) override;
 };
 
 /** An atom with an Ogonek */
