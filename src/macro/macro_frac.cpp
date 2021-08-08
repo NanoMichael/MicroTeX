@@ -1,5 +1,6 @@
 #include "macro/macro_frac.h"
 #include "utils/utf.h"
+#include "utils/string_utils.h"
 
 using namespace std;
 
@@ -105,36 +106,30 @@ macro(cfrac) {
 }
 
 macro(genfrac) {
-//  sptr<SymbolAtom> L, R;
-//
-//  Formula left(tp, args[1], false);
-//  L = dynamic_pointer_cast<SymbolAtom>(left._root);
-//
-//  Formula right(tp, args[2], false);
-//  R = dynamic_pointer_cast<SymbolAtom>(right._root);
-//
-//  bool rule = true;
-//  auto[unit, value] = Units::getLength(args[3]);
-//  if (args[3].empty()) {
-//    unit = UnitType::em;
-//    value = 0.f;
-//    rule = false;
-//  }
-//
-//  int style = 0;
-//  if (!args[4].empty()) valueof(args[4], style);
-//
-//  Formula num(tp, args[5], false);
-//  Formula den(tp, args[6], false);
-//  if (num._root == nullptr || den._root == nullptr) {
-//    throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
-//  }
-//  auto fa = sptrOf<FractionAtom>(num._root, den._root, rule, unit, value);
-//  auto* ra = new RowAtom();
-//  const auto texStyle = static_cast<TexStyle>(style * 2);
-//  ra->add(sptrOf<StyleAtom>(texStyle, sptrOf<FencedAtom>(fa, L, R)));
-//
-//  return sptr<Atom>(ra);
+  bool rule = true;
+  Dimen thickness;
+  if (args[3].empty()) {
+    rule = false;
+  } else {
+    thickness = Units::getDimen(args[3]);
+  }
+
+  int style = 0;
+  if (!args[4].empty()) valueof(args[4], style);
+
+  Formula num(tp, args[5], false);
+  Formula den(tp, args[6], false);
+  if (num._root == nullptr || den._root == nullptr) {
+    throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
+  }
+
+  auto fa = sptrOf<FracAtom>(num._root, den._root, rule, thickness);
+  auto* ra = new RowAtom();
+  const auto texStyle = static_cast<TexStyle>(style * 2);
+  auto f = sptrOf<FencedAtom>(fa, wide2utf8(args[1]), wide2utf8(args[2]));
+  ra->add(sptrOf<StyleAtom>(texStyle, f));
+
+  return sptr<Atom>(ra);
 }
 
 }
