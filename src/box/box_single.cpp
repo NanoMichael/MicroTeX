@@ -74,8 +74,9 @@ LineBox::LineBox(const vector<float>& lines, float thickness) {
 }
 
 void LineBox::draw(Graphics2D& g2, float x, float y) {
-  const float oldThickness = g2.getStroke().lineWidth;
-  g2.setStrokeWidth(_thickness);
+  const auto oldStroke = g2.getStroke();
+  auto stroke = Stroke(_thickness, CAP_ROUND, JOIN_ROUND);
+  g2.setStroke(stroke);
   g2.translate(0, -_height);
   int count = _lines.size() / 4;
   for (int i = 0; i < count; i++) {
@@ -85,7 +86,7 @@ void LineBox::draw(Graphics2D& g2, float x, float y) {
     g2.drawLine(x1, y1, x2, y2);
   }
   g2.translate(0, _height);
-  g2.setStrokeWidth(oldThickness);
+  g2.setStroke(oldStroke);
 }
 
 RuleBox::RuleBox(float thickness, float width, float shift, color c, bool trueshift)

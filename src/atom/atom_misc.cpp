@@ -123,6 +123,15 @@ sptr<Box> RuleAtom::createBox(Env& env) {
   return sptrOf<RuleBox>(h, w, r);
 }
 
+sptr<Box> VCenteredAtom::createBox(Env& env) {
+  auto b = _base->createBox(env);
+  auto a = env.mathConsts().axisHeight() * env.scale();
+  auto hb = sptrOf<HBox>(b);
+  hb->_height = b->vlen() / 2 + a;
+  hb->_depth = b->vlen() - hb->_height;
+  return hb;
+}
+
 LongDivAtom::LongDivAtom(long divisor, long dividend)
   : _divisor(divisor), _dividend(dividend) {}
 
@@ -198,5 +207,25 @@ sptr<Box> LongDivAtom::createBox(Env& env) {
 }
 
 sptr<Box> CancelAtom::createBox(Env& env) {
-  return StrutBox::empty();
+  auto box = _base->createBox(env);
+  vector<float> lines;
+  if (_cancelType == SLASH) {
+    lines = {0, 0, box->_width, box->_height + box->_depth};
+  } else if (_cancelType == BACKSLASH) {
+    lines = {box->_width, 0, 0, box->_height + box->_depth};
+  } else if (_cancelType == CROSS) {
+    lines = {0, 0, box->_width, box->_height + box->_depth, box->_width, 0, 0, box->_height + box->_depth};
+  } else {
+    return box;
+  }
+
+  const float rt = env.mathConsts().fractionRuleThickness() * env.scale();
+  auto overlap = sptrOf<LineBox>(lines, rt);
+  overlap->_width = box->_width;
+  overlap->_height = box->_height;
+  overlap->_depth = box->_depth;
+  auto hbox = new HBox(box);
+  hbox->add(sptr<Box>(new StrutBox(-box->_width, 0, 0, 0)));
+  hbox->add(overlap);
+  return sptr<Box>(hbox);
 }

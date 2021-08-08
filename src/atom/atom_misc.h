@@ -215,18 +215,13 @@ public:
  * An atom representing another atom vertically centered with respect to
  * the math axis
  */
-class VCenteredAtom : public Atom {
-private:
-  sptr<Atom> _at;
-
+class VCenteredAtom : public WrapAtom {
 public:
   VCenteredAtom() = delete;
 
-  explicit VCenteredAtom(const sptr<Atom>& a) : _at(a) {}
+  explicit VCenteredAtom(const sptr<Atom>& a) : WrapAtom(a) {}
 
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
+  sptr<Box> createBox(Env& env) override;
 };
 
 /** An atom representing long division */
