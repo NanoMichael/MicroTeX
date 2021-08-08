@@ -221,7 +221,7 @@ public:
   HdotsforAtom() = delete;
 
   HdotsforAtom(int n, float coeff)
-    : MulticolumnAtom(n, "c", SymbolAtom::get("ldotp")), _coeff(coeff) {}
+    : MulticolumnAtom(n, "c", sptrOf<CharAtom>('.', true)), _coeff(coeff) {}
 
   bool isNeedWidth() const override {
     return true;
