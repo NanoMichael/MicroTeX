@@ -43,21 +43,25 @@ static sptr<Box> createDelim(const std::string& sym, Env& env, const float len, 
   // 1. try from variants
   const auto variantCount = isVertical ? chr.vLargerCount() : chr.hLargerCount();
   const auto tolerance = ROUND_TOL * env.scale();
+  auto wider = false;
   // tail recursion, compiler will optimize this
   std::function<sptr<Box>(int)> v = [&](int i) -> sptr<Box> {
     if (i >= variantCount) return nullptr;
     const auto& n = isVertical ? chr.vLarger(i) : chr.hLarger(i);
     const auto l = isVertical ? n.height() + n.depth() : n.width();
-    if (l >= len) return sptrOf<CharBox>(n);
-    if (round && len - l <= tolerance) return sptrOf<CharBox>(n);
+    wider = l >= len || (round && len - l <= tolerance);
+    if (i == variantCount - 1 || wider) return sptrOf<CharBox>(n);
     return v(i + 1);
   };
   auto vb = v(0);
-  if (vb != nullptr) return vb;
+  if (vb != nullptr && wider) return vb;
 
   // 2. try from assembly
   const auto& assembly = isVertical ? chr.vAssembly() : chr.hAssembly();
-  if (assembly.isEmpty()) return sptrOf<CharBox>(chr);
+  if (assembly.isEmpty()) {
+    if (vb != nullptr) return vb;
+    return sptrOf<CharBox>(chr);
+  }
 
   deque<pair<int, sptr<Box>>> f;
   vector<sptr<Box>> r;

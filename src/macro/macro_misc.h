@@ -240,7 +240,7 @@ inline macro(rmoustache) {
   return b;
 }
 
-inline macro(insertBreakMark) {
+inline macro(breakmark) {
   return sptrOf<BreakMarkAtom>();
 }
 

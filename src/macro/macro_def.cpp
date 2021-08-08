@@ -307,7 +307,7 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_surd, "surd"),
     mac(0, macro_lmoustache, "lmoustache"),
     mac(0, macro_rmoustache, "rmoustache"),
-    mac(0, macro_insertBreakMark, "-"),
+    mac(0, macro_breakmark, "-"),
     mac(1, macro_st, "st"),
     mac(1, macro_fcscore, "fcscore"),
     mac(2, macro_longdiv, "longdiv"),
@@ -422,7 +422,7 @@ void NewCommandMacro::_init_() {
     L"\\scalebox{.8}{"
     "\\raisebox{.5ex}{"
     "\\raisebox{.45ex}{\\numstyle{#1}}"
-    "\\kern-.4ex\\nokern\\slash\\nokern\\kern-.4ex"
+    "\\kern-.4ex\\nokern\\mathslash\\nokern\\kern-.4ex"
     "\\raisebox{-.45ex}{\\dnomstyle{#2}}"
     "}}"
   );
