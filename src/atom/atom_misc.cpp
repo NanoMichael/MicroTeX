@@ -50,6 +50,27 @@ sptr<Box> RaiseAtom::createBox(Env& env) {
   return hb;
 }
 
+sptr<Box> ResizeAtom::createBox(Env& env) {
+  auto box = _base->createBox(env);
+  if (!_width.isValid() && !_height.isValid()) return box;
+  auto sx = 1.f, sy = 1.f;
+  if (_width.isValid() && _height.isValid()) {
+    sx = Units::fsize(_width, env) / box->_width;
+    sy = Units::fsize(_height, env) / box->vlen();
+    if (_keepAspectRatio) {
+      sx = std::min(sx, sy);
+      sy = sx;
+    }
+  } else if (_width.isValid() && !_height.isValid()) {
+    sx = Units::fsize(_width, env) / box->_width;
+    sy = sx;
+  } else {
+    sy = Units::fsize(_height, env) / box->vlen();
+    sx = sy;
+  }
+  return sptrOf<ScaleBox>(box, sx, sy);
+}
+
 RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const wstring& option)
   : _angle(0), _option(Rotation::bl) {
   _type = base->_type;

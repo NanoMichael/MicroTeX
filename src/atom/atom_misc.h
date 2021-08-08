@@ -113,7 +113,7 @@ public:
   }
 };
 
-/** An atom representing a resize atom */
+/** An atom representing a resize operation on given atom */
 class ResizeAtom : public Atom {
 private:
   sptr<Atom> _base;
@@ -135,9 +135,7 @@ public:
 
   AtomType rightType() const override { return _base->rightType(); }
 
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
+  sptr<Box> createBox(Env& env) override;
 };
 
 /** An atom representing a rotated atom */
