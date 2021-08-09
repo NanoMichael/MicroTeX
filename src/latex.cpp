@@ -26,7 +26,6 @@ string LaTeX::queryResourceLocation(string& custom_path) {
   if (userdata != NULL && strcmp(userdata, "") != 0) {
     paths.push(string(userdata));
   }
-  delete userdata;
 
   // checks if XDG_DATA_DIRS is set. If it is, it splits XDG_DATA_DIRS at : and
   // pushes each part of it to potential paths.
