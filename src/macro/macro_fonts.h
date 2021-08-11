@@ -77,9 +77,8 @@ inline macro(intertext) {
   replaceall(str, L"^{\\prime}", L"\'");
   replaceall(str, L"^{\\prime\\prime}", L"\'\'");
 
-  // TODO
-  // auto ra = sptrOf<RomanAtom>(Formula(tp, str, false, false)._root);
-  sptr<Atom> ra = nullptr;
+  auto a = Formula(tp, str, false, false)._root;
+  sptr<Atom> ra = sptrOf<FontStyleAtom>(FontStyle::rm, false, a);
   ra->_type = AtomType::interText;
   tp.addAtom(ra);
   tp.addRow();
