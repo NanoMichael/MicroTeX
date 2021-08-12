@@ -24,7 +24,7 @@ inline macro(scalebox) {
 
   if (sx == 0) sx = 1;
   if (sy == 0) sy = 1;
-  return sptrOf<ScaleAtom>(Formula(tp, args[2])._root, sx, sy);
+  return sptrOf<ScaleAtom>(Formula(tp, args[2], false, tp.isMathMode())._root, sx, sy);
 }
 
 inline macro(resizebox) {

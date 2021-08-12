@@ -73,7 +73,7 @@ macro(raisebox) {
   auto r = Units::getDimen(args[1]);
   auto h = Units::getDimen(args[3]);
   auto d = Units::getDimen(args[4]);
-  return sptrOf<RaiseAtom>(Formula(tp, args[2])._root, -r, h, d);
+  return sptrOf<RaiseAtom>(Formula(tp, args[2], false, tp.isMathMode())._root, -r, h, d);
 }
 
 macro(romannumeral) {

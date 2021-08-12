@@ -113,6 +113,7 @@ public:
 
   inline i16 fractionDenominatorDisplayStyleGapMin() const { return _fields[40]; }
 
+  // TODO sfrac
   inline i16 skewedFractionHorizontalGap() const { return _fields[41]; }
 
   inline i16 skewedFractionVerticalGap() const { return _fields[42]; }

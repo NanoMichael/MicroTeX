@@ -1,5 +1,5 @@
-#ifndef FORMULA_H_INCLUDED
-#define FORMULA_H_INCLUDED
+#ifndef LATEX_FORMULA_H
+#define LATEX_FORMULA_H
 
 #include <string>
 #include <utility>
@@ -20,23 +20,6 @@ class TeXParser;
  * Represents a logical mathematical formula that will be displayed (by creating
  * a TeXRender from it and painting it) using algorithms that are based
  * on the TeX algorithms.
- * <p>
- * These formula's can be built using the built-in primitive TeX parser (methods
- * with String arguments) or using other Formula objects. Most methods have
- * (an) equivalent(s) where one or more Formula arguments are replaced with
- * string arguments. These are just shorter notations, because all they do is
- * parse the string(s) to Formula's and call an equivalent method with (a)
- * Formula argument(s). Most methods also come in 2 variants. One kind will
- * use this Formula to build another mathematical construction and then
- * change this object to represent the newly build construction. The other kind
- * will only use other Formula's (or parse strings), build a mathematical
- * construction with them and insert this newly build construction at the end of
- * this Formula. Because all the provided methods return a pointer to this
- * (modified) Formula, method chaining is also possible.
- * <p>
- * Important: All the provided methods modify this Formula object, but
- * all the Formula arguments of these methods will remain unchanged and
- * independent of this Formula object!
  */
 class Formula {
 private:
@@ -47,10 +30,8 @@ public:
   static std::map<std::wstring, sptr<Formula>> _predefFormulas;
   static std::map<std::wstring, std::wstring> _predefFormulaStrs;
 
-  // character-to-symbol and character-to-delimiter mappings
+  // character-to-symbol mappings
   static const std::map<c32, std::string> _charToSymbol;
-  static std::map<int, std::string> _symbolTextMappings;
-  static std::map<int, std::string> _symbolFormulaMappings;
 
   std::vector<sptr<MiddleAtom>> _middle;
   // the root atom of the "atom tree" that represents the formula
@@ -93,10 +74,10 @@ public:
    */
   void setLaTeX(const std::wstring& latex);
 
-  /** Inserts an a at the end of the current formula. */
+  /** Inserts an atom at the end of the current formula. */
   Formula* add(const sptr<Atom>& a);
 
-  /** Convert this Formula into a box, with the given style */
+  /** Convert this Formula into a box, with the given environment. */
   sptr<Box> createBox(Env& env);
 
   /** Test if this formula is in array mode. */
@@ -106,13 +87,14 @@ public:
    * Get a predefined Formula.
    *
    * @param name the name of the predefined Formula
-   * @return a <b>copy</b> of the predefined Formula or nullptr if not found
+   * @return the predefined Formula or nullptr if not found
    */
   static sptr<Formula> get(const std::wstring& name);
 
   virtual ~Formula() = default;
 };
 
+/** Represents a formula in array mode. */
 class ArrayFormula : public Formula {
 private:
   size_t _row, _col;
@@ -151,4 +133,4 @@ public:
 
 }  // namespace tex
 
-#endif  // FORMULA_H_INCLUDED
+#endif  // LATEX_FORMULA_H
