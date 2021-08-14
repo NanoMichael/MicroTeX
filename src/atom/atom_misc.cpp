@@ -11,9 +11,8 @@ using namespace tex;
 sptr<Box> BigSymbolAtom::createBox(Env& env) {
   auto b = tex::createVDelim(_delim, env, _size);
   const auto axis = env.mathConsts().axisHeight() * env.scale();
-  // TODO
-  // b->_shift = -(b->vlen() / 2 - b->_height) - axis;
-  return b;
+  b->_shift = -(b->vlen() / 2 - b->_height) - axis;
+  return sptrOf<HBox>(b);
 }
 
 sptr<Box> LapedAtom::createBox(Env& env) {

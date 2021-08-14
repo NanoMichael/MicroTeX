@@ -44,16 +44,17 @@ sptr<Box> FencedAtom::createBox(Env& env) {
     auto l = tex::createVDelim(_l, env, h, true);
     center(l);
     hbox->add(l);
+    if (!base->isSpace()) {
+      hbox->add(Glue::get(AtomType::opening, _base->leftType(), env));
+    }
   }
 
-  if (!base->isSpace()) {
-    hbox->add(Glue::get(AtomType::opening, _base->leftType(), env));
-  }
   hbox->add(base);
-  if (!base->isSpace() && !_r.empty() && _r != ".") {
-    hbox->add(Glue::get(_base->rightType(), AtomType::closing, env));
-  }
+
   if (!_r.empty() && _r != ".") {
+    if (!base->isSpace()) {
+      hbox->add(Glue::get(_base->rightType(), AtomType::closing, env));
+    }
     auto r = tex::createVDelim(_r, env, h, true);
     center(r);
     hbox->add(r);
