@@ -3,6 +3,7 @@
 
 #include "atom/atom.h"
 #include "unimath/uni_char.h"
+#include "graphic/font_style.h"
 
 namespace tex {
 
@@ -38,15 +39,12 @@ public:
   static sptr<StrutBox> create(float width) noexcept {
     return sptrOf<StrutBox>(width, 0.f, 0.f, 0.f);
   }
-
-  static sptr<StrutBox> onlyHeight(float height) noexcept {
-    return sptrOf<StrutBox>(0.f, height, 0.f, 0.f);
-  }
 };
 
 /** A box representing glue */
 class GlueBox : public Box {
 public:
+  // Not used by now
   float _stretch, _shrink;
 
   GlueBox() = delete;
@@ -93,38 +91,22 @@ public:
   boxname(CharBox);
 };
 
-/** A box representing a text rendering box */
-class TextRenderingBox : public Box {
+/**
+ * Box to draw text. The metrics measurement and drawing is
+ * delegate to rendering backend.
+ */
+class TextBox : public Box {
 private:
-  static sptr<Font> _font;
   sptr<TextLayout> _layout;
-  float _size{};
-
-  void init(const std::wstring& str, int type, float size, const sptr<Font>& font, bool kerning);
 
 public:
-  TextRenderingBox() = delete;
+  TextBox() = delete;
 
-  TextRenderingBox(
-    const std::wstring& str, int type, float size,
-    const sptr<Font>& font, bool kerning
-  ) {
-    init(str, type, size, font, kerning);
-  }
-
-  TextRenderingBox(const std::wstring& str, int type, float size) {
-    init(str, type, size, sptr<Font>(_font), true);
-  }
+  TextBox(const std::wstring& str, FontStyle style, float size);
 
   void draw(Graphics2D& g2, float x, float y) override;
 
-  boxname(TextRenderingBox);
-
-  static void setFont(const std::string& name);
-
-  static void _init_();
-
-  static void _free_();
+  boxname(TextBox);
 };
 
 /** Class represents several lines */

@@ -37,6 +37,18 @@ enum class FontStyle : u16 {
  */
 FontStyle findClosestStyle(FontStyle src);
 
+/** Test if the given font style is bold */
+bool isBold(FontStyle style);
+
+/** Test if the given font style is italic */
+bool isItalic(FontStyle style);
+
+/** Test if the given font style is serif */
+bool isSerif(FontStyle style);
+
+/** Test if the given font style is mono-spaced */
+bool isMono(FontStyle style);
+
 }
 
 #endif //LATEX_FONT_STYLE_H

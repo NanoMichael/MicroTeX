@@ -11,22 +11,16 @@
 using namespace tex;
 using namespace std;
 
-map<string, string> Font_cairo::_families;
 map<string, Cairo::RefPtr<Cairo::FtFontFace>> Font_cairo::_cairoFtFaces;
 
-Font_cairo::Font_cairo(string family, int style)
-  : _family(std::move(family)), _style(style) {}
-
-Font_cairo::Font_cairo(const string& file) : Font_cairo("", PLAIN) {
+Font_cairo::Font_cairo(const string& file) {
   loadFont(file);
 }
 
 void Font_cairo::loadFont(const string& file) {
   auto ffaceEntry = _cairoFtFaces.find(file);
-  auto familyEntry = _families.find(file);
-  if (ffaceEntry != _cairoFtFaces.end() && familyEntry != _families.end()) {
+  if (ffaceEntry != _cairoFtFaces.end()) {
     // already loaded
-    _family = familyEntry->second;
     _fface = ffaceEntry->second;
     return;
   }
@@ -51,9 +45,6 @@ void Font_cairo::loadFont(const string& file) {
   if (!status) __dbg(ANSI_COLOR_RED "Load %s failed\n" ANSI_RESET, file.c_str());
 #endif
 
-  _family = (const char*) family;
-  _families[file] = _family;
-
   _fface = Cairo::FtFontFace::create(p);
   _cairoFtFaces[file] = _fface;
 
@@ -61,25 +52,13 @@ void Font_cairo::loadFont(const string& file) {
   FcPatternDestroy(p);
 }
 
-string Font_cairo::getFamily() const {
-  return _family;
-}
-
 Cairo::RefPtr<Cairo::FtFontFace> Font_cairo::getCairoFontFace() const {
   return _fface;
 }
 
-int Font_cairo::getStyle() const {
-  return _style;
-}
-
-sptr<Font> Font_cairo::deriveFont(int style) const {
-  return sptrOf<Font_cairo>(_family, style);
-}
-
 bool Font_cairo::operator==(const Font& ft) const {
   const auto& f = static_cast<const Font_cairo&>(ft);
-  return _style == f._style && _family == f._family;
+  return _fface == f._fface;
 }
 
 bool Font_cairo::operator!=(const Font& f) const {
@@ -94,7 +73,7 @@ sptr<Font> Font::create(const std::string& file) {
 
 Cairo::RefPtr<Cairo::Context> TextLayout_cairo::_img_context;
 
-TextLayout_cairo::TextLayout_cairo(const wstring& src, const sptr<Font_cairo>& f) {
+TextLayout_cairo::TextLayout_cairo(const wstring& src, FontStyle style, float size) {
   if (!_img_context) {
     auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 1, 1);
     _img_context = Cairo::Context::create(surface);
@@ -103,23 +82,23 @@ TextLayout_cairo::TextLayout_cairo(const wstring& src, const sptr<Font_cairo>& f
   _layout = Pango::Layout::create(_img_context);
 
   Pango::FontDescription fd;
-  fd.set_family(f->getFamily());
   // TODO
-  fd.set_absolute_size(10 * Pango::SCALE);
+  fd.set_absolute_size(size * Pango::SCALE);
   fd.set_style(Pango::STYLE_NORMAL);
   fd.set_weight(Pango::WEIGHT_NORMAL);
+  fd.set_family("sans-serif");
 
-  switch (f->getStyle()) {
-    case BOLD:
-      fd.set_weight(Pango::WEIGHT_BOLD);
-      break;
-    case ITALIC:
-      fd.set_style(Pango::STYLE_ITALIC);
-      break;
-    case BOLDITALIC:
-      fd.set_style(Pango::STYLE_ITALIC);
-      fd.set_weight(Pango::WEIGHT_BOLD);
-      break;
+  if (tex::isSerif(style)) {
+    fd.set_family("serif");
+  }
+  if (tex::isMono(style)) {
+    fd.set_family("monospace");
+  }
+  if (tex::isBold(style)) {
+    fd.set_weight(Pango::WEIGHT_BOLD);
+  }
+  if (tex::isItalic(style)) {
+    fd.set_style(Pango::STYLE_ITALIC);
   }
 
   _layout->set_text(wide2utf8(src));
@@ -152,9 +131,8 @@ void TextLayout_cairo::draw(Graphics2D& g2, float x, float y) {
   g2.translate(-x, -y + _ascent);
 }
 
-sptr<TextLayout> TextLayout::create(const wstring& src, const sptr<Font>& font) {
-  sptr<Font_cairo> f = static_pointer_cast<Font_cairo>(font);
-  return sptrOf<TextLayout_cairo>(src, f);
+sptr<TextLayout> TextLayout::create(const wstring& src, FontStyle style, float size) {
+  return sptrOf<TextLayout_cairo>(src, style, size);
 }
 
 /**************************************************************************************************/

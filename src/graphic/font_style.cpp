@@ -1,4 +1,4 @@
-#include "font_style.h"
+#include "graphic/font_style.h"
 
 using namespace tex;
 
@@ -17,4 +17,20 @@ FontStyle tex::findClosestStyle(const FontStyle src) {
     }
   }
   return target;
+}
+
+bool tex::isBold(FontStyle style) {
+  return (static_cast<u16>(style) & static_cast<u16>(FontStyle::bf)) == 1;
+}
+
+bool tex::isItalic(FontStyle style) {
+  return (static_cast<u16>(style) & static_cast<u16>(FontStyle::it)) == 1;
+}
+
+bool tex::isSerif(FontStyle style) {
+  return (static_cast<u16>(style) & static_cast<u16>(FontStyle::sf)) == 1;
+}
+
+bool tex::isMono(FontStyle style) {
+  return (static_cast<u16>(style) & static_cast<u16>(FontStyle::tt)) == 1;
 }

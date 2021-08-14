@@ -2,35 +2,20 @@
 #define GRAPHIC_H_INCLUDED
 
 #include "graphic/graphic_basic.h"
+#include "graphic/font_style.h"
 #include "utils/utils.h"
 
 namespace tex {
 
 class Graphics2D;
 
-enum TypefaceStyle {
-  PLAIN = 0,
-  BOLD = 1,
-  ITALIC = 2,
-  BOLDITALIC = BOLD | ITALIC
-};
-
 /** Abstract class represents a font. */
 class Font {
 public:
-  /**
-   * Derive font from current font with given style
-   *
-   * @param style
-   *      required style, defined in enum TypefaceStyle,
-   *      we use integer type to represents style here
-   */
-  virtual sptr<Font> deriveFont(int style) const = 0;
-
-  /** Check if current font equals another */
+  /** Check if current font is equals to another */
   virtual bool operator==(const Font& f) const = 0;
 
-  /** Check if current font not equals another */
+  /** Check if current font is not equals to another */
   virtual bool operator!=(const Font& f) const = 0;
 
   virtual ~Font() = default;
@@ -66,11 +51,11 @@ public:
   /**
    * Create a TextLayout with given text and font
    *
-   * @param src the text to layout
-   * @param font the specified font
-   * @return new TextLayout
+   * @param src the source text to layout and draw
+   * @param style the font style
+   * @param size the font size
    */
-  static sptr<TextLayout> create(const std::wstring& src, const sptr<Font>& font);
+  static sptr<TextLayout> create(const std::wstring& src, FontStyle style, float size);
 };
 
 /**

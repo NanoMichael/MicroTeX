@@ -20,7 +20,6 @@ void LaTeX::init(const FontSpec& mathFontSpec) {
   if (_isInited) return;
   _isInited = true;
   NewCommandMacro::_init_();
-  TextRenderingBox::_init_();
 }
 
 bool LaTeX::isInited() {
@@ -30,7 +29,6 @@ bool LaTeX::isInited() {
 void LaTeX::release() {
   MacroInfo::_free_();
   NewCommandMacro::_free_();
-  TextRenderingBox::_free_();
 
   delete _formula;
   delete _builder;

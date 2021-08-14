@@ -2,7 +2,7 @@
 #define LATEX_MATH_TYPE_H
 
 #include "utils/utils.h"
-#include "unimath/font_style.h"
+#include "graphic/font_style.h"
 
 #include <map>
 

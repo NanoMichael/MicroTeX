@@ -29,41 +29,20 @@ std::string CharBox::toString() const {
   return sstr(cvt.to_bytes(_chr.mappedCode), " scale: ", _chr.scale);
 }
 
-sptr<Font> TextRenderingBox::_font(nullptr);
-
-void TextRenderingBox::_init_() {
-  // TODO
-  // _font = Font::_create("Serif", PLAIN, 10);
-}
-
-void TextRenderingBox::_free_() {
-  // For memory check purpose
-  // to check if has memory leak
-  _font = nullptr;
-}
-
-void TextRenderingBox::setFont(const string& name) {
-  // TODO
-  // _font = Font::_create(name, PLAIN, 10);
-}
-
-void TextRenderingBox::init(
-  const wstring& str, int type, float size, const sptr<Font>& f, bool kerning
-) {
-  _size = size;
-  _layout = TextLayout::create(str, f->deriveFont(type));
+TextBox::TextBox(const std::wstring& str, FontStyle style, float size) {
+  _layout = TextLayout::create(str, style, size);
   Rect rect;
   _layout->getBounds(rect);
-  _height = -rect.y * size / 10;
-  _depth = rect.h * size / 10 - _height;
-  _width = (rect.w + rect.x + 0.4f) * size / 10;
+  _height = -rect.y * size;
+  _depth = rect.h * size - _height;
+  _width = (rect.w + rect.x) * size;
 }
 
-void TextRenderingBox::draw(Graphics2D& g2, float x, float y) {
+void TextBox::draw(Graphics2D& g2, float x, float y) {
   g2.translate(x, y);
-  g2.scale(0.1f * _size, 0.1f * _size);
+  // g2.scale(0.1f * _size, 0.1f * _size);
   _layout->draw(g2, 0, 0);
-  g2.scale(10 / _size, 10 / _size);
+  // g2.scale(10 / _size, 10 / _size);
   g2.translate(-x, -y);
 }
 

@@ -18,10 +18,7 @@ namespace tex {
 class Font_cairo : public Font {
 private:
   static map<string, Cairo::RefPtr<Cairo::FtFontFace>> _cairoFtFaces;
-  static map<string, string> _families;
 
-  int _style;
-  string _family;
   Cairo::RefPtr<Cairo::FtFontFace> _fface;
 
   void loadFont(const string& file);
@@ -29,15 +26,7 @@ private:
 public:
   explicit Font_cairo(const string& file);
 
-  Font_cairo(string family, int style);
-
-  string getFamily() const;
-
-  int getStyle() const;
-
   Cairo::RefPtr<Cairo::FtFontFace> getCairoFontFace() const;
-
-  sptr<Font> deriveFont(int style) const override;
 
   bool operator==(const Font& f) const override;
 
@@ -55,7 +44,7 @@ private:
   float _ascent;
 
 public:
-  TextLayout_cairo(const wstring& src, const sptr<Font_cairo>& font);
+  TextLayout_cairo(const wstring& src, FontStyle style, float size);
 
   void getBounds(Rect& r) override;
 
@@ -90,7 +79,7 @@ public:
 
   void setStrokeWidth(float w) override;
 
-  void setDash(const std::vector<float> &dash) override;
+  void setDash(const std::vector<float>& dash) override;
 
   std::vector<float> getDash() override;
 

@@ -2,7 +2,7 @@
 #define LATEX_ATOM_FONT_H
 
 #include "atom/atom.h"
-#include "unimath/font_style.h"
+#include "graphic/font_style.h"
 #include "env/env.h"
 
 namespace tex {

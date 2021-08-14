@@ -110,11 +110,12 @@ target_sources(LaTeX PRIVATE
         src/otf/glyph.cpp
         src/otf/otf.cpp
         # unimath folder
-        src/unimath/font_style.cpp
         src/unimath/math_type.cpp
         src/unimath/uni_char.cpp
         src/unimath/uni_font.cpp
         src/unimath/uni_symbol.cpp
+        # graphic folder
+        src/graphic/font_style.cpp
 
         src/latex.cpp
         src/render.cpp

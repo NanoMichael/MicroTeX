@@ -6,7 +6,7 @@
 #include "utils/utils.h"
 #include "otf/otf.h"
 #include "unimath/math_type.h"
-#include "unimath/font_style.h"
+#include "graphic/font_style.h"
 #include "unimath/uni_char.h"
 #include "unimath/uni_symbol.h"
 
