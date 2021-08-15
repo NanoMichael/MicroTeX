@@ -14,8 +14,6 @@ private:
   static float PIXELS_PER_POINT;
 
   TexStyle _style = TexStyle::display;
-  bool _smallCap = false;
-  float _scaleFactor = 1.f;
 
   i32 _lastFontId = FontContext::NO_FONT;
   sptr<FontContext> _fctx;
@@ -65,21 +63,9 @@ public:
   /** Set line space with given unit */
   Env& setLineSpace(UnitType unit, float space);
 
-  /** Set scale factor, this is used for scale atoms */
-  inline Env& setScaleFactor(float factor) {
-    _scaleFactor = factor;
-    return *this;
-  }
-
   /** Set current style to display formulas */
   inline Env& setStyle(TexStyle style) {
     _style = style;
-    return *this;
-  }
-
-  /** Set if draw formula with small capitals */
-  inline Env& setSmallCap(bool smallCap) {
-    _smallCap = smallCap;
     return *this;
   }
 
@@ -88,12 +74,6 @@ public:
     _lastFontId = lastFontId == FontContext::NO_FONT ? _fctx->mathFontId() : _lastFontId;
     return *this;
   }
-
-  /** The scale factor */
-  inline float scaleFactor() const { return _scaleFactor; }
-
-  /** If draw formula with small capitals */
-  inline bool isSmallCap() const { return _smallCap; }
 
   /** The environment width */
   inline float textWidth() const { return _textWidth; }

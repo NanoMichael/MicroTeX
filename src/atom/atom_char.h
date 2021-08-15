@@ -46,6 +46,9 @@ public:
 
   bool isChar() const override { return true; }
 
+  /** Test if is in math mode */
+  virtual bool isMathMode() const = 0;
+
   /**
    * Get the Char-object that uniquely identifies the character that is
    * represented by this atom.
@@ -71,6 +74,10 @@ public:
 
   std::string name() const override;
 
+  bool isMathMode() const override {
+    return false;
+  }
+
   sptr<Box> createBox(Env& env) override;
 };
 
@@ -91,6 +98,11 @@ public:
 
   /** Test if this symbol is valid */
   bool isValid() const;
+
+  bool isMathMode() const override {
+    // TODO math mode?
+    return true;
+  }
 
   sptr<Box> createBox(Env& env) override;
 
@@ -123,7 +135,9 @@ public:
 
   inline c32 unicode() const { return _unicode; }
 
-  inline bool isMathMode() const { return _mathMode; }
+  bool isMathMode() const override {
+    return _mathMode;
+  }
 
   Char getChar(Env& env) const override;
 

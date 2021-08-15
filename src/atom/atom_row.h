@@ -7,6 +7,7 @@
 #include "atom/atom.h"
 #include "box/box.h"
 #include "unimath/uni_char.h"
+#include "atom/atom_text.h"
 
 namespace tex {
 
@@ -71,12 +72,12 @@ public:
   }
 
   /** Test if this atom is a char-symbol. */
-  bool isCharSymbol() const;
+  bool isChar() const;
 
   /** Test if this char is in math mode. */
-  bool isCharInMathMode() const;
+  bool isMathMode() const;
 
-  /** This method will only be called if #isCharSymbol returns true. */
+  /** This method will only be called if #isChar returns true. */
   Char getChar(Env& env) const;
 
   /** Changes this atom into the given "ligature atom". */
@@ -121,6 +122,13 @@ private:
    * an ordinary type
    */
   static void changeToOrd(AtomDecor* cur, AtomDecor* prev, Atom* next);
+
+  int processInvalid(
+    const sptr<TextAtom>& txt,
+    bool isMathMode,
+    int i,
+    Env& env
+  );
 
 public:
   static bool _breakEveywhere;

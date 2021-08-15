@@ -44,7 +44,7 @@ private:
   float _ascent;
 
 public:
-  TextLayout_cairo(const wstring& src, FontStyle style, float size);
+  TextLayout_cairo(const string& src, FontStyle style, float size);
 
   void getBounds(Rect& r) override;
 

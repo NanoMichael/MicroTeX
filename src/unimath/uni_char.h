@@ -22,6 +22,12 @@ struct Char final {
   /** The glyph scale, can be modified during using */
   float scale = 1.f;
 
+  Char() = default;
+
+  Char(c32 code, c32 mapped, i32 fid, i32 gid, float scale = 1.f);
+
+  Char(const Char& chr);
+
   /**
    * Create a char-glyph with only font and glyph, the Unicode code point is 0.
    * <p>

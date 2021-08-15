@@ -73,6 +73,7 @@ target_sources(LaTeX PRIVATE
         src/atom/atom_frac.cpp
         src/atom/atom_fence.cpp
         src/atom/atom_box.cpp
+        src/atom/atom_text.cpp
         src/atom/colors_def.cpp
         # box folder
         src/box/box.cpp

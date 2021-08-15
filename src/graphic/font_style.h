@@ -43,8 +43,8 @@ bool isBold(FontStyle style);
 /** Test if the given font style is italic */
 bool isItalic(FontStyle style);
 
-/** Test if the given font style is serif */
-bool isSerif(FontStyle style);
+/** Test if the given font style is sans-serif */
+bool isSansSerif(FontStyle style);
 
 /** Test if the given font style is mono-spaced */
 bool isMono(FontStyle style);

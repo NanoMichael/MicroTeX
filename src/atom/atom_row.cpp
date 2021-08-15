@@ -1,26 +1,26 @@
 #include "atom/atom_row.h"
 #include "atom/atom_char.h"
 #include "atom/atom_space.h"
+#include "atom/atom_text.h"
 #include "box/box_group.h"
 #include "box/box_single.h"
 #include "env/env.h"
 #include "core/glue.h"
 
-#include <memory>
-
 using namespace std;
 using namespace tex;
 
-bool AtomDecor::isCharSymbol() const {
+bool AtomDecor::isChar() const {
   return _atom->isChar();
 }
 
-bool AtomDecor::isCharInMathMode() const {
-  auto* at = dynamic_cast<CharAtom*>(_atom.get());
-  return at != nullptr && at->isMathMode();
+bool AtomDecor::isMathMode() const {
+  if (!isChar()) return false;
+  return static_cast<CharSymbol*>(_atom.get())->isMathMode();
 }
 
 Char AtomDecor::getChar(Env& env) const {
+  if (!isChar()) return {};
   return ((CharSymbol*) _atom.get())->getChar(env);
 }
 
@@ -128,6 +128,18 @@ AtomType RowAtom::rightType() const {
   return _elements.back()->rightType();
 }
 
+int RowAtom::processInvalid(const sptr<TextAtom>& txt, bool isMathMode, int i, Env& env) {
+  if (i >= _elements.size()) return i;
+  const auto a = _elements[i];
+  if (!a->isChar()) return i;
+  const auto pa = (CharSymbol*) a.get();
+  if (pa->isMathMode() != isMathMode) return i;
+  const auto& chr = pa->getChar(env);
+  if (chr.isValid()) return i;
+  txt->append(chr.mappedCode);
+  return processInvalid(txt, isMathMode, i + 1, env);
+}
+
 sptr<Box> RowAtom::createBox(Env& env) {
   auto hbox = new HBox();
   // convert atoms to boxes and add to the horizontal box
@@ -148,23 +160,34 @@ sptr<Box> RowAtom::createBox(Env& env) {
       }
     }
 
-    // 2. Change atom type
     auto curr = sptrOf<AtomDecor>(raw);
+
+    // 2. process invalid chars
+    Char c = curr->getChar(env);
+    if (curr->isChar() && !c.isValid()) {
+      const auto isMathMode = curr->isMathMode();
+      auto t = sptrOf<TextAtom>(isMathMode);
+      t->append(c.mappedCode);
+      i = processInvalid(t, isMathMode, i + 1, env) - 1;
+      curr = sptrOf<AtomDecor>(t);
+    }
+
+    // 3. Change atom type
     // if necessary, change BIN to ORD
     // i.e. for formula: $+ e - f$, the plus sign should be treated as an ordinary atom
     sptr<Atom> nextAtom = nullptr;
     if (i < end) nextAtom = _elements[i + 1];
     changeToOrd(curr.get(), _previousAtom.get(), nextAtom.get());
 
-    // 3. Check for ligatures and kerning
+    // 4. Check for ligatures and kerning
     float kern = 0.f;
     if (nextAtom != nullptr
         && curr->rightType() == AtomType::ordinary
-        && curr->isCharSymbol()
+        && curr->isChar()
       ) {
       curr->markAsTextSymbol();
       // initialize
-      const auto& chr = curr->getChar(env);
+      const auto& chr = c;
       const auto font = chr.fontId;
       auto ligs = FontContext::getFont(font)->otf().ligatures();
       auto lig = ligs == nullptr ? nullptr : (*ligs)[chr.glyphId];
@@ -217,7 +240,7 @@ sptr<Box> RowAtom::createBox(Env& env) {
       }
     }
 
-    // 4. Insert glue, unless it's the first element of the row
+    // 5. Insert glue, unless it's the first element of the row
     //    or the previous element or the current is a kerning
     if (i != 0
         && _previousAtom != nullptr
@@ -230,7 +253,7 @@ sptr<Box> RowAtom::createBox(Env& env) {
       }
     }
 
-    // 5. Add break mark to box
+    // 6. Add break mark to box
     if (_breakable) {
       if (_breakEveywhere) {
         hbox->addBreakPosition(hbox->size());
@@ -246,7 +269,7 @@ sptr<Box> RowAtom::createBox(Env& env) {
       }
     }
 
-    // 6. Add italic
+    // 7. Add italic
     curr->setPreviousAtom(_previousAtom);
     auto box = curr->createBox(env);
     if (auto cb = dynamic_cast<CharBox*>(box.get());
@@ -256,7 +279,7 @@ sptr<Box> RowAtom::createBox(Env& env) {
       kern += cb->italic();
     }
 
-    // 7. Append atom's box and kerning to horizontal box
+    // 8. Append atom's box and kerning to horizontal box
     hbox->add(box);
     if (std::abs(kern) > PREC) hbox->add(StrutBox::create(kern));
 

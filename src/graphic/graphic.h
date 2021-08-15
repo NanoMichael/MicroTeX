@@ -55,7 +55,7 @@ public:
    * @param style the font style
    * @param size the font size
    */
-  static sptr<TextLayout> create(const std::wstring& src, FontStyle style, float size);
+  static sptr<TextLayout> create(const std::string& src, FontStyle style, float size);
 };
 
 /**

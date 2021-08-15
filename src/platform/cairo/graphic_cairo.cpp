@@ -73,7 +73,7 @@ sptr<Font> Font::create(const std::string& file) {
 
 Cairo::RefPtr<Cairo::Context> TextLayout_cairo::_img_context;
 
-TextLayout_cairo::TextLayout_cairo(const wstring& src, FontStyle style, float size) {
+TextLayout_cairo::TextLayout_cairo(const string& src, FontStyle style, float size) {
   if (!_img_context) {
     auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 1, 1);
     _img_context = Cairo::Context::create(surface);
@@ -86,10 +86,10 @@ TextLayout_cairo::TextLayout_cairo(const wstring& src, FontStyle style, float si
   fd.set_absolute_size(size * Pango::SCALE);
   fd.set_style(Pango::STYLE_NORMAL);
   fd.set_weight(Pango::WEIGHT_NORMAL);
-  fd.set_family("sans-serif");
+  fd.set_family("serif");
 
-  if (tex::isSerif(style)) {
-    fd.set_family("serif");
+  if (tex::isSansSerif(style)) {
+    fd.set_family("sans-serif");
   }
   if (tex::isMono(style)) {
     fd.set_family("monospace");
@@ -101,7 +101,8 @@ TextLayout_cairo::TextLayout_cairo(const wstring& src, FontStyle style, float si
     fd.set_style(Pango::STYLE_ITALIC);
   }
 
-  _layout->set_text(wide2utf8(src));
+  // _layout->set_text(src);
+  _layout->set_text("你好😭️");
   _layout->set_font_description(fd);
 
   _ascent = (float) (_layout->get_baseline() / Pango::SCALE);
@@ -131,7 +132,7 @@ void TextLayout_cairo::draw(Graphics2D& g2, float x, float y) {
   g2.translate(-x, -y + _ascent);
 }
 
-sptr<TextLayout> TextLayout::create(const wstring& src, FontStyle style, float size) {
+sptr<TextLayout> TextLayout::create(const string& src, FontStyle style, float size) {
   return sptrOf<TextLayout_cairo>(src, style, size);
 }
 

@@ -52,12 +52,6 @@ Char SymbolAtom::getChar(Env& env) const {
     const auto& chr = env.getChar(*_symbol);
     return env.style() < TexStyle::text ? chr.vLarger(1) : chr;
   }
-  if (env.isSmallCap() && unicode() != 0 && isUnicodeLower(unicode())) {
-    const auto upper = toUnicodeUpper(unicode());
-    if (upper == unicode()) return env.getChar(*_symbol);
-    const auto chr = env.getChar(upper, true); // TODO math mode?
-    return chr.isValid() ? chr : env.getChar(*_symbol);
-  }
   return env.getChar(*_symbol);
 }
 
@@ -69,10 +63,7 @@ sptr<Box> SymbolAtom::createBox(Env& env) {
     box->_shift = (box->_height - box->_depth) / 2 - axis;
     return sptrOf<HBox>(box);
   } else {
-    const bool doScale = unicode() != chr.code;
-    auto box = sptrOf<CharBox>(chr);
-    if (doScale) return sptrOf<ScaleBox>(box, 0.8f, 0.8f);
-    return box;
+    return sptrOf<CharBox>(chr);
   }
 }
 
@@ -81,12 +72,7 @@ Char CharAtom::getChar(Env& env) const {
     const auto& chr = env.getChar(_unicode, true, _fontStyle);
     return chr.script(0);
   }
-  const auto code = (
-    env.isSmallCap() && isUnicodeLower(unicode())
-    ? toUnicodeUpper(unicode())
-    : unicode()
-  );
-  return env.getChar(code, isMathMode(), _fontStyle);
+  return env.getChar(unicode(), isMathMode(), _fontStyle);
 }
 
 std::string CharAtom::name() const {
@@ -97,13 +83,9 @@ std::string CharAtom::name() const {
 
 sptr<Box> CharAtom::createBox(Env& env) {
   const auto& chr = getChar(env);
-  sptr<Box> box = sptrOf<CharBox>(chr);
-  if (env.isSmallCap() && unicode() != chr.code) {
-    box = sptrOf<ScaleBox>(box, 0.8f, 0.8f);
-  }
-  return box;
+  return sptrOf<CharBox>(chr);
 }
 
 sptr<Box> BreakMarkAtom::createBox(Env& env) {
-  return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
+  return StrutBox::empty();
 }

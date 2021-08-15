@@ -27,7 +27,7 @@ bool tex::isItalic(FontStyle style) {
   return (static_cast<u16>(style) & static_cast<u16>(FontStyle::it)) == 1;
 }
 
-bool tex::isSerif(FontStyle style) {
+bool tex::isSansSerif(FontStyle style) {
   return (static_cast<u16>(style) & static_cast<u16>(FontStyle::sf)) == 1;
 }
 

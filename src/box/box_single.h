@@ -102,7 +102,7 @@ private:
 public:
   TextBox() = delete;
 
-  TextBox(const std::wstring& str, FontStyle style, float size);
+  TextBox(const std::string& str, FontStyle style, float size);
 
   void draw(Graphics2D& g2, float x, float y) override;
 

@@ -2,10 +2,14 @@
 #define UTF_H_INCLUDED
 
 #include <string>
+#include "utils/utils.h"
 
 namespace tex {
 
-/** Convert unicode wide string to UTF-8 encoded string. */
+/** Append a unicode code-point to a utf-8 string */
+void appendToUtf8(std::string& out, c32 code);
+
+/** Convert unicode wide string to UTF-8 string. */
 std::string wide2utf8(const std::wstring& src);
 
 /**

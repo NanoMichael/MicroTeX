@@ -3,6 +3,12 @@
 
 using namespace tex;
 
+Char::Char(c32 c, c32 mc, i32 fid, i32 gid, float s)
+  : code(c), mappedCode(mc), fontId(fid), glyphId(gid), scale(s) {}
+
+Char::Char(const Char& c)
+  : code(c.code), mappedCode(c.mappedCode), fontId(c.fontId), glyphId(c.glyphId), scale(c.scale) {}
+
 sptr<const OtfFont> Char::otfFont() const {
   return FontContext::getFont(fontId);
 }

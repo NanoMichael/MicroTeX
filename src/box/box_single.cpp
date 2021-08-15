@@ -29,20 +29,18 @@ std::string CharBox::toString() const {
   return sstr(cvt.to_bytes(_chr.mappedCode), " scale: ", _chr.scale);
 }
 
-TextBox::TextBox(const std::wstring& str, FontStyle style, float size) {
+TextBox::TextBox(const std::string& str, FontStyle style, float size) {
   _layout = TextLayout::create(str, style, size);
   Rect rect;
   _layout->getBounds(rect);
-  _height = -rect.y * size;
-  _depth = rect.h * size - _height;
-  _width = (rect.w + rect.x) * size;
+  _height = -rect.y;
+  _depth = rect.h - _height;
+  _width = rect.w + rect.x;
 }
 
 void TextBox::draw(Graphics2D& g2, float x, float y) {
   g2.translate(x, y);
-  // g2.scale(0.1f * _size, 0.1f * _size);
   _layout->draw(g2, 0, 0);
-  // g2.scale(10 / _size, 10 / _size);
   g2.translate(-x, -y);
 }
 

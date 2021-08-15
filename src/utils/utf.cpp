@@ -3,12 +3,31 @@
 using namespace std;
 using namespace tex;
 
-string tex::wide2utf8(const std::wstring& src) {
+void tex::appendToUtf8(std::string& out, c32 code) {
+  if (code <= 0x7f) {
+    out.append(1, static_cast<char>(code));
+  } else if (code <= 0x7ff) {
+    out.append(1, static_cast<char>(0xc0 | ((code >> 6) & 0x1f)));
+    out.append(1, static_cast<char>(0x80 | (code & 0x3f)));
+  } else if (code <= 0xffff) {
+    out.append(1, static_cast<char>(0xe0 | ((code >> 12) & 0x0f)));
+    out.append(1, static_cast<char>(0x80 | ((code >> 6) & 0x3f)));
+    out.append(1, static_cast<char>(0x80 | (code & 0x3f)));
+  } else {
+    out.append(1, static_cast<char>(0xf0 | ((code >> 18) & 0x07)));
+    out.append(1, static_cast<char>(0x80 | ((code >> 12) & 0x3f)));
+    out.append(1, static_cast<char>(0x80 | ((code >> 6) & 0x3f)));
+    out.append(1, static_cast<char>(0x80 | (code & 0x3f)));
+  }
+}
+
+std::string tex::wide2utf8(const std::wstring& src) {
+  std::string out;
   const wchar_t* in = src.c_str();
-  string out;
-  unsigned int codepoint = 0;
+  c32 codepoint = 0;
   for (; *in != 0; ++in) {
     if (*in >= 0xd800 && *in <= 0xdbff) {
+      // surrogate
       codepoint = ((*in - 0xd800) << 10) + 0x10000;
     } else {
       if (*in >= 0xdc00 && *in <= 0xdfff) {
@@ -16,22 +35,7 @@ string tex::wide2utf8(const std::wstring& src) {
       } else {
         codepoint = *in;
       }
-
-      if (codepoint <= 0x7f) {
-        out.append(1, static_cast<char>(codepoint));
-      } else if (codepoint <= 0x7ff) {
-        out.append(1, static_cast<char>(0xc0 | ((codepoint >> 6) & 0x1f)));
-        out.append(1, static_cast<char>(0x80 | (codepoint & 0x3f)));
-      } else if (codepoint <= 0xffff) {
-        out.append(1, static_cast<char>(0xe0 | ((codepoint >> 12) & 0x0f)));
-        out.append(1, static_cast<char>(0x80 | ((codepoint >> 6) & 0x3f)));
-        out.append(1, static_cast<char>(0x80 | (codepoint & 0x3f)));
-      } else {
-        out.append(1, static_cast<char>(0xf0 | ((codepoint >> 18) & 0x07)));
-        out.append(1, static_cast<char>(0x80 | ((codepoint >> 12) & 0x3f)));
-        out.append(1, static_cast<char>(0x80 | ((codepoint >> 6) & 0x3f)));
-        out.append(1, static_cast<char>(0x80 | (codepoint & 0x3f)));
-      }
+      appendToUtf8(out, codepoint);
       codepoint = 0;
     }
   }
