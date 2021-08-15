@@ -55,7 +55,7 @@ public:
    * @param mathFontName the math font name
    */
   static TeXRender* parse(
-    const std::wstring& tex,
+    const std::string& tex,
     int width,
     float textSize,
     float lineSpace,

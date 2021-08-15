@@ -67,12 +67,6 @@ public:
    * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or (UnitType::none, 0) will be returned.
    */
   static Dimen getDimen(const std::string& lgth);
-
-  /**
-   * Get the unit and length from given string. The string must be in the format: a number
-   * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or (UnitType::none, 0) will be returned.
-   */
-  static Dimen getDimen(const std::wstring& lgth);
 };
 
 }

@@ -13,13 +13,13 @@
 namespace tex {
 
 inline macro(overdelim) {
-  const auto& name = wide2utf8(args[0]);
+  const auto& name = args[0];
   const auto& base = Formula(tp, args[1], false)._root;
   return sptrOf<OverUnderDelimiter>(base, name, true);
 }
 
 inline macro(underdelim) {
-  const auto& name = wide2utf8(args[0]);
+  const auto& name = args[0];
   const auto& base = Formula(tp, args[1], false)._root;
   return sptrOf<OverUnderDelimiter>(base, name, false);
 }
@@ -35,29 +35,29 @@ inline macro(underline) {
 }
 
 inline macro(Braket) {
-  std::wstring str(args[1]);
-  replaceall(str, L"\\|", L"\\middle\\vert ");
-  return Formula(tp, L"\\left\\langle " + str + L"\\right\\rangle")._root;
+  std::string str(args[1]);
+  replaceall(str, "\\|", "\\middle\\vert ");
+  return Formula(tp, "\\left\\langle " + str + "\\right\\rangle")._root;
 }
 
 inline macro(Set) {
-  std::wstring str(args[1]);
-  replacefirst(str, L"\\|", L"\\middle\\vert ");
-  return Formula(tp, L"\\left\\{" + str + L"\\right\\}")._root;
+  std::string str(args[1]);
+  replacefirst(str, "\\|", "\\middle\\vert ");
+  return Formula(tp, "\\left\\{" + str + "\\right\\}")._root;
 }
 
 inline macro(leftparenthesis) {
-  std::wstring grp = tp.getGroup(L"\\(", L"\\)");
+  std::string grp = tp.getGroup("\\(", "\\)");
   return sptrOf<MathAtom>(Formula(tp, grp, false)._root, TexStyle::text);
 }
 
 inline macro(leftbracket) {
-  std::wstring grp = tp.getGroup(L"\\[", L"\\]");
+  std::string grp = tp.getGroup("\\[", "\\]");
   return sptrOf<MathAtom>(Formula(tp, grp, false)._root, TexStyle::display);
 }
 
 inline macro(middle) {
-  return sptrOf<MiddleAtom>(wide2utf8(args[1]));
+  return sptrOf<MiddleAtom>(args[1]);
 }
 
 inline macro(sqrt) {

@@ -51,12 +51,12 @@ public:
 class LapedAtom : public Atom {
 private:
   sptr<Atom> _at;
-  wchar_t _type;
+  char _type;
 
 public:
   LapedAtom() = delete;
 
-  LapedAtom(const sptr<Atom>& a, wchar_t type) : _at(a), _type(type) {}
+  LapedAtom(const sptr<Atom>& a, char type) : _at(a), _type(type) {}
 
   sptr<Box> createBox(Env& env) override;
 };
@@ -149,9 +149,9 @@ private:
 public:
   RotateAtom() = delete;
 
-  RotateAtom(const sptr<Atom>& base, const std::wstring& angle, const std::wstring& option);
+  RotateAtom(const sptr<Atom>& base, const std::string& angle, const std::string& option);
 
-  RotateAtom(const sptr<Atom>& base, float angle, const std::wstring& option);
+  RotateAtom(const sptr<Atom>& base, float angle, const std::string& option);
 
   sptr<Box> createBox(Env& env) override;
 };
@@ -229,7 +229,7 @@ class LongDivAtom : public Atom {
 private:
   long _divisor, _dividend;
 
-  void calculate(std::vector<std::wstring>& results) const;
+  void calculate(std::vector<std::string>& results) const;
 
 public:
   LongDivAtom() = delete;

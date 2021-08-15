@@ -122,8 +122,7 @@ inline macro(gatheredATATenv) {
 inline macro(multicolumn) {
   int n = 0;
   valueof(args[1], n);
-  const std::string x = wide2utf8(args[2]);
-  tp.addAtom(sptrOf<MulticolumnAtom>(n, x, Formula(tp, args[3])._root));
+  tp.addAtom(sptrOf<MulticolumnAtom>(n, args[2], Formula(tp, args[3])._root));
   ((ArrayFormula*) tp._formula)->addCol(n);
   return nullptr;
 }
@@ -156,7 +155,7 @@ inline macro(multirow) {
 
 inline macro(cellcolor) {
   if (!tp.isArrayMode()) throw ex_parse("Command \\cellcolor must used in array environment!");
-  color c = ColorAtom::getColor(wide2utf8(args[1]));
+  color c = ColorAtom::getColor(args[1]);
   auto atom = sptrOf<CellColorAtom>(c);
   ((ArrayFormula*) tp._formula)->addCellSpecifier(atom);
   return nullptr;
@@ -167,7 +166,7 @@ inline macro(color) {
   // when parsing a LaTeX string, it is useless to specify a global foreground color again, but in
   // array mode, the \color command is useful to specify the foreground color of the columns.
   if (tp.isArrayMode()) {
-    color c = ColorAtom::getColor(wide2utf8(args[1]));
+    color c = ColorAtom::getColor(args[1]);
     return sptrOf<CellForegroundAtom>(c);
   }
   return nullptr;
@@ -179,19 +178,19 @@ inline macro(newcolumntype) {
 }
 
 inline macro(arrayrulecolor) {
-  color c = ColorAtom::getColor(wide2utf8(args[1]));
+  color c = ColorAtom::getColor(args[1]);
   MatrixAtom::LINE_COLOR = c;
   return nullptr;
 }
 
 inline macro(columnbg) {
-  color c = ColorAtom::getColor(wide2utf8(args[1]));
+  color c = ColorAtom::getColor(args[1]);
   return sptrOf<CellColorAtom>(c);
 }
 
 inline macro(rowcolor) {
   if (!tp.isArrayMode()) throw ex_parse("Command \\rowcolor must used in array environment!");
-  color c = ColorAtom::getColor(wide2utf8(args[1]));
+  color c = ColorAtom::getColor(args[1]);
   auto spe = sptrOf<CellColorAtom>(c);
   ((ArrayFormula*) tp._formula)->addRowSpecifier(spe);
   return nullptr;

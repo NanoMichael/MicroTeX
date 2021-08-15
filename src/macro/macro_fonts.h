@@ -19,7 +19,7 @@ inline macro(text) {
 inline macro(textfont) {
   tp.skipWhiteSpace(1);
   const auto atom = Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root;
-  const auto style = FontContext::mainFontStyleOf(wide2utf8(args[0]));
+  const auto style = FontContext::mainFontStyleOf(args[0]);
   return sptrOf<FontStyleAtom>(style, tp.isMathMode(), atom);
 }
 
@@ -54,7 +54,7 @@ inline sptr<Atom> _mathfont(TeXParser& tp, Args& args, FontStyle style) {
 }
 
 inline macro(mathfont) {
-  return _mathfont(tp, args, FontContext::mathFontStyleOf(wide2utf8(args[0])));
+  return _mathfont(tp, args, FontContext::mathFontStyleOf(args[0]));
 }
 
 inline macro(Bbb) {
@@ -73,9 +73,9 @@ inline macro(intertext) {
   if (!tp.isArrayMode())
     throw ex_parse("Command \\intertext must used in array environment!");
 
-  wstring str(args[1]);
-  replaceall(str, L"^{\\prime}", L"\'");
-  replaceall(str, L"^{\\prime\\prime}", L"\'\'");
+  string str(args[1]);
+  replaceall(str, "^{\\prime}", "\'");
+  replaceall(str, "^{\\prime\\prime}", "\'\'");
 
   auto a = Formula(tp, str, false, false)._root;
   sptr<Atom> ra = sptrOf<FontStyleAtom>(FontStyle::rm, false, a);

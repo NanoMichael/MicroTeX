@@ -107,10 +107,6 @@ public:
 
   void drawGlyph(u16 glyph, float x, float y) override;
 
-  void drawChar(wchar_t c, float x, float y) override;
-
-  void drawText(const wstring& t, float x, float y) override;
-
   void drawLine(float x, float y1, float x2, float y2) override;
 
   void drawRect(float x, float y, float w, float h) override;

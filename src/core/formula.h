@@ -27,8 +27,8 @@ private:
 
 public:
   // predefined TeX formulas
-  static std::map<std::wstring, sptr<Formula>> _predefFormulas;
-  static std::map<std::wstring, std::wstring> _predefFormulaStrs;
+  static std::map<std::string, sptr<Formula>> _predefFormulas;
+  static std::map<std::string, std::string> _predefFormulaStrs;
 
   // character-to-symbol mappings
   static const std::map<c32, std::string> _charToSymbol;
@@ -52,7 +52,7 @@ public:
    * @throw ex_parse if the string could not be parsed correctly
    */
   Formula(
-    const TeXParser& tp, const std::wstring& latex,
+    const TeXParser& tp, const std::string& latex,
     bool preprocess = true, bool isMathMode = true
   );
 
@@ -65,14 +65,14 @@ public:
    *
    * @throw ex_parse if the string could not be parsed correctly
    */
-  explicit Formula(const std::wstring& latex, bool preprocess = true);
+  explicit Formula(const std::string& latex, bool preprocess = true);
 
   /**
    * Change the text of the Formula and regenerate the root atom.
    *
    * @param latex the latex formula
    */
-  void setLaTeX(const std::wstring& latex);
+  void setLaTeX(const std::string& latex);
 
   /** Inserts an atom at the end of the current formula. */
   Formula* add(const sptr<Atom>& a);
@@ -89,7 +89,7 @@ public:
    * @param name the name of the predefined Formula
    * @return the predefined Formula or nullptr if not found
    */
-  static sptr<Formula> get(const std::wstring& name);
+  static sptr<Formula> get(const std::string& name);
 
   virtual ~Formula() = default;
 };

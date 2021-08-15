@@ -9,7 +9,7 @@
 namespace tex {
 
 inline macro(accents) {
-  const auto name = wide2utf8(args[0]);
+  const auto& name = args[0];
   const auto&[acc, fit] = [&]() {
     if (name == "widehat") return std::make_pair<std::string>("hat", true);
     if (name == "widetilde") return std::make_pair<std::string>("tilde", true);
@@ -21,7 +21,7 @@ inline macro(accents) {
 inline macro(accentset) {
   return sptrOf<AccentedAtom>(
     Formula(tp, args[2], false)._root,
-    wide2utf8(args[1]).substr(1), false, true
+    args[1].substr(1), false, true
   );
 }
 

@@ -5,12 +5,12 @@ namespace tex {
 
 macro(definecolor) {
   color c = TRANSPARENT;
-  std::string cs = wide2utf8(args[3]);
-  if (args[2] == L"gray") {
+  const auto& cs = args[3];
+  if (args[2] == "gray") {
     float f = 0;
     valueof(args[3], f);
     c = rgb(f, f, f);
-  } else if (args[2] == L"rgb") {
+  } else if (args[2] == "rgb") {
     StrTokenizer stok(cs, ":,");
     if (stok.count() != 3)
       throw ex_parse("The color definition must have three components!");
@@ -20,7 +20,7 @@ macro(definecolor) {
     valueof(trim(G), g);
     valueof(trim(B), b);
     c = rgb(r, g, b);
-  } else if (args[2] == L"cmyk") {
+  } else if (args[2] == "cmyk") {
     StrTokenizer stok(cs, ":,");
     if (stok.count() != 4)
       throw ex_parse("The color definition must have four components!");
@@ -35,7 +35,7 @@ macro(definecolor) {
     throw ex_parse("Color model is incorrect!");
   }
 
-  ColorAtom::defineColor(wide2utf8(args[1]), c);
+  ColorAtom::defineColor(args[1], c);
   return nullptr;
 }
 

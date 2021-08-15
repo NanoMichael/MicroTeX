@@ -43,14 +43,14 @@ void LaTeX::addMathFont(const FontSpec& params) {
 }
 
 TeXRender* LaTeX::parse(
-  const wstring& latex, int width, float textSize, float lineSpace, color fg,
+  const string& latex, int width, float textSize, float lineSpace, color fg,
   const string& mathFontName, const string& mainFontName
 ) {
   if (_formula == nullptr) _formula = new Formula();
   if (_builder == nullptr) _builder = new TeXRenderBuilder();
 
   bool isInline = true;
-  if (startswith(latex, L"$$") || startswith(latex, L"\\[")) {
+  if (startswith(latex, "$$") || startswith(latex, "\\[")) {
     isInline = false;
   }
   Alignment align = isInline ? Alignment::left : Alignment::center;

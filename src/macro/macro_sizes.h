@@ -21,25 +21,25 @@ inline macro(magnification) {
 
 inline macro(sizes) {
   float f = 1;
-  if (args[0] == L"tiny")
+  if (args[0] == "tiny")
     f = 0.5f;
-  else if (args[0] == L"scriptsize")
+  else if (args[0] == "scriptsize")
     f = 0.7f;
-  else if (args[0] == L"footnotesize")
+  else if (args[0] == "footnotesize")
     f = 0.8f;
-  else if (args[0] == L"small")
+  else if (args[0] == "small")
     f = 0.9f;
-  else if (args[0] == L"normalsize")
+  else if (args[0] == "normalsize")
     f = 1.f;
-  else if (args[0] == L"large")
+  else if (args[0] == "large")
     f = 1.2f;
-  else if (args[0] == L"Large")
+  else if (args[0] == "Large")
     f = 1.4f;
-  else if (args[0] == L"LARGE")
+  else if (args[0] == "LARGE")
     f = 1.8f;
-  else if (args[0] == L"huge")
+  else if (args[0] == "huge")
     f = 2.f;
-  else if (args[0] == L"Huge")
+  else if (args[0] == "Huge")
     f = 2.5f;
 
   auto a = Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root;
@@ -48,7 +48,7 @@ inline macro(sizes) {
 
 inline sptr <Atom> _big(
   TeXParser& tp,
-  std::vector<std::wstring>& args,
+  std::vector<std::string>& args,
   int size,
   AtomType type = AtomType::none
 ) {

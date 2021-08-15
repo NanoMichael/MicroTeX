@@ -9,16 +9,12 @@ namespace tex {
 /** Append a unicode code-point to a utf-8 string */
 void appendToUtf8(std::string& out, c32 code);
 
-c32 nextUnicode(std::string& src, std::size_t& i);
-
-/** Convert unicode wide string to UTF-8 string. */
-std::string wide2utf8(const std::wstring& src);
-
 /**
- * Convert an UTF-8 encoded char sequence to wide unicode string,
- * the encoding of input char sequence must be known as UTF-8
+ * Get the next Unicode code-point from the given utf-8 string,
+ * the index of the following code-point in the byte sequence
+ * was given by #i after current code-point was decoded.
  */
-std::wstring utf82wide(const std::string& src);
+c32 nextUnicode(const std::string& src, int& i);
 
 }  // namespace tex
 

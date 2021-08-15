@@ -71,13 +71,12 @@ sptr<Box> ResizeAtom::createBox(Env& env) {
   return sptrOf<ScaleBox>(box, sx, sy);
 }
 
-RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const wstring& option)
+RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const string& option)
   : _angle(0), _option(Rotation::bl) {
   _type = base->_type;
   _base = base;
   _angle = angle;
-  const string x = wide2utf8(option);
-  const auto& opt = parseOption(x);
+  const auto& opt = parseOption(option);
   auto it = opt.find("origin");
   if (it != opt.end()) {
     _option = RotateBox::getOrigin(it->second);
@@ -97,13 +96,12 @@ RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const wstring& optio
   }
 }
 
-RotateAtom::RotateAtom(const sptr<Atom>& base, const wstring& angle, const wstring& option)
+RotateAtom::RotateAtom(const sptr<Atom>& base, const string& angle, const string& option)
   : _angle(0), _option(Rotation::none), _x(0._em), _y(0._em) {
   _type = base->_type;
   _base = base;
   valueof(angle, _angle);
-  const string x = wide2utf8(option);
-  _option = RotateBox::getOrigin(x);
+  _option = RotateBox::getOrigin(option);
 }
 
 sptr<Box> RotateAtom::createBox(Env& env) {
@@ -135,19 +133,19 @@ sptr<Box> VCenteredAtom::createBox(Env& env) {
 LongDivAtom::LongDivAtom(long divisor, long dividend)
   : _divisor(divisor), _dividend(dividend) {}
 
-void LongDivAtom::calculate(vector<wstring>& results) const {
+void LongDivAtom::calculate(vector<string>& results) const {
   long quotient = _dividend / _divisor;
-  results.push_back(towstring(quotient));
+  results.push_back(tostring(quotient));
   string x = tostring(quotient);
   size_t len = x.length();
   long remaining = _dividend;
-  results.push_back(towstring(remaining));
+  results.push_back(tostring(remaining));
   for (size_t i = 0; i < len; i++) {
     long b = (x[i] - '0') * pow(10, len - i - 1);
     long product = b * _divisor;
     remaining = remaining - product;
-    results.push_back(towstring(product));
-    results.push_back(towstring(remaining));
+    results.push_back(tostring(product));
+    results.push_back(tostring(remaining));
   }
 }
 
@@ -156,7 +154,7 @@ sptr<Box> LongDivAtom::createBox(Env& env) {
   vrow._halign = Alignment::right;
   vrow.setAlignTop(true);
 
-  vector<wstring> results;
+  vector<string> results;
   calculate(results);
 
   auto kern = sptrOf<SpaceAtom>(UnitType::ex, 0.f, 2.f, 0.4f);
@@ -182,7 +180,7 @@ sptr<Box> LongDivAtom::createBox(Env& env) {
 
   auto hb = sptrOf<HBox>();
   auto b = vrow.createBox(env);
-  const wstring& n = towstring(_divisor);
+  const string& n = tostring(_divisor);
   hb->add(Formula(n, false)._root->createBox(env));
   hb->add(SpaceAtom(SpaceType::thinMuSkip).createBox(env));
   auto x = ScaleAtom(SymbolAtom::get("longdivision"), scale).createBox(env);

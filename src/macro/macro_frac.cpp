@@ -17,7 +17,7 @@ macro(binom) {
 
 sptr<Atom> _choose(
   const std::string& left, const std::string& right,
-  TeXParser& tp, std::vector<std::wstring>& args
+  TeXParser& tp, std::vector<std::string>& args
 ) {
   auto num = tp.popFormulaAtom();
   auto den = Formula(tp, tp.getOverArgument(), false)._root;
@@ -74,7 +74,7 @@ sptr<Atom> _frac_with_delims(TeXParser& tp, Args& args, bool rule, bool hasLengt
     ? sptrOf<FracAtom>(num, den, rule, l)
     : sptrOf<FracAtom>(num, den, rule)
   );
-  return sptrOf<FencedAtom>(f, wide2utf8(args[1]), wide2utf8(args[2]));
+  return sptrOf<FencedAtom>(f, args[1], args[2]);
 }
 
 macro(overwithdelims) {
@@ -91,9 +91,9 @@ macro(abovewithdelims) {
 
 macro(cfrac) {
   Alignment numAlign = Alignment::center;
-  if (args[3] == L"r") {
+  if (args[3] == "r") {
     numAlign = Alignment::right;
-  } else if (args[3] == L"l") {
+  } else if (args[3] == "l") {
     numAlign = Alignment::left;
   }
   Formula num(tp, args[1], false);
@@ -126,7 +126,7 @@ macro(genfrac) {
   auto fa = sptrOf<FracAtom>(num._root, den._root, rule, thickness);
   auto* ra = new RowAtom();
   const auto texStyle = static_cast<TexStyle>(style * 2);
-  auto f = sptrOf<FencedAtom>(fa, wide2utf8(args[1]), wide2utf8(args[2]));
+  auto f = sptrOf<FencedAtom>(fa, args[1], args[2]);
   ra->add(sptrOf<StyleAtom>(texStyle, f));
 
   return sptr<Atom>(ra);

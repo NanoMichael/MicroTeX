@@ -173,24 +173,6 @@ public:
   virtual void drawGlyph(u16 glyph, float x, float y) = 0;
 
   /**
-   * Draw character, is baseline aligned
-   * 
-   * @param c specified character
-   * @param x x-coordinate
-   * @param y y-coordinate, is baseline aligned
-   */
-  virtual void drawChar(wchar_t c, float x, float y) = 0;
-
-  /**
-   * Draw text, is baseline aligned
-   * 
-   * @param c specified text
-   * @param x x-coordinate
-   * @param y y-coordinate, is baseline aligned
-   */
-  virtual void drawText(const std::wstring& c, float x, float y) = 0;
-
-  /**
    * Draw line
    * 
    * @param x1 start point in x-direction

@@ -17,7 +17,7 @@ using namespace std;
 class Samples {
 private:
   int _index;
-  vector<std::wstring> _samples;
+  vector<std::string> _samples;
 
   void readSamples(const string& path) {
     string line;
@@ -43,7 +43,7 @@ private:
   void add(const string& str) {
     if (str.empty()) return;
     if (isSpace(str)) return;
-    _samples.push_back(utf82wide(str.c_str()));
+    _samples.push_back(str);
   }
 
   bool isSpace(const string& str) {
@@ -53,9 +53,9 @@ private:
 public:
   Samples(const string& file) : _index(0) { readSamples(file); }
 
-  const std::wstring& next() {
+  const std::string& next() {
     if (_index >= _samples.size()) _index = 0;
-    const std::wstring& x = _samples[_index];
+    const std::string& x = _samples[_index];
     _index++;
     return x;
   }

@@ -18,12 +18,12 @@
 namespace tex {
 
 inline macro(fatalIfCmdConflict) {
-  NewCommandMacro::_errIfConflict = args[1] == L"true";
+  NewCommandMacro::_errIfConflict = args[1] == "true";
   return nullptr;
 }
 
 inline macro(breakEverywhere) {
-  RowAtom::_breakEveywhere = args[1] == L"true";
+  RowAtom::_breakEveywhere = args[1] == "true";
   return nullptr;
 }
 
@@ -42,7 +42,7 @@ inline macro(st) {
 }
 
 inline macro(spATbreve) {
-  auto* vra = new VRowAtom(Formula(L"\\displaystyle\\!\\breve{}")._root);
+  auto* vra = new VRowAtom(Formula("\\displaystyle\\!\\breve{}")._root);
   vra->setRaise(UnitType::ex, 0.6f);
   return sptrOf<SmashedAtom>(sptr<Atom>(vra), "");
 }
@@ -57,7 +57,7 @@ inline macro(mathclrlap) {
 
 inline sptr<Atom> _cancel(
   int cancelType,
-  TeXParser& tp, std::vector<std::wstring>& args) {
+  TeXParser& tp, std::vector<std::string>& args) {
   auto base = Formula(tp, args[1], false)._root;
   if (base == nullptr)
     throw ex_parse("Cancel content must not be empty!");
@@ -101,8 +101,7 @@ inline macro(joinrel) {
 }
 
 inline macro(smash) {
-  const std::string x = wide2utf8(args[2]);
-  return sptrOf<SmashedAtom>(Formula(tp, args[1], false)._root, x);
+  return sptrOf<SmashedAtom>(Formula(tp, args[1], false)._root, args[2]);
 }
 
 inline macro(cr) {
@@ -188,7 +187,8 @@ inline macro(ctext) {
 }
 
 inline macro(char) {
-  std::string x = wide2utf8(args[1]);
+  // TODO
+  std::string x = args[1];
   int radix = 10;
   if (startswith(x, "0x") || startswith(x, "0X")) {
     x = x.substr(2);
@@ -202,16 +202,17 @@ inline macro(char) {
   }
   int n = 0;
   str2int(x, n, radix);
-  return tp.getCharAtom((wchar_t) n);
+  return tp.getCharAtom1(n);
 }
 
 inline macro(T) {
-  return sptrOf<RotateAtom>(Formula(tp, args[1])._root, 180.f, L"origin=cc");
+  return sptrOf<RotateAtom>(Formula(tp, args[1])._root, 180.f, "origin=cc");
 }
 
 inline macro(textcircled) {
   // TODO
   // return sptrOf<TextCircledAtom>(sptrOf<RomanAtom>(Formula(tp, args[1])._root));
+  return nullptr;
 }
 
 inline macro(textsc) {

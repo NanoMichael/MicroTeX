@@ -15,25 +15,22 @@
 using namespace std;
 using namespace tex;
 
-const wchar_t TeXParser::ESCAPE = '\\';
-const wchar_t TeXParser::L_GROUP = '{';
-const wchar_t TeXParser::R_GROUP = '}';
-const wchar_t TeXParser::L_BRACK = '[';
-const wchar_t TeXParser::R_BRACK = ']';
-const wchar_t TeXParser::DOLLAR = '$';
-const wchar_t TeXParser::DQUOTE = '\"';
-const wchar_t TeXParser::PERCENT = '%';
-const wchar_t TeXParser::SUB_SCRIPT = '_';
-const wchar_t TeXParser::SUPER_SCRIPT = '^';
-const wchar_t TeXParser::PRIME = '\'';
-const wchar_t TeXParser::PRIME_UTF = 0x2019;
-const wchar_t TeXParser::BACKPRIME = '`';
-const wchar_t TeXParser::BACKPRIME_UTF = 0x2035;
-const wchar_t TeXParser::DEGRE = 0x00B0;
+const char TeXParser::ESCAPE = '\\';
+const char TeXParser::L_GROUP = '{';
+const char TeXParser::R_GROUP = '}';
+const char TeXParser::L_BRACK = '[';
+const char TeXParser::R_BRACK = ']';
+const char TeXParser::DOLLAR = '$';
+const char TeXParser::DQUOTE = '\"';
+const char TeXParser::PERCENT = '%';
+const char TeXParser::SUB_SCRIPT = '_';
+const char TeXParser::SUPER_SCRIPT = '^';
+const char TeXParser::PRIME = '\'';
+const char TeXParser::BACKPRIME = '`';
 
 void TeXParser::init(
   bool isPartial,
-  const wstring& latex,
+  const string& latex,
   Formula* formula,
   bool firstPass
 ) {
@@ -53,14 +50,14 @@ void TeXParser::init(
     _pos = 0;
     if (firstPass) preprocess();
   } else {
-    _latex = L"";
+    _latex = "";
     _pos = 0;
     _len = 0;
   }
   _arrayMode = formula->isArrayMode();
 }
 
-void TeXParser::reset(const wstring& latex) {
+void TeXParser::reset(const string& latex) {
   _latex = latex;
   _len = latex.length();
   _formula->_root = nullptr;
@@ -99,9 +96,9 @@ void TeXParser::addRow() const {
   ((ArrayFormula*) _formula)->addRow();
 }
 
-wstring TeXParser::getDollarGroup(wchar_t openclose) {
+string TeXParser::getDollarGroup(char openclose) {
   int spos = _pos;
-  wchar_t ch;
+  char ch;
 
   do {
     ch = _latex[_pos++];
@@ -112,11 +109,11 @@ wstring TeXParser::getDollarGroup(wchar_t openclose) {
   return _latex.substr(spos, _pos - spos);
 }
 
-wstring TeXParser::getGroup(wchar_t open, wchar_t close) {
-  if (_pos == _len) return L"";
+string TeXParser::getGroup(char open, char close) {
+  if (_pos == _len) return "";
 
   int group, spos;
-  wchar_t ch = _latex[_pos];
+  char ch = _latex[_pos];
 
   if (_pos < _len && ch == open) {
     group = 1;
@@ -140,7 +137,7 @@ wstring TeXParser::getGroup(wchar_t open, wchar_t close) {
   throw ex_parse("Missing '" + tostring((char) open) + "'!");
 }
 
-wstring TeXParser::getGroup(const wstring& open, const wstring& close) {
+string TeXParser::getGroup(const string& open, const string& close) {
   int group = 1;
   int ol = open.length();
   int cl = close.length();
@@ -149,12 +146,12 @@ wstring TeXParser::getGroup(const wstring& open, const wstring& close) {
   int oc = 0;
   int cc = 0;
   int startC = 0;
-  wchar_t prev = L'\0';
-  wstring buf;
+  char prev = L'\0';
+  string buf;
 
   while (_pos < _len && group != 0) {
-    wchar_t c = _latex[_pos];
-    wchar_t c1;
+    char c = _latex[_pos];
+    char c1;
 
     if (prev != ESCAPE && c == ' ') {
       while (_pos < _len && _latex[_pos++] == ' ') buf.append(1, L' ');
@@ -209,11 +206,11 @@ wstring TeXParser::getGroup(const wstring& open, const wstring& close) {
   return buf.substr(0, buf.length() - _pos + startC);
 }
 
-wstring TeXParser::getOverArgument() {
-  if (_pos == _len) return L"";
+string TeXParser::getOverArgument() {
+  if (_pos == _len) return "";
 
   int ogroup = 1, spos;
-  wchar_t ch = L'\0';
+  char ch = L'\0';
 
   spos = _pos;
   while (_pos < _len && ogroup != 0) {
@@ -253,7 +250,7 @@ wstring TeXParser::getOverArgument() {
   // end of string reached, bu not processed properly
   if (ogroup >= 2) throw ex_parse("Illegal end, missing '}'!");
 
-  wstring str;
+  string str;
   if (ogroup == 0) {
     str = _latex.substr(spos, _pos - spos - 1);
   } else {
@@ -266,9 +263,9 @@ wstring TeXParser::getOverArgument() {
   return str;
 }
 
-wstring TeXParser::getCommand() {
+string TeXParser::getCommand() {
   int spos = ++_pos;
-  wchar_t ch = L'\0';
+  char ch = L'\0';
 
   while (_pos < _len) {
     ch = _latex[_pos];
@@ -281,49 +278,49 @@ wstring TeXParser::getCommand() {
     _pos++;
   }
 
-  if (ch == L'\0') return L"";
+  if (ch == L'\0') return "";
 
   if (_pos == spos) _pos++;
 
-  wstring com = _latex.substr(spos, _pos - spos);
-  if (com == L"cr" && _pos < _len && _latex[_pos] == ' ') _pos++;
+  string com = _latex.substr(spos, _pos - spos);
+  if (com == "cr" && _pos < _len && _latex[_pos] == ' ') _pos++;
 
   return com;
 }
 
-void TeXParser::insert(int beg, int end, const wstring& formula) {
+void TeXParser::insert(int beg, int end, const string& formula) {
   _latex.replace(beg, end - beg, formula);
   _len = _latex.length();
   _pos = beg;
   _insertion = true;
 }
 
-wstring TeXParser::getCommandWithArgs(const wstring& command) {
-  if (command == L"left") return getGroup(L"\\left", L"\\right");
+string TeXParser::getCommandWithArgs(const string& command) {
+  if (command == "left") return getGroup("\\left", "\\right");
 
   auto mac = MacroInfo::get(command);
   if (mac == nullptr) {
-    return L"\\" + command;
+    return "\\" + command;
   }
   int mac_opts = mac->_posOpts;
 
   // return as format: \cmd[opt][...]{arg}{...}
 
-  vector<wstring> mac_args;
+  vector<string> mac_args;
   getOptsArgs(mac->_argc, mac_opts, mac_args);
-  wstring mac_arg(L"\\");
+  string mac_arg("\\");
   mac_arg.append(command);
   for (int j = 0; j < mac->_posOpts; j++) {
-    wstring arg_t = mac_args[mac->_argc + j + 1];
+    string arg_t = mac_args[mac->_argc + j + 1];
     if (!arg_t.empty()) {
-      mac_arg.append(L"[").append(arg_t).append(L"]");
+      mac_arg.append("[").append(arg_t).append("]");
     }
   }
 
   for (int j = 0; j < mac->_argc; j++) {
-    wstring arg_t = mac_args[j + 1];
+    string arg_t = mac_args[j + 1];
     if (!arg_t.empty()) {
-      mac_arg.append(L"{").append(arg_t).append(L"}");
+      mac_arg.append("{").append(arg_t).append("}");
     }
   }
 
@@ -332,7 +329,7 @@ wstring TeXParser::getCommandWithArgs(const wstring& command) {
 
 void TeXParser::skipWhiteSpace(int count) {
   count = count >= 0 ? count : std::numeric_limits<int>::max();
-  wchar_t c;
+  char c;
   while (_pos < _len && count > 0) {
     c = _latex[_pos];
     if (c != ' ' && c != '\t' && c != '\n' && c != '\r') break;
@@ -345,9 +342,9 @@ void TeXParser::skipWhiteSpace(int count) {
   }
 }
 
-wstring TeXParser::forwardBalancedGroup() {
+string TeXParser::forwardBalancedGroup() {
   if (_group == 0) {
-    const wstring& sub = _latex.substr(_pos);
+    const string& sub = _latex.substr(_pos);
     finish();
     return sub;
   }
@@ -363,7 +360,7 @@ wstring TeXParser::forwardBalancedGroup() {
   if (closing != 0) {
     throw ex_parse("Found a closing '}' without an opening '{'!");
   }
-  const wstring& sub = _latex.substr(_pos, i - _pos);
+  const string& sub = _latex.substr(_pos, i - _pos);
   _pos = i;
   return sub;
 }
@@ -382,7 +379,7 @@ void TeXParser::getOptsArgs(int argc, int opts, Args& args) {
         args[j] = getGroup(L_BRACK, R_BRACK);
       }
     } catch (ex_parse& e) {
-      args[j] = L"";
+      args[j] = "";
     }
   };
 
@@ -392,7 +389,7 @@ void TeXParser::getOptsArgs(int argc, int opts, Args& args) {
       args[i] = getGroup(L_GROUP, R_GROUP);
     } catch (ex_parse& e) {
       if (_latex[_pos] != '\\') {
-        args[i] = towstring(_latex[_pos]);
+        args[i] = tostring(_latex[_pos]);
         _pos++;
       } else {
         args[i] = getCommandWithArgs(getCommand());
@@ -416,11 +413,11 @@ void TeXParser::getOptsArgs(int argc, int opts, Args& args) {
   }
 }
 
-bool TeXParser::isValidName(const wstring& com) const {
+bool TeXParser::isValidName(const string& com) const {
   if (com.empty()) return false;
   if (com[0] != '\\') return false;
 
-  wchar_t c = L'\0';
+  char c = L'\0';
   int p = 1;
   int l = com.length();
   while (p < l) {
@@ -435,7 +432,7 @@ bool TeXParser::isValidName(const wstring& com) const {
 
 sptr<Atom> TeXParser::processEscape() {
   _spos = _pos;
-  const wstring command = getCommand();
+  const string command = getCommand();
 
   if (command.length() == 0) return sptrOf<EmptyAtom>();
 
@@ -447,23 +444,22 @@ sptr<Atom> TeXParser::processEscape() {
   sptr<Formula> predef = Formula::get(command);
   if (predef != nullptr) return predef->_root;
 
-  const string cmd = wide2utf8(command);
-  sptr<Atom> sym = SymbolAtom::get(cmd);
+  sptr<Atom> sym = SymbolAtom::get(command);
   if (sym != nullptr) return sym;
 
   // not a valid command or symbol or predefined Formula found
   if (!_isPartial) {
-    throw ex_parse("Unknown symbol or command or predefined Formula: '" + cmd + "'");
+    throw ex_parse("Unknown symbol or command or predefined Formula: '" + command + "'");
   }
   auto rm = sptrOf<FontStyleAtom>(
     FontStyle::tt,
     false,
-    Formula(L"\\text{{\\backslash}" + command + L"}")._root
+    Formula("\\text{{\\backslash}" + command + "}")._root
   );
   return sptrOf<ColorAtom>(rm, TRANSPARENT, RED);
 }
 
-sptr<Atom> TeXParser::processCommands(const wstring& cmd, MacroInfo* mac) {
+sptr<Atom> TeXParser::processCommands(const string& cmd, MacroInfo* mac) {
   int opts = mac->_posOpts;
 
   Args args;
@@ -481,12 +477,12 @@ sptr<Atom> TeXParser::processCommands(const wstring& cmd, MacroInfo* mac) {
   return mac->invoke(*this, args);
 }
 
-sptr<Atom> TeXParser::getScripts(wchar_t first) {
+sptr<Atom> TeXParser::getScripts(char first) {
   _pos++;
   // get the sub script (assume the first is the sub script)
   sptr<Atom> sub = getArgument();
   sptr<Atom> sup(nullptr);
-  wchar_t second = '\0';
+  char second = '\0';
 
   if (_pos < _len) second = _latex[_pos];
 
@@ -540,7 +536,7 @@ sptr<Atom> TeXParser::getScripts(wchar_t first) {
 
 sptr<Atom> TeXParser::getArgument() {
   skipWhiteSpace();
-  wchar_t ch;
+  char ch;
   if (_pos < _len) ch = _latex[_pos];
   else return sptrOf<EmptyAtom>();
 
@@ -569,7 +565,7 @@ sptr<Atom> TeXParser::getArgument() {
     return atom;
   }
 
-  auto atom = getCharAtom(ch);
+  auto atom = getCharAtom();
   _pos++;
   return atom;
 }
@@ -577,7 +573,7 @@ sptr<Atom> TeXParser::getArgument() {
 Dimen TeXParser::getDimen() {
   if (_pos == _len) return {0.f, UnitType::none};
 
-  wchar_t ch = L'\0';
+  char ch = L'\0';
 
   skipWhiteSpace();
   const int start = _pos;
@@ -591,23 +587,23 @@ Dimen TeXParser::getDimen() {
   return Units::getDimen(_latex.substr(start, end - start - 1));
 }
 
-void TeXParser::preprocess(wstring& cmd, Args& args, int& pos) {
-  if (cmd == L"newcommand" || cmd == L"renewcommand") {
+void TeXParser::preprocess(string& cmd, Args& args, int& pos) {
+  if (cmd == "newcommand" || cmd == "renewcommand") {
     preprocessNewCmd(cmd, args, pos);
-  } else if (cmd == L"newenvironment" || cmd == L"renewenvironment") {
+  } else if (cmd == "newenvironment" || cmd == "renewenvironment") {
     preprocessNewCmd(cmd, args, pos);
   } else if (NewCommandMacro::isMacro(cmd)) {
     inflateNewCmd(cmd, args, pos);
-  } else if (cmd == L"begin") {
+  } else if (cmd == "begin") {
     inflateEnv(cmd, args, pos);
-  } else if (cmd == L"makeatletter") {
+  } else if (cmd == "makeatletter") {
     _atIsLetter++;
-  } else if (cmd == L"makeatother") {
+  } else if (cmd == "makeatother") {
     _atIsLetter--;
   }
 }
 
-void TeXParser::preprocessNewCmd(wstring& cmd, Args& args, int& pos) {
+void TeXParser::preprocessNewCmd(string& cmd, Args& args, int& pos) {
   // The macro must exists
   auto mac = MacroInfo::get(cmd);
   getOptsArgs(mac->_argc, mac->_posOpts, args);
@@ -617,7 +613,7 @@ void TeXParser::preprocessNewCmd(wstring& cmd, Args& args, int& pos) {
   _pos = pos;
 }
 
-void TeXParser::inflateNewCmd(wstring& cmd, Args& args, int& pos) {
+void TeXParser::inflateNewCmd(string& cmd, Args& args, int& pos) {
   // The macro must exists
   auto mac = MacroInfo::get(cmd);
   getOptsArgs(mac->_argc, mac->_posOpts, args);
@@ -634,24 +630,24 @@ void TeXParser::inflateNewCmd(wstring& cmd, Args& args, int& pos) {
   _pos = pos;
 }
 
-void TeXParser::inflateEnv(wstring& cmd, Args& args, int& pos) {
+void TeXParser::inflateEnv(string& cmd, Args& args, int& pos) {
   getOptsArgs(1, 0, args);
-  wstring env = args[1] + L"@env";
+  string env = args[1] + "@env";
   auto mac = MacroInfo::get(env);
   if (mac == nullptr) {
     throw ex_parse(
       "Unknown environment: "
-      + wide2utf8(args[1])
+      + args[1]
       + " at position " + tostring(getLine())
       + ":" + tostring(getCol())
     );
   }
-  vector<wstring> optargs;
+  vector<string> optargs;
   getOptsArgs(mac->_argc - 1, 0, optargs);
-  wstring grp = getGroup(L"\\begin{" + args[1] + L"}", L"\\end{" + args[1] + L"}");
-  wstring expr = L"{\\makeatletter \\" + args[1] + L"@env";
-  for (int i = 1; i <= mac->_argc - 1; i++) expr += L"{" + optargs[i] + L"}";
-  expr += L"{" + grp + L"}\\makeatother}";
+  string grp = getGroup("\\begin{" + args[1] + "}", "\\end{" + args[1] + "}");
+  string expr = "{\\makeatletter \\" + args[1] + "@env";
+  for (int i = 1; i <= mac->_argc - 1; i++) expr += "{" + optargs[i] + "}";
+  expr += "{" + grp + "}\\makeatother}";
   _latex.replace(pos, _pos - pos, expr);
   _len = _latex.length();
   _pos = pos;
@@ -660,15 +656,15 @@ void TeXParser::inflateEnv(wstring& cmd, Args& args, int& pos) {
 void TeXParser::preprocess() {
   if (_len == 0) return;
 
-  wchar_t ch;
+  char ch;
   int spos;
-  vector<wstring> args;
+  vector<string> args;
   while (_pos < _len) {
     ch = _latex[_pos];
     switch (ch) {
       case ESCAPE: {
         spos = _pos;
-        wstring cmd = getCommand();
+        string cmd = getCommand();
         try {
           preprocess(cmd, args, spos);
         } catch (ex_parse& e) {
@@ -679,21 +675,15 @@ void TeXParser::preprocess() {
       }
       case PERCENT: {
         spos = _pos++;
-        wchar_t chr;
+        char chr;
         while (_pos < _len) {
           chr = _latex[_pos++];
           if (chr == '\r' || chr == '\n') break;
         }
         if (_pos < _len) _pos--;
-        _latex.replace(spos, _pos - spos, L"");
+        _latex.replace(spos, _pos - spos, "");
         _len = _latex.length();
         _pos = spos;
-        break;
-      }
-      case DEGRE: {
-        _latex.replace(_pos, 1, L"^{\\circ}");
-        _len = _latex.length();
-        _pos++;
         break;
       }
       default:
@@ -712,7 +702,7 @@ void TeXParser::parse() {
     return;
   }
 
-  wchar_t ch;
+  char ch;
   while (_pos < _len) {
     ch = _latex[_pos];
 
@@ -789,7 +779,7 @@ void TeXParser::parse() {
         if (_isMathMode) {
           _formula->add(getScripts(ch));
         } else {
-          _formula->add(getCharAtom(ch));
+          _formula->add(getCharAtom());
           _pos++;
         }
       }
@@ -808,19 +798,17 @@ void TeXParser::parse() {
       }
         break;
       case PRIME:
-      case PRIME_UTF:
-      case BACKPRIME:
-      case BACKPRIME_UTF: {
+      case BACKPRIME: {
         // special case for ` and '
         if (_isMathMode) {
           auto atom = sptrOf<CumulativeScriptsAtom>(
             popLastAtom(),
             nullptr,
-            getSimpleScripts(ch != BACKPRIME && ch != BACKPRIME_UTF)
+            getSimpleScripts(ch != BACKPRIME)
           );
           _formula->add(atom);
         } else {
-          _formula->add(getCharAtom(ch));
+          _formula->add(getCharAtom());
           _pos++;
         }
       }
@@ -834,13 +822,13 @@ void TeXParser::parse() {
           );
           _formula->add(atom);
         } else {
-          _formula->add(getCharAtom(ch));
+          _formula->add(getCharAtom());
           _pos++;
         }
       }
         break;
       default: {
-        _formula->add(getCharAtom(ch));
+        _formula->add(getCharAtom());
         _pos++;
       }
         break;
@@ -848,7 +836,12 @@ void TeXParser::parse() {
   }
 }
 
-sptr<Atom> TeXParser::getCharAtom(wchar_t chr) {
+sptr<Atom> TeXParser::getCharAtom() {
+  const c32 code = tex::nextUnicode(_latex, _pos);
+  return getCharAtom1(code);
+}
+
+sptr<Atom> TeXParser::getCharAtom1(c32 chr) {
   const c32 code = tex::convertToRomanNumber(chr);
   if (_isMathMode) {
     const auto it = Formula::_charToSymbol.find(code);
@@ -865,9 +858,7 @@ sptr<Atom> TeXParser::getSimpleScripts(bool isPrime) {
     ++_pos;
     if (_pos >= _len) break;
     const auto chr = _latex[_pos];
-    if ((isPrime && chr != PRIME && chr != PRIME_UTF)
-        || (!isPrime && chr != BACKPRIME && chr != BACKPRIME_UTF)
-      ) {
+    if ((isPrime && chr != PRIME) || (!isPrime && chr != BACKPRIME)) {
       break;
     }
     ++count;

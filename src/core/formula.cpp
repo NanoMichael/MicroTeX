@@ -6,13 +6,13 @@
 using namespace std;
 using namespace tex;
 
-map<wstring, sptr<Formula>> Formula::_predefFormulas;
+map<string, sptr<Formula>> Formula::_predefFormulas;
 
-Formula::Formula() : _parser(L"", this, false) {}
+Formula::Formula() : _parser("", this, false) {}
 
 Formula::Formula(
   const TeXParser& tp,
-  const wstring& latex,
+  const string& latex,
   bool preprocess,
   bool isMathMode
 ) : _parser(tp.isPartial(), latex, this, preprocess, isMathMode) {
@@ -27,11 +27,11 @@ Formula::Formula(
   }
 }
 
-Formula::Formula(const wstring& latex, bool preprocess) : _parser(latex, this, preprocess) {
+Formula::Formula(const string& latex, bool preprocess) : _parser(latex, this, preprocess) {
   _parser.parse();
 }
 
-void Formula::setLaTeX(const wstring& latex) {
+void Formula::setLaTeX(const string& latex) {
   _parser.reset(latex);
   if (!latex.empty()) _parser.parse();
 }
@@ -63,7 +63,7 @@ sptr<Box> Formula::createBox(Env& env) {
   return _root->createBox(env);
 }
 
-sptr<Formula> Formula::get(const wstring& name) {
+sptr<Formula> Formula::get(const string& name) {
   auto it = _predefFormulas.find(name);
   if (it != _predefFormulas.end()) return it->second;
 

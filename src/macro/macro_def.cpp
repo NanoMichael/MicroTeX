@@ -17,10 +17,10 @@ using namespace std;
 using namespace tex;
 
 #define mac3(argc, name, code) \
-  { L##code, defMac(argc, name) }
+  { code, defMac(argc, name) }
 
 #define mac4(argc, posOpts, name, code) \
-  { L##code, defMac(argc, posOpts, name) }
+  { code, defMac(argc, posOpts, name) }
 
 inline static PreDefMacro* defMac(int argc, int posOpts, MacroDelegate del) {
   return new PreDefMacro(argc, posOpts, del);
@@ -30,7 +30,7 @@ inline static PreDefMacro* defMac(int argc, MacroDelegate del) {
   return new PreDefMacro(argc, del);
 }
 
-map<wstring, MacroInfo*> MacroInfo::_commands{
+map<string, MacroInfo*> MacroInfo::_commands{
 #define mac mac4
     mac(2, 2, macro_newcommand, "newcommand"),
     mac(2, 2, macro_renewcommand, "renewcommand"),
@@ -341,85 +341,85 @@ map<wstring, MacroInfo*> MacroInfo::_commands{
 #endif  // GRAPHICS_DEBUG
 };
 
-map<wstring, wstring> NewCommandMacro::_codes;
-map<wstring, wstring> NewCommandMacro::_replacements;
+map<string, string> NewCommandMacro::_codes;
+map<string, string> NewCommandMacro::_replacements;
 Macro* NewCommandMacro::_instance = new NewCommandMacro();
 
 inline static void env(
   int argc,
-  const wstring& name,
-  const wstring& begDef,
-  const wstring& endDef
+  const string& name,
+  const string& begDef,
+  const string& endDef
 ) {
   NewEnvironmentMacro::addNewEnvironment(name, begDef, endDef, argc);
 }
 
 inline static void cmd(
   int argc,
-  const wstring& name,
-  const wstring& code
+  const string& name,
+  const string& code
 ) {
   NewCommandMacro::addNewCommand(name, code, argc);
 }
 
 void NewCommandMacro::_init_() {
   // region Predefined environments
-  env(1, L"array", L"\\array@@env{#1}{", L"}");
-  env(1, L"tabular", L"\\array@@env{#1}{", L"}");
-  env(0, L"matrix", L"\\matrix@@env{", L"}");
-  env(0, L"smallmatrix", L"\\smallmatrix@@env{", L"}");
-  env(0, L"pmatrix", L"\\left(\\begin{matrix}", L"\\end{matrix}\\right)");
-  env(0, L"bmatrix", L"\\left[\\begin{matrix}", L"\\end{matrix}\\right]");
-  env(0, L"Bmatrix", L"\\left\\{\\begin{matrix}", L"\\end{matrix}\\right\\}");
-  env(0, L"vmatrix", L"\\left|\\begin{matrix}", L"\\end{matrix}\\right|");
-  env(0, L"Vmatrix", L"\\left\\|\\begin{matrix}", L"\\end{matrix}\\right\\|");
-  env(0, L"eqnarray", L"\\begin{array}{rcl}", L"\\end{array}");
-  env(0, L"align", L"\\align@@env{", L"}");
-  env(0, L"flalign", L"\\flalign@@env{", L"}");
-  env(1, L"alignat", L"\\alignat@@env{#1}{", L"}");
-  env(0, L"aligned", L"\\aligned@@env{", L"}");
-  env(1, L"alignedat", L"\\alignedat@@env{#1}{", L"}");
-  env(0, L"multline", L"\\multline@@env{", L"}");
-  env(0, L"cases", L"\\left\\{\\begin{array}{@{}ll@{\\,}}", L"\\end{array}\\right.");
-  env(0, L"split", L"\\begin{array}{r@{\\;}l}", L"\\end{array}");
-  env(0, L"gather", L"\\gather@@env{", L"}");
-  env(0, L"gathered", L"\\gathered@@env{", L"}");
-  env(0, L"math", L"\\(", L"\\)");
-  env(0, L"displaymath", L"\\[", L"\\]");
-  env(0, L"equation", L"\\begin{align}", L"\\end{align}");
+  env(1, "array", "\\array@@env{#1}{", "}");
+  env(1, "tabular", "\\array@@env{#1}{", "}");
+  env(0, "matrix", "\\matrix@@env{", "}");
+  env(0, "smallmatrix", "\\smallmatrix@@env{", "}");
+  env(0, "pmatrix", "\\left(\\begin{matrix}", "\\end{matrix}\\right)");
+  env(0, "bmatrix", "\\left[\\begin{matrix}", "\\end{matrix}\\right]");
+  env(0, "Bmatrix", "\\left\\{\\begin{matrix}", "\\end{matrix}\\right\\}");
+  env(0, "vmatrix", "\\left|\\begin{matrix}", "\\end{matrix}\\right|");
+  env(0, "Vmatrix", "\\left\\|\\begin{matrix}", "\\end{matrix}\\right\\|");
+  env(0, "eqnarray", "\\begin{array}{rcl}", "\\end{array}");
+  env(0, "align", "\\align@@env{", "}");
+  env(0, "flalign", "\\flalign@@env{", "}");
+  env(1, "alignat", "\\alignat@@env{#1}{", "}");
+  env(0, "aligned", "\\aligned@@env{", "}");
+  env(1, "alignedat", "\\alignedat@@env{#1}{", "}");
+  env(0, "multline", "\\multline@@env{", "}");
+  env(0, "cases", "\\left\\{\\begin{array}{@{}ll@{\\,}}", "\\end{array}\\right.");
+  env(0, "split", "\\begin{array}{r@{\\;}l}", "\\end{array}");
+  env(0, "gather", "\\gather@@env{", "}");
+  env(0, "gathered", "\\gathered@@env{", "}");
+  env(0, "math", "\\(", "\\)");
+  env(0, "displaymath", "\\[", "\\]");
+  env(0, "equation", "\\begin{align}", "\\end{align}");
   // endregion
   // region Predefined commands
-  cmd(1, L"operatorname", L"\\mathop{\\mathrm{#1}}\\nolimits ");
-  cmd(2, L"DeclareMathOperator", L"\\newcommand{#1}{\\mathop{\\mathrm{#2}}\\nolimits}");
-  cmd(1, L"substack", L"{\\scriptstyle\\begin{array}{c}#1\\end{array}}");
-  cmd(2, L"dfrac", L"\\genfrac{}{}{}{}{#1}{#2}");
-  cmd(2, L"tfrac", L"\\genfrac{}{}{}{1}{#1}{#2}");
-  cmd(2, L"dbinom", L"\\genfrac{(}{)}{0pt}{}{#1}{#2}");
-  cmd(2, L"tbinom", L"\\genfrac{(}{)}{0pt}{1}{#1}{#2}");
-  cmd(1, L"pmod", L"\\qquad\\mathbin{(\\mathrm{mod}\\ #1)}");
-  cmd(1, L"mod", L"\\qquad\\mathbin{\\mathrm{mod}\\ #1}");
-  cmd(1, L"pod", L"\\qquad\\mathbin{(#1)}");
-  cmd(0, L"spbreve", L"^{\\makeatletter\\sp@breve\\makeatother}");
-  cmd(0, L"spcheck", L"^{\\vee}");
-  cmd(0, L"spdot", L"^{\\displaystyle.}");
-  cmd(1, L"d", L"\\underaccent{\\dot}{#1}");
-  cmd(1, L"b", L"\\underaccent{\\bar}{#1}");
-  cmd(1, L"Bra", L"\\left\\langle{#1}\\right\\vert");
-  cmd(1, L"Ket", L"\\left\\vert{#1}\\right\\rangle");
-  cmd(1, L"textsuperscript", L"{}^{\\text{#1}}");
-  cmd(1, L"textsubscript", L"{}_{\\text{#1}}");
-  cmd(1, L"overbrack", L"\\overbracket{#1}");
-  cmd(1, L"underbrack", L"\\underbracket{#1}");
-  cmd(0, L"degree", L"^\\circ");
-  cmd(0, L"with", L"\\mathbin{\\&}");
-  cmd(0, L"parr", L"\\mathbin{\\rotatebox[origin=c]{180}{\\&}}");
-  cmd(0, L"copyright", L"\\textcircled{\\raisebox{0.2ex}{c}}");
-  cmd(0, L"L", L"\\mathrm{\\polishlcross L}");
-  cmd(0, L"l", L"\\mathrm{\\polishlcross l}");
+  cmd(1, "operatorname", "\\mathop{\\mathrm{#1}}\\nolimits ");
+  cmd(2, "DeclareMathOperator", "\\newcommand{#1}{\\mathop{\\mathrm{#2}}\\nolimits}");
+  cmd(1, "substack", "{\\scriptstyle\\begin{array}{c}#1\\end{array}}");
+  cmd(2, "dfrac", "\\genfrac{}{}{}{}{#1}{#2}");
+  cmd(2, "tfrac", "\\genfrac{}{}{}{1}{#1}{#2}");
+  cmd(2, "dbinom", "\\genfrac{(}{)}{0pt}{}{#1}{#2}");
+  cmd(2, "tbinom", "\\genfrac{(}{)}{0pt}{1}{#1}{#2}");
+  cmd(1, "pmod", "\\qquad\\mathbin{(\\mathrm{mod}\\ #1)}");
+  cmd(1, "mod", "\\qquad\\mathbin{\\mathrm{mod}\\ #1}");
+  cmd(1, "pod", "\\qquad\\mathbin{(#1)}");
+  cmd(0, "spbreve", "^{\\makeatletter\\sp@breve\\makeatother}");
+  cmd(0, "spcheck", "^{\\vee}");
+  cmd(0, "spdot", "^{\\displaystyle.}");
+  cmd(1, "d", "\\underaccent{\\dot}{#1}");
+  cmd(1, "b", "\\underaccent{\\bar}{#1}");
+  cmd(1, "Bra", "\\left\\langle{#1}\\right\\vert");
+  cmd(1, "Ket", "\\left\\vert{#1}\\right\\rangle");
+  cmd(1, "textsuperscript", "{}^{\\text{#1}}");
+  cmd(1, "textsubscript", "{}_{\\text{#1}}");
+  cmd(1, "overbrack", "\\overbracket{#1}");
+  cmd(1, "underbrack", "\\underbracket{#1}");
+  cmd(0, "degree", "^\\circ");
+  cmd(0, "with", "\\mathbin{\\&}");
+  cmd(0, "parr", "\\mathbin{\\rotatebox[origin=c]{180}{\\&}}");
+  cmd(0, "copyright", "\\textcircled{\\raisebox{0.2ex}{c}}");
+  cmd(0, "", "\\mathrm{\\polishlcross L}");
+  cmd(0, "l", "\\mathrm{\\polishlcross l}");
   cmd(
     2,
-    L"sfrac",
-    L"\\scalebox{.8}{"
+    "sfrac",
+    "\\scalebox{.8}{"
     "\\raisebox{.5ex}{"
     "\\raisebox{.45ex}{\\numstyle{#1}}"
     "\\kern-.4ex\\nokern\\mathslash\\nokern\\kern-.4ex"

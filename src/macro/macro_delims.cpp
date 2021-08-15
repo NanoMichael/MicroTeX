@@ -7,7 +7,7 @@ namespace tex {
 using namespace std;
 
 macro(xarrow) {
-  const auto& name = wide2utf8(args[0].substr(1));
+  const auto& name = args[0].substr(1);
   const auto& over = StackArgs::autoSpace(
     Formula(tp, args[1], false, tp.isMathMode())._root,
     false
@@ -30,7 +30,7 @@ macro(xarrow) {
 }
 
 macro(left) {
-  const wstring& grep = tp.getGroup(L"\\left", L"\\right");
+  const string& grep = tp.getGroup("\\left", "\\right");
 
   auto left = Formula(tp, args[1], false)._root;
   auto* big = dynamic_cast<BigSymbolAtom*>(left.get());

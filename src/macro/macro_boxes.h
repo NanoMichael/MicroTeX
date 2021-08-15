@@ -28,8 +28,8 @@ inline macro(scalebox) {
 }
 
 inline macro(resizebox) {
-  const std::string ws = wide2utf8(args[1]);
-  const std::string hs = wide2utf8(args[2]);
+  const std::string& ws = args[1];
+  const std::string& hs = args[2];
   return sptrOf<ResizeAtom>(Formula(tp, args[3])._root, ws, hs, ws == "!" || hs == "!");
 }
 

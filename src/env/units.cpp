@@ -127,8 +127,3 @@ Dimen Units::getDimen(const std::string& lgth) {
 
   return {f, unit};
 }
-
-Dimen Units::getDimen(const std::wstring& lgth) {
-  const string str = wide2utf8(lgth);
-  return getDimen(str);
-}

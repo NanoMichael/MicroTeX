@@ -36,10 +36,10 @@ macro(rule) {
 }
 
 macro(newcommand) {
-  wstring newcmd(args[1]);
+  string newcmd(args[1]);
   int argc = 0;
   if (!tp.isValidName(newcmd))
-    throw ex_parse("Invalid name for the command '" + wide2utf8(newcmd));
+    throw ex_parse("Invalid name for the command '" + newcmd);
 
   if (!args[3].empty()) valueof(args[3], argc);
 
@@ -53,10 +53,10 @@ macro(newcommand) {
 }
 
 macro(renewcommand) {
-  wstring newcmd(args[1]);
+  string newcmd(args[1]);
   int argc = 0;
   if (!tp.isValidName(newcmd))
-    throw ex_parse("Invalid name for the command: " + wide2utf8(newcmd));
+    throw ex_parse("Invalid name for the command: " + newcmd);
 
   if (!args[3].empty()) valueof(args[3], argc);
 
@@ -78,12 +78,11 @@ macro(raisebox) {
 
 macro(romannumeral) {
   int numbers[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
-  string letters[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+  string letters[] = {"M", "CM", "D", "CD", "C", "XC", "", "XL", "X", "IX", "V", "IV", "I"};
   string roman;
 
   int num;
-  string x = wide2utf8(args[1]);
-  valueof(trim(x), num);
+  valueof(trim(args[1]), num);
   for (int i = 0; i < 13; i++) {
     while (num >= numbers[i]) {
       roman += letters[i];
@@ -95,13 +94,12 @@ macro(romannumeral) {
     tolower(roman);
   }
 
-  const wstring str = utf82wide(roman);
-  return Formula(str, false)._root;
+  return Formula(roman, false)._root;
 }
 
 macro(setmathfont) {
   auto mathStyle = MathStyle::TeX;
-  const auto& options = parseOption(wide2utf8(args[2]));
+  const auto& options = parseOption(args[2]);
   const auto it = options.find("math-style");
   if (it != options.end()) {
     const auto& value = it->second;
@@ -115,12 +113,12 @@ macro(setmathfont) {
       mathStyle = MathStyle::upright;
     }
   }
-  return sptrOf<MathFontAtom>(mathStyle, wide2utf8(args[1]));
+  return sptrOf<MathFontAtom>(mathStyle, args[1]);
 }
 
 macro(debug) {
   auto& config = DebugConfig::INSTANCE;
-  const auto& options = parseOption(wide2utf8(args[1]));
+  const auto& options = parseOption(args[1]);
   config.enable = true;
   const auto& showOnlyChar = options.find("showonlychar");
   if (showOnlyChar != options.end()) {
@@ -145,20 +143,20 @@ macro(undebug) {
 
 macro(zstack) {
   auto halign = Alignment::left;
-  if (args[1] == L"c") {
+  if (args[1] == "c") {
     halign = Alignment::center;
-  } else if (args[1] == L"r") {
+  } else if (args[1] == "r") {
     halign = Alignment::right;
   }
   const auto& h = Units::getDimen(args[2]);
   const ZStackArgs hargs{halign, h};
 
   auto valign = Alignment::top;
-  if (args[3] == L"c") {
+  if (args[3] == "c") {
     valign = Alignment::center;
-  } else if (args[3] == L"b") {
+  } else if (args[3] == "b") {
     valign = Alignment::bottom;
-  } else if (args[3] == L"B") {
+  } else if (args[3] == "B") {
     valign = Alignment::none;
   }
   const auto& v = Units::getDimen(args[4]);

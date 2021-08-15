@@ -78,7 +78,7 @@ public:
     }
   }
 
-  void setLaTeX(const wstring& latex) {
+  void setLaTeX(const string& latex) {
     delete _render;
     _render = LaTeX::parse(
       latex,
@@ -217,9 +217,8 @@ public:
 
 protected:
   void on_next_clicked() {
-    auto sample = _samples.next();
-    string x = wide2utf8(sample);
-    _tex_editor.get_buffer()->set_text(x);
+    const auto& sample = _samples.next();
+    _tex_editor.get_buffer()->set_text(sample);
     _tex.setLaTeX(sample);
     _save.set_sensitive(_tex.isRenderDisplayed());
   }
@@ -242,7 +241,7 @@ protected:
   }
 
   void on_rendering_clicked() {
-    wstring x = utf82wide(_tex_editor.get_buffer()->get_text());
+    string x = _tex_editor.get_buffer()->get_text();
     _tex.setLaTeX(x);
     _save.set_sensitive(_tex.isRenderDisplayed());
   }
@@ -276,7 +275,7 @@ public:
   float _padding = 10.f;
   float _maxWidth = 720.f;
 
-  void generateSingle(const wstring& code, const string& file) const {
+  void generateSingle(const string& code, const string& file) const {
     auto r = LaTeX::parse(code, _maxWidth, _textSize, _textSize / 3.f, _foreground);
     const float w = r->getWidth() + _padding * 2;
     const float h = r->getHeight() + _padding * 2;
@@ -309,7 +308,7 @@ public:
       __print(ANSI_COLOR_RED "Error: the option '-output' must be specified\n" ANSI_RESET);
       return 1;
     }
-    wstring code = utf82wide(_input);
+    const string& code = _input;
     generateSingle(code, _outputFile);
     return 0;
   }
@@ -420,7 +419,8 @@ int runHelp() {
 
 void test() {
   std::string x = "😭️";
-  c32 n = tex::nextUnicode(x, 0);
+  int i = 0;
+  c32 n = tex::nextUnicode(x, i);
 }
 
 int main(int argc, char* argv[]) {
