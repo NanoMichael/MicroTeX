@@ -1,7 +1,7 @@
 #include "box_single.h"
 #include "env/env.h"
 #include "core/debug_config.h"
-#include <codecvt>
+#include "utils/utf.h"
 
 using namespace std;
 using namespace tex;
@@ -24,9 +24,9 @@ int CharBox::lastFontId() {
 }
 
 std::string CharBox::toString() const {
-  // TODO
-  std::wstring_convert<std::codecvt_utf8<c32>, c32> cvt;
-  return sstr(cvt.to_bytes(_chr.mappedCode), " scale: ", _chr.scale);
+  std::string str;
+  appendToUtf8(str, _chr.mappedCode);
+  return sstr(str, " scale: ", _chr.scale);
 }
 
 TextBox::TextBox(const std::string& str, FontStyle style, float size) {

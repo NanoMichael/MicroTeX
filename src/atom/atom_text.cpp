@@ -6,8 +6,6 @@
 using namespace std;
 using namespace tex;
 
-TextAtom::TextAtom(bool isMathMode) : _mathMode(isMathMode) {}
-
 void TextAtom::append(c32 code) {
   appendToUtf8(_txt, code);
 }
@@ -18,5 +16,5 @@ sptr<Box> TextAtom::createBox(Env& env) {
     ? env.mathFontStyle()
     : env.textFontStyle()
   );
-  return sptrOf<TextBox>(_txt, style, env.fixedTextSize());
+  return sptrOf<TextBox>(_txt, style, env.fixedTextSize() * env.scale());
 }

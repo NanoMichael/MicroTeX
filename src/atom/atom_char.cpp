@@ -2,7 +2,7 @@
 #include "core/split.h"
 #include "env/env.h"
 #include "box/box_single.h"
-#include <codecvt>
+#include "utils/utf.h"
 
 using namespace tex;
 using namespace std;
@@ -76,9 +76,9 @@ Char CharAtom::getChar(Env& env) const {
 }
 
 std::string CharAtom::name() const {
-  // TODO
-  std::wstring_convert<std::codecvt_utf8<c32>, c32> cvt;
-  return cvt.to_bytes(_unicode);
+  std::string str;
+  tex::appendToUtf8(str, _unicode);
+  return str;
 }
 
 sptr<Box> CharAtom::createBox(Env& env) {

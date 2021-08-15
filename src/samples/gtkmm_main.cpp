@@ -418,7 +418,7 @@ int runHelp() {
 }
 
 void test() {
-  std::string x = "😭️";
+  std::string x = "😭️a";
   int i = 0;
   c32 n = tex::nextUnicode(x, i);
 }

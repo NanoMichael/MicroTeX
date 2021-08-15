@@ -11,7 +11,10 @@ private:
   bool _mathMode;
 
 public:
-  explicit TextAtom(bool isMathMode);
+  TextAtom(bool isMathMode) : _mathMode(isMathMode) {}
+
+  TextAtom(std::string str, bool isMathMode)
+    : _txt(std::move(str)), _mathMode(isMathMode) {}
 
   void append(c32 code);
 

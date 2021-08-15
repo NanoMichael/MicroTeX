@@ -304,7 +304,7 @@ public:
    * @param chr the character to be converted
    * @return the corresponding atom
    */
-  sptr<Atom> getCharAtom1(c32 chr);
+  sptr<Atom> getCharAtom(c32 chr);
 
   /** Get the simple scripts from given character */
   sptr<Atom> getSimpleScripts(bool isPrime);

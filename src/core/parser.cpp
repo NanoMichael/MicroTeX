@@ -837,11 +837,19 @@ void TeXParser::parse() {
 }
 
 sptr<Atom> TeXParser::getCharAtom() {
-  const c32 code = tex::nextUnicode(_latex, _pos);
-  return getCharAtom1(code);
+  int i = _pos;
+  const c32 a = tex::nextUnicode(_latex, i);
+  int j = i + 1;
+  const c32 b = tex::nextUnicode(_latex, j);
+  if (tex::isVariationSelector(b)) {
+    auto atom = sptrOf<TextAtom>(_latex.substr(_pos, j - _pos + 1), _isMathMode);
+    _pos = j;
+    return atom;
+  }
+  return getCharAtom(a);
 }
 
-sptr<Atom> TeXParser::getCharAtom1(c32 chr) {
+sptr<Atom> TeXParser::getCharAtom(c32 chr) {
   const c32 code = tex::convertToRomanNumber(chr);
   if (_isMathMode) {
     const auto it = Formula::_charToSymbol.find(code);

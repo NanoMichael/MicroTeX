@@ -3,6 +3,22 @@
 using namespace std;
 using namespace tex;
 
+bool tex::isVariationSelector(c32 code) {
+  // variation selectors (Unicode block)
+  if (code >= 0xFE00 && code <= 0xFE0F) {
+    return true;
+  }
+  // variation selectors supplement
+  if (code >= 0xE0100 && code <= 0xE01EF) {
+    return true;
+  }
+  // Mongolian variation selectors
+  if (code >= 0x180B && code <= 0x180D) {
+    return true;
+  }
+  return false;
+}
+
 void tex::appendToUtf8(std::string& out, c32 code) {
   if (code <= 0x7f) {
     out.append(1, static_cast<char>(code));

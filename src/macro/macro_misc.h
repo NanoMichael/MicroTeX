@@ -202,7 +202,7 @@ inline macro(char) {
   }
   int n = 0;
   str2int(x, n, radix);
-  return tp.getCharAtom1(n);
+  return tp.getCharAtom(n);
 }
 
 inline macro(T) {
