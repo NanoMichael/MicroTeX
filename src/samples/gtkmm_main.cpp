@@ -418,12 +418,19 @@ int runHelp() {
   return 0;
 }
 
+void test() {
+  std::string x = "😭️";
+  c32 n = tex::nextUnicode(x, 0);
+}
+
 int main(int argc, char* argv[]) {
   vector<string> opts;
   opts.reserve(argc);
   for (int i = 0; i < argc; i++) opts.emplace_back(argv[i]);
 
   if (indexOf(opts, string("-h")) >= 0) return runHelp();
+
+  test();
 
   Pango::init();
   // TODO dialog to choose font file
