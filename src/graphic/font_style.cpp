@@ -20,17 +20,17 @@ FontStyle tex::findClosestStyle(const FontStyle src) {
 }
 
 bool tex::isBold(FontStyle style) {
-  return (static_cast<u16>(style) & static_cast<u16>(FontStyle::bf)) == 1;
+  return (static_cast<u16>(style) & static_cast<u16>(FontStyle::bf)) != 0;
 }
 
 bool tex::isItalic(FontStyle style) {
-  return (static_cast<u16>(style) & static_cast<u16>(FontStyle::it)) == 1;
+  return (static_cast<u16>(style) & static_cast<u16>(FontStyle::it)) != 0;
 }
 
 bool tex::isSansSerif(FontStyle style) {
-  return (static_cast<u16>(style) & static_cast<u16>(FontStyle::sf)) == 1;
+  return (static_cast<u16>(style) & static_cast<u16>(FontStyle::sf)) != 0;
 }
 
 bool tex::isMono(FontStyle style) {
-  return (static_cast<u16>(style) & static_cast<u16>(FontStyle::tt)) == 1;
+  return (static_cast<u16>(style) & static_cast<u16>(FontStyle::tt)) != 0;
 }

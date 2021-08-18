@@ -83,7 +83,14 @@ std::string CharAtom::name() const {
 
 sptr<Box> CharAtom::createBox(Env& env) {
   const auto& chr = getChar(env);
-  return sptrOf<CharBox>(chr);
+  if (chr.isValid()) return sptrOf<CharBox>(chr);
+  FontStyle fontStyle;
+  if (_fontStyle != FontStyle::invalid) {
+    fontStyle = _fontStyle;
+  } else {
+    fontStyle = _mathMode ? env.mathFontStyle() : env.textFontStyle();
+  }
+  return sptrOf<TextBox>(name(), fontStyle, env.fixedTextSize() * env.scale());
 }
 
 sptr<Box> BreakMarkAtom::createBox(Env& env) {

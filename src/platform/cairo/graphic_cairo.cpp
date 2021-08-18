@@ -82,17 +82,16 @@ TextLayout_cairo::TextLayout_cairo(const string& src, FontStyle style, float siz
   _layout = Pango::Layout::create(_img_context);
 
   Pango::FontDescription fd;
-  // TODO
   fd.set_absolute_size(size * Pango::SCALE);
   fd.set_style(Pango::STYLE_NORMAL);
   fd.set_weight(Pango::WEIGHT_NORMAL);
-  fd.set_family("serif");
+  fd.set_family("Serif");
 
   if (tex::isSansSerif(style)) {
-    fd.set_family("sans-serif");
+    fd.set_family("Sans-Serif");
   }
   if (tex::isMono(style)) {
-    fd.set_family("monospace");
+    fd.set_family("Monospace");
   }
   if (tex::isBold(style)) {
     fd.set_weight(Pango::WEIGHT_BOLD);
@@ -111,9 +110,10 @@ void TextLayout_cairo::getBounds(Rect& r) {
   int w, h;
   _layout->get_pixel_size(w, h);
   r.x = 0;
-  r.y = -_ascent;
   r.w = (float) w;
-  r.h = (float) h;
+  const auto& rect = _layout->get_pixel_ink_extents();
+  r.y = -_ascent + rect.get_y();
+  r.h = rect.get_height();
 }
 
 void TextLayout_cairo::draw(Graphics2D& g2, float x, float y) {

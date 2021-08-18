@@ -4,6 +4,7 @@ using namespace std;
 using namespace tex;
 
 bool tex::isVariationSelector(c32 code) {
+  if (code <= 0x7ff) return false;
   // variation selectors (Unicode block)
   if (code >= 0xFE00 && code <= 0xFE0F) {
     return true;
@@ -17,6 +18,18 @@ bool tex::isVariationSelector(c32 code) {
     return true;
   }
   return false;
+}
+
+bool tex::isZWJ(c32 code) {
+  return code == 0x200D;
+}
+
+bool tex::isZWNJ(c32 code) {
+  return code == 0x200C;
+}
+
+bool tex::isJoiner(c32 code) {
+  return isZWJ(code) || isZWNJ(code);
 }
 
 void tex::appendToUtf8(std::string& out, c32 code) {
@@ -37,39 +50,43 @@ void tex::appendToUtf8(std::string& out, c32 code) {
   }
 }
 
-c32 tex::nextUnicode(const std::string& src, int& i) {
+c32 tex::nextUnicode(const std::string& src, int i, int& cnt) {
   const auto l = src.length();
-  if (i >= l) return 0;
+  if (i >= l) {
+    cnt = 0;
+    return 0;
+  }
   const char* in = src.c_str() + i;
   auto ch = static_cast<unsigned char>(*in);
   // 1 byte
+  cnt = 1;
   if (ch <= 0b01111111) {
     return static_cast<c32>(ch);
   }
   // multi-bytes
-  size_t n = 0;
   c32 code = 0;
   if (ch <= 0b11011111) {
     code = (ch & 0b00011111) << 6;
-    n = 2;
+    cnt = 2;
   } else if (ch <= 0b11101111) {
     code = (ch & 0b00001111) << 12;
-    n = 3;
+    cnt = 3;
   } else if (ch <= 0b11110111) {
     code = (ch & 0b00000111) << 18;
-    n = 4;
+    cnt = 4;
   } else if (ch <= 0b11111011) {
     code = (ch & 0b00000011) << 24;
-    n = 5;
+    cnt = 5;
   } else if (ch <= 0b11111101) {
     code = (ch & 0b00000001) << 30;
+    cnt = 6;
   }
-  for (size_t j = 1; j < n; j++) {
+  // otherwise, the utf-8 string is malformed
+  for (int j = 1; j < cnt; j++) {
     // malformed utf-8 string, we ignore it
     if (i + j >= l) break;
     auto c = static_cast<unsigned char>(*(in + j));
-    code |= (c & 0b00111111) << (6 * (n - j - 1));
+    code |= (c & 0b00111111) << (6 * (cnt - j - 1));
   }
-  i += n - 1;
   return code;
 }

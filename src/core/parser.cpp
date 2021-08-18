@@ -837,15 +837,28 @@ void TeXParser::parse() {
 }
 
 sptr<Atom> TeXParser::getCharAtom() {
-  int i = _pos;
-  const c32 a = tex::nextUnicode(_latex, i);
-  int j = i + 1;
-  const c32 b = tex::nextUnicode(_latex, j);
+  int n = 0;
+  const c32 a = tex::nextUnicode(_latex, _pos, n);
+  int m = 0;
+  c32 b = tex::nextUnicode(_latex, _pos + n, m);
   if (tex::isVariationSelector(b)) {
-    auto atom = sptrOf<TextAtom>(_latex.substr(_pos, j - _pos + 1), _isMathMode);
-    _pos = j;
+    auto atom = sptrOf<TextAtom>(_latex.substr(_pos, n + m), _isMathMode);
+    _pos += n + m - 1;
     return atom;
   }
+  if (tex::isJoiner(b)) {
+    int q = 0;
+    while (true) {
+      tex::nextUnicode(_latex, _pos + n + m, q);
+      n += m + q;
+      b = tex::nextUnicode(_latex, _pos + n, m);
+      if (!tex::isJoiner(b)) break;
+    }
+    auto atom = sptrOf<TextAtom>(_latex.substr(_pos, n), _isMathMode);
+    _pos += n - 1;
+    return atom;
+  }
+  _pos += n - 1;
   return getCharAtom(a);
 }
 

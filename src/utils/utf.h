@@ -11,10 +11,10 @@ void appendToUtf8(std::string& out, c32 code);
 
 /**
  * Get the next Unicode code-point from the given utf-8 string,
- * the start index of the following code-points in the byte sequence
- * was given by #i after the code-point was decoded.
+ * the bytes count consumed in the byte sequence  was given by
+ * #cnt after the code-point was decoded.
  */
-c32 nextUnicode(const std::string& src, int& i);
+c32 nextUnicode(const std::string& src, int i, int& cnt);
 
 /**
  * Test if a given Unicode code-point is a variation-selector.
@@ -32,10 +32,13 @@ bool isZWJ(c32 code);
 
 /**
  * Test if a given Unicode code-point is a zero-width non-joiner.
- * @param code
- * @return
+ * See [https://en.wikipedia.org/wiki/Zero-width_non-joiner]
+ * for details
  */
 bool isZWNJ(c32 code);
+
+/** Test if a given Unicode code-point is a joiner. */
+bool isJoiner(c32 code);
 
 }  // namespace tex
 
