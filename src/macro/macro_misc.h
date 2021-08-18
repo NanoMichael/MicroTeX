@@ -181,11 +181,6 @@ inline macro(phantom) {
     new PhantomAtom(Formula(tp, args[1], false)._root, true, true, true));
 }
 
-inline macro(ctext) {
-  // TODO text
-  return sptrOf<EmptyAtom>();
-}
-
 inline macro(char) {
   // TODO
   std::string x = args[1];
@@ -203,10 +198,6 @@ inline macro(char) {
   int n = 0;
   str2int(x, n, radix);
   return tp.getCharAtom(n);
-}
-
-inline macro(T) {
-  return sptrOf<RotateAtom>(Formula(tp, args[1])._root, 180.f, "origin=cc");
 }
 
 inline macro(textcircled) {
@@ -300,14 +291,6 @@ macro(undebug);
 /**************************************** not implemented *****************************************/
 
 inline macro(includegraphics) {
-  return nullptr;
-}
-
-inline macro(fcscore) {
-  return nullptr;
-}
-
-inline macro(dynamic) {
   return nullptr;
 }
 

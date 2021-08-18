@@ -62,7 +62,6 @@ map<string, MacroInfo*> MacroInfo::_commands{
     mac(2, 1, macro_rotatebox, "rotatebox"),
     mac(2, 2, macro_scalebox, "scalebox"),
     mac(2, 2, macro_raisebox, "raisebox"),
-    mac(1, 1, macro_dynamic, "dynamic"),
     mac(1, 1, macro_setmathfont, "setmathfont"),
 #undef mac
 #define mac mac3
@@ -309,13 +308,11 @@ map<string, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_rmoustache, "rmoustache"),
     mac(0, macro_breakmark, "-"),
     mac(1, macro_st, "st"),
-    mac(1, macro_fcscore, "fcscore"),
     mac(2, macro_longdiv, "longdiv"),
     mac(1, macro_cancel, "cancel"),
     mac(1, macro_bcancel, "bcancel"),
     mac(1, macro_xcancel, "xcancel"),
     mac(6, macro_zstack, "stackinset"),
-    mac(1, macro_T, "T"),
     mac(0, macro_nbsp, "nbsp"),
     mac(1, macro_sqrt, "sqrtsign"),
     mac(0, macro_joinrel, "joinrel"),
