@@ -712,8 +712,6 @@ void TeXParser::parse() {
         _col = _pos;
       case '\t':
       case '\r':
-        _pos++;
-        break;
       case ' ': {
         _pos++;
         if (!_isMathMode) {  // we are in text mode
