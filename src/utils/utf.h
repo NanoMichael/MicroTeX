@@ -10,9 +10,9 @@ namespace tex {
 void appendToUtf8(std::string& out, c32 code);
 
 /**
- * Get the next Unicode code-point from the given utf-8 string,
- * the bytes count consumed in the byte sequence  was given by
- * #cnt after the code-point was decoded.
+ * Get the next Unicode code-point from the given utf-8 string
+ * start from #i, the bytes count consumed in the byte sequence
+ * was given by #cnt after the code-point was decoded.
  */
 c32 nextUnicode(const std::string& src, int i, int& cnt);
 

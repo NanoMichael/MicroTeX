@@ -13,6 +13,10 @@
 
 namespace tex {
 
+/**
+ * Parse options from given string. The options are given in the form of
+ * [key=value,key=value...].
+ */
 std::map<std::string, std::string> parseOption(const std::string& options);
 
 /** Convert a value to string */

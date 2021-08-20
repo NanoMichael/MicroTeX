@@ -35,14 +35,14 @@ void Font_cairo::loadFont(const string& file) {
   FcPattern* p = FcFreeTypeQuery(f, 0, blanks, &count);
   FcPatternGetString(p, FC_FAMILY, 0, &family);
 #ifdef HAVE_LOG
-  __dbg("Load font: %s, count: %d\n", file.c_str(), count);
+  dbg("Load font: %s, count: %d\n", file.c_str(), count);
   FcPatternPrint(p);
 #endif
 
   // load font to fontconfig
   FcBool status = FcConfigAppFontAddFile(nullptr, f);
 #ifdef HAVE_LOG
-  if (!status) __dbg(ANSI_COLOR_RED "Load %s failed\n" ANSI_RESET, file.c_str());
+  if (!status) dbg(ANSI_COLOR_RED "Load %s failed\n" ANSI_RESET, file.c_str());
 #endif
 
   _fface = Cairo::FtFontFace::create(p);

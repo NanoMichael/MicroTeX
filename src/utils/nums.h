@@ -7,17 +7,17 @@
 namespace tex {
 
 /** Positive infinity */
-static const float POS_INF = std::numeric_limits<float>::infinity();
+static constexpr float POS_INF = std::numeric_limits<float>::infinity();
 /** Negative infinity */
-static const float NEG_INF = -POS_INF;
+static constexpr float NEG_INF = -POS_INF;
 /** Max float value */
-static const float F_MAX = std::numeric_limits<float>::max();
+static constexpr float F_MAX = std::numeric_limits<float>::max();
 /** Min float value */
-static const float F_MIN = -F_MAX;
+static constexpr float F_MIN = -F_MAX;
 /** Pi */
-static const double PI = atan(1.0) * 4;
+static constexpr double PI = 3.1415926535;
 /** Precision, for compare with 0.0f, if a value < PREC, we trade it as 0.0f */
-static const float PREC = 0.01;
+static constexpr float PREC = 0.01;
 
 }  // namespace tex
 

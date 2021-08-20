@@ -144,13 +144,13 @@ map<string, string> Formula::_predefFormulaStrs{
   {"lVert",            "\\Vert"},
   {"lvert",            "\\vert"},
   {"rvert",            "\\vert"},
-  {"Android",          "\\Huge{\\android}\\normalsize"},
-  {"AndroidTeX",       "\\Android\\large{\\dT\\dE\\dX}\\normalsize"},
-  {"TeX",              "\\large{\\dT\\dE\\dX}\\normalsize"},
+  {"Android",          "\\large{🤖️}"},
+  {"AndroidTeX",       "\\Android\\TeX"},
+  {"TeX",              "\\text{T\\kern-.15em\\raisebox{-.4ex}{E}\\kern-.15em X}"},
   {"LaTeX",            "\\text{L\\kern-0.25em"
-                        "\\raisebox{.45ex}{\\scalebox{0.7}{A}}"
-                        "\\kern-.15em T\\kern-.15em"
-                        "\\raisebox{-.4ex}{E}\\kern-.15em X}"},
+                       "\\raisebox{.45ex}{\\scalebox{0.7}{A}}"
+                       "\\kern-.15em T\\kern-.15em"
+                       "\\raisebox{-.4ex}{E}\\kern-.15em X}"},
   {"IJ",               "{I\\kern-0.065em J}"},
   {"ij",               "{i\\kern-0.065em j}"},
   {"idotsint",         "\\int\\cdots\\int"},

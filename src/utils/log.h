@@ -12,7 +12,7 @@
 #define ANSI_UNDERLINE   "\x1b[4m"
 #define ANSI_RESET       "\x1b[0m"
 
-#define __dbg(format, ...)             \
+#define dbg(format, ...)               \
   {                                    \
     fprintf(                           \
         stdout,                        \
@@ -29,11 +29,6 @@
         ##__VA_ARGS__);                \
   }
 
-#ifdef HAVE_LOG
-#include <iostream>
-#define __log std::cout
-#endif
-
-#define __print printf
+#define print printf
 
 #endif

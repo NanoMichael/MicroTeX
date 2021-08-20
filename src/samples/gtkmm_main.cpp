@@ -292,7 +292,7 @@ public:
 
   int runBatch() const {
     if (_outputDir.empty()) {
-      __print(ANSI_COLOR_RED "Error: the option '-outputdir' must be specified\n" ANSI_RESET);
+      print(ANSI_COLOR_RED "Error: the option '-outputdir' must be specified\n" ANSI_RESET);
       return 1;
     }
     Samples samples(_samplesFile);
@@ -305,7 +305,7 @@ public:
 
   int runSingle() const {
     if (_outputFile.empty()) {
-      __print(ANSI_COLOR_RED "Error: the option '-output' must be specified\n" ANSI_RESET);
+      print(ANSI_COLOR_RED "Error: the option '-output' must be specified\n" ANSI_RESET);
       return 1;
     }
     const string& code = _input;
@@ -413,7 +413,7 @@ int runHelp() {
     "      the source code that is written in LaTeX\n\n" B
     "  -output=[FILE]\n" R
     "      indicates where to save the produced SVG image, only works if the option '-input' has given\n\n";
-  __print("%s", msg);
+  print("%s", msg);
   return 0;
 }
 
