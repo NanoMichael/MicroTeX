@@ -27,7 +27,6 @@ class TeXParser {
 private:
   std::string _latex;
   int _pos, _spos, _len;
-  int _line, _col;
   int _group;
   int _atIsLetter;
   bool _insertion;
@@ -178,12 +177,6 @@ public:
 
   /** Return true if we get a partial formula */
   inline bool isPartial() const { return _isPartial; }
-
-  /** Get the number of the current line */
-  inline int getLine() const { return _line; }
-
-  /** Get the number of the current column */
-  inline int getCol() const { return _pos - _col - 1; }
 
   /** Get and remove the last atom of the current formula */
   sptr<Atom> popLastAtom() const;

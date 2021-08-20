@@ -3,18 +3,17 @@
 
 #include <exception>
 #include <string>
+#include <utility>
 
 namespace tex {
 
-/**
- * Superclass of all the possible TeX exceptions that can be thrown
- */
+/** Superclass of all the possible exceptions that can be thrown */
 class ex_tex : public std::exception {
 private:
   const std::string _msg;
 
 public:
-  explicit ex_tex(const std::string& msg) : _msg(msg) {}
+  explicit ex_tex(std::string msg) : _msg(std::move(msg)) {}
 
   explicit ex_tex(const std::string& msg, const exception& cause)
     : _msg(msg + "\n caused by: " + cause.what()) {}
@@ -24,31 +23,12 @@ public:
   }
 };
 
-/**
- * Invalid symbol
- */
-class ex_invalid_symbol_type : public ex_tex {
-public:
-  explicit ex_invalid_symbol_type(const std::string& msg) : ex_tex(msg) {}
-};
-
-/**
- * Error occurred while parsing a string to a formula
- */
+/** Error occurred while parsing a string to a formula */
 class ex_parse : public ex_tex {
 public:
   explicit ex_parse(const std::string& msg, const exception& cause) : ex_tex(msg, cause) {}
 
   explicit ex_parse(const std::string& msg) : ex_tex(msg) {}
-};
-
-/**
- * Unknown symbol
- */
-class ex_symbol_not_found : public ex_tex {
-public:
-  explicit ex_symbol_not_found(const std::string& name)
-    : ex_tex("There's no symbol with the name '" + name + "' defined.") {}
 };
 
 class ex_invalid_state : public ex_tex {

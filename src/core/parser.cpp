@@ -35,7 +35,6 @@ void TeXParser::init(
   bool firstPass
 ) {
   _pos = _spos = _len = 0;
-  _line = _col = 0;
   _group = 0;
   _atIsLetter = 0;
   _insertion = _arrayMode = _isMathMode = false;
@@ -63,8 +62,6 @@ void TeXParser::reset(const string& latex) {
   _formula->_root = nullptr;
   _pos = 0;
   _spos = 0;
-  _line = 0;
-  _col = 0;
   _group = 0;
   _insertion = false;
   _atIsLetter = 0;
@@ -333,10 +330,6 @@ void TeXParser::skipWhiteSpace(int count) {
   while (_pos < _len && count > 0) {
     c = _latex[_pos];
     if (c != ' ' && c != '\t' && c != '\n' && c != '\r') break;
-    if (c == '\n') {
-      _line++;
-      _col = _pos;
-    }
     _pos++;
     count--;
   }
@@ -635,12 +628,7 @@ void TeXParser::inflateEnv(string& cmd, Args& args, int& pos) {
   string env = args[1] + "@env";
   auto mac = MacroInfo::get(env);
   if (mac == nullptr) {
-    throw ex_parse(
-      "Unknown environment: "
-      + args[1]
-      + " at position " + tostring(getLine())
-      + ":" + tostring(getCol())
-    );
+    throw ex_parse("Unknown environment: " + args[1]);
   }
   vector<string> optargs;
   getOptsArgs(mac->_argc - 1, 0, optargs);
@@ -708,8 +696,6 @@ void TeXParser::parse() {
 
     switch (ch) {
       case '\n':
-        _line++;
-        _col = _pos;
       case '\t':
       case '\r':
       case ' ': {

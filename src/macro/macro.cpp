@@ -151,11 +151,6 @@ sptr<Atom> PreDefMacro::invoke(
   try {
     return _delegate(tp, args);
   } catch (ex_parse& e) {
-    throw ex_parse(
-      "Problem with command "
-      + args[0]
-      + " at position " + tostring(tp.getLine()) + ":"
-      + tostring(tp.getCol()) + "\n caused by: " + e.what()
-    );
+    throw ex_parse("Problem with command: " + args[0] + "\n caused by: " + e.what());
   }
 }

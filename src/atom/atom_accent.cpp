@@ -16,7 +16,7 @@ void AccentedAtom::setupBase(const sptr<Atom>& base) {
 AccentedAtom::AccentedAtom(const sptr<Atom>& base, const string& name, bool fitSize, bool fake) {
   _accenter = SymbolAtom::get(name);
   if (_accenter == nullptr) {
-    throw ex_symbol_not_found(name);
+    throw ex_parse("'" + name + "' is not defined as a symbol");
   }
   _fitSize = fitSize;
   _fakeAccent = fake;
@@ -29,7 +29,7 @@ AccentedAtom::AccentedAtom(const sptr<Atom>& base, const string& name, bool fitS
     _accentee = base;
     setupBase(base);
   } else {
-    throw ex_invalid_symbol_type(
+    throw ex_parse(
       "The symbol with the name '"
       + name + "' is not defined as an accent (type='acc')!"
     );
