@@ -65,12 +65,18 @@ static sptr<Box> createDelim(const std::string& sym, Env& env, const float len, 
 
   deque<pair<int, sptr<Box>>> f;
   vector<sptr<Box>> r;
-  auto fl = 0.f, rl = 0.f;
+  auto fl = 0.f, rl = 0.f, max = tex::F_MAX;
 
   auto run = [&](int i) {
     const auto& part = assembly[i];
     const auto b = sptrOf<CharBox>(chr.assemblyPart(part.glyph()));
     const auto l = isVertical ? b->vlen() : b->_width;
+    if (part.startConnectorLength() != 0) {
+      max = std::min(max, (float) part.startConnectorLength());
+    }
+    if (part.endConnectorLength() != 0) {
+      max = std::min(max, (float) part.endConnectorLength());
+    }
     if (!part.isExtender()) {
       f.emplace_back(r.size(), b);
       fl += l;
@@ -97,10 +103,11 @@ static sptr<Box> createDelim(const std::string& sym, Env& env, const float len, 
   const auto cnt = (int) std::ceil((len - fl + (f.size() - 1) * m) / (rl - r.size() * m));
   const auto p = r.size() * cnt + f.size() - 1;
   const auto e = (cnt * rl + fl - p * m - len) / p;
+  const auto s = std::min(m + e, max);
   const auto space = (
     isVertical
-    ? sptrOf<StrutBox>(0.f, -(m + e), 0.f, 0.f)
-    : StrutBox::create(-(m + e))
+    ? sptrOf<StrutBox>(0.f, -s, 0.f, 0.f)
+    : StrutBox::create(-s)
   );
 
   sptr<BoxGroup> box;
