@@ -83,10 +83,6 @@ const function<float(const Env&)> Units::_unitConversions[]{
   [](const Env& env) -> float {
     return 12.7924193070f * pt(env);
   },
-  // x8
-  [](const Env& env) -> float {
-    return env.ruleThickness();
-  }
 };
 
 float Units::pt(const Env& env) {

@@ -30,10 +30,6 @@ constexpr Dimen operator ""_em(long double val) {
   return {static_cast<float>(val), UnitType::em};
 }
 
-constexpr Dimen operator ""_x8(long double val) {
-  return {static_cast<float>(val), UnitType::x8};
-}
-
 constexpr Dimen operator ""_pt(long double val) {
   return {static_cast<float>(val), UnitType::pt};
 }

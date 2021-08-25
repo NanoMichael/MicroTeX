@@ -125,8 +125,6 @@ enum class UnitType : i8 {
   dd,
   /** 1 cc = 12 dd, shortcut for `cicero` */
   cc,
-  /** 1 x8 = 1 default rule thickness */
-  x8,
   none = -1
 };
 
