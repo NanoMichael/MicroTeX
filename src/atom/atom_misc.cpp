@@ -121,7 +121,18 @@ sptr<Box> RuleAtom::createBox(Env& env) {
   return sptrOf<RuleBox>(h, w, r);
 }
 
-sptr<Box> VCenteredAtom::createBox(Env& env) {
+sptr<Box> StrikeThroughAtom::createBox(Env& env) {
+  const auto t = env.mathConsts().overbarRuleThickness() * env.scale();
+  const auto h = env.mathConsts().axisHeight() * env.scale();
+  auto b = _at->createBox(env);
+  auto r = sptrOf<RuleBox>(t, b->_width, -h + t);
+  auto hb = sptrOf<HBox>(b);
+  hb->add(StrutBox::create(-b->_width));
+  hb->add(r);
+  return hb;
+}
+
+sptr<Box> VCenterAtom::createBox(Env& env) {
   auto b = _base->createBox(env);
   auto a = env.mathConsts().axisHeight() * env.scale();
   auto hb = sptrOf<HBox>(b);

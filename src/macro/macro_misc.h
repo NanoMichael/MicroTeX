@@ -37,7 +37,7 @@ inline macro(longdiv) {
 }
 
 inline macro(st) {
-  auto base = Formula(tp, args[1], false)._root;
+  auto base = Formula(tp, args[1], false, tp.isMathMode())._root;
   return sptrOf<StrikeThroughAtom>(base);
 }
 
@@ -104,44 +104,6 @@ inline macro(smash) {
   return sptrOf<SmashedAtom>(Formula(tp, args[1], false)._root, args[2]);
 }
 
-inline macro(cr) {
-  if (tp.isArrayMode()) {
-    tp.addRow();
-  } else {
-    ArrayFormula arr;
-    arr.add(tp._formula->_root);
-    arr.addRow();
-    TeXParser parser(
-      tp.isPartial(),
-      tp.forwardBalancedGroup(),
-      &arr,
-      false,
-      tp.isMathMode()
-    );
-    parser.parse();
-    arr.checkDimensions();
-    tp._formula->_root = arr.getAsVRow();
-  }
-
-  return nullptr;
-}
-
-inline macro(backslashcr) {
-  return macro_cr(tp, args);
-}
-
-inline macro(shoveright) {
-  auto a = Formula(tp, args[1])._root;
-  a->_alignment = Alignment::right;
-  return a;
-}
-
-inline macro(shoveleft) {
-  auto a = Formula(tp, args[1])._root;
-  a->_alignment = Alignment::left;
-  return a;
-}
-
 inline macro(makeatletter) {
   tp.makeAtLetter();
   return nullptr;
@@ -181,25 +143,6 @@ inline macro(phantom) {
     new PhantomAtom(Formula(tp, args[1], false)._root, true, true, true));
 }
 
-inline macro(char) {
-  // TODO
-  std::string x = args[1];
-  int radix = 10;
-  if (startswith(x, "0x") || startswith(x, "0X")) {
-    x = x.substr(2);
-    radix = 16;
-  } else if (startswith(x, "x") || startswith(x, "X")) {
-    x = x.substr(1);
-    radix = 16;
-  } else if (startswith(x, "0")) {
-    x = x.substr(1);
-    radix = 8;
-  }
-  int n = 0;
-  str2int(x, n, radix);
-  return tp.getCharAtom(n);
-}
-
 inline macro(textcircled) {
   // TODO
   // return sptrOf<TextCircledAtom>(sptrOf<RomanAtom>(Formula(tp, args[1])._root));
@@ -215,7 +158,7 @@ inline macro(sc) {
 }
 
 inline macro(surd) {
-  return sptrOf<VCenteredAtom>(SymbolAtom::get("surdsign"));
+  return sptrOf<VCenterAtom>(SymbolAtom::get("surdsign"));
 }
 
 inline macro(lmoustache) {
@@ -262,6 +205,10 @@ inline macro(normal) {
 
 /***************************************** implement at .cpp **************************************/
 
+macro(char);
+
+macro(cr);
+
 macro(kern);
 
 macro(hvspace);
@@ -287,6 +234,10 @@ macro(debug);
 macro(undebug);
 
 #endif  // GRAPHICS_DEBUG
+
+inline macro(backslashcr) {
+  return macro_cr(tp, args);
+}
 
 /**************************************** not implemented *****************************************/
 

@@ -92,6 +92,8 @@ map<string, MacroInfo*> MacroInfo::_commands{
     mac(2, macro_newcolumntype, "newcolumntype"),
     mac(1, macro_color, "color"),
     mac(1, macro_cellcolor, "cellcolor"),
+    mac(1, macro_shoveright, "shoveright"),
+    mac(1, macro_shoveleft, "shoveleft"),
   // endregion
   // region sizes
     mac(4, macro_declaremathsizes, "DeclareMathSizes"),
@@ -293,6 +295,11 @@ map<string, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_mathclrlap, "mathrlap"),
     mac(1, macro_mathclrlap, "mathclap"),
   // endregion
+  // region limits
+    mac(0, macro_nolimits, "nolimits"),
+    mac(0, macro_limits, "limits"),
+    mac(0, macro_normal, "normal"),
+  // endregion
 
     mac(1, macro_cedilla, "c"),
     mac(1, macro_ogonek, "k"),
@@ -316,12 +323,7 @@ map<string, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_nbsp, "nbsp"),
     mac(1, macro_sqrt, "sqrtsign"),
     mac(0, macro_joinrel, "joinrel"),
-    mac(0, macro_nolimits, "nolimits"),
-    mac(0, macro_limits, "limits"),
-    mac(0, macro_normal, "normal"),
     mac(0, macro_cr, "cr"),
-    mac(1, macro_shoveright, "shoveright"),
-    mac(1, macro_shoveleft, "shoveleft"),
     mac(0, macro_backslashcr, "\\"),
     mac(1, macro_hvspace, "hspace"),
     mac(1, macro_hvspace, "vspace"),

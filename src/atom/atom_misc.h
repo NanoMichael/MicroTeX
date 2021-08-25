@@ -192,9 +192,7 @@ private:
 public:
   explicit StrikeThroughAtom(const sptr<Atom>& a) : _at(a) {}
 
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
+  sptr<Box> createBox(Env& env) override;
 };
 
 class TextCircledAtom : public Atom {
@@ -215,11 +213,11 @@ public:
  * An atom representing another atom vertically centered with respect to
  * the math axis
  */
-class VCenteredAtom : public WrapAtom {
+class VCenterAtom : public WrapAtom {
 public:
-  VCenteredAtom() = delete;
+  VCenterAtom() = delete;
 
-  explicit VCenteredAtom(const sptr<Atom>& a) : WrapAtom(a) {}
+  explicit VCenterAtom(const sptr<Atom>& a) : WrapAtom(a) {}
 
   sptr<Box> createBox(Env& env) override;
 };

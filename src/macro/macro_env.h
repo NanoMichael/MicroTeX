@@ -196,6 +196,18 @@ inline macro(rowcolor) {
   return nullptr;
 }
 
+inline macro(shoveright) {
+  auto a = Formula(tp, args[1])._root;
+  a->_alignment = Alignment::right;
+  return a;
+}
+
+inline macro(shoveleft) {
+  auto a = Formula(tp, args[1])._root;
+  a->_alignment = Alignment::left;
+  return a;
+}
+
 }
 
 #endif //LATEX_MACRO_ENV_H

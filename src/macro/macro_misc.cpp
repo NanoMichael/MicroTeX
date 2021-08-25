@@ -13,6 +13,47 @@ using namespace std;
 
 namespace tex {
 
+macro(char) {
+  // TODO
+  std::string x = args[1];
+  int radix = 10;
+  if (startswith(x, "0x") || startswith(x, "0X")) {
+    x = x.substr(2);
+    radix = 16;
+  } else if (startswith(x, "x") || startswith(x, "X")) {
+    x = x.substr(1);
+    radix = 16;
+  } else if (startswith(x, "0")) {
+    x = x.substr(1);
+    radix = 8;
+  }
+  int n = 0;
+  str2int(x, n, radix);
+  return tp.getCharAtom(n);
+}
+
+macro(cr) {
+  if (tp.isArrayMode()) {
+    tp.addRow();
+  } else {
+    ArrayFormula arr;
+    arr.add(tp._formula->_root);
+    arr.addRow();
+    TeXParser parser(
+      tp.isPartial(),
+      tp.forwardBalancedGroup(),
+      &arr,
+      false,
+      tp.isMathMode()
+    );
+    parser.parse();
+    arr.checkDimensions();
+    tp._formula->_root = arr.getAsVRow();
+  }
+
+  return nullptr;
+}
+
 macro(kern) {
   auto[value, unit] = tp.getDimen();
   return sptrOf<SpaceAtom>(unit, value, 0.f, 0.f);
