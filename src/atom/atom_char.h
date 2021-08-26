@@ -56,6 +56,8 @@ public:
   virtual Char getChar(Env& env) const = 0;
 
   virtual std::string name() const = 0;
+
+  virtual c32 unicode() const = 0;
 };
 
 /** An atom representing a fixed character (not depending on a text style). */
@@ -78,6 +80,10 @@ public:
     return false;
   }
 
+  c32 unicode() const override {
+    return _chr.mappedCode;
+  }
+
   sptr<Box> createBox(Env& env) override;
 };
 
@@ -90,8 +96,7 @@ public:
 
   explicit SymbolAtom(const Symbol* symbol) noexcept;
 
-  /** Unicode code point of this symbol */
-  c32 unicode() const;
+  c32 unicode() const override;
 
   /** Name of this symbol */
   std::string name() const override;
@@ -133,7 +138,7 @@ public:
   CharAtom(c32 unicode, bool mathMode)
     : _unicode(unicode), _mathMode(mathMode) {}
 
-  inline c32 unicode() const { return _unicode; }
+  c32 unicode() const override { return _unicode; }
 
   bool isMathMode() const override {
     return _mathMode;

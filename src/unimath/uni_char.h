@@ -29,10 +29,10 @@ struct Char final {
   Char(const Char& chr);
 
   /**
-   * Create a char-glyph with only font and glyph, the Unicode code point is 0.
+   * Create a char-glyph with only font and glyph, the Unicode code-point is 0.
    * <p>
    * Notice that the char-glyph is valid even if its Unicode is 0, because many glyph has no
-   * corresponding Unicode code point.
+   * corresponding Unicode code-point.
    */
   static inline Char onlyGlyph(i32 font, i32 glyph, float scale = 1.f) {
     return {0, 0, font, glyph, scale};

@@ -18,6 +18,8 @@ public:
 
   void append(c32 code);
 
+  inline bool isMathMode() const { return _mathMode; }
+
   sptr<Box> createBox(Env& env) override;
 
   AtomType leftType() const override {

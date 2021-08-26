@@ -2,10 +2,12 @@
 #include "atom/atom_char.h"
 #include "atom/atom_space.h"
 #include "atom/atom_text.h"
+#include "atom/atom_basic.h"
 #include "box/box_group.h"
 #include "box/box_single.h"
 #include "env/env.h"
 #include "core/glue.h"
+#include "utils/utf.h"
 
 using namespace std;
 using namespace tex;
@@ -144,6 +146,24 @@ int RowAtom::processInvalid(const sptr<TextAtom>& txt, bool isMathMode, int i, E
   return processInvalid(txt, isMathMode, i + 1, env);
 }
 
+sptr<TextAtom> RowAtom::processContinues(int& i, bool isMathMode) {
+  if (i >= _elements.size()) return nullptr;
+  int cnt = 0;
+  auto txt = sptrOf<TextAtom>(isMathMode);
+  const auto next = [&]() {
+    auto a = currentChar(i + cnt);
+    return a == nullptr || a->isMathMode() != isMathMode ? 0 : a->unicode();
+  };
+  const auto collect = [&](c32 code) {
+    txt->append(code);
+    ++cnt;
+  };
+  tex::scanContinuedUnicodes(next, collect);
+  if (cnt <= 1) return nullptr;
+  i += cnt - 1;
+  return txt;
+}
+
 sptr<Box> RowAtom::createBox(Env& env) {
   auto hbox = new HBox();
   // convert atoms to boxes and add to the horizontal box
@@ -152,10 +172,10 @@ sptr<Box> RowAtom::createBox(Env& env) {
     auto raw = _elements[++i];
 
     // 1. Skip break marks
-    bool markAdded = false;
+    bool hasBreak = false;
     auto ba = dynamic_cast<BreakMarkAtom*>(raw.get());
     while (ba != nullptr) {
-      markAdded = true;
+      hasBreak = true;
       if (i < end) {
         raw = _elements[++i];
         ba = dynamic_cast<BreakMarkAtom*>(raw.get());
@@ -165,12 +185,23 @@ sptr<Box> RowAtom::createBox(Env& env) {
     }
 
     auto curr = sptrOf<AtomDecor>(raw);
+    auto tmp = curr;
 
-    // 2. process invalid chars
-    Char c = curr->getChar(env);
-    if (curr->isChar() && !c.isValid()) {
-      const auto isMathMode = curr->isMathMode();
-      auto t = sptrOf<TextAtom>(isMathMode);
+    // 2. process continued and invalid chars
+    auto t = processContinues(i, curr->isMathMode());
+    if (t != nullptr) {
+      curr = sptrOf<AtomDecor>(t);
+      tmp = (
+        i < end
+        ? sptrOf<AtomDecor>(_elements[i + 1])
+        : sptrOf<AtomDecor>(EmptyAtom::create())
+      );
+    }
+    Char c = tmp->getChar(env);
+    if (tmp->isChar() && !c.isValid()) {
+      const auto isMathMode = tmp->isMathMode();
+      if (t == nullptr) t = sptrOf<TextAtom>(isMathMode);
+      else ++i;
       t->append(c.mappedCode);
       i = processInvalid(t, isMathMode, i + 1, env) - 1;
       curr = sptrOf<AtomDecor>(t);
@@ -262,7 +293,7 @@ sptr<Box> RowAtom::createBox(Env& env) {
       if (_breakEveywhere) {
         hbox->addBreakPosition(hbox->size());
       } else {
-        if (markAdded) {
+        if (hasBreak) {
           hbox->addBreakPosition(hbox->size());
         } else {
           auto charAtom = dynamic_cast<CharAtom*>(raw.get());

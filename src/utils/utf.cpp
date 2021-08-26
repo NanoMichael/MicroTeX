@@ -90,3 +90,26 @@ c32 tex::nextUnicode(const std::string& src, int i, int& cnt) {
   }
   return code;
 }
+
+void tex::scanContinuedUnicodes(
+  std::function<c32()>&& next,
+  std::function<void(c32)>&& collect
+) {
+  const c32 x = next();
+  collect(x);
+  while (true) {
+    const c32 a = next();
+    if (tex::isVariationSelector(a)) {
+      collect(a);
+    } else if (tex::isJoiner(a)) {
+      collect(a);
+      c32 b = 0;
+      do {
+        b = next();
+        collect(b);
+      } while (isJoiner(b));
+    } else {
+      break;
+    }
+  }
+}

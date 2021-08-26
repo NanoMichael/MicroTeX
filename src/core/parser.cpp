@@ -827,29 +827,24 @@ void TeXParser::parse() {
 }
 
 sptr<Atom> TeXParser::getCharAtom() {
-  int n = 0;
-  const c32 a = tex::nextUnicode(_latex, _pos, n);
-  int m = 0;
-  c32 b = tex::nextUnicode(_latex, _pos + n, m);
-  if (tex::isVariationSelector(b)) {
-    auto atom = sptrOf<TextAtom>(_latex.substr(_pos, n + m), _isMathMode);
-    _pos += n + m - 1;
-    return atom;
-  }
-  if (tex::isJoiner(b)) {
-    int q = 0;
-    while (true) {
-      tex::nextUnicode(_latex, _pos + n + m, q);
-      n += m + q;
-      b = tex::nextUnicode(_latex, _pos + n, m);
-      if (!tex::isJoiner(b)) break;
-    }
-    auto atom = sptrOf<TextAtom>(_latex.substr(_pos, n), _isMathMode);
-    _pos += n - 1;
-    return atom;
-  }
+  int n = 0, m = 0, cnt = 0;
+  c32 chr = 0;
+  const auto next = [&]() {
+    return tex::nextUnicode(_latex, _pos + n, m);
+  };
+  const auto collect = [&](c32 code) {
+    n += m;
+    cnt++;
+    chr = code;
+  };
+  tex::scanContinuedUnicodes(next, collect);
+  auto atom = (
+    cnt == 1
+    ? getCharAtom(chr)
+    : sptrOf<TextAtom>(_latex.substr(_pos, n), _isMathMode)
+  );
   _pos += n - 1;
-  return getCharAtom(a);
+  return atom;
 }
 
 sptr<Atom> TeXParser::getCharAtom(c32 chr) {

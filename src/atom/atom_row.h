@@ -134,6 +134,8 @@ private:
     Env& env
   );
 
+  sptr<TextAtom> processContinues(int& i, bool isMathMode);
+
 public:
   static bool _breakEveywhere;
 

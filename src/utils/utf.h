@@ -40,7 +40,17 @@ bool isZWNJ(c32 code);
 /** Test if a given Unicode code-point is a joiner. */
 bool isJoiner(c32 code);
 
-void scanSpecs(std::function<c32()>&& next, std::function<void(c32)>&& gather);
+/**
+ * Scan Unicodes from a sequence and collect it into an arbitrary
+ * container.
+ *
+ * @param next function to get the next Unicode code-point, 0 terminated
+ * @param collect function to collect the given Unicode-point
+ */
+void scanContinuedUnicodes(
+  std::function<c32()>&& next,
+  std::function<void(c32)>&& collect
+);
 
 }  // namespace tex
 

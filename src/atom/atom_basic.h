@@ -77,6 +77,10 @@ public:
   sptr<Box> createBox(Env& env) override {
     return StrutBox::empty();
   }
+
+  static sptr<EmptyAtom> create() {
+    return sptrOf<EmptyAtom>();
+  }
 };
 
 /** A placeholder atom */
