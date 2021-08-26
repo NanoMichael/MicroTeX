@@ -1,5 +1,5 @@
-#ifndef LATE_LATEX_H
-#define LATE_LATEX_H
+#ifndef LATEX_LATEX_H
+#define LATEX_LATEX_H
 
 #include <string>
 
@@ -53,6 +53,7 @@ public:
    * @param lineSpace the line space
    * @param fg the foreground color
    * @param mathFontName the math font name
+   * @param mainFontName the main font name
    */
   static TeXRender* parse(
     const std::string& tex,
@@ -70,4 +71,4 @@ public:
 
 }  // namespace tex
 
-#endif  // LATE_LATEX_H
+#endif  // LATEX_LATEX_H

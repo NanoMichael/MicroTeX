@@ -86,7 +86,7 @@ public:
       _text_size,
       _text_size / 3.f,
       0xff424242,
-      "xits",
+      "lm",
       "xits"
     );
 
@@ -426,18 +426,40 @@ int main(int argc, char* argv[]) {
 
   Pango::init();
   // TODO dialog to choose font file
+//  const FontSpec math{
+//    "xits",
+//    "/home/nano/Downloads/xits/XITSMath-Regular.otf",
+//    "./res/XITSMath-Regular.clm"
+//  };
   const FontSpec math{
-    "xits",
-    "/home/nano/Downloads/xits/XITSMath-Regular.otf",
-    "./res/XITSMath-Regular.clm"
+    "lm",
+    "/home/nano/Downloads/lm-math/opentype/latinmodern-math.otf",
+    "./res/latinmodern-math.clm"
   };
   LaTeX::init(math);
-  const FontSpec main{
-    "rm",
-    "/home/nano/Downloads/xits/XITS-Regular.otf",
-    "./res/XITS-Regular.clm"
+  const std::vector<FontSpec> main{
+    {
+      "rm",
+      "/home/nano/Downloads/xits/XITS-Regular.otf",
+      "./res/XITS-Regular.clm"
+    },
+    {
+      "bf",
+      "/home/nano/Downloads/xits/XITS-Bold.otf",
+      "./res/XITS-Bold.clm"
+    },
+    {
+      "it",
+      "/home/nano/Downloads/xits/XITS-Italic.otf",
+      "./res/XITS-Italic.clm"
+    },
+    {
+      "bfit",
+      "/home/nano/Downloads/xits/XITS-BoldItalic.otf",
+      "./res/XITS-BoldItalic.clm"
+    },
   };
-  LaTeX::addMainFont("xits", {main});
+  LaTeX::addMainFont("xits", main);
 
   int result = 0;
   if (indexOf(opts, string("-headless")) >= 0) {

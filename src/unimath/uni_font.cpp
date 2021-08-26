@@ -11,7 +11,7 @@ OtfFont::OtfFont(i32 id, string fontFile, const string& clmFile)
   : id(id), fontFile(std::move(fontFile)), otfSpec(sptr<const Otf>(Otf::fromFile(clmFile.c_str()))) {}
 
 FontStyle FontFamily::fontStyleOf(const std::string& name) {
-  // TODO: add composed styles
+  // TODO: more composed styles
   static const map<string, FontStyle> nameStyle{
     {"",     FontStyle::rm},
     {"rm",   FontStyle::rm},
@@ -21,6 +21,7 @@ FontStyle FontFamily::fontStyleOf(const std::string& name) {
     {"tt",   FontStyle::tt},
     {"cal",  FontStyle::cal},
     {"frak", FontStyle::frak},
+    {"bfit", FontStyle::bfit},
   };
   const auto it = nameStyle.find(name);
   if (it == nameStyle.end()) return FontStyle::none;
@@ -105,12 +106,18 @@ sptr<const OtfFont> FontContext::getFont(i32 id) {
 
 void FontContext::selectMathFont(const string& name) {
   const auto it = _mathFonts.find(name);
-  _mathFont = it == _mathFonts.end() ? nullptr : it->second;
+  if (it == _mathFonts.end()) {
+    throw ex_invalid_param("Math font '" + name + "' does not exists!");
+  }
+  _mathFont = it->second;
 }
 
 void FontContext::selectMainFont(const string& name) {
   const auto it = _mainFonts.find(name);
-  _mainFont = it == _mainFonts.end() ? nullptr : it->second;
+  if (it == _mainFonts.end()) {
+    throw ex_invalid_param("Main font '" + name + "' does not exists!");
+  }
+  _mainFont = it->second;
 }
 
 Char FontContext::getChar(const Symbol& symbol, FontStyle style) const {
