@@ -27,15 +27,6 @@ inline macro(breakEverywhere) {
   return nullptr;
 }
 
-inline macro(longdiv) {
-  long dividend = 0;
-  valueof(args[1], dividend);
-  long divisor = 0;
-  valueof(args[2], divisor);
-  if (divisor == 0) throw ex_parse("Divisor must not be 0.");
-  return sptrOf<LongDivAtom>(divisor, dividend);
-}
-
 inline macro(st) {
   auto base = Formula(tp, args[1], false, tp.isMathMode())._root;
   return sptrOf<StrikeThroughAtom>(base);
@@ -204,6 +195,8 @@ inline macro(normal) {
 }
 
 /***************************************** implement at .cpp **************************************/
+
+macro(longdiv);
 
 macro(char);
 

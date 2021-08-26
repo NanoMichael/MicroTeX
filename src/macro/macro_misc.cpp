@@ -7,28 +7,40 @@
 #include "graphic/graphic.h"
 #include "core/debug_config.h"
 #include "atom/atom_zstack.h"
+#include "atom/atom_font.h"
 
 using namespace tex;
 using namespace std;
 
 namespace tex {
 
+macro(longdiv) {
+  long dividend = 0;
+  valueof(args[1], dividend);
+  long divisor = 0;
+  valueof(args[2], divisor);
+  if (divisor == 0) throw ex_parse("Divisor must not be 0.");
+  return sptrOf<LongDivAtom>(divisor, dividend);
+}
+
 macro(char) {
-  // TODO
-  std::string x = args[1];
+  const auto& str = tp.forward([](char ch) {
+    return ch == '\'' || ch == '"'
+           || (ch >= '0' && ch <= '9')
+           || (ch >= 'a' && ch <= 'z')
+           || (ch >= 'A' && ch <= 'Z');
+  });
   int radix = 10;
-  if (startswith(x, "0x") || startswith(x, "0X")) {
-    x = x.substr(2);
-    radix = 16;
-  } else if (startswith(x, "x") || startswith(x, "X")) {
-    x = x.substr(1);
-    radix = 16;
-  } else if (startswith(x, "0")) {
-    x = x.substr(1);
+  int offset = 0;
+  if (startswith(str, "'")) {
     radix = 8;
+    offset = 1;
+  } else if (startswith(str, "\"")) {
+    radix = 16;
+    offset = 1;
   }
   int n = 0;
-  str2int(x, n, radix);
+  str2int(str.c_str() + offset, str.length() - offset, n, radix);
   return tp.getCharAtom(n);
 }
 
@@ -118,8 +130,8 @@ macro(raisebox) {
 }
 
 macro(romannumeral) {
-  int numbers[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
-  string letters[] = {"M", "CM", "D", "CD", "C", "XC", "", "XL", "X", "IX", "V", "IV", "I"};
+  static const int numbers[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+  static const string letters[] = {"M", "CM", "D", "CD", "C", "XC", "", "XL", "X", "IX", "V", "IV", "I"};
   string roman;
 
   int num;
@@ -135,7 +147,11 @@ macro(romannumeral) {
     tolower(roman);
   }
 
-  return Formula(roman, false)._root;
+  return sptrOf<FontStyleAtom>(
+    FontStyle::rm,
+    tp.isMathMode(),
+    Formula(tp, roman, false, tp.isMathMode())._root
+  );
 }
 
 macro(setmathfont) {

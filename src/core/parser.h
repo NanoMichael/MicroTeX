@@ -226,6 +226,9 @@ public:
    */
   std::string forwardBalancedGroup();
 
+  /** Forward parse while the given function #f returns true. */
+  std::string forward(std::function<bool(char)>&& f);
+
   /**
    * Add a new row when the parser is in array mode
    *

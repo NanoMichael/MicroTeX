@@ -34,17 +34,17 @@ inline void valueof(const std::string& s, T& val) {
   ss >> val;
 }
 
-inline bool str2int(const std::string& str, int& res, int radix) {
+inline bool str2int(const char* str, size_t len, int& res, int radix) {
   char* endptr = nullptr;
   errno = 0;
 
-  const long val = strtol(str.c_str(), &endptr, radix);
+  const long val = strtol(str, &endptr, radix);
 
   if ((val == LONG_MAX || val == LONG_MIN) && errno == ERANGE)
     return false;
 
   res = static_cast<int>(val);
-  return endptr == str.c_str() + str.size();
+  return endptr == str + len;
 }
 
 /** Transform a string to lowercase */

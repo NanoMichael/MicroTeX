@@ -40,6 +40,8 @@ bool isZWNJ(c32 code);
 /** Test if a given Unicode code-point is a joiner. */
 bool isJoiner(c32 code);
 
+void scanSpecs(std::function<c32()>&& next, std::function<void(c32)>&& gather);
+
 }  // namespace tex
 
 #endif

@@ -358,6 +358,12 @@ string TeXParser::forwardBalancedGroup() {
   return sub;
 }
 
+string TeXParser::forward(std::function<bool(char)>&& f) {
+  const auto p = _pos;
+  while (_pos < _len && f(_latex[_pos])) ++_pos;
+  return _latex.substr(p, _pos - p);
+}
+
 void TeXParser::getOptsArgs(int argc, int opts, Args& args) {
   // A maximum of 10 options can be passed to a command,
   // the value will be added at the tail of the args if found any,

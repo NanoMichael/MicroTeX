@@ -15,6 +15,8 @@ class AtomDecor;
 
 class FixedCharAtom;
 
+class CharSymbol;
+
 class Env;
 
 /**
@@ -122,6 +124,8 @@ private:
    * an ordinary type
    */
   static void changeToOrd(AtomDecor* cur, AtomDecor* prev, Atom* next);
+
+  sptr<CharSymbol> currentChar(int i);
 
   int processInvalid(
     const sptr<TextAtom>& txt,

@@ -128,13 +128,17 @@ AtomType RowAtom::rightType() const {
   return _elements.back()->rightType();
 }
 
-int RowAtom::processInvalid(const sptr<TextAtom>& txt, bool isMathMode, int i, Env& env) {
-  if (i >= _elements.size()) return i;
+sptr<CharSymbol> RowAtom::currentChar(int i) {
+  if (i >= _elements.size()) return nullptr;
   const auto a = _elements[i];
-  if (!a->isChar()) return i;
-  const auto pa = (CharSymbol*) a.get();
-  if (pa->isMathMode() != isMathMode) return i;
-  const auto& chr = pa->getChar(env);
+  if (!a->isChar()) return nullptr;
+  return static_pointer_cast<CharSymbol>(a);
+}
+
+int RowAtom::processInvalid(const sptr<TextAtom>& txt, bool isMathMode, int i, Env& env) {
+  const auto a = currentChar(i);
+  if (a == nullptr || a->isMathMode() != isMathMode) return i;
+  const auto& chr = a->getChar(env);
   if (chr.isValid()) return i;
   txt->append(chr.mappedCode);
   return processInvalid(txt, isMathMode, i + 1, env);
