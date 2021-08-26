@@ -85,6 +85,7 @@ map<string, string> Formula::_predefFormulaStrs{
   {"deg",              "\\mathop{\\mathrm{deg}}\\nolimits"},
   {"bmod",             "\\:\\mathbin{\\mathrm{mod}}\\:"},
   // endregion
+  // region symbol alias
   {"arrowvert",        "\\vert"},
   {"Arrowvert",        "\\Vert"},
   {"aa",               "\\mathring{a}"},
@@ -96,6 +97,13 @@ map<string, string> Formula::_predefFormulaStrs{
   {"doublecap",        "\\Cap"},
   {"llless",           "\\lll"},
   {"gggtr",            "\\ggg"},
+  {"copyright",        "\\circledR"},
+  {"micro",            "\\mu"},
+  {"rVert",            "\\Vert"},
+  {"lVert",            "\\Vert"},
+  {"lvert",            "\\vert"},
+  {"rvert",            "\\vert"},
+  // endregion
   // region Greek
   {"Alpha",            "Α"},
   {"Beta",             "Β"},
@@ -134,16 +142,11 @@ map<string, string> Formula::_predefFormulaStrs{
   {"coloncolonapprox", "\\mathrel{\\colon\\nokern\\colon\\nokern\\approx}"},
   // endregion
   {"celsius",          "\\mathord{{}^\\circ\\mathrm{C}}"},
-  {"micro",            "\\textmu"},
   {"marker",           "\\kern{0.25ex}\\rule{0.5ex}{1.2ex}\\kern{0.25ex}"},
   {"hybull",           "\\rule[0.6ex]{1ex}{0.2ex}"},
   {"block",            "\\rule{1ex}{1.2ex}"},
   {"uhblk",            "\\rule[0.6ex]{1ex}{0.6ex}"},
   {"lhblk",            "\\rule{1ex}{0.6ex}"},
-  {"rVert",            "\\Vert"},
-  {"lVert",            "\\Vert"},
-  {"lvert",            "\\vert"},
-  {"rvert",            "\\vert"},
   {"Android",          "\\large{🤖️}"},
   {"AndroidTeX",       "\\Android\\TeX"},
   {"TeX",              "\\text{T\\kern-.15em\\raisebox{-.4ex}{E}\\kern-.15em X}"},

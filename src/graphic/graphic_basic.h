@@ -71,7 +71,7 @@ inline bool isTransparent(color c) {
 }
 
 /** Convert #AARRGGBB or #RRGGBB formatted string into color. */
-inline color decode(const std::string& s) {
+inline color decodeColor(const std::string& s) {
   if (s[0] == '#') {
     const std::string x = s.substr(1);
     std::stringstream ss;

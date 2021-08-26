@@ -131,14 +131,14 @@ public:
   virtual void scale(float sx, float sy) = 0;
 
   /**
-   * Rotate the context with the given angle (in radian), with pivot (0, 0).
+   * Rotate the context with the given angle (in radian) and pivot (0, 0).
    *
    * @param angle angle (in radian) amount to rotate
    */
   virtual void rotate(float angle) = 0;
 
   /**
-   * Rotate the context with the given angle (in radian), with pivot (px, py).
+   * Rotate the context with the given angle (in radian) and pivot (px, py).
    *
    * @param angle angle (in radian) amount to rotate
    * @param px pivot in x-direction

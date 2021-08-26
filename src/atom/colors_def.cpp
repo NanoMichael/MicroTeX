@@ -84,13 +84,13 @@ color ColorAtom::getColor(std::string name) {
   trim(name);
 
   // #AARRGGBB formatted color
-  if (name[0] == '#') return decode(name);
+  if (name[0] == '#') return decodeColor(name);
   if (name.find(',') == string::npos) {
     // find from predefined colors
     auto it = _colors.find(tolower(name));
     if (it != _colors.end()) return it->second;
     // AARRGGBB formatted color
-    if (name.find('.') == string::npos) return decode("#" + name);
+    if (name.find('.') == string::npos) return decodeColor("#" + name);
     // gray color
     float x = 0.f;
     valueof(name, x);

@@ -48,7 +48,8 @@ inline macro(mathclrlap) {
 
 inline sptr<Atom> _cancel(
   int cancelType,
-  TeXParser& tp, std::vector<std::string>& args) {
+  TeXParser& tp, std::vector<std::string>& args
+) {
   auto base = Formula(tp, args[1], false)._root;
   if (base == nullptr)
     throw ex_parse("Cancel content must not be empty!");

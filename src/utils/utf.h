@@ -41,8 +41,8 @@ bool isZWNJ(c32 code);
 bool isJoiner(c32 code);
 
 /**
- * Scan Unicodes from a sequence and collect it into an arbitrary
- * container.
+ * Scan Unicodes that cannot be split from a sequence and collect
+ * it into an arbitrary container.
  *
  * @param next function to get the next Unicode code-point, 0 terminated
  * @param collect function to collect the given Unicode-point

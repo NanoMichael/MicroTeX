@@ -1,5 +1,5 @@
-#ifndef LATEX_H_INCLUDED
-#define LATEX_H_INCLUDED
+#ifndef LATE_LATEX_H
+#define LATE_LATEX_H
 
 #include <string>
 
@@ -70,4 +70,4 @@ public:
 
 }  // namespace tex
 
-#endif  // LATEX_H_INCLUDED
+#endif  // LATE_LATEX_H

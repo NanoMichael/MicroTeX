@@ -47,10 +47,11 @@ enum class LetterType : u8 {
  *
  * <p>
  * Unicode includes many such symbols (in the range U+1D400–U+1D7FF). But notice that
- * there are several code-point come up as <Reserved> at Unicode, this class will
+ * there are several code-point come up as <Reserved> at Unicode, this handler will
  * replace these <Reserved> code-points with the code-point that has the same "glyph"
  * representation.
  *
+ * <p>
  * For example, the math-italic version of the character 'h' has the code-point
  * "U+1D455" that is reserved in Unicode, and it will be replaced by "U+210E" that has
  * the meaning of "PLANCK CONSTANT".

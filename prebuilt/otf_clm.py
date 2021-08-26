@@ -530,6 +530,10 @@ def parse_otf(file_path, is_math_font, output_file_path):
     font.close()
 
     with open(output_file_path, 'wb') as f:
+        f.write(struct.pack('c', 'c'))
+        f.write(struct.pack('c', 'l'))
+        f.write(struct.pack('c', 'm'))
+        f.write(struct.pack('!H', 1))
         f.write(struct.pack('?', is_math_font))
         f.write(struct.pack('!H', em))
         f.write(struct.pack('!H', xheight))

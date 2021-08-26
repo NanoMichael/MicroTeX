@@ -107,7 +107,7 @@ public:
   u16 space() const;
 
   /**
-   * Get the glyph id from the given Unicode-codepoint, return -1 if not found.
+   * Get the glyph id from the given Unicode code-point, return -1 if not found.
    *
    * <p>
    * The glyph id actually represents the index of the glyph in font file.
@@ -124,7 +124,7 @@ public:
    */
   i32 glyphId(c32 codepoint) const;
 
-  /** Get the glyph from the given unicode-codepoint, return null if not found. */
+  /** Get the glyph from the given Unicode code-point, return null if not found. */
   const Glyph* glyphOfUnicode(c32 codepoint) const;
 
   /** Get the glyph from the given glyph id, return null if absent. */

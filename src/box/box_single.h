@@ -93,7 +93,7 @@ public:
 
 /**
  * Box to draw text. The metrics measurement and drawing is
- * delegate to rendering backend.
+ * delegated to rendering backend.
  */
 class TextBox : public Box {
 private:

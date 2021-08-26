@@ -1,9 +1,7 @@
 #include "latex.h"
 
-#include "core/split.h"
 #include "core/formula.h"
 #include "macro/macro.h"
-#include "utils/utf.h"
 #include "utils/string_utils.h"
 
 using namespace std;

@@ -412,9 +412,6 @@ void NewCommandMacro::_init_() {
   cmd(0, "degree", "^\\circ");
   cmd(0, "with", "\\mathbin{\\&}");
   cmd(0, "parr", "\\mathbin{\\rotatebox[origin=c]{180}{\\&}}");
-  cmd(0, "copyright", "\\textcircled{\\raisebox{0.2ex}{c}}");
-  cmd(0, "", "\\mathrm{\\polishlcross L}");
-  cmd(0, "l", "\\mathrm{\\polishlcross l}");
   cmd(
     2,
     "sfrac",

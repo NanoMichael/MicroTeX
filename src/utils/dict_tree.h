@@ -11,7 +11,7 @@ private:
   K _key;
   V _value;
   u16 _childCount;
-  /** Children sorted by _key, MUST NOT BE NULL */
+  /** Children sorted by #_key */
   SortedDictTree<K, V>** _children;
 
 public:

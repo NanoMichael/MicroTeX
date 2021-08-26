@@ -1,5 +1,8 @@
-#ifndef CONFIG_H_INCLUDED
-#define CONFIG_H_INCLUDED
+#ifndef LATEX_CONFIG_H
+#define LATEX_CONFIG_H
+
+// The clm data version
+#define CLM_VER 1
 
 // Flag for debug
 #if defined(_DEBUG) || defined(DEBUG) || defined(__DEBUG__) || !defined(NDEBUG)
@@ -46,4 +49,4 @@
 #define CLATEX_CXX17 0
 #endif
 
-#endif  // CONFIG_H_INCLUDED
+#endif  // LATEX_CONFIG_H

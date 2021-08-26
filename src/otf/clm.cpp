@@ -2,6 +2,8 @@
 
 #include <cstring>
 
+#include "config.h"
+#include "utils/string_utils.h"
 #include "utils/exceptions.h"
 
 namespace tex {
@@ -237,6 +239,23 @@ void CLMReader::readGlyphs(Otf& font, BinaryFileReader& reader) {
 
 Otf* CLMReader::read(const char* clmFilePath) const {
   BinaryFileReader reader(clmFilePath);
+  // read format
+  const auto c = reader.read<u8>();
+  const auto l = reader.read<u8>();
+  const auto m = reader.read<u8>();
+  if (c != 'c' || l != 'l' || m != 'm') {
+    throw ex_invalid_param("file: '" + std::string(clmFilePath) + "' is not a clm file!");
+  }
+  const auto ver = reader.read<u16>();
+  if (ver != CLM_VER) {
+    throw ex_invalid_param(
+      "file: '" +
+      std::string(clmFilePath) +
+      "' does not match the required version ("
+      + tostring(CLM_VER) + ")!"
+    );
+  }
+  // read otf-spec
   Otf* font = new Otf();
   readMeta(*font, reader);
   readClassKernings(*font, reader);
