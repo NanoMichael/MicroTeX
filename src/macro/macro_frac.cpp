@@ -102,7 +102,8 @@ macro(cfrac) {
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
   const auto n = sptrOf<StyleAtom>(TexStyle::display, num._root);
   const auto d = sptrOf<StyleAtom>(TexStyle::display, denom._root);
-  return sptrOf<FracAtom>(n, d, numAlign, Alignment::center);
+  const auto f = sptrOf<FracAtom>(n, d, numAlign, Alignment::center);
+  return sptrOf<StyleAtom>(TexStyle::display, f);
 }
 
 macro(genfrac) {
