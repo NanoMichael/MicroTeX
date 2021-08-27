@@ -142,7 +142,43 @@ sptr<Box> VCenterAtom::createBox(Env& env) {
 }
 
 LongDivAtom::LongDivAtom(long divisor, long dividend)
-  : _divisor(divisor), _dividend(dividend) {}
+  : _divisor(divisor), _dividend(dividend) {
+  _halign = Alignment::right;
+  setAlignTop(true);
+  vector<string> results;
+  calculate(results);
+
+  auto rule = sptrOf<RuleAtom>(0._ex, 2.5_ex, 0.3_ex);
+
+  const int s = results.size();
+  for (int i = 0; i < s; i++) {
+    auto num = Formula(results[i])._root;
+    if (i == 1) {
+      string divisor = tostring(_divisor);
+      auto rparen = SymbolAtom::get("rparen");
+      auto big = sptrOf<BigSymbolAtom>(rparen, 1);
+      auto raise = sptrOf<RaiseAtom>(big, -1._tt, 0._tt, 0._tt);
+      auto row = sptrOf<RowAtom>(raise);
+      row->add(num);
+      auto o = sptrOf<OverUnderBar>(row, true);
+      auto r = sptrOf<RowAtom>(Formula(divisor, false)._root);
+      r->add(sptrOf<SpaceAtom>(SpaceType::thinMuSkip));
+      r->add(o);
+      append(r);
+      continue;
+    }
+    if (i % 2 == 0) {
+      auto row = sptrOf<RowAtom>(num);
+      row->add(rule);
+      if (i == 0) append(row);
+      else append(sptrOf<OverUnderBar>(row, false));
+    } else {
+      auto row = sptrOf<RowAtom>(num);
+      row->add(rule);
+      append(row);
+    }
+  }
+}
 
 void LongDivAtom::calculate(vector<string>& results) const {
   long quotient = _dividend / _divisor;
@@ -158,61 +194,6 @@ void LongDivAtom::calculate(vector<string>& results) const {
     results.push_back(tostring(product));
     results.push_back(tostring(remaining));
   }
-}
-
-sptr<Box> LongDivAtom::createBox(Env& env) {
-  VRowAtom vrow;
-  vrow._halign = Alignment::right;
-  vrow.setAlignTop(true);
-
-  vector<string> results;
-  calculate(results);
-
-  auto kern = sptrOf<SpaceAtom>(UnitType::ex, 0.f, 2.f, 0.4f);
-
-  const int s = results.size();
-  for (int i = 1; i < s; i++) {
-    auto num = Formula(results[i])._root;
-    auto row = sptrOf<RowAtom>(num);
-    if (i == 1) {
-      row->add(sptrOf<SpaceAtom>(UnitType::ex, 0.f, 0.f, 0.4f));
-      vrow.append(row);
-      continue;
-    }
-    row->add(kern);
-    if (i % 2 == 0) {
-      vrow.append(sptrOf<OverUnderBar>(row, false));
-    } else {
-      vrow.append(row);
-    }
-  }
-
-  const auto scale = 1.2f;
-
-  auto hb = sptrOf<HBox>();
-  auto b = vrow.createBox(env);
-  const string& n = tostring(_divisor);
-  hb->add(Formula(n, false)._root->createBox(env));
-  hb->add(SpaceAtom(SpaceType::thinMuSkip).createBox(env));
-  auto x = ScaleAtom(SymbolAtom::get("longdivision"), scale).createBox(env);
-  hb->add(x);
-  hb->add(b);
-
-  auto row = sptrOf<RowAtom>(Formula(results[0])._root);
-  row->add(kern);
-  auto d = row->createBox(env);
-
-  auto vb = sptrOf<VBox>();
-  d->_shift = hb->_width - d->_width;
-  vb->add(d);
-  const auto t = env.mathConsts().overbarRuleThickness() * env.scale() * scale;
-  auto r = sptrOf<RuleBox>(t, b->_width, 0.f);
-  r->_shift = hb->_width - r->_width;
-  vb->add(r);
-  vb->add(sptrOf<StrutBox>(0.f, -t - 1.f, 0.f, 0.f));
-  vb->add(hb);
-
-  return vb;
 }
 
 sptr<Box> CancelAtom::createBox(Env& env) {

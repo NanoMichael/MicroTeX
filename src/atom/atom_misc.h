@@ -223,7 +223,7 @@ public:
 };
 
 /** An atom representing long division */
-class LongDivAtom : public Atom {
+class LongDivAtom : public VRowAtom {
 private:
   long _divisor, _dividend;
 
@@ -233,8 +233,6 @@ public:
   LongDivAtom() = delete;
 
   LongDivAtom(long divisor, long dividend);
-
-  sptr<Box> createBox(Env& env) override;
 };
 
 /** An atom representing an atom with lines covered */
