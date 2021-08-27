@@ -8,6 +8,10 @@
 using namespace tex;
 using namespace std;
 
+const std::vector<StackElement> StackAtom::_defaultOrder = {
+  StackElement::over, StackElement::under, StackElement::base
+};
+
 sptr<Box> StackAtom::createBox(Env& env) {
   const auto&[box, _] = createStack(env);
   return box;
@@ -15,26 +19,32 @@ sptr<Box> StackAtom::createBox(Env& env) {
 
 StackResult StackAtom::createStack(Env& env) {
   // over and under
-  sptr<Box> o, u;
-  if (_over.isPresent()) {
-    o = (
-      _over.isScript
-      ? env.withStyle(env.supStyle(), [&](Env& sub) { return _over.atom->createBox(sub); })
-      : _over.atom->createBox(env)
+  sptr<Box> o, u, b;
+  const auto createOverUnder = [&](const StackArgs& args, TexStyle style) -> sptr<Box> {
+    if (!args.isPresent()) return nullptr;
+    auto x = (
+      args.isScript
+      ? env.withStyle(style, [&](Env& e) { return args.atom->createBox(e); })
+      : args.atom->createBox(env)
     );
-    _maxWidth = std::max(_maxWidth, o->_width);
-  }
-  if (_under.isPresent()) {
-    u = (
-      _under.isScript
-      ? env.withStyle(env.subStyle(), [&](Env& sub) { return _under.atom->createBox(sub); })
-      : _under.atom->createBox(env)
-    );
-    _maxWidth = std::max(_maxWidth, u->_width);
+    _maxWidth = std::max(_maxWidth, x->_width);
+    return x;
+  };
+  for (auto elem : _order) {
+    switch (elem) {
+      case StackElement::over:
+        o = createOverUnder(_over, env.supStyle());
+        break;
+      case StackElement::under:
+        u = createOverUnder(_under, env.subStyle());
+        break;
+      case StackElement::base:
+        b = _base == nullptr ? StrutBox::empty() : _base->createBox(env);
+        _maxWidth = std::max(_maxWidth, b->_width);
+        break;
+    }
   }
 
-  sptr<Box> b = _base == nullptr ? StrutBox::empty() : _base->createBox(env);
-  _maxWidth = std::max(_maxWidth, b->_width);
   auto delta = 0.f;
   if (auto cs = dynamic_cast<CharSymbol*>(_base.get()); cs != nullptr) {
     delta = cs->getChar(env).italic();

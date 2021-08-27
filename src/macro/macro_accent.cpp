@@ -43,4 +43,29 @@ macro(accentbiss) {
   return sptrOf<AccentedAtom>(Formula(tp, args[1], false)._root, acc);
 }
 
+macro(accents) {
+  const auto& name = args[0];
+  const auto&[acc, fit] = [&]() {
+    if (name == "widehat") return std::make_pair<std::string>("hat", true);
+    if (name == "widetilde") return std::make_pair<std::string>("tilde", true);
+    return std::make_pair(name, false);
+  }();
+  return sptrOf<AccentedAtom>(Formula(tp, args[1], false)._root, acc, fit);
+}
+
+macro(undertilde) {
+  auto stack = new StackAtom({StackElement::base, StackElement::under});
+  auto tilde = sptrOf<ExtensibleAtom>(
+    "tilde",
+    // capture raw pointer to avoid cycle reference
+    [stack](const Env& env) { return stack->getMaxWidth(); },
+    false
+  );
+  auto a = Formula(tp, args[1], false)._root;
+  const StackArgs under{tilde, UnitType::mu, 0.5f, true};
+  stack->setBaseAtom(a);
+  stack->setUnder(under);
+  return sptr<StackAtom>(stack);
+}
+
 }

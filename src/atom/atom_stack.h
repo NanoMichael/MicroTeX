@@ -30,6 +30,12 @@ struct StackResult {
   float kernelShift;
 };
 
+enum class StackElement {
+  over,
+  under,
+  base
+};
+
 /**
  * An atom representing another atom with an atom above it (if not null)
  * separated by a kern and in a smaller size depending on "overScriptSize"
@@ -42,12 +48,21 @@ private:
   StackArgs _over;
   StackArgs _under;
   float _maxWidth = 0.f;
+  std::vector<StackElement> _order;
+
+  static const std::vector<StackElement> _defaultOrder;
 
 public:
-  StackAtom() = delete;
+  explicit StackAtom(
+    std::vector<StackElement> order = _defaultOrder
+  ) : _order(std::move(order)) {}
 
-  StackAtom(const sptr<Atom>& base, const StackArgs& args, bool isOver) {
-    _base = base;
+  StackAtom(
+    const sptr<Atom>& base,
+    const StackArgs& args,
+    bool isOver,
+    std::vector<StackElement> order = _defaultOrder
+  ) : _base(base), _order(std::move(order)) {
     if (isOver) {
       _over = args;
     } else {
@@ -58,11 +73,20 @@ public:
   StackAtom(
     const sptr<Atom>& base,
     StackArgs overArgs,
-    StackArgs underArgs
-  ) : _base(base), _over(std::move(overArgs)), _under(std::move(underArgs)) {}
+    StackArgs underArgs,
+    std::vector<StackElement> order = _defaultOrder
+  ) : _base(base), _over(std::move(overArgs)), _under(std::move(underArgs)), _order(std::move(order)) {}
 
   inline void setBaseAtom(const sptr<Atom>& base) {
     _base = base;
+  }
+
+  inline void setOver(StackArgs over) {
+    _over = std::move(over);
+  }
+
+  inline void setUnder(StackArgs under) {
+    _under = std::move(under);
   }
 
   inline float getMaxWidth() {

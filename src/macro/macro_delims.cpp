@@ -16,9 +16,10 @@ macro(xarrow) {
     Formula(tp, args[2], false, tp.isMathMode())._root,
     false
   );
-  const auto& stack = sptrOf<StackAtom>(nullptr, over, under);
+  const auto stack = new StackAtom(nullptr, over, under);
   const auto& arrow = sptrOf<ExtensibleAtom>(
     name,
+    // capture raw pointer to avoid cycle reference
     [stack](const Env& env) -> float {
       return stack->getMaxWidth() + Units::fsize(UnitType::ex, 1.f, env);
     },
@@ -26,7 +27,7 @@ macro(xarrow) {
   );
   arrow->_type = AtomType::relation;
   stack->setBaseAtom(arrow);
-  return stack;
+  return sptr<StackAtom>(stack);
 }
 
 macro(left) {
