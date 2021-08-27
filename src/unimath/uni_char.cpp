@@ -41,7 +41,8 @@ float Char::italic() const {
 
 float Char::topAccentAttachment() const {
   auto g = glyph();
-  return g == nullptr ? 0.f : g->math().topAccentAttachment() * scale;
+  auto t = g == nullptr ? 0.f : g->math().topAccentAttachment();
+  return t == Otf::undefinedMathValue ? width() / 2.f : t * scale;
 }
 
 static Char variant(const Char& chr, u32 index, std::function<const Variants&(const Glyph*)>&& f) {
