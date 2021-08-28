@@ -16,7 +16,14 @@ void CharBox::draw(Graphics2D& g2, float x, float y) {
   const auto font = Font::create(_chr.otfFont()->fontFile);
   g2.setFont(font);
   g2.setFontSize(Env::fixedTextSize() * _chr.scale);
-  g2.drawGlyph(_chr.glyphId, x, y);
+  if (_chr.isValid()) {
+    g2.drawGlyph(_chr.glyphId, x, y);
+    return;
+  }
+  const auto old = g2.getColor();
+  g2.setColor(red);
+  g2.drawGlyph(_chr.fallbackGlyphId(), x, y);
+  g2.setColor(old);
 }
 
 int CharBox::lastFontId() {

@@ -32,6 +32,15 @@ const Glyph* Char::glyph() const {
   return g;
 }
 
+const i32 Char::fallbackGlyphId() const {
+  if (isValid()) return glyphId;
+  auto font = FontContext::getFont(fontId);
+  if (font == nullptr) {
+    return FontContext::getFont(0)->otf().glyphId('?');
+  }
+  return font->otf().glyphId('?');
+}
+
 float Char::width() const {
   return glyph()->metrics().width() * scale;
 }

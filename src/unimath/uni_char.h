@@ -52,6 +52,9 @@ struct Char final {
    */
   const Glyph* glyph() const;
 
+  /** The fallback glyph id if is invalid */
+  const i32 fallbackGlyphId() const;
+
   /** The width of this char-glyph */
   float width() const;
 
