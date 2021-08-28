@@ -11,7 +11,7 @@ map<string, sptr<Formula>> Formula::_predefFormulas;
 Formula::Formula() : _parser("", this, false) {}
 
 Formula::Formula(
-  const TeXParser& tp,
+  const Parser& tp,
   const string& latex,
   bool preprocess,
   bool isMathMode

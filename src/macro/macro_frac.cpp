@@ -17,7 +17,7 @@ macro(binom) {
 
 sptr<Atom> _choose(
   const std::string& left, const std::string& right,
-  TeXParser& tp, std::vector<std::string>& args
+  Parser& tp, std::vector<std::string>& args
 ) {
   auto num = tp.popFormulaAtom();
   auto den = Formula(tp, tp.getOverArgument(), false)._root;
@@ -61,7 +61,7 @@ macro(over) {
   return sptrOf<FracAtom>(num, den, true);
 }
 
-sptr<Atom> _frac_with_delims(TeXParser& tp, Args& args, bool rule, bool hasLength) {
+sptr<Atom> _frac_with_delims(Parser& tp, Args& args, bool rule, bool hasLength) {
   auto num = tp.popFormulaAtom();
   const auto& l = hasLength ? tp.getDimen() : Dimen();
   auto den = Formula(tp, tp.getOverArgument(), false)._root;

@@ -48,7 +48,7 @@ inline macro(mathclrlap) {
 
 inline sptr<Atom> _cancel(
   int cancelType,
-  TeXParser& tp, std::vector<std::string>& args
+  Parser& tp, std::vector<std::string>& args
 ) {
   auto base = Formula(tp, args[1], false)._root;
   if (base == nullptr)
@@ -177,7 +177,7 @@ inline macro(nokern) {
 
 /**************************************** limits macros *******************************************/
 
-inline sptr<Atom> _limits_type(TeXParser& tp, Args& args, LimitsType type) {
+inline sptr<Atom> _limits_type(Parser& tp, Args& args, LimitsType type) {
   auto atom = tp.popLastAtom();
   atom->_limitsType = type;
   return atom;

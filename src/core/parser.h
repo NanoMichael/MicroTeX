@@ -23,7 +23,7 @@ class Formula;
 class MacroInfo;
 
 /** This class implements a parser for latex formulas */
-class TeXParser {
+class Parser {
 private:
   std::string _latex;
   int _pos, _spos, _len;
@@ -102,7 +102,7 @@ public:
    * @param formula the formula where to put the atoms
    * @throw ex_parse if the string could not be parsed correctly
    */
-  TeXParser(const std::string& latex, Formula* formula) {
+  Parser(const std::string& latex, Formula* formula) {
     init(true, latex, formula, true);
   }
 
@@ -113,7 +113,7 @@ public:
    * @param formula the formula where to put the atoms
    * @throw ex_parse if the string could not be parsed correctly
    */
-  TeXParser(bool isPartial, const std::string& latex, Formula* formula) {
+  Parser(bool isPartial, const std::string& latex, Formula* formula) {
     init(isPartial, latex, formula, true);
   }
 
@@ -126,7 +126,7 @@ public:
    *
    * @throw ex_parse if the string could not be parsed correctly
    */
-  TeXParser(
+  Parser(
     bool isPartial,
     const std::string& latex,
     Formula* formula,
@@ -143,7 +143,7 @@ public:
    *
    * @throw ex_parse if the string could not be parsed correctly
    */
-  TeXParser(const std::string& latex, Formula* formula, bool preprocess) {
+  Parser(const std::string& latex, Formula* formula, bool preprocess) {
     init(true, latex, formula, preprocess);
   }
 
@@ -159,7 +159,7 @@ public:
    *
    * @throw ex_parse if the string could not be parsed correctly
    */
-  TeXParser(
+  Parser(
     bool isPartial,
     const std::string& latex,
     Formula* formula,

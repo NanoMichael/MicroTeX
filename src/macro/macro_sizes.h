@@ -47,7 +47,7 @@ inline macro(sizes) {
 }
 
 inline sptr <Atom> _big(
-  TeXParser& tp,
+  Parser& tp,
   std::vector<std::string>& args,
   int size,
   AtomType type = AtomType::none

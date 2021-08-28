@@ -8,11 +8,11 @@
 
 namespace tex {
 
-class TeXParser;
+class Parser;
 
 class Macro {
 public:
-  virtual void execute(TeXParser& tp, std::vector<std::string>& args) = 0;
+  virtual void execute(Parser& tp, std::vector<std::string>& args) = 0;
 
   virtual ~Macro() = default;
 };
@@ -35,7 +35,7 @@ public:
    */
   static bool _errIfConflict;
 
-  void execute(TeXParser& tp, std::vector<std::string>& args) override;
+  void execute(Parser& tp, std::vector<std::string>& args) override;
 
   static void addNewCommand(
     const std::string& name,
@@ -116,7 +116,7 @@ public:
   explicit MacroInfo(int argc) : _argc(argc), _posOpts(0) {}
 
   virtual sptr<Atom> invoke(
-    TeXParser& tp,
+    Parser& tp,
     std::vector<std::string>& args) {
     return nullptr;
   }
@@ -139,7 +139,7 @@ public:
     : _macro(macro), MacroInfo(argc, posOpts) {}
 
   sptr<Atom> invoke(
-    TeXParser& tp,
+    Parser& tp,
     std::vector<std::string>& args
   ) override {
     _macro->execute(tp, args);
@@ -148,7 +148,7 @@ public:
 };
 
 typedef sptr<Atom> (* MacroDelegate)(
-  TeXParser& tp,
+  Parser& tp,
   std::vector<std::string>& args
 );
 
@@ -166,7 +166,7 @@ public:
     : MacroInfo(argc), _delegate(delegate) {}
 
   sptr<Atom> invoke(
-    TeXParser& tp,
+    Parser& tp,
     std::vector<std::string>& args
   ) override;
 };

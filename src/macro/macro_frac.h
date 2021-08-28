@@ -11,7 +11,7 @@ macro(binom);
 
 sptr<Atom> _choose(
   const std::string& left, const std::string& right,
-  TeXParser& tp, Args& args
+  Parser& tp, Args& args
 );
 
 inline macro(choose) {

@@ -11,7 +11,7 @@ namespace tex {
 
 inline macro(smallmatrixATATenv) {
   auto* arr = new ArrayFormula();
-  TeXParser parser(tp.isPartial(), args[1], arr, false);
+  Parser parser(tp.isPartial(), args[1], arr, false);
   parser.parse();
   arr->checkDimensions();
   return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::smallMatrix);
@@ -19,7 +19,7 @@ inline macro(smallmatrixATATenv) {
 
 inline macro(matrixATATenv) {
   auto* arr = new ArrayFormula();
-  TeXParser parser(tp.isPartial(), args[1], arr, false);
+  Parser parser(tp.isPartial(), args[1], arr, false);
   parser.parse();
   arr->checkDimensions();
   return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::matrix);
@@ -27,7 +27,7 @@ inline macro(matrixATATenv) {
 
 inline macro(arrayATATenv) {
   auto* arr = new ArrayFormula();
-  TeXParser parser(tp.isPartial(), args[2], arr, false);
+  Parser parser(tp.isPartial(), args[2], arr, false);
   parser.parse();
   arr->checkDimensions();
   return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), args[1], true);
@@ -35,7 +35,7 @@ inline macro(arrayATATenv) {
 
 inline macro(alignATATenv) {
   auto* arr = new ArrayFormula();
-  TeXParser parser(tp.isPartial(), args[1], arr, false);
+  Parser parser(tp.isPartial(), args[1], arr, false);
   parser.parse();
   arr->checkDimensions();
   return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::align);
@@ -43,7 +43,7 @@ inline macro(alignATATenv) {
 
 inline macro(flalignATATenv) {
   auto* arr = new ArrayFormula();
-  TeXParser parser(tp.isPartial(), args[1], arr, false);
+  Parser parser(tp.isPartial(), args[1], arr, false);
   parser.parse();
   arr->checkDimensions();
   return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::flAlign);
@@ -51,7 +51,7 @@ inline macro(flalignATATenv) {
 
 inline macro(alignatATATenv) {
   auto* arr = new ArrayFormula();
-  TeXParser par(tp.isPartial(), args[2], arr, false);
+  Parser par(tp.isPartial(), args[2], arr, false);
   par.parse();
   arr->checkDimensions();
   size_t n = 0;
@@ -63,7 +63,7 @@ inline macro(alignatATATenv) {
 
 inline macro(alignedATATenv) {
   auto* arr = new ArrayFormula();
-  TeXParser p(tp.isPartial(), args[1], arr, false);
+  Parser p(tp.isPartial(), args[1], arr, false);
   p.parse();
   arr->checkDimensions();
   return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::aligned);
@@ -71,7 +71,7 @@ inline macro(alignedATATenv) {
 
 inline macro(alignedatATATenv) {
   auto* arr = new ArrayFormula();
-  TeXParser p(tp.isPartial(), args[2], arr, false);
+  Parser p(tp.isPartial(), args[2], arr, false);
   p.parse();
   arr->checkDimensions();
   size_t n = 0;
@@ -85,7 +85,7 @@ inline macro(alignedatATATenv) {
 
 inline macro(multlineATATenv) {
   auto* arr = new ArrayFormula();
-  TeXParser p(tp.isPartial(), args[1], arr, false);
+  Parser p(tp.isPartial(), args[1], arr, false);
   p.parse();
   arr->checkDimensions();
   if (arr->cols() > 1) {
@@ -98,7 +98,7 @@ inline macro(multlineATATenv) {
 
 inline macro(gatherATATenv) {
   auto* arr = new ArrayFormula();
-  TeXParser p(tp.isPartial(), args[1], arr, false);
+  Parser p(tp.isPartial(), args[1], arr, false);
   p.parse();
   arr->checkDimensions();
   if (arr->cols() > 1) throw ex_parse("Requires exact one column in gather environment!");
@@ -110,7 +110,7 @@ inline macro(gatherATATenv) {
 
 inline macro(gatheredATATenv) {
   auto* arr = new ArrayFormula();
-  TeXParser p(tp.isPartial(), args[1], arr, false);
+  Parser p(tp.isPartial(), args[1], arr, false);
   p.parse();
   arr->checkDimensions();
   if (arr->cols() > 1) throw ex_parse("Requires exact one column in gathered environment!");

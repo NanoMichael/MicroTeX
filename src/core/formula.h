@@ -14,7 +14,7 @@ namespace tex {
 
 class CellSpecifier;
 
-class TeXParser;
+class Parser;
 
 /**
  * Represents a logical mathematical formula that will be displayed (by creating
@@ -23,7 +23,7 @@ class TeXParser;
  */
 class Formula {
 private:
-  TeXParser _parser;
+  Parser _parser;
 
 public:
   // predefined TeX formulas
@@ -52,7 +52,7 @@ public:
    * @throw ex_parse if the string could not be parsed correctly
    */
   Formula(
-    const TeXParser& tp, const std::string& latex,
+    const Parser& tp, const std::string& latex,
     bool preprocess = true, bool isMathMode = true
   );
 

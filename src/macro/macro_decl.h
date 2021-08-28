@@ -8,7 +8,7 @@
 namespace tex {
 
 #ifndef macro
-#define macro(name) sptr<Atom> macro_##name(TeXParser& tp, Args& args)
+#define macro(name) sptr<Atom> macro_##name(Parser& tp, Args& args)
 #endif
 
 }

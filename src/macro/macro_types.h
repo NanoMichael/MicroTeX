@@ -5,7 +5,7 @@
 
 namespace tex {
 
-inline sptr<Atom> _math_type(TeXParser& tp, Args& args, AtomType type) {
+inline sptr<Atom> _math_type(Parser& tp, Args& args, AtomType type) {
   return sptrOf<TypedAtom>(type, type, Formula(tp, args[1], false)._root);
 }
 

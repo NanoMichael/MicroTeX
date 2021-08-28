@@ -51,7 +51,7 @@ macro(cr) {
     ArrayFormula arr;
     arr.add(tp._formula->_root);
     arr.addRow();
-    TeXParser parser(
+    Parser parser(
       tp.isPartial(),
       tp.forwardBalancedGroup(),
       &arr,

@@ -23,7 +23,7 @@ inline macro(textfont) {
   return sptrOf<FontStyleAtom>(style, tp.isMathMode(), atom);
 }
 
-inline sptr<Atom> _textfontnested(TeXParser& tp, Args& args, FontStyle style) {
+inline sptr<Atom> _textfontnested(Parser& tp, Args& args, FontStyle style) {
   const auto atom = Formula(tp, args[1], false, false)._root;
   return sptrOf<FontStyleAtom>(style, false, atom);
 }
@@ -48,7 +48,7 @@ inline macro(textrm) {
   return _textfontnested(tp, args, FontStyle::rm);
 }
 
-inline sptr<Atom> _mathfont(TeXParser& tp, Args& args, FontStyle style) {
+inline sptr<Atom> _mathfont(Parser& tp, Args& args, FontStyle style) {
   const auto atom = Formula(tp, args[1], false, tp.isMathMode())._root;
   return sptrOf<FontStyleAtom>(style, true, atom);
 }

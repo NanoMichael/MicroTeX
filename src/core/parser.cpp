@@ -15,20 +15,20 @@
 using namespace std;
 using namespace tex;
 
-const char TeXParser::ESCAPE = '\\';
-const char TeXParser::L_GROUP = '{';
-const char TeXParser::R_GROUP = '}';
-const char TeXParser::L_BRACK = '[';
-const char TeXParser::R_BRACK = ']';
-const char TeXParser::DOLLAR = '$';
-const char TeXParser::DQUOTE = '\"';
-const char TeXParser::PERCENT = '%';
-const char TeXParser::SUB_SCRIPT = '_';
-const char TeXParser::SUPER_SCRIPT = '^';
-const char TeXParser::PRIME = '\'';
-const char TeXParser::BACKPRIME = '`';
+const char Parser::ESCAPE = '\\';
+const char Parser::L_GROUP = '{';
+const char Parser::R_GROUP = '}';
+const char Parser::L_BRACK = '[';
+const char Parser::R_BRACK = ']';
+const char Parser::DOLLAR = '$';
+const char Parser::DQUOTE = '\"';
+const char Parser::PERCENT = '%';
+const char Parser::SUB_SCRIPT = '_';
+const char Parser::SUPER_SCRIPT = '^';
+const char Parser::PRIME = '\'';
+const char Parser::BACKPRIME = '`';
 
-void TeXParser::init(
+void Parser::init(
   bool isPartial,
   const string& latex,
   Formula* formula,
@@ -56,7 +56,7 @@ void TeXParser::init(
   _arrayMode = formula->isArrayMode();
 }
 
-void TeXParser::reset(const string& latex) {
+void Parser::reset(const string& latex) {
   _latex = latex;
   _len = latex.length();
   _formula->_root = nullptr;
@@ -70,7 +70,7 @@ void TeXParser::reset(const string& latex) {
   preprocess();
 }
 
-sptr<Atom> TeXParser::popLastAtom() const {
+sptr<Atom> Parser::popLastAtom() const {
   auto a = _formula->_root;
   auto* ra = dynamic_cast<RowAtom*>(a.get());
   if (ra != nullptr) return ra->popBack();
@@ -78,22 +78,22 @@ sptr<Atom> TeXParser::popLastAtom() const {
   return a;
 }
 
-sptr<Atom> TeXParser::popFormulaAtom() const {
+sptr<Atom> Parser::popFormulaAtom() const {
   auto a = _formula->_root;
   _formula->_root = nullptr;
   return a;
 }
 
-void TeXParser::addAtom(const sptr<Atom>& atom) const {
+void Parser::addAtom(const sptr<Atom>& atom) const {
   _formula->add(atom);
 }
 
-void TeXParser::addRow() const {
+void Parser::addRow() const {
   if (!_arrayMode) throw ex_parse("Can not add row in none-array mode!");
   ((ArrayFormula*) _formula)->addRow();
 }
 
-string TeXParser::getDollarGroup(char openclose) {
+string Parser::getDollarGroup(char openclose) {
   int spos = _pos;
   char ch;
 
@@ -106,7 +106,7 @@ string TeXParser::getDollarGroup(char openclose) {
   return _latex.substr(spos, _pos - spos);
 }
 
-string TeXParser::getGroup(char open, char close) {
+string Parser::getGroup(char open, char close) {
   if (_pos == _len) return "";
 
   int group, spos;
@@ -134,7 +134,7 @@ string TeXParser::getGroup(char open, char close) {
   throw ex_parse("Missing '" + tostring((char) open) + "'!");
 }
 
-string TeXParser::getGroup(const string& open, const string& close) {
+string Parser::getGroup(const string& open, const string& close) {
   int group = 1;
   int ol = open.length();
   int cl = close.length();
@@ -203,7 +203,7 @@ string TeXParser::getGroup(const string& open, const string& close) {
   return buf.substr(0, buf.length() - _pos + startC);
 }
 
-string TeXParser::getOverArgument() {
+string Parser::getOverArgument() {
   if (_pos == _len) return "";
 
   int ogroup = 1, spos;
@@ -260,7 +260,7 @@ string TeXParser::getOverArgument() {
   return str;
 }
 
-string TeXParser::getCommand() {
+string Parser::getCommand() {
   int spos = ++_pos;
   char ch = L'\0';
 
@@ -285,14 +285,14 @@ string TeXParser::getCommand() {
   return com;
 }
 
-void TeXParser::insert(int beg, int end, const string& formula) {
+void Parser::insert(int beg, int end, const string& formula) {
   _latex.replace(beg, end - beg, formula);
   _len = _latex.length();
   _pos = beg;
   _insertion = true;
 }
 
-string TeXParser::getCommandWithArgs(const string& command) {
+string Parser::getCommandWithArgs(const string& command) {
   if (command == "left") return getGroup("\\left", "\\right");
 
   auto mac = MacroInfo::get(command);
@@ -324,7 +324,7 @@ string TeXParser::getCommandWithArgs(const string& command) {
   return mac_arg;
 }
 
-void TeXParser::skipWhiteSpace(int count) {
+void Parser::skipWhiteSpace(int count) {
   count = count >= 0 ? count : std::numeric_limits<int>::max();
   char c;
   while (_pos < _len && count > 0) {
@@ -335,7 +335,7 @@ void TeXParser::skipWhiteSpace(int count) {
   }
 }
 
-string TeXParser::forwardBalancedGroup() {
+string Parser::forwardBalancedGroup() {
   if (_group == 0) {
     const string& sub = _latex.substr(_pos);
     finish();
@@ -358,13 +358,13 @@ string TeXParser::forwardBalancedGroup() {
   return sub;
 }
 
-string TeXParser::forward(std::function<bool(char)>&& f) {
+string Parser::forward(std::function<bool(char)>&& f) {
   const auto p = _pos;
   while (_pos < _len && f(_latex[_pos])) ++_pos;
   return _latex.substr(p, _pos - p);
 }
 
-void TeXParser::getOptsArgs(int argc, int opts, Args& args) {
+void Parser::getOptsArgs(int argc, int opts, Args& args) {
   // A maximum of 10 options can be passed to a command,
   // the value will be added at the tail of the args if found any,
   // the last (maximum to 12th) value is reserved for returned value
@@ -412,7 +412,7 @@ void TeXParser::getOptsArgs(int argc, int opts, Args& args) {
   }
 }
 
-bool TeXParser::isValidName(const string& com) const {
+bool Parser::isValidName(const string& com) const {
   if (com.empty()) return false;
   if (com[0] != '\\') return false;
 
@@ -429,7 +429,7 @@ bool TeXParser::isValidName(const string& com) const {
   return isalpha(c);
 }
 
-sptr<Atom> TeXParser::processEscape() {
+sptr<Atom> Parser::processEscape() {
   _spos = _pos;
   const string command = getCommand();
 
@@ -458,7 +458,7 @@ sptr<Atom> TeXParser::processEscape() {
   return sptrOf<ColorAtom>(rm, TRANSPARENT, RED);
 }
 
-sptr<Atom> TeXParser::processCommands(const string& cmd, MacroInfo* mac) {
+sptr<Atom> Parser::processCommands(const string& cmd, MacroInfo* mac) {
   int opts = mac->_posOpts;
 
   Args args;
@@ -476,7 +476,7 @@ sptr<Atom> TeXParser::processCommands(const string& cmd, MacroInfo* mac) {
   return mac->invoke(*this, args);
 }
 
-sptr<Atom> TeXParser::getScripts(char first) {
+sptr<Atom> Parser::getScripts(char first) {
   _pos++;
   // get the sub script (assume the first is the sub script)
   sptr<Atom> sub = getArgument();
@@ -533,7 +533,7 @@ sptr<Atom> TeXParser::getScripts(char first) {
   return sptrOf<ScriptsAtom>(atom, sub, sup);
 }
 
-sptr<Atom> TeXParser::getArgument() {
+sptr<Atom> Parser::getArgument() {
   skipWhiteSpace();
   char ch;
   if (_pos < _len) ch = _latex[_pos];
@@ -569,7 +569,7 @@ sptr<Atom> TeXParser::getArgument() {
   return atom;
 }
 
-Dimen TeXParser::getDimen() {
+Dimen Parser::getDimen() {
   if (_pos == _len) return {0.f, UnitType::none};
 
   char ch = L'\0';
@@ -586,7 +586,7 @@ Dimen TeXParser::getDimen() {
   return Units::getDimen(_latex.substr(start, end - start - 1));
 }
 
-void TeXParser::preprocess(string& cmd, Args& args, int& pos) {
+void Parser::preprocess(string& cmd, Args& args, int& pos) {
   if (cmd == "newcommand" || cmd == "renewcommand") {
     preprocessNewCmd(cmd, args, pos);
   } else if (cmd == "newenvironment" || cmd == "renewenvironment") {
@@ -602,7 +602,7 @@ void TeXParser::preprocess(string& cmd, Args& args, int& pos) {
   }
 }
 
-void TeXParser::preprocessNewCmd(string& cmd, Args& args, int& pos) {
+void Parser::preprocessNewCmd(string& cmd, Args& args, int& pos) {
   // The macro must exists
   auto mac = MacroInfo::get(cmd);
   getOptsArgs(mac->_argc, mac->_posOpts, args);
@@ -612,7 +612,7 @@ void TeXParser::preprocessNewCmd(string& cmd, Args& args, int& pos) {
   _pos = pos;
 }
 
-void TeXParser::inflateNewCmd(string& cmd, Args& args, int& pos) {
+void Parser::inflateNewCmd(string& cmd, Args& args, int& pos) {
   // The macro must exists
   auto mac = MacroInfo::get(cmd);
   getOptsArgs(mac->_argc, mac->_posOpts, args);
@@ -629,7 +629,7 @@ void TeXParser::inflateNewCmd(string& cmd, Args& args, int& pos) {
   _pos = pos;
 }
 
-void TeXParser::inflateEnv(string& cmd, Args& args, int& pos) {
+void Parser::inflateEnv(string& cmd, Args& args, int& pos) {
   getOptsArgs(1, 0, args);
   string env = args[1] + "@env";
   auto mac = MacroInfo::get(env);
@@ -647,7 +647,7 @@ void TeXParser::inflateEnv(string& cmd, Args& args, int& pos) {
   _pos = pos;
 }
 
-void TeXParser::preprocess() {
+void Parser::preprocess() {
   if (_len == 0) return;
 
   char ch;
@@ -689,7 +689,7 @@ void TeXParser::preprocess() {
   _len = _latex.length();
 }
 
-void TeXParser::parse() {
+void Parser::parse() {
   if (_len == 0) {
     if (_formula->_root == nullptr && !_arrayMode)
       _formula->add(sptrOf<EmptyAtom>());
@@ -826,7 +826,7 @@ void TeXParser::parse() {
   }
 }
 
-sptr<Atom> TeXParser::getCharAtom() {
+sptr<Atom> Parser::getCharAtom() {
   int n = 0, m = 0, cnt = 0;
   c32 chr = 0;
   const auto next = [&]() {
@@ -847,7 +847,7 @@ sptr<Atom> TeXParser::getCharAtom() {
   return atom;
 }
 
-sptr<Atom> TeXParser::getCharAtom(c32 chr) {
+sptr<Atom> Parser::getCharAtom(c32 chr) {
   const c32 code = tex::convertToRomanNumber(chr);
   if (_isMathMode) {
     const auto it = Formula::_charToSymbol.find(code);
@@ -858,7 +858,7 @@ sptr<Atom> TeXParser::getCharAtom(c32 chr) {
   return sptrOf<CharAtom>(code, _isMathMode);
 }
 
-sptr<Atom> TeXParser::getSimpleScripts(bool isPrime) {
+sptr<Atom> Parser::getSimpleScripts(bool isPrime) {
   int count = 1;
   while (true) {
     ++_pos;
