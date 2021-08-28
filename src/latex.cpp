@@ -10,7 +10,7 @@ using namespace tex;
 volatile bool LaTeX::_isInited = false;
 std::string LaTeX::_defaultMathFontName;
 Formula* LaTeX::_formula = nullptr;
-TeXRenderBuilder* LaTeX::_builder = nullptr;
+RenderBuilder* LaTeX::_builder = nullptr;
 
 void LaTeX::init(const FontSpec& mathFontSpec) {
   FontContext::addMathFont(mathFontSpec);
@@ -40,12 +40,12 @@ void LaTeX::addMathFont(const FontSpec& params) {
   FontContext::addMathFont(params);
 }
 
-TeXRender* LaTeX::parse(
+Render* LaTeX::parse(
   const string& latex, int width, float textSize, float lineSpace, color fg,
   const string& mathFontName, const string& mainFontName
 ) {
   if (_formula == nullptr) _formula = new Formula();
-  if (_builder == nullptr) _builder = new TeXRenderBuilder();
+  if (_builder == nullptr) _builder = new RenderBuilder();
 
   bool isInline = true;
   if (startswith(latex, "$$") || startswith(latex, "\\[")) {
@@ -53,7 +53,7 @@ TeXRender* LaTeX::parse(
   }
   Alignment align = isInline ? Alignment::left : Alignment::center;
   _formula->setLaTeX(latex);
-  TeXRender* render =
+  Render* render =
     _builder->setStyle(isInline ? TexStyle::text : TexStyle::display)
       .setTextSize(textSize)
       .setMathFontName(mathFontName.empty() ? _defaultMathFontName : mathFontName)

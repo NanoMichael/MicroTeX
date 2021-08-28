@@ -11,7 +11,7 @@
 using namespace std;
 using namespace tex;
 
-TeXRender::TeXRender(const sptr<Box>& box, float textSize) {
+Render::Render(const sptr<Box>& box, float textSize) {
   _box = box;
   _textSize = textSize;
   _fixedScale = _textSize / Env::fixedTextSize();
@@ -30,7 +30,7 @@ TeXRender::TeXRender(const sptr<Box>& box, float textSize) {
   }
 }
 
-sptr<BoxGroup> TeXRender::wrap(const sptr<Box>& box) {
+sptr<BoxGroup> Render::wrap(const sptr<Box>& box) {
   sptr<BoxGroup> parent;
   if (auto group = dynamic_pointer_cast<BoxGroup>(box); group != nullptr) {
     parent = group;
@@ -40,7 +40,7 @@ sptr<BoxGroup> TeXRender::wrap(const sptr<Box>& box) {
   return parent;
 }
 
-void TeXRender::buildDebug(
+void Render::buildDebug(
   const sptr<BoxGroup>& parent,
   const sptr<Box>& box,
   BoxFilter&& filter
@@ -70,36 +70,36 @@ void TeXRender::buildDebug(
   }
 }
 
-float TeXRender::getTextSize() const {
+float Render::getTextSize() const {
   return _textSize;
 }
 
-int TeXRender::getHeight() const {
+int Render::getHeight() const {
   return (int) ((_box->_height + _box->_depth) * _fixedScale);
 }
 
-int TeXRender::getDepth() const {
+int Render::getDepth() const {
   return (int) (_box->_depth * _fixedScale);
 }
 
-int TeXRender::getWidth() const {
+int Render::getWidth() const {
   return (int) (_box->_width * _fixedScale);
 }
 
-float TeXRender::getBaseline() const {
+float Render::getBaseline() const {
   return _box->_height / (_box->_height + _box->_depth);
 }
 
-void TeXRender::setTextSize(float textSize) {
+void Render::setTextSize(float textSize) {
   _textSize = textSize;
   _fixedScale = _textSize / Env::fixedTextSize();
 }
 
-void TeXRender::setForeground(color fg) {
+void Render::setForeground(color fg) {
   _fg = fg;
 }
 
-void TeXRender::setWidth(int width, Alignment align) {
+void Render::setWidth(int width, Alignment align) {
   float diff = width - getWidth();
   // only care if new width larger than old
   if (diff > 0) {
@@ -107,7 +107,7 @@ void TeXRender::setWidth(int width, Alignment align) {
   }
 }
 
-void TeXRender::setHeight(int height, Alignment align) {
+void Render::setHeight(int height, Alignment align) {
   float diff = height - getHeight();
   // only care if new height larger than old
   if (diff > 0) {
@@ -115,7 +115,7 @@ void TeXRender::setHeight(int height, Alignment align) {
   }
 }
 
-void TeXRender::draw(Graphics2D& g2, int x, int y) {
+void Render::draw(Graphics2D& g2, int x, int y) {
   color old = g2.getColor();
   g2.setColor(isTransparent(_fg) ? DFT_COLOR : _fg);
   g2.translate(x, y);
@@ -130,15 +130,15 @@ void TeXRender::draw(Graphics2D& g2, int x, int y) {
   g2.setColor(old);
 }
 
-TeXRender* TeXRenderBuilder::build(Formula& f) {
+Render* RenderBuilder::build(Formula& f) {
   return build(f._root);
 }
 
-TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
+Render* RenderBuilder::build(const sptr<Atom>& fc) {
   sptr<Atom> f = fc;
   if (f == nullptr) f = sptrOf<EmptyAtom>();
   if (_textSize == -1) {
-    throw ex_invalid_state("A size is required, call function setSize before build.");
+    throw ex_invalid_state("A text size is required, call function setTextSize before build.");
   }
   if (_mathFontName.empty()) {
     throw ex_invalid_state("A math font is required, call function setMathFontName before build.");
@@ -157,7 +157,7 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
     env.setLineSpace(_lineSpaceUnit, _lineSpace);
   }
 
-  TeXRender* render;
+  Render* render;
   auto box = f->createBox(env);
   if (isLimitedWidth) {
     HBox* hb;
@@ -168,9 +168,9 @@ TeXRender* TeXRenderBuilder::build(const sptr<Atom>& fc) {
     } else {
       hb = new HBox(box, _isMaxWidth ? box->_width : env.textWidth(), _align);
     }
-    render = new TeXRender(sptr<Box>(hb), _textSize);
+    render = new Render(sptr<Box>(hb), _textSize);
   } else {
-    render = new TeXRender(box, _textSize);
+    render = new Render(box, _textSize);
   }
 
   if (!isTransparent(_fg)) render->setForeground(_fg);

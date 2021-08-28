@@ -30,7 +30,7 @@ using namespace tex;
 
 class TeXDrawingArea : public Gtk::DrawingArea {
 private:
-  TeXRender* _render;
+  Render* _render;
   float _text_size;
   int _padding;
 

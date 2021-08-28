@@ -70,7 +70,7 @@ void Parser::reset(const string& latex) {
   preprocess();
 }
 
-sptr<Atom> Parser::popLastAtom() const {
+sptr<Atom> Parser::popBack() const {
   auto a = _formula->_root;
   auto* ra = dynamic_cast<RowAtom*>(a.get());
   if (ra != nullptr) return ra->popBack();
@@ -260,7 +260,7 @@ string Parser::getOverArgument() {
   return str;
 }
 
-string Parser::getCommand() {
+string Parser::getCmd() {
   int spos = ++_pos;
   char ch = L'\0';
 
@@ -292,12 +292,12 @@ void Parser::insert(int beg, int end, const string& formula) {
   _insertion = true;
 }
 
-string Parser::getCommandWithArgs(const string& command) {
-  if (command == "left") return getGroup("\\left", "\\right");
+string Parser::getCmdWithArgs(const string& cmd) {
+  if (cmd == "left") return getGroup("\\left", "\\right");
 
-  auto mac = MacroInfo::get(command);
+  auto mac = MacroInfo::get(cmd);
   if (mac == nullptr) {
-    return "\\" + command;
+    return "\\" + cmd;
   }
   int mac_opts = mac->_posOpts;
 
@@ -306,7 +306,7 @@ string Parser::getCommandWithArgs(const string& command) {
   vector<string> mac_args;
   getOptsArgs(mac->_argc, mac_opts, mac_args);
   string mac_arg("\\");
-  mac_arg.append(command);
+  mac_arg.append(cmd);
   for (int j = 0; j < mac->_posOpts; j++) {
     string arg_t = mac_args[mac->_argc + j + 1];
     if (!arg_t.empty()) {
@@ -391,7 +391,7 @@ void Parser::getOptsArgs(int argc, int opts, Args& args) {
         args[i] = tostring(_latex[_pos]);
         _pos++;
       } else {
-        args[i] = getCommandWithArgs(getCommand());
+        args[i] = getCmdWithArgs(getCmd());
       }
     }
   };
@@ -431,34 +431,34 @@ bool Parser::isValidName(const string& com) const {
 
 sptr<Atom> Parser::processEscape() {
   _spos = _pos;
-  const string command = getCommand();
+  const string cmd = getCmd();
 
-  if (command.length() == 0) return sptrOf<EmptyAtom>();
+  if (cmd.length() == 0) return sptrOf<EmptyAtom>();
 
-  auto mac = MacroInfo::get(command);
+  auto mac = MacroInfo::get(cmd);
   if (mac != nullptr) {
-    return processCommands(command, mac);
+    return processCmd(cmd, mac);
   }
 
-  sptr<Formula> predef = Formula::get(command);
+  sptr<Formula> predef = Formula::get(cmd);
   if (predef != nullptr) return predef->_root;
 
-  sptr<Atom> sym = SymbolAtom::get(command);
+  sptr<Atom> sym = SymbolAtom::get(cmd);
   if (sym != nullptr) return sym;
 
   // not a valid command or symbol or predefined Formula found
   if (!_isPartial) {
-    throw ex_parse("Unknown symbol or command or predefined Formula: '" + command + "'");
+    throw ex_parse("Unknown symbol or command or predefined Formula: '" + cmd + "'");
   }
   auto rm = sptrOf<FontStyleAtom>(
     FontStyle::tt,
     false,
-    Formula("\\text{{\\backslash}" + command + "}")._root
+    Formula("\\text{{\\backslash}" + cmd + "}")._root
   );
   return sptrOf<ColorAtom>(rm, TRANSPARENT, RED);
 }
 
-sptr<Atom> Parser::processCommands(const string& cmd, MacroInfo* mac) {
+sptr<Atom> Parser::processCmd(const string& cmd, MacroInfo* mac) {
   int opts = mac->_posOpts;
 
   Args args;
@@ -622,7 +622,7 @@ void Parser::inflateNewCmd(string& cmd, Args& args, int& pos) {
     // The last element is the returned value (after inflated macro)
     _latex.replace(pos, _pos - pos, args.back());
   } catch (ex_parse& e) {
-    if (!_isPartial) throw;
+    if (!_isPartial) throw e;
     pos += cmd.length() + 1;
   }
   _len = _latex.length();
@@ -658,7 +658,7 @@ void Parser::preprocess() {
     switch (ch) {
       case ESCAPE: {
         spos = _pos;
-        string cmd = getCommand();
+        string cmd = getCmd();
         try {
           preprocess(cmd, args, spos);
         } catch (ex_parse& e) {
@@ -792,7 +792,7 @@ void Parser::parse() {
         // special case for ` and '
         if (_isMathMode) {
           auto atom = sptrOf<CumulativeScriptsAtom>(
-            popLastAtom(),
+            popBack(),
             nullptr,
             getSimpleScripts(ch != BACKPRIME)
           );
@@ -806,7 +806,7 @@ void Parser::parse() {
       case DQUOTE: {
         if (_isMathMode) {
           auto atom = sptrOf<CumulativeScriptsAtom>(
-            popLastAtom(),
+            popBack(),
             nullptr,
             sptrOf<CharAtom>(0x02033, _isMathMode)
           );

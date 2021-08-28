@@ -15,7 +15,7 @@ private:
   static volatile bool _isInited;
   static std::string _defaultMathFontName;
   static Formula* _formula;
-  static TeXRenderBuilder* _builder;
+  static RenderBuilder* _builder;
 
 public:
   /**
@@ -55,7 +55,7 @@ public:
    * @param mathFontName the math font name
    * @param mainFontName the main font name
    */
-  static TeXRender* parse(
+  static Render* parse(
     const std::string& tex,
     int width,
     float textSize,

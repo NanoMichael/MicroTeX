@@ -24,7 +24,7 @@ using BoxFilter = std::function<bool(const sptr<Box>&)>;
  * You can change the size via method #setWidth and #setHeight, but only the new
  * size is larger will be handled.
  */
-class TeXRender {
+class Render {
 private:
   static constexpr color DFT_COLOR = black;
 
@@ -43,7 +43,7 @@ private:
 
 public:
 
-  TeXRender(const sptr<Box>& box, float textSize);
+  Render(const sptr<Box>& box, float textSize);
 
   /** Get the text size of this render */
   float getTextSize() const;
@@ -67,10 +67,11 @@ public:
 
   void setHeight(int height, Alignment align);
 
+  /** Draw the formula */
   void draw(Graphics2D& g2, int x, int y);
 };
 
-class TeXRenderBuilder {
+class RenderBuilder {
 private:
   TexStyle _style = TexStyle::display;
   UnitType _widthUnit = UnitType::none;
@@ -83,41 +84,41 @@ private:
   std::string _mainFontName;
 
 public:
-  TeXRenderBuilder() {}
+  RenderBuilder() = default;
 
-  inline TeXRenderBuilder& setStyle(TexStyle style) {
+  inline RenderBuilder& setStyle(TexStyle style) {
     _style = style;
     return *this;
   }
 
-  inline TeXRenderBuilder& setTextSize(float textSize) {
+  inline RenderBuilder& setTextSize(float textSize) {
     _textSize = textSize;
     return *this;
   }
 
-  inline TeXRenderBuilder& setForeground(color c) {
+  inline RenderBuilder& setForeground(color c) {
     _fg = c;
     return *this;
   }
 
-  inline TeXRenderBuilder& setWidth(UnitType unit, float width, Alignment align) {
+  inline RenderBuilder& setWidth(UnitType unit, float width, Alignment align) {
     _widthUnit = unit;
     _textWidth = width;
     _align = align;
     return *this;
   }
 
-  inline TeXRenderBuilder& setMathFontName(const std::string& name) {
+  inline RenderBuilder& setMathFontName(const std::string& name) {
     _mathFontName = name;
     return *this;
   }
 
-  inline TeXRenderBuilder& setMainFontName(const std::string& name) {
+  inline RenderBuilder& setMainFontName(const std::string& name) {
     _mainFontName = name;
     return *this;
   }
 
-  inline TeXRenderBuilder& setIsMaxWidth(bool i) {
+  inline RenderBuilder& setIsMaxWidth(bool i) {
     if (_widthUnit == UnitType::none) {
       throw ex_invalid_state("Cannot set 'isMaxWidth' without having specified a width!");
     }
@@ -151,7 +152,7 @@ public:
     return *this;
   }
 
-  inline TeXRenderBuilder& setLineSpace(UnitType unit, float space) {
+  inline RenderBuilder& setLineSpace(UnitType unit, float space) {
     if (_widthUnit == UnitType::none) {
       throw ex_invalid_state("Cannot set line space without having specified a width!");
     }
@@ -160,9 +161,9 @@ public:
     return *this;
   }
 
-  TeXRender* build(const sptr<Atom>& f);
+  Render* build(const sptr<Atom>& f);
 
-  TeXRender* build(Formula& f);
+  Render* build(Formula& f);
 };
 
 }  // namespace tex

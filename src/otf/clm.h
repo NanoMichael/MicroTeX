@@ -9,7 +9,7 @@ namespace tex {
 
 class BinaryFileReader;
 
-/** Read a Otf from `.clm` file. */
+/** Read an Otf from `.clm` file. */
 class CLMReader final {
 private:
   static void readMeta(Otf& font, BinaryFileReader& reader);

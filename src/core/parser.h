@@ -1,10 +1,6 @@
 #ifndef PARSER_H_INCLUDED
 #define PARSER_H_INCLUDED
 
-#include <set>
-#include <string>
-#include <map>
-
 #include "atom/atom.h"
 #include "env/units.h"
 
@@ -56,7 +52,7 @@ private:
 
   sptr<Atom> getScripts(char first);
 
-  std::string getCommand();
+  std::string getCmd();
 
   sptr<Atom> processEscape();
 
@@ -65,16 +61,16 @@ private:
   /**
    * Return a string with command, options and arguments.
    *
-   * @param command name of command
+   * @param cmd name of command
    * @return command with arguments string with format: \cmd[opt][...]{arg}{...}
    */
-  std::string getCommandWithArgs(const std::string& command);
+  std::string getCmdWithArgs(const std::string& cmd);
 
   /**
    * Process the given TeX command (by parsing following command
    * arguments in the parse string).
    */
-  sptr<Atom> processCommands(const std::string& cmd, MacroInfo* mac);
+  sptr<Atom> processCmd(const std::string& cmd, MacroInfo* mac);
 
   void preprocess(std::string& cmd, Args& args, int& pos);
 
@@ -179,7 +175,7 @@ public:
   inline bool isPartial() const { return _isPartial; }
 
   /** Get and remove the last atom of the current formula */
-  sptr<Atom> popLastAtom() const;
+  sptr<Atom> popBack() const;
 
   /** Get and remove the atom represented by the current formula */
   sptr<Atom> popFormulaAtom() const;
@@ -289,7 +285,7 @@ public:
 
   /**
    * Get the unit and length from given string. The string must be in the format: a digital
-   * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or a pair (UnitType::pixel, 0) will be
+   * following with the unit (e.g. 10px, 1cm, 8.2em, ...) or a pair (UnitType::none, 0) will be
    * returned.
    */
   Dimen getDimen();

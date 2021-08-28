@@ -310,7 +310,7 @@ General mode:
  *      wstring wstr = utf82wide("A string with UTF-8 encoding.");
  */
 wstring code = L"\\int_{now}^{+\\infty} \\text{Keep trying}";
-// Convert the code to a paintable object (TeXRender)
+// Convert the code to a paintable object (Render)
 auto r = LaTeX::parse(
     code,   // LaTeX code to parse
     720,    // logical width of the graphics context (in pixel)
@@ -325,7 +325,7 @@ Builder mode:
 ```c++
 wstring code = L"\\int_{now}^{+\\infty} \\text{Keep trying}";
 TeXFormula formula;
-TeXRenderBuilder builder;
+RenderBuilder builder;
 formula.setLaTeX(code);
 
 auto r = builder
@@ -345,22 +345,22 @@ auto r = builder
     // space between 2 lines
     .setLineSpace(UnitType::pixel, 10)
     .setForground(tex::BLACK)
-    // convert the formula to a paintable object (TeXRender)
+    // convert the formula to a paintable object (Render)
     .build(formula);
 ```
 
 > **NOTICE**
 >
-> A style and text size are required to build a TeXRender, in another word, you must call method `setStyle` and `setSize` before method `build` has been called, otherwise an `ex_invalid_state` exception will be thrown. If the logical width has not set, the generated TeXRender may be wide enough to overflow into the graphics context.
+> A style and text size are required to build a Render, in another word, you must call method `setStyle` and `setSize` before method `build` has been called, otherwise an `ex_invalid_state` exception will be thrown. If the logical width has not set, the generated Render may be wide enough to overflow into the graphics context.
 
-Now you can draw the generated `TeXRender` (take `Graphics2D_cairo` that uses `cairomm` to implement the graphics (2D) context that run in Linux as an example):
+Now you can draw the generated `Render` (take `Graphics2D_cairo` that uses `cairomm` to implement the graphics (2D) context that run in Linux as an example):
 
 ```c++
 // cairomm implementation
 Graphics2D_cairo g2;
 // draw the formula on the coordinate (10, 10) of the graphics context
 r->draw(10, 10);
-// IMPORTANT: remember to delete the generated TeXRender after there
+// IMPORTANT: remember to delete the generated Render after there
 // is no use on it.
 delete r;
 ```

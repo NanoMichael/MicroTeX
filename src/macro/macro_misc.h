@@ -178,7 +178,7 @@ inline macro(nokern) {
 /**************************************** limits macros *******************************************/
 
 inline sptr<Atom> _limits_type(Parser& tp, Args& args, LimitsType type) {
-  auto atom = tp.popLastAtom();
+  auto atom = tp.popBack();
   atom->_limitsType = type;
   return atom;
 }
