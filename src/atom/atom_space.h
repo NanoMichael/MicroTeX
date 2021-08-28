@@ -29,9 +29,6 @@ public:
   SpaceAtom(UnitType unit, float width, float height, float depth) noexcept
     : _wUnit(unit), _hUnit(unit), _dUnit(unit), _width(width), _height(height), _depth(depth) {}
 
-  SpaceAtom(UnitType wu, float w, UnitType hu, float h, UnitType du, float d) noexcept
-    : _wUnit(wu), _hUnit(hu), _dUnit(du), _width(w), _height(h), _depth(d) {}
-
   sptr<Box> createBox(Env& env) override;
 
   static sptr<SpaceAtom> empty() {

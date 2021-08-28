@@ -29,6 +29,15 @@
         ##__VA_ARGS__);                \
   }
 
+#define log(format, ...) \
+  {                      \
+    fprintf(             \
+      stdout,            \
+      format,            \
+      ##__VA_ARGS__      \
+    );                   \
+  }
+
 #define print printf
 
 #endif

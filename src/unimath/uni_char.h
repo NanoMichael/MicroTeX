@@ -44,7 +44,12 @@ struct Char final {
   /** The otf font spec the char belongs to */
   sptr<const OtfFont> otfFont() const;
 
-  /** The glyph of this char-glyph */
+  /**
+   * The glyph of this char-glyph, NOT NULL.
+   * If the char has no corresponding glyph was found, the '?' will be
+   * returned instead. You should test the validity of this object before
+   * call this function.
+   */
   const Glyph* glyph() const;
 
   /** The width of this char-glyph */

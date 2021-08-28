@@ -70,7 +70,7 @@ sptr<Box> SymbolAtom::createBox(Env& env) {
 Char CharAtom::getChar(Env& env) const {
   if (_mathMode && env.style() >= TexStyle::script) {
     const auto& chr = env.getChar(_unicode, true, _fontStyle);
-    return chr.script(0);
+    return chr.isValid() ? chr.script(0) : chr;
   }
   return env.getChar(unicode(), isMathMode(), _fontStyle);
 }

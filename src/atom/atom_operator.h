@@ -17,7 +17,7 @@ public:
   OperatorAtom() = delete;
 
   /**
-   * Create a new BigOperatorAtom from the given atoms. The default rules the
+   * Create a new OperatorAtom from the given atoms. The default rules the
    * positioning of the limits will be applied.
    *
    * @param base atom representing the big operator

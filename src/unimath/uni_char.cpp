@@ -1,5 +1,6 @@
 #include "unimath/uni_char.h"
 #include "unimath/uni_font.h"
+#include "utils/log.h"
 
 using namespace tex;
 
@@ -15,39 +16,46 @@ sptr<const OtfFont> Char::otfFont() const {
 
 const Glyph* Char::glyph() const {
   auto font = FontContext::getFont(fontId);
-  return font == nullptr ? nullptr : font->otf().glyph(glyphId);
+  if (font == nullptr) {
+#ifdef HAVE_LOG
+    log("There's no font was found with id = %d, use '?' instead.\n", fontId);
+#endif
+    return FontContext::getFont(0)->otf().glyphOfUnicode('?');
+  }
+  auto g = font->otf().glyph(glyphId);
+  if (g == nullptr) {
+#ifdef HAVE_LOG
+    log("There's no glyph was found with (unicode = %u, id = %d), use '?' instead.\n", mappedCode, glyphId);
+#endif
+    return font->otf().glyphOfUnicode('?');
+  }
+  return g;
 }
 
 float Char::width() const {
-  auto g = glyph();
-  return g == nullptr ? 0.f : g->metrics().width() * scale;
+  return glyph()->metrics().width() * scale;
 }
 
 float Char::height() const {
-  auto g = glyph();
-  return g == nullptr ? 0.f : g->metrics().height() * scale;
+  return glyph()->metrics().height() * scale;
 }
 
 float Char::depth() const {
-  auto g = glyph();
-  return g == nullptr ? 0.f : g->metrics().depth() * scale;
+  return glyph()->metrics().depth() * scale;
 }
 
 float Char::italic() const {
-  auto g = glyph();
-  auto italic = g == nullptr ? 0 : g->math().italicsCorrection();
+  auto italic = glyph()->math().italicsCorrection();
   return italic == Otf::undefinedMathValue ? 0.f : italic * scale;
 }
 
 float Char::topAccentAttachment() const {
-  auto g = glyph();
-  auto t = g == nullptr ? 0.f : g->math().topAccentAttachment();
+  auto t = glyph()->math().topAccentAttachment();
   return t == Otf::undefinedMathValue ? width() / 2.f : t * scale;
 }
 
 static Char variant(const Char& chr, u32 index, std::function<const Variants&(const Glyph*)>&& f) {
   auto g = chr.glyph();
-  if (g == nullptr) return Char(chr);
   const auto& v = f(g);
   if (v.isEmpty()) return chr;
   index = std::min<int>(index, v.count() - 1);
@@ -56,8 +64,7 @@ static Char variant(const Char& chr, u32 index, std::function<const Variants&(co
 }
 
 u16 Char::vLargerCount() const {
-  auto g = glyph();
-  return g == nullptr ? 0 : g->math().verticalVariants().count();
+  return glyph()->math().verticalVariants().count();
 }
 
 Char Char::vLarger(u32 index) const {
@@ -69,8 +76,7 @@ Char Char::vLarger(u32 index) const {
 }
 
 u16 Char::hLargerCount() const {
-  auto g = glyph();
-  return g == nullptr ? 0 : g->math().horizontalVariants().count();
+  return glyph()->math().horizontalVariants().count();
 }
 
 Char Char::hLarger(u32 index) const {
@@ -90,13 +96,11 @@ Char Char::script(u32 index) const {
 }
 
 const GlyphAssembly& Char::vAssembly() const {
-  auto g = glyph();
-  return g == nullptr ? GlyphAssembly::empty : g->math().verticalAssembly();
+  return glyph()->math().verticalAssembly();
 }
 
 const GlyphAssembly& Char::hAssembly() const {
-  auto g = glyph();
-  return g == nullptr ? GlyphAssembly::empty : g->math().horizontalAssembly();
+  return glyph()->math().horizontalAssembly();
 }
 
 const Char Char::assemblyPart(i32 id) const {
