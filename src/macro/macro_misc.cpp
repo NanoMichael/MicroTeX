@@ -154,25 +154,6 @@ macro(romannumeral) {
   );
 }
 
-macro(setmathfont) {
-  auto mathStyle = MathStyle::TeX;
-  const auto& options = parseOption(args[2]);
-  const auto it = options.find("math-style");
-  if (it != options.end()) {
-    const auto& value = it->second;
-    if (value == "TeX") {
-      mathStyle = MathStyle::TeX;
-    } else if (value == "ISO") {
-      mathStyle = MathStyle::ISO;
-    } else if (value == "French") {
-      mathStyle = MathStyle::French;
-    } else if (value == "upright") {
-      mathStyle = MathStyle::upright;
-    }
-  }
-  return sptrOf<MathFontAtom>(mathStyle, args[1]);
-}
-
 macro(debug) {
   auto& config = DebugConfig::INSTANCE;
   const auto& options = parseOption(args[1]);

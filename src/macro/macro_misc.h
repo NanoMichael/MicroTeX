@@ -217,8 +217,6 @@ macro(raisebox);
 
 macro(romannumeral);
 
-macro(setmathfont);
-
 macro(zstack);
 
 #ifdef GRAPHICS_DEBUG

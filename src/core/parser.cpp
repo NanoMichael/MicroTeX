@@ -813,8 +813,8 @@ void Parser::parse() {
           _formula->add(atom);
         } else {
           _formula->add(getCharAtom());
-          _pos++;
         }
+        _pos++;
       }
         break;
       default: {

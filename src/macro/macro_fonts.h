@@ -9,8 +9,6 @@
 
 namespace tex {
 
-using namespace std;
-
 inline macro(text) {
   const auto atom = Formula(tp, args[1], false, false)._root;
   return sptrOf<FontStyleAtom>(FontStyle::rm, false, atom);
@@ -69,22 +67,9 @@ inline macro(bold) {
   return _mathfont(tp, args, FontStyle::bf);
 }
 
-inline macro(intertext) {
-  if (!tp.isArrayMode())
-    throw ex_parse("Command \\intertext must used in array environment!");
+macro(intertext);
 
-  string str(args[1]);
-  replaceall(str, "^{\\prime}", "\'");
-  replaceall(str, "^{\\prime\\prime}", "\'\'");
-
-  auto a = Formula(tp, str, false, false)._root;
-  sptr<Atom> ra = sptrOf<FontStyleAtom>(FontStyle::rm, false, a);
-  ra->_type = AtomType::interText;
-  tp.addAtom(ra);
-  tp.addRow();
-
-  return nullptr;
-}
+macro(setmathfont);
 
 }
 
