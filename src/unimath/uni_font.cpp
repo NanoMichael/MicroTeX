@@ -89,6 +89,14 @@ void FontContext::addMainFont(const string& versionName, const vector<FontSpec>&
 }
 
 void FontContext::addMathFont(const FontSpec& params) {
+  auto it = std::find_if(
+    _fonts.begin(), _fonts.end(),
+    [&](sptr<const OtfFont>& x) { return x->fontFile == params.fontFile; }
+  );
+  if (it != _fonts.end()) {
+    // already loaded
+    return;
+  }
   const auto&[version, font, clm] = params;
   auto otf = sptrOf<OtfFont>(_lastId++, font, clm);
   _fonts.push_back(otf);

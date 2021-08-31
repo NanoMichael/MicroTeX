@@ -20,7 +20,12 @@ macro(intertext) {
   return nullptr;
 }
 
-macro(setmathfont) {
+macro(addmathfont) {
+  FontContext::addMathFont({args[1], args[2], args[3]});
+  return nullptr;
+}
+
+macro(mathversion) {
   auto mathStyle = MathStyle::TeX;
   const auto& options = parseOption(args[2]);
   const auto it = options.find("math-style");

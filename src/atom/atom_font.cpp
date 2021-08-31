@@ -1,4 +1,5 @@
 #include "atom/atom_font.h"
+#include "box/box_single.h"
 
 using namespace tex;
 
@@ -13,4 +14,9 @@ sptr<Box> FontStyleAtom::createBox(Env& env) {
     _style, _mathMode,
     [&](Env& e) { return _atom->createBox(e); }
   );
+}
+
+sptr<Box> MathFontAtom::createBox(Env& env) {
+  env.selectMathFont(_name, _mathStyle);
+  return StrutBox::empty();
 }

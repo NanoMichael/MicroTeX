@@ -41,11 +41,6 @@ sptr<Box> SmashedAtom::createBox(Env& env) {
   return b;
 }
 
-sptr<Box> MathFontAtom::createBox(Env& env) {
-  env.selectMathFont(_fontName, _mathStyle);
-  return StrutBox::empty();
-}
-
 sptr<Box> ScaleAtom::createBox(Env& env) {
   return sptrOf<ScaleBox>(_base->createBox(env), _sx, _sy);
 }

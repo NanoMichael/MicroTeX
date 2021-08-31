@@ -32,6 +32,19 @@ public:
   sptr<Box> createBox(Env& env) override;
 };
 
+/** Atom to modify math font and style */
+class MathFontAtom : public Atom {
+private:
+  MathStyle _mathStyle;
+  std::string _name;
+
+public:
+  MathFontAtom(MathStyle style, std::string name)
+    : _mathStyle(style), _name(std::move(name)) {}
+
+  sptr<Box> createBox(Env& env) override;
+};
+
 }
 
 #endif //LATEX_ATOM_FONT_H

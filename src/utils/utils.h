@@ -34,7 +34,7 @@ inline sptr<T> sptrOf(Args&& ... args) {
 /** Find the position of a value in the vector, return -1 if not found */
 template<typename T>
 inline int indexOf(const std::vector<T>& v, const T& x) {
-  auto it = find(v.begin(), v.end(), x);
+  auto it = std::find(v.begin(), v.end(), x);
   int i = std::distance(v.begin(), it);
   return (i >= v.size() ? -1 : i);
 }

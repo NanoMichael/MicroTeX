@@ -2,6 +2,7 @@
 #define UNI_FONT_INCLUDED
 
 #include <map>
+#include <set>
 
 #include "utils/utils.h"
 #include "otf/otf.h"

@@ -58,19 +58,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 };
 
-/** Atom to modify math font and style */
-class MathFontAtom : public Atom {
-private:
-  MathStyle _mathStyle;
-  std::string _fontName;
-
-public:
-  MathFontAtom(MathStyle style, std::string fontName)
-    : _mathStyle(style), _fontName(std::move(fontName)) {}
-
-  sptr<Box> createBox(Env& env) override;
-};
-
 /** An empty atom */
 class EmptyAtom : public Atom {
 public:

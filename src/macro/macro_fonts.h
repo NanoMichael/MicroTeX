@@ -69,7 +69,9 @@ inline macro(bold) {
 
 macro(intertext);
 
-macro(setmathfont);
+macro(addmathfont);
+
+macro(mathversion);
 
 }
 

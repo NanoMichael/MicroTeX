@@ -62,7 +62,7 @@ map<string, MacroInfo*> MacroInfo::_commands{
     mac(2, 1, macro_rotatebox, "rotatebox"),
     mac(2, 2, macro_scalebox, "scalebox"),
     mac(2, 2, macro_raisebox, "raisebox"),
-    mac(1, 1, macro_setmathfont, "setmathfont"),
+    mac(1, 1, macro_mathversion, "setmathversion"),
 #undef mac
 #define mac mac3
     mac(1, macro_fatalIfCmdConflict, "fatalIfCmdConflict"),
@@ -200,6 +200,7 @@ map<string, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_mathds, "mathds"),
     mac(1, macro_bold, "bold"),
     mac(1, macro_bold, "boldsymbol"),
+    mac(3, macro_addmathfont, "addmathfont"),
   // endregion
   // region nested styles
     mac(1, macro_text, "mbox"),
