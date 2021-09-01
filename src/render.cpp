@@ -146,7 +146,9 @@ Render* RenderBuilder::build(const sptr<Atom>& fc) {
 
   auto fctx = sptrOf<FontContext>();
   fctx->selectMathFont(_mathFontName);
-  fctx->selectMainFont(_mainFontName);
+  if (!_mainFontName.empty()) {
+    fctx->selectMainFont(_mainFontName);
+  }
 
   Env env(_style, fctx, _textSize);
   const auto isLimitedWidth = _widthUnit != UnitType::none && _textWidth != 0;

@@ -33,11 +33,15 @@ void LaTeX::release() {
 }
 
 void LaTeX::addMainFont(const std::string& name, const std::vector<FontSpec>& params) {
-  FontContext::addMainFont(name, params);
+  FontContext::addMainFonts(name, params);
 }
 
 void LaTeX::addMathFont(const FontSpec& params) {
   FontContext::addMathFont(params);
+}
+
+void LaTeX::setDefaultMathFont(const std::string& name) {
+  _defaultMathFontName = name;
 }
 
 Render* LaTeX::parse(

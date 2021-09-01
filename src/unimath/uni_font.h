@@ -61,6 +61,8 @@ private:
   sptr<FontFamily> _mainFont = nullptr;
   sptr<const OtfFont> _mathFont = nullptr;
 
+  static sptr<FontFamily> getOrCreateFontFamily(const std::string& version);
+
 public:
   no_copy_assign(FontContext);
 
@@ -90,9 +92,20 @@ public:
    * @param versionName the name of this font (collection)
    * @param params font-spec to load
    */
-  static void addMainFont(
+  static void addMainFonts(
     const std::string& versionName,
     const std::vector<FontSpec>& params
+  );
+
+  /**
+   * Add a main font to context.
+   *
+   * @param versionName the name of the main font collection
+   * @param param font-spec to load
+   */
+  static void addMainFont(
+    const std::string& versionName,
+    const FontSpec& param
   );
 
   /** Add math font to context. */

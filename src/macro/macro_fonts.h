@@ -71,6 +71,8 @@ macro(intertext);
 
 macro(addmathfont);
 
+macro(addmainfont);
+
 macro(mathversion);
 
 }

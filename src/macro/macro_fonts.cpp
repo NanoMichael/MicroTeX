@@ -1,5 +1,6 @@
 #include "macro/macro_fonts.h"
 #include "utils/string_utils.h"
+#include "latex.h"
 
 namespace tex {
 
@@ -25,6 +26,11 @@ macro(addmathfont) {
   return nullptr;
 }
 
+macro(addmainfont) {
+  FontContext::addMainFont(args[1], {args[2], args[3], args[4]});
+  return nullptr;
+}
+
 macro(mathversion) {
   auto mathStyle = MathStyle::TeX;
   const auto& options = parseOption(args[2]);
@@ -41,6 +47,7 @@ macro(mathversion) {
       mathStyle = MathStyle::upright;
     }
   }
+  LaTeX::setDefaultMathFont(args[1]);
   return sptrOf<MathFontAtom>(mathStyle, args[1]);
 }
 

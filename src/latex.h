@@ -45,6 +45,15 @@ public:
   static void addMathFont(const FontSpec& params);
 
   /**
+   * Set the default math font to show formulas while math font
+   * was not given.
+   *
+   * @param name the math font name, must exists or an `ex_invalid_param`
+   *   will be thrown.
+   */
+  static void setDefaultMathFont(const std::string& name);
+
+  /**
    * Parse TeX formatted string to TeXRender
    *
    * @param tex the TeX formatted string

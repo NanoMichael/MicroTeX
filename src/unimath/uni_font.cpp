@@ -78,14 +78,33 @@ FontStyle FontContext::mainFontStyleOf(const std::string& name) {
   return FontFamily::fontStyleOf(name);
 }
 
-void FontContext::addMainFont(const string& versionName, const vector<FontSpec>& params) {
-  auto f = new FontFamily();
+sptr<FontFamily> FontContext::getOrCreateFontFamily(const std::string& version) {
+  sptr<FontFamily> f;
+  auto it = _mainFonts.find(version);
+  if (it == _mainFonts.end()) {
+    f = sptrOf<FontFamily>();
+    _mainFonts[version] = f;
+  } else {
+    f = it->second;
+  }
+  return f;
+}
+
+void FontContext::addMainFonts(const string& versionName, const vector<FontSpec>& params) {
+  auto f = getOrCreateFontFamily(versionName);
   for (const auto&[style, font, clm] : params) {
     auto otf = sptrOf<const OtfFont>(_lastId++, font, clm);
     _fonts.push_back(otf);
     f->add(style, otf);
   }
-  _mainFonts[versionName] = sptr<FontFamily>(f);
+}
+
+void FontContext::addMainFont(const std::string& versionName, const FontSpec& param) {
+  auto f = getOrCreateFontFamily(versionName);
+  const auto&[style, font, clm] = param;
+  auto otf = sptrOf<const OtfFont>(_lastId++, font, clm);
+  _fonts.push_back(otf);
+  f->add(style, otf);
 }
 
 void FontContext::addMathFont(const FontSpec& params) {

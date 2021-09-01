@@ -29,7 +29,7 @@ sptr<Box> DoubleFramedAtom::createBox(Env& env) {
 sptr<Box> ShadowAtom::createBox(Env& env) {
   auto x = FBoxAtom::createBox(env);
   auto b = std::static_pointer_cast<FramedBox>(x);
-  float t = env.mathConsts().fractionRuleThickness() * env.scale();
+  float t = env.mathConsts().fractionRuleThickness() * env.scale() * 3;
   return sptrOf<ShadowBox>(b, t);
 }
 
