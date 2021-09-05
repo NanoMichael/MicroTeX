@@ -32,21 +32,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 };
 
-/** An atom with cedilla */
-class CedillaAtom : public Atom {
-private:
-  sptr<Atom> _base;
-
-public:
-  CedillaAtom() = delete;
-
-  explicit CedillaAtom(const sptr<Atom>& base) : _base(base) {}
-
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
-};
-
 /** An atom representing a lapped atom (i.e. with no width) */
 class LapedAtom : public Atom {
 private:
@@ -59,21 +44,6 @@ public:
   LapedAtom(const sptr<Atom>& a, char type) : _at(a), _type(type) {}
 
   sptr<Box> createBox(Env& env) override;
-};
-
-/** An atom with an Ogonek */
-class OgonekAtom : public Atom {
-private:
-  sptr<Atom> _base;
-
-public:
-  OgonekAtom() = delete;
-
-  explicit OgonekAtom(const sptr<Atom>& base) : _base(base) {}
-
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
 };
 
 class RaiseAtom : public Atom {
@@ -167,21 +137,6 @@ public:
     : _w(w), _h(h), _r(r) {}
 
   sptr<Box> createBox(Env& env) override;
-};
-
-/** An atom representing a small Capital atom */
-class SmallCapAtom : public Atom {
-private:
-  sptr<Atom> _base;
-
-public:
-  SmallCapAtom() = delete;
-
-  explicit SmallCapAtom(const sptr<Atom>& base) : _base(base) {}
-
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
 };
 
 /** An atom representing a strike through atom */

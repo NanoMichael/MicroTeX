@@ -72,14 +72,6 @@ inline macro(underscore) {
   return SymbolAtom::get("_");
 }
 
-inline macro(cedilla) {
-  return sptrOf<CedillaAtom>(Formula(tp, args[1])._root);
-}
-
-inline macro(ogonek) {
-  return sptrOf<OgonekAtom>(Formula(tp, args[1])._root);
-}
-
 inline macro(nbsp) {
   return sptrOf<SpaceAtom>();
 }
@@ -139,14 +131,6 @@ inline macro(textcircled) {
   // TODO
   // return sptrOf<TextCircledAtom>(sptrOf<RomanAtom>(Formula(tp, args[1])._root));
   return nullptr;
-}
-
-inline macro(textsc) {
-  return sptrOf<SmallCapAtom>(Formula(tp, args[1], false)._root);
-}
-
-inline macro(sc) {
-  return sptrOf<SmallCapAtom>(Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root);
 }
 
 inline macro(surd) {

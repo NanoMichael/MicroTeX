@@ -303,15 +303,11 @@ map<string, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_normal, "normal"),
   // endregion
 
-    mac(1, macro_cedilla, "c"),
-    mac(1, macro_ogonek, "k"),
     mac(0, macro_kern, "kern"),
     mac(0, macro_char, "char"),
     mac(1, macro_romannumeral, "roman"),
     mac(1, macro_romannumeral, "Roman"),
     mac(1, macro_textcircled, "textcircled"),
-    mac(1, macro_textsc, "textsc"),
-    mac(0, macro_sc, "sc"),
     mac(0, macro_surd, "surd"),
     mac(0, macro_lmoustache, "lmoustache"),
     mac(0, macro_rmoustache, "rmoustache"),
