@@ -67,6 +67,8 @@ public:
  */
 class Graphics2D {
 public:
+  virtual ~Graphics2D() = default;
+
   /**
    * Set the color of the context
    * 

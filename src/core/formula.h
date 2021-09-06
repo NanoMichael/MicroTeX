@@ -18,7 +18,7 @@ class Parser;
 
 /**
  * Represents a logical mathematical formula that will be displayed (by creating
- * a TeXRender from it and painting it) using algorithms that are based
+ * a Render from it and painting it) using algorithms that are based
  * on the TeX algorithms.
  */
 class Formula {

@@ -5,75 +5,77 @@
 #ifndef GRAPHIC_WIN32_H_INCLUDED
 #define GRAPHIC_WIN32_H_INCLUDED
 
-#include "common.h"
 #include "graphic/graphic.h"
-
-using namespace std;
-using namespace tex;
+#include <map>
 
 namespace Gdiplus {
 
 class Font;
+
 class FontFamily;
+
 class Graphics;
+
 class Pen;
+
 class Brush;
+
 class SolidBrush;
+
 class StringFormat;
+
 class Bitmap;
 
 }  // namespace Gdiplus
 
 namespace tex {
 
+std::wstring win32ToWideString(const std::string& str);
+
 class Font_win32 : public Font {
 private:
-  static const Gdiplus::FontFamily* _serif;
-  static const Gdiplus::FontFamily* _sansserif;
+  static std::map<std::string, sptr<Font_win32>> _win32Faces;
 
-  float _size;
-
-  Font_win32();
+  const Gdiplus::FontFamily* _family;
+  int _style;
+  bool _isSystem;
 
 public:
-  int _style;
-  sptr<Gdiplus::Font> _typeface;
-  const Gdiplus::FontFamily* _family;
+  Font_win32(const Gdiplus::FontFamily* family, int style, bool isSystem = false);
 
-  Font_win32(const string& name, int style, float size);
+  sptr<Gdiplus::Font> getFont(float size);
 
-  Font_win32(const string& file, float size);
+  int getEmHeight();
 
-  virtual float getSize() const override;
+  int getCellAscent();
 
-  virtual sptr<Font> deriveFont(int style) const override;
+  bool operator==(const Font& f) const override;
 
-  virtual bool operator==(const Font& f) const override;
+  bool operator!=(const Font& f) const override;
 
-  virtual bool operator!=(const Font& f) const override;
+  static sptr<Font_win32> getOrCreate(const std::string& file);
 
-  virtual ~Font_win32();
-
-  static int convertStyle(int style);
+  ~Font_win32() noexcept override;
 };
 
 /**************************************************************************************************/
 
 class TextLayout_win32 : public TextLayout {
 private:
+  std::wstring _txt;
   sptr<Font_win32> _font;
-  wstring _txt;
+  float _fontSize;
 
 public:
   static const Gdiplus::StringFormat* _format;
   static Gdiplus::Graphics* _g;
   static Gdiplus::Bitmap* _img;
 
-  TextLayout_win32(const wstring& src, const sptr<Font_win32>& font);
+  TextLayout_win32(const std::string& src, FontStyle style, float size);
 
-  virtual void getBounds(Rect& bounds) override;
+  void getBounds(Rect& bounds) override;
 
-  virtual void draw(Graphics2D& g2, float x, float y) override;
+  void draw(Graphics2D& g2, float x, float y) override;
 };
 
 /**************************************************************************************************/
@@ -81,63 +83,72 @@ public:
 class Graphics2D_win32 : public Graphics2D {
 private:
   static const Gdiplus::StringFormat* _format;
-  static const Font* _defaultFont;
 
   color _color;
-  const Font* _font;
+  sptr<Font_win32> _font;
   Stroke _stroke;
   Gdiplus::Graphics* _g;
   Gdiplus::Pen* _pen;
   Gdiplus::SolidBrush* _brush;
 
+  float _fontSize;
   float _sx, _sy;
 
 public:
   Graphics2D_win32(Gdiplus::Graphics* g);
 
-  ~Graphics2D_win32();
+  ~Graphics2D_win32() override;
 
-  virtual void setColor(color c) override;
+  void setColor(color c) override;
 
-  virtual color getColor() const override;
+  color getColor() const override;
 
-  virtual void setStroke(const Stroke& s) override;
+  void setStroke(const Stroke& s) override;
 
-  virtual const Stroke& getStroke() const override;
+  const Stroke& getStroke() const override;
 
-  virtual void setStrokeWidth(float w) override;
+  void setStrokeWidth(float w) override;
 
-  virtual const Font* getFont() const override;
+  void setDash(const std::vector<float>& dash) override;
 
-  virtual void setFont(const Font* font) override;
+  std::vector<float> getDash() override;
 
-  virtual void translate(float dx, float dy) override;
+  sptr<tex::Font> getFont() const override;
 
-  virtual void scale(float sx, float sy) override;
+  void setFont(const sptr<Font>& font) override;
 
-  virtual void rotate(float angle) override;
+  float getFontSize() const override;
 
-  virtual void rotate(float angle, float px, float py) override;
+  void setFontSize(float size) override;
 
-  virtual void reset() override;
+  void translate(float dx, float dy) override;
 
-  virtual float sx() const override;
+  void scale(float sx, float sy) override;
 
-  virtual float sy() const override;
+  void rotate(float angle) override;
 
-  virtual void drawChar(wchar_t c, float x, float y) override;
+  void rotate(float angle, float px, float py) override;
 
-  virtual void drawText(const wstring& c, float x, float y) override;
+  void reset() override;
 
-  virtual void drawLine(float x1, float y1, float x2, float y2) override;
+  float sx() const override;
 
-  virtual void drawRect(float x, float y, float w, float h) override;
+  float sy() const override;
 
-  virtual void fillRect(float x, float y, float w, float h) override;
+  void drawGlyph(u16 glyph, float x, float y) override;
 
-  virtual void drawRoundRect(float x, float y, float w, float h, float rx, float ry) override;
+  /** Draw text */
+  void drawText(const std::wstring& src, float x, float y);
 
-  virtual void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
+  void drawLine(float x1, float y1, float x2, float y2) override;
+
+  void drawRect(float x, float y, float w, float h) override;
+
+  void fillRect(float x, float y, float w, float h) override;
+
+  void drawRoundRect(float x, float y, float w, float h, float rx, float ry) override;
+
+  void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
 };
 
 }  // namespace tex

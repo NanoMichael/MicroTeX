@@ -54,7 +54,7 @@ public:
   static void setDefaultMathFont(const std::string& name);
 
   /**
-   * Parse TeX formatted string to TeXRender
+   * Parse TeX formatted string to Render
    *
    * @param tex the TeX formatted string
    * @param width the width of the 2D graphics context

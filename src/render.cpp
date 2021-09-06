@@ -19,7 +19,7 @@ Render::Render(const sptr<Box>& box, float textSize) {
   if (debugConfig.enable) {
     const auto group = wrap(box);
     _box = group;
-    BoxFilter filter = [](const sptr<Box>& b) {
+    BoxFilter filter = [&](const sptr<Box>& b) {
       return (
         debugConfig.showOnlyChar
         ? dynamic_cast<CharBox*>(b.get()) != nullptr

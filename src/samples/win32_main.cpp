@@ -5,8 +5,8 @@
 #include "latex.h"
 #include "platform/gdi_win/graphic_win32.h"
 #include "samples.h"
+#include "utils/string_utils.h"
 
-#include <time.h>
 #include <cstdlib>
 #include <iostream>
 
@@ -30,12 +30,12 @@ using namespace std;
 using namespace tex;
 using namespace Gdiplus;
 
-TeXRender* _render = nullptr;
+tex::Render* _render = nullptr;
 int _size = 26;
 color _color = 0xff424242;
 Samples* _samples;
 
-HWND hEditor, hBtnSize, hBtnRandom, hCanvas, hEditSize;
+HWND hEditor, hBtnSize, hBtnNext, hCanvas, hEditSize;
 WNDPROC editorProc, setterProc;
 
 void RegisterCanvas();
@@ -82,24 +82,25 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
   wndClass.hInstance = hInstance;
   wndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
   wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-  wndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+  wndClass.hbrBackground = (HBRUSH) GetStockObject(WHITE_BRUSH);
   wndClass.lpszMenuName = NULL;
   wndClass.lpszClassName = TEXT("LaTeX");
 
   RegisterClass(&wndClass);
 
   hWnd = CreateWindow(
-      TEXT("LaTeX"),        // window class name
-      TEXT("LaTeX"),        // window caption
-      WS_OVERLAPPEDWINDOW,  // window style
-      0,                    // initial x position
-      0,                    // initial y position
-      780,                  // initial x size
-      480,                  // initial y size
-      NULL,                 // parent window handle
-      NULL,                 // window menu handle
-      hInstance,            // program instance handle
-      NULL);                // creation parameters
+    TEXT("LaTeX"),        // window class name
+    TEXT("LaTeX"),        // window caption
+    WS_OVERLAPPEDWINDOW,  // window style
+    0,                    // initial x position
+    0,                    // initial y position
+    780,                  // initial x size
+    480,                  // initial y size
+    NULL,                 // parent window handle
+    NULL,                 // window menu handle
+    hInstance,            // program instance handle
+    NULL                  // creation parameters
+  );
 
   CreateCtrl(hInstance, hWnd);
   ShowWindow(hWnd, SW_SHOWMAXIMIZED);
@@ -138,16 +139,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 }  // WndProc
 
 void init() {
-  LaTeX::init();
-  _samples = new Samples();
-  _render = LaTeX::parse(L"\\text{What a beautiful day}", 720, _size, _size / 3.f, _color);
+  // TODO
+  const FontSpec math{
+    "xits",
+    "C:\\Users\\artia\\Downloads\\xits\\xits\\XITSMath-Regular.otf",
+    "./res/XITSMath-Regular.clm"
+  };
+  LaTeX::init(math);
+  _samples = new Samples("./res/SAMPLES.tex");
+  _render = LaTeX::parse("\\text{What a beautiful day}", 720, _size, _size / 3.f, _color);
 }
 
 void HandleRandom() {
-  srand(time(NULL));
-  if (_render != nullptr) {
-    delete _render;
-  }
+  delete _render;
   RECT r;
   GetClientRect(hCanvas, &r);
   _render = LaTeX::parse(_samples->next(), r.right - r.left, _size, _size / 3.f, _color);
@@ -156,18 +160,16 @@ void HandleRandom() {
 }
 
 void HandleOK() {
-  int len = GetWindowTextLengthW(hEditor);
-  wchar_t* txt = new wchar_t[len + 10];
-  GetWindowTextW(hEditor, txt, len + 10);
-  if (_render != nullptr) {
-    delete _render;
-  }
+  int len = GetWindowTextLengthA(hEditor);
+  std::string txt;
+  txt.reserve(len + 10);
+  GetWindowTextA(hEditor, txt.data(), len + 10);
+  delete _render;
   RECT r;
   GetClientRect(hCanvas, &r);
-  _render = LaTeX::parse(std::wstring(txt), r.right - r.left, _size, _size / 3.f, _color);
+  _render = LaTeX::parse(txt, r.right - r.left, _size, _size / 3.f, _color);
   InvalidateRect(hCanvas, NULL, TRUE);
   UpdateWindow(hCanvas);
-  delete[] txt;
 }
 
 void HandleSize() {
@@ -179,7 +181,7 @@ void HandleSize() {
   char* txt = new char[len + 10];
   GetWindowText(hEditSize, txt, len + 10);
   string x = txt;
-  valueof(x, _size);
+  tex::valueof(x, _size);
   _render->setTextSize(_size);
   InvalidateRect(hCanvas, NULL, TRUE);
   UpdateWindow(hCanvas);
@@ -204,84 +206,74 @@ void CreateCtrl(HINSTANCE hInst, HWND hwnd) {
   int l = 0, t = 0, w = 10, h = 10;
   // edit-box
   hEditor = CreateWindowEx(
-      WS_EX_TOPMOST,
-      "edit",
-      NULL,
-      WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL,
-      l,
-      t,
-      w,
-      h,
-      hwnd,
-      (HMENU)ID_EDITBOX,
-      hInst,
-      NULL);
+    WS_EX_TOPMOST,
+    "edit",
+    NULL,
+    WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL,
+    l, t, w, h,
+    hwnd,
+    (HMENU) ID_EDITBOX,
+    hInst,
+    NULL
+  );
   HFONT hf = CreateFont(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "Consolas");
-  SendMessage(hEditor, WM_SETFONT, (WPARAM)hf, 0);
+  SendMessage(hEditor, WM_SETFONT, (WPARAM) hf, 0);
   SetFocus(hEditor);
-  editorProc = (WNDPROC)SetWindowLongPtr(hEditor, GWLP_WNDPROC, (LONG_PTR)EditorProc);
+  editorProc = (WNDPROC) SetWindowLongPtr(hEditor, GWLP_WNDPROC, (LONG_PTR) EditorProc);
   // size setter
   hEditSize = CreateWindowEx(
-      WS_EX_TOPMOST,
-      "edit",
-      NULL,
-      WS_CHILD | WS_VISIBLE | WS_BORDER | ES_CENTER | ES_NUMBER,
-      l,
-      t,
-      w,
-      h,
-      hwnd,
-      (HMENU)ID_SETTER,
-      hInst,
-      NULL);
-  SendMessage(hEditSize, WM_SETFONT, (WPARAM)hf, 0);
-  setterProc = (WNDPROC)SetWindowLongPtr(hEditSize, GWLP_WNDPROC, (LONG_PTR)SetterProc);
+    WS_EX_TOPMOST,
+    "edit",
+    NULL,
+    WS_CHILD | WS_VISIBLE | WS_BORDER | ES_CENTER | ES_NUMBER,
+    l, t, w, h,
+    hwnd,
+    (HMENU) ID_SETTER,
+    hInst,
+    NULL
+  );
+  SendMessage(hEditSize, WM_SETFONT, (WPARAM) hf, 0);
+  setterProc = (WNDPROC) SetWindowLongPtr(hEditSize, GWLP_WNDPROC, (LONG_PTR) SetterProc);
   // button size
   hBtnSize = CreateWindowEx(
-      WS_EX_TOPMOST,
-      "Button",
-      NULL,
-      WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-      l,
-      t,
-      w,
-      h,
-      hwnd,
-      (HMENU)ID_BUTTON_SIZE,
-      hInst,
-      NULL);
-  SendMessage(hBtnSize, WM_SETFONT, (WPARAM)hf, 0);
-  SendMessage(hBtnSize, WM_SETTEXT, (WPARAM)NULL, (LPARAM)("Set Text Size"));
+    WS_EX_TOPMOST,
+    "Button",
+    NULL,
+    WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+    l, t, w, h,
+    hwnd,
+    (HMENU) ID_BUTTON_SIZE,
+    hInst,
+    NULL
+  );
+  SendMessage(hBtnSize, WM_SETFONT, (WPARAM) hf, 0);
+  SendMessage(hBtnSize, WM_SETTEXT, (WPARAM) NULL, (LPARAM) ("Set Text Size"));
   // button random
-  hBtnRandom = CreateWindowEx(
-      WS_EX_TOPMOST,
-      "Button",
-      NULL,
-      WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-      l,
-      t,
-      w,
-      h,
-      hwnd,
-      (HMENU)ID_BUTTON_RANDOM,
-      hInst,
-      NULL);
-  SendMessage(hBtnRandom, WM_SETFONT, (WPARAM)hf, 0);
-  SendMessage(hBtnRandom, WM_SETTEXT, (WPARAM)NULL, (LPARAM)("Random Example"));
+  hBtnNext = CreateWindowEx(
+    WS_EX_TOPMOST,
+    "Button",
+    NULL,
+    WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+    l, t, w, h,
+    hwnd,
+    (HMENU) ID_BUTTON_RANDOM,
+    hInst,
+    NULL
+  );
+  SendMessage(hBtnNext, WM_SETFONT, (WPARAM) hf, 0);
+  SendMessage(hBtnNext, WM_SETTEXT, (WPARAM) NULL, (LPARAM) ("Next Example"));
   // canvas
   hCanvas = CreateWindowEx(
-      WS_EX_TOPMOST,
-      "canvas",
-      NULL,
-      WS_CHILD | WS_VISIBLE,
-      l,
-      t,
-      w,
-      h,
-      hwnd,
-      (HMENU)ID_CANVAS,
-      hInst,
-      NULL);
+    WS_EX_TOPMOST,
+    "canvas",
+    NULL,
+    WS_CHILD | WS_VISIBLE,
+    l, t, w, h,
+    hwnd,
+    (HMENU) ID_CANVAS,
+    hInst,
+    NULL
+  );
 }
 
 void ResizeCtrl(HWND hwnd) {
@@ -303,7 +295,7 @@ void ResizeCtrl(HWND hwnd) {
   // button random
   w = BUTTON_WIDTH;
   l = r.right - w - margin;
-  MoveWindow(hBtnRandom, l, t, w, h, TRUE);
+  MoveWindow(hBtnNext, l, t, w, h, TRUE);
   // canvas
   l = r.left + margin, t = r.top + margin;
   w = r.right - EDITOR_WIDTH - 2 * margin - l, h = r.bottom - t - margin;
@@ -355,10 +347,10 @@ LRESULT CALLBACK CanvasProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
       break;
     }
     case WM_ERASEBKGND: {
-      hdc = (HDC)wParam;
+      hdc = (HDC) wParam;
       RECT r;
       GetClientRect(hWnd, &r);
-      FillRect(hdc, &r, (HBRUSH)GetStockObject(WHITE_BRUSH));
+      FillRect(hdc, &r, (HBRUSH) GetStockObject(WHITE_BRUSH));
       break;
     }
     default:

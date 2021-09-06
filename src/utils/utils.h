@@ -7,6 +7,7 @@
 #include <vector>
 #include <locale>
 #include <sstream>
+#include <algorithm>
 
 #define no_copy_assign(T) \
   T(const T&) = delete;   \

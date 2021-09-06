@@ -118,7 +118,8 @@ map<string, string> Formula::_predefFormulaStrs{
   {"Rho",              "Ρ"},
   {"Tau",              "Τ"},
   {"Chi",              "Χ"},
-  {"Nabla",            "∇"},
+  // TODO
+  // {"Nabla",            "∇"},
   {"omicron",          "ο"},
   // endregion
   // region colons
