@@ -412,15 +412,15 @@ void Parser::getOptsArgs(int argc, int opts, Args& args) {
   }
 }
 
-bool Parser::isValidName(const string& com) const {
-  if (com.empty()) return false;
-  if (com[0] != '\\') return false;
+bool Parser::isValidName(const string& cmd) const {
+  if (cmd.empty()) return false;
+  if (cmd[0] != '\\') return false;
 
   char c = L'\0';
   int p = 1;
-  int l = com.length();
+  int l = cmd.length();
   while (p < l) {
-    c = com[p];
+    c = cmd[p];
     if (!isalpha(c) && (_atIsLetter == 0 || c != '@'))
       break;
     p++;
