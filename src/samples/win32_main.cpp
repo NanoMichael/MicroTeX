@@ -7,20 +7,15 @@
 #include "samples.h"
 #include "utils/string_utils.h"
 
-#include <cstdlib>
-#include <iostream>
-
 #include <comdef.h>
 #include <gdiplus.h>
-#include <objidl.h>
-#include <tchar.h>
 #include <windows.h>
 
 #define ID_SETTER 256
 #define ID_CANVAS 512
 #define ID_EDITBOX 1024
 #define ID_BUTTON_SIZE 2048
-#define ID_BUTTON_RANDOM 4096
+#define ID_BUTTON_NEXT 4096
 
 #define BUTTON_WIDTH 140
 #define BUTTON_HEIGHT 35
@@ -46,7 +41,7 @@ void ResizeCtrl(HWND);
 
 void HandleOK();
 
-void HandleRandom();
+void HandleNext();
 
 void HandleSize();
 
@@ -126,8 +121,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
     case WM_COMMAND:
       if (wParam == ID_BUTTON_SIZE) {
         HandleSize();
-      } else if (wParam == ID_BUTTON_RANDOM) {
-        HandleRandom();
+      } else if (wParam == ID_BUTTON_NEXT) {
+        HandleNext();
       }
       return 0;
     case WM_SIZE:
@@ -147,10 +142,13 @@ void init() {
   };
   LaTeX::init(math);
   _samples = new Samples("./res/SAMPLES.tex");
-  _render = LaTeX::parse("\\text{What a beautiful day}", 720, _size, _size / 3.f, _color);
+  _render = LaTeX::parse(
+    "\\text{What a beautiful day! Press Ctrl + Enter to show formulas.}",
+    720, _size, _size / 3.f, _color
+  );
 }
 
-void HandleRandom() {
+void HandleNext() {
   delete _render;
   RECT r;
   GetClientRect(hCanvas, &r);
@@ -161,10 +159,11 @@ void HandleRandom() {
 
 void HandleOK() {
   int len = GetWindowTextLengthA(hEditor);
-  std::string txt;
-  txt.reserve(len + 10);
-  GetWindowTextA(hEditor, txt.data(), len + 10);
+  char* data = new char[len + 10];
+  GetWindowTextA(hEditor, data, len + 10);
+  std::string txt = data;
   delete _render;
+  delete[] data;
   RECT r;
   GetClientRect(hCanvas, &r);
   _render = LaTeX::parse(txt, r.right - r.left, _size, _size / 3.f, _color);
@@ -173,11 +172,9 @@ void HandleOK() {
 }
 
 void HandleSize() {
-  if (_render == nullptr)
-    return;
+  if (_render == nullptr) return;
   int len = GetWindowTextLength(hEditSize);
-  if (len == 0)
-    return;
+  if (len == 0) return;
   char* txt = new char[len + 10];
   GetWindowText(hEditSize, txt, len + 10);
   string x = txt;
@@ -248,7 +245,7 @@ void CreateCtrl(HINSTANCE hInst, HWND hwnd) {
   );
   SendMessage(hBtnSize, WM_SETFONT, (WPARAM) hf, 0);
   SendMessage(hBtnSize, WM_SETTEXT, (WPARAM) NULL, (LPARAM) ("Set Text Size"));
-  // button random
+  // button next
   hBtnNext = CreateWindowEx(
     WS_EX_TOPMOST,
     "Button",
@@ -256,7 +253,7 @@ void CreateCtrl(HINSTANCE hInst, HWND hwnd) {
     WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
     l, t, w, h,
     hwnd,
-    (HMENU) ID_BUTTON_RANDOM,
+    (HMENU) ID_BUTTON_NEXT,
     hInst,
     NULL
   );
@@ -292,7 +289,7 @@ void ResizeCtrl(HWND hwnd) {
   w = BUTTON_WIDTH;
   l = r.right - w * 2 - margin * 2;
   MoveWindow(hBtnSize, l, t, w, h, TRUE);
-  // button random
+  // button next
   w = BUTTON_WIDTH;
   l = r.right - w - margin;
   MoveWindow(hBtnNext, l, t, w, h, TRUE);
