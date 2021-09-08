@@ -424,16 +424,16 @@ int main(int argc, char* argv[]) {
 
   Pango::init();
   // TODO dialog to choose font file
-//  const FontSpec math{
-//    "xits",
-//    "/home/nano/Downloads/xits/XITSMath-Regular.otf",
-//    "./res/XITSMath-Regular.clm"
-//  };
   const FontSpec math{
-    "lm",
-    "/home/nano/Downloads/lm-math/opentype/latinmodern-math.otf",
-    "./res/latinmodern-math.clm"
+    "xits",
+    "/home/nano/Downloads/xits/XITSMath-Regular.otf",
+    "./res/XITSMath-Regular.clm"
   };
+//  const FontSpec math{
+//    "lm",
+//    "/home/nano/Downloads/lm-math/opentype/latinmodern-math.otf",
+//    "./res/latinmodern-math.clm"
+//  };
   LaTeX::init(math);
   const std::vector<FontSpec> main{
     {
