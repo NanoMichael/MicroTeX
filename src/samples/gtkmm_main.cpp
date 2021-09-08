@@ -322,42 +322,43 @@ public:
 
 #include "atom/atom_basic.h"
 
-int runHeadless(const vector<string>& opts) {
-  Headless h;
-  for (const auto& x : opts) {
-    if (startswith(x, "-outputdir")) {
-      h._outputDir = x.substr(x.find('=') + 1);
-    } else if (startswith(x, "-samples")) {
-      h._samplesFile = x.substr(x.find('=') + 1);
-    } else if (startswith(x, "-prefix")) {
-      h._prefix = x.substr(x.find('=') + 1);
-    } else if (startswith(x, "-textsize")) {
-      auto str = x.substr(x.find('=') + 1);
-      valueof(str, h._textSize);
-    } else if (startswith(x, "-foreground")) {
-      auto str = x.substr(x.find('=') + 1);
-      h._foreground = tex::ColorAtom::getColor(str);
-    } else if (startswith(x, "-background")) {
-      auto str = x.substr(x.find('=') + 1);
-      h._background = tex::ColorAtom::getColor(str);
-    } else if (startswith(x, "-input")) {
-      h._input = x.substr(x.find('=') + 1);
-    } else if (startswith(x, "-output")) {
-      h._outputFile = x.substr(x.find('=') + 1);
-    } else if (startswith(x, "-padding")) {
-      auto str = x.substr(x.find('=') + 1);
-      valueof(str, h._padding);
-    } else if (startswith(x, "-maxwidth")) {
-      auto str = x.substr(x.find('=') + 1);
-      valueof(str, h._maxWidth);
-    }
+template<typename F>
+void getOpt(const std::string& opt, F&& f) {
+  size_t i = opt.find('=');
+  if (i != 0) {
+    auto key = opt.substr(0, i);
+    auto value = opt.substr(i + 1);
+    f(key, value);
   }
+}
 
-  return h.run();
+void getHeadlessOpt(Headless& h, const std::string& key, const std::string& value) {
+  if (key == "-outputdir") {
+    h._outputDir = value;
+  } else if (key == "-samples") {
+    h._samplesFile = value;
+  } else if (key == "-prefix") {
+    h._prefix = value;
+  } else if (key == "-textsize") {
+    valueof(value, h._textSize);
+  } else if (key == "-foreground") {
+    h._foreground = tex::ColorAtom::getColor(value);
+  } else if (key == "-background") {
+    h._background = tex::ColorAtom::getColor(value);
+  } else if (key == "-input") {
+    h._input = value;
+  } else if (key == "-output") {
+    h._outputFile = value;
+  } else if (key == "-padding") {
+    valueof(value, h._padding);
+  } else if (key == "-maxwidth") {
+    valueof(value, h._maxWidth);
+  }
 }
 
 int runWindow(int argc, char* argv[]) {
-  auto app = Gtk::Application::create(argc, argv, "io.nano.LaTeX");
+  int cnt = 0;
+  auto app = Gtk::Application::create(cnt, argv, "io.nano.LaTeX");
   MainWindow win;
   int result = app->run(win);
   return result;
@@ -387,12 +388,17 @@ int runHelp() {
     "      config the background color to display formulas; the value can be a color name or\n"
     "      in the form of #AARRGGBB; default is transparent\n\n" B
     "  -padding=[VALUE]\n" R
-    "      a float value to config spaces (in pixel) to add to the SVG images, "
-    "the default is 10\n\n" B
+    "      a float value to config spaces (in pixel) to add to the SVG images, the default is 10\n\n" B
     "  -maxwidth=[VALUE]\n" R
     "      config the max width of the graphics context, the default is 720 pixels; this option\n"
     "      has weak limits on the SVG images, thus the width of the SVG image may be wider than\n"
     "      the value defined by this option\n\n" B
+    "  -mathversion=[NAME]\n" R
+    "      the default math version name, default is 'dft'\n\n" B
+    "  -mathfont=<FILE>\n" R
+    "      the math font file to display formulas\n\n" B
+    "  -clm=<FILE>\n" R
+    "      the clm file to display formulas\n\n" B
     "BATCH MODE\n" R
     "The application will save the SVG images produced by the LaTeX codes that parsed from the\n"
     "given file (specified by the option '-samples') into the directory specified by the option\n"
@@ -416,24 +422,43 @@ int runHelp() {
 }
 
 int main(int argc, char* argv[]) {
-  vector<string> opts;
-  opts.reserve(argc);
-  for (int i = 0; i < argc; i++) opts.emplace_back(argv[i]);
+  bool isHeadless = false;
+  Headless h;
+  std::string mathVersionName = "dft";
+  std::string mathFont, clmFile;
+  auto f = [&](const std::string& key, const std::string& value) {
+    if (key == "-mathfont") {
+      mathFont = value;
+    } else if (key == "-clm") {
+      clmFile = value;
+    } else if (key == "-mathversion") {
+      mathVersionName = value;
+    } else {
+      getHeadlessOpt(h, key, value);
+    }
+  };
+  for (int i = 0; i < argc; i++) {
+    const string opt = argv[i];
+    if (opt == "-h") return runHelp();
+    if (opt == "-headless") {
+      isHeadless = true;
+    } else {
+      getOpt(opt, f);
+    }
+  }
 
-  if (indexOf(opts, string("-h")) >= 0) return runHelp();
+  if (mathVersionName.empty() || mathFont.empty() || clmFile.empty()) {
+    print(
+      ANSI_COLOR_RED
+      "No math font or clm file was given, exit...\n"
+      ANSI_COLOR_GREEN
+      "You can specify it by option -mathfont and -clm\n"
+    );
+    return 1;
+  }
 
   Pango::init();
-  // TODO dialog to choose font file
-  const FontSpec math{
-    "xits",
-    "/home/nano/Downloads/xits/XITSMath-Regular.otf",
-    "./res/XITSMath-Regular.clm"
-  };
-//  const FontSpec math{
-//    "lm",
-//    "/home/nano/Downloads/lm-math/opentype/latinmodern-math.otf",
-//    "./res/latinmodern-math.clm"
-//  };
+  const FontSpec math{mathVersionName, mathFont, clmFile};
   LaTeX::init(math);
   const std::vector<FontSpec> main{
     {
@@ -460,8 +485,8 @@ int main(int argc, char* argv[]) {
   LaTeX::addMainFont("xits", main);
 
   int result = 0;
-  if (indexOf(opts, string("-headless")) >= 0) {
-    result = runHeadless(opts);
+  if (isHeadless) {
+    result = h.run();
   } else {
     result = runWindow(argc, argv);
   }
