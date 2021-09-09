@@ -60,6 +60,8 @@ public:
     return x;
   }
 
+  bool isEmpty() const { return _samples.empty(); }
+
   int count() const {
     return _samples.size();
   }

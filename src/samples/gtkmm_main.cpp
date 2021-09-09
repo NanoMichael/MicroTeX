@@ -141,13 +141,13 @@ protected:
   Samples _samples;
 
 public:
-  MainWindow()
+  MainWindow(const std::string& samplesFile)
     : _size_change_info("change text size: "),
       _next("Next Example"),
       _rendering("Rendering"),
       _save("Save as SVG"),
       _side_box(Gtk::ORIENTATION_VERTICAL),
-      _samples("res/SAMPLES.tex") { // TODO
+      _samples(samplesFile) {
     // init before use
     Gsv::init();
 
@@ -180,6 +180,7 @@ public:
       sigc::mem_fun(*this, &MainWindow::on_text_size_changed)
     );
     _size_spin.set_adjustment(adj);
+    _next.set_sensitive(!_samples.isEmpty());
     _next.signal_clicked().connect(
       sigc::mem_fun(*this, &MainWindow::on_next_clicked)
     );
@@ -289,11 +290,19 @@ public:
   }
 
   int runBatch() const {
+    if (_samplesFile.empty()) {
+      print(ANSI_COLOR_RED "Error: the option '-samples' must be specified\n" ANSI_RESET);
+      return 1;
+    }
     if (_outputDir.empty()) {
       print(ANSI_COLOR_RED "Error: the option '-outputdir' must be specified\n" ANSI_RESET);
       return 1;
     }
     Samples samples(_samplesFile);
+    if (samples.isEmpty()) {
+      print(ANSI_COLOR_RED "Error: no samples was loaded\n" ANSI_RESET);
+      return 1;
+    }
     if (samples.count() == 0) return 1;
     for (int i = 0; i < samples.count(); i++) {
       generateSingle(samples.next(), _outputDir + "/" + _prefix + tostring(i) + ".svg");
@@ -356,10 +365,10 @@ void getHeadlessOpt(Headless& h, const std::string& key, const std::string& valu
   }
 }
 
-int runWindow(int argc, char* argv[]) {
+int runWindow(const std::string& samplesFile, char* argv[]) {
   int cnt = 0;
   auto app = Gtk::Application::create(cnt, argv, "io.nano.LaTeX");
-  MainWindow win;
+  MainWindow win(samplesFile);
   int result = app->run(win);
   return result;
 }
@@ -405,9 +414,9 @@ int runHelp() {
     "'-outputdir'.\n\n" B
     "  -outputdir=[WHERE]\n" R
     "      indicates the directory to save the SVG images\n\n" B
-    "  -samples=[FILE]\n" R
+    "  -samples=<FILE>\n" R
     "      specifies the file that contains various LaTeX codes split by a line that consists of\n"
-    "      the character '\%' only, the default is './res/SAMPLES.tex'\n\n" B
+    "      the character '\%' only\n\n" B
     "  -prefix=[VALUE]\n" R
     "      specifies the prefix of the filename of the SVG images, the default is ''; for example,\n"
     "      if 2 pieces of code has given with the option '-prefix=a_', the filename of the SVG\n"
@@ -426,6 +435,7 @@ int main(int argc, char* argv[]) {
   Headless h;
   std::string mathVersionName = "dft";
   std::string mathFont, clmFile;
+  std::string samplesFile;
   auto f = [&](const std::string& key, const std::string& value) {
     if (key == "-mathfont") {
       mathFont = value;
@@ -433,6 +443,9 @@ int main(int argc, char* argv[]) {
       clmFile = value;
     } else if (key == "-mathversion") {
       mathVersionName = value;
+    } else if (key == "-samples") {
+      samplesFile = value;
+      h._samplesFile = value;
     } else {
       getHeadlessOpt(h, key, value);
     }
@@ -465,7 +478,7 @@ int main(int argc, char* argv[]) {
   if (isHeadless) {
     result = h.run();
   } else {
-    result = runWindow(argc, argv);
+    result = runWindow(samplesFile, argv);
   }
 
   LaTeX::release();
