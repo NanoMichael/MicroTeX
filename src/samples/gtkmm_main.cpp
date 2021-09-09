@@ -460,29 +460,6 @@ int main(int argc, char* argv[]) {
   Pango::init();
   const FontSpec math{mathVersionName, mathFont, clmFile};
   LaTeX::init(math);
-  const std::vector<FontSpec> main{
-    {
-      "rm",
-      "/home/nano/Downloads/xits/XITS-Regular.otf",
-      "./res/XITS-Regular.clm"
-    },
-    {
-      "bf",
-      "/home/nano/Downloads/xits/XITS-Bold.otf",
-      "./res/XITS-Bold.clm"
-    },
-    {
-      "it",
-      "/home/nano/Downloads/xits/XITS-Italic.otf",
-      "./res/XITS-Italic.clm"
-    },
-    {
-      "bfit",
-      "/home/nano/Downloads/xits/XITS-BoldItalic.otf",
-      "./res/XITS-BoldItalic.clm"
-    },
-  };
-  LaTeX::addMainFont("xits", main);
 
   int result = 0;
   if (isHeadless) {
