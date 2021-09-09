@@ -7,13 +7,12 @@ utils_src = [
 if install_headerfiles
 	install_headers([
 		'dict_tree.h',
-		'enums.h',
-		'exceptions.h',
-		'indexed_arr.h',
-		'log.h',
-		'nums.h',
-		'string_utils.h',
-		'utf.h',
-		'utils.h'
+        'enums.h',
+        'exceptions.h',
+        'log.h',
+        'nums.h',
+        'string_utils.h',
+        'utf.h',
+        'utils.h'
 	], subdir: 'clatexmath/utils')
 endif

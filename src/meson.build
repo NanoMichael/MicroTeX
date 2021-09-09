@@ -23,45 +23,30 @@ src += box_src
 subdir('core')
 src += core_src
 
-subdir('fonts')
-src += fonts_src
+subdir('env')
+src += env_src
 
 subdir('graphic')
+src += graphic_src
+
+subdir('macro')
+src += macro_src
+
+subdir('otf')
+src += otf_src
 
 subdir('platform')
 src += platform_src
 deps += platform_deps
 
-subdir('res')
-src += res_src
+subdir('unimath')
+src += unimath_src
 
 subdir('utils')
 src += utils_src
 
-subdir('otf')
-src += otf_src
 
-subdir('unimath')
-src += unimath_src
-
-subdir('env')
-src += env_src
-
-# GCC versions earlier than 9 require linking with stdc++fs to use
-# std::filesystem functionality.
-cc = meson.get_compiler('cpp')
-if cc.get_id() == 'gcc' and cc.version().version_compare('<9')
-    deps += [ cc.find_library('stdc++fs') ]
-endif
-if cc.get_id() == 'gcc' and cc.version().version_compare('<8')
-	add_project_arguments('-std=c++14', language : 'cpp')
-elif cc.has_argument('--std=c++17')
-	add_project_arguments('-std=c++17', language : 'cpp')
-else
-	add_project_arguments('-std=c++14', language : 'cpp')
-endif
-
-deps += [dependency('tinyxml2')]
+add_project_arguments('-std=c++17', language: 'cpp')
 
 clatexmath_lib = library('clatexmath', src,
 	include_directories: inc,
@@ -101,7 +86,6 @@ endif
 
 if install_headerfiles
 	install_headers([
-		'common.h',
 		'config.h',
 		'latex.h',
 		'render.h'

@@ -32,7 +32,7 @@ public:
 
   bool operator!=(const Font& f) const override;
 
-  ~Font_cairo() override = default;;
+  ~Font_cairo() override = default;
 };
 
 /**************************************************************************************************/

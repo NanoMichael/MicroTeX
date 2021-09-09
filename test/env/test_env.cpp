@@ -11,16 +11,16 @@ using namespace tex;
 void show_char(c32 code, const Env& env, bool isMathMode = true) {
   const auto&& chr = env.getChar(code, isMathMode);
   std::u32string str;
-  str.append(1, chr._mappedCode);
+  str.append(1, chr.mappedCode);
   printf(
     "font style: %x: "
     "{ code: %X, map: %X, font: %d, glyph: %d, scale: %f }\n",
-    env.fontStyle(),
-    chr._code,
-    chr._mappedCode,
-    chr._font,
-    chr._glyph,
-    chr._scale
+    env.mathFontStyle(),
+    chr.code,
+    chr.mappedCode,
+    chr.fontId,
+    chr.glyphId,
+    chr.scale
   );
 }
 
@@ -70,8 +70,7 @@ int main(int argc, char* argv[]) {
     Units::fsize(UnitType::sp, 1.f, env),
     Units::fsize(UnitType::pt, 1.f, env),
     Units::fsize(UnitType::dd, 1.f, env),
-    Units::fsize(UnitType::cc, 1.f, env),
-    Units::fsize(UnitType::x8, 1.f, env)
+    Units::fsize(UnitType::cc, 1.f, env)
   );
   printf("\n");
 
@@ -84,14 +83,14 @@ int main(int argc, char* argv[]) {
   show_char(0x1d53a, env);
   printf("\n");
 
-  env.addFontStyle(FontStyle::rm);
-  env.addFontStyle(FontStyle::bf);
-  env.addFontStyle(FontStyle::it);
-  env.addFontStyle(FontStyle::cal);
-  env.addFontStyle(FontStyle::frak);
-  env.addFontStyle(FontStyle::bb);
-  env.addFontStyle(FontStyle::sf);
-  env.addFontStyle(FontStyle::tt);
+  env.addMathFontStyle(FontStyle::rm);
+  env.addMathFontStyle(FontStyle::bf);
+  env.addMathFontStyle(FontStyle::it);
+  env.addMathFontStyle(FontStyle::cal);
+  env.addMathFontStyle(FontStyle::frak);
+  env.addMathFontStyle(FontStyle::bb);
+  env.addMathFontStyle(FontStyle::sf);
+  env.addMathFontStyle(FontStyle::tt);
   printf("varies char with TexStyle::scriptScript and full FontStyle in 20 point size:\n");
   show_char('a', env);
   show_char('h', env);
