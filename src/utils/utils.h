@@ -65,7 +65,8 @@ u32 countSetBits(T n) {
   return cnt;
 }
 
-static const std::locale UTF8_LOCALE("en_US.utf8");
+/** The default locale */
+const std::locale& defaultLocale();
 
 /** Test if a Unicode code point is lower case */
 bool isUnicodeLower(c32 code);

@@ -330,14 +330,14 @@ def write_clm_unicode_glyph_map(f, unicode_glyph_map):
 
 
 def write_clm_kerning_class(f, kerning_classes, glyph_name_id_map):
-    length = len(kerning_classes)
+    length = len(list(kerning_classes))
     f.write(struct.pack('!H', length))
 
     # map the names to (glyph, index_in_classes)
     write_classes = chain(
         partial(
             map,
-            lambda (i, xs, ): map(lambda x: (x, i,), xs)
+            lambda y: map(lambda x: (x, y[0],), y[1])
         ),
         partial(
             do,
@@ -346,7 +346,7 @@ def write_clm_kerning_class(f, kerning_classes, glyph_name_id_map):
         partial(fmap, lambda x: x),
         partial(
             map,
-            lambda (name, index, ): (glyph_name_id_map[name], index,)
+            lambda n: (glyph_name_id_map[n[0]], n[1],)
         ),
         partial(sorted, key=lambda x: x[0]),
         partial(
@@ -355,7 +355,7 @@ def write_clm_kerning_class(f, kerning_classes, glyph_name_id_map):
         ),
         partial(
             map,
-            lambda (glyph, index, ): struct.pack('!HH', glyph, index)
+            lambda n: struct.pack('!HH', n[0], n[1])
         ),
         partial(
             do_loop,
@@ -420,13 +420,13 @@ def write_glyphs(f, glyphs, glyph_name_id_map, is_math_font):
 
     def write_metrics(metrics):
         for v in metrics:
-            f.write(struct.pack('!h', v))
+            f.write(struct.pack('!h', int(v)))
 
     def write_kerns(kerns):
         if not kerns:
             f.write(struct.pack('!H', 0))
             return
-        f.write(struct.pack('!H', len(kerns)))
+        f.write(struct.pack('!H', len(list(kerns))))
         sorted_kerns = chain(
             partial(map, lambda x: (glyph_name_id_map[x[0]], x[1],)),
             partial(sorted, key=lambda x: x[0])
@@ -527,16 +527,15 @@ def parse_otf(file_path, is_math_font, output_file_path):
     xheight = font.xHeight
     ascent = font.ascent
     descent = font.descent
-    font.close()
 
     with open(output_file_path, 'wb') as f:
-        f.write(struct.pack('c', 'c'))
-        f.write(struct.pack('c', 'l'))
-        f.write(struct.pack('c', 'm'))
+        f.write(struct.pack('c', bytes('c', 'ascii')))
+        f.write(struct.pack('c', bytes('l', 'ascii')))
+        f.write(struct.pack('c', bytes('m', 'ascii')))
         f.write(struct.pack('!H', 1))
         f.write(struct.pack('?', is_math_font))
         f.write(struct.pack('!H', em))
-        f.write(struct.pack('!H', xheight))
+        f.write(struct.pack('!H', int(xheight)))
         f.write(struct.pack('!H', ascent))
         f.write(struct.pack('!H', descent))
         write_clm_unicode_glyph_map(f, unicode_glyph_map)
@@ -545,6 +544,8 @@ def parse_otf(file_path, is_math_font, output_file_path):
         if is_math_font:
             write_math_consts(f, math_consts)
         write_glyphs(f, glyphs, glyph_name_id_map, is_math_font)
+
+    font.close()
 
 
 if __name__ == "__main__":
