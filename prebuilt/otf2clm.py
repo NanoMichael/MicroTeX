@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 # Parse open-type font file and convert to `clm` format file
@@ -548,5 +548,22 @@ def parse_otf(file_path, is_math_font, output_file_path):
     font.close()
 
 
-if __name__ == "__main__":
+usage = """
+Convert an OTF font to clm data.
+
+Usage:
+    fontforge -lang=py -script otf2clm <path/to/OTF-font> \\
+        <is_math_font: true | false> \\
+        <path/to/save/clm_file>
+"""
+
+
+def main():
+    if len(sys.argv) < 3:
+        print(usage)
+        return
     parse_otf(sys.argv[1], sys.argv[2] == 'true', sys.argv[3])
+
+
+if __name__ == "__main__":
+    main()
