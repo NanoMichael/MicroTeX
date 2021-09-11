@@ -61,10 +61,6 @@ bool Font_cairo::operator==(const Font& ft) const {
   return _fface == f._fface;
 }
 
-bool Font_cairo::operator!=(const Font& f) const {
-  return !(*this == f);
-}
-
 sptr<Font> Font::create(const std::string& file) {
   return sptrOf<Font_cairo>(file);
 }

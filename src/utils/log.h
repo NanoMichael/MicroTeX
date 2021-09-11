@@ -13,7 +13,6 @@
 #define ANSI_RESET       "\x1b[0m"
 
 #define dbg(format, ...)               \
-  {                                    \
     fprintf(                           \
         stdout,                        \
         "FILE: " ANSI_UNDERLINE        \
@@ -26,17 +25,15 @@
         __FILE__,                      \
         __LINE__,                      \
         __FUNCTION__,                  \
-        ##__VA_ARGS__);                \
-  }
+        ##__VA_ARGS__                  \
+    );
 
-#define log(format, ...) \
-  {                      \
-    fprintf(             \
-      stdout,            \
-      format,            \
-      ##__VA_ARGS__      \
-    );                   \
-  }
+#define logv(format, ...) \
+    fprintf(              \
+      stdout,             \
+      format,             \
+      ##__VA_ARGS__       \
+    );
 
 #define print printf
 

@@ -13,43 +13,27 @@
 #include <QMap>
 #include <QPainter>
 #include <QString>
+#include <QTextLayout>
 
 namespace tex {
 
-// remove a null byte off end of QString
-QString wstring_to_QString(const std::wstring& ws);
-
 class Font_qt : public Font {
-
 private:
+  static QMap<QString, QString> _qtFamilies;
+
   QFont _font;
 
-  static QMap<QString, QString> _loaded_families;
+  void loadFont(const std::string& file);
 
 public:
-
-  Font_qt(const std::string& family = "", int style = PLAIN, float size = 1.f);
-
-  Font_qt(const std::string& file, float size);
-
-  std::string getFamily() const;
-
-  int getStyle() const;
+  explicit Font_qt(const std::string& file);
 
   QFont getQFont() const;
 
-  virtual float getSize() const override;
+  bool operator==(const Font& f) const override;
 
-  virtual sptr<Font> deriveFont(int style) const override;
-
-  virtual bool operator==(const Font& f) const override;
-
-  virtual bool operator!=(const Font& f) const override;
-
-  virtual ~Font_qt() {};
-
+  ~Font_qt() override = default;
 };
-
 
 /**************************************************************************************************/
 
@@ -59,75 +43,81 @@ private:
   QString _text;
 
 public:
-  TextLayout_qt(const std::wstring& src, const sptr<Font_qt>& font);
+  TextLayout_qt(const std::string& src, FontStyle style, float size);
 
-  virtual void getBounds(Rect& r) override;
+  void getBounds(Rect& r) override;
 
-  virtual void draw(Graphics2D& g2, float x, float y) override;
+  void draw(Graphics2D& g2, float x, float y) override;
 };
 
 /**************************************************************************************************/
 
 class Graphics2D_qt : public Graphics2D {
 private:
-  /*static*/ Font_qt _default_font = Font_qt("SansSerif", PLAIN, 20.f);
-
   QPainter* _painter;
 
   color _color;
   Stroke _stroke;
-  const Font_qt* _font;
+  sptr <Font_qt> _font;
+  float _fontSize;
   float _sx, _sy;
 
   void setPen();
+
   QBrush getQBrush() const;
 
 public:
-  Graphics2D_qt(QPainter* painter);
+  explicit Graphics2D_qt(QPainter* painter);
 
   QPainter* getQPainter() const;
 
-  virtual void setColor(color c) override;
+  void setColor(color c) override;
 
-  virtual color getColor() const override;
+  color getColor() const override;
 
-  virtual void setStroke(const Stroke& s) override;
+  void setStroke(const Stroke& s) override;
 
-  virtual const Stroke& getStroke() const override;
+  const Stroke& getStroke() const override;
 
-  virtual void setStrokeWidth(float w) override;
+  void setStrokeWidth(float w) override;
 
-  virtual const Font* getFont() const override;
+  void setDash(const std::vector<float>& dash) override;
 
-  virtual void setFont(const Font* font) override;
+  std::vector<float> getDash() override;
 
-  virtual void translate(float dx, float dy) override;
+  sptr <Font> getFont() const override;
 
-  virtual void scale(float sx, float sy) override;
+  void setFont(const sptr <Font>& font) override;
 
-  virtual void rotate(float angle) override;
+  float getFontSize() const override;
 
-  virtual void rotate(float angle, float px, float py) override;
+  void setFontSize(float size) override;
 
-  virtual void reset() override;
+  void translate(float dx, float dy) override;
 
-  virtual float sx() const override;
+  void scale(float sx, float sy) override;
 
-  virtual float sy() const override;
+  void rotate(float angle) override;
 
-  virtual void drawChar(wchar_t c, float x, float y) override;
+  void rotate(float angle, float px, float py) override;
 
-  virtual void drawText(const std::wstring& t, float x, float y) override;
+  void reset() override;
 
-  virtual void drawLine(float x, float y1, float x2, float y2) override;
+  float sx() const override;
 
-  virtual void drawRect(float x, float y, float w, float h) override;
+  float sy() const override;
 
-  virtual void fillRect(float x, float y, float w, float h) override;
+  void drawGlyph(u16 glyph, float x, float y) override;
 
-  virtual void drawRoundRect(float x, float y, float w, float h, float rx, float ry) override;
+  void drawLine(float x, float y1, float x2, float y2) override;
 
-  virtual void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
+  void drawRect(float x, float y, float w, float h) override;
+
+  void fillRect(float x, float y, float w, float h) override;
+
+  void drawRoundRect(float x, float y, float w, float h, float rx, float ry) override;
+
+  void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
 };
 
 }

@@ -14,9 +14,8 @@
 
 using namespace std;
 
-MainWindow::MainWindow(QWidget* parent)
-  : QWidget(parent)
-{
+// todo
+MainWindow::MainWindow(QWidget* parent) : QWidget(parent), _samples("./res/SAMPLES.tex") {
   int text_size = 20;
 
   // main layout for window
@@ -70,29 +69,25 @@ MainWindow::MainWindow(QWidget* parent)
   QObject::connect(save, &QPushButton::clicked,
                    this, &MainWindow::saveClicked);
   QObject::connect(_sizespin, SIGNAL(valueChanged(int)),
-                    this, SLOT(fontSizeChanged(int)));
+                   this, SLOT(fontSizeChanged(int)));
 }
 
-void MainWindow::fontSizeChanged(int size)
-{
+void MainWindow::fontSizeChanged(int size) {
   _texwidget->setTextSize(size);
 }
 
-void MainWindow::nextClicked()
-{
+void MainWindow::nextClicked() {
   auto sample = _samples.next();
-  _textedit->setText(QString::fromStdWString(sample));
+  _textedit->setText(QString::fromStdString(sample));
   _texwidget->setLaTeX(sample);
 }
 
-void MainWindow::renderClicked()
-{
+void MainWindow::renderClicked() {
   QString text = _textedit->toPlainText();
-  _texwidget->setLaTeX(text.toStdWString());
+  _texwidget->setLaTeX(text.toStdString());
 }
 
-void MainWindow::saveClicked()
-{
+void MainWindow::saveClicked() {
 #ifdef BUILD_SKIA
   _texwidget->saveSVG("out.svg");
 #endif

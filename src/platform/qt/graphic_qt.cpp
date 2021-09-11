@@ -5,6 +5,7 @@
 #if defined(BUILD_QT) && !defined(MEM_CHECK)
 
 #include "platform/qt/graphic_qt.h"
+#include "utils/log.h"
 
 #include <QDebug>
 
@@ -17,134 +18,85 @@
 #include <QPointF>
 #include <QRectF>
 #include <QString>
-#include <QStringList>
 #include <QTransform>
 #include <QtMath>
 #include <QFile>
+#include <QGlyphRun>
 
 using namespace tex;
 using namespace std;
 
-QMap<QString, QString> Font_qt::_loaded_families;
+QMap<QString, QString> Font_qt::_qtFamilies;
 
-namespace tex {
-// Some wstrings arrive with a \0 at end, so we remove when converting
-QString wstring_to_QString(const std::wstring& ws)
-{
-  QString out = QString::fromStdWString(ws);
-  auto index = out.indexOf(QChar('\0'));
-  if (index != -1)
-    out.truncate(index);
-  return out;
-}
-}
-
-Font_qt::Font_qt(const string& family, int style, float size) {
-
-//  qInfo() << "new font" << QString::fromStdString(family) << style << size;
-
-  _font.setFamily(QString::fromStdString(family));
-  _font.setPointSizeF(size);
-
-  _font.setBold(style & BOLD);
-  _font.setItalic(style & ITALIC);
-}
-
-Font_qt::Font_qt(const string& file, float size)
-{
-//  qInfo() << "new font" << QString::fromStdString(file) << size;
-
-  // set size for newly loaded and previously loaded font
-  _font.setPointSizeF(size);
-
+void Font_qt::loadFont(const std::string& file) {
   QString filename(QString::fromStdString(file));
-  if(!QFile::exists(filename)) {
-      filename.prepend(":/");
-//      qInfo() << "new filename" << filename;
+  if (!QFile::exists(filename)) {
+    filename.prepend(":/");
   }
-
-  if(_loaded_families.contains(filename)) {
-    // file already loaded
-    _font.setFamily(_loaded_families.value(filename));
-#ifdef HAVE_LOG
-    __log << file << " already loaded, skip\n";
-#endif
+  // find from cache first
+  if (_qtFamilies.contains(filename)) {
+    _font.setFamily(_qtFamilies.value(filename));
     return;
   }
-
-  QFontDatabase db;
-  int id = db.addApplicationFont(filename);
-  if( id == -1 ) {
+  // load to font database
+  int id = QFontDatabase::addApplicationFont(filename);
+  if (id == -1) {
 #ifdef HAVE_LOG
-    __log << file << " failed to load\n";
+    print("failed to load font: %s\n", file.c_str());
 #endif
   } else {
-    QStringList families = db.applicationFontFamilies(id);
-    if( families.size() > 0 ) {
-      _loaded_families[filename] = families.first();
+    auto families = QFontDatabase::applicationFontFamilies(id);
+    if (families.size() >= 0) {
+      auto first = families.first();
+      _qtFamilies[filename] = first;
       _font.setFamily(families.first());
     } else {
 #ifdef HAVE_LOG
-    __log << file << " no font families found\n";
+      print("no font families found: %s\n", file.c_str());
 #endif
     }
   }
 }
 
-string Font_qt::getFamily() const {
-  return _font.family().toStdString();
-}
-
-int Font_qt::getStyle() const {
-  int out = PLAIN;
-  if(_font.bold())   out |= BOLD;
-  if(_font.italic()) out |= ITALIC;
-  return out;
+Font_qt::Font_qt(const std::string& file) {
+  loadFont(file);
 }
 
 QFont Font_qt::getQFont() const {
   return _font;
 }
 
-float Font_qt::getSize() const {
-  return _font.pointSizeF();
+bool Font_qt::operator==(const Font& f) const {
+  const auto& cast = static_cast<const Font_qt&>(f);
+  return _font == cast._font;
 }
 
-sptr<Font> Font_qt::deriveFont(int style) const {
-  return sptrOf<Font_qt>(getFamily(), style, getSize());
-}
-
-bool Font_qt::operator==(const Font& ft) const {
-  const Font_qt& o = static_cast<const Font_qt&>(ft);
-
-  return getFamily()==o.getFamily() && getSize()==o.getSize() &&
-    getStyle()==o.getStyle();
-}
-
-bool Font_qt::operator!=(const Font& ft) const {
-  return !(*this == ft);
-}
-
-Font* Font::create(const string& file, float size) {
-  return new Font_qt(file, size);
-}
-
-sptr<Font> Font::_create(const string& name, int style, float size) {
-  return sptrOf<Font_qt>(name, style, size);
+sptr<Font> Font::create(const std::string& file) {
+  return sptrOf<Font_qt>(file);
 }
 
 /**************************************************************************************************/
 
-TextLayout_qt::TextLayout_qt(const std::wstring& src, const sptr<Font_qt>& f) :
-  _font(f->getQFont()),
-  _text(wstring_to_QString(src))
-{
+TextLayout_qt::TextLayout_qt(const std::string& src, FontStyle style, float size) {
+  _text = QString::fromStdString(src);
+  // _font.setPointSizeF(size);
+  _font.setPixelSize(size);
+  _font.setFamily("Serif");
+  if (tex::isSansSerif(style)) {
+    _font.setFamily("Sans-Serif");
+  }
+  if (tex::isMono(style)) {
+    _font.setFamily("Monospace");
+  }
+  // todo fallback font families
+  _font.setFamily("Noto Color Emoji");
+  _font.setBold(tex::isBold(style));
+  _font.setItalic(tex::isItalic(style));
 }
 
 void TextLayout_qt::getBounds(Rect& r) {
   QFontMetricsF fm(_font);
   QRectF br(fm.boundingRect(_text));
-
   r.x = br.left();
   r.y = br.top();
   r.w = br.width();
@@ -152,26 +104,22 @@ void TextLayout_qt::getBounds(Rect& r) {
 }
 
 void TextLayout_qt::draw(Graphics2D& g2, float x, float y) {
-  Graphics2D_qt& g = static_cast<Graphics2D_qt&>(g2);
+  auto& g = static_cast<Graphics2D_qt&>(g2);
   g.getQPainter()->setFont(_font);
   g.getQPainter()->drawText(QPointF(x, y), _text);
 }
 
-sptr<TextLayout> TextLayout::create(const std::wstring& src, const sptr<Font>& font) {
-  sptr<Font_qt> f = static_pointer_cast<Font_qt>(font);
-  return sptrOf<TextLayout_qt>(src, f);
+sptr<TextLayout> TextLayout::create(const std::string& src, FontStyle style, float size) {
+  return sptrOf<TextLayout_qt>(src, style, size);
 }
 
 /**************************************************************************************************/
 
-//Font_qt Graphics2D_qt::_default_font("SansSerif", PLAIN, 20.f);
-
-Graphics2D_qt::Graphics2D_qt(QPainter* painter)
-    : _painter(painter) {
+Graphics2D_qt::Graphics2D_qt(QPainter* painter) : _painter(painter) {
   _sx = _sy = 1.f;
+  _fontSize = 1.f;
   setColor(BLACK);
   setStroke(Stroke());
-  setFont(&_default_font);
 }
 
 QPainter* Graphics2D_qt::getQPainter() const {
@@ -179,8 +127,12 @@ QPainter* Graphics2D_qt::getQPainter() const {
 }
 
 QBrush Graphics2D_qt::getQBrush() const {
-  return QBrush(QColor(color_r(_color), color_g(_color),
-                       color_b(_color), color_a(_color)));
+  return QBrush(
+    QColor(
+      color_r(_color), color_g(_color),
+      color_b(_color), color_a(_color)
+    )
+  );
 }
 
 void Graphics2D_qt::setPen() {
@@ -189,30 +141,30 @@ void Graphics2D_qt::setPen() {
 
   Qt::PenCapStyle cap;
   switch (_stroke.cap) {
-  case CAP_ROUND:
-    cap = Qt::RoundCap;
-    break;
-  case CAP_SQUARE:
-    cap = Qt::SquareCap;
-    break;
-  case CAP_BUTT:
-  default:
-    cap = Qt::FlatCap;
-    break;
+    case CAP_ROUND:
+      cap = Qt::RoundCap;
+      break;
+    case CAP_SQUARE:
+      cap = Qt::SquareCap;
+      break;
+    case CAP_BUTT:
+    default:
+      cap = Qt::FlatCap;
+      break;
   }
 
   Qt::PenJoinStyle join;
   switch (_stroke.join) {
-  case JOIN_BEVEL:
-    join = Qt::BevelJoin;
-    break;
-  case JOIN_ROUND:
-    join = Qt::RoundJoin;
-    break;
-  case JOIN_MITER:
-  default:
-    join = Qt::MiterJoin;
-    break;
+    case JOIN_BEVEL:
+      join = Qt::BevelJoin;
+      break;
+    case JOIN_ROUND:
+      join = Qt::RoundJoin;
+      break;
+    case JOIN_MITER:
+    default:
+      join = Qt::MiterJoin;
+      break;
   }
 
   QPen pen(brush, _stroke.lineWidth, Qt::SolidLine, cap, join);
@@ -243,34 +195,46 @@ void Graphics2D_qt::setStrokeWidth(float w) {
   setPen();
 }
 
-const Font* Graphics2D_qt::getFont() const {
+void Graphics2D_qt::setDash(const std::vector<float>& dash) {
+  // todo
+}
+
+std::vector<float> Graphics2D_qt::getDash() {
+  // todo
+  return {};
+}
+
+sptr<Font> Graphics2D_qt::getFont() const {
   return _font;
 }
 
-void Graphics2D_qt::setFont(const Font* font) {
-  _font = static_cast<const Font_qt*>(font);
+void Graphics2D_qt::setFont(const sptr<Font>& font) {
+  _font = static_pointer_cast<Font_qt>(font);
+}
+
+float Graphics2D_qt::getFontSize() const {
+  return _fontSize;
+}
+
+void Graphics2D_qt::setFontSize(float size) {
+  _fontSize = size;
 }
 
 void Graphics2D_qt::translate(float dx, float dy) {
-  //qInfo() << "translate" << dx << dy;
   _painter->translate(dx, dy);
 }
 
 void Graphics2D_qt::scale(float sx, float sy) {
-  //qInfo() << "scale" << sx << sy;
   _sx *= sx;
   _sy *= sy;
   _painter->scale(sx, sy);
 }
 
 void Graphics2D_qt::rotate(float angle) {
-  //qInfo() << "rotate" << angle;
   _painter->rotate(qRadiansToDegrees(angle));
 }
 
 void Graphics2D_qt::rotate(float angle, float px, float py) {
-
-  //qInfo() << "translate" << px << py << "rotate" << angle;
   _painter->translate(px, py);
   _painter->rotate(qRadiansToDegrees(angle));
   _painter->translate(-px, -py);
@@ -289,21 +253,16 @@ float Graphics2D_qt::sy() const {
   return _sy;
 }
 
-void Graphics2D_qt::drawChar(wchar_t c, float x, float y) {
-  std::wstring str = {c};
-  drawText(str, x, y);
-}
-
-void Graphics2D_qt::drawText(const std::wstring& t, float x, float y) {
-
-  _painter->setFont(_font->getQFont());
-
-  QString text = wstring_to_QString(t);
-  //qInfo() << "text" << x << y << text << text.toLocal8Bit();
-  //for(size_t i=0; i<t.size(); ++i)
-  //  qInfo() << 'v' << int(t[i]);
-
-  _painter->drawText(QPointF(x, y), text);
+void Graphics2D_qt::drawGlyph(u16 glyph, float x, float y) {
+  auto f = _font->getQFont();
+  // f.setPointSizeF(_fontSize);
+  f.setPixelSize(_fontSize);
+  auto rf = QRawFont::fromFont(f);
+  QGlyphRun g;
+  g.setRawFont(rf);
+  g.setGlyphIndexes({glyph});
+  g.setPositions({{0, 0}});
+  _painter->drawGlyphRun({x, y}, g);
 }
 
 void Graphics2D_qt::drawLine(float x1, float y1, float x2, float y2) {
@@ -331,9 +290,5 @@ void Graphics2D_qt::fillRoundRect(float x, float y, float w, float h, float rx, 
   setPen();
   _painter->setBrush(QBrush());
 }
-
-
-/**************************************************************************************************/
-
 
 #endif

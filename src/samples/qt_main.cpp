@@ -7,20 +7,26 @@
 
 #include <QApplication>
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   QApplication app(argc, argv);
 
 #ifdef BUILD_SKIA
   initGL();
 #endif
+  // todo
+  const tex::FontSpec math{
+    "xits",
+    "/home/nano/Downloads/xits/XITSMath-Regular.otf",
+    "./res/XITSMath-Regular.clm"
+  };
+  tex::LaTeX::init(math);
 
-  tex::LaTeX::init();
-  MainWindow mainwin;
-  mainwin.show();
-  int retn = app.exec();
+  MainWindow win;
+  win.show();
+  int ret = app.exec();
 
   tex::LaTeX::release();
-  return retn;
+  return ret;
 }
 
 #endif

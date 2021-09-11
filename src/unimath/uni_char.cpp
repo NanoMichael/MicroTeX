@@ -18,14 +18,14 @@ const Glyph* Char::glyph() const {
   auto font = FontContext::getFont(fontId);
   if (font == nullptr) {
 #ifdef HAVE_LOG
-    log("There's no font was found with id = %d, use '?' instead.\n", fontId);
+    logv("There's no font was found with id = %d, use '?' instead.\n", fontId);
 #endif
     return FontContext::getFont(0)->otf().glyphOfUnicode('?');
   }
   auto g = font->otf().glyph(glyphId);
   if (g == nullptr) {
 #ifdef HAVE_LOG
-    log("There's no glyph was found with (unicode = %u, id = %d), use '?' instead.\n", mappedCode, glyphId);
+    logv("There's no glyph was found with (unicode = %u, id = %d), use '?' instead.\n", mappedCode, glyphId);
 #endif
     return font->otf().glyphOfUnicode('?');
   }

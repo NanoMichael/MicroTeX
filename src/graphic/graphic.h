@@ -16,7 +16,9 @@ public:
   virtual bool operator==(const Font& f) const = 0;
 
   /** Check if current font is not equals to another */
-  virtual bool operator!=(const Font& f) const = 0;
+  inline bool operator!=(const Font& f) const {
+    return !(*this == f);
+  }
 
   virtual ~Font() = default;
 
@@ -48,6 +50,8 @@ public:
    */
   virtual void draw(Graphics2D& g2, float x, float y) = 0;
 
+  virtual ~TextLayout() = default;
+
   /**
    * Create a TextLayout with given text and font
    *
@@ -60,10 +64,7 @@ public:
 
 /**
  * Abstract class to represents a graphics (2D) context, all the TeX drawing operations will on it.
- * It must have scale, translation, and rotation support. You should notice that the scaling on
- * y-direction will be selected as the base if they are different on x and y-direction when drawing
- * characters. In most cases, you should never use different scaling, unless you are really sure the
- * coordinates are correct (i.e. draw a hyphen).
+ * It must have scale, translation, and rotation support.
  */
 class Graphics2D {
 public:
@@ -101,7 +102,7 @@ public:
    */
   virtual void setDash(const std::vector<float>& dash) = 0;
 
-  /** Get the dash */
+  /** Get the dash pattern to draw lines. */
   virtual std::vector<float> getDash() = 0;
 
   /** Get the current font */
@@ -117,7 +118,7 @@ public:
   virtual void setFontSize(float size) = 0;
 
   /**
-   * Translate the context with distance dx, dy
+   * Translate the context by dx, dy
    *
    * @param dx distance in x-direction to translate
    * @param dy distance in y-direction to translate
@@ -125,7 +126,7 @@ public:
   virtual void translate(float dx, float dy) = 0;
 
   /**
-   * Scale the context with sx, sy
+   * Scale the context by sx, sy
    *
    * @param sx scale ratio in x-direction
    * @param sy scale ratio in y-direction
@@ -152,14 +153,14 @@ public:
   virtual void reset() = 0;
 
   /**
-   * Get the scale of the context in x-direction
+   * Get the scale ratio of the context in x-direction
    *
    * @return the scale in x-direction
    */
   virtual float sx() const = 0;
 
   /**
-   * Get the scale of the context in y-direction
+   * Get the scale ratio of the context in y-direction
    *
    * @return the scale in y-direction
    */
