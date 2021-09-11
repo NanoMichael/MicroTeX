@@ -127,12 +127,6 @@ inline macro(phantom) {
     new PhantomAtom(Formula(tp, args[1], false)._root, true, true, true));
 }
 
-inline macro(textcircled) {
-  // TODO
-  // return sptrOf<TextCircledAtom>(sptrOf<RomanAtom>(Formula(tp, args[1])._root));
-  return nullptr;
-}
-
 inline macro(surd) {
   return sptrOf<VCenterAtom>(SymbolAtom::get("surdsign"));
 }

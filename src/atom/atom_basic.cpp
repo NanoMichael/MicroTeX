@@ -2,10 +2,7 @@
 #include "atom/atom_scripts.h"
 #include "box/box_group.h"
 #include "box/box_factory.h"
-#include "graphic/graphic.h"
 #include "env/env.h"
-
-#include <memory>
 
 using namespace std;
 using namespace tex;

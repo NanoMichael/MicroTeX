@@ -1,13 +1,9 @@
 #ifndef LATEX_ATOM_BASIC_H
 #define LATEX_ATOM_BASIC_H
 
-#include <utility>
-
 #include "atom/atom.h"
 #include "atom/atom_row.h"
 #include "box/box_single.h"
-#include "box/box_group.h"
-#include "graphic/graphic.h"
 #include "unimath/math_type.h"
 
 namespace tex {

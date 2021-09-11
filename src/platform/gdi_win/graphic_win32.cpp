@@ -82,10 +82,6 @@ bool Font_win32::operator==(const Font& ft) const {
   return f._family == _family;
 }
 
-bool Font_win32::operator!=(const Font& f) const {
-  return !(*this == f);
-}
-
 Font_win32::~Font_win32() noexcept {
   if (!_isSystem) delete _family;
 }

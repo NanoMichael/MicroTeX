@@ -150,20 +150,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 };
 
-class TextCircledAtom : public Atom {
-private:
-  sptr<Atom> _at;
-
-public:
-  TextCircledAtom() = delete;
-
-  explicit TextCircledAtom(const sptr<Atom>& a) : _at(a) {}
-
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
-};
-
 /**
  * An atom representing another atom vertically centered with respect to
  * the math axis

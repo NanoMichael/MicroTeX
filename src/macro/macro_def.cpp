@@ -307,7 +307,6 @@ map<string, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_char, "char"),
     mac(1, macro_romannumeral, "roman"),
     mac(1, macro_romannumeral, "Roman"),
-    mac(1, macro_textcircled, "textcircled"),
     mac(0, macro_surd, "surd"),
     mac(0, macro_lmoustache, "lmoustache"),
     mac(0, macro_rmoustache, "rmoustache"),

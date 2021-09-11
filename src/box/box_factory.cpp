@@ -1,4 +1,5 @@
 #include "box/box_factory.h"
+#include "box/box_group.h"
 #include "atom/atom_basic.h"
 #include "utils/utils.h"
 #include "env/env.h"

@@ -1,9 +1,6 @@
 #ifndef ATOM_H_INCLUDED
 #define ATOM_H_INCLUDED
 
-#undef DEBUG
-
-#include "utils/utils.h"
 #include "box/box.h"
 
 namespace tex {

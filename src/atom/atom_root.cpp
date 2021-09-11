@@ -1,6 +1,7 @@
 #include "atom/atom_root.h"
 #include "env/env.h"
 #include "box/box_factory.h"
+#include "box/box_group.h"
 
 using namespace tex;
 

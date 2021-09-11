@@ -51,8 +51,6 @@ public:
 
   bool operator==(const Font& f) const override;
 
-  bool operator!=(const Font& f) const override;
-
   static sptr<Font_win32> getOrCreate(const std::string& file);
 
   ~Font_win32() noexcept override;
