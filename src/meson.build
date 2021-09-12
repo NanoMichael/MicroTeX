@@ -46,8 +46,6 @@ subdir('utils')
 src += utils_src
 
 
-add_project_arguments('-std=c++17', language: 'cpp')
-
 clatexmath_lib = library('clatexmath', src,
 	include_directories: inc,
 	dependencies: deps,
