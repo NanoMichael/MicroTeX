@@ -15,6 +15,7 @@ TexStyle texStyleOf(const std::string& str) {
   } else if (str == "scriptscriptstyle") {
     style = TexStyle::scriptScript;
   }
+  return style;
 }
 
 macro(everymath) {
