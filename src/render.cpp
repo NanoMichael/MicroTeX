@@ -130,6 +130,18 @@ void Render::draw(Graphics2D& g2, int x, int y) {
   g2.setColor(old);
 }
 
+TexStyle RenderBuilder::_overrideStyle = TexStyle::text;
+bool RenderBuilder::_enableOverrideStyle = false;
+
+RenderBuilder& RenderBuilder::setLineSpace(UnitType unit, float space) {
+  if (_widthUnit == UnitType::none) {
+    throw ex_invalid_state("Cannot set line space without having specified a width!");
+  }
+  _lineSpace = space;
+  _lineSpaceUnit = unit;
+  return *this;
+}
+
 Render* RenderBuilder::build(Formula& f) {
   return build(f._root);
 }
@@ -150,7 +162,8 @@ Render* RenderBuilder::build(const sptr<Atom>& fc) {
     fctx->selectMainFont(_mainFontName);
   }
 
-  Env env(_style, fctx, _textSize);
+  const auto style = _enableOverrideStyle ? _overrideStyle : _style;
+  Env env(style, fctx, _textSize);
   const auto isLimitedWidth = _widthUnit != UnitType::none && _textWidth != 0;
   if (isLimitedWidth) {
     env.setTextWidth(_widthUnit, _textWidth);

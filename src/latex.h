@@ -8,14 +8,10 @@
 
 namespace tex {
 
-class Formula;
-
 class LaTeX {
 private:
   static volatile bool _isInited;
   static std::string _defaultMathFontName;
-  static Formula* _formula;
-  static RenderBuilder* _builder;
 
 public:
   /**
@@ -54,7 +50,16 @@ public:
   static void setDefaultMathFont(const std::string& name);
 
   /**
-   * Parse TeX formatted string to Render
+   * Override the style to display formulas. If #enable is true, the '$', '$$',
+   * '\(' and '\[' will be ignored, and force to use the given overridden style.
+   *
+   * @param enable whether enable the overridden style, false to cancel
+   * @param style the target style to override
+   */
+  static void overrideTexStyle(bool enable, TexStyle style = TexStyle::text);
+
+  /**
+   * Parse LaTeX string to Render
    *
    * @param tex the TeX formatted string
    * @param width the width of the 2D graphics context

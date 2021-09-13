@@ -32,14 +32,6 @@ inline sptr<T> sptrOf(Args&& ... args) {
   return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
-/** Find the position of a value in the vector, return -1 if not found */
-template<typename T>
-inline int indexOf(const std::vector<T>& v, const T& x) {
-  auto it = std::find(v.begin(), v.end(), x);
-  int i = std::distance(v.begin(), it);
-  return (i >= v.size() ? -1 : i);
-}
-
 /** Template version to find the max value of the given list */
 template<typename T, typename ... Args>
 inline T maxOf(Args&& ... args) {

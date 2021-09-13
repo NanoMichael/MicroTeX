@@ -31,11 +31,13 @@ public:
   explicit ex_parse(const std::string& msg) : ex_tex(msg) {}
 };
 
+/** Error occurred while conditions not satisfied */
 class ex_invalid_state : public ex_tex {
 public:
   explicit ex_invalid_state(const std::string& e) : ex_tex(e) {}
 };
 
+/** Error occurred while an invalid param was given */
 class ex_invalid_param : public ex_tex {
 public:
   explicit ex_invalid_param(const std::string& e) : ex_tex(e) {}

@@ -9,8 +9,6 @@ using namespace tex;
 
 volatile bool LaTeX::_isInited = false;
 std::string LaTeX::_defaultMathFontName;
-Formula* LaTeX::_formula = nullptr;
-RenderBuilder* LaTeX::_builder = nullptr;
 
 void LaTeX::init(const FontSpec& mathFontSpec) {
   FontContext::addMathFont(mathFontSpec);
@@ -27,9 +25,6 @@ bool LaTeX::isInited() {
 void LaTeX::release() {
   MacroInfo::_free_();
   NewCommandMacro::_free_();
-
-  delete _formula;
-  delete _builder;
 }
 
 void LaTeX::addMainFont(const std::string& name, const std::vector<FontSpec>& params) {
@@ -44,28 +39,26 @@ void LaTeX::setDefaultMathFont(const std::string& name) {
   _defaultMathFontName = name;
 }
 
+void LaTeX::overrideTexStyle(bool enable, TexStyle style) {
+  RenderBuilder::overrideTexStyle(enable, style);
+}
+
 Render* LaTeX::parse(
   const string& latex, int width, float textSize, float lineSpace, color fg,
   const string& mathFontName, const string& mainFontName
 ) {
-  if (_formula == nullptr) _formula = new Formula();
-  if (_builder == nullptr) _builder = new RenderBuilder();
-
-  bool isInline = true;
-  if (startswith(latex, "$$") || startswith(latex, "\\[")) {
-    isInline = false;
-  }
-  Alignment align = isInline ? Alignment::left : Alignment::center;
-  _formula->setLaTeX(latex);
-  Render* render =
-    _builder->setStyle(isInline ? TexStyle::text : TexStyle::display)
-      .setTextSize(textSize)
-      .setMathFontName(mathFontName.empty() ? _defaultMathFontName : mathFontName)
-      .setMainFontName(mainFontName)
-      .setWidth(UnitType::pixel, width, align)
-      .setIsMaxWidth(isInline)
-      .setLineSpace(UnitType::pixel, lineSpace)
-      .setForeground(fg)
-      .build(*_formula);
+  Formula formula(latex);
+  const auto isInline = !startswith(latex, "$$") && !startswith(latex, "\\[");
+  const auto align = isInline ? Alignment::left : Alignment::center;
+  Render* render = RenderBuilder()
+    .setStyle(isInline ? TexStyle::text : TexStyle::display)
+    .setTextSize(textSize)
+    .setMathFontName(mathFontName.empty() ? _defaultMathFontName : mathFontName)
+    .setMainFontName(mainFontName)
+    .setWidth(UnitType::pixel, width, align)
+    .setIsMaxWidth(isInline)
+    .setLineSpace(UnitType::pixel, lineSpace)
+    .setForeground(fg)
+    .build(formula);
   return render;
 }

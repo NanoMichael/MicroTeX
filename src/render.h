@@ -73,6 +73,9 @@ public:
 
 class RenderBuilder {
 private:
+  static bool _enableOverrideStyle;
+  static TexStyle _overrideStyle;
+
   TexStyle _style = TexStyle::display;
   UnitType _widthUnit = UnitType::none;
   UnitType _lineSpaceUnit = UnitType::none;
@@ -85,6 +88,11 @@ private:
 
 public:
   RenderBuilder() = default;
+
+  inline static void overrideTexStyle(bool enable, TexStyle style) {
+    _enableOverrideStyle = enable;
+    _overrideStyle = style;
+  }
 
   inline RenderBuilder& setStyle(TexStyle style) {
     _style = style;
@@ -152,14 +160,7 @@ public:
     return *this;
   }
 
-  inline RenderBuilder& setLineSpace(UnitType unit, float space) {
-    if (_widthUnit == UnitType::none) {
-      throw ex_invalid_state("Cannot set line space without having specified a width!");
-    }
-    _lineSpace = space;
-    _lineSpaceUnit = unit;
-    return *this;
-  }
+  RenderBuilder& setLineSpace(UnitType unit, float space);
 
   Render* build(const sptr<Atom>& f);
 

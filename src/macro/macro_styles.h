@@ -9,6 +9,10 @@
 
 namespace tex {
 
+TexStyle texStyleOf(const std::string& str);
+
+macro(everymath);
+
 macro(texstyle);
 
 macro(atexstyle);

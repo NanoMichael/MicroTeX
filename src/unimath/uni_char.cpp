@@ -32,7 +32,7 @@ const Glyph* Char::glyph() const {
   return g;
 }
 
-const i32 Char::fallbackGlyphId() const {
+i32 Char::fallbackGlyphId() const {
   if (isValid()) return glyphId;
   auto font = FontContext::getFont(fontId);
   if (font == nullptr) {

@@ -1,20 +1,35 @@
 #include "macro/macro_styles.h"
 #include "utils/utf.h"
+#include "latex.h"
 
 namespace tex {
 
-macro(texstyle) {
-  auto g = Formula(tp, tp.getOverArgument(), false)._root;
+TexStyle texStyleOf(const std::string& str) {
   TexStyle style = TexStyle::text;
-  if (args[0] == "displaystyle") {
+  if (str == "displaystyle") {
     style = TexStyle::display;
-  } else if (args[0] == "textstyle") {
+  } else if (str == "textstyle") {
     style = TexStyle::text;
-  } else if (args[0] == "scriptstyle") {
+  } else if (str == "scriptstyle") {
     style = TexStyle::script;
-  } else if (args[0] == "scriptscriptstyle") {
+  } else if (str == "scriptscriptstyle") {
     style = TexStyle::scriptScript;
   }
+}
+
+macro(everymath) {
+  if (args[1].empty()) {
+    LaTeX::overrideTexStyle(false);
+  } else {
+    TexStyle style = texStyleOf(args[1].substr(1));
+    LaTeX::overrideTexStyle(true, style);
+  }
+  return nullptr;
+}
+
+macro(texstyle) {
+  auto g = Formula(tp, tp.getOverArgument(), false)._root;
+  TexStyle style = texStyleOf(args[0]);
   return sptrOf<StyleAtom>(style, g);
 }
 

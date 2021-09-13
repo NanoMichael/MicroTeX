@@ -253,6 +253,7 @@ map<string, MacroInfo*> MacroInfo::_commands{
     mac(0, macro_texstyle, "textstyle"),
     mac(0, macro_texstyle, "scriptstyle"),
     mac(0, macro_texstyle, "scriptscriptstyle"),
+    mac(1, macro_everymath, "everymath"),
     mac(1, macro_atexstyle, "dnomstyle"),
     mac(1, macro_atexstyle, "numstyle"),
     mac(1, macro_atexstyle, "substyle"),

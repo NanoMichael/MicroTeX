@@ -126,7 +126,7 @@ public:
 
   void checkDimensions();
 
-  virtual bool isArrayMode() const override { return true; }
+  bool isArrayMode() const override { return true; }
 
   ~ArrayFormula() override = default;
 };
