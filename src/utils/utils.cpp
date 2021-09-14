@@ -1,7 +1,7 @@
 #include "utils/utils.h"
 
 const std::locale& tex::defaultLocale() {
-  static const std::locale locale("en_US.utf8");
+  static const std::locale locale("en_US.UTF-8");
   return locale;
 }
 

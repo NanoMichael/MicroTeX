@@ -18,7 +18,8 @@ else ()
     CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
 
     if (COMPILER_SUPPORTS_CXX17)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+        message(STATUS "${CMAKE_CXX_COMPILER} has c++17 support.")
+        target_compile_features(LaTeX PUBLIC cxx_std_17)
     else ()
         message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no c++17 support. Please use a different one that supports c++17.")
     endif ()
@@ -105,7 +106,7 @@ target_include_directories(LaTeX PUBLIC src)
 # check operating system
 
 if (QT)
-    message(STATUS, "Cross platform build using Qt")
+    message(STATUS "Cross platform build using Qt")
     target_compile_definitions(LaTeX PUBLIC -DBUILD_QT)
     find_package(QT NAMES Qt6 Qt5 COMPONENTS Gui Widgets REQUIRED)
     find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Gui Widgets REQUIRED)
