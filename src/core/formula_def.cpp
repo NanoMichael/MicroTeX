@@ -157,4 +157,8 @@ map<string, string> Formula::_predefFormulaStrs{
   {"IJ",               "{I\\kern-0.065em J}"},
   {"ij",               "{i\\kern-0.065em j}"},
   {"idotsint",         "\\int\\cdots\\int"},
+  {"clm",              "$\\stackinset{l}{0.22em}{c}{}{"
+                       "\\scalebox{1.5}{\\mathrm{L}}"
+                       "}{\\mathrm{CM}"
+                       "}$"}
 };
