@@ -201,7 +201,7 @@ elseif (UNIX)
     )
     set_target_properties(LaTeXGtkSample PROPERTIES OUTPUT_NAME LaTeX)
 else ()
-    message(STATUS "We are working on a unknown platform")
+    message(STATUS "We are working on an unknown platform")
     # other platforms...
 endif ()
 

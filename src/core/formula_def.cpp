@@ -150,7 +150,7 @@ map<string, string> Formula::_predefFormulaStrs{
   {"Android",          "\\large{🤖️}"},
   {"AndroidTeX",       "\\Android\\TeX"},
   {"TeX",              "\\text{T\\kern-.15em\\raisebox{-.4ex}{E}\\kern-.15em X}"},
-  {"LaTeX",            "\\text{L\\kern-0.25em"
+  {"LaTeX",            "\\text{L\\kern-0.3em"
                        "\\raisebox{.45ex}{\\scalebox{0.7}{A}}"
                        "\\kern-.15em T\\kern-.15em"
                        "\\raisebox{-.4ex}{E}\\kern-.15em X}"},
