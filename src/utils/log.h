@@ -35,6 +35,4 @@
       ##__VA_ARGS__       \
     );
 
-#define print printf
-
 #endif

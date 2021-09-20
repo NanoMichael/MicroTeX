@@ -9,19 +9,19 @@ using namespace tex;
 #ifdef HAVE_LOG
 
 static void printBox(const sptr<Box>& b, int dep, vector<bool>& lines, int max = 0) {
-  print("%-4d", dep);
+  logv("%-4d", dep);
   if (lines.size() < dep + 1) lines.resize(dep + 1, false);
 
   for (int i = 0; i < dep - 1; i++) {
-    print(lines[i] ? "    " : " │  ");
+    logv(lines[i] ? "    " : " │  ");
   }
 
   if (dep > 0) {
-    print(lines[dep - 1] ? " └──" : " ├──");
+    logv(lines[dep - 1] ? " └──" : " ├──");
   }
 
   if (b == nullptr) {
-    print(ANSI_COLOR_RED " NULL\n" ANSI_RESET);
+    logv(ANSI_COLOR_RED " NULL\n" ANSI_RESET);
     return;
   }
 
@@ -33,9 +33,9 @@ static void printBox(const sptr<Box>& b, int dep, vector<bool>& lines, int max =
     ? ANSI_COLOR_CYAN " %-*s " ANSI_RESET
     : " %-*s "
   );
-  print(fmt, size > 0 ? name.size() : max, name.c_str());
+  logv(fmt, size > 0 ? name.size() : max, name.c_str());
   // show metrics and additional info
-  print(
+  logv(
     "[%g, (%g + %g) = %g, %g] %s\n",
     b->_width, b->_height, b->_depth, b->vlen(), b->_shift,
     b->toString().c_str()
@@ -56,7 +56,7 @@ static void printBox(const sptr<Box>& b, int dep, vector<bool>& lines, int max =
 void tex::printBox(const sptr<Box>& box) {
   vector<bool> lines;
   ::printBox(box, 0, lines, box->name().size());
-  print("\n");
+  logv("\n");
 }
 
 #endif  // HAVE_LOG
@@ -68,19 +68,19 @@ sptr<Box> BoxSplitter::split(const sptr<Box>& b, float width, float lineSpace) {
     auto box = split(h, width, lineSpace);
 #ifdef HAVE_LOG
     if (box != b) {
-      print("[BEFORE SPLIT]:\n");
+      logv("[BEFORE SPLIT]:\n");
       printBox(b);
-      print("[AFTER SPLIT]:\n");
+      logv("[AFTER SPLIT]:\n");
       printBox(box);
     } else {
-      print("[BOX TREE]:\n");
+      logv("[BOX TREE]:\n");
       printBox(box);
     }
 #endif
     return box;
   }
 #ifdef HAVE_LOG
-  print("[BOX TREE]:\n");
+  logv("[BOX TREE]:\n");
   printBox(b);
 #endif
   return b;

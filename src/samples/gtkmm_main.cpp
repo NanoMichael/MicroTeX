@@ -26,6 +26,8 @@
 
 #include <pangomm/init.h>
 
+#include <chrono>
+
 using namespace tex;
 
 class TeXDrawingArea : public Gtk::DrawingArea {
@@ -80,6 +82,7 @@ public:
 
   void setLaTeX(const string& latex) {
     delete _render;
+    auto start = std::chrono::high_resolution_clock::now();
     _render = LaTeX::parse(
       latex,
       get_allocated_width() - _padding * 2,
@@ -87,6 +90,9 @@ public:
       _text_size / 3.f,
       0xff424242
     );
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    logv("parse duration: %ld(ms)\n", duration.count());
 
     checkInvalidate();
   }
@@ -291,16 +297,16 @@ public:
 
   int runBatch() const {
     if (_samplesFile.empty()) {
-      print(ANSI_COLOR_RED "Error: the option '-samples' must be specified\n" ANSI_RESET);
+      logv(ANSI_COLOR_RED "Error: the option '-samples' must be specified\n" ANSI_RESET);
       return 1;
     }
     if (_outputDir.empty()) {
-      print(ANSI_COLOR_RED "Error: the option '-outputdir' must be specified\n" ANSI_RESET);
+      logv(ANSI_COLOR_RED "Error: the option '-outputdir' must be specified\n" ANSI_RESET);
       return 1;
     }
     Samples samples(_samplesFile);
     if (samples.isEmpty()) {
-      print(ANSI_COLOR_RED "Error: no samples was loaded\n" ANSI_RESET);
+      logv(ANSI_COLOR_RED "Error: no samples was loaded\n" ANSI_RESET);
       return 1;
     }
     if (samples.count() == 0) return 1;
@@ -312,7 +318,7 @@ public:
 
   int runSingle() const {
     if (_outputFile.empty()) {
-      print(ANSI_COLOR_RED "Error: the option '-output' must be specified\n" ANSI_RESET);
+      logv(ANSI_COLOR_RED "Error: the option '-output' must be specified\n" ANSI_RESET);
       return 1;
     }
     const string& code = _input;
@@ -426,7 +432,7 @@ int runHelp() {
     "      the source code that is written in LaTeX\n\n" B
     "  -output=[FILE]\n" R
     "      indicates where to save the produced SVG image, only works if the option '-input' has given\n\n";
-  print("%s", msg);
+  logv("%s", msg);
   return 0;
 }
 
@@ -461,7 +467,7 @@ int main(int argc, char* argv[]) {
   }
 
   if (mathVersionName.empty() || mathFont.empty() || clmFile.empty()) {
-    print(
+    logv(
       ANSI_COLOR_RED
       "No math font or clm file was given, exit...\n"
       ANSI_COLOR_GREEN
