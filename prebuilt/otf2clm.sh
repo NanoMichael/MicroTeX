@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
 
 usage="
-Parse clm data from OTF font file.
+Generate clm data from OTF font file.
 
-Usage: $(basename $0)
+Usage: $(basename "$0") <otf/font/file> <true|false> <file/to/save/clm>
 
 Required arguments:
     1: OTF font file path
@@ -17,6 +17,5 @@ then
   exit 1
 fi
 
-fontforge -lang=py -script otf2clm.py $1 $2 $3
-
+fontforge -lang=py -script otf2clm.py "$1" "$2" "$3"
 echo "Generated clm data was saved into file: $3"
