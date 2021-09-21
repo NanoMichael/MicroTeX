@@ -1,7 +1,13 @@
 cmake_minimum_required(VERSION 3.16)
-project(LaTeX)
 
-add_library(LaTeX "")
+project(
+    LaTeX
+    VERSION 1.0.0
+    DESCRIPTION "A dynamic, cross-platform, and embeddable LaTeX rendering library"
+)
+
+add_library(clatexmath SHARED "")
+set_target_properties(clatexmath PROPERTIES VERSION 1.0.0 SOVERSION 1)
 
 # MSVC Compat
 
@@ -9,7 +15,7 @@ if (MSVC)
     set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     add_compile_options("/utf-8")
-    target_compile_features(LaTeX PUBLIC cxx_std_17)
+    target_compile_features(clatexmath PUBLIC cxx_std_17)
 else ()
 
     # check if compiler has c++17 support
@@ -19,7 +25,7 @@ else ()
 
     if (COMPILER_SUPPORTS_CXX17)
         message(STATUS "${CMAKE_CXX_COMPILER} has c++17 support.")
-        target_compile_features(LaTeX PUBLIC cxx_std_17)
+        target_compile_features(clatexmath PUBLIC cxx_std_17)
     else ()
         message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no c++17 support. Please use a different one that supports c++17.")
     endif ()
@@ -31,7 +37,7 @@ file(COPY res DESTINATION .)
 
 # source files
 target_sources(
-    LaTeX PRIVATE
+    clatexmath PRIVATE
     # atom folder
     src/atom/atom_basic.cpp
     src/atom/atom_char.cpp
@@ -101,21 +107,21 @@ target_sources(
     src/latex.cpp
     src/render.cpp
 )
-target_include_directories(LaTeX PUBLIC src)
+target_include_directories(clatexmath PUBLIC src)
 
 # check operating system
 
 if (QT)
     message(STATUS "Cross platform build using Qt")
-    target_compile_definitions(LaTeX PUBLIC -DBUILD_QT)
+    target_compile_definitions(clatexmath PUBLIC -DBUILD_QT)
     find_package(QT NAMES Qt6 Qt5 COMPONENTS Gui Widgets REQUIRED)
     find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Gui Widgets REQUIRED)
     target_sources(
-        LaTeX PRIVATE
+        clatexmath PRIVATE
         src/platform/qt/graphic_qt.cpp
     )
     target_link_libraries(
-        LaTeX PRIVATE
+        clatexmath PRIVATE
         Qt${QT_VERSION_MAJOR}::Gui
     )
     add_executable(
@@ -126,17 +132,17 @@ if (QT)
     )
     target_link_libraries(
         LaTeXQtSample PRIVATE
-        Qt${QT_VERSION_MAJOR}::Widgets LaTeX
+        Qt${QT_VERSION_MAJOR}::Widgets clatexmath
     )
     set_target_properties(LaTeXQtSample PROPERTIES OUTPUT_NAME LaTeX)
     set_target_properties(LaTeXQtSample PROPERTIES AUTOMOC ON)
 elseif (SKIA)
     message(STATUS, "Cross platform build using Qt and Skia for rendering")
-    target_compile_definitions(LaTeX PUBLIC -DBUILD_SKIA -DSK_GL)
-    target_include_directories(LaTeX PUBLIC src)
+    target_compile_definitions(clatexmath PUBLIC -DBUILD_SKIA -DSK_GL)
+    target_include_directories(clatexmath PUBLIC src)
     if (MSVC)
         find_package(skia REQUIRED)
-        target_link_libraries(LaTeX INTERFACE skia skia::skia)
+        target_link_libraries(clatexmath INTERFACE skia skia::skia)
     else ()
         include_directories(../skia ../skia/include)
         link_directories(../skia)
@@ -144,11 +150,11 @@ elseif (SKIA)
     find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Widgets REQUIRED)
     find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Widgets REQUIRED)
     target_sources(
-        LaTeX PRIVATE
+        clatexmath PRIVATE
         src/platform/skia/graphic_skia.cpp
     )
     target_link_libraries(
-        LaTeX PRIVATE
+        clatexmath PRIVATE
         Qt${QT_VERSION_MAJOR}::Core
     )
     add_executable(
@@ -159,33 +165,33 @@ elseif (SKIA)
     )
     target_link_libraries(
         LaTeXQtSkiaSample PRIVATE
-        Qt${QT_VERSION_MAJOR}::Widgets LaTeX
+        Qt${QT_VERSION_MAJOR}::Widgets clatexmath
     )
     set_target_properties(LaTeXQtSkiaSample PROPERTIES OUTPUT_NAME LaTeX)
     set_target_properties(LaTeXQtSkiaSample PROPERTIES AUTOMOC ON)
 elseif (WIN32)
     message(STATUS "We are working on Windows")
-    target_compile_definitions(LaTeX PUBLIC -DBUILD_WIN32 -D_HAS_STD_BYTE=0)
+    target_compile_definitions(clatexmath PUBLIC -DBUILD_WIN32 -D_HAS_STD_BYTE=0)
     add_executable(
         LaTeXWin32Sample WIN32
         src/platform/gdi_win/graphic_win32.cpp
         src/samples/win32_main.cpp
     )
-    target_link_libraries(LaTeXWin32Sample PRIVATE gdiplus LaTeX)
+    target_link_libraries(LaTeXWin32Sample PRIVATE gdiplus clatexmath)
     set_target_properties(LaTeXWin32Sample PROPERTIES OUTPUT_NAME LaTeX)
 elseif (UNIX)
     message(STATUS "We are working with GTK on a Unix like OS")
-    target_compile_definitions(LaTeX PUBLIC -DBUILD_GTK)
+    target_compile_definitions(clatexmath PUBLIC -DBUILD_GTK)
     find_package(Fontconfig REQUIRED)
     pkg_check_modules(GTKMM REQUIRED IMPORTED_TARGET gtkmm-3.0)
     pkg_check_modules(GSVMM REQUIRED IMPORTED_TARGET gtksourceviewmm-3.0)
     pkg_check_modules(CairoMM REQUIRED IMPORTED_TARGET cairomm-1.0)
     target_sources(
-        LaTeX PRIVATE
+        clatexmath PRIVATE
         src/platform/cairo/graphic_cairo.cpp
     )
     target_link_libraries(
-        LaTeX PRIVATE
+        clatexmath PRIVATE
         PkgConfig::GTKMM #include <pangomm/fontdescription.h>
         PkgConfig::CairoMM #include <cairomm/context.h>
         Fontconfig::Fontconfig
@@ -197,9 +203,12 @@ elseif (UNIX)
     target_link_libraries(
         LaTeXGtkSample PRIVATE
         PkgConfig::GSVMM
-        LaTeX
+        clatexmath
     )
     set_target_properties(LaTeXGtkSample PROPERTIES OUTPUT_NAME LaTeX)
+    # install
+    set_target_properties(LaTeXGtkSample PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+    install(TARGETS LaTeXGtkSample DESTINATION bin)
 else ()
     message(STATUS "We are working on an unknown platform")
     # other platforms...
@@ -230,3 +239,8 @@ if (BUILD_EXAMPLE)
     add_subdirectory(example)
 endif ()
 
+# install
+
+install(TARGETS clatexmath DESTINATION lib) # the shared library
+install(PROGRAMS prebuilt/otf2clm.py DESTINATION bin)
+install(PROGRAMS prebuilt/otf2clm.sh DESTINATION bin RENAME otf2clm)
