@@ -7,6 +7,7 @@
 #include "platform/qt/graphic_qt.h"
 #include <QGuiApplication>
 #include <QFile>
+#include <QFileInfo>
 #include <QCommandLineParser>
 #include <QDebug>
 #include <QPainter>
@@ -15,8 +16,8 @@
 
 class TexGuard {
 public:
-    TexGuard() {
-        tex::LaTeX::init();
+    TexGuard(const tex::FontSpec& math) {
+        tex::LaTeX::init(math);
     }
 
     ~TexGuard() {
@@ -26,19 +27,58 @@ public:
 
 int main(int argc, char **argv) {
     QGuiApplication app(argc, argv);
-    TexGuard texGuard;
+    QGuiApplication::setApplicationName("latex2png");
+    QGuiApplication::setApplicationVersion("1.0.0");
+    QCommandLineParser parser;
+    parser.setApplicationDescription("Convert LaTex Sample to Image(.png)");
+    parser.addHelpOption();
+    parser.addVersionOption();
+    parser.addPositionalArgument("source", "path to tex file");
+    parser.addPositionalArgument("destination", "path to image file");
+    QCommandLineOption mathFontOption(QStringList() << "mathfont",
+                                      "path to math font (must absolution path)",
+                                      "mathfont",
+                                      "../res/XITSMath-Regular.otf");
+    parser.addOption(mathFontOption);
+    QCommandLineOption clmOption(QStringList() << "clm",
+                                 "path to clm data file",
+                                 "clm",
+                                 "../res/XITSMath-Regular.clm");
+    parser.addOption(clmOption);
+    parser.process(app);
+
+    QStringList args = parser.positionalArguments();
+    QString mathFontPath = parser.value(mathFontOption);
+    QString clmPath = parser.value(clmOption);
+    if (!QFile(mathFontPath).exists()) {
+      qDebug() << "math font not exist:" << mathFontPath;
+      return 1;
+    }
+    if (!QFileInfo(mathFontPath).isAbsolute()) {
+      qDebug() << "math font path must absolute path.";
+      return 1;
+    }
+    if (!QFile(clmPath).exists()) {
+      qDebug() << "clm not exist:" << clmPath;
+      return 1;
+    }
+
+    tex::FontSpec math{
+        "xits",
+        mathFontPath.toStdString(),
+        clmPath.toStdString()
+    };
+
+    TexGuard texGuard(math);
 #ifdef BUILD_SKIA
     initGL();
 #endif
-    if (argc != 3) {
-        qDebug() << "Usage: latex2png tex_name png_name";
+    if (args.size() != 2) {
+        qDebug().nospace().noquote() << parser.helpText();
         return 1;
     }
-    for (int i = 0; i < argc; i++) {
-        qDebug() << i << argv[i];
-    }
-    QString texName = argv[1];
-    QString pngName = argv[2];
+    QString texName = args[0];
+    QString pngName = args[1];
     if (!pngName.endsWith(".png")) {
         pngName += ".png";
     }
@@ -55,7 +95,7 @@ int main(int argc, char **argv) {
     QString latex = file.readAll();
     qDebug() << latex;
     auto render = tex::LaTeX::parse(
-            latex.toStdWString(),
+            latex.toStdString(),
             600 - 0 * 2,
             20,
             20 / 3.f,
