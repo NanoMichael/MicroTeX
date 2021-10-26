@@ -42,7 +42,7 @@ void Font_qt::loadFont(const std::string& file) {
   int id = QFontDatabase::addApplicationFont(filename);
   if (id == -1) {
 #ifdef HAVE_LOG
-    print("failed to load font: %s\n", file.c_str());
+    logv("failed to load font: %s\n", file.c_str());
 #endif
   } else {
     auto families = QFontDatabase::applicationFontFamilies(id);
@@ -52,7 +52,7 @@ void Font_qt::loadFont(const std::string& file) {
       _font.setFamily(families.first());
     } else {
 #ifdef HAVE_LOG
-      print("no font families found: %s\n", file.c_str());
+      logv("no font families found: %s\n", file.c_str());
 #endif
     }
   }
