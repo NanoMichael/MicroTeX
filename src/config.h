@@ -48,5 +48,13 @@
 #else
 #define CLATEX_CXX17 0
 #endif
-
+#ifdef _MSC_VER
+#if defined(CLATEXMATH_LIBRARY)
+#define CLATEXMATH_EXPORT __declspec(dllexport)
+#else
+#define CLATEXMATH_EXPORT __declspec(dllimport)
+#endif
+#else
+#define CLATEXMATH_EXPORT
+#endif
 #endif  // LATEX_CONFIG_H
