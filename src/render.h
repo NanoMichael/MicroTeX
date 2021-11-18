@@ -3,6 +3,7 @@
 
 #include <functional>
 
+#include "config.h"
 #include "utils/enums.h"
 #include "box/box.h"
 #include "graphic/graphic.h"
@@ -24,7 +25,7 @@ using BoxFilter = std::function<bool(const sptr<Box>&)>;
  * You can change the size via method #setWidth and #setHeight, but only the new
  * size is larger will be handled.
  */
-class Render {
+class CLATEXMATH_EXPORT Render {
 private:
   static constexpr color DFT_COLOR = black;
 

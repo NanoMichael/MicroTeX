@@ -16,6 +16,7 @@ if (MSVC)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     add_compile_options("/utf-8")
     target_compile_features(clatexmath PUBLIC cxx_std_17)
+    target_compile_definitions(clatexmath PRIVATE -DCLATEXMATH_LIBRARY)
 else ()
 
     # check if compiler has c++17 support
@@ -172,12 +173,19 @@ elseif (SKIA)
 elseif (WIN32)
     message(STATUS "We are working on Windows")
     target_compile_definitions(clatexmath PUBLIC -DBUILD_WIN32 -D_HAS_STD_BYTE=0)
+    target_sources(
+        clatexmath PRIVATE
+        src/platform/gdi_win/graphic_win32.cpp
+    )
+    target_link_libraries(
+        clatexmath PUBLIC
+        gdiplus
+    )
     add_executable(
         LaTeXWin32Sample WIN32
-        src/platform/gdi_win/graphic_win32.cpp
         src/samples/win32_main.cpp
     )
-    target_link_libraries(LaTeXWin32Sample PRIVATE gdiplus clatexmath)
+    target_link_libraries(LaTeXWin32Sample PRIVATE clatexmath)
     set_target_properties(LaTeXWin32Sample PROPERTIES OUTPUT_NAME LaTeX)
 elseif (UNIX)
     message(STATUS "We are working with GTK on a Unix like OS")

@@ -3,12 +3,13 @@
 
 #include <string>
 
+#include "config.h"
 #include "unimath/uni_font.h"
 #include "render.h"
 
 namespace tex {
 
-class LaTeX {
+class CLATEXMATH_EXPORT LaTeX {
 private:
   static volatile bool _isInited;
   static std::string _defaultMathFontName;

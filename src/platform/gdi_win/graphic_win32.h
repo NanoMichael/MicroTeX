@@ -78,7 +78,7 @@ public:
 
 /**************************************************************************************************/
 
-class Graphics2D_win32 : public Graphics2D {
+class CLATEXMATH_EXPORT Graphics2D_win32 : public Graphics2D {
 private:
   static const Gdiplus::StringFormat* _format;
 

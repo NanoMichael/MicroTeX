@@ -52,7 +52,7 @@ public:
 
 /**************************************************************************************************/
 
-class Graphics2D_qt : public Graphics2D {
+class CLATEXMATH_EXPORT Graphics2D_qt : public Graphics2D {
 private:
   QPainter* _painter;
 
