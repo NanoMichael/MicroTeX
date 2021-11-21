@@ -125,8 +125,12 @@ protected:
     cr->rectangle(0, 0, get_width(), get_height());
     cr->fill();
     if (_render == nullptr) return true;
+    auto start = std::chrono::high_resolution_clock::now();
     Graphics2D_cairo g2(cr);
     _render->draw(g2, _padding, _padding);
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    logv("render duration: %ld(ms)\n", duration.count());
     return true;
   }
 };
