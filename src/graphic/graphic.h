@@ -175,6 +175,24 @@ public:
    */
   virtual void drawGlyph(u16 glyph, float x, float y) = 0;
 
+  // region path commands
+
+  virtual void moveTo(float x, float y) = 0;
+
+  virtual void lineTo(float x, float y) = 0;
+
+  virtual void curveTo(float x1, float y1, float x2, float y2, float x3, float y3) = 0;
+
+  virtual void quadraticTo(float x1, float y1, float x2, float y2) = 0;
+
+  virtual void closePath() = 0;
+
+  virtual void fillPath() = 0;
+
+  // endregion
+
+  // region shape commands
+
   /**
    * Draw line
    * 
@@ -228,6 +246,8 @@ public:
    * @param ry radius in y-direction
    */
   virtual void fillRoundRect(float x, float y, float w, float h, float rx, float ry) = 0;
+
+  // endregion
 };
 
 }  // namespace tex

@@ -3,6 +3,7 @@
 
 #include "utils/dict_tree.h"
 #include "utils/utils.h"
+#include "otf/path.h"
 
 namespace tex {
 
@@ -354,6 +355,8 @@ private:
   const KernRecord* _kernRecord = &KernRecord::empty;
   /** MUST NOT BE NULL, equals to &Math::empty if absent */
   const Math* _math = &Math::empty;
+  /** MUST NOT BE NULL, equals to &Path::empty if absent */
+  const Path* _path = &Path::empty;
 
   Glyph() = default;
 
@@ -365,6 +368,8 @@ public:
   inline const Math& math() const { return *_math; }
 
   inline const KernRecord& kernRecord() const { return *_kernRecord; }
+
+  inline const Path& path() const { return *_path; }
 
   ~Glyph();
 

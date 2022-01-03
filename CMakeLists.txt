@@ -97,6 +97,7 @@ target_sources(
     src/otf/clm.cpp
     src/otf/glyph.cpp
     src/otf/otf.cpp
+    src/otf/path.cpp
     # unimath folder
     src/unimath/math_type.cpp
     src/unimath/uni_char.cpp
@@ -104,6 +105,7 @@ target_sources(
     src/unimath/uni_symbol.cpp
     # graphic folder
     src/graphic/font_style.cpp
+    src/graphic/graphic_basic.cpp
 
     src/latex.cpp
     src/render.cpp

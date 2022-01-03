@@ -275,6 +275,38 @@ void Graphics2D_cairo::drawGlyph(u16 glyph, float x, float y) {
   _context->show_glyphs({g});
 }
 
+void Graphics2D_cairo::moveTo(float x, float y) {
+  _context->move_to(x, y);
+}
+
+void Graphics2D_cairo::lineTo(float x, float y) {
+  _context->line_to(x, y);
+}
+
+void Graphics2D_cairo::curveTo(float x1, float y1, float x2, float y2, float x3, float y3) {
+  _context->curve_to(x1, y1, x2, y2, x3, y3);
+}
+
+void Graphics2D_cairo::quadraticTo(float x1, float y1, float x2, float y2) {
+  double x0, y0;
+  _context->get_current_point(x0, y0);
+  _context->curve_to(
+    2.0 / 3.0 * x1 + 1.0 / 3.0 * x0,
+    2.0 / 3.0 * y1 + 1.0 / 3.0 * y0,
+    2.0 / 3.0 * x1 + 1.0 / 3.0 * x2,
+    2.0 / 3.0 * y1 + 1.0 / 3.0 * y2,
+    y1, y2
+  );
+}
+
+void Graphics2D_cairo::closePath() {
+  _context->close_path();
+}
+
+void Graphics2D_cairo::fillPath() {
+  _context->fill();
+}
+
 void Graphics2D_cairo::drawLine(float x1, float y1, float x2, float y2) {
   _context->move_to(x1, y1);
   _context->line_to(x2, y2);

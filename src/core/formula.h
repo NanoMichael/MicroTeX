@@ -23,13 +23,13 @@ class Parser;
  */
 class Formula {
 private:
-  Parser _parser;
-
-public:
   // predefined TeX formulas
   static std::map<std::string, sptr<Formula>> _predefFormulas;
   static std::map<std::string, std::string> _predefFormulaStrs;
 
+  Parser _parser;
+
+public:
   // character-to-symbol mappings
   static const std::map<c32, std::string> _charToSymbol;
 

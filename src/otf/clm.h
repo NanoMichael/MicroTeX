@@ -32,6 +32,8 @@ private:
 
   static Math* readMath(BinaryFileReader& reader);
 
+  static Path* readPath(BinaryFileReader& reader);
+
   static Glyph* readGlyph(bool isMathFont, BinaryFileReader& reader);
 
   static void readGlyphs(Otf& font, BinaryFileReader& reader);

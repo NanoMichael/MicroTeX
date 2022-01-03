@@ -213,6 +213,22 @@ Math* CLMReader::readMath(BinaryFileReader& reader) {
   return ptr;
 }
 
+Path* CLMReader::readPath(BinaryFileReader& reader) {
+  const auto len = reader.read<u16>();
+  if (len == 0) return nullptr;
+  auto cmds = new PathCmd* [len];
+  for (u16 i = 0; i < len; i++) {
+    const auto cmd = reader.read<char>();
+    const auto cnt = PathCmd::argsCount(cmd);
+    auto args = new i16[cnt];
+    for (u16 j = 0; j < cnt; j++) {
+      args[j] = reader.read<i16>();
+    }
+    cmds[i] = new PathCmd(cmd, args);
+  }
+  return new Path(len, cmds);
+}
+
 Glyph* CLMReader::readGlyph(bool isMathFont, BinaryFileReader& reader) {
   auto* glyph = new Glyph();
   // Metrics is required
@@ -224,6 +240,9 @@ Glyph* CLMReader::readGlyph(bool isMathFont, BinaryFileReader& reader) {
   glyph->_kernRecord = kern == nullptr ? &KernRecord::empty : kern;
   // read math, optional
   glyph->_math = isMathFont ? readMath(reader) : &Math::empty;
+  // read path
+  auto path = readPath(reader);
+  glyph->_path = path == nullptr ? &Path::empty : path;
   return glyph;
 }
 

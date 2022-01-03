@@ -91,8 +91,8 @@ public:
       0xff424242
     );
     auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    logv("parse duration: %ld(ms)\n", duration.count());
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    logv("parse duration: %ld(us)\n", duration.count());
 
     checkInvalidate();
   }
@@ -129,8 +129,8 @@ protected:
     Graphics2D_cairo g2(cr);
     _render->draw(g2, _padding, _padding);
     auto stop = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    logv("render duration: %ld(ms)\n", duration.count());
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    logv("render duration: %ld(us)\n", duration.count());
     return true;
   }
 };

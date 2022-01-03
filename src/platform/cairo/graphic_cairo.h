@@ -105,6 +105,18 @@ public:
 
   void drawGlyph(u16 glyph, float x, float y) override;
 
+  void moveTo(float x, float y) override;
+
+  void lineTo(float x, float y) override;
+
+  void curveTo(float x1, float y1, float x2, float y2, float x3, float y3) override;
+
+  void quadraticTo(float x1, float y1, float x2, float y2) override;
+
+  void closePath() override;
+
+  void fillPath() override;
+
   void drawLine(float x, float y1, float x2, float y2) override;
 
   void drawRect(float x, float y, float w, float h) override;

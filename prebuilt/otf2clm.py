@@ -3,10 +3,11 @@
 
 # Parse open-type font file and convert to `clm` format file
 
-import json
 import sys
 from functools import reduce, partial
 import fontforge
+import xml.dom.minidom as dom
+import tempfile
 import struct
 
 
@@ -206,19 +207,108 @@ def read_kern(glyph, kern_subtable_names):
     )(kern_subtable_names)
 
 
+def path_cmd_arg_cnt(x):
+    if x == 'M' or x == 'm' or x == 'L' or x == 'l' or x == 'T' or x == 't':
+        return 2
+    if x == 'H' or x == 'h' or x == 'V' or x == 'v':
+        return 1
+    if x == 'C' or x == 'c':
+        return 6
+    if x == 'S' or x == 's' or x == 'Q' or x == 'q':
+        return 4
+    if x == 'Z' or x == 'z':
+        return -1
+    return 0
+
+
+def is_valid_digit(c):
+    return c == '.' or c == '-' or c.isdigit()
+
+
+def mirror_cmd(t):
+    x = t[0]
+    if x == 'M' or x == 'm' or x == 'L' or x == 'l' or x == 'T' or x == 't':
+        t[2] = -t[2]
+    elif x == 'V' or x == 'v':
+        t[1] = -t[1]
+    elif x == 'C' or x == 'c':
+        t[2] = -t[2]
+        t[4] = -t[4]
+        t[6] = -t[6]
+    elif x == 'S' or x == 's' or x == 'Q' or x == 'q':
+        t[2] = -t[2]
+        t[4] = -t[4]
+
+
+def mirror(data):
+    for t in data:
+        mirror_cmd(t)
+
+
+def read_glyph_path(glyph):
+    tf = tempfile.NamedTemporaryFile(suffix='.svg', mode='w+')
+    # keep font coordinate-system, thus decrease y from bottom to up
+    glyph.export(tf.name, usetransform=True)
+    string = tf.read()
+    tf.close()
+
+    svg = dom.parseString(string).documentElement
+    g = svg.getElementsByTagName('g')
+    paths = g[0].getElementsByTagName('path')
+
+    path = None
+    if paths:
+        path = paths[0]
+    if not path:
+        return []
+
+    v = path.attributes.get('d').value
+    data = []
+
+    def digits(i):
+        j = i
+        while is_valid_digit(v[j]):
+            j += 1
+        return (v[i:j], j,)
+
+    i = 0
+    while i < len(v):
+        x = v[i]
+        cnt = path_cmd_arg_cnt(x)
+        if not cnt:
+            i += 1
+            continue
+        i += 1
+        cmd = [x]
+        for j in range(0, cnt):
+            while not is_valid_digit(v[i]):
+                i += 1
+            r = digits(i)
+            cmd.append(int(r[0]))
+            i = r[1]
+        data.append(cmd)
+
+    mirror(data)
+    return data
+
+
 def read_glyph(glyph, is_math_font, kern_subtable_names, scripts_subtable_names):
     '''
     Return a tuple
     (
         metrics,
         kerning,
-        math
+        math,
+        path_cmds,
+        glyph_name
     )
     '''
     return (
         read_metrics(glyph),
         read_kern(glyph, kern_subtable_names),
         None if not is_math_font else read_math(glyph, scripts_subtable_names),
+        read_glyph_path(glyph),
+        glyph.glyphname,
     )
 
 
@@ -474,11 +564,21 @@ def write_glyphs(f, glyphs, glyph_name_id_map, is_math_font):
         write_glyph_assembly(math[6])  # vertical assembly
         write_math_kern(math[7])  # math kern
 
+    def write_path(path):
+        f.write(struct.pack('!H', len(path)))
+        if not path:
+            return
+        for cmd in path:
+            f.write(struct.pack('c', bytes(cmd[0], 'ascii')))
+            for param in cmd[1:]:
+                f.write(struct.pack('!h', param))
+
     for glyph in glyphs:
         write_metrics(glyph[0])
         write_kerns(glyph[1])
         if is_math_font:
             write_math(glyph[2])
+        write_path(glyph[3])
 
 
 def parse_otf(file_path, is_math_font, output_file_path):

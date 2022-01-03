@@ -1,6 +1,7 @@
 #ifndef GRAPHIC_BASIC_H_INCLUDED
 #define GRAPHIC_BASIC_H_INCLUDED
 
+#include "utils/utils.h"
 #include <sstream>
 #include <string>
 
@@ -8,26 +9,27 @@ namespace tex {
 
 using color = std::uint32_t;
 
-static const color transparent = 0x00000000;
-static const color black = 0xff000000;
-static const color white = 0xffffffff;
-static const color red = 0xffff0000;
-static const color green = 0xff00ff00;
-static const color blue = 0xff0000ff;
-static const color yellow = 0xffffff00;
-static const color cyan = 0xff00ffff;
-static const color magenta = 0xffff00ff;
+static constexpr color transparent = 0x00000000;
+static constexpr color black = 0xff000000;
+static constexpr color white = 0xffffffff;
+static constexpr color red = 0xffff0000;
+static constexpr color green = 0xff00ff00;
+static constexpr color blue = 0xff0000ff;
+static constexpr color yellow = 0xffffff00;
+static constexpr color cyan = 0xff00ffff;
+static constexpr color magenta = 0xffff00ff;
 
-static const color TRANSPARENT = transparent;
-static const color BLACK = black;
-static const color WHITE = white;
-static const color RED = red;
-static const color GREEN = green;
-static const color BLUE = blue;
-static const color YELLOW = yellow;
-static const color CYAN = cyan;
-static const color MAGENTA = magenta;
+static constexpr color TRANSPARENT = transparent;
+static constexpr color BLACK = black;
+static constexpr color WHITE = white;
+static constexpr color RED = red;
+static constexpr color GREEN = green;
+static constexpr color BLUE = blue;
+static constexpr color YELLOW = yellow;
+static constexpr color CYAN = cyan;
+static constexpr color MAGENTA = magenta;
 
+/** Construct a 32 bit true color with its alpha, red, green and blue channel*/
 inline color argb(int a, int r, int g, int b) {
   return (a << 24) | (r << 16) | (g << 8) | b;
 }
@@ -71,24 +73,9 @@ inline bool isTransparent(color c) {
 }
 
 /** Convert #AARRGGBB or #RRGGBB formatted string into color. */
-inline color decodeColor(const std::string& s) {
-  if (s[0] == '#') {
-    const std::string x = s.substr(1);
-    std::stringstream ss;
-    ss << std::hex << x;
-    color c;
-    ss >> c;
-    if (s.size() == 7) {
-      // set alpha value
-      c |= 0xff000000;
-    } else if (s.size() != 9) {
-      return black;
-    }
-    return c;
-  }
-  return black;
-}
+color decodeColor(const std::string& s);
 
+/** Represents a point in 2D plane */
 struct Point {
   float x, y;
 
@@ -105,34 +92,14 @@ struct Rect {
   Rect(float x1, float y1, float w1, float h1) : x(x1), y(y1), w(w1), h(h1) {}
 };
 
-struct Insets {
-  int left, top, right, bottom;
-
-  Insets() : left(0), top(0), right(0), bottom(0) {}
-
-  Insets(int t, int l, int b, int r) : left(l), top(t), right(r), bottom(b) {}
-
-  void set(int t, int l, int b, int r) {
-    left = l;
-    top = t;
-    right = r;
-    bottom = b;
-  }
-
-  Insets& operator+=(const int offset) {
-    left += offset;
-    top += offset;
-    right += offset;
-    bottom += offset;
-    return *this;
-  }
-};
-
+/** Stroke cap type */
 enum Cap {
   CAP_BUTT,
   CAP_ROUND,
   CAP_SQUARE
 };
+
+/** Stroke join type */
 enum Join {
   JOIN_BEVEL,
   JOIN_MITER,
@@ -151,7 +118,7 @@ struct Stroke {
   Stroke(float w, Cap c, Join j, float ml = 0)
     : lineWidth(w), cap(c), join(j), miterLimit(ml) {}
 
-  void setStroke(float w, Cap c, Join j, float ml = 0) {
+  inline void set(float w, Cap c, Join j, float ml = 0) {
     lineWidth = w;
     cap = c;
     join = j;
