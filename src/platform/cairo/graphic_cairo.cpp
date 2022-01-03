@@ -288,6 +288,9 @@ void Graphics2D_cairo::curveTo(float x1, float y1, float x2, float y2, float x3,
 }
 
 void Graphics2D_cairo::quadraticTo(float x1, float y1, float x2, float y2) {
+  // See https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Degree_elevation
+  // and https://lists.cairographics.org/archives/cairo/2010-April/019691.html
+  // for details
   double x0, y0;
   _context->get_current_point(x0, y0);
   _context->curve_to(

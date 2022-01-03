@@ -8,7 +8,7 @@
 
 namespace tex {
 
-class BinaryFileReader final {
+class BinaryReader {
 private:
   constexpr static const u32 CHUNK_SIZE = 10 * 1024;
   FILE* _file;
@@ -28,7 +28,7 @@ private:
   }
 
 public:
-  explicit BinaryFileReader(const char* filePath) {
+  explicit BinaryReader(const char* filePath) {
     _file = fopen(filePath, "rb");
     if (_file == nullptr) {
       throw ex_file_not_found(std::string(filePath) + " cannot be opened.");
@@ -51,12 +51,12 @@ public:
     return t;
   }
 
-  ~BinaryFileReader() {
+  ~BinaryReader() {
     if (_file != nullptr) fclose(_file);
   }
 };
 
-void CLMReader::readMeta(Otf& font, BinaryFileReader& reader) {
+void CLMReader::readMeta(Otf& font, BinaryReader& reader) {
   font._isMathFont = reader.read<bool>();
   font._em = reader.read<u16>();
   font._xHeight = reader.read<u16>();
@@ -74,7 +74,7 @@ void CLMReader::readMeta(Otf& font, BinaryFileReader& reader) {
   font._unicodeGlyphs = glyphs;
 }
 
-std::pair<u16, u16*> CLMReader::readClassKerningGlyphs(BinaryFileReader& reader) {
+std::pair<u16, u16*> CLMReader::readClassKerningGlyphs(BinaryReader& reader) {
   const u16 count = reader.read<u16>();
   u16* glyphs = new u16[count * 2];
   for (u16 i = 0; i < count; i++) {
@@ -84,7 +84,7 @@ std::pair<u16, u16*> CLMReader::readClassKerningGlyphs(BinaryFileReader& reader)
   return std::make_pair(count, glyphs);
 }
 
-ClassKerning* CLMReader::readClassKerning(BinaryFileReader& reader) {
+ClassKerning* CLMReader::readClassKerning(BinaryReader& reader) {
   auto* ptr = new ClassKerning();
   ClassKerning& ck = *ptr;
   // read left glyphs
@@ -107,7 +107,7 @@ ClassKerning* CLMReader::readClassKerning(BinaryFileReader& reader) {
   return ptr;
 }
 
-void CLMReader::readClassKernings(Otf& font, BinaryFileReader& reader) {
+void CLMReader::readClassKernings(Otf& font, BinaryReader& reader) {
   const u16 count = reader.read<u16>();
   font._classKerningCount = count;
   if (count == 0) {
@@ -120,7 +120,7 @@ void CLMReader::readClassKernings(Otf& font, BinaryFileReader& reader) {
   }
 }
 
-LigaTable* CLMReader::readLigatures(BinaryFileReader& reader) {
+LigaTable* CLMReader::readLigatures(BinaryReader& reader) {
   const u16 glyph = reader.read<u16>();
   const u32 liga = reader.read<i32>();
   const u16 childCount = reader.read<u16>();
@@ -131,7 +131,7 @@ LigaTable* CLMReader::readLigatures(BinaryFileReader& reader) {
   return t;
 }
 
-MathConsts* CLMReader::readMathConsts(BinaryFileReader& reader) {
+MathConsts* CLMReader::readMathConsts(BinaryReader& reader) {
   auto* consts = new MathConsts();
   for (i16& _field : consts->_fields) {
     _field = reader.read<i16>();
@@ -139,7 +139,7 @@ MathConsts* CLMReader::readMathConsts(BinaryFileReader& reader) {
   return consts;
 }
 
-KernRecord* CLMReader::readKerns(BinaryFileReader& reader) {
+KernRecord* CLMReader::readKerns(BinaryReader& reader) {
   const u16 count = reader.read<u16>();
   if (count == 0) return nullptr;
   auto* record = new KernRecord(count);
@@ -150,7 +150,7 @@ KernRecord* CLMReader::readKerns(BinaryFileReader& reader) {
   return record;
 }
 
-Variants* CLMReader::readVariants(BinaryFileReader& reader) {
+Variants* CLMReader::readVariants(BinaryReader& reader) {
   const u16 count = reader.read<u16>();
   if (count == 0) return nullptr;
   auto* variants = new Variants(count);
@@ -160,7 +160,7 @@ Variants* CLMReader::readVariants(BinaryFileReader& reader) {
   return variants;
 }
 
-GlyphAssembly* CLMReader::readGlyphAssembly(BinaryFileReader& reader) {
+GlyphAssembly* CLMReader::readGlyphAssembly(BinaryReader& reader) {
   const bool isPresent = reader.read<bool>();
   if (!isPresent) return nullptr;
   const u16 partCount = reader.read<u16>();
@@ -177,7 +177,7 @@ GlyphAssembly* CLMReader::readGlyphAssembly(BinaryFileReader& reader) {
   return assembly;
 }
 
-Math* CLMReader::readMath(BinaryFileReader& reader) {
+Math* CLMReader::readMath(BinaryReader& reader) {
   Math* ptr = new Math(0);
   Math& math = *ptr;
   math._italicsCorrection = reader.read<i16>();
@@ -213,7 +213,7 @@ Math* CLMReader::readMath(BinaryFileReader& reader) {
   return ptr;
 }
 
-Path* CLMReader::readPath(BinaryFileReader& reader) {
+Path* CLMReader::readPath(BinaryReader& reader) {
   const auto len = reader.read<u16>();
   if (len == 0) return nullptr;
   auto cmds = new PathCmd* [len];
@@ -229,7 +229,7 @@ Path* CLMReader::readPath(BinaryFileReader& reader) {
   return new Path(len, cmds);
 }
 
-Glyph* CLMReader::readGlyph(bool isMathFont, BinaryFileReader& reader) {
+Glyph* CLMReader::readGlyph(bool isMathFont, BinaryReader& reader) {
   auto* glyph = new Glyph();
   // Metrics is required
   glyph->_metrics._width = reader.read<i16>();
@@ -246,7 +246,7 @@ Glyph* CLMReader::readGlyph(bool isMathFont, BinaryFileReader& reader) {
   return glyph;
 }
 
-void CLMReader::readGlyphs(Otf& font, BinaryFileReader& reader) {
+void CLMReader::readGlyphs(Otf& font, BinaryReader& reader) {
   const u16 count = reader.read<u16>();
   auto** glyphs = new Glyph* [count];
   for (u16 i = 0; i < count; i++) {
@@ -257,7 +257,7 @@ void CLMReader::readGlyphs(Otf& font, BinaryFileReader& reader) {
 }
 
 Otf* CLMReader::read(const char* clmFilePath) const {
-  BinaryFileReader reader(clmFilePath);
+  BinaryReader reader(clmFilePath);
   // read format
   const auto c = reader.read<u8>();
   const auto l = reader.read<u8>();
