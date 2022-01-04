@@ -69,18 +69,6 @@ class CharBox : public Box {
 private:
   Char _chr;
 
-#if GLYPH_RENDER_TYPE == 0 || GLYPH_RENDER_TYPE == 2
-
-  void drawWithFont(Graphics2D& g2, float x, float y);
-
-#endif
-
-#if GLYPH_RENDER_TYPE == 0 || GLYPH_RENDER_TYPE == 1
-
-  void drawWithPath(Graphics2D& g2, float x, float y);
-
-#endif
-
 public:
   CharBox() = delete;
 
