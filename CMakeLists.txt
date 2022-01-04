@@ -236,6 +236,12 @@ if (GRAPHICS_DEBUG)
     add_definitions(-DGRAPHICS_DEBUG)
 endif ()
 
+# compile option: the glyph render type
+# 0: use path and typeface both
+# 1: use path only
+# 2: use typeface only
+add_definitions(-DGLYPH_RENDER_TYPE=0)
+
 option(MEM_CHECK "If compile for memory check only" OFF)
 if (MEM_CHECK)
     add_definitions(-DMEM_CHECK)

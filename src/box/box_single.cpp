@@ -2,6 +2,7 @@
 #include "env/env.h"
 #include "core/debug_config.h"
 #include "utils/utf.h"
+#include "latex.h"
 
 using namespace std;
 using namespace tex;
@@ -12,27 +13,52 @@ CharBox::CharBox(const Char& chr) : _chr(chr) {
   _depth = chr.depth();
 }
 
-void CharBox::draw(Graphics2D& g2, float x, float y) {
-//  const auto font = Font::create(_chr.otfFont()->fontFile);
-//  g2.setFont(font);
-//  g2.setFontSize(Env::fixedTextSize() * _chr.scale);
-//  if (_chr.isValid()) {
-//    g2.drawGlyph(_chr.glyphId, x, y);
-//    return;
-//  }
-//  const auto old = g2.getColor();
-//  g2.setColor(red);
-//  g2.drawGlyph(_chr.fallbackGlyphId(), x, y);
-//  g2.setColor(old);
-  if (!_chr.isValid()) {
+#if GLYPH_RENDER_TYPE == 0 || GLYPH_RENDER_TYPE == 2
+
+void CharBox::drawWithFont(Graphics2D& g2, float x, float y) {
+  const auto font = Font::create(_chr.otfFont()->fontFile);
+  g2.setFont(font);
+  g2.setFontSize(Env::fixedTextSize() * _chr.scale);
+  if (_chr.isValid()) {
+    g2.drawGlyph(_chr.glyphId, x, y);
     return;
   }
+  const auto old = g2.getColor();
+  g2.setColor(red);
+  g2.drawGlyph(_chr.fallbackGlyphId(), x, y);
+  g2.setColor(old);
+}
+
+#endif
+
+#if GLYPH_RENDER_TYPE == 0 || GLYPH_RENDER_TYPE == 1
+
+void CharBox::drawWithPath(Graphics2D& g2, float x, float y) {
+  const auto old = g2.getColor();
+  if (!_chr.isValid()) g2.setColor(red);
   const auto scale = _chr.scale;
   g2.translate(x, y);
   if (scale != 1.f) g2.scale(scale, scale);
   _chr.glyph()->path().draw(g2);
   if (scale != 1.f) g2.scale(1 / scale, 1 / scale);
   g2.translate(-x, -y);
+  if (!_chr.isValid()) g2.setColor(old);
+}
+
+#endif
+
+void CharBox::draw(Graphics2D& g2, float x, float y) {
+#if GLYPH_RENDER_TYPE == 1
+  drawWithPath(g2, x, y);
+#elif GLYPH_RENDER_TYPE == 2
+  drawWithFont(g2, x, y);
+#elif GLYPH_RENDER_TYPE == 0
+  if (LaTeX::isRenderGlyphUsePath()) {
+    drawWithPath(g2, x, y);
+  } else {
+    drawWithFont(g2, x, y);
+  }
+#endif
 }
 
 int CharBox::lastFontId() {

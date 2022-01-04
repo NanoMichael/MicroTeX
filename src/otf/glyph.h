@@ -355,8 +355,11 @@ private:
   const KernRecord* _kernRecord = &KernRecord::empty;
   /** MUST NOT BE NULL, equals to &Math::empty if absent */
   const Math* _math = &Math::empty;
+
+#if GLYPH_RENDER_TYPE == 0 || GLYPH_RENDER_TYPE == 1
   /** MUST NOT BE NULL, equals to &Path::empty if absent */
   const Path* _path = &Path::empty;
+#endif
 
   Glyph() = default;
 
@@ -369,7 +372,11 @@ public:
 
   inline const KernRecord& kernRecord() const { return *_kernRecord; }
 
+#if GLYPH_RENDER_TYPE == 0 || GLYPH_RENDER_TYPE == 1
+
   inline const Path& path() const { return *_path; }
+
+#endif
 
   ~Glyph();
 

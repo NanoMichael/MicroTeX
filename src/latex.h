@@ -14,6 +14,10 @@ private:
   static volatile bool _isInited;
   static std::string _defaultMathFontName;
 
+#if GLYPH_RENDER_TYPE == 0
+  static bool _renderGlyphUsePath;
+#endif
+
 public:
   /**
    * Initialize LaTeX context with given math font spec, at least we need
@@ -58,6 +62,16 @@ public:
    * @param style the target style to override
    */
   static void overrideTexStyle(bool enable, TexStyle style = TexStyle::text);
+
+#if GLYPH_RENDER_TYPE == 0
+
+  /** Set if use path to render glyphs */
+  static void setRenderGlyphUsePath(bool use);
+
+  /** Test if currently use path to render glyphs */
+  static bool isRenderGlyphUsePath();
+
+#endif
 
   /**
    * Parse LaTeX string to Render

@@ -43,6 +43,20 @@ void LaTeX::overrideTexStyle(bool enable, TexStyle style) {
   RenderBuilder::overrideTexStyle(enable, style);
 }
 
+#if GLYPH_RENDER_TYPE == 0
+
+bool LaTeX::_renderGlyphUsePath = false;
+
+void LaTeX::setRenderGlyphUsePath(bool use) {
+  _renderGlyphUsePath = use;
+}
+
+bool LaTeX::isRenderGlyphUsePath() {
+  return _renderGlyphUsePath;
+}
+
+#endif
+
 Render* LaTeX::parse(
   const string& latex, int width, float textSize, float lineSpace, color fg,
   const string& mathFontName, const string& mainFontName

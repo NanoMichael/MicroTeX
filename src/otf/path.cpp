@@ -1,7 +1,8 @@
+#if GLYPH_RENDER_TYPE == 0 || GLYPH_RENDER_TYPE == 1
+
 #include "graphic/graphic.h"
 #include "otf/path.h"
 #include "utils/string_utils.h"
-#include "utils/log.h"
 
 namespace tex {
 
@@ -167,7 +168,7 @@ void Path::draw(Graphics2D& g2) const {
 
 std::string Path::toString() const {
   std::string str;
-  for (int i = 0; i < cmdCnt(); i++) {
+  for (int i = 0; i < _cmdCnt; i++) {
     str.append(_cmds[i]->toString());
   }
   return str;
@@ -179,3 +180,5 @@ Path::~Path() {
 }
 
 }
+
+#endif // GLYPH_RENDER_TYPE
