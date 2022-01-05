@@ -52,9 +52,9 @@ void _drawWithPath(const Char& chr, Graphics2D& g2, float x, float y) {
 
 void CharBox::draw(Graphics2D& g2, float x, float y) {
 #if GLYPH_RENDER_TYPE == 1
-  drawWithPath(_chr, g2, x, y);
+  _drawWithPath(_chr, g2, x, y);
 #elif GLYPH_RENDER_TYPE == 2
-  drawWithFont(_chr, g2, x, y);
+  _drawWithFont(_chr, g2, x, y);
 #elif GLYPH_RENDER_TYPE == 0
   if (LaTeX::isRenderGlyphUsePath()) {
     _drawWithPath(_chr, g2, x, y);

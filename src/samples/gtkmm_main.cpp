@@ -440,8 +440,46 @@ int runHelp() {
   return 0;
 }
 
+template<typename F>
+long countDuration(F f) {
+  auto start = std::chrono::high_resolution_clock::now();
+  f();
+  auto stop = std::chrono::high_resolution_clock::now();
+  return std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count();
+}
+
+int runPerf(const std::string& samplesFilePath) {
+  Samples samples(samplesFilePath);
+  auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 1024, 1024);
+  auto ctx = Cairo::Context::create(surface);
+  Graphics2D_cairo g2(ctx);
+
+  auto run = [&](const std::string& sample) {
+    auto render = LaTeX::parse(sample, 1024, 20.f, 20.f / 3.f, 0xff424242);
+    long d = 0;
+    for (int j = 0; j < 10; j++) {
+      d += countDuration([&] { render->draw(g2, 0, 0); });
+    }
+    delete render;
+    return d / 10;
+  };
+
+  for (int i = 0; i < samples.count(); i++) {
+    const auto& sample = samples.next();
+    LaTeX::setRenderGlyphUsePath(false);
+    const auto d1 = run(sample);
+    logv("%ld, ", d1);
+    LaTeX::setRenderGlyphUsePath(true);
+    const auto d2 = run(sample);
+    logv("%ld\n", d2);
+  }
+
+  return 0;
+}
+
 int main(int argc, char* argv[]) {
   bool isHeadless = false;
+  bool isPerf = false;
   Headless h;
   std::string mathVersionName = "dft";
   std::string mathFont, clmFile;
@@ -465,6 +503,8 @@ int main(int argc, char* argv[]) {
     if (opt == "-h") return runHelp();
     if (opt == "-headless") {
       isHeadless = true;
+    } else if (opt == "-perf") {
+      isPerf = true;
     } else {
       getOpt(opt, f);
     }
@@ -487,6 +527,8 @@ int main(int argc, char* argv[]) {
   int result = 0;
   if (isHeadless) {
     result = h.run();
+  } else if (isPerf) {
+    result = runPerf(samplesFile);
   } else {
     result = runWindow(samplesFile, argv);
   }
