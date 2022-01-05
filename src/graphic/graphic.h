@@ -177,16 +177,28 @@ public:
 
   // region path commands
 
+  /** Begin a path, move to point (x, y). */
   virtual void moveTo(float x, float y) = 0;
 
+  /** Add a line to path. */
   virtual void lineTo(float x, float y) = 0;
 
+  /**
+   * Add a cubic Bezier spline to path, with control points (x1, y1), (x2, y2)
+   * and the final point (x3, y3).
+   */
   virtual void curveTo(float x1, float y1, float x2, float y2, float x3, float y3) = 0;
 
+  /**
+   * Add a quadratic Bezier spline to path, with control point (x1, y1) and the
+   * final point (x2, y2).
+   */
   virtual void quadraticTo(float x1, float y1, float x2, float y2) = 0;
 
+  /** Close the path. */
   virtual void closePath() = 0;
 
+  /** Fill the path. */
   virtual void fillPath() = 0;
 
   // endregion
