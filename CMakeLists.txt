@@ -106,6 +106,7 @@ target_sources(
     # graphic folder
     src/graphic/font_style.cpp
     src/graphic/graphic_basic.cpp
+    src/graphic/graphic_svg.cpp
 
     src/latex.cpp
     src/render.cpp
