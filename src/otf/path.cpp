@@ -106,24 +106,24 @@ void Path::draw(Graphics2D& g2) const {
         cy = cmd[3];
         px = cmd[4];
         py = cmd[5];
-        g2.curveTo(cmd[0], cmd[1], cx, cy, px, py);
+        g2.cubicTo(cmd[0], cmd[1], cx, cy, px, py);
         break;
       case 'c':
-        g2.curveTo(px + cmd[0], py + cmd[1], px + cmd[2], py + cmd[3], px + cmd[4], py + cmd[5]);
+        g2.cubicTo(px + cmd[0], py + cmd[1], px + cmd[2], py + cmd[3], px + cmd[4], py + cmd[5]);
         cx = px + cmd[2];
         cy = py + cmd[3];
         px += cmd[4];
         py += cmd[5];
         break;
       case 'S':
-        g2.curveTo(px + px - cx, py + py - cy, cmd[0], cmd[1], cmd[2], cmd[3]);
+        g2.cubicTo(px + px - cx, py + py - cy, cmd[0], cmd[1], cmd[2], cmd[3]);
         cx = cmd[0];
         cy = cmd[1];
         px = cmd[2];
         py = cmd[3];
         break;
       case 's':
-        g2.curveTo(px + px - cx, py + py - cy, px + cmd[0], py + cmd[1], px + cmd[2], py + cmd[3]);
+        g2.cubicTo(px + px - cx, py + py - cy, px + cmd[0], py + cmd[1], px + cmd[2], py + cmd[3]);
         cx = cmd[0] + px;
         cy = cmd[1] + py;
         px += cmd[2];
@@ -134,28 +134,28 @@ void Path::draw(Graphics2D& g2) const {
         cy = cmd[1];
         px = cmd[2];
         py = cmd[3];
-        g2.quadraticTo(cx, cy, px, py);
+        g2.quadTo(cx, cy, px, py);
         break;
       case 'q':
         cx = cmd[0] + px;
         cy = cmd[1] + py;
         px += cmd[2];
         py += cmd[3];
-        g2.quadraticTo(cx, cy, px, py);
+        g2.quadTo(cx, cy, px, py);
         break;
       case 'T':
         cx = px + px - cx;
         cy = py + py - cy;
         px = cmd[0];
         py = cmd[1];
-        g2.quadraticTo(cx, cy, px, py);
+        g2.quadTo(cx, cy, px, py);
         break;
       case 't':
         cx = px + px - cx;
         cy = py + py - cy;
         px += cmd[0];
         py += cmd[1];
-        g2.quadraticTo(cx, cy, px, py);
+        g2.quadTo(cx, cy, px, py);
         break;
       case 'Z':
       case 'z':

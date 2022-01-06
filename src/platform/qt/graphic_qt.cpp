@@ -265,6 +265,33 @@ void Graphics2D_qt::drawGlyph(u16 glyph, float x, float y) {
   _painter->drawGlyphRun({x, y}, g);
 }
 
+void Graphics2D_qt::moveTo(float x, float y) {
+  _path.moveTo(x, y);
+}
+
+void Graphics2D_qt::lineTo(float x, float y) {
+  _path.lineTo(x, y);
+}
+
+void Graphics2D_qt::cubicTo(float x1, float y1, float x2, float y2, float x3, float y3) {
+  _path.cubicTo(x1, y1, x2, y2, x3, y3);
+}
+
+void Graphics2D_qt::quadTo(float x1, float y1, float x2, float y2) {
+  _path.quadTo(x1, y1, x2, y2);
+}
+
+void Graphics2D_qt::closePath() {
+  _path.closeSubpath();
+}
+
+void Graphics2D_qt::fillPath() {
+  _painter->fillPath(_path, getQBrush());
+  // FIXME
+  // Once the path was filled, clear it
+  _path = QPainterPath();
+}
+
 void Graphics2D_qt::drawLine(float x1, float y1, float x2, float y2) {
   _painter->drawLine(QPointF(x1, y1), QPointF(x2, y2));
 }

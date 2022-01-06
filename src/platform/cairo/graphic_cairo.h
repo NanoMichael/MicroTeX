@@ -109,9 +109,9 @@ public:
 
   void lineTo(float x, float y) override;
 
-  void curveTo(float x1, float y1, float x2, float y2, float x3, float y3) override;
+  void cubicTo(float x1, float y1, float x2, float y2, float x3, float y3) override;
 
-  void quadraticTo(float x1, float y1, float x2, float y2) override;
+  void quadTo(float x1, float y1, float x2, float y2) override;
 
   void closePath() override;
 

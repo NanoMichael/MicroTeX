@@ -187,13 +187,13 @@ public:
    * Add a cubic Bezier spline to path, with control points (x1, y1), (x2, y2)
    * and the final point (x3, y3).
    */
-  virtual void curveTo(float x1, float y1, float x2, float y2, float x3, float y3) = 0;
+  virtual void cubicTo(float x1, float y1, float x2, float y2, float x3, float y3) = 0;
 
   /**
    * Add a quadratic Bezier spline to path, with control point (x1, y1) and the
    * final point (x2, y2).
    */
-  virtual void quadraticTo(float x1, float y1, float x2, float y2) = 0;
+  virtual void quadTo(float x1, float y1, float x2, float y2) = 0;
 
   /** Close the path. */
   virtual void closePath() = 0;

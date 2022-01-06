@@ -21,6 +21,8 @@ int main(int argc, char** argv) {
   };
   tex::LaTeX::init(math);
 
+  tex::LaTeX::setRenderGlyphUsePath(true);
+
   MainWindow win;
   win.show();
   int ret = app.exec();

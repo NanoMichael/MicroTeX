@@ -62,6 +62,8 @@ private:
   float _fontSize;
   float _sx, _sy;
 
+  QPainterPath _path;
+
   void setPen();
 
   QBrush getQBrush() const;
@@ -108,6 +110,18 @@ public:
   float sy() const override;
 
   void drawGlyph(u16 glyph, float x, float y) override;
+
+  void moveTo(float x, float y) override;
+
+  void lineTo(float x, float y) override;
+
+  void cubicTo(float x1, float y1, float x2, float y2, float x3, float y3) override;
+
+  void quadTo(float x1, float y1, float x2, float y2) override;
+
+  void closePath() override;
+
+  void fillPath() override;
 
   void drawLine(float x, float y1, float x2, float y2) override;
 
