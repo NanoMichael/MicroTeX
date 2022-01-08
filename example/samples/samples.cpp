@@ -1,0 +1,42 @@
+#include "samples.h"
+
+using namespace std;
+using namespace tex;
+
+void Samples::readSamples(const string& path) {
+  string line;
+  string sample;
+  std::ifstream f(path);
+  if (f.is_open()) {
+    while (getline(f, line)) {
+      if (!line.empty() &&
+          !isSpace(line) &&
+          std::all_of(line.begin(), line.end(), [](char c) { return c == '%'; })
+        ) {
+        add(sample);
+        sample = "";
+      } else {
+        if (!line.empty() && !isSpace(line)) sample += line + "\n";
+      }
+    }
+    f.close();
+  }
+  add(sample);
+}
+
+void Samples::add(const string& str) {
+  if (str.empty()) return;
+  if (isSpace(str)) return;
+  _samples.push_back(str);
+}
+
+bool Samples::isSpace(const string& str) {
+  return std::all_of(str.begin(), str.end(), [](char c) { return isspace(c); });
+}
+
+const std::string& Samples::next() {
+  if (_index >= _samples.size()) _index = 0;
+  const std::string& x = _samples[_index];
+  _index++;
+  return x;
+}

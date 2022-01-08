@@ -1,0 +1,137 @@
+cmake_minimum_required(VERSION 3.16)
+
+add_library(clatexmath SHARED "")
+set_target_properties(clatexmath PROPERTIES VERSION 1.0.0 SOVERSION 1)
+
+# source files
+target_sources(
+    clatexmath PRIVATE
+    # atom folder
+    atom/atom_basic.cpp
+    atom/atom_char.cpp
+    atom/atom_misc.cpp
+    atom/atom_matrix.cpp
+    atom/atom_row.cpp
+    atom/atom_space.cpp
+    atom/atom_stack.cpp
+    atom/atom_accent.cpp
+    atom/atom_scripts.cpp
+    atom/atom_vrow.cpp
+    atom/atom_operator.cpp
+    atom/atom_zstack.cpp
+    atom/atom_sideset.cpp
+    atom/atom_font.cpp
+    atom/atom_delim.cpp
+    atom/atom_root.cpp
+    atom/atom_frac.cpp
+    atom/atom_fence.cpp
+    atom/atom_box.cpp
+    atom/atom_text.cpp
+    atom/colors_def.cpp
+    # box folder
+    box/box.cpp
+    box/box_factory.cpp
+    box/box_group.cpp
+    box/box_single.cpp
+    # core folder
+    core/split.cpp
+    core/formula.cpp
+    core/formula_def.cpp
+    core/glue.cpp
+    core/localized_num.cpp
+    core/parser.cpp
+    core/debug_config.cpp
+    # macro folder
+    macro/macro.cpp
+    macro/macro_def.cpp
+    macro/macro_misc.cpp
+    macro/macro_scripts.cpp
+    macro/macro_accent.cpp
+    macro/macro_colors.cpp
+    macro/macro_space.cpp
+    macro/macro_delims.cpp
+    macro/macro_frac.cpp
+    macro/macro_styles.cpp
+    macro/macro_fonts.cpp
+    # env folder
+    env/env.cpp
+    env/units.cpp
+    # utils folder
+    utils/string_utils.cpp
+    utils/utf.cpp
+    utils/utils.cpp
+    # otf folder
+    otf/clm.cpp
+    otf/glyph.cpp
+    otf/otf.cpp
+    otf/path.cpp
+    # unimath folder
+    unimath/math_type.cpp
+    unimath/uni_char.cpp
+    unimath/uni_font.cpp
+    unimath/uni_symbol.cpp
+    # graphic folder
+    graphic/font_style.cpp
+    graphic/graphic_basic.cpp
+    graphic/graphic.cpp
+    # graphic/graphic_svg.cpp
+
+    latex.cpp
+    render.cpp
+)
+target_include_directories(clatexmath PUBLIC .)
+
+if (GTK)
+    message(STATUS "Cross-building using GTK")
+    find_package(Fontconfig REQUIRED)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(GTKMM REQUIRED IMPORTED_TARGET gtkmm-3.0)
+    pkg_check_modules(CairoMM REQUIRED IMPORTED_TARGET cairomm-1.0)
+    target_sources(
+        clatexmath PRIVATE
+        platform/cairo/graphic_cairo.cpp
+    )
+    target_link_libraries(
+        clatexmath PRIVATE
+        PkgConfig::GTKMM   #include <pangomm/fontdescription.h>
+        PkgConfig::CairoMM #include <cairomm/context.h>
+        Fontconfig::Fontconfig
+    )
+endif ()
+
+if (QT)
+    message(STATUS "Cross-building using QT")
+    find_package(QT NAMES Qt6 Qt5 COMPONENTS Gui Widgets REQUIRED)
+    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Gui Widgets REQUIRED)
+    target_sources(
+        clatexmath PRIVATE
+        platform/qt/graphic_qt.cpp
+    )
+    target_link_libraries(
+        clatexmath PRIVATE
+        Qt${QT_VERSION_MAJOR}::Gui
+    )
+endif ()
+
+# compile option: if have log
+option(HAVE_LOG "If enable log" ON)
+if (HAVE_LOG)
+    add_definitions(-DHAVE_LOG)
+endif ()
+
+# compile option: if debug graphics
+option(GRAPHICS_DEBUG "If enable graphics debug" ON)
+if (GRAPHICS_DEBUG)
+    add_definitions(-DGRAPHICS_DEBUG)
+endif ()
+
+# compile option: the glyph render type
+# 0: use path and typeface both
+# 1: use path only
+# 2: use typeface only
+add_definitions(-DGLYPH_RENDER_TYPE=0)
+
+option(MEM_CHECK "If compile for memory check only" OFF)
+if (MEM_CHECK)
+    add_definitions(-DMEM_CHECK)
+endif ()
