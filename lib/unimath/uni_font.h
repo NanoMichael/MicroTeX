@@ -21,6 +21,8 @@ struct OtfFont final {
 
   OtfFont(i32 id, std::string fontFile, const std::string& clmFile);
 
+  OtfFont(i32 id, size_t len, const u8* data, std::string fontFile);
+
   inline const Otf& otf() const { return *otfSpec; }
 };
 
@@ -110,6 +112,14 @@ public:
 
   /** Add math font to context. */
   static void addMathFont(const FontSpec& params);
+
+  // todo
+  static void addMathFont(
+    const std::string& name,
+    size_t len,
+    const u8* data,
+    const std::string& fontFile = ""
+  );
 
   /** Check if has math font */
   static bool hasMathFont();

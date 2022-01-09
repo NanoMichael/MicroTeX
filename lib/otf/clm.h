@@ -41,6 +41,8 @@ private:
 
   static void readGlyphs(Otf& font, BinaryReader& reader);
 
+  static Otf* read(BinaryReader& reader);
+
 public:
   no_copy_assign(CLMReader);
 
@@ -48,7 +50,7 @@ public:
 
   Otf* read(const char* clmFilePath) const;
 
-  Otf* read(size_t cnt, const u8* bytes) const;
+  Otf* read(size_t len, const u8* bytes) const;
 };
 
 }  // namespace tex

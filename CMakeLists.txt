@@ -41,6 +41,10 @@ if (QT)
     add_subdirectory(platform/qt)
 endif ()
 
+if (WASM)
+    add_subdirectory(platform/wasm)
+endif ()
+
 if (BUILD_EXAMPLE_GTK)
     add_subdirectory(example/gtk)
 endif ()

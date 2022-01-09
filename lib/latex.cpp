@@ -18,6 +18,14 @@ void LaTeX::init(const FontSpec& mathFontSpec) {
   NewCommandMacro::_init_();
 }
 
+void LaTeX::init(const std::string& name, size_t len, const u8* data) {
+  FontContext::addMathFont(name, len, data);
+  _defaultMathFontName = name;
+  if (_isInited) return;
+  _isInited = true;
+  NewCommandMacro::_init_();
+}
+
 bool LaTeX::isInited() {
   return _isInited;
 }

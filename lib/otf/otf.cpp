@@ -27,6 +27,11 @@ Otf* Otf::fromFile(const char* filePath) {
   return reader.read(filePath);
 }
 
+Otf * Otf::fromData(size_t len, const u8* data) {
+  const CLMReader reader;
+  return reader.read(len, data);
+}
+
 u16 Otf::space() const {
   auto glyph = glyphOfUnicode(' ');
   if (glyph != nullptr) {

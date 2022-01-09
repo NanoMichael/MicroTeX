@@ -29,3 +29,4 @@ cmake-build-*
 venv/
 builddir/
 *.clm
+buildwasm/

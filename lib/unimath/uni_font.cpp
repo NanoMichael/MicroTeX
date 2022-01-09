@@ -10,6 +10,9 @@ using namespace std;
 OtfFont::OtfFont(i32 id, string fontFile, const string& clmFile)
   : id(id), fontFile(std::move(fontFile)), otfSpec(sptr<const Otf>(Otf::fromFile(clmFile.c_str()))) {}
 
+OtfFont::OtfFont(i32 id, size_t len, const u8* data, std::string fontFile)
+  : id(id), fontFile(std::move(fontFile)), otfSpec(sptr<const Otf>(Otf::fromData(len, data))) {}
+
 FontStyle FontFamily::fontStyleOf(const std::string& name) {
   // TODO: more composed styles
   static const map<string, FontStyle> nameStyle{
@@ -120,6 +123,16 @@ void FontContext::addMathFont(const FontSpec& params) {
   auto otf = sptrOf<OtfFont>(_lastId++, font, clm);
   _fonts.push_back(otf);
   _mathFonts[version] = otf;
+}
+
+void FontContext::addMathFont(
+  const std::string& name,
+  size_t len, const u8* data,
+  const std::string& fontFile
+) {
+  auto otf = sptrOf<OtfFont>(_lastId++, len, data, fontFile);
+  _fonts.push_back(otf);
+  _mathFonts[name] = otf;
 }
 
 bool FontContext::hasMathFont() {

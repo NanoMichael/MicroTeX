@@ -76,6 +76,9 @@ public:
   /** Read otf font from file */
   static Otf* fromFile(const char* filePath);
 
+  /** Read otf font from data */
+  static Otf* fromData(size_t len, const u8* data);
+
   /** Test if this font is a math font */
   inline bool isMathFont() const { return _isMathFont; }
 

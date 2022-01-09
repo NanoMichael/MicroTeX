@@ -1,4 +1,9 @@
-add_library(clatexmath SHARED "")
+if (WASM)
+    add_library(clatexmath STATIC "")
+else (WASM)
+    add_library(clatexmath SHARED "")
+endif ()
+
 set_target_properties(clatexmath PROPERTIES VERSION 1.0.0 SOVERSION 1)
 
 # source files

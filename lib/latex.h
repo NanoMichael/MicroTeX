@@ -27,6 +27,12 @@ public:
    */
   static void init(const FontSpec& mathFontSpec);
 
+  // todo
+  static void init(
+    const std::string& name,
+    size_t len, const u8* data
+  );
+
   /** Check if context is initialized */
   static bool isInited();
 

@@ -9,6 +9,25 @@
 namespace tex {
 
 class BinaryReader {
+public:
+  virtual ~BinaryReader() = default;
+
+  virtual const u8* readBytes(size_t bytes) = 0;
+
+  template<typename T>
+  T read() {
+    const auto bytes = sizeof(T);
+    const u8* p = readBytes(bytes);
+    auto shift = bytes - 1;
+    T t = 0;
+    for (std::size_t i = 0; i < bytes; i++) {
+      t |= (T) (*(p + i)) << ((shift - i) * 8);
+    }
+    return t;
+  }
+};
+
+class BinaryFileReader : public BinaryReader {
 private:
   constexpr static const u32 CHUNK_SIZE = 10 * 1024;
   FILE* _file;
@@ -28,31 +47,41 @@ private:
   }
 
 public:
-  explicit BinaryReader(const char* filePath) {
+  explicit BinaryFileReader(const char* filePath) {
     _file = fopen(filePath, "rb");
     if (_file == nullptr) {
       throw ex_file_not_found(std::string(filePath) + " cannot be opened.");
     }
   }
 
-  template<typename T>
-  T read() {
-    const auto bytes = sizeof(T);
+  const u8* readBytes(size_t bytes) override {
     const auto remain = _currentSize - _index;
     if (remain < bytes) readChunk(remain);
-    if (_index >= _currentSize) throw ex_eof("");
+    if (_index >= _currentSize) throw ex_eof("end of data");
     const u8* p = _buff + _index;
     _index += bytes;
-    auto shift = bytes - 1;
-    T t = 0;
-    for (std::size_t i = 0; i < bytes; i++) {
-      t |= (T) (*(p + i)) << ((shift - i) * 8);
-    }
-    return t;
+    return p;
   }
 
-  ~BinaryReader() {
+  ~BinaryFileReader() override {
     if (_file != nullptr) fclose(_file);
+  }
+};
+
+class BinaryDataReader : public BinaryReader {
+private:
+  const u8* _data;
+  const size_t _len;
+  u32 _index = 0;
+
+public:
+  explicit BinaryDataReader(size_t len, const u8* data) : _len(len), _data(data) {}
+
+  const u8* readBytes(size_t bytes) override {
+    if (_index >= _len) throw ex_eof("end of data");
+    const u8* p = _data + _index;
+    _index += bytes;
+    return p;
   }
 };
 
@@ -262,21 +291,18 @@ void CLMReader::readGlyphs(Otf& font, BinaryReader& reader) {
   font._glyphs = glyphs;
 }
 
-Otf* CLMReader::read(const char* clmFilePath) const {
-  BinaryReader reader(clmFilePath);
+Otf* CLMReader::read(BinaryReader& reader) {
   // read format
   const auto c = reader.read<u8>();
   const auto l = reader.read<u8>();
   const auto m = reader.read<u8>();
   if (c != 'c' || l != 'l' || m != 'm') {
-    throw ex_invalid_param("file: '" + std::string(clmFilePath) + "' is not a clm file!");
+    throw ex_invalid_param("invalid clm data format");
   }
   const auto ver = reader.read<u16>();
   if (ver != CLM_VER_MAJOR) {
     throw ex_invalid_param(
-      "file: '" +
-      std::string(clmFilePath) +
-      "' does not match the required version (" +
+      "clm data does not match the required version (" +
       tostring(CLM_VER_MAJOR) + ")!"
     );
   }
@@ -284,17 +310,14 @@ Otf* CLMReader::read(const char* clmFilePath) const {
 #ifdef HAVE_GLYPH_RENDER_PATH
   if (!CLM_SUPPORT_GLYPH_PATH(minor)) {
     throw ex_invalid_param(
-      "file: '" +
-      std::string(clmFilePath) +
-      "' does not have glyph path."
+      "clm data does not have glyph path."
     );
   }
 #else
   if (CLM_SUPPORT_GLYPH_PATH(minor)) {
     throw ex_invalid_param(
-      "file: '" +
-      std::string(clmFilePath) +
-      "' have glyph path, but the program cannot support it, use a different one."
+      "clm data "
+      " have glyph path, but the program cannot support it, use a different one."
     );
   }
 #endif
@@ -306,6 +329,16 @@ Otf* CLMReader::read(const char* clmFilePath) const {
   font->_mathConsts = font->_isMathFont ? readMathConsts(reader) : nullptr;
   readGlyphs(*font, reader);
   return font;
+}
+
+Otf* CLMReader::read(const char* clmFilePath) const {
+  BinaryFileReader reader(clmFilePath);
+  return read(reader);
+}
+
+Otf* CLMReader::read(size_t len, const u8* bytes) const {
+  BinaryDataReader reader(len, bytes);
+  return read(reader);
 }
 
 }  // namespace tex
