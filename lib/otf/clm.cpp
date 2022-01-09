@@ -213,6 +213,8 @@ Math* CLMReader::readMath(BinaryReader& reader) {
   return ptr;
 }
 
+#ifdef HAVE_GLYPH_RENDER_PATH
+
 Path* CLMReader::readPath(BinaryReader& reader) {
   const auto len = reader.read<u16>();
   if (len == 0) return nullptr;
@@ -229,6 +231,8 @@ Path* CLMReader::readPath(BinaryReader& reader) {
   return new Path(len, cmds);
 }
 
+#endif
+
 Glyph* CLMReader::readGlyph(bool isMathFont, BinaryReader& reader) {
   auto* glyph = new Glyph();
   // Metrics is required
@@ -240,9 +244,11 @@ Glyph* CLMReader::readGlyph(bool isMathFont, BinaryReader& reader) {
   glyph->_kernRecord = kern == nullptr ? &KernRecord::empty : kern;
   // read math, optional
   glyph->_math = isMathFont ? readMath(reader) : &Math::empty;
+#ifdef HAVE_GLYPH_RENDER_PATH
   // read path
   auto path = readPath(reader);
   glyph->_path = path == nullptr ? &Path::empty : path;
+#endif
   return glyph;
 }
 
@@ -266,14 +272,32 @@ Otf* CLMReader::read(const char* clmFilePath) const {
     throw ex_invalid_param("file: '" + std::string(clmFilePath) + "' is not a clm file!");
   }
   const auto ver = reader.read<u16>();
-  if (ver != CLM_VER) {
+  if (ver != CLM_VER_MAJOR) {
     throw ex_invalid_param(
       "file: '" +
       std::string(clmFilePath) +
-      "' does not match the required version ("
-      + tostring(CLM_VER) + ")!"
+      "' does not match the required version (" +
+      tostring(CLM_VER_MAJOR) + ")!"
     );
   }
+  const auto minor = reader.read<u8>();
+#ifdef HAVE_GLYPH_RENDER_PATH
+  if (!CLM_SUPPORT_GLYPH_PATH(minor)) {
+    throw ex_invalid_param(
+      "file: '" +
+      std::string(clmFilePath) +
+      "' does not have glyph path."
+    );
+  }
+#else
+  if (CLM_SUPPORT_GLYPH_PATH(minor)) {
+    throw ex_invalid_param(
+      "file: '" +
+      std::string(clmFilePath) +
+      "' have glyph path, but the program cannot support it, use a different one."
+    );
+  }
+#endif
   // read otf-spec
   Otf* font = new Otf();
   readMeta(*font, reader);

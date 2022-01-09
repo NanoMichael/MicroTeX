@@ -1,8 +1,8 @@
-#include <utility>
-
 #include "unimath/uni_font.h"
 #include "unimath/uni_symbol.h"
 #include "utils/utils.h"
+#include "utils/exceptions.h"
+#include <utility>
 
 using namespace tex;
 using namespace std;

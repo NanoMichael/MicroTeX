@@ -1,10 +1,12 @@
-#include <memory>
-
 #include "atom/atom_matrix.h"
+#include "atom/atom_row.h"
+#include "atom/atom_basic.h"
 #include "core/formula.h"
 #include "env/env.h"
 #include "core/glue.h"
 #include "utils/string_utils.h"
+
+#include <memory>
 
 using namespace std;
 using namespace tex;
@@ -562,7 +564,8 @@ sptr<Box> MatrixAtom::createBoxInner(Env& env) {
           j = cols;
         }
           break;
-        default: {}
+        default: {
+        }
       }
     }
 

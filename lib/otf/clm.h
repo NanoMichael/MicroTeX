@@ -1,8 +1,7 @@
 #ifndef CLM_INCLUDED
 #define CLM_INCLUDED
 
-#include <cstdio>
-
+#include "config.h"
 #include "otf/otf.h"
 
 namespace tex {
@@ -34,7 +33,11 @@ private:
 
   static Path* readPath(BinaryReader& reader);
 
+#ifdef HAVE_GLYPH_RENDER_PATH
+
   static Glyph* readGlyph(bool isMathFont, BinaryReader& reader);
+
+#endif
 
   static void readGlyphs(Otf& font, BinaryReader& reader);
 

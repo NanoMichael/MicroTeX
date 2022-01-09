@@ -1,5 +1,8 @@
 #include "core/formula.h"
 #include "atom/atom_char.h"
+#include "atom/atom_basic.h"
+#include "atom/atom_vrow.h"
+#include "atom/atom_fence.h"
 #include "utils/utf.h"
 #include "utils/string_utils.h"
 

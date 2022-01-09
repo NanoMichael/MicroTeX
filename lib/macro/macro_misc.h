@@ -14,6 +14,7 @@
 #include "graphic/graphic.h"
 #include "utils/string_utils.h"
 #include "utils/utf.h"
+#include "utils/exceptions.h"
 
 namespace tex {
 

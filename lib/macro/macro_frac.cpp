@@ -1,6 +1,9 @@
 #include "macro/macro_frac.h"
 #include "utils/utf.h"
 #include "utils/string_utils.h"
+#include "utils/exceptions.h"
+#include "atom/atom_fence.h"
+#include "atom/atom_basic.h"
 
 using namespace std;
 

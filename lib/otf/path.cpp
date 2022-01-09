@@ -1,7 +1,9 @@
-#if GLYPH_RENDER_TYPE == 0 || GLYPH_RENDER_TYPE == 1
+#include "config.h"
 
-#include "graphic/graphic.h"
+#ifdef HAVE_GLYPH_RENDER_PATH
+
 #include "otf/path.h"
+#include "graphic/graphic.h"
 #include "utils/string_utils.h"
 
 namespace tex {
@@ -181,4 +183,4 @@ Path::~Path() {
 
 }
 
-#endif // GLYPH_RENDER_TYPE
+#endif // HAVE_GLYPH_RENDER_PATH

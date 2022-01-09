@@ -5,6 +5,7 @@
 #include "env/env.h"
 #include "core/formula.h"
 #include "atom/atom_char.h"
+#include "utils/exceptions.h"
 
 #include <deque>
 

@@ -3,6 +3,7 @@
 
 #include "atom/atom.h"
 #include "atom/atom_row.h"
+#include "graphic/graphic_basic.h"
 
 namespace tex {
 

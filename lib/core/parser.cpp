@@ -11,6 +11,7 @@
 #include "env/units.h"
 #include "utils/string_utils.h"
 #include "utils/utf.h"
+#include "utils/exceptions.h"
 
 using namespace std;
 using namespace tex;

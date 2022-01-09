@@ -292,7 +292,7 @@ def read_glyph_path(glyph):
     return data
 
 
-def read_glyph(glyph, is_math_font, kern_subtable_names, scripts_subtable_names):
+def read_glyph(glyph, is_math_font, parse_path, kern_subtable_names, scripts_subtable_names):
     '''
     Return a tuple
     (
@@ -307,7 +307,7 @@ def read_glyph(glyph, is_math_font, kern_subtable_names, scripts_subtable_names)
         read_metrics(glyph),
         read_kern(glyph, kern_subtable_names),
         None if not is_math_font else read_math(glyph, scripts_subtable_names),
-        read_glyph_path(glyph),
+        None if not parse_path else read_glyph_path(glyph),
         glyph.glyphname,
     )
 
@@ -505,7 +505,7 @@ def write_math_consts(f, consts):
         f.write(struct.pack('!h', v))
 
 
-def write_glyphs(f, glyphs, glyph_name_id_map, is_math_font):
+def write_glyphs(f, glyphs, glyph_name_id_map, is_math_font, have_glyph_path):
     f.write(struct.pack('!H', len(glyphs)))
 
     def write_metrics(metrics):
@@ -578,10 +578,11 @@ def write_glyphs(f, glyphs, glyph_name_id_map, is_math_font):
         write_kerns(glyph[1])
         if is_math_font:
             write_math(glyph[2])
-        write_path(glyph[3])
+        if have_glyph_path:
+            write_path(glyph[3])
 
 
-def parse_otf(file_path, is_math_font, output_file_path):
+def parse_otf(file_path, is_math_font, have_glyph_path, output_file_path):
     font = fontforge.open(file_path)
 
     # read math constants
@@ -614,7 +615,7 @@ def parse_otf(file_path, is_math_font, output_file_path):
         glyph_name_id_map[glyph_name] = glyph.originalgid
         # glyph info
         glyphs.append(read_glyph(
-            glyph, is_math_font,
+            glyph, is_math_font, have_glyph_path,
             kern_subtable_names, scripts_subtable_names
         ))
 
@@ -632,7 +633,10 @@ def parse_otf(file_path, is_math_font, output_file_path):
         f.write(struct.pack('c', bytes('c', 'ascii')))
         f.write(struct.pack('c', bytes('l', 'ascii')))
         f.write(struct.pack('c', bytes('m', 'ascii')))
-        f.write(struct.pack('!H', 1))
+        # current major version 2
+        f.write(struct.pack('!H', 2))
+        # minor version, if support glyph path
+        f.write(struct.pack('B', 2 if have_glyph_path else 1))
         f.write(struct.pack('?', is_math_font))
         f.write(struct.pack('!H', em))
         f.write(struct.pack('!H', int(xheight)))
@@ -643,7 +647,8 @@ def parse_otf(file_path, is_math_font, output_file_path):
         write_ligas(f, ligas, glyph_name_id_map)
         if is_math_font:
             write_math_consts(f, math_consts)
-        write_glyphs(f, glyphs, glyph_name_id_map, is_math_font)
+        write_glyphs(f, glyphs, glyph_name_id_map,
+                     is_math_font, have_glyph_path)
 
     font.close()
 
@@ -654,15 +659,19 @@ Convert an OTF font to clm data.
 Usage:
     fontforge -lang=py -script otf2clm <path/to/OTF-font> \\
         <is_math_font: true | false> \\
+        <if_parse_glyph_path: true | false> \\
         <path/to/save/clm_file>
 """
 
 
 def main():
-    if len(sys.argv) < 3:
+    if len(sys.argv) < 4:
         print(usage)
         return
-    parse_otf(sys.argv[1], sys.argv[2] == 'true', sys.argv[3])
+    parse_otf(
+        sys.argv[1], sys.argv[2] == 'true',
+        sys.argv[3] == 'true', sys.argv[4]
+    )
 
 
 if __name__ == "__main__":

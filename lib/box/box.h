@@ -1,10 +1,11 @@
 #ifndef LATEX_BOX_H
 #define LATEX_BOX_H
 
-#include "graphic/graphic.h"
 #include "utils/enums.h"
 
 namespace tex {
+
+class Graphics2D;
 
 /**
  * An abstract graphical representation of a formula, that can be painted. All
@@ -58,7 +59,7 @@ public:
   Box() { init(); }
 
   /** Copy the metrics from another box */
-  void copyMetrics(const sptr<Box>& box);
+  void copyMetrics(const sptr <Box>& box);
 
   /** Transform the width of box to negative */
   inline void negWidth() { _width = -_width; }
@@ -85,12 +86,12 @@ public:
   virtual int lastFontId();
 
   /** Get child boxes of this box. */
-  virtual std::vector<sptr<Box>> descendants() const {
+  virtual std::vector<sptr < Box>> descendants() const {
     return {};
   }
 
   /** Replace child box */
-  virtual void replaceFirst(const sptr<Box>& from, const sptr<Box>& to);
+  virtual void replaceFirst(const sptr <Box>& from, const sptr <Box>& to);
 
   /** Test if this box represents a space that only has metrics and has no visual effect. */
   virtual bool isSpace() const { return false; }
@@ -120,14 +121,14 @@ public:
 class BoxGroup : public Box {
 public:
   /** Children of this box */
-  std::vector<sptr<Box>> _children{};
+  std::vector<sptr < Box>> _children{};
 
   /**
    * Append the given box to the end of the list of the child boxes.
    *
    * @param box the box to be append
    */
-  virtual void add(const sptr<Box>& box);
+  virtual void add(const sptr <Box>& box);
 
   /**
    * Inserts the given box at the given position in the list of child boxes.
@@ -135,7 +136,7 @@ public:
    * @param pos the position at which to insert the given box
    * @param box the box to be inserted
    */
-  virtual void add(int pos, const sptr<Box>& box);
+  virtual void add(int pos, const sptr <Box>& box);
 
   /**
    * Append the given box to the end of the list of the child boxes,
@@ -147,7 +148,7 @@ public:
    *
    * @param box the box to be append
    */
-  void addOnly(const sptr<Box>& box) {
+  void addOnly(const sptr <Box>& box) {
     _children.push_back(box);
   }
 
@@ -158,7 +159,7 @@ public:
 
   bool isSingle() const override { return false; }
 
-  std::vector<sptr<Box>> descendants() const override {
+  std::vector<sptr < Box>> descendants() const override {
     return _children;
   }
 
@@ -172,15 +173,15 @@ public:
  */
 class DecorBox : public Box {
 public:
-  sptr<Box> _base;
+  sptr <Box> _base;
 
-  explicit DecorBox(const sptr<Box>& base) : _base(base) {}
+  explicit DecorBox(const sptr <Box>& base) : _base(base) {}
 
   bool isSingle() const override { return false; }
 
   int lastFontId() override;
 
-  std::vector<sptr<Box>> descendants() const override {
+  std::vector<sptr < Box>> descendants() const override {
     return {_base};
   }
 };

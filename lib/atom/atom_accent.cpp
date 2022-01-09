@@ -3,6 +3,7 @@
 #include "env/units.h"
 #include "box/box_single.h"
 #include "box/box_group.h"
+#include "utils/exceptions.h"
 
 using namespace tex;
 using namespace std;

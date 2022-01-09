@@ -1,6 +1,7 @@
 #include "macro/macro_styles.h"
 #include "utils/utf.h"
 #include "latex.h"
+#include "atom/atom_basic.h"
 
 namespace tex {
 

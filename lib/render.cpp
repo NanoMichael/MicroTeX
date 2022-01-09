@@ -7,6 +7,9 @@
 #include "unimath/uni_font.h"
 #include "env/env.h"
 #include "env/units.h"
+#include "utils/exceptions.h"
+#include "box/box_single.h"
+#include "atom/atom_basic.h"
 
 using namespace std;
 using namespace tex;
@@ -139,6 +142,40 @@ RenderBuilder& RenderBuilder::setLineSpace(UnitType unit, float space) {
   }
   _lineSpace = space;
   _lineSpaceUnit = unit;
+  return *this;
+}
+
+RenderBuilder& RenderBuilder::setIsMaxWidth(bool i) {
+  if (_widthUnit == UnitType::none) {
+    throw ex_invalid_state("Cannot set 'isMaxWidth' without having specified a width!");
+  }
+  if (i) {
+    // Currently isMaxWidth==true does not work with
+    // Alignment::center or Alignment::right (see HBox constructor)
+    //
+    // The case (1) we don't support by setting align := Alignment::left
+    // here is this:
+    //      \text{hello world\\hello} with align=Alignment::center (but forced
+    //      to Alignment::left) and isMaxWidth==true results in:
+    //      [hello world]
+    //      [hello ]
+    // and NOT:
+    //      [hello world]
+    //      [ hello ]
+    //
+    // However, this case (2) is currently not supported anyway
+    // (Alignment::center with isMaxWidth==false):
+    //      [ hello world ]
+    //      [ hello ]
+    // and NOT:
+    //      [ hello world ]
+    //      [ hello ]
+    //
+    // => until (2) is solved, we stick with the hack to set align
+    // := Alignment::left!
+    _align = Alignment::left;
+  }
+  _isMaxWidth = i;
   return *this;
 }
 

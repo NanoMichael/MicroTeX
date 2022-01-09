@@ -9,6 +9,8 @@
 #include "graphic/graphic.h"
 #include "env/env.h"
 #include "env/units.h"
+#include "atom/atom_char.h"
+#include "atom/atom_vrow.h"
 
 namespace tex {
 

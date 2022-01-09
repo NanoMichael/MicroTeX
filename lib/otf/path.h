@@ -1,7 +1,9 @@
 #ifndef LATEX_PATH_H
 #define LATEX_PATH_H
 
-#if GLYPH_RENDER_TYPE == 0 || GLYPH_RENDER_TYPE == 1
+#include "config.h"
+
+#ifdef HAVE_GLYPH_RENDER_PATH
 
 #include <string>
 #include "utils/utils.h"
@@ -108,5 +110,5 @@ public:
 
 }
 
-#endif // GLYPH_RENDER_TYPE
+#endif // HAVE_GLYPH_RENDER_PATH
 #endif //LATEX_PATH_H

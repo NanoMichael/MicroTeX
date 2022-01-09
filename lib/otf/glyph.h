@@ -1,6 +1,7 @@
 #ifndef GLYPH_INCLUDED
 #define GLYPH_INCLUDED
 
+#include "config.h"
 #include "utils/dict_tree.h"
 #include "utils/utils.h"
 #include "otf/path.h"
@@ -356,7 +357,7 @@ private:
   /** MUST NOT BE NULL, equals to &Math::empty if absent */
   const Math* _math = &Math::empty;
 
-#if GLYPH_RENDER_TYPE == 0 || GLYPH_RENDER_TYPE == 1
+#ifdef HAVE_GLYPH_RENDER_PATH
   /** MUST NOT BE NULL, equals to &Path::empty if absent */
   const Path* _path = &Path::empty;
 #endif
@@ -372,7 +373,7 @@ public:
 
   inline const KernRecord& kernRecord() const { return *_kernRecord; }
 
-#if GLYPH_RENDER_TYPE == 0 || GLYPH_RENDER_TYPE == 1
+#ifdef HAVE_GLYPH_RENDER_PATH
 
   inline const Path& path() const { return *_path; }
 

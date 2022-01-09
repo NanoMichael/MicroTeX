@@ -2,7 +2,6 @@
 #define GRAPHIC_BASIC_H_INCLUDED
 
 #include "utils/utils.h"
-#include <sstream>
 #include <string>
 
 namespace tex {

@@ -3,6 +3,7 @@
 #include "core/debug_config.h"
 #include "utils/utf.h"
 #include "latex.h"
+#include "utils/exceptions.h"
 
 using namespace std;
 using namespace tex;

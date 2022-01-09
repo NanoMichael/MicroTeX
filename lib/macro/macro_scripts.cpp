@@ -1,5 +1,6 @@
 #include "macro/macro_scripts.h"
 #include "atom/atom_scripts.h"
+#include "atom/atom_basic.h"
 
 namespace tex {
 

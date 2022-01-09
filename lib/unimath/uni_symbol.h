@@ -3,7 +3,6 @@
 
 #include "utils/utils.h"
 #include "utils/enums.h"
-#include "utils/exceptions.h"
 
 namespace tex {
 

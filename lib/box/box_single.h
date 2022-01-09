@@ -4,8 +4,11 @@
 #include "atom/atom.h"
 #include "unimath/uni_char.h"
 #include "graphic/font_style.h"
+#include "graphic/graphic_basic.h"
 
 namespace tex {
+
+class TextLayout;
 
 /** A box representing whitespace */
 class StrutBox : public Box {

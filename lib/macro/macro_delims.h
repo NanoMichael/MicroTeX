@@ -7,6 +7,7 @@
 #include "atom/atom_basic.h"
 #include "atom/atom_delim.h"
 #include "atom/atom_root.h"
+#include "atom/atom_fence.h"
 #include "utils/string_utils.h"
 #include "utils/utf.h"
 

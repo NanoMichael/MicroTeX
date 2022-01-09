@@ -1,5 +1,6 @@
 #include "macro/macro_fonts.h"
 #include "utils/string_utils.h"
+#include "utils/exceptions.h"
 #include "latex.h"
 
 namespace tex {

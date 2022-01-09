@@ -4,6 +4,7 @@
 #include "macro/macro_decl.h"
 #include "atom/atom_accent.h"
 #include "atom/atom_stack.h"
+#include "atom/atom_basic.h"
 #include "utils/utf.h"
 
 namespace tex {

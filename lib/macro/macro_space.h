@@ -2,6 +2,7 @@
 #define LATEX_MACRO_SPACE_H
 
 #include "macro/macro_decl.h"
+#include "atom/atom_space.h"
 
 namespace tex {
 

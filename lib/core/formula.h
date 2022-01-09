@@ -4,13 +4,13 @@
 #include <string>
 #include <utility>
 
-#include "atom/atom_basic.h"
-#include "atom/atom_fence.h"
-#include "atom/atom_vrow.h"
 #include "core/parser.h"
-#include "graphic/graphic.h"
 
 namespace tex {
+
+class MiddleAtom;
+
+class VRowAtom;
 
 class CellSpecifier;
 

@@ -1,5 +1,6 @@
 #include "macro/macro_colors.h"
 #include "utils/string_utils.h"
+#include "utils/exceptions.h"
 
 namespace tex {
 
