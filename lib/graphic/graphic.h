@@ -48,7 +48,7 @@ public:
 /** Simple factory to create platform specific Font and TextLayout. */
 class PlatformFactory {
 private:
-  static std::map<std::string, PlatformFactory*> _factories;
+  static std::map<std::string, std::unique_ptr<PlatformFactory>> _factories;
   static std::string _currentFactory;
 
 public:
@@ -72,7 +72,7 @@ public:
   virtual sptr<TextLayout> createTextLayout(const std::string& src, FontStyle style, float size) = 0;
 
   /** Register a factory */
-  static void registerFactory(const std::string& name, PlatformFactory* factory);
+  static void registerFactory(const std::string& name, std::unique_ptr<PlatformFactory> factory);
 
   /** Activate a factory */
   static void activate(const std::string& name);

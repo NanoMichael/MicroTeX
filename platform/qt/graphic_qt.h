@@ -2,8 +2,9 @@
 #define GRAPHIC_QT_H_INCLUDED
 
 #include "config.h"
-#include <string>
 #include "graphic/graphic.h"
+
+#include <string>
 
 #include <QBrush>
 #include <QFont>
@@ -51,9 +52,9 @@ public:
 
 class PlatformFactory_qt : public PlatformFactory {
 public:
-  sptr<Font> createFont(const std::string &file) override;
+  sptr<Font> createFont(const std::string& file) override;
 
-  sptr<TextLayout> createTextLayout(const std::string &src, FontStyle style, float size) override;
+  sptr<TextLayout> createTextLayout(const std::string& src, FontStyle style, float size) override;
 };
 
 /**************************************************************************************************/
@@ -64,7 +65,7 @@ private:
 
   color _color;
   Stroke _stroke;
-  sptr <Font_qt> _font;
+  sptr<Font_qt> _font;
   float _fontSize;
   float _sx, _sy;
 
@@ -93,9 +94,9 @@ public:
 
   std::vector<float> getDash() override;
 
-  sptr <Font> getFont() const override;
+  sptr<Font> getFont() const override;
 
-  void setFont(const sptr <Font>& font) override;
+  void setFont(const sptr<Font>& font) override;
 
   float getFontSize() const override;
 

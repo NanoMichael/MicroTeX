@@ -15,4 +15,5 @@ target_link_libraries(
     LaTeXGtkSample PRIVATE
     PkgConfig::GSVMM
     clatexmath
+    clatexmath-cairo
 )

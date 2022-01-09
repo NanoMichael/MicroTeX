@@ -5,6 +5,7 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Gui REQUIRED)
 target_link_libraries(
     latex2png PRIVATE
     clatexmath
+    clatexmath-qt
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui
 )

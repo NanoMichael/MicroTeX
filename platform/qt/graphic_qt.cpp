@@ -1,4 +1,4 @@
-#include "platform/qt/graphic_qt.h"
+#include "graphic_qt.h"
 #include "utils/log.h"
 
 #include <QDebug>

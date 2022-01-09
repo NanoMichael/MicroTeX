@@ -1,5 +1,5 @@
 #include "latex.h"
-#include "platform/cairo/graphic_cairo.h"
+#include "graphic_cairo.h"
 #include "samples.h"
 #include "utils/log.h"
 #include "utils/string_utils.h"
@@ -520,8 +520,7 @@ int main(int argc, char* argv[]) {
   const FontSpec math{mathVersionName, mathFont, clmFile};
   LaTeX::init(math);
 
-  auto factory = new PlatformFactory_cairo();
-  PlatformFactory::registerFactory("gtk", factory);
+  PlatformFactory::registerFactory("gtk", std::make_unique<PlatformFactory_cairo>());
   PlatformFactory::activate("gtk");
 
   int result = 0;

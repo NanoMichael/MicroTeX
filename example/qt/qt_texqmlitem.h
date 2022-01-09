@@ -4,7 +4,7 @@
 #include <QtQuick/QQuickPaintedItem>
 
 #include "latex.h"
-#include "platform/qt/graphic_qt.h"
+#include "graphic_qt.h"
 
 class TexQmlItem : public QQuickPaintedItem {
   Q_OBJECT

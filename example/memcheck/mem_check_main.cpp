@@ -128,7 +128,7 @@ int main(int argc, char* argv[]) {
   };
   tex::LaTeX::init(math);
 
-  tex::PlatformFactory::registerFactory("none", new tex::PlatformFactory_none());
+  tex::PlatformFactory::registerFactory("none", std::make_unique<tex::PlatformFactory_none>());
   tex::PlatformFactory::activate("none");
 
   tex::Samples samples("../../res/SAMPLES.tex");

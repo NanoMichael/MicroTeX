@@ -4,7 +4,7 @@
 
 
 #include "latex.h"
-#include "platform/qt/graphic_qt.h"
+#include "graphic_qt.h"
 #include <QGuiApplication>
 #include <QFile>
 #include <QFileInfo>
@@ -18,8 +18,7 @@ class TexGuard {
 public:
   TexGuard(const tex::FontSpec& math) {
     tex::LaTeX::init(math);
-    auto factory = new tex::PlatformFactory_qt();
-    tex::PlatformFactory::registerFactory("qt", factory);
+    tex::PlatformFactory::registerFactory("qt", std::make_unique<tex::PlatformFactory_qt>());
     tex::PlatformFactory::activate("qt");
   }
 

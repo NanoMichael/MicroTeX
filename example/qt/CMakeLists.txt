@@ -13,8 +13,9 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Gui Widgets REQUIRED)
 
 target_link_libraries(
     LaTeXQtSample PRIVATE
-    Qt${QT_VERSION_MAJOR}::Widgets
     clatexmath
+    clatexmath-qt
+    Qt${QT_VERSION_MAJOR}::Widgets
 )
 
 set_target_properties(LaTeXQtSample PROPERTIES AUTOMOC ON)

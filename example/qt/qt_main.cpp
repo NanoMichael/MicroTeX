@@ -18,8 +18,7 @@ int main(int argc, char** argv) {
   };
   tex::LaTeX::init(math);
 
-  auto factory = new tex::PlatformFactory_qt();
-  tex::PlatformFactory::registerFactory("qt", factory);
+  tex::PlatformFactory::registerFactory("qt", std::make_unique<tex::PlatformFactory_qt>());
   tex::PlatformFactory::activate("qt");
 
   tex::LaTeX::setRenderGlyphUsePath(true);

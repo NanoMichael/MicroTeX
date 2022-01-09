@@ -1,9 +1,8 @@
-#include "config.h"
-
 #ifndef QT_TEXWIDGET_H
 #define QT_TEXWIDGET_H
 
-#include "platform/qt/graphic_qt.h"
+#include "config.h"
+#include "graphic_qt.h"
 #include "latex.h"
 
 #include <QWidget>

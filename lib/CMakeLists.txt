@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.16)
-
 add_library(clatexmath SHARED "")
 set_target_properties(clatexmath PROPERTIES VERSION 1.0.0 SOVERSION 1)
 
@@ -81,38 +79,6 @@ target_sources(
 )
 target_include_directories(clatexmath PUBLIC .)
 
-if (GTK)
-    message(STATUS "Cross-building using GTK")
-    find_package(Fontconfig REQUIRED)
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(GTKMM REQUIRED IMPORTED_TARGET gtkmm-3.0)
-    pkg_check_modules(CairoMM REQUIRED IMPORTED_TARGET cairomm-1.0)
-    target_sources(
-        clatexmath PRIVATE
-        platform/cairo/graphic_cairo.cpp
-    )
-    target_link_libraries(
-        clatexmath PRIVATE
-        PkgConfig::GTKMM   #include <pangomm/fontdescription.h>
-        PkgConfig::CairoMM #include <cairomm/context.h>
-        Fontconfig::Fontconfig
-    )
-endif ()
-
-if (QT)
-    message(STATUS "Cross-building using QT")
-    find_package(QT NAMES Qt6 Qt5 COMPONENTS Gui Widgets REQUIRED)
-    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Gui Widgets REQUIRED)
-    target_sources(
-        clatexmath PRIVATE
-        platform/qt/graphic_qt.cpp
-    )
-    target_link_libraries(
-        clatexmath PRIVATE
-        Qt${QT_VERSION_MAJOR}::Gui
-    )
-endif ()
-
 # compile option: if have log
 option(HAVE_LOG "If enable log" ON)
 if (HAVE_LOG)
@@ -130,8 +96,3 @@ endif ()
 # 1: use path only
 # 2: use typeface only
 add_definitions(-DGLYPH_RENDER_TYPE=0)
-
-option(MEM_CHECK "If compile for memory check only" OFF)
-if (MEM_CHECK)
-    add_definitions(-DMEM_CHECK)
-endif ()

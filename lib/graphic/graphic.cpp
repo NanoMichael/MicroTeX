@@ -1,15 +1,14 @@
 #include "graphic/graphic.h"
 #include "utils/exceptions.h"
 
-std::map<std::string, tex::PlatformFactory*> tex::PlatformFactory::_factories;
-std::string tex::PlatformFactory::_currentFactory;
+using namespace std;
+using namespace tex;
 
-void tex::PlatformFactory::registerFactory(const std::string& name, PlatformFactory* factory) {
-  auto it = _factories.find(name);
-  if (it != _factories.end()) {
-    delete it->second;
-  }
-  _factories[name] = factory;
+map<string, unique_ptr<PlatformFactory>> PlatformFactory::_factories;
+string PlatformFactory::_currentFactory;
+
+void tex::PlatformFactory::registerFactory(const string& name, unique_ptr<PlatformFactory> factory) {
+  _factories[name] = std::move(factory);
 }
 
 void tex::PlatformFactory::activate(const std::string& name) {
@@ -21,5 +20,5 @@ tex::PlatformFactory* tex::PlatformFactory::get() {
   if (it == _factories.end()) {
     throw ex_invalid_state("No factory found with name '" + _currentFactory + "', please register one.");
   }
-  return it->second;
+  return it->second.get();
 }

@@ -33,6 +33,14 @@ else ()
     endif ()
 endif ()
 
+if (GTK)
+    add_subdirectory(platform/cairo)
+endif ()
+
+if (QT)
+    add_subdirectory(platform/qt)
+endif ()
+
 if (BUILD_EXAMPLE_GTK)
     add_subdirectory(example/gtk)
 endif ()
