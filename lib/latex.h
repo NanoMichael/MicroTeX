@@ -27,7 +27,14 @@ public:
    */
   static void init(const FontSpec& mathFontSpec);
 
-  // todo
+  /**
+   * Initialize LaTeX context with given math font spec, using byte buffer,
+   * at least we need a math font to layout formulas.
+   *
+   * @param name the name of the math font spec
+   * @param len buffer length
+   * @param data the byte buffer
+   */
   static void init(
     const std::string& name,
     size_t len, const u8* data

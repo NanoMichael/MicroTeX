@@ -1,5 +1,6 @@
 if (WASM)
     add_library(clatexmath STATIC "")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
 else (WASM)
     add_library(clatexmath SHARED "")
 endif ()
@@ -100,4 +101,8 @@ endif ()
 # 0: use path and typeface both
 # 1: use path only
 # 2: use typeface only
-add_definitions(-DGLYPH_RENDER_TYPE=0)
+if (WASM)
+    add_definitions(-DGLYPH_RENDER_TYPE=1)
+else (WASM)
+    add_definitions(-DGLYPH_RENDER_TYPE=0)
+endif ()

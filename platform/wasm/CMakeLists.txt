@@ -2,7 +2,8 @@ message(STATUS "Cross-building using emscripten")
 
 add_executable(
     clatexmath-wasm
-    api.cpp
+    capi.cpp
+    # graphic_wasm.cpp
 )
 
 target_link_libraries(
@@ -12,5 +13,5 @@ target_link_libraries(
 
 set_target_properties(
     clatexmath-wasm PROPERTIES
-    LINK_FLAGS "-s WASM=1 -s NO_DISABLE_EXCEPTION_CATCHING"
+    LINK_FLAGS "-fexceptions -s WASM=1"
 )

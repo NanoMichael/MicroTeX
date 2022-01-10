@@ -19,9 +19,7 @@ struct OtfFont final {
   const std::string fontFile;
   const sptr<const Otf> otfSpec;
 
-  OtfFont(i32 id, std::string fontFile, const std::string& clmFile);
-
-  OtfFont(i32 id, size_t len, const u8* data, std::string fontFile);
+  OtfFont(i32 id, sptr<const Otf> spec, std::string fontFile) noexcept;
 
   inline const Otf& otf() const { return *otfSpec; }
 };
@@ -64,6 +62,8 @@ private:
   sptr<const OtfFont> _mathFont = nullptr;
 
   static sptr<FontFamily> getOrCreateFontFamily(const std::string& version);
+
+  static void addMainFont(const sptr<FontFamily>& family, const FontSpec& param);
 
 public:
   no_copy_assign(FontContext);
