@@ -85,12 +85,6 @@ target_sources(
 )
 target_include_directories(clatexmath PUBLIC .)
 
-# compile option: if have log
-option(HAVE_LOG "If enable log" ON)
-if (HAVE_LOG)
-    add_definitions(-DHAVE_LOG)
-endif ()
-
 # compile option: if debug graphics
 option(GRAPHICS_DEBUG "If enable graphics debug" ON)
 if (GRAPHICS_DEBUG)

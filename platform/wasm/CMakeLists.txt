@@ -3,7 +3,8 @@ message(STATUS "Cross-building using emscripten")
 add_executable(
     clatexmath-wasm
     capi.cpp
-    # graphic_wasm.cpp
+    graphic_wasm.cpp
+    cmd.cpp
 )
 
 target_link_libraries(

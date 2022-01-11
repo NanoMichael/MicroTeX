@@ -6,6 +6,12 @@ project(
     DESCRIPTION "A dynamic, cross-platform, and embeddable LaTeX rendering library"
 )
 
+# compile option: if have log
+option(HAVE_LOG "If enable log" ON)
+if (HAVE_LOG)
+    add_definitions(-DHAVE_LOG)
+endif ()
+
 add_subdirectory(lib)
 
 file(COPY res DESTINATION .)

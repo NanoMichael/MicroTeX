@@ -1,5 +1,7 @@
 #include "latex.h"
 #include "render.h"
+#include "grapihc_wasm.h"
+#include "utils/log.h"
 
 #ifndef CLATEX_WASM_API
 #  ifdef __EMSCRIPTEN__
@@ -39,6 +41,9 @@ void* CLATEX_WASM_API clatex_parseRender(
   float lineSpace,
   unsigned int color
 ) {
+#ifdef HAVE_LOG
+  logv("parse: %s\n", tex);
+#endif
   auto r = LaTeX::parse(tex, width, textSize, lineSpace, color);
   return reinterpret_cast<void*>(r);
 }
@@ -48,26 +53,26 @@ void CLATEX_WASM_API clatex_deleteRender(void* render) {
   delete r;
 }
 
-void* CLATEX_WASM_API clatex_fuck() {
-  void* m = malloc(sizeof(char) + sizeof(float));
-  auto* c = (unsigned char*) m;
-  *c = 33;
-  auto* f = (float*) (c + 1);
-  *f = 3.14159f;
-  // printf("%u, %f\n", *((unsigned char*) m), *((float*) ((char*) m + 1)));
-  printf("char: %p, %u, float: %p, %f\n", c, *c, f, *f);
-  return m;
+void* CLATEX_WASM_API clatex_getDrawingData(void* render, int x, int y) {
+  auto r = reinterpret_cast<Render*>(render);
+  Graphics2D_wasm g2;
+  r->draw(g2, x, y);
+  return g2.getDrawingData();
+}
+
+void CLATEX_WASM_API clatex_freeDrawingData(void* data) {
+  free(data);
+}
+
+bool CLATEX_WASM_API clatex_isLittleEndian() {
+  int n = 1;
+  return *((char*) &n) == 1;
 }
 
 int main(int argc, char** argv) {
-  printf("hello clatexmath, fuck\n");
-  int n = 1;
-
-  if (*(char*) &n == 1) {
-    printf("fuck, is little endian\n");
-  } else {
-    printf("fuck, is big endian\n");
-  }
+#ifdef HAVE_LOG
+  logv("clatex entry run, is little endian: %d...\n", clatex_isLittleEndian());
+#endif
   return 0;
 }
 

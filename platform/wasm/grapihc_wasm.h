@@ -2,13 +2,17 @@
 #define LATEX_GRAPIHC_WASM_H
 
 #include "graphic/graphic.h"
+#include "cmd.h"
 
 namespace tex {
 
+/** EMPTY IMPL */
 class Font_wasm : public Font {
 public:
   bool operator==(const Font& f) const override;
 };
+
+/**********************************************************************************/
 
 class TextLayout_wasm : public TextLayout {
 public:
@@ -17,30 +21,46 @@ public:
   void draw(Graphics2D& g2, float x, float y) override;
 };
 
+/**********************************************************************************/
+
 class PlatformFactory_wasm : public PlatformFactory {
 public:
   sptr<Font> createFont(const std::string& file) override;
 
-  sptr<TextLayout> createTextLayout(const std::string& src, FontStyle style, float size) override;
+  sptr<TextLayout> createTextLayout(
+    const std::string& src,
+    FontStyle style, float size
+  ) override;
 };
+
+/**********************************************************************************/
 
 class Graphics2D_wasm : public Graphics2D {
 private:
+  color _color;
+  Stroke _stroke;
+  Cmds _cmds;
+  float _sx = 1;
+  float _sy = 1;
+
 public:
-  void setColor(color c) override;
+  void* getDrawingData();
+
+  void setColor(color c) override; // 0
 
   color getColor() const override;
 
-  void setStroke(const Stroke& s) override;
+  void setStroke(const Stroke& s) override; // 1
 
   const Stroke& getStroke() const override;
 
-  void setStrokeWidth(float w) override;
+  void setStrokeWidth(float w) override; // 1
 
-  void setDash(const std::vector<float>& dash) override;
+  void setDash(const std::vector<float>& dash) override; // todo
 
   std::vector<float> getDash() override;
 
+  // region EMPTY IMPL - no font support
   sptr<Font> getFont() const override;
 
   void setFont(const sptr<Font>& font) override;
@@ -48,44 +68,59 @@ public:
   float getFontSize() const override;
 
   void setFontSize(float size) override;
+  // endregion
 
-  void translate(float dx, float dy) override;
+  void translate(float dx, float dy) override; // 2
 
-  void scale(float sx, float sy) override;
+  void scale(float sx, float sy) override; // 3
 
-  void rotate(float angle) override;
+  void rotate(float angle) override; // 4
 
-  void rotate(float angle, float px, float py) override;
+  void rotate(float angle, float px, float py) override; // 4
 
-  void reset() override;
+  void reset() override; // 5
 
   float sx() const override;
 
   float sy() const override;
 
+  // region EMPTY IMPL - no glyph support
   void drawGlyph(u16 glyph, float x, float y) override;
+  // endregion
 
-  void moveTo(float x, float y) override;
+  void moveTo(float x, float y) override; // 6
 
-  void lineTo(float x, float y) override;
+  void lineTo(float x, float y) override; // 7
 
-  void cubicTo(float x1, float y1, float x2, float y2, float x3, float y3) override;
+  void cubicTo(
+    float x1, float y1,
+    float x2, float y2,
+    float x3, float y3
+  ) override; // 8
 
-  void quadTo(float x1, float y1, float x2, float y2) override;
+  void quadTo(float x1, float y1, float x2, float y2) override; // 9
 
-  void closePath() override;
+  void closePath() override; // 10
 
-  void fillPath() override;
+  void fillPath() override; // 11
 
-  void drawLine(float x1, float y1, float x2, float y2) override;
+  void drawLine(float x1, float y1, float x2, float y2) override; // 12
 
-  void drawRect(float x, float y, float w, float h) override;
+  void drawRect(float x, float y, float w, float h) override; // 13
 
-  void fillRect(float x, float y, float w, float h) override;
+  void fillRect(float x, float y, float w, float h) override; // 14
 
-  void drawRoundRect(float x, float y, float w, float h, float rx, float ry) override;
+  void drawRoundRect(
+    float x, float y,
+    float w, float h,
+    float rx, float ry
+  ) override; // 15
 
-  void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
+  void fillRoundRect(
+    float x, float y,
+    float w, float h,
+    float rx, float ry
+  ) override; // 16
 };
 
 }
