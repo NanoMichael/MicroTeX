@@ -1,0 +1,77 @@
+<!doctype html>
+
+<html lang="zh">
+
+<head>
+  <title>Hello</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+<script src="../dist/index.js"></script>
+<script>
+  tinytex
+    .context
+    .init("./res/XITSMath-Regular-path.clm")
+    .then(_ => {
+      const hello = `
+      \\text{Hello Tiny\\kern-.15em\\TeX.}\\\\
+      \\text{Press ctrl + enter to show.}
+      `
+      parse(hello);
+      document.getElementById("editor").value = hello;
+      listenEdit();
+    });
+
+  function listenEdit() {
+    document.getElementById("editor").addEventListener("keypress", ev => {
+      if (ev.ctrlKey && ev.key === "Enter") {
+        show();
+      }
+    });
+  }
+
+  function parse(str) {
+    const sizeStr = document.getElementById("textsize").value;
+    const size = parseInt(sizeStr);
+    const r = tinytex.context.parseRender(str, 1000, size, size / 3, 0x3b3b3b);
+    const canvas = document.createElement("canvas");
+    canvas.width = r.getWidth();
+    canvas.height = r.getHeight();
+    const ctx = canvas.getContext('2d');
+    ctx.translate(0.5, 0.5);
+    r.draw(ctx, 0, 0);
+    r.release();
+    // append to left
+    const left = document.getElementById("left");
+    left.replaceChildren();
+    left.appendChild(canvas);
+  }
+
+  function show() {
+    if (!tinytex.context.isInited()) {
+      return;
+    }
+    const t = document.getElementById("editor");
+    parse(t.value);
+  }
+</script>
+
+<div class="topmost">
+  <div class="container">
+    <div class="left" id="left"></div>
+    <div class="right">
+      <textarea class="editor" id="editor"></textarea>
+      <div class="bottom">
+        <label>Change text size:</label>
+        <input class="textsize" id="textsize" type="number" min="5" max="100" step="2" value="20"/>
+        <button class="show" onclick="show()">Show</button>
+        <button class="next" id="next">Next example</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+
+</html>

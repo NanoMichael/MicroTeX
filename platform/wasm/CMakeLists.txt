@@ -12,7 +12,11 @@ target_link_libraries(
     clatexmath
 )
 
+file(COPY jsapi_impl.js DESTINATION .)
+
 set_target_properties(
     clatexmath-wasm PROPERTIES
-    LINK_FLAGS "-fexceptions -s WASM=1"
+    LINK_FLAGS
+    "-fexceptions --js-library jsapi_impl.js -s MODULARIZE=1 -s EXPORT_ES6=1\
+    -s WASM=1 -s EXPORTED_RUNTIME_METHODS=allocateUTF8 -s IMPORTED_MEMORY"
 )

@@ -1,0 +1,57 @@
+.topmost {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 8pt;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  flex-basis: 100%;
+}
+
+.left {
+  flex-basis: 50%;
+}
+
+.right {
+  flex-basis: 50%;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor {
+  flex-basis: 100%;
+  font-family: monospace;
+  font-size: medium;
+  padding: 8pt;
+}
+
+.bottom {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-top: 8pt;
+}
+
+.textsize {
+  margin-left: 8pt;
+}
+
+.next {
+  margin-left: 8pt;
+  padding-left: 6pt;
+  padding-right: 6pt;
+}
+
+.show {
+  margin-left: 8pt;
+  padding-left: 6pt;
+  padding-right: 6pt;
+}

@@ -47,7 +47,7 @@ public:
   /** Get the text size of this render */
   float getTextSize() const;
 
-  /** Get the size amount above the baseline */
+  /** Get the total height of this render */
   int getHeight() const;
 
   /** Get the size amount below the baseline */

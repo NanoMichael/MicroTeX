@@ -60,6 +60,7 @@ Path::Path(u16 cmdCnt, PathCmd** cmds) noexcept: _cmdCnt(cmdCnt), _cmds(cmds) {}
 
 void Path::draw(Graphics2D& g2) const {
   if (isEmpty()) return;
+  g2.beginPath();
   int mx = 0, my = 0; // the first point to move to
   int px = 0, py = 0; // the current point
   int cx = 0, cy = 0; // the last control point

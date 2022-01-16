@@ -33,7 +33,7 @@ public:
    *
    * @param name the name of the math font spec
    * @param len buffer length
-   * @param data the byte buffer
+   * @param data the clm byte buffer
    */
   static void init(
     const std::string& name,
@@ -57,6 +57,18 @@ public:
    * @param params font spec to load
    */
   static void addMathFont(const FontSpec& params);
+
+  /**
+   * Add a math font to context, using byte buffer.
+   *
+   * @param name the name of the math font spec
+   * @param len buffer length
+   * @param data the clm byte buffer
+   */
+  static void addMathFont(
+    const std::string& name,
+    size_t len, const u8* data
+  );
 
   /**
    * Set the default math font to show formulas while math font

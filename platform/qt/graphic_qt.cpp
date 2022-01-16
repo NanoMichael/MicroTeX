@@ -261,6 +261,10 @@ void Graphics2D_qt::drawGlyph(u16 glyph, float x, float y) {
   _painter->drawGlyphRun({x, y}, g);
 }
 
+void Graphics2D_qt::beginPath() {
+  _path = QPainterPath();
+}
+
 void Graphics2D_qt::moveTo(float x, float y) {
   _path.moveTo(x, y);
 }
@@ -283,9 +287,6 @@ void Graphics2D_qt::closePath() {
 
 void Graphics2D_qt::fillPath() {
   _painter->fillPath(_path, getQBrush());
-  // FIXME
-  // Once the path was filled, clear it
-  _path = QPainterPath();
 }
 
 void Graphics2D_qt::drawLine(float x1, float y1, float x2, float y2) {

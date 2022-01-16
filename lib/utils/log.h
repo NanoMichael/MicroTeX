@@ -1,6 +1,8 @@
 #ifndef LOG_H_INCLUDED
 #define LOG_H_INCLUDED
 
+#ifdef HAVE_LOG
+
 #include <cstdio>
 
 #define ANSI_BOLD        "\x1b[1m"
@@ -32,5 +34,6 @@
       format,             \
       ##__VA_ARGS__       \
     );
+#endif
 
 #endif

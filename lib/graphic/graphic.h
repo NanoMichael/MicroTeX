@@ -196,6 +196,9 @@ public:
 
   // region path commands
 
+  /** Begin a new path. */
+  virtual void beginPath() = 0;
+
   /** Begin a path, move to point (x, y). */
   virtual void moveTo(float x, float y) = 0;
 

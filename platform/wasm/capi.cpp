@@ -1,16 +1,8 @@
+#include "def.h"
 #include "latex.h"
 #include "render.h"
-#include "grapihc_wasm.h"
+#include "graphic_wasm.h"
 #include "utils/log.h"
-
-#ifndef CLATEX_WASM_API
-#  ifdef __EMSCRIPTEN__
-#    include <emscripten.h>
-#    define CLATEX_WASM_API EMSCRIPTEN_KEEPALIVE
-#  else
-#    define CLATEX_WASM_API
-#  endif
-#endif
 
 using namespace tex;
 
@@ -32,6 +24,18 @@ void CLATEX_WASM_API clatex_release() {
 
 bool CLATEX_WASM_API clatex_isInited() {
   return LaTeX::isInited();
+}
+
+void CLATEX_WASM_API clatex_addMathFont(
+  const char* name,
+  unsigned long len,
+  const unsigned char* data
+) {
+  LaTeX::addMathFont(name, len, data);
+}
+
+void CLATEX_WASM_API clatex_setDefaultMathFont(const char* name) {
+  LaTeX::setDefaultMathFont(name);
 }
 
 void* CLATEX_WASM_API clatex_parseRender(
@@ -69,10 +73,28 @@ bool CLATEX_WASM_API clatex_isLittleEndian() {
   return *((char*) &n) == 1;
 }
 
+int CLATEX_WASM_API clatex_getRenderWidth(void* render) {
+  auto r = reinterpret_cast<Render*>(render);
+  return r->getWidth();
+}
+
+int CLATEX_WASM_API clatex_getRenderHeight(void* render) {
+  auto r = reinterpret_cast<Render*>(render);
+  return r->getHeight();
+}
+
+int CLATEX_WASM_API clatex_getRenderDepth(void* render) {
+  auto r = reinterpret_cast<Render*>(render);
+  return r->getDepth();
+}
+
 int main(int argc, char** argv) {
 #ifdef HAVE_LOG
   logv("clatex entry run, is little endian: %d...\n", clatex_isLittleEndian());
 #endif
+  auto factory = std::make_unique<PlatformFactory_wasm>();
+  PlatformFactory::registerFactory("wasm", std::move(factory));
+  PlatformFactory::activate("wasm");
   return 0;
 }
 

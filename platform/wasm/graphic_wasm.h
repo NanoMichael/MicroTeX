@@ -1,12 +1,12 @@
-#ifndef LATEX_GRAPIHC_WASM_H
-#define LATEX_GRAPIHC_WASM_H
+#ifndef LATEX_GRAPHIC_WASM_H
+#define LATEX_GRAPHIC_WASM_H
 
 #include "graphic/graphic.h"
 #include "cmd.h"
 
 namespace tex {
 
-/** EMPTY IMPL */
+/** EMPTY IMPL - no font support */
 class Font_wasm : public Font {
 public:
   bool operator==(const Font& f) const override;
@@ -15,7 +15,17 @@ public:
 /**********************************************************************************/
 
 class TextLayout_wasm : public TextLayout {
+private:
+  // shared floats between js
+  static float _bounds[3];
+
+  const unsigned int _id;
+
 public:
+  explicit TextLayout_wasm(unsigned int id);
+
+  ~TextLayout_wasm() noexcept override;
+
   void getBounds(Rect& bounds) override;
 
   void draw(Graphics2D& g2, float x, float y) override;
@@ -40,10 +50,11 @@ private:
   color _color;
   Stroke _stroke;
   Cmds _cmds;
-  float _sx = 1;
-  float _sy = 1;
+  float _sx, _sy;
 
 public:
+  Graphics2D_wasm();
+
   void* getDrawingData();
 
   void setColor(color c) override; // 0
@@ -56,7 +67,7 @@ public:
 
   void setStrokeWidth(float w) override; // 1
 
-  void setDash(const std::vector<float>& dash) override; // todo
+  void setDash(const std::vector<float>& dash) override; // 19
 
   std::vector<float> getDash() override;
 
@@ -87,6 +98,8 @@ public:
   // region EMPTY IMPL - no glyph support
   void drawGlyph(u16 glyph, float x, float y) override;
   // endregion
+
+  void beginPath() override; // 17
 
   void moveTo(float x, float y) override; // 6
 
@@ -121,8 +134,10 @@ public:
     float w, float h,
     float rx, float ry
   ) override; // 16
+
+  void drawTextLayout(unsigned int id, float x, float y); // 18
 };
 
 }
 
-#endif //LATEX_GRAPIHC_WASM_H
+#endif //LATEX_GRAPHIC_WASM_H

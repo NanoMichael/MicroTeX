@@ -43,6 +43,10 @@ void LaTeX::addMathFont(const FontSpec& params) {
   FontContext::addMathFont(params);
 }
 
+void LaTeX::addMathFont(const std::string& name, size_t len, const u8* data) {
+  FontContext::addMathFont(name, len, data);
+}
+
 void LaTeX::setDefaultMathFont(const std::string& name) {
   _defaultMathFontName = name;
 }

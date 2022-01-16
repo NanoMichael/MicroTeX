@@ -274,6 +274,10 @@ void Graphics2D_cairo::drawGlyph(u16 glyph, float x, float y) {
   _context->show_glyphs({g});
 }
 
+void Graphics2D_cairo::beginPath() {
+  _context->begin_new_path();
+}
+
 void Graphics2D_cairo::moveTo(float x, float y) {
   _context->move_to(x, y);
 }
