@@ -18,7 +18,7 @@
       const hello = `
       \\text{Hello Tiny\\kern-.15em\\TeX.}\\\\
       \\text{Press ctrl + enter to show.}
-      `
+      `.trim();
       parse(hello);
       document.getElementById("editor").value = hello;
       listenEdit();
@@ -32,21 +32,34 @@
     });
   }
 
+  function fixDpi(canvas) {
+    let dpi = window.devicePixelRatio;
+    let sw = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
+    let sh = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
+    console.log(`style size: ${sw}, ${sh}, ${dpi}`);
+    // scale
+    canvas.setAttribute('width', sw * dpi);
+    canvas.setAttribute('height', sh * dpi);
+  }
+
   function parse(str) {
     const sizeStr = document.getElementById("textsize").value;
     const size = parseInt(sizeStr);
     const r = tinytex.context.parseRender(str, 1000, size, size / 3, 0x3b3b3b);
     const canvas = document.createElement("canvas");
-    canvas.width = r.getWidth();
-    canvas.height = r.getHeight();
-    const ctx = canvas.getContext('2d');
-    ctx.translate(0.5, 0.5);
-    r.draw(ctx, 0, 0);
-    r.release();
+    canvas.style.width = +r.getWidth() + "px";
+    canvas.style.height = +r.getHeight() + "px";
     // append to left
     const left = document.getElementById("left");
     left.replaceChildren();
     left.appendChild(canvas);
+    // fix dpi
+    fixDpi(canvas);
+    // draw the render
+    const ctx = canvas.getContext('2d');
+    ctx.translate(0.5, 0.5);
+    r.draw(ctx, 0, 0);
+    r.release();
   }
 
   function show() {

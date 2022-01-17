@@ -18,6 +18,9 @@ emcmake cmake -DCMAKE_BUILD_TYPE=Debug -DWASM=ON ..
 emmake make -j8
 
 rm -rf "${web_dir}/dist"
+rm -rf "${web_dir}/gen"
+
+mkdir "${web_dir}/gen"
 
 cp -r "${build_dir}/res" "${web_dir}/demo"
 cp "${build_dir}/platform/wasm/clatexmath-wasm.wasm" "${web_dir}/demo"
