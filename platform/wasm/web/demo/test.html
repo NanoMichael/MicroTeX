@@ -15,10 +15,7 @@
     .context
     .init("./res/XITSMath-Regular-path.clm")
     .then(_ => {
-      const hello = `
-      \\text{Hello Tiny\\kern-.15em\\TeX.}\\\\
-      \\text{Press ctrl + enter to show.}
-      `.trim();
+      const hello = `\\text{Hello Tiny\\kern-.15em\\TeX.}\\\\\\text{Press [Ctrl + Enter] to show.}`;
       parse(hello);
       document.getElementById("editor").value = hello;
       listenEdit();
@@ -33,32 +30,47 @@
   }
 
   function fixDpi(canvas) {
-    let dpi = window.devicePixelRatio;
+    let dpi = window.devicePixelRatio || 1;
+    if (dpi === 1) return;
     let sw = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
     let sh = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
     console.log(`style size: ${sw}, ${sh}, ${dpi}`);
     // scale
-    canvas.setAttribute('width', sw * dpi);
-    canvas.setAttribute('height', sh * dpi);
+    canvas.width = sw * dpi;
+    canvas.height = sh * dpi;
   }
 
   function parse(str) {
     const sizeStr = document.getElementById("textsize").value;
     const size = parseInt(sizeStr);
     const r = tinytex.context.parseRender(str, 1000, size, size / 3, 0x3b3b3b);
-    const canvas = document.createElement("canvas");
-    canvas.style.width = +r.getWidth() + "px";
-    canvas.style.height = +r.getHeight() + "px";
-    // append to left
-    const left = document.getElementById("left");
+
+    const left = document.getElementById("wrapper");
     left.replaceChildren();
-    left.appendChild(canvas);
-    // fix dpi
-    fixDpi(canvas);
+
+    function attach() {
+      const canvas = document.createElement("canvas");
+      canvas.style.width = (r.getWidth() + 4) + "px";
+      canvas.style.height = (r.getHeight() + 4) + "px";
+      canvas.width = r.getWidth() + 4;
+      canvas.height = r.getHeight() + 4;
+      // append to left
+      left.appendChild(canvas);
+      // fix dpi
+      fixDpi(canvas);
+      return canvas;
+    }
+
     // draw the render
-    const ctx = canvas.getContext('2d');
-    ctx.translate(0.5, 0.5);
-    r.draw(ctx, 0, 0);
+    function draw(canvas) {
+      const ctx = canvas.getContext('2d');
+      ctx.translate(2, 2);
+      r.draw(ctx, 0, 0);
+    }
+
+    const canvas = attach();
+    draw(canvas);
+
     r.release();
   }
 
@@ -69,18 +81,71 @@
     const t = document.getElementById("editor");
     parse(t.value);
   }
+
+  function Examples(examplesUrl) {
+    let isInited = false;
+
+    this.isInited = function () {
+      return isInited;
+    }
+
+    fetch(examplesUrl)
+      .then(res => res.text())
+      .then(txt => readExamples(txt));
+
+    let samples = [];
+    let i = -1;
+
+    function readExamples(txt) {
+      const lines = txt.split(/\r?\n/);
+      let str = "";
+      lines.forEach(v => {
+        if (/^%+$/.test(v)) {
+          samples.push(str);
+          str = "";
+        } else {
+          str += v + "\n";
+        }
+      });
+      isInited = true;
+    }
+
+    this.count = function () {
+      return samples.length;
+    }
+
+    this.next = function () {
+      i = (i + 1) % this.count();
+      return samples[i];
+    }
+  }
+
+  const examples = new Examples('./res/SAMPLES.tex');
+
+  function next() {
+    if (!examples.isInited()) {
+      return;
+    }
+    let str = examples.next();
+    parse(str);
+    document.getElementById("editor").value = str;
+  }
 </script>
 
 <div class="topmost">
   <div class="container">
-    <div class="left" id="left"></div>
+
+    <div class="left" id="left">
+      <div id="wrapper"></div>
+    </div>
+
     <div class="right">
       <textarea class="editor" id="editor"></textarea>
       <div class="bottom">
         <label>Change text size:</label>
-        <input class="textsize" id="textsize" type="number" min="5" max="100" step="2" value="20"/>
+        <input class="textsize" id="textsize" type="number" min="5" max="100" step="2" value="30"/>
         <button class="show" onclick="show()">Show</button>
-        <button class="next" id="next">Next example</button>
+        <button class="next" onclick="next()">Next example</button>
       </div>
     </div>
   </div>
