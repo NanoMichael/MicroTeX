@@ -70,6 +70,7 @@ void* Graphics2D_wasm::getDrawingData() {
 }
 
 void Graphics2D_wasm::setColor(color c) {
+  if (_color == c) return;
   _color = c;
   _cmds.put((u8) 0, c);
 }
@@ -77,11 +78,13 @@ void Graphics2D_wasm::setColor(color c) {
 color Graphics2D_wasm::getColor() const { return _color; }
 
 void Graphics2D_wasm::setStroke(const Stroke& s) {
+  if (_stroke == s) return;
   _stroke = s;
   _cmds.put((u8) 1, s.lineWidth, s.miterLimit, s.cap, s.join);
 }
 
 void Graphics2D_wasm::setStrokeWidth(float w) {
+  if (_stroke.lineWidth == w) return;
   _stroke.lineWidth = w;
   _cmds.put((u8) 1, _stroke.lineWidth, _stroke.miterLimit, _stroke.cap, _stroke.join);
 }

@@ -81,6 +81,8 @@ struct Point {
   Point() : x(0), y(0) {}
 
   Point(float x1, float y1) : x(x1), y(y1) {}
+
+  bool operator==(const Point& other) const;
 };
 
 struct Rect {
@@ -89,6 +91,8 @@ struct Rect {
   Rect() : x(0), y(0), w(0), h(0) {}
 
   Rect(float x1, float y1, float w1, float h1) : x(x1), y(y1), w(w1), h(h1) {}
+
+  bool operator==(const Rect& other) const;
 };
 
 /** Stroke cap type */
@@ -116,6 +120,8 @@ struct Stroke {
 
   Stroke(float w, Cap c, Join j, float ml = 0)
     : lineWidth(w), cap(c), join(j), miterLimit(ml) {}
+
+  bool operator==(const Stroke& other) const;
 
   inline void set(float w, Cap c, Join j, float ml = 0) {
     lineWidth = w;

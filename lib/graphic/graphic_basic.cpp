@@ -18,3 +18,18 @@ tex::color tex::decodeColor(const std::string& s) {
   }
   return black;
 }
+
+bool tex::Point::operator==(const Point& other) const {
+  return x == other.x && y == other.y;
+}
+
+bool tex::Rect::operator==(const Rect& other) const {
+  return x == other.x && y == other.y && w == other.w && h == other.h;
+}
+
+bool tex::Stroke::operator==(const Stroke& other) const {
+  return lineWidth == other.lineWidth
+         && miterLimit == other.miterLimit
+         && cap == other.cap
+         && join == other.join;
+}

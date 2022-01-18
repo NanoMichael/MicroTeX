@@ -128,6 +128,7 @@ function Render(nativeRender, isLittleEndian) {
           ctx.miterLimit = miterLimit;
           ctx.lineCap = capMap[cap];
           ctx.lineJoin = joinMap[join];
+          console.log(`stroke: ${lineWidth}`);
           break;
         case 2: // translate
           const t = getF32s(2);
@@ -174,6 +175,7 @@ function Render(nativeRender, isLittleEndian) {
           const dl = getF32s(4);
           ctx.moveTo(dl[0], dl[1]);
           ctx.lineTo(dl[2], dl[3]);
+          console.log(`line(${dl[0]}, ${dl[1]}, ${dl[2]}, ${dl[3]})`);
           ctx.stroke();
           break;
         case 13: // drawRect
