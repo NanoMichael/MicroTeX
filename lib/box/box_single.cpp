@@ -129,32 +129,13 @@ RuleBox::RuleBox(float thickness, float width, float shift, color c, bool truesh
 void RuleBox::draw(Graphics2D& g2, float x, float y) {
   const color oldColor = g2.getColor();
   if (!isTransparent(_color)) g2.setColor(_color);
-  const auto reverse = _height > _width;
-  const auto thickness = reverse ? _width : _height;
   const Stroke oldStroke = g2.getStroke();
-  g2.setStroke(Stroke(thickness, CAP_BUTT, JOIN_BEVEL));
-  y -= _speShift;
-  if (reverse) {
-    x += _width / 2;
-    g2.drawLine(x, y - _height, x, y + _height);
-  } else {
-    y -= _height / 2;
-    g2.drawLine(x, y, x + _width, y);
-  }
+  g2.setStroke(Stroke(_height, CAP_BUTT, JOIN_BEVEL));
+  y = y - _height / 2.f - _speShift;
+  g2.drawLine(x, y, x + _width, y);
   g2.setStroke(oldStroke);
   g2.setColor(oldColor);
 }
-
-//void RuleBox::draw(Graphics2D& g2, float x, float y) {
-//  const color oldColor = g2.getColor();
-//  if (!isTransparent(_color)) g2.setColor(_color);
-//  const Stroke oldStroke = g2.getStroke();
-//  g2.setStroke(Stroke(_height, CAP_BUTT, JOIN_BEVEL));
-//  y = y - _height / 2.f - _speShift;
-//  g2.drawLine(x, y, x + _width, y);
-//  g2.setStroke(oldStroke);
-//  g2.setColor(oldColor);
-//}
 
 DebugBox::DebugBox(const sptr<Box>& base) {
   copyMetrics(base);

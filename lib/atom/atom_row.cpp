@@ -307,12 +307,16 @@ sptr<Box> RowAtom::createBox(Env& env) {
     // 7. Add italic
     curr->setPreviousAtom(_previousAtom);
     auto box = curr->createBox(env);
+    /* FIXME
+     * In most cases we don't care the italic corrections
+     * on math environment, although it is looks crappy
     if (auto cb = dynamic_cast<CharBox*>(box.get());
       cb != nullptr
+      && curr->isMathMode()
       && nextAtom != nullptr
       && nextAtom->isChar()) {
       kern += cb->italic();
-    }
+    }*/
 
     // 8. Append atom's box and kerning to horizontal box
     hbox->add(box);

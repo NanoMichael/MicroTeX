@@ -199,12 +199,13 @@ def read_kern(glyph, kern_subtable_names):
         ...
     ]
     '''
-    return chain(
-        partial(fmap, lambda subtable_name: glyph.getPosSub(subtable_name)),
-        # only care about horizontal kerning
-        partial(filter, lambda kern_info: kern_info[5] != 0),
-        partial(map, lambda kern_info: (kern_info[2], kern_info[5],))
-    )(kern_subtable_names)
+    ks = []
+    for sn in kern_subtable_names:
+        kerns = glyph.getPosSub(sn)
+        for k in kerns:
+            if k[5] != 0:
+                ks.append((k[2], k[5],))
+    return ks
 
 
 def path_cmd_arg_cnt(x):
@@ -247,7 +248,7 @@ def mirror(data):
 
 def read_glyph_path(glyph):
     tf = tempfile.NamedTemporaryFile(suffix='.svg', mode='w+')
-    # keep font coordinate-system, thus decrease y from bottom to up
+    # keep font coordinate-system, thus increase y from bottom to up
     glyph.export(tf.name, usetransform=True)
     string = tf.read()
     tf.close()
@@ -345,11 +346,16 @@ def read_kern_subtables(font):
     '''
     Return array of kerning subtable name
     '''
-    return _read_lookup_subtables(
-        font,
-        lambda lookup_info: lookup_info[0] == 'gpos_pair',
-        lambda subtable_name: not font.isKerningClass(subtable_name)
-    )(font.gpos_lookups)
+    tables = []
+    lookups = font.gpos_lookups
+    for lookup_name in lookups:
+        lookup_info = font.getLookupInfo(lookup_name)
+        if lookup_info and lookup_info[0] == 'gpos_pair':
+            subtable_names = font.getLookupSubtables(lookup_name)
+            for sn in subtable_names:
+                if not font.isKerningClass(sn):
+                    tables.append(sn)
+    return tables
 
 
 def read_ligature_subtables(font):
@@ -512,7 +518,7 @@ def write_glyphs(f, glyphs, glyph_name_id_map, is_math_font, have_glyph_path):
         for v in metrics:
             f.write(struct.pack('!h', int(v)))
 
-    def write_kerns(kerns):
+    def write_kerns(g, kerns):
         if not kerns:
             f.write(struct.pack('!H', 0))
             return
@@ -575,7 +581,7 @@ def write_glyphs(f, glyphs, glyph_name_id_map, is_math_font, have_glyph_path):
 
     for glyph in glyphs:
         write_metrics(glyph[0])
-        write_kerns(glyph[1])
+        write_kerns(glyph[4], glyph[1])
         if is_math_font:
             write_math(glyph[2])
         if have_glyph_path:
@@ -669,8 +675,10 @@ def main():
         print(usage)
         return
     parse_otf(
-        sys.argv[1], sys.argv[2] == 'true',
-        sys.argv[3] == 'true', sys.argv[4]
+        sys.argv[1],
+        sys.argv[2] == 'true',
+        sys.argv[3] == 'true',
+        sys.argv[4]
     )
 
 

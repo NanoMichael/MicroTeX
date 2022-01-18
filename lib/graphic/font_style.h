@@ -37,6 +37,12 @@ enum class FontStyle : u16 {
  */
 FontStyle findClosestStyle(FontStyle src);
 
+/** Test if the given font style is unspecified*/
+bool isUnspecified(FontStyle style);
+
+/** Test if the given font style is roman */
+bool isRoman(FontStyle style);
+
 /** Test if the given font style is bold */
 bool isBold(FontStyle style);
 
