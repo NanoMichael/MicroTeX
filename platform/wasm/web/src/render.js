@@ -47,7 +47,7 @@ function Render(nativeRender, isLittleEndian) {
   }
 
   /**
-   * Get the height above the baseline.
+   * Get the height of the render.
    *
    * @return {Number}
    */
@@ -153,8 +153,9 @@ function Render(nativeRender, isLittleEndian) {
           break;
         case 4: // rotate
           const r = getF32s(3);
-          // todo
+          ctx.translate(r[1], r[2]);
           ctx.rotate(r[0]);
+          ctx.translate(-r[1], -r[2]);
           break;
         case 5: // reset
           ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -199,17 +200,13 @@ function Render(nativeRender, isLittleEndian) {
           break;
         case 15: // drawRoundRect
           const rr = getF32s(6);
-          // todo
           roundRect(rr[0], rr[1], rr[2], rr[3], rr[4], rr[5]);
           ctx.stroke();
-          console.log(`drawRoundRect(${rr[0]}, ${rr[1]}, ${rr[2]}, ${rr[3]}, ${rr[4]}, ${rr[5]})`);
           break;
         case 16: // fillRoundRect
           const rf = getF32s(6);
-          // todo
           roundRect(rf[0], rf[1], rf[2], rf[3], rf[4], rf[5]);
           ctx.fill();
-          console.log(`fillRoundRect(${rf[0]}, ${rf[1]}, ${rf[2]}, ${rf[3]}, ${rf[4]}, ${rf[5]})`);
           break;
         case 17: // beginPath
           ctx.beginPath();
@@ -222,7 +219,6 @@ function Render(nativeRender, isLittleEndian) {
           ctx.font = value.font;
           ctx.fillText(value.text, xy[0], xy[1]);
           ctx.font = old;
-          console.log(`drawTextLayout(${id}, ${xy[0]}, ${xy[1]})`)
           break;
         case 19: // setDash
           const hasDash = getU8() === 1;
@@ -230,7 +226,7 @@ function Render(nativeRender, isLittleEndian) {
           ctx.setLineDash(dash);
           break;
         default:
-          // malformed drawing command
+          // invalid drawing command
           break;
       }
     }
