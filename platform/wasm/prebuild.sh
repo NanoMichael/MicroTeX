@@ -14,7 +14,7 @@ cd "${build_dir}" || return
 
 rm "${build_dir}/platform/wasm/clatexmath-wasm.js"
 
-emcmake cmake -DCMAKE_BUILD_TYPE=Debug -DWASM=ON ..
+emcmake cmake -DCMAKE_BUILD_TYPE=Release -DWASM=ON ..
 emmake make -j8
 
 rm -rf "${web_dir}/dist"

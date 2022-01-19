@@ -106,6 +106,18 @@ function Render(nativeRender, isLittleEndian) {
       return argBuf;
     }
 
+    /** Make a round rectangle. */
+    function roundRect(x, y, w, h, rx, ry) {
+      const r = Math.max(rx, ry);
+      const d = Math.PI / 180;
+      ctx.beginPath();
+      ctx.arc(x + r, y + r, r, 180 * d, 270 * d);
+      ctx.arc(x + w - r, y + r, r, -90 * d, 0);
+      ctx.arc(x + w - r, y + h - r, r, 0, 90 * d);
+      ctx.arc(x + r, y + h - r, r, 90 * d, 180 * d);
+      ctx.closePath();
+    }
+
     const len = getU32();
 
     let sx = 1;
@@ -122,8 +134,8 @@ function Render(nativeRender, isLittleEndian) {
         case 1: // setStroke
           const lineWidth = getF32();
           const miterLimit = getF32();
-          const cap = getF32();
-          const join = getF32();
+          const cap = getU32();
+          const join = getU32();
           ctx.lineWidth = lineWidth;
           ctx.miterLimit = miterLimit;
           ctx.lineCap = capMap[cap];
@@ -188,11 +200,15 @@ function Render(nativeRender, isLittleEndian) {
         case 15: // drawRoundRect
           const rr = getF32s(6);
           // todo
+          roundRect(rr[0], rr[1], rr[2], rr[3], rr[4], rr[5]);
+          ctx.stroke();
           console.log(`drawRoundRect(${rr[0]}, ${rr[1]}, ${rr[2]}, ${rr[3]}, ${rr[4]}, ${rr[5]})`);
           break;
         case 16: // fillRoundRect
           const rf = getF32s(6);
           // todo
+          roundRect(rf[0], rf[1], rf[2], rf[3], rf[4], rf[5]);
+          ctx.fill();
           console.log(`fillRoundRect(${rf[0]}, ${rf[1]}, ${rf[2]}, ${rf[3]}, ${rf[4]}, ${rf[5]})`);
           break;
         case 17: // beginPath
