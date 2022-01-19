@@ -81,7 +81,7 @@ context.init = function (clmDataUri, fontName = "dft") {
     .then(_ => fetch(clmDataUri))
     .then(res => res.arrayBuffer())
     .then(buf => {
-      console.log(fontName + " clm data size: " + buf.byteLength);
+      console.log("init with '" + fontName + "' clm data size: " + buf.byteLength);
       const dft = _runtime.allocateUTF8(fontName);
       const ptr = copyToHeap(buf);
       try {
@@ -122,7 +122,6 @@ context.addMathFont = function (clmDataUri, fontName) {
   return fetch(clmDataUri)
     .then(res => res.arrayBuffer())
     .then(buf => {
-      console.log("add math font, clm data size: " + buf.byteLength);
       const fname = _runtime.allocateUTF8(fontName);
       const ptr = copyToHeap(buf);
       try {
@@ -132,7 +131,7 @@ context.addMathFont = function (clmDataUri, fontName) {
         freeHeap(fname);
         freeHeap(ptr);
       }
-      console.log("add math font " + fontName + "successfully...");
+      console.log("add math font '" + fontName + "' successfully, size: " + buf.byteLength);
     });
 }
 
@@ -146,7 +145,14 @@ context.setMathFont = function (fontName) {
   if (!_mathFonts.includes(fontName)) {
     throw new TypeError("the font `" + fontName + "` was not added.");
   }
+  const cstr = _runtime.allocateUTF8(fontName);
+  try {
+    _runtime._clatex_setDefaultMathFont(cstr);
+  } finally {
+    freeHeap(cstr);
+  }
   _currentFont = fontName;
+  console.log("set math font: " + fontName);
 }
 
 /**
@@ -169,7 +175,7 @@ context.getMathFonts = function () {
  * @param {number} color \#AARRGGBB formatted color
  * @returns {Render} a render to paint the parsed formula
  */
-context.parseRender = function (tex, width, textSize, lineSpace, color) {
+context.parse = function (tex, width, textSize, lineSpace, color) {
   const cstr = _runtime.allocateUTF8(tex);
   let ptr = 0;
   try {

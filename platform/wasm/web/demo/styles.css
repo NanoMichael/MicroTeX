@@ -1,26 +1,40 @@
-.topmost {
-  display: flex;
-  flex-direction: column;
+.container {
+  /* give the outermost container a predefined size */
   position: absolute;
   top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  padding: 8pt;
+
+  display: flex;
+  flex-direction: column;
 }
 
-.container {
+.section {
+  margin: 8px;
+  flex-grow: 1;
+
   display: flex;
   flex-direction: row;
-  align-items: stretch;
-  flex-basis: 100%;
+
+  /* for Firefox */
+  min-height: 0;
 }
 
 .left {
+  flex-grow: 1;
+  overflow: auto;
+  min-height: 0;
   flex-basis: 50%;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #424242;
 }
 
 .right {
+  margin-left: 8px;
+  flex-grow: 1;
+  min-height: 0;
   flex-basis: 50%;
   display: flex;
   flex-direction: column;
@@ -29,7 +43,11 @@
 .editor {
   flex-basis: 100%;
   font-family: monospace;
-  font-size: medium;
+  font-size: 16px;
+  line-height: 1.5;
+  border-style: solid;
+  border-color: #424242;
+  border-width: 1px;
   padding: 8pt;
 }
 
@@ -40,8 +58,16 @@
   margin-top: 8pt;
 }
 
-.textsize {
-  margin-left: 8pt;
+.fonts {
+  margin-left: 8px;
+}
+
+.size-label {
+  margin-left: 8px;
+}
+
+.text-size {
+  margin-left: 8px;
 }
 
 .next {

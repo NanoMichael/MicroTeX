@@ -3,7 +3,7 @@
 <html lang="zh">
 
 <head>
-  <title>Hello</title>
+  <title>TinyTEX</title>
   <meta charset="utf-8">
   <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
@@ -11,35 +11,45 @@
 <body>
 <script src="../dist/index.js"></script>
 <script
-    src="https://pagecdn.io/lib/ace/1.4.13/ace.min.js"
-    crossorigin="anonymous"
-    integrity="sha256-GjtAsBCI/KPlEYQf0I8yNimcThRoWMnk7Vpi+dUt+GY="></script>
-<script src="https://pagecdn.io/lib/ace/1.4.13/mode-latex.min.js" crossorigin="anonymous"></script>
+    src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.13/ace.min.js"
+    integrity="sha512-jB1NOQkR0yLnWmEZQTUW4REqirbskxoYNltZE+8KzXqs9gHG5mrxLR5w3TwUn6AylXkhZZWTPP894xcX/X8Kbg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.13/mode-latex.min.js"
+    integrity="sha512-UW9wpNwFxMAOMYsfMP4KSb8z19IEdSWGofp8d3gwSVPuxxpJjw7MqkDc+OPJPpmnCOleCoUIpBksNX2TrhTR9w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script>
   let editor = null;
+  const fonts = {
+    "xits": "./res/XITSMath-Regular-path.clm",
+    "lm": "./res/latinmodern-math-path.clm",
+    "dejavu": "./res/texgyredejavu-math-path.clm",
+    "fm": "./res/Firamath-Regular-path.clm"
+  };
 
   tinytex
     .context
-    .init("./res/XITSMath-Regular-path.clm")
+    .init(fonts["xits"], "xits")
     .then(_ => {
-      const hello = `\\text{Hello Tiny\\kern-.15em\\TeX.}\\\\\\text{Press [Ctrl + Enter] to show.}`;
-      initEditor();
+      Object.entries(fonts).forEach(([name, path]) => {
+        if (name !== "xits") tinytex.context.addMathFont(path, name);
+      });
+    })
+    .then(_ => {
+      const hello = `\\text{Hello from Tiny\\kern-.1em\\TeX.}`;
       parse(hello);
-      editor.setValue(hello);
-      listenEdit();
+      initEditor(hello);
     });
 
-  function initEditor() {
+  function initEditor(str) {
     editor = ace.edit("editor");
     editor.session.setMode("ace/mode/latex");
     editor.getSession().setTabSize(2);
-  }
-
-  function listenEdit() {
-    editor.addEventListener("keypress", ev => {
-      if (ev.ctrlKey && ev.key === "Enter") {
-        show();
+    editor.setValue(str);
+    editor.getSession().on('change', () => {
+      if (tinytex.context.isInited()) {
+        parse(editor.getValue());
       }
     });
   }
@@ -55,22 +65,34 @@
     canvas.height = sh * dpi;
   }
 
+  const padding = 16;
+
   function parse(str) {
+    // get text size
     const sizeStr = document.getElementById("textsize").value;
     const size = parseInt(sizeStr);
-    const r = tinytex.context.parseRender(str, 1000, size, size / 3, 0x3b3b3b);
+    // get content width
+    let width = document.getElementById("left").offsetWidth - padding;
 
-    const left = document.getElementById("wrapper");
-    left.replaceChildren();
+    let r = null;
+    try {
+      r = tinytex.context.parse(str, width, size, size / 3, 0x3b3b3b);
+    } catch (e) {
+      console.log(e);
+      return;
+    }
+
+    const wrapper = document.getElementById("wrapper");
+    wrapper.replaceChildren();
 
     function attach() {
       const canvas = document.createElement("canvas");
-      canvas.style.width = (r.getWidth() + 4) + "px";
-      canvas.style.height = (r.getHeight() + 4) + "px";
-      canvas.width = r.getWidth() + 4;
-      canvas.height = r.getHeight() + 4;
+      canvas.style.width = (r.getWidth() + padding) + "px";
+      canvas.style.height = (r.getHeight() + padding) + "px";
+      canvas.width = r.getWidth() + padding;
+      canvas.height = r.getHeight() + padding;
       // append to left
-      left.appendChild(canvas);
+      wrapper.appendChild(canvas);
       // fix dpi
       fixDpi(canvas);
       return canvas;
@@ -79,21 +101,13 @@
     // draw the render
     function draw(canvas) {
       const ctx = canvas.getContext('2d');
-      ctx.translate(2, 2);
-      r.draw(ctx, 0, 0);
+      r.draw(ctx, padding / 2, padding / 2);
     }
 
     const canvas = attach();
     draw(canvas);
 
     r.release();
-  }
-
-  function show() {
-    if (!tinytex.context.isInited()) {
-      return;
-    }
-    parse(editor.getValue());
   }
 
   function Examples(examplesUrl) {
@@ -137,18 +151,33 @@
   const examples = new Examples('./res/SAMPLES.tex');
 
   function next() {
-    if (!examples.isInited()) {
+    if (!examples.isInited() || !tinytex.context.isInited()) {
       return;
     }
     let str = examples.next();
     parse(str);
     editor.setValue(str);
   }
+
+  function changeFont() {
+    if (!tinytex.context.isInited()) {
+      return;
+    }
+    const option = document.getElementById("fonts").value;
+    tinytex.context.setMathFont(option);
+    parse(editor.getValue());
+  }
+
+  function changeSize() {
+    if (!tinytex.context.isInited()) {
+      return;
+    }
+    parse(editor.getValue());
+  }
 </script>
 
-<div class="topmost">
-  <div class="container">
-
+<div class="container">
+  <div class="section">
     <div class="left" id="left">
       <div id="wrapper"></div>
     </div>
@@ -156,9 +185,18 @@
     <div class="right">
       <div class="editor" id="editor"></div>
       <div class="bottom">
-        <label>Change text size:</label>
-        <input class="textsize" id="textsize" type="number" min="5" max="100" step="2" value="30"/>
-        <button class="show" onclick="show()">Show</button>
+        <label>Math font:</label>
+        <select id="fonts" class="fonts" onchange="changeFont()">
+          <option value="xits">xits</option>
+          <option value="lm">latin-modern</option>
+          <option value="dejavu">texgyre-dejavu</option>
+          <option value="fm">Firamath</option>
+        </select>
+        <label class="size-label">Text size:</label>
+        <input
+            class="text-size" id="textsize"
+            type="number" min="5" max="100" step="2" value="30"
+            onchange="changeSize()"/>
         <button class="next" onclick="next()">Next example</button>
       </div>
     </div>
