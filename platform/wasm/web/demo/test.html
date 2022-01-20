@@ -21,19 +21,35 @@
 
 <script>
   let editor = null;
-  const fonts = {
+  // the math fonts
+  const mathFonts = {
     "xits": "./res/XITSMath-Regular-path.clm",
     "lm": "./res/latinmodern-math-path.clm",
     "dejavu": "./res/texgyredejavu-math-path.clm",
     "fm": "./res/Firamath-Regular-path.clm"
   };
+  // the main fonts
+  const mainFonts = {
+    "xits": {
+      "rm": "./res/XITS-Regular-path.clm"
+      // "it": "./res/XITS-Italic-path.clm",
+      // "bf": "./res/XITS-Bold-path.clm",
+      // "bfit": "./res/XITS-BoldItalic-path.clm"
+    }
+  }
 
   tinytex
     .context
-    .init(fonts["xits"], "xits")
+    .init(mathFonts["xits"], "xits")
     .then(_ => {
-      Object.entries(fonts).forEach(([name, path]) => {
+      Object.entries(mathFonts).forEach(([name, path]) => {
         if (name !== "xits") tinytex.context.addMathFont(path, name);
+      });
+    })
+    .then(_ => {
+      const xits = mainFonts.xits;
+      Object.entries(xits).forEach(([style, path]) => {
+        tinytex.context.addMainFont("xits", path, style);
       });
     })
     .then(_ => {

@@ -15,7 +15,8 @@ void CLATEX_WASM_API clatex_init(
   unsigned long len,
   const unsigned char* data
 ) {
-  LaTeX::init(name, len, data);
+  FontSrcData src{name, len, data};
+  LaTeX::init(src);
 }
 
 void CLATEX_WASM_API clatex_release() {
@@ -31,11 +32,28 @@ void CLATEX_WASM_API clatex_addMathFont(
   unsigned long len,
   const unsigned char* data
 ) {
-  LaTeX::addMathFont(name, len, data);
+  FontSrcData src{name, len, data};
+  LaTeX::addMathFont(src);
+}
+
+void CLATEX_WASM_API clatex_addMainFont(
+  const char* familyName,
+  const char* styleName,
+  unsigned long len,
+  const unsigned char* data
+) {
+  auto src = std::make_unique<FontSrcData>(styleName, len, data);
+  FontSrcList list;
+  list.push_back(std::move(src));
+  LaTeX::addMainFont(familyName, list);
 }
 
 void CLATEX_WASM_API clatex_setDefaultMathFont(const char* name) {
   LaTeX::setDefaultMathFont(name);
+}
+
+void CLATEX_WASM_API clatex_setDefaultMainFont(const char* name) {
+  LaTeX::setDefaultMainFont(name);
 }
 
 void* CLATEX_WASM_API clatex_parseRender(

@@ -12,6 +12,7 @@ namespace tex {
 class CLATEXMATH_EXPORT LaTeX {
 private:
   static volatile bool _isInited;
+  static std::string _defaultMainFontName;
   static std::string _defaultMathFontName;
 
 #if GLYPH_RENDER_TYPE == 0
@@ -53,9 +54,21 @@ public:
    * was not given.
    *
    * @param name the math font name, must exists or an `ex_invalid_param`
-   *   will be thrown.
+   * will be thrown when parsing.
    */
   static void setDefaultMathFont(const std::string& name);
+
+  /**
+   * Set the default main font to show formulas while main font
+   * was not given. However, if no main font was loaded, the engine
+   * will use the math font to render the glyphs wrapped by command
+   * `text`.
+   *
+   * @param name the main font name, this function will takes no
+   * effect if it is empty, or if the font was not loaded, an
+   * `ex_invalid_param` will be thrown when parsing.
+   */
+  static void setDefaultMainFont(const std::string& name);
 
   /**
    * Override the style to display formulas. If #enable is true, the '$', '$$',

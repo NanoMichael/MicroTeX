@@ -60,6 +60,8 @@ public:
   FontSrc(std::string name, std::string fontFile);
 
   virtual sptr<Otf> loadOtf() const = 0;
+
+  virtual ~FontSrc() = default;
 };
 
 /** Font source from file. */

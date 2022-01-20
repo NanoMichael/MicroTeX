@@ -9,6 +9,7 @@ using namespace tex;
 
 volatile bool LaTeX::_isInited = false;
 std::string LaTeX::_defaultMathFontName;
+std::string LaTeX::_defaultMainFontName;
 
 void LaTeX::init(const FontSrc& mathFontSrc) {
   FontContext::addMathFont(mathFontSrc);
@@ -42,6 +43,10 @@ void LaTeX::setDefaultMathFont(const std::string& name) {
   _defaultMathFontName = name;
 }
 
+void LaTeX::setDefaultMainFont(const std::string& name) {
+  _defaultMainFontName = name;
+}
+
 void LaTeX::overrideTexStyle(bool enable, TexStyle style) {
   RenderBuilder::overrideTexStyle(enable, style);
 }
@@ -71,7 +76,7 @@ Render* LaTeX::parse(
     .setStyle(isInline ? TexStyle::text : TexStyle::display)
     .setTextSize(textSize)
     .setMathFontName(mathFontName.empty() ? _defaultMathFontName : mathFontName)
-    .setMainFontName(mainFontName)
+    .setMainFontName(mainFontName.empty() ? _defaultMainFontName : mainFontName)
     .setWidth(UnitType::pixel, width, align)
     .setIsMaxWidth(isInline)
     .setLineSpace(UnitType::pixel, lineSpace)

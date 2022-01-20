@@ -6,7 +6,15 @@ import {Render} from './render';
 let context = {};
 
 /**
- * The loaded font names.
+ * The loaded main font
+ *
+ * @type {String[]}
+ * @private
+ */
+let _mainFonts = [];
+
+/**
+ * The loaded math font names.
  *
  * @type {String[]}
  * @private
@@ -14,12 +22,20 @@ let context = {};
 let _mathFonts = [];
 
 /**
- * The current font name.
+ * The current math font name.
  *
  * @type {string}
  * @private
  */
-let _currentFont = "";
+let _currentMathFont = "";
+
+/**
+ * The current main font name.
+ *
+ * @type {string}
+ * @private
+ */
+let _currentMainFont = "";
 
 /**
  * The byte order
@@ -87,7 +103,7 @@ context.init = function (clmDataUri, fontName = "dft") {
       try {
         _runtime._clatex_init(dft, buf.byteLength, ptr);
         _mathFonts.push(fontName);
-        _currentFont = fontName;
+        _currentMathFont = fontName;
         _isLittleEndian = _runtime._clatex_isLittleEndian();
       } finally {
         freeHeap(ptr);
@@ -104,6 +120,61 @@ context.release = function () {
 /** Check if context is initialized. */
 context.isInited = function () {
   return _runtime._clatex_isInited();
+}
+
+/**
+ * Add a main font to context.
+ *
+ * @param {String} familyName the font family name
+ * @param {String} clmDataUri the clm data uri
+ * @param {String} styleName the font style name,
+ * e.g: rm(stands for roman), bold(stands for bold) etc
+ */
+context.addMainFont = function (familyName, clmDataUri, styleName) {
+  return fetch(clmDataUri)
+    .then(res => res.arrayBuffer())
+    .then(buf => {
+      const fname = _runtime.allocateUTF8(familyName);
+      const sname = _runtime.allocateUTF8(styleName);
+      const ptr = copyToHeap(buf);
+      try {
+        _runtime._clatex_addMainFont(fname, sname, buf.byteLength, ptr);
+        _mainFonts.push(familyName);
+      } finally {
+        freeHeap(fname);
+        freeHeap(sname);
+        freeHeap(ptr);
+      }
+      if (_currentMainFont === "") {
+        this.setMainFont(familyName);
+      }
+      console.log(
+        "add main font, family: '" + familyName
+        + "', style: '" + styleName
+        + "' successfully, size: "
+        + buf.byteLength
+      );
+    })
+}
+
+/**
+ * Set main font to render formulas. The font MUST be added to the context.
+ *
+ * @param {String} familyName the family name
+ * @throws {TypeError} if the font was not added
+ */
+context.setMainFont = function (familyName) {
+  if (!_mainFonts.includes(familyName)) {
+    throw new TypeError("the font family `" + familyName + "` has no font.");
+  }
+  const cstr = _runtime.allocateUTF8(familyName);
+  try {
+    _runtime._clatex_setDefaultMainFont(cstr);
+  } finally {
+    freeHeap(cstr);
+  }
+  _currentMainFont = familyName;
+  console.log("set main font: " + familyName);
 }
 
 /**
@@ -151,7 +222,7 @@ context.setMathFont = function (fontName) {
   } finally {
     freeHeap(cstr);
   }
-  _currentFont = fontName;
+  _currentMathFont = fontName;
   console.log("set math font: " + fontName);
 }
 
