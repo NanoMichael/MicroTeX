@@ -23,22 +23,9 @@ public:
    * Initialize LaTeX context with given math font spec, at least we need
    * a math font to layout formulas.
    *
-   * @param mathFontSpec the font spec to load math font
+   * @param mathFontSrc the font source to load math font
    */
-  static void init(const FontSpec& mathFontSpec);
-
-  /**
-   * Initialize LaTeX context with given math font spec, using byte buffer,
-   * at least we need a math font to layout formulas.
-   *
-   * @param name the name of the math font spec
-   * @param len buffer length
-   * @param data the clm byte buffer
-   */
-  static void init(
-    const std::string& name,
-    size_t len, const u8* data
-  );
+  static void init(const FontSrc& mathFontSrc);
 
   /** Check if context is initialized */
   static bool isInited();
@@ -47,28 +34,19 @@ public:
    * Add main font (collection) to context.
    *
    * @param name the name of the font (collection)
-   * @param params font spec to load
+   * @param srcs font spec to load
    */
-  static void addMainFont(const std::string& name, const std::vector<FontSpec>& params);
+  static void addMainFont(
+    const std::string& name,
+    const std::vector<std::unique_ptr<FontSrc>>& srcs
+  );
 
   /**
    * Add math font to context.
    *
-   * @param params font spec to load
+   * @param src font source to load
    */
-  static void addMathFont(const FontSpec& params);
-
-  /**
-   * Add a math font to context, using byte buffer.
-   *
-   * @param name the name of the math font spec
-   * @param len buffer length
-   * @param data the clm byte buffer
-   */
-  static void addMathFont(
-    const std::string& name,
-    size_t len, const u8* data
-  );
+  static void addMathFont(const FontSrc& src);
 
   /**
    * Set the default math font to show formulas while math font

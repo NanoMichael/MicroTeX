@@ -517,7 +517,7 @@ int main(int argc, char* argv[]) {
   }
 
   Pango::init();
-  const FontSpec math{mathVersionName, mathFont, clmFile};
+  const FontSrcFile math{mathVersionName, clmFile, mathFont};
   LaTeX::init(math);
 
   PlatformFactory::registerFactory("gtk", std::make_unique<PlatformFactory_cairo>());

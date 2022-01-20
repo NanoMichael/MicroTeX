@@ -10,17 +10,9 @@ using namespace tex;
 volatile bool LaTeX::_isInited = false;
 std::string LaTeX::_defaultMathFontName;
 
-void LaTeX::init(const FontSpec& mathFontSpec) {
-  FontContext::addMathFont(mathFontSpec);
-  _defaultMathFontName = mathFontSpec.name;
-  if (_isInited) return;
-  _isInited = true;
-  NewCommandMacro::_init_();
-}
-
-void LaTeX::init(const std::string& name, size_t len, const u8* data) {
-  FontContext::addMathFont(name, len, data);
-  _defaultMathFontName = name;
+void LaTeX::init(const FontSrc& mathFontSrc) {
+  FontContext::addMathFont(mathFontSrc);
+  _defaultMathFontName = mathFontSrc.name;
   if (_isInited) return;
   _isInited = true;
   NewCommandMacro::_init_();
@@ -35,16 +27,15 @@ void LaTeX::release() {
   NewCommandMacro::_free_();
 }
 
-void LaTeX::addMainFont(const std::string& name, const std::vector<FontSpec>& params) {
-  FontContext::addMainFonts(name, params);
+void LaTeX::addMainFont(
+  const std::string& name,
+  const std::vector<std::unique_ptr<FontSrc>>& srcs
+) {
+  FontContext::addMainFonts(name, srcs);
 }
 
-void LaTeX::addMathFont(const FontSpec& params) {
-  FontContext::addMathFont(params);
-}
-
-void LaTeX::addMathFont(const std::string& name, size_t len, const u8* data) {
-  FontContext::addMathFont(name, len, data);
+void LaTeX::addMathFont(const FontSrc& src) {
+  FontContext::addMathFont(src);
 }
 
 void LaTeX::setDefaultMathFont(const std::string& name) {

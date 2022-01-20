@@ -16,6 +16,7 @@ namespace tex {
 /** Represents an open-type font with font-file and font-spec */
 struct OtfFont final {
   const i32 id;
+  /** The font file path, may be empty if glyphs are drawn by graphical-paths. */
   const std::string fontFile;
   const sptr<const Otf> otfSpec;
 
@@ -43,12 +44,58 @@ public:
   sptr<const OtfFont> get(FontStyle style) const;
 };
 
-/** Parameters to load a font */
-struct FontSpec {
+/*********************************************************************************/
+
+/** Source to load font. */
+class FontSrc {
+public:
+  /**
+   * The name(or style name if this font belongs to a font collection)
+   * of this font.
+   */
   const std::string name;
+  /** The font file path, may be empty if glyphs are drawn by graphical-paths. */
   const std::string fontFile;
-  const std::string clmFile;
+
+  FontSrc(std::string name, std::string fontFile);
+
+  virtual sptr<Otf> loadOtf() const = 0;
 };
+
+/** Font source from file. */
+class FontSrcFile : public FontSrc {
+public:
+  const std::string clmFile;
+  const std::string fontFile;
+
+  FontSrcFile(
+    std::string name,
+    std::string clmFile,
+    std::string fontFile = ""
+  );
+
+  sptr<Otf> loadOtf() const override;
+};
+
+/** Font source from data. */
+class FontSrcData : public FontSrc {
+public:
+  const size_t len;
+  const u8* data;
+
+  FontSrcData(
+    std::string name,
+    size_t len,
+    const u8* data,
+    std::string fontFile = ""
+  );
+
+  sptr<Otf> loadOtf() const override;
+};
+
+using FontSrcList = std::vector<std::unique_ptr<FontSrc>>;
+
+/*********************************************************************************/
 
 class FontContext {
 private:
@@ -62,8 +109,6 @@ private:
   sptr<const OtfFont> _mathFont = nullptr;
 
   static sptr<FontFamily> getOrCreateFontFamily(const std::string& version);
-
-  static void addMainFont(const sptr<FontFamily>& family, const FontSpec& param);
 
 public:
   no_copy_assign(FontContext);
@@ -92,34 +137,16 @@ public:
    * Add main font (collection) to context.
    *
    * @param versionName the name of this font (collection)
-   * @param params font-spec to load
+   * @param params font-spec to load, the name of the font-spec is the font
+   * style, e.g: rm(stands for roman), bf(stands for bold) etc.
    */
   static void addMainFonts(
     const std::string& versionName,
-    const std::vector<FontSpec>& params
-  );
-
-  /**
-   * Add a main font to context.
-   *
-   * @param versionName the name of the main font collection
-   * @param param font-spec to load
-   */
-  static void addMainFont(
-    const std::string& versionName,
-    const FontSpec& param
+    const FontSrcList& srcs
   );
 
   /** Add math font to context. */
-  static void addMathFont(const FontSpec& params);
-
-  // todo
-  static void addMathFont(
-    const std::string& name,
-    size_t len,
-    const u8* data,
-    const std::string& fontFile = ""
-  );
+  static void addMathFont(const FontSrc& src);
 
   /** Check if has math font */
   static bool hasMathFont();

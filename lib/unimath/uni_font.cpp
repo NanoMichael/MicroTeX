@@ -11,6 +11,8 @@ namespace tex {
 OtfFont::OtfFont(i32 id, sptr<const Otf> spec, std::string fontFile) noexcept
   : id(id), fontFile(std::move(fontFile)), otfSpec(std::move(spec)) {}
 
+/*********************************************************************************/
+
 FontStyle FontFamily::fontStyleOf(const std::string& name) {
   // TODO: more composed styles
   static const map<string, FontStyle> nameStyle{
@@ -41,6 +43,32 @@ sptr<const OtfFont> FontFamily::get(FontStyle style) const {
   }
   return it->second;
 }
+
+/*********************************************************************************/
+
+FontSrc::FontSrc(std::string name, std::string fontFile)
+  : name(std::move(name)),
+    fontFile(std::move(fontFile)) {}
+
+FontSrcFile::FontSrcFile(std::string name, std::string clmFile, std::string fontFile)
+  : FontSrc(std::move(name), std::move(fontFile)),
+    clmFile(std::move(clmFile)),
+    fontFile(std::move(fontFile)) {}
+
+sptr<Otf> FontSrcFile::loadOtf() const {
+  return sptr<Otf>(Otf::fromFile(clmFile.c_str()));
+}
+
+FontSrcData::FontSrcData(std::string name, size_t len, const u8* data, std::string fontFile)
+  : FontSrc(std::move(name), std::move(fontFile)),
+    len(len),
+    data(data) {}
+
+sptr<Otf> FontSrcData::loadOtf() const {
+  return sptr<Otf>(Otf::fromData(len, data));
+}
+
+/*********************************************************************************/
 
 int FontContext::_lastId = 0;
 vector<sptr<const OtfFont>> FontContext::_fonts;
@@ -91,49 +119,24 @@ sptr<FontFamily> FontContext::getOrCreateFontFamily(const std::string& version) 
   return f;
 }
 
-void FontContext::addMainFont(const sptr<FontFamily>& family, const FontSpec& param) {
-  const auto&[style, font, clm] = param;
-  auto spec = sptr<Otf>(Otf::fromFile(clm.c_str()));
-  auto otf = sptrOf<const OtfFont>(_lastId++, spec, font);
-  _fonts.push_back(otf);
-  family->add(style, otf);
-}
-
-void FontContext::addMainFonts(const string& versionName, const vector<FontSpec>& params) {
+void FontContext::addMainFonts(const std::string& versionName, const FontSrcList& srcs) {
   auto f = getOrCreateFontFamily(versionName);
-  for (const auto& p : params) {
-    addMainFont(f, p);
+  for (const auto& src : srcs) {
+    auto spec = src->loadOtf();
+    auto otf = sptrOf<OtfFont>(_lastId++, spec, src->fontFile);
+    _fonts.push_back(otf);
+    f->add(src->name, otf);
   }
 }
 
-void FontContext::addMainFont(const std::string& versionName, const FontSpec& param) {
-  auto f = getOrCreateFontFamily(versionName);
-  addMainFont(f, param);
-}
-
-void FontContext::addMathFont(const FontSpec& params) {
-  auto it = std::find_if(
-    _fonts.begin(), _fonts.end(),
-    [&](sptr<const OtfFont>& x) { return x->fontFile == params.fontFile; }
-  );
-  if (it != _fonts.end()) {
+void FontContext::addMathFont(const FontSrc& src) {
+  const auto& name = src.name;
+  if (_mathFonts.find(name) != _mathFonts.end()) {
     // already loaded
     return;
   }
-  const auto&[version, font, clm] = params;
-  auto spec = sptr<Otf>(Otf::fromFile(clm.c_str()));
-  auto otf = sptrOf<OtfFont>(_lastId++, spec, font);
-  _fonts.push_back(otf);
-  _mathFonts[version] = otf;
-}
-
-void FontContext::addMathFont(
-  const std::string& name,
-  size_t len, const u8* data,
-  const std::string& fontFile
-) {
-  auto spec = sptr<Otf>(Otf::fromData(len, data));
-  auto otf = sptrOf<OtfFont>(_lastId++, spec, fontFile);
+  auto spec = src.loadOtf();
+  auto otf = sptrOf<OtfFont>(_lastId++, spec, src.fontFile);
   _fonts.push_back(otf);
   _mathFonts[name] = otf;
 }
