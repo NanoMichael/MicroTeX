@@ -93,6 +93,8 @@ public:
 
   void drawGlyph(u16 glyph, float x, float y) override {}
 
+  void beginPath() override {}
+
   void moveTo(float x, float y) override {}
 
   void lineTo(float x, float y) override {}
@@ -121,17 +123,24 @@ public:
 #include "samples.h"
 
 int main(int argc, char* argv[]) {
-  const tex::FontSpec math{
-    "xits",
-    "/home/nano/Downloads/xits/XITSMath-Regular.otf",
-    "../../res/XITSMath-Regular.clm"
-  };
+  if (argc < 5) {
+    fprintf(
+      stderr,
+      "Required options:\n"
+      "  <math font name>\n"
+      "  <clm data file>\n"
+      "  <math font file>\n"
+      "  <samples file>\n"
+    );
+    return 1;
+  }
+  const tex::FontSrcFile math{argv[1], argv[2], argv[3]};
   tex::LaTeX::init(math);
 
   tex::PlatformFactory::registerFactory("none", std::make_unique<tex::PlatformFactory_none>());
   tex::PlatformFactory::activate("none");
 
-  tex::Samples samples("../../res/SAMPLES.tex");
+  tex::Samples samples(argv[4]);
   for (int i = 0; i < samples.count(); i++) {
     auto r = tex::LaTeX::parse(samples.next(), 720, 20, 20 / 3.f, tex::black);
     tex::Graphics2D_none g2;

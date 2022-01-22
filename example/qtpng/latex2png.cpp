@@ -16,7 +16,7 @@
 
 class TexGuard {
 public:
-  TexGuard(const tex::FontSpec& math) {
+  TexGuard(const tex::FontSrc& math) {
     tex::LaTeX::init(math);
     tex::PlatformFactory::registerFactory("qt", std::make_unique<tex::PlatformFactory_qt>());
     tex::PlatformFactory::activate("qt");
@@ -69,10 +69,10 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  tex::FontSpec math{
+  tex::FontSrcFile math{
     "xits",
-    mathFontPath.toStdString(),
-    clmPath.toStdString()
+    clmPath.toStdString(),
+    mathFontPath.toStdString()
   };
 
   TexGuard texGuard(math);

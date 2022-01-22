@@ -51,7 +51,7 @@ std::string PathCmd::toString() const {
 }
 
 PathCmd::~PathCmd() {
-  delete args;
+  delete[] args;
 }
 
 Path Path::empty(0, nullptr);

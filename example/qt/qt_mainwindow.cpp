@@ -12,7 +12,8 @@
 using namespace std;
 
 // todo
-MainWindow::MainWindow(QWidget* parent) : QWidget(parent), _samples("../../res/SAMPLES.tex") {
+MainWindow::MainWindow(QWidget* parent, const std::string& samplesFile)
+  : QWidget(parent), _samples(samplesFile) {
   int text_size = 20;
 
   // main layout for window

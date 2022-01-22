@@ -19,7 +19,7 @@ atom_src = [
     'atom/atom_text.cpp',
     'atom/atom_vrow.cpp',
     'atom/atom_zstack.cpp',
-    'atom/colors_def.cpp'
+    'atom/colors_def.cpp',
 ]
 
 if install_headerfiles
