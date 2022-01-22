@@ -1,8 +1,15 @@
-name: Ubuntu GTK
+name: Ubuntu
 
 on:
-  - push
-  - pull_request
+  push:
+    branches:
+      - master
+      - openmath
+      - wasm
+  pull_request:
+    branches:
+      - master
+      - openmath
 
 jobs:
   build_by_meson:
@@ -42,13 +49,15 @@ jobs:
       - name: Downloading Source Code 📥
         uses: actions/checkout@v2
       - name: Downloading dependencies 📥
-        run: sudo apt-get install build-essential meson libgtksourceviewmm-3.0-dev libgtkmm-3.0-dev
+        run: |
+          sudo apt-get install build-essential meson libgtksourceviewmm-3.0-dev libgtkmm-3.0-dev
+          sudo apt-get install qt5-default qttools5-dev-tools
       - name: Configure 🔧
         run: |
           cd ${{ github.workspace }}
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release -G Ninja
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DGTK=ON -DBUILD_EXAMPLE_GTK=ON -DQT=ON -DBUILD_EXAMPLE_QT=ON -DBUILD_EXAMPLE_QTPNG=ON -DBUILD_EXAMPLE_MEMCHECK=ON -DWASM=OFF -DHAVE_LOG=ON -G Ninja
       - name: Compile 🎲
         run: |
           cd ${{ github.workspace }}
