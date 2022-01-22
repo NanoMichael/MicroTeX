@@ -34,6 +34,13 @@
       format,             \
       ##__VA_ARGS__       \
     );
+
+#define loge(format, ...) \
+    fprintf(              \
+      stderr,             \
+      format,             \
+      ##__VA_ARGS__       \
+    );
 #endif
 
 #endif

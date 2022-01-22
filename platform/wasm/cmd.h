@@ -1,24 +1,23 @@
 #ifndef LATEX_CMD_H
 #define LATEX_CMD_H
 
-#include <cstdlib>
-#include <memory>
-
 namespace tex {
+
+using len_t = unsigned int;
 
 class Cmds {
 private:
-  static constexpr size_t CHUNK_SIZE = 4 * 1024; // 4KB
+  static constexpr len_t CHUNK_SIZE = 4 * 1024; // 4KB
 
-  static inline size_t sizeOf() { return 0; }
+  static inline len_t sizeOf() { return 0; }
 
   template<typename T, typename... Ts>
-  static size_t sizeOf(const T& t, const Ts& ... ts) {
+  static len_t sizeOf(const T& t, const Ts& ... ts) {
     return sizeof(T) + sizeOf(ts...);
   }
 
-  size_t index;
-  size_t capacity;
+  len_t index;
+  len_t capacity;
   void* data;
 
   inline void _put() {}
@@ -37,7 +36,7 @@ private:
     _put(ts...);
   }
 
-  void ensureCapacity(size_t required);
+  void ensureCapacity(len_t required);
 
 public:
 

@@ -74,7 +74,7 @@ c32 toUnicodeLower(c32 code);
 
 /** 
  * Binary-search for the index of the given target in a container. The items in the container must be
- * sorted ascending.
+ * sorted.
  * 
  * @param count total count of elements in the container
  * @param compare function to compare between the target value and the value at the given index
@@ -85,7 +85,7 @@ c32 toUnicodeLower(c32 code);
  */
 int binIndexOf(
   int count,
-  const std::function<int(int)>&& compare,
+  const std::function<int(int)>& compare,
   bool returnClosest = false
 );
 

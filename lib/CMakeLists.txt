@@ -78,7 +78,6 @@ target_sources(
     graphic/font_style.cpp
     graphic/graphic_basic.cpp
     graphic/graphic.cpp
-    # graphic/graphic_svg.cpp
 
     latex.cpp
     render.cpp

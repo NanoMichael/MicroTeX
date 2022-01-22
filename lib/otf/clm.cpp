@@ -151,7 +151,7 @@ void CLMReader::readClassKernings(Otf& font, BinaryReader& reader) {
 
 LigaTable* CLMReader::readLigatures(BinaryReader& reader) {
   const u16 glyph = reader.read<u16>();
-  const u32 liga = reader.read<i32>();
+  const i32 liga = reader.read<i32>();
   const u16 childCount = reader.read<u16>();
   auto* t = new LigaTable(glyph, liga, childCount);
   for (u16 i = 0; i < childCount; i++) {

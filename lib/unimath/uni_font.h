@@ -68,7 +68,6 @@ public:
 class FontSrcFile : public FontSrc {
 public:
   const std::string clmFile;
-  const std::string fontFile;
 
   FontSrcFile(
     std::string name,
@@ -142,7 +141,7 @@ public:
    * @param params font-spec to load, the name of the font-spec is the font
    * style, e.g: rm(stands for roman), bf(stands for bold) etc.
    */
-  static void addMainFonts(
+  static void addMainFont(
     const std::string& versionName,
     const FontSrcList& srcs
   );

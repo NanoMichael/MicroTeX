@@ -23,7 +23,7 @@ macro(intertext) {
 }
 
 macro(addmathfont) {
-  FontContext::addMathFont(FontSrcFile(args[1], args[2], args[3]));
+  LaTeX::addMathFont(FontSrcFile(args[1], args[2], args[3]));
   return nullptr;
 }
 
@@ -31,7 +31,7 @@ macro(addmainfont) {
   auto src = std::make_unique<FontSrcFile>(args[2], args[3], args[4]);
   FontSrcList srcs;
   srcs.push_back(std::move(src));
-  FontContext::addMainFonts(args[1], srcs);
+  LaTeX::addMainFont(args[2], srcs);
   return nullptr;
 }
 

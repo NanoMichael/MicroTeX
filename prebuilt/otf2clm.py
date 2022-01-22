@@ -362,25 +362,32 @@ def read_ligature_subtables(font):
     '''
     Return array of ligture subtable name
     '''
-    return _read_lookup_subtables(
-        font,
-        lambda lookup_info: lookup_info[0] == 'gsub_ligature',
-    )(font.gsub_lookups)
+    tables = []
+    lookups = font.gsub_lookups
+    for lookup_name in lookups:
+        lookup_info = font.getLookupInfo(lookup_name)
+        if lookup_info and lookup_info[0] == 'gsub_ligature':
+            subtable_names = font.getLookupSubtables(lookup_name)
+            for sn in subtable_names:
+                tables.append(sn)
+    return tables
 
 
 def read_ligatures(glyph, liga_subtable_names):
     '''
-    Return array of ligatures info represents by this glyph
+    Return array of ligatures info represents by this glyph,
+    the glyph id is the ligature
     [
         ((glyph_name, glyph_name, ...), glyph_id),
         ...
     ]
     '''
-    get_ligas = chain(
-        partial(fmap, lambda subtable_name: glyph.getPosSub(subtable_name)),
-        partial(map, lambda liga_info: (liga_info[2:], glyph.originalgid,))
-    )
-    return get_ligas(liga_subtable_names)
+    ligs = []
+    for sn in liga_subtable_names:
+        liga_infos = glyph.getPosSub(sn)
+        for info in liga_infos:
+            ligs.append((info[2:], glyph.originalgid,))
+    return ligs
 
 
 def read_kerning_class(font):
@@ -406,15 +413,16 @@ def read_kerning_class(font):
         )
     )
     '''
-    get_tables = chain(
-        _read_lookup_subtables(
-            font,
-            lambda lookup_info: lookup_info[0] == 'gpos_pair',
-            lambda subtable_name: font.isKerningClass(subtable_name)
-        ),
-        partial(map, lambda subtable_name: font.getKerningClass(subtable_name))
-    )
-    return get_tables(font.gpos_lookups)
+    kerns = []
+    lookups = font.gpos_lookups
+    for ln in lookups:
+        li = font.getLookupInfo(ln)
+        if li and li[0] == 'gpos_pair':
+            subtables = font.getLookupSubtables(ln)
+            for sn in subtables:
+                if font.isKerningClass(sn):
+                    kerns.append(font.getKerningClass(sn))
+    return kerns
 
 
 def write_clm_unicode_glyph_map(f, unicode_glyph_map):
@@ -429,39 +437,30 @@ def write_clm_kerning_class(f, kerning_classes, glyph_name_id_map):
     length = len(list(kerning_classes))
     f.write(struct.pack('!H', length))
 
-    # map the names to (glyph, index_in_classes)
-    write_classes = chain(
-        partial(
-            map,
-            lambda y: map(lambda x: (x, y[0],), y[1])
-        ),
-        partial(
-            do,
-            lambda xs: f.write(struct.pack('!H', len(xs)))
-        ),
-        partial(fmap, lambda x: x),
-        partial(
-            map,
-            lambda n: (glyph_name_id_map[n[0]], n[1],)
-        ),
-        partial(sorted, key=lambda x: x[0]),
-        partial(
-            do,
-            lambda xs: f.write(struct.pack('!H', len(xs)))
-        ),
-        partial(
-            map,
-            lambda n: struct.pack('!HH', n[0], n[1])
-        ),
-        partial(
-            do_loop,
-            lambda bs: f.write(bs)
-        )
-    )
+    def write_group(g):
+        """
+        row format:
+        (index, (glyph_name, glyph_name, ...))
+        convert to:
+        [{index, glyph_id}, ...]
+        """
+        # write the group length
+        f.write(struct.pack('!H', len(g)))
+        m = []
+        for (index, glyph_names,) in g:
+            for name in glyph_names:
+                m.append({'index': index, 'glyph_id': glyph_name_id_map[name]})
+        # sort the array by glyph id
+        m = sorted(m, key=lambda item: item['glyph_id'])
+        # write the count of the glyphs
+        f.write(struct.pack('!H', len(m)))
+        # write glyph id and its index in this group
+        for item in m:
+            f.write(struct.pack('!HH', item['glyph_id'], item['index']))
 
     for (left, right, value,) in kerning_classes:
-        write_classes(enumerate(left[1:]))
-        write_classes(enumerate(right[1:]))
+        write_group(list(enumerate(left[1:])))
+        write_group(list(enumerate(right[1:])))
         column_count = len(right)
         for i, v in enumerate(value):
             if i < column_count or i % column_count == 0:
@@ -588,9 +587,11 @@ def write_glyphs(f, glyphs, glyph_name_id_map, is_math_font, have_glyph_path):
             write_path(glyph[3])
 
 
-def parse_otf(file_path, is_math_font, have_glyph_path, output_file_path):
+def parse_otf(file_path, have_glyph_path, output_file_path):
+    print("parsing font " + file_path + ", please wait...")
     font = fontforge.open(file_path)
 
+    is_math_font = font.math.exists()
     # read math constants
     math_consts = []
     if is_math_font:
@@ -659,14 +660,38 @@ def parse_otf(file_path, is_math_font, have_glyph_path, output_file_path):
     font.close()
 
 
+def batch_parse(dir, have_glyph_path, output_dir):
+    import os
+    fs = os.listdir(dir)
+    if not os.path.isdir(output_dir):
+        os.makedirs(output_dir)
+    for f in fs:
+        if f.endswith('.otf'):
+            name = os.path.basename(f)[0:-4]
+            save_name = name + "-path.clm" if have_glyph_path else name + ".clm"
+            save_path = os.path.join(output_dir, save_name)
+            input_file = os.path.join(dir, f)
+            parse_otf(input_file, have_glyph_path, save_path)
+    print("The generated clm data files were saved into directory: " + output_dir)
+
+
 usage = """
-Convert an OTF font to clm data.
+Generate clm data from OTF font file.
 
 Usage:
-    fontforge -lang=py -script otf2clm <path/to/OTF-font> \\
-        <is_math_font: true | false> \\
+    with single mode:
+        --single \\
+        <path/to/OTF-font> \\
         <if_parse_glyph_path: true | false> \\
         <path/to/save/clm_file>
+
+    or with batch mode:
+        --batch \\
+        <dir/to/OTF-fonts> \\
+        <if_parse_glyph_path: true | false> \\
+        <dir/to/save/clm_files>
+
+    the batch mode will not run in recursive
 """
 
 
@@ -674,12 +699,19 @@ def main():
     if len(sys.argv) < 4:
         print(usage)
         return
-    parse_otf(
-        sys.argv[1],
-        sys.argv[2] == 'true',
-        sys.argv[3] == 'true',
-        sys.argv[4]
-    )
+    if sys.argv[1] == '--batch':
+        batch_parse(
+            sys.argv[2],
+            sys.argv[3] == 'true',
+            sys.argv[4]
+        )
+    else:
+        parse_otf(
+            sys.argv[1],
+            sys.argv[2] == 'true',
+            sys.argv[4]
+        )
+        print("The generated clm data file was saved into file: " + sys.argv[4])
 
 
 if __name__ == "__main__":

@@ -2,6 +2,7 @@
 #include "unimath/uni_symbol.h"
 #include "utils/utils.h"
 #include "utils/exceptions.h"
+#include "utils/log.h"
 #include <utility>
 
 using namespace std;
@@ -32,7 +33,13 @@ FontStyle FontFamily::fontStyleOf(const std::string& name) {
 }
 
 void FontFamily::add(const std::string& styleName, const sptr<const OtfFont>& font) {
-  _styles[fontStyleOf(styleName)] = font;
+  const auto style = fontStyleOf(styleName);
+#ifdef HAVE_LOG
+  if (_styles.find(style) != _styles.end()) {
+    loge("the style '%s' has a font already, but you can replace it anyway\n", styleName.c_str());
+  }
+#endif
+  _styles[style] = font;
 }
 
 sptr<const OtfFont> FontFamily::get(FontStyle style) const {
@@ -52,8 +59,7 @@ FontSrc::FontSrc(std::string name, std::string fontFile)
 
 FontSrcFile::FontSrcFile(std::string name, std::string clmFile, std::string fontFile)
   : FontSrc(std::move(name), std::move(fontFile)),
-    clmFile(std::move(clmFile)),
-    fontFile(std::move(fontFile)) {}
+    clmFile(std::move(clmFile)) {}
 
 sptr<Otf> FontSrcFile::loadOtf() const {
   return sptr<Otf>(Otf::fromFile(clmFile.c_str()));
@@ -119,7 +125,7 @@ sptr<FontFamily> FontContext::getOrCreateFontFamily(const std::string& version) 
   return f;
 }
 
-void FontContext::addMainFonts(const std::string& versionName, const FontSrcList& srcs) {
+void FontContext::addMainFont(const std::string& versionName, const FontSrcList& srcs) {
   auto f = getOrCreateFontFamily(versionName);
   for (const auto& src : srcs) {
     auto spec = src->loadOtf();

@@ -25,7 +25,7 @@ tex::c32 tex::toUnicodeLower(c32 code) {
 
 int tex::binIndexOf(
   int count,
-  const std::function<int(int)>&& compare,
+  const std::function<int(int)>& compare,
   bool returnClosest
 ) {
   if (count == 0) return -1;

@@ -32,7 +32,10 @@ void LaTeX::addMainFont(
   const std::string& name,
   const std::vector<std::unique_ptr<FontSrc>>& srcs
 ) {
-  FontContext::addMainFonts(name, srcs);
+  FontContext::addMainFont(name, srcs);
+  if (_defaultMainFontName.empty()) {
+    _defaultMainFontName = name;
+  }
 }
 
 void LaTeX::addMathFont(const FontSrc& src) {

@@ -1,6 +1,6 @@
 'use strict'
 
-import Module from "../gen/clatexmath-wasm";
+import Module from "../gen/tinytex";
 
 let runtime = {};
 

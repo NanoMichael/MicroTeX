@@ -2,7 +2,6 @@
 #include "utils/log.h"
 
 #include <cstdlib>
-#include <cstdio>
 
 namespace tex {
 
@@ -13,7 +12,7 @@ Cmds::Cmds() {
   capacity = CHUNK_SIZE;
 }
 
-void Cmds::ensureCapacity(size_t required) {
+void Cmds::ensureCapacity(len_t required) {
   if (index + required < capacity) {
     return;
   }
