@@ -2,7 +2,7 @@ src = [
     'test_clm.cpp'
 ]
 
-include = include_directories('../../src')
+include = include_directories('../../lib')
 
 executable('clm', src,
     include_directories: include,

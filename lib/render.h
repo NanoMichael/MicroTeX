@@ -35,7 +35,7 @@ private:
   void buildDebug(
     const sptr<BoxGroup>& parent,
     const sptr<Box>& box,
-    BoxFilter&& filter
+    const BoxFilter& filter
   );
 
   static sptr<BoxGroup> wrap(const sptr<Box>& box);
@@ -50,7 +50,7 @@ public:
   /** Get the total height of this render */
   int getHeight() const;
 
-  /** Get the size amount below the baseline */
+  /** Get the size amount below the baseline, in positive */
   int getDepth() const;
 
   /** Get the width of this render */
@@ -60,6 +60,7 @@ public:
 
   void setTextSize(float textSize);
 
+  /** Set the foreground color to draw. */
   void setForeground(color fg);
 
   void setWidth(int width, Alignment align);

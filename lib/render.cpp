@@ -46,7 +46,7 @@ sptr<BoxGroup> Render::wrap(const sptr<Box>& box) {
 void Render::buildDebug(
   const sptr<BoxGroup>& parent,
   const sptr<Box>& box,
-  BoxFilter&& filter
+  const BoxFilter& filter
 ) {
   if (parent != nullptr) {
     if (box->isSpace()) {
@@ -64,12 +64,12 @@ void Render::buildDebug(
     const auto children = group->descendants();
     group->addOnly(kern);
     for (const auto& child: children) {
-      buildDebug(group, child, std::forward<BoxFilter>(filter));
+      buildDebug(group, child, filter);
     }
   } else if (auto decor = dynamic_pointer_cast<DecorBox>(box); decor != nullptr) {
     const auto g = wrap(decor->_base);
     decor->_base = g;
-    buildDebug(nullptr, g, std::forward<BoxFilter>(filter));
+    buildDebug(nullptr, g, filter);
   }
 }
 

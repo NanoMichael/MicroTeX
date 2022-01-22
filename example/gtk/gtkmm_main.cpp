@@ -88,7 +88,7 @@ public:
     );
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    logv("parse duration: %ld(us)\n", duration.count());
+    printf("parse duration: %ld(us)\n", duration.count());
 
     checkInvalidate();
   }
@@ -126,7 +126,7 @@ protected:
     _render->draw(g2, _padding, _padding);
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    logv("render duration: %ld(us)\n", duration.count());
+    printf("render duration: %ld(us)\n", duration.count());
     return true;
   }
 };
@@ -265,6 +265,11 @@ protected:
   }
 };
 
+#define BOLD_ANSI "\x1b[1m"
+#define RESET_ANSI "\x1b[0m"
+#define RED_ANSI "\x1b[31m"
+#define GREEN_ANSI "\x1b[32m"
+
 class Headless {
 public:
   string _outputDir;
@@ -297,16 +302,16 @@ public:
 
   int runBatch() const {
     if (_samplesFile.empty()) {
-      logv(ANSI_COLOR_RED "Error: the option '-samples' must be specified\n" ANSI_RESET);
+      printf(RED_ANSI "Error: the option '-samples' must be specified\n" RESET_ANSI);
       return 1;
     }
     if (_outputDir.empty()) {
-      logv(ANSI_COLOR_RED "Error: the option '-outputdir' must be specified\n" ANSI_RESET);
+      printf(RED_ANSI "Error: the option '-outputdir' must be specified\n" RESET_ANSI);
       return 1;
     }
     Samples samples(_samplesFile);
     if (samples.isEmpty()) {
-      logv(ANSI_COLOR_RED "Error: no samples was loaded\n" ANSI_RESET);
+      printf(RED_ANSI "Error: no samples was loaded\n" RESET_ANSI);
       return 1;
     }
     if (samples.count() == 0) return 1;
@@ -318,7 +323,7 @@ public:
 
   int runSingle() const {
     if (_outputFile.empty()) {
-      logv(ANSI_COLOR_RED "Error: the option '-output' must be specified\n" ANSI_RESET);
+      printf(RED_ANSI "Error: the option '-output' must be specified\n" RESET_ANSI);
       return 1;
     }
     const string& code = _input;
@@ -380,8 +385,8 @@ int runWindow(const std::string& samplesFile, char* argv[]) {
 }
 
 int runHelp() {
-#define B ANSI_BOLD
-#define R ANSI_RESET
+#define B BOLD_ANSI
+#define R RESET_ANSI
   const char* msg =
     "Application to parse and display LaTeX code. The application will run with the headless\n"
     "mode if the option '-headless' has given, otherwise, it will run with the GUI mode.\n\n" B
@@ -432,7 +437,7 @@ int runHelp() {
     "      the source code that is written in LaTeX\n\n" B
     "  -output=[FILE]\n" R
     "      indicates where to save the produced SVG image, only works if the option '-input' has given\n\n";
-  logv("%s", msg);
+  printf("%s", msg);
   return 0;
 }
 
@@ -464,10 +469,10 @@ int runPerf(const std::string& samplesFilePath) {
     const auto& sample = samples.next();
     LaTeX::setRenderGlyphUsePath(false);
     const auto d1 = run(sample);
-    logv("%ld, ", d1);
+    printf("%ld, ", d1);
     LaTeX::setRenderGlyphUsePath(true);
     const auto d2 = run(sample);
-    logv("%ld\n", d2);
+    printf("%ld\n", d2);
   }
 
   return 0;
@@ -507,10 +512,10 @@ int main(int argc, char* argv[]) {
   }
 
   if (mathVersionName.empty() || mathFont.empty() || clmFile.empty()) {
-    logv(
-      ANSI_COLOR_RED
+    printf(
+      RED_ANSI
       "No math font or clm file was given, exit...\n"
-      ANSI_COLOR_GREEN
+      GREEN_ANSI
       "You can specify it by option -mathfont and -clm\n"
     );
     return 1;

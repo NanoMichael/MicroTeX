@@ -1,7 +1,8 @@
 otf_src = [
 	'otf/clm.cpp',
 	'otf/glyph.cpp',
-	'otf/otf.cpp'
+	'otf/otf.cpp',
+	'otf/path.cpp'
 ]
 
 if install_headerfiles
@@ -9,6 +10,7 @@ if install_headerfiles
 		'clm.h',
 		'glyph.h',
 		'math_consts.h',
-		'otf.h'
+		'otf.h',
+		'path.h'
 	], subdir: 'clatexmath/otf')
 endif

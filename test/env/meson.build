@@ -2,7 +2,7 @@ src = [
     'test_env.cpp'
 ]
 
-include = include_directories('../../src')
+include = include_directories('../../lib')
 
 executable('env', src,
     include_directories: include,

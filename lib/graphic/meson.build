@@ -1,5 +1,7 @@
 graphic_src = [
-    'graphic/font_style.cpp'
+    'graphic/font_style.cpp',
+    'graphic/graphic.cpp',
+    'graphic/graphic_basic.cpp'
 ]
 
 if install_headerfiles

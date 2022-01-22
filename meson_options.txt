@@ -1,8 +1,14 @@
 # generate pkgconfig files & install headers
 option('TARGET_DEVEL', type : 'boolean', value : true)
 
-# if, and what demo/sample application to build --- Todo: add (QT &) Win32
-option('TARGET_DEMO', type : 'combo', choices : ['NONE', 'GTK'], value : 'GTK')
+# if build tests
+option('TEST', type: 'boolean', value: true)
 
-# if build  tests
-option('TARGET_TEST', type: 'boolean', value: true)
+# if build cairo
+option('CAIRO', type: 'boolean', value: true)
+
+# if build qt
+option('QT', type: 'boolean', value: true)
+
+# if build gtk example
+option('EXAMPLE_GTK', type: 'boolean', value: true)
