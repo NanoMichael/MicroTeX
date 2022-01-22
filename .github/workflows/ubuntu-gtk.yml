@@ -1,6 +1,6 @@
 name: Ubuntu GTK
 
-on: 
+on:
   - push
   - pull_request
 
@@ -8,27 +8,29 @@ jobs:
   build_by_meson:
     runs-on: ${{ matrix.os }}
     strategy:
-      matrix: 
-        os: 
+      matrix:
+        os:
           - ubuntu-20.04
     steps:
-    - uses: actions/checkout@v2
-    - name: Downloading dependencies 📥
-      run: sudo apt-get install build-essential meson libgtksourceviewmm-3.0-dev libgtkmm-3.0-dev libtinyxml2-dev
-    - name: Configure 🔧
-      run: meson _build -DTARGET_DEMO=GTK
-    - name: Compile 🎲
-      run: ninja -C _build
-    - name: Compress build artifacts 📦
-      run: |
-        pushd _build
-        tar -c * | zstd -o $GITHUB_WORKSPACE/artifacts.tar.zst
-        popd
-    - name: Upload build artifacts 📤
-      uses: actions/upload-artifact@v1
-      with:
-        name: Build artifacts
-        path: artifacts.tar.zst
+      - uses: actions/checkout@v2
+      - name: Downloading dependencies 📥
+        run: |
+          sudo apt-get install build-essential meson libgtksourceviewmm-3.0-dev libgtkmm-3.0-dev
+          sudo apt-get install qt5-default qttools5-dev-tools
+      - name: Configure 🔧
+        run: meson _build
+      - name: Compile 🎲
+        run: ninja -C _build
+      - name: Compress build artifacts 📦
+        run: |
+          pushd _build
+          tar -c * | zstd -o $GITHUB_WORKSPACE/artifacts.tar.zst
+          popd
+      - name: Upload build artifacts 📤
+        uses: actions/upload-artifact@v1
+        with:
+          name: Build artifacts
+          path: artifacts.tar.zst
 
   build_by_cmake:
     runs-on: ${{ matrix.os }}
@@ -37,18 +39,18 @@ jobs:
         os:
           - ubuntu-20.04
     steps:
-    - name: Downloading Source Code 📥
-      uses: actions/checkout@v2
-    - name: Downloading dependencies 📥
-      run: sudo apt-get install build-essential meson libgtksourceviewmm-3.0-dev libgtkmm-3.0-dev libtinyxml2-dev
-    - name: Configure 🔧
-      run: |
-        cd ${{ github.workspace }}
-        mkdir build
-        cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release -G Ninja
-    - name: Compile 🎲
-      run: |
-        cd ${{ github.workspace }}
-        cd build
-        ninja
+      - name: Downloading Source Code 📥
+        uses: actions/checkout@v2
+      - name: Downloading dependencies 📥
+        run: sudo apt-get install build-essential meson libgtksourceviewmm-3.0-dev libgtkmm-3.0-dev
+      - name: Configure 🔧
+        run: |
+          cd ${{ github.workspace }}
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release -G Ninja
+      - name: Compile 🎲
+        run: |
+          cd ${{ github.workspace }}
+          cd build
+          ninja
