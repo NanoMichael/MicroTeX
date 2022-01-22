@@ -46,9 +46,14 @@ clatexmath_lib = library('clatexmath', src,
 	install: true
 )
 
+clatexmath_dep = declare_dependency(
+	link_with: clatexmath_lib,
+	include_directories: inc,
+	version: meson.project_version()
+)
+
 if get_option('TARGET_DEVEL')
-    import('pkgconfig').generate(
-        libraries: clatexmath_lib,
+    pkgconfig.generate(clatexmath_lib,
         version: meson.project_version(),
         name: 'clatexmath',
         filebase: 'clatexmath',

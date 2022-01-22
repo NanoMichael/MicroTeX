@@ -4,10 +4,9 @@ cairo_src = [
 
 cairo_deps = [
     dependency('fontconfig'),
-    dependency('gdkmm-3.0')
+    dependency('cairomm-1.0'),
+    dependency('pangomm-1.4')
 ]
-
-cairo_inc = include_directories('.')
 
 clatexmath_cairo_lib = library('clatexmath-cairo', cairo_src,
     link_with: clatexmath_lib,
@@ -17,6 +16,23 @@ clatexmath_cairo_lib = library('clatexmath-cairo', cairo_src,
     soversion: 0,
     install: true
 )
+
+clatexmath_cairo_dep = declare_dependency(
+	link_with: [clatexmath_lib, clatexmath_cairo_lib],
+	include_directories: ['.', inc],
+	version: meson.project_version()
+)
+
+if get_option('TARGET_DEVEL')
+    pkgconfig.generate(clatexmath_cairo_lib,
+        libraries: clatexmath_lib,
+        version: meson.project_version(),
+        name: 'clatexmath-cairo',
+        filebase: 'clatexmath-cairo',
+        subdirs: ['clatexmath/platform/cairo'],
+        description: 'cairomm backend to cLaTeXMath'
+    )
+endif
 
 if install_headerfiles
     install_headers([

@@ -2,13 +2,12 @@ example_gtk_src = [
     'gtkmm_main.cpp',
     '../samples/samples.cpp'
 ]
-example_gtk_inc = inc
-example_gtk_inc += '../samples'
-example_gtk_inc += cairo_inc
+example_gtk_inc = '../samples'
 
 example_gtk_deps = [
     dependency('gtkmm-3.0'),
-    dependency('gtksourceviewmm-3.0')
+    dependency('gtksourceviewmm-3.0'),
+    clatexmath_cairo_dep
 ]
 
 executable(

@@ -10,6 +10,7 @@
 #include <QFont>
 #include <QMap>
 #include <QPainter>
+#include <QPainterPath>
 #include <QString>
 #include <QTextLayout>
 

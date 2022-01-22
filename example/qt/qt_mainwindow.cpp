@@ -7,7 +7,7 @@
 #include <QString>
 
 #include "qt_mainwindow.h"
-#include "moc_qt_mainwindow.cpp"
+//#include "moc_qt_mainwindow.cpp"
 
 using namespace std;
 
