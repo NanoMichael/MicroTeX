@@ -41,7 +41,7 @@ void TexQmlItem::setLatexString(const QString& latex)
 
     try {
         _render = LaTeX::parse(
-            latex.toStdWString(),
+            latex.toStdString(),
             width() - _padding * 2,
             _text_size,
             _text_size / 3.f,
