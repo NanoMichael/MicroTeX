@@ -13,3 +13,8 @@ option('EXAMPLE_GTK', type: 'boolean', value: true)
 option('QT', type: 'boolean', value: true)
 # if build qt example
 option('EXAMPLE_QT', type: 'boolean', value: true)
+
+# if build gdi
+option('GDI', type: 'feature')
+# if build win32 example
+option('EXAMPLE_WIN32', type: 'boolean', value: false)

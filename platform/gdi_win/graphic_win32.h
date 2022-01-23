@@ -1,7 +1,5 @@
 #include "config.h"
 
-#if defined(BUILD_WIN32) && !defined(MEM_CHECK)
-
 #ifndef GRAPHIC_WIN32_H_INCLUDED
 #define GRAPHIC_WIN32_H_INCLUDED
 
@@ -78,6 +76,15 @@ public:
 
 /**************************************************************************************************/
 
+class PlatformFactory_gdi : public PlatformFactory {
+public:
+  sptr<Font> createFont(const std::string &file) override;
+
+  sptr<TextLayout> createTextLayout(const std::string &src, FontStyle style, float size) override;
+};
+
+/**************************************************************************************************/
+
 class CLATEXMATH_EXPORT Graphics2D_win32 : public Graphics2D {
 private:
   static const Gdiplus::StringFormat* _format;
@@ -135,6 +142,20 @@ public:
 
   void drawGlyph(u16 glyph, float x, float y) override;
 
+  void beginPath() override;
+
+  void moveTo(float x, float y) override;
+
+  void lineTo(float x, float y) override;
+
+  void cubicTo(float x1, float y1, float x2, float y2, float x3, float y3) override;
+
+  void quadTo(float x1, float y1, float x2, float y2) override;
+
+  void closePath() override;
+
+  void fillPath() override;
+
   /** Draw text */
   void drawText(const std::wstring& src, float x, float y);
 
@@ -152,4 +173,3 @@ public:
 }  // namespace tex
 
 #endif  // GRAPHIC_WIN32_H_INCLUDED
-#endif
