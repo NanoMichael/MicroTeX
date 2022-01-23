@@ -1,9 +1,7 @@
 #include "config.h"
 
-#if defined(BUILD_WIN32) && !defined(MEM_CHECK)
-
 #include "latex.h"
-#include "platform/gdi_win/graphic_win32.h"
+#include "graphic_win32.h"
 #include "samples.h"
 #include "utils/string_utils.h"
 
@@ -135,12 +133,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 
 void init() {
   // TODO
-  const FontSpec math{
-    "xits",
-    "C:\\Users\\artia\\Downloads\\xits\\xits\\XITSMath-Regular.otf",
-    "./res/XITSMath-Regular.clm"
+  const FontSrcFile math{
+    "Latin Modern Math",
+    "./res/lm-math.clm",
+    "Z:\\usr\\share\\fonts\\texlive-lm-math\\latinmodern-math.otf"
   };
   LaTeX::init(math);
+  PlatformFactory::registerFactory("gdi", std::make_unique<PlatformFactory_gdi>());
+  PlatformFactory::activate("gdi");
   _samples = new Samples("./res/SAMPLES.tex");
   _render = LaTeX::parse(
     "\\text{What a beautiful day! Press Ctrl + Enter to show formulas.}",
@@ -355,5 +355,3 @@ LRESULT CALLBACK CanvasProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
   }
   return 0;
 }
-
-#endif

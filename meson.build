@@ -3,6 +3,8 @@ project('clatexmath', 'cpp',
 	default_options : ['buildtype=release', 'warning_level=0', 'cpp_std=c++17']
 )
 
+cpp = meson.get_compiler('cpp')
+
 if get_option('TARGET_DEVEL')
   pkgconfig = import('pkgconfig')
 endif
@@ -28,6 +30,18 @@ if get_option('QT')
 else
   if get_option('EXAMPLE_QT')
     error('EXAMPLE_QT was enabled, but it requires QT platform')
+  endif
+endif
+
+gdi_dep = cpp.find_library('gdiplus', required: get_option('GDI'))
+if gdi_dep.found() and cpp.has_header('windows.h')
+  subdir('platform/gdi_win')
+  if get_option('EXAMPLE_WIN32')
+    subdir('example/win32')
+  endif
+else
+  if get_option('EXAMPLE_WIN32')
+    error('EXAMPLE_WIN32 was enabled, but it requires GDI platform')
   endif
 endif
 

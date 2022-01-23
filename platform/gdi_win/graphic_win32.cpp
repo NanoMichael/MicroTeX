@@ -1,8 +1,6 @@
 #include "config.h"
 
-#if defined(BUILD_WIN32) && !defined(MEM_CHECK)
-
-#include "platform/gdi_win/graphic_win32.h"
+#include "graphic_win32.h"
 #include "utils/nums.h"
 #include "utils/exceptions.h"
 
@@ -86,10 +84,6 @@ Font_win32::~Font_win32() noexcept {
   if (!_isSystem) delete _family;
 }
 
-sptr<tex::Font> tex::Font::create(const std::string& file) {
-  return Font_win32::getOrCreate(file);
-}
-
 /**************************************************************************************************/
 
 Gdiplus::Graphics* TextLayout_win32::_g = nullptr;
@@ -151,7 +145,13 @@ void TextLayout_win32::draw(Graphics2D& g2, float x, float y) {
   g.setFont(prev);
 }
 
-sptr<TextLayout> TextLayout::create(const std::string& src, FontStyle style, float size) {
+/**************************************************************************************************/
+
+sptr<tex::Font> PlatformFactory_gdi::createFont(const std::string& file) {
+  return Font_win32::getOrCreate(file);
+}
+
+sptr<TextLayout> PlatformFactory_gdi::createTextLayout(const std::string& src, FontStyle style, float size) {
   return sptrOf<TextLayout_win32>(src, style, size);
 }
 
@@ -295,6 +295,34 @@ void Graphics2D_win32::drawGlyph(u16 glyph, float x, float y) {
   _g->DrawDriverString(&glyph, 1, f.get(), _brush, &p, 0, nullptr);
 }
 
+void Graphics2D_win32::beginPath() {
+  // not supported
+}
+
+void Graphics2D_win32::moveTo(float x, float y) {
+  // not supported
+}
+
+void Graphics2D_win32::lineTo(float x, float y) {
+  // not supported
+}
+
+void Graphics2D_win32::cubicTo(float x1, float y1, float x2, float y2, float x3, float y3) {
+  // not supported
+}
+
+void Graphics2D_win32::quadTo(float x1, float y1, float x2, float y2) {
+  // not supported
+}
+
+void Graphics2D_win32::closePath() {
+  // not supported
+}
+
+void Graphics2D_win32::fillPath() {
+  // not supported
+}
+
 void Graphics2D_win32::drawText(const std::wstring& src, float x, float y) {
   auto f = std::static_pointer_cast<Font_win32>(_font);
   int em = f->getEmHeight();
@@ -330,5 +358,3 @@ void Graphics2D_win32::fillRoundRect(float x, float y, float w, float h, float r
   // not supported
   fillRect(x, y, w, h);
 }
-
-#endif
