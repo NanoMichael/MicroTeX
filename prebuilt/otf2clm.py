@@ -660,9 +660,9 @@ def parse_otf(file_path, have_glyph_path, output_file_path):
     font.close()
 
 
-def batch_parse(dir, have_glyph_path, output_dir):
+def batch_parse(input_dir, have_glyph_path, output_dir):
     import os
-    fs = os.listdir(dir)
+    fs = os.listdir(input_dir)
     if not os.path.isdir(output_dir):
         os.makedirs(output_dir)
     for f in fs:
@@ -670,7 +670,7 @@ def batch_parse(dir, have_glyph_path, output_dir):
             name = os.path.basename(f)[0:-4]
             save_name = name + "-path.clm" if have_glyph_path else name + ".clm"
             save_path = os.path.join(output_dir, save_name)
-            input_file = os.path.join(dir, f)
+            input_file = os.path.join(input_dir, f)
             parse_otf(input_file, have_glyph_path, save_path)
     print("The generated clm data files were saved into directory: " + output_dir)
 
@@ -707,8 +707,8 @@ def main():
         )
     else:
         parse_otf(
-            sys.argv[1],
-            sys.argv[2] == 'true',
+            sys.argv[2],
+            sys.argv[3] == 'true',
             sys.argv[4]
         )
         print("The generated clm data file was saved into file: " + sys.argv[4])
