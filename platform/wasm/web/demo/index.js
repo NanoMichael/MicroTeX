@@ -40,7 +40,7 @@ context
     });
   })
   .then(_ => {
-    const hello = `\\text{Hello from Tiny\\kern-.1em\\TeX.}`;
+    const hello = `\\text{Hello from Tiny\\kern-.1em\\TeX 🥰, have fun!}`;
     parse(hello);
     initEditor(hello);
     listenEvents()
@@ -65,7 +65,7 @@ function listenEvents() {
     context.setMathFont(option);
     parse(editor.getValue());
   }
-  document.getElementById('textsize').onclick = e => {
+  document.getElementById('textsize').onchange = e => {
     if (!context.isInited()) return;
     parse(editor.getValue());
   }
