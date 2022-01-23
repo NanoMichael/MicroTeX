@@ -128,7 +128,7 @@ context.isInited = function () {
  * @param {String} familyName the font family name
  * @param {String} clmDataUri the clm data uri
  * @param {String} styleName the font style name,
- * e.g: rm(stands for roman), bold(stands for bold) etc
+ * e.g: rm(stands for roman), bf(stands for bold) etc
  */
 context.addMainFont = function (familyName, clmDataUri, styleName) {
   return fetch(clmDataUri)

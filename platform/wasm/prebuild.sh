@@ -1,3 +1,5 @@
+#!/usr/bin/env sh
+
 web_dir="$(pwd)"
 
 # go to project root dir
@@ -11,8 +13,6 @@ if [ ! -d "${build_dir}" ]; then
 fi
 
 cd "${build_dir}" || return
-
-rm "${build_dir}/platform/wasm/clatexmath-wasm.js"
 
 emcmake cmake -DCMAKE_BUILD_TYPE=Release -DHAVE_LOG=OFF -DWASM=ON ..
 emmake make -j8
