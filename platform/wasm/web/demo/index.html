@@ -9,189 +9,6 @@
 </head>
 
 <body>
-<script src="../dist/tinytex.js"></script>
-<script
-    src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.13/ace.min.js"
-    integrity="sha512-jB1NOQkR0yLnWmEZQTUW4REqirbskxoYNltZE+8KzXqs9gHG5mrxLR5w3TwUn6AylXkhZZWTPP894xcX/X8Kbg=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script
-    src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.13/mode-latex.min.js"
-    integrity="sha512-UW9wpNwFxMAOMYsfMP4KSb8z19IEdSWGofp8d3gwSVPuxxpJjw7MqkDc+OPJPpmnCOleCoUIpBksNX2TrhTR9w=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-<script>
-  let editor = null;
-  // the math fonts
-  const mathFonts = {
-    "xits": "./res/XITSMath-Regular-path.clm",
-    "lm": "./res/latinmodern-math-path.clm",
-    "dejavu": "./res/texgyredejavu-math-path.clm",
-    "fm": "./res/Firamath-Regular-path.clm"
-  };
-  // the main fonts
-  const mainFonts = {
-    "xits": {
-      "rm": "./res/xits/XITS-Regular-path.clm",
-      "it": "./res/xits/XITS-Italic-path.clm",
-      "bf": "./res/xits/XITS-Bold-path.clm",
-      "bfit": "./res/xits/XITS-BoldItalic-path.clm"
-    }
-  }
-
-  tinytex
-    .context
-    .init(mathFonts["xits"], "xits")
-    .then(_ => {
-      Object.entries(mathFonts).forEach(([name, path]) => {
-        // the 'xits' was already loaded while init
-        if (name !== "xits") tinytex.context.addMathFont(path, name);
-      });
-    })
-    .then(_ => {
-      const xits = mainFonts.xits;
-      Object.entries(xits).forEach(([style, path]) => {
-        tinytex.context.addMainFont("xits", path, style);
-      });
-    })
-    .then(_ => {
-      const hello = `\\text{Hello from Tiny\\kern-.1em\\TeX.}`;
-      parse(hello);
-      initEditor(hello);
-    });
-
-  function initEditor(str) {
-    editor = ace.edit("editor");
-    editor.session.setMode("ace/mode/latex");
-    editor.getSession().setTabSize(2);
-    editor.setValue(str);
-    editor.getSession().on('change', () => {
-      if (tinytex.context.isInited()) {
-        parse(editor.getValue());
-      }
-    });
-  }
-
-  function fixDpi(canvas) {
-    let dpi = window.devicePixelRatio || 1;
-    if (dpi === 1) return;
-    let sw = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
-    let sh = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
-    console.log(`style size: ${sw}, ${sh}, ${dpi}`);
-    // scale
-    canvas.width = sw * dpi;
-    canvas.height = sh * dpi;
-  }
-
-  const padding = 16;
-
-  function parse(str) {
-    // get text size
-    const sizeStr = document.getElementById("textsize").value;
-    const size = parseInt(sizeStr);
-    // get content width
-    let width = document.getElementById("left").offsetWidth - padding;
-
-    let r = null;
-    try {
-      r = tinytex.context.parse(str, width, size, size / 3, 0x3b3b3b);
-    } catch (e) {
-      console.log(e);
-      return;
-    }
-
-    const wrapper = document.getElementById("wrapper");
-    wrapper.replaceChildren();
-
-    function attach() {
-      const canvas = document.createElement("canvas");
-      canvas.style.width = (r.getWidth() + padding) + "px";
-      canvas.style.height = (r.getHeight() + padding) + "px";
-      canvas.width = r.getWidth() + padding;
-      canvas.height = r.getHeight() + padding;
-      // append to left
-      wrapper.appendChild(canvas);
-      // fix dpi
-      fixDpi(canvas);
-      return canvas;
-    }
-
-    // draw the render
-    function draw(canvas) {
-      const ctx = canvas.getContext('2d');
-      r.draw(ctx, padding / 2, padding / 2);
-    }
-
-    const canvas = attach();
-    draw(canvas);
-
-    r.release();
-  }
-
-  function Examples(examplesUrl) {
-    let isInited = false;
-
-    this.isInited = function () {
-      return isInited;
-    }
-
-    fetch(examplesUrl)
-      .then(res => res.text())
-      .then(txt => readExamples(txt));
-
-    let samples = [];
-    let i = -1;
-
-    function readExamples(txt) {
-      const lines = txt.split(/\r?\n/);
-      let str = "";
-      lines.forEach(v => {
-        if (/^%+$/.test(v)) {
-          samples.push(str);
-          str = "";
-        } else {
-          str += v + "\n";
-        }
-      });
-      isInited = true;
-    }
-
-    this.count = function () {
-      return samples.length;
-    }
-
-    this.next = function () {
-      i = (i + 1) % this.count();
-      return samples[i];
-    }
-  }
-
-  const examples = new Examples('./res/SAMPLES.tex');
-
-  function next() {
-    if (!examples.isInited() || !tinytex.context.isInited()) {
-      return;
-    }
-    let str = examples.next();
-    parse(str);
-    editor.setValue(str);
-  }
-
-  function changeFont() {
-    if (!tinytex.context.isInited()) {
-      return;
-    }
-    const option = document.getElementById("fonts").value;
-    tinytex.context.setMathFont(option);
-    parse(editor.getValue());
-  }
-
-  function changeSize() {
-    if (!tinytex.context.isInited()) {
-      return;
-    }
-    parse(editor.getValue());
-  }
-</script>
 
 <div class="container">
   <div class="section">
@@ -203,7 +20,7 @@
       <div class="editor" id="editor"></div>
       <div class="bottom">
         <label>Math font:</label>
-        <select id="fonts" class="fonts" onchange="changeFont()">
+        <select id="fonts" class="fonts">
           <option value="xits">xits</option>
           <option value="lm">latin-modern</option>
           <option value="dejavu">texgyre-dejavu</option>
@@ -212,12 +29,13 @@
         <label class="size-label">Text size:</label>
         <input
             class="text-size" id="textsize"
-            type="number" min="5" max="100" step="2" value="30"
-            onchange="changeSize()"/>
-        <button class="next" onclick="next()">Next example</button>
+            type="number" min="5" max="100" step="2" value="30"/>
+        <button class="next" id="next">Next example</button>
       </div>
     </div>
   </div>
+
+  <script src="index.js" type="module"></script>
 </div>
 
 </body>

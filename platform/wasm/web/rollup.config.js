@@ -1,11 +1,13 @@
-import babel from '@rollup/plugin-babel'
+import babel from '@rollup/plugin-babel';
 import {terser} from "rollup-plugin-terser";
+import {nodeResolve} from '@rollup/plugin-node-resolve';
+import commonjs from "@rollup/plugin-commonjs";
 
-export default {
+export default [{
   input: './src/index.js',
   output: {
     file: './dist/tinytex.js',
-    format: 'umd',
+    format: 'esm',
     name: 'tinytex'
   },
   plugins: [
@@ -14,4 +16,21 @@ export default {
     }),
     terser()
   ]
-}
+}, {
+  input: './demo/index.js',
+  output: {
+    file: './demo-dist/index.js',
+    format: 'esm',
+    name: 'app',
+    globals: {
+      'ace-builds': 'ace',
+      'ace': 'ace'
+    }
+  },
+  plugins: [
+    babel(),
+    nodeResolve(),
+    commonjs(),
+    terser()
+  ]
+}];
