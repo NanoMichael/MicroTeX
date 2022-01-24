@@ -31,7 +31,16 @@ void Samples::add(const string& str) {
 }
 
 bool Samples::isSpace(const string& str) {
-  return std::all_of(str.begin(), str.end(), [](char c) { return isspace(c); });
+  return std::all_of(
+    str.begin(),
+    str.end(),
+    [](char c) {
+      // FIXME
+      // avoid the disgusting Windows assertion `c > -1 && c < 255`
+      // return isspace(c);
+      return c == ' ' || c == '\r' || c == '\n';
+    }
+  );
 }
 
 const std::string& Samples::next() {

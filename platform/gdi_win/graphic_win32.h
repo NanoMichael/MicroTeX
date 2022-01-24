@@ -76,7 +76,7 @@ public:
 
 /**************************************************************************************************/
 
-class PlatformFactory_gdi : public PlatformFactory {
+class CLATEXMATH_EXPORT PlatformFactory_gdi : public PlatformFactory {
 public:
   sptr<Font> createFont(const std::string &file) override;
 
@@ -100,7 +100,7 @@ private:
   float _sx, _sy;
 
 public:
-  Graphics2D_win32(Gdiplus::Graphics* g);
+  explicit Graphics2D_win32(Gdiplus::Graphics* g);
 
   ~Graphics2D_win32() override;
 

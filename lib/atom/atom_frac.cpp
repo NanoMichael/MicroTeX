@@ -103,7 +103,7 @@ sptr<Box> FracAtom::createBox(Env& env) {
     // TODO equal gaps between numerator and denominator?
     const auto dn = x->_height + u - axis - theta / 2 - x->vlen();
     vbox->add(sptrOf<StrutBox>(0.f, dn, 0.f, 0.f));
-    vbox->add(sptrOf<RuleBox>(theta, w, 0));
+    vbox->add(sptrOf<RuleBox>(theta, w, 0.f));
     const auto dd = kern - dn;
     vbox->add(sptrOf<StrutBox>(0.f, dd, 0.f, 0.f));
   } else {

@@ -33,7 +33,7 @@ jobs:
       run: |
         cd ${{ github.workspace }}
         cd build
-        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -G Ninja
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DGDI=ON -DBUILD_EXAMPLE_WIN32=ON -G Ninja
     - name: Compile 🎲
       run: |
         cd ${{ github.workspace }}

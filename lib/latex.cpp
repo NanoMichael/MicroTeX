@@ -30,7 +30,7 @@ void LaTeX::release() {
 
 void LaTeX::addMainFont(
   const std::string& name,
-  const std::vector<std::unique_ptr<FontSrc>>& srcs
+  const FontSrcList& srcs
 ) {
   FontContext::addMainFont(name, srcs);
   if (_defaultMainFontName.empty()) {

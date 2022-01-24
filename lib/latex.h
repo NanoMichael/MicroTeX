@@ -39,7 +39,7 @@ public:
    */
   static void addMainFont(
     const std::string& name,
-    const std::vector<std::unique_ptr<FontSrc>>& srcs
+    const FontSrcList& srcs
   );
 
   /**

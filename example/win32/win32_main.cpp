@@ -15,9 +15,9 @@
 #define ID_BUTTON_SIZE 2048
 #define ID_BUTTON_NEXT 4096
 
-#define BUTTON_WIDTH 140
+#define BUTTON_WIDTH 180
 #define BUTTON_HEIGHT 35
-#define EDITOR_WIDTH 480
+#define EDITOR_WIDTH 640
 
 using namespace std;
 using namespace tex;
@@ -132,18 +132,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 }  // WndProc
 
 void init() {
-  // TODO
-  const FontSrcFile math{
-    "Latin Modern Math",
-    "./res/lm-math.clm",
-    "Z:\\usr\\share\\fonts\\texlive-lm-math\\latinmodern-math.otf"
-  };
+  if (__argc < 6) {
+    //  Required options:
+    //    <math font name>
+    //    <math clm data file>
+    //    <math font file>
+    //    <samples file>
+    exit(1);
+  }
+  const FontSrcFile math{__argv[2], __argv[3], __argv[4]};
   LaTeX::init(math);
   PlatformFactory::registerFactory("gdi", std::make_unique<PlatformFactory_gdi>());
   PlatformFactory::activate("gdi");
-  _samples = new Samples("./res/SAMPLES.tex");
+  _samples = new Samples(__argv[5]);
   _render = LaTeX::parse(
-    "\\text{What a beautiful day! Press Ctrl + Enter to show formulas.}",
+    "\\text{Hello from Tiny\\kern-.1em\\TeX, have fun! Press Ctrl + Enter on editor to show formulas.}",
     720, _size, _size / 3.f, _color
   );
 }

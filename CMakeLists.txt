@@ -23,6 +23,10 @@ if (MSVC)
     add_compile_options("/utf-8")
     target_compile_features(clatexmath PUBLIC cxx_std_17)
     target_compile_definitions(clatexmath PRIVATE -DCLATEXMATH_LIBRARY)
+    target_compile_definitions(clatexmath PUBLIC -D_HAS_STD_BYTE=0)
+    # make binaries together
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 else ()
     # check if compiler has c++17 support
     include(CheckCXXCompilerFlag)
@@ -47,6 +51,10 @@ if (QT)
     add_subdirectory(platform/qt)
 endif ()
 
+if (GDI)
+    add_subdirectory(platform/gdi_win)
+endif ()
+
 if (WASM)
     add_subdirectory(platform/wasm)
 endif ()
@@ -65,4 +73,8 @@ endif ()
 
 if (BUILD_EXAMPLE_MEMCHECK)
     add_subdirectory(example/memcheck)
+endif ()
+
+if (BUILD_EXAMPLE_WIN32)
+    add_subdirectory(example/win32)
 endif ()

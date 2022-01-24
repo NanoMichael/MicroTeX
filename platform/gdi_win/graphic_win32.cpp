@@ -157,7 +157,7 @@ sptr<TextLayout> PlatformFactory_gdi::createTextLayout(const std::string& src, F
 
 /**************************************************************************************************/
 
-const Gdiplus::StringFormat* Graphics2D_win32::_format = nullptr;
+const Gdiplus::StringFormat* Graphics2D_win32::_format;
 
 Graphics2D_win32::Graphics2D_win32(Gdiplus::Graphics* g) {
   if (_format == nullptr) {

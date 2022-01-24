@@ -1,6 +1,7 @@
 #ifndef LATEX_FONT_STYLE_H
 #define LATEX_FONT_STYLE_H
 
+#include "config.h"
 #include "utils/utils.h"
 
 namespace tex {
@@ -38,22 +39,22 @@ enum class FontStyle : u16 {
 FontStyle findClosestStyle(FontStyle src);
 
 /** Test if the given font style is unspecified*/
-bool isUnspecified(FontStyle style);
+bool CLATEXMATH_EXPORT isUnspecified(FontStyle style);
 
 /** Test if the given font style is roman */
-bool isRoman(FontStyle style);
+bool CLATEXMATH_EXPORT isRoman(FontStyle style);
 
 /** Test if the given font style is bold */
-bool isBold(FontStyle style);
+bool CLATEXMATH_EXPORT isBold(FontStyle style);
 
 /** Test if the given font style is italic */
-bool isItalic(FontStyle style);
+bool CLATEXMATH_EXPORT isItalic(FontStyle style);
 
 /** Test if the given font style is sans-serif */
-bool isSansSerif(FontStyle style);
+bool CLATEXMATH_EXPORT isSansSerif(FontStyle style);
 
 /** Test if the given font style is mono-spaced */
-bool isMono(FontStyle style);
+bool CLATEXMATH_EXPORT isMono(FontStyle style);
 
 }
 

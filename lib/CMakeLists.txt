@@ -70,6 +70,7 @@ target_sources(
     otf/otf.cpp
     otf/path.cpp
     # unimath folder
+    unimath/font_src.cpp
     unimath/math_type.cpp
     unimath/uni_char.cpp
     unimath/uni_font.cpp
