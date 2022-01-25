@@ -195,9 +195,7 @@ Render* RenderBuilder::build(const sptr<Atom>& fc) {
 
   auto fctx = sptrOf<FontContext>();
   fctx->selectMathFont(_mathFontName);
-  if (!_mainFontName.empty()) {
-    fctx->selectMainFont(_mainFontName);
-  }
+  fctx->selectMainFont(_mainFontName);
 
   const auto style = _enableOverrideStyle ? _overrideStyle : _style;
   Env env(style, fctx, _textSize);

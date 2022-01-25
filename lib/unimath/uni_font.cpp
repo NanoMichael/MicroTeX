@@ -142,6 +142,10 @@ void FontContext::selectMathFont(const string& name) {
 }
 
 void FontContext::selectMainFont(const string& name) {
+  if (name.empty()) {
+    _mainFont = nullptr;
+    return;
+  }
   const auto it = _mainFonts.find(name);
   if (it == _mainFonts.end()) {
     throw ex_invalid_param("Main font '" + name + "' does not exists!");

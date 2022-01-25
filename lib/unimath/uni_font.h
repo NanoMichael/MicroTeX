@@ -107,7 +107,7 @@ public:
   /** Select math font by the given version name */
   void selectMathFont(const std::string& name);
 
-  /** Select main font by the given version name */
+  /** Select main font by the given version name, empty to use math font */
   void selectMainFont(const std::string& name);
 
   /** Get the math font currently in use */

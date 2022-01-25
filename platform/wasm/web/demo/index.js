@@ -59,22 +59,29 @@ function initEditor(str) {
 }
 
 function listenEvents() {
+  document.getElementById('main-font').onchange = e => {
+    if (!context.isInited()) return;
+    const option = document.getElementById("main-font").value;
+    const name = option === "none" ? "" : option;
+    context.setMainFont(name);
+    parse(editor.getValue());
+  };
   document.getElementById('fonts').onchange = e => {
     if (!context.isInited()) return;
     const option = document.getElementById("fonts").value;
     context.setMathFont(option);
     parse(editor.getValue());
-  }
+  };
   document.getElementById('textsize').onchange = e => {
     if (!context.isInited()) return;
     parse(editor.getValue());
-  }
+  };
   document.getElementById('next').onclick = e => {
     if (!examples.isInited() || !context.isInited()) return;
     let str = examples.next();
     parse(str);
     editor.setValue(str);
-  }
+  };
 }
 
 function fixDpi(canvas) {

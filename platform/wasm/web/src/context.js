@@ -160,11 +160,12 @@ context.addMainFont = function (familyName, clmDataUri, styleName) {
 /**
  * Set main font to render formulas. The font MUST be added to the context.
  *
- * @param {String} familyName the family name
- * @throws {TypeError} if the font was not added
+ * @param {String} familyName the family name, the engine will use math font
+ * to render text if is empty.
+ * @throws {TypeError} if the font was not added.
  */
 context.setMainFont = function (familyName) {
-  if (!_mainFonts.includes(familyName)) {
+  if (familyName !== "" && !_mainFonts.includes(familyName)) {
     throw new TypeError("the font family `" + familyName + "` has no font.");
   }
   const cstr = _runtime.allocateUTF8(familyName);
