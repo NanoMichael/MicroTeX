@@ -55,21 +55,27 @@ inline std::string& tolower(std::string& src) {
 
 /** Ignore left side whitespace in a string */
 inline std::string& ltrim(std::string& s) {
-#if CLATEX_CXX17
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not_fn<int(int)>(isspace)));
-#else
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::cref<int(int)>(isspace))));
-#endif
+  s.erase(
+    s.begin(),
+    std::find_if(
+      s.begin(),
+      s.end(),
+      [](char c) { return !isspace(c); }
+    )
+  );
   return s;
 }
 
 /** Ignore right side whitespace in a string */
 inline std::string& rtrim(std::string& s) {
-#if CLATEX_CXX17
-  s.erase(std::find_if(s.rbegin(), s.rend(), std::not_fn<int(int)>(isspace)).base(), s.end());
-#else
-  s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::cref<int(int)>(isspace))).base(), s.end());
-#endif
+  s.erase(
+    std::find_if(
+      s.rbegin(),
+      s.rend(),
+      [](char c) { return !isspace(c); }
+    ).base(),
+    s.end()
+  );
   return s;
 }
 
