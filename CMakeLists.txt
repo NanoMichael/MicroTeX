@@ -45,36 +45,32 @@ endif ()
 
 if (GTK)
     add_subdirectory(platform/cairo)
+    if (BUILD_EXAMPLE_GTK)
+        add_subdirectory(example/gtk)
+    endif ()
 endif ()
 
 if (QT)
     add_subdirectory(platform/qt)
+    if (BUILD_EXAMPLE_QT)
+        add_subdirectory(example/qt)
+    endif ()
+    if (BUILD_EXAMPLE_QTPNG)
+        add_subdirectory(example/qtpng)
+    endif ()
 endif ()
 
 if (GDI)
     add_subdirectory(platform/gdi_win)
+    if (BUILD_EXAMPLE_WIN32)
+        add_subdirectory(example/win32)
+    endif ()
 endif ()
 
 if (WASM)
     add_subdirectory(platform/wasm)
 endif ()
 
-if (BUILD_EXAMPLE_GTK)
-    add_subdirectory(example/gtk)
-endif ()
-
-if (BUILD_EXAMPLE_QT)
-    add_subdirectory(example/qt)
-endif ()
-
-if (BUILD_EXAMPLE_QTPNG)
-    add_subdirectory(example/qtpng)
-endif ()
-
 if (BUILD_EXAMPLE_MEMCHECK)
     add_subdirectory(example/memcheck)
-endif ()
-
-if (BUILD_EXAMPLE_WIN32)
-    add_subdirectory(example/win32)
 endif ()
