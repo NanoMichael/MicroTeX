@@ -6,9 +6,6 @@ fi
 
 cd "demo-dist" || return
 
-git config user.email "artiano@hotmail.com"
-git config user.name "Nano"
-
 if [ ! -d ".git" ]; then
   echo "Init git..."
   git init
