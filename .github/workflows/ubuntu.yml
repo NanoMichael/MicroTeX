@@ -83,3 +83,8 @@ jobs:
           cd platform/wasm/web
           npm install
           npm run build
+      - name: Publis Demo 🚀
+        run: |
+          cd ${{ github.workspace }}
+          cd platform/wasm/web
+          sh ./publishdemo.sh
