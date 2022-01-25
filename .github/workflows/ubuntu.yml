@@ -63,3 +63,23 @@ jobs:
           cd ${{ github.workspace }}
           cd build
           ninja
+
+  build_wasm:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-20.04
+    steps:
+      - name: Downloading Source Code 📥
+        uses: actions/checkout@v2
+      - name: Setup Emscripten Environment 🍺
+        uses: mymindstorm/setup-emsdk@v11
+      - name: Verify Emscripten 🚀
+        run: emcc -v
+      - name: Compile 🎲
+        run: |
+          cd ${{ github.workspace }}
+          cd platform/wasm/web
+          npm install
+          npm run build
