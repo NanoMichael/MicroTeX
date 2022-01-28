@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
     QStringList() << "clm",
     "path to clm data file",
     "clm",
-    "../../res/XITSMath-Regular.clm"
+    "../../res/xits/XITSMath-Regular.clm"
   );
   parser.addOption(clmOption);
   parser.process(app);

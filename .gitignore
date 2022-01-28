@@ -28,5 +28,4 @@ cmake-build-*
 .vs
 venv/
 builddir/
-*.clm
 buildwasm/
