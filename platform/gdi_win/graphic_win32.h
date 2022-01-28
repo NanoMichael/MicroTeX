@@ -30,7 +30,7 @@ namespace tex {
 
 std::wstring win32ToWideString(const std::string& str);
 
-class Font_win32 : public Font {
+class CLATEXMATH_EXPORT Font_win32 : public Font {
 private:
   static std::map<std::string, sptr<Font_win32>> _win32Faces;
 
@@ -56,7 +56,7 @@ public:
 
 /**************************************************************************************************/
 
-class TextLayout_win32 : public TextLayout {
+class CLATEXMATH_EXPORT TextLayout_win32 : public TextLayout {
 private:
   std::wstring _txt;
   sptr<Font_win32> _font;
