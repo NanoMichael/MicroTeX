@@ -29,3 +29,4 @@ cmake-build-*
 venv/
 builddir/
 buildwasm/
+CMakeLists.txt.user
