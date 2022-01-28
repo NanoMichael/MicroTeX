@@ -7,6 +7,7 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Gui Widgets REQUIRED)
 
 target_include_directories(clatexmath-qt PUBLIC .)
 
+target_compile_definitions(clatexmath-qt PRIVATE -DCLATEXMATH_LIBRARY)
 target_link_libraries(
     clatexmath-qt PRIVATE
     clatexmath
