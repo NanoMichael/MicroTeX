@@ -4,10 +4,12 @@ option('TARGET_DEVEL', type : 'boolean', value : true)
 # if build tests
 option('TEST', type: 'boolean', value: true)
 
+# if build cairo
+option('CAIRO', type: 'boolean', value: true)
 # if build cairomm
 option('CAIROMM', type: 'boolean', value: true)
 # if build gtk example
-option('EXAMPLE_GTK', type: 'boolean', value: true)
+option('EXAMPLE_GTK', type : 'combo', choices : ['cairo', 'cairomm'], value : 'cairomm')
 
 # if build qt
 option('QT', type: 'boolean', value: true)
