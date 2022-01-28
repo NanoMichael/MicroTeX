@@ -6,24 +6,11 @@ project(
     DESCRIPTION "A dynamic, cross-platform, and embeddable LaTeX rendering library"
 )
 
-# compile option: if have log
-option(HAVE_LOG "If enable log" ON)
-if (HAVE_LOG)
-    add_definitions(-DHAVE_LOG)
-endif ()
-
-add_subdirectory(lib)
-
-file(COPY res DESTINATION .)
-
 if (MSVC)
     # MSVC Compat
     set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     add_compile_options("/utf-8")
-    target_compile_features(clatexmath PUBLIC cxx_std_17)
-    target_compile_definitions(clatexmath PRIVATE -DCLATEXMATH_LIBRARY)
-    target_compile_definitions(clatexmath PUBLIC -D_HAS_STD_BYTE=0)
     # make binaries together
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -42,6 +29,26 @@ else ()
         )
     endif ()
 endif ()
+####################
+#  compile option  #
+####################
+option(GTK "Build with GTK" OFF)
+option(BUILD_EXAMPLE_GTK "Build GTK example, only work with -DGTK=ON flag" OFF)
+option(QT "Build with Qt" OFF)
+option(BUILD_EXAMPLE_QT "Build Qt example, only work with -DQT=ON flag" OFF)
+option(BUILD_EXAMPLE_QTPNG "Build Qt png example, only work with -DQT=ON flag" OFF)
+option(GDI "Build with GDI" OFF)
+option(BUILD_EXAMPLE_WIN32 "Build Win32 GDI example, only work with -DGDI=ON flag" OFF)
+option(WASM "Build with WebAssembly" OFF)
+option(BUILD_EXAMPLE_MEMCHECK "Build memory check example" OFF)
+option(HAVE_LOG "If enable log" ON)
+if (HAVE_LOG)
+    add_definitions(-DHAVE_LOG)
+endif ()
+
+add_subdirectory(lib)
+
+file(COPY res DESTINATION .)
 
 if (GTK)
     add_subdirectory(platform/cairo)

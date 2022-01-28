@@ -5,6 +5,12 @@ else (WASM)
     add_library(clatexmath SHARED "")
 endif ()
 
+if (MSVC)
+    target_compile_features(clatexmath PUBLIC cxx_std_17)
+    target_compile_definitions(clatexmath PRIVATE -DCLATEXMATH_LIBRARY)
+    target_compile_definitions(clatexmath PUBLIC -D_HAS_STD_BYTE=0)
+endif ()
+
 set_target_properties(clatexmath PROPERTIES VERSION 1.0.0 SOVERSION 1)
 
 # source files
