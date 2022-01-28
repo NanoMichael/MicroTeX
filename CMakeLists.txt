@@ -49,7 +49,7 @@ add_subdirectory(lib)
 file(COPY res DESTINATION .)
 
 if (GTK)
-    add_subdirectory(platform/cairo)
+    add_subdirectory(platform/cairomm)
     if (BUILD_EXAMPLE_GTK)
         add_subdirectory(example/gtk)
     endif ()

@@ -1,7 +1,7 @@
 #include <fontconfig/fontconfig.h>
 
 #include <utility>
-#include "graphic_cairo.h"
+#include "graphic_cairomm.h"
 #include "utils/log.h"
 #include "utils/utf.h"
 

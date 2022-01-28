@@ -1,6 +1,6 @@
 message(STATUS "Cross-building using GTK")
 
-add_library(clatexmath-cairo SHARED graphic_cairo.cpp)
+add_library(clatexmath-cairo SHARED graphic_cairomm.cpp)
 
 find_package(Fontconfig REQUIRED)
 find_package(PkgConfig REQUIRED)
