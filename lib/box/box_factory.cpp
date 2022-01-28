@@ -80,7 +80,7 @@ static sptr<Box> createDelim(const std::string& sym, Env& env, const float len, 
       max = std::min(max, (float) part.endConnectorLength());
     }
     if (!part.isExtender()) {
-      f.emplace_back(r.size(), b);
+      f.emplace_back(static_cast<int>(r.size()), b);
       fl += l;
     } else {
       r.push_back(b);
