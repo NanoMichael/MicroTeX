@@ -25,7 +25,7 @@ const Glyph* Char::glyph() const {
   auto g = font->otf().glyph(glyphId);
   if (g == nullptr) {
 #ifdef HAVE_LOG
-    logv("There's no glyph was found with (unicode = %u, id = %d), use '?' instead.\n", mappedCode, glyphId);
+    logv("There's no glyph was found with (unicode = %u, id = %d), use '?' instead.\n", static_cast<std::uint32_t>(mappedCode), glyphId);
 #endif
     return font->otf().glyphOfUnicode('?');
   }
