@@ -13,23 +13,12 @@ subdir('lib')
 
 if get_option('CAIRO')
   subdir('platform/cairo')
-  if get_option('EXAMPLE_GTK') == 'cairo'
+  if get_option('EXAMPLE_GTK')
     subdir('example/gtk')
   endif
 else
-  if get_option('EXAMPLE_GTK') == 'cairo'
+  if get_option('EXAMPLE_GTK')
     error('EXAMPLE_GTK was enabled, but it requires CAIRO platform')
-  endif
-endif
-
-if get_option('CAIROMM')
-  subdir('platform/cairomm')
-  if get_option('EXAMPLE_GTK') == 'cairomm'
-    subdir('example/gtk')
-  endif
-else
-  if get_option('EXAMPLE_GTK') == 'cairomm'
-    error('EXAMPLE_GTK was enabled, but it requires CAIROMM platform')
   endif
 endif
 

@@ -44,7 +44,7 @@ else ()
 endif ()
 
 if (GTK)
-    add_subdirectory(platform/cairomm)
+    add_subdirectory(platform/cairo)
     if (BUILD_EXAMPLE_GTK)
         add_subdirectory(example/gtk)
     endif ()

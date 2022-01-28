@@ -6,7 +6,7 @@ add_executable(
 
 target_include_directories(LaTeXGtkExample PUBLIC ../samples)
 
-add_definitions(-DBUILD_EXAMPLE_GTK -DWITH_MM)
+add_definitions(-DBUILD_EXAMPLE_GTK)
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GSVMM REQUIRED IMPORTED_TARGET gtksourceviewmm-3.0)
