@@ -16,7 +16,7 @@
 
 namespace tex {
 
-class Font_qt : public Font {
+class CLATEXMATH_EXPORT Font_qt : public Font {
 private:
   static QMap<QString, QString> _qtFamilies;
 
@@ -36,7 +36,7 @@ public:
 
 /**************************************************************************************************/
 
-class TextLayout_qt : public TextLayout {
+class CLATEXMATH_EXPORT TextLayout_qt : public TextLayout {
 private:
   QFont _font;
   QString _text;
@@ -51,7 +51,7 @@ public:
 
 /**************************************************************************************************/
 
-class PlatformFactory_qt : public PlatformFactory {
+class CLATEXMATH_EXPORT PlatformFactory_qt : public PlatformFactory {
 public:
   sptr<Font> createFont(const std::string& file) override;
 
