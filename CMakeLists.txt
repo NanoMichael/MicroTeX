@@ -6,10 +6,9 @@ project(
     DESCRIPTION "A dynamic, cross-platform, and embeddable LaTeX rendering library"
 )
 
-if (MSVC)
-    # MSVC Compat
-    set(CMAKE_CXX_STANDARD 17)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+if (MSVC) # MSVC Compat
     add_compile_options("/utf-8")
     # make binaries together
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -21,7 +20,6 @@ else ()
 
     if (COMPILER_SUPPORTS_CXX17)
         message(STATUS "${CMAKE_CXX_COMPILER} has c++17 support.")
-        target_compile_features(clatexmath PUBLIC cxx_std_17)
     else ()
         message(
             FATAL_ERROR
