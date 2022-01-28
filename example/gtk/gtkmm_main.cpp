@@ -1,5 +1,5 @@
 #include "latex.h"
-#include "graphic_cairo.h"
+#include "graphic_cairomm.h"
 #include "samples.h"
 #include "utils/log.h"
 #include "utils/string_utils.h"
