@@ -1,5 +1,9 @@
 #include "latex.h"
+#ifdef WITH_MM
 #include "graphic_cairomm.h"
+#else
+#include "graphic_cairo.h"
+#endif
 #include "samples.h"
 #include "utils/log.h"
 #include "utils/string_utils.h"
@@ -107,7 +111,11 @@ public:
 
   void drawInContext(const Cairo::RefPtr<Cairo::Context>& cr) {
     if (_render == nullptr) return;
+#ifdef WITH_MM
     Graphics2D_cairo g2(cr);
+#else
+	Graphics2D_cairo g2(cr->cobj());
+#endif
     _render->draw(g2, _padding, _padding);
   }
 
@@ -122,7 +130,11 @@ protected:
     cr->fill();
     if (_render == nullptr) return true;
     auto start = std::chrono::high_resolution_clock::now();
+#ifdef WITH_MM
     Graphics2D_cairo g2(cr);
+#else
+	Graphics2D_cairo g2(cr->cobj());
+#endif
     _render->draw(g2, _padding, _padding);
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
@@ -291,7 +303,11 @@ public:
     const float h = r->getHeight() + _padding * 2;
     auto surface = Cairo::SvgSurface::create(file, w, h);
     auto context = Cairo::Context::create(surface);
+#ifdef WITH_MM
     Graphics2D_cairo g2(context);
+#else
+	Graphics2D_cairo g2(context->cobj());
+#endif
     if (!isTransparent(_background)) {
       g2.setColor(_background);
       g2.fillRect(0, 0, w, h);
@@ -453,7 +469,11 @@ int runPerf(const std::string& samplesFilePath) {
   Samples samples(samplesFilePath);
   auto surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 1024, 1024);
   auto ctx = Cairo::Context::create(surface);
-  Graphics2D_cairo g2(ctx);
+#ifdef WITH_MM
+    Graphics2D_cairo g2(ctx);
+#else
+	Graphics2D_cairo g2(ctx->cobj());
+#endif
 
   auto run = [&](const std::string& sample) {
     auto render = LaTeX::parse(sample, 1024, 20.f, 20.f / 3.f, 0xff424242);
