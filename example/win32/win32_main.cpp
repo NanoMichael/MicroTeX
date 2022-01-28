@@ -63,7 +63,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
   ULONG_PTR gdiplusToken;
 
   // Initialize GDI+.
-  GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+  GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, nullptr);
   init();
 
   RegisterCanvas();
@@ -73,10 +73,10 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
   wndClass.cbClsExtra = 0;
   wndClass.cbWndExtra = 0;
   wndClass.hInstance = hInstance;
-  wndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-  wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+  wndClass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+  wndClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
   wndClass.hbrBackground = (HBRUSH) GetStockObject(WHITE_BRUSH);
-  wndClass.lpszMenuName = NULL;
+  wndClass.lpszMenuName = nullptr;
   wndClass.lpszClassName = TEXT("LaTeX");
 
   RegisterClass(&wndClass);
@@ -89,17 +89,17 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
     0,                    // initial y position
     780,                  // initial x size
     480,                  // initial y size
-    NULL,                 // parent window handle
-    NULL,                 // window menu handle
+    nullptr,                 // parent window handle
+    nullptr,                 // window menu handle
     hInstance,            // program instance handle
-    NULL                  // creation parameters
+    nullptr                  // creation parameters
   );
 
   CreateCtrl(hInstance, hWnd);
   ShowWindow(hWnd, SW_SHOWMAXIMIZED);
   UpdateWindow(hWnd);
 
-  while (GetMessage(&msg, NULL, 0, 0)) {
+  while (GetMessage(&msg, nullptr, 0, 0)) {
     TranslateMessage(&msg);
     DispatchMessage(&msg);
   }
@@ -164,7 +164,7 @@ void HandleNext() {
   RECT r;
   GetClientRect(hCanvas, &r);
   _render = LaTeX::parse(_samples->next(), r.right - r.left, _size, _size / 3.f, _color);
-  InvalidateRect(hCanvas, NULL, TRUE);
+  InvalidateRect(hCanvas, nullptr, TRUE);
   UpdateWindow(hCanvas);
 }
 
@@ -178,7 +178,7 @@ void HandleOK() {
   RECT r;
   GetClientRect(hCanvas, &r);
   _render = LaTeX::parse(txt, r.right - r.left, _size, _size / 3.f, _color);
-  InvalidateRect(hCanvas, NULL, TRUE);
+  InvalidateRect(hCanvas, nullptr, TRUE);
   UpdateWindow(hCanvas);
 }
 
@@ -191,7 +191,7 @@ void HandleSize() {
   string x = txt;
   tex::valueof(x, _size);
   _render->setTextSize(_size);
-  InvalidateRect(hCanvas, NULL, TRUE);
+  InvalidateRect(hCanvas, nullptr, TRUE);
   UpdateWindow(hCanvas);
   delete[] txt;
 }
@@ -216,13 +216,13 @@ void CreateCtrl(HINSTANCE hInst, HWND hwnd) {
   hEditor = CreateWindowEx(
     WS_EX_TOPMOST,
     "edit",
-    NULL,
+    nullptr,
     WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL,
     l, t, w, h,
     hwnd,
     (HMENU) ID_EDITBOX,
     hInst,
-    NULL
+    nullptr
   );
   HFONT hf = CreateFont(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "Consolas");
   SendMessage(hEditor, WM_SETFONT, (WPARAM) hf, 0);
@@ -232,13 +232,13 @@ void CreateCtrl(HINSTANCE hInst, HWND hwnd) {
   hEditSize = CreateWindowEx(
     WS_EX_TOPMOST,
     "edit",
-    NULL,
+    nullptr,
     WS_CHILD | WS_VISIBLE | WS_BORDER | ES_CENTER | ES_NUMBER,
     l, t, w, h,
     hwnd,
     (HMENU) ID_SETTER,
     hInst,
-    NULL
+    nullptr
   );
   SendMessage(hEditSize, WM_SETFONT, (WPARAM) hf, 0);
   setterProc = (WNDPROC) SetWindowLongPtr(hEditSize, GWLP_WNDPROC, (LONG_PTR) SetterProc);
@@ -246,41 +246,41 @@ void CreateCtrl(HINSTANCE hInst, HWND hwnd) {
   hBtnSize = CreateWindowEx(
     WS_EX_TOPMOST,
     "Button",
-    NULL,
+    nullptr,
     WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
     l, t, w, h,
     hwnd,
     (HMENU) ID_BUTTON_SIZE,
     hInst,
-    NULL
+    nullptr
   );
   SendMessage(hBtnSize, WM_SETFONT, (WPARAM) hf, 0);
-  SendMessage(hBtnSize, WM_SETTEXT, (WPARAM) NULL, (LPARAM) ("Set Text Size"));
+  SendMessage(hBtnSize, WM_SETTEXT, (WPARAM) nullptr, (LPARAM) ("Set Text Size"));
   // button next
   hBtnNext = CreateWindowEx(
     WS_EX_TOPMOST,
     "Button",
-    NULL,
+    nullptr,
     WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
     l, t, w, h,
     hwnd,
     (HMENU) ID_BUTTON_NEXT,
     hInst,
-    NULL
+    nullptr
   );
   SendMessage(hBtnNext, WM_SETFONT, (WPARAM) hf, 0);
-  SendMessage(hBtnNext, WM_SETTEXT, (WPARAM) NULL, (LPARAM) ("Next Example"));
+  SendMessage(hBtnNext, WM_SETTEXT, (WPARAM) nullptr, (LPARAM) ("Next Example"));
   // canvas
   hCanvas = CreateWindowEx(
     WS_EX_TOPMOST,
     "canvas",
-    NULL,
+    nullptr,
     WS_CHILD | WS_VISIBLE,
     l, t, w, h,
     hwnd,
     (HMENU) ID_CANVAS,
     hInst,
-    NULL
+    nullptr
   );
 }
 
@@ -314,7 +314,7 @@ void RegisterCanvas() {
   WNDCLASS wnd = {0};
   wnd.style = CS_GLOBALCLASS | CS_HREDRAW | CS_VREDRAW;
   wnd.lpfnWndProc = CanvasProc;
-  wnd.hCursor = LoadCursor(NULL, IDC_ARROW);
+  wnd.hCursor = LoadCursor(nullptr, IDC_ARROW);
   wnd.lpszClassName = "canvas";
   RegisterClass(&wnd);
 }
@@ -339,7 +339,7 @@ LRESULT CALLBACK SetterProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
 }
 
 void ScrollCanvas(int d) {
-  ScrollWindow(hCanvas, 0, d, NULL, NULL);
+  ScrollWindow(hCanvas, 0, d, nullptr, nullptr);
   UpdateWindow(hCanvas);
 }
 
