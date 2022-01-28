@@ -138,6 +138,14 @@ void init() {
     //    <math clm data file>
     //    <math font file>
     //    <samples file>
+    fprintf(
+            stderr,
+            "Required options:\n"
+            "  <math font name>\n"
+            "  <clm data file>\n"
+            "  <math font file>\n"
+            "  <samples file>\n"
+    );
     exit(1);
   }
   const FontSrcFile math{__argv[2], __argv[3], __argv[4]};
