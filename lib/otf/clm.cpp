@@ -13,6 +13,7 @@ public:
   virtual ~BinaryReader() = default;
 
   virtual const u8* readBytes(size_t bytes) = 0;
+  virtual size_t lookfwd(u8 until) = 0;
 
   template<typename T>
   T read() {
@@ -24,6 +25,12 @@ public:
       t |= (T) (*(p + i)) << ((shift - i) * 8);
     }
     return t;
+  }
+
+  const char* read_string() {
+    size_t len = lookfwd(0x00);
+    const char* ret = (const char*)readBytes(len);
+    return ret;
   }
 };
 
@@ -63,6 +70,20 @@ public:
     return p;
   }
 
+  size_t lookfwd(u8 until) override {
+    size_t len = 0;
+    u8 active = 0x00;
+    while (active != until || len == 0) {
+      const auto remain = _currentSize - (_index + len);
+      if (remain < 32) readChunk(32);
+
+      if (_index + len >= _currentSize) throw ex_eof("end of data");
+      active = _buff[_index + len];
+      len++;
+    }
+    return len;
+  }
+
   ~BinaryFileReader() override {
     if (_file != nullptr) fclose(_file);
   }
@@ -83,9 +104,21 @@ public:
     _index += bytes;
     return p;
   }
+
+  size_t lookfwd(u8 until) override {
+    size_t len = 0;
+    u8 active = 0x00;
+    while (active != until || len == 0) {
+      if (_index + len >= _len) throw ex_eof("end of data");
+      active = _data[_index + len];
+      len++;
+    }
+    return len;
+  }
 };
 
 void CLMReader::readMeta(Otf& font, BinaryReader& reader) {
+  font._name = std::string(reader.read_string());
   font._isMathFont = reader.read<bool>();
   font._em = reader.read<u16>();
   font._xHeight = reader.read<u16>();
