@@ -521,7 +521,7 @@ int main(int argc, char* argv[]) {
 
   Pango::init();
   const FontSrcFile math{mathVersionName, clmFile, mathFont};
-  TinyTeX::init(math);
+  TinyTeX::init(&math);
 
   PlatformFactory::registerFactory("gtk", std::make_unique<PlatformFactory_cairo>());
   PlatformFactory::activate("gtk");
