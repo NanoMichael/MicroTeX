@@ -135,7 +135,7 @@ int main(int argc, char* argv[]) {
     return 1;
   }
   const tinytex::FontSrcFile math{argv[1], argv[2], argv[3]};
-  tinytex::TinyTeX::init(math);
+  tinytex::TinyTeX::init(&math);
 
   tinytex::PlatformFactory::registerFactory("none", std::make_unique<tinytex::PlatformFactory_none>());
   tinytex::PlatformFactory::activate("none");

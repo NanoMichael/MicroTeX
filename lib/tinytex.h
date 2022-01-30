@@ -2,12 +2,16 @@
 #define TINYTEX_TINYTEX_H
 
 #include <string>
+#include <variant>
 
 #include "unimath/font_src.h"
 #include "config.h"
 #include "render.h"
 
 namespace tinytex {
+
+struct TINYTEX_EXPORT InitFontSenseAuto { };
+typedef std::variant<const FontSrc*, const std::string, InitFontSenseAuto> Init;
 
 class TINYTEX_EXPORT TinyTeX {
 private:
@@ -26,7 +30,7 @@ public:
    *
    * @param mathFontSrc the font source to load math font
    */
-  static void init(const FontSrc& mathFontSrc);
+  static void init(Init init);
 
   /** Check if context is initialized */
   static bool isInited();

@@ -17,7 +17,7 @@
 class TexGuard {
 public:
   TexGuard(const tinytex::FontSrc& math) {
-    tinytex::TinyTeX::init(math);
+    tinytex::TinyTeX::init(&math);
     tinytex::PlatformFactory::registerFactory("qt", std::make_unique<tinytex::PlatformFactory_qt>());
     tinytex::PlatformFactory::activate("qt");
   }

@@ -16,7 +16,7 @@ void TINYTEX_WASM_API tinytex_init(
   const unsigned char* data
 ) {
   FontSrcData src{name, len, data};
-  TinyTeX::init(src);
+  TinyTeX::init(&src);
 }
 
 void TINYTEX_WASM_API tinytex_release() {

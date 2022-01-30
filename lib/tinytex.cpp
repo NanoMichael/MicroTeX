@@ -1,7 +1,9 @@
 #include "tinytex.h"
 
 #include "core/formula.h"
+#include "otf/fontsense.h"
 #include "macro/macro.h"
+#include "utils/exceptions.h"
 #include "utils/string_utils.h"
 
 using namespace std;
@@ -11,10 +13,31 @@ volatile bool TinyTeX::_isInited = false;
 std::string TinyTeX::_defaultMathFontName;
 std::string TinyTeX::_defaultMainFontName;
 
-void TinyTeX::init(const FontSrc& mathFontSrc) {
-  FontContext::addMathFont(mathFontSrc);
-  _defaultMathFontName = mathFontSrc.name;
-  if (_isInited) return;
+void TinyTeX::init(Init init) {
+  const FontSrc** mathFontSrc = std::get_if<const FontSrc*>(&init);
+  if (mathFontSrc) {
+    FontContext::addMathFont(**mathFontSrc);
+    _defaultMathFontName = (*mathFontSrc)->name;
+    goto initialization;
+  }
+
+  {
+  auto mathfont = fontsense_lookup();
+  {
+  const std::string* mathFontName= std::get_if<const std::string>(&init);
+  if (mathFontName) {
+    _defaultMathFontName = *mathFontName;
+    goto initialization;
+  }
+  }
+
+  if (mathfont)
+    _defaultMathFontName = mathfont.value();
+  else
+    throw ex_invalid_state("no math font found by fontsense");
+  }
+
+  initialization:if (_isInited) return;
   _isInited = true;
   NewCommandMacro::_init_();
 }

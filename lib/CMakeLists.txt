@@ -73,6 +73,7 @@ target_sources(
     utils/utils.cpp
     # otf folder
     otf/clm.cpp
+	otf/fontsense.cpp
     otf/glyph.cpp
     otf/otf.cpp
     otf/path.cpp

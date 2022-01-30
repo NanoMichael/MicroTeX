@@ -23,3 +23,11 @@ FontSrcData::FontSrcData(std::string name, size_t len, const u8* data, std::stri
 sptr<Otf> FontSrcData::loadOtf() const {
   return sptr<Otf>(Otf::fromData(len, data));
 }
+
+FontSrcSense::FontSrcSense(Otf* clm_file, std::string font_file)
+	: FontSrc(clm_file->name(), std::move(font_file)),
+	  clm_file(clm_file) {}
+
+sptr<Otf> FontSrcSense::loadOtf() const {
+	return sptr<Otf>(clm_file);
+}

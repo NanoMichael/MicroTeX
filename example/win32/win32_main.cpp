@@ -147,7 +147,7 @@ void init() {
     exit(1);
   }
   const FontSrcFile math{__argv[2], __argv[3], __argv[4]};
-  TinyTeX::init(math);
+  TinyTeX::init(&math);
   PlatformFactory::registerFactory("gdi", std::make_unique<PlatformFactory_gdi>());
   PlatformFactory::activate("gdi");
   _samples = new Samples(__argv[5]);
