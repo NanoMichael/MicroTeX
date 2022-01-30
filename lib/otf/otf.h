@@ -46,6 +46,8 @@ public:
 /** Class to represent an otf font */
 class Otf final {
 private:
+  std::string _name;
+
   u16 _unicodeCount = 0;
   u32* _unicodes = nullptr;
   u16* _unicodeGlyphs = nullptr;
@@ -78,6 +80,9 @@ public:
 
   /** Read otf font from data */
   static Otf* fromData(size_t len, const u8* data);
+
+  /** Get the full postscript name of this font */
+  inline std::string& name() { return _name; }
 
   /** Test if this font is a math font */
   inline bool isMathFont() const { return _isMathFont; }
