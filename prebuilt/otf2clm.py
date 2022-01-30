@@ -632,6 +632,7 @@ def parse_otf(file_path, have_glyph_path, output_file_path):
             ligas.append(l)
 
     name = font.fullname
+    family = font.familyname
     em = font.em
     xheight = font.xHeight
     ascent = font.ascent
@@ -646,6 +647,7 @@ def parse_otf(file_path, have_glyph_path, output_file_path):
         # minor version, if support glyph path
         f.write(struct.pack('B', 2 if have_glyph_path else 1))
         f.write(struct.pack(str(len(name)+1) + 's', bytes(name, 'utf-8')))
+        f.write(struct.pack(str(len(family)+1) + 's', bytes(family, 'utf-8')))
         f.write(struct.pack('?', is_math_font))
         f.write(struct.pack('!H', em))
         f.write(struct.pack('!H', int(xheight)))
