@@ -1,5 +1,5 @@
-#ifndef LATEX_ATOM_SIDESET_H
-#define LATEX_ATOM_SIDESET_H
+#ifndef TINYTEX_ATOM_SIDESET_H
+#define TINYTEX_ATOM_SIDESET_H
 
 #include "atom/atom.h"
 
@@ -25,4 +25,4 @@ public:
 
 }
 
-#endif //LATEX_ATOM_SIDESET_H
+#endif //TINYTEX_ATOM_SIDESET_H

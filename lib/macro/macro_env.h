@@ -1,5 +1,5 @@
-#ifndef LATEX_MACRO_ENV_H
-#define LATEX_MACRO_ENV_H
+#ifndef TINYTEX_MACRO_ENV_H
+#define TINYTEX_MACRO_ENV_H
 
 #include "macro/macro_decl.h"
 #include "macro/macro.h"
@@ -210,4 +210,4 @@ inline macro(shoveleft) {
 
 }
 
-#endif //LATEX_MACRO_ENV_H
+#endif //TINYTEX_MACRO_ENV_H

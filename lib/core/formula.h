@@ -1,5 +1,5 @@
-#ifndef LATEX_FORMULA_H
-#define LATEX_FORMULA_H
+#ifndef TINYTEX_FORMULA_H
+#define TINYTEX_FORMULA_H
 
 #include <string>
 #include <utility>
@@ -133,4 +133,4 @@ public:
 
 }  // namespace tinytex
 
-#endif  // LATEX_FORMULA_H
+#endif  // TINYTEX_FORMULA_H

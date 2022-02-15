@@ -10,7 +10,7 @@ using namespace tinytex;
 extern "C" {
 #endif
 
-void CLATEX_WASM_API clatex_init(
+void TINYTEX_WASM_API clatex_init(
   const char* name,
   unsigned long len,
   const unsigned char* data
@@ -19,15 +19,15 @@ void CLATEX_WASM_API clatex_init(
   LaTeX::init(src);
 }
 
-void CLATEX_WASM_API clatex_release() {
+void TINYTEX_WASM_API clatex_release() {
   LaTeX::release();
 }
 
-bool CLATEX_WASM_API clatex_isInited() {
+bool TINYTEX_WASM_API clatex_isInited() {
   return LaTeX::isInited();
 }
 
-void CLATEX_WASM_API clatex_addMathFont(
+void TINYTEX_WASM_API clatex_addMathFont(
   const char* name,
   unsigned long len,
   const unsigned char* data
@@ -36,7 +36,7 @@ void CLATEX_WASM_API clatex_addMathFont(
   LaTeX::addMathFont(src);
 }
 
-void CLATEX_WASM_API clatex_addMainFont(
+void TINYTEX_WASM_API clatex_addMainFont(
   const char* familyName,
   const char* styleName,
   unsigned long len,
@@ -48,15 +48,15 @@ void CLATEX_WASM_API clatex_addMainFont(
   LaTeX::addMainFont(familyName, list);
 }
 
-void CLATEX_WASM_API clatex_setDefaultMathFont(const char* name) {
+void TINYTEX_WASM_API clatex_setDefaultMathFont(const char* name) {
   LaTeX::setDefaultMathFont(name);
 }
 
-void CLATEX_WASM_API clatex_setDefaultMainFont(const char* name) {
+void TINYTEX_WASM_API clatex_setDefaultMainFont(const char* name) {
   LaTeX::setDefaultMainFont(name);
 }
 
-void* CLATEX_WASM_API clatex_parseRender(
+void* TINYTEX_WASM_API clatex_parseRender(
   const char* tex,
   int width,
   float textSize,
@@ -70,38 +70,38 @@ void* CLATEX_WASM_API clatex_parseRender(
   return reinterpret_cast<void*>(r);
 }
 
-void CLATEX_WASM_API clatex_deleteRender(void* render) {
+void TINYTEX_WASM_API clatex_deleteRender(void* render) {
   auto r = reinterpret_cast<Render*>(render);
   delete r;
 }
 
-void* CLATEX_WASM_API clatex_getDrawingData(void* render, int x, int y) {
+void* TINYTEX_WASM_API clatex_getDrawingData(void* render, int x, int y) {
   auto r = reinterpret_cast<Render*>(render);
   Graphics2D_wasm g2;
   r->draw(g2, x, y);
   return g2.getDrawingData();
 }
 
-void CLATEX_WASM_API clatex_freeDrawingData(void* data) {
+void TINYTEX_WASM_API clatex_freeDrawingData(void* data) {
   free(data);
 }
 
-bool CLATEX_WASM_API clatex_isLittleEndian() {
+bool TINYTEX_WASM_API clatex_isLittleEndian() {
   int n = 1;
   return *((char*) &n) == 1;
 }
 
-int CLATEX_WASM_API clatex_getRenderWidth(void* render) {
+int TINYTEX_WASM_API clatex_getRenderWidth(void* render) {
   auto r = reinterpret_cast<Render*>(render);
   return r->getWidth();
 }
 
-int CLATEX_WASM_API clatex_getRenderHeight(void* render) {
+int TINYTEX_WASM_API clatex_getRenderHeight(void* render) {
   auto r = reinterpret_cast<Render*>(render);
   return r->getHeight();
 }
 
-int CLATEX_WASM_API clatex_getRenderDepth(void* render) {
+int TINYTEX_WASM_API clatex_getRenderDepth(void* render) {
   auto r = reinterpret_cast<Render*>(render);
   return r->getDepth();
 }

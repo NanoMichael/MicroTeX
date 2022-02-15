@@ -1,5 +1,5 @@
-#ifndef LATEX_ATOM_FRAC_H
-#define LATEX_ATOM_FRAC_H
+#ifndef TINYTEX_ATOM_FRAC_H
+#define TINYTEX_ATOM_FRAC_H
 
 #include "atom/atom.h"
 #include "utils/enums.h"
@@ -45,4 +45,4 @@ public:
 
 }
 
-#endif //LATEX_ATOM_FRAC_H
+#endif //TINYTEX_ATOM_FRAC_H

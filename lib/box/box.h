@@ -1,5 +1,5 @@
-#ifndef LATEX_BOX_H
-#define LATEX_BOX_H
+#ifndef TINYTEX_BOX_H
+#define TINYTEX_BOX_H
 
 #include "utils/enums.h"
 
@@ -188,4 +188,4 @@ public:
 
 }
 
-#endif //LATEX_BOX_H
+#endif //TINYTEX_BOX_H

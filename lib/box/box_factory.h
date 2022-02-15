@@ -1,5 +1,5 @@
-#ifndef LATEX_BOX_FACTORY_H
-#define LATEX_BOX_FACTORY_H
+#ifndef TINYTEX_BOX_FACTORY_H
+#define TINYTEX_BOX_FACTORY_H
 
 #include "atom/atom.h"
 
@@ -21,4 +21,4 @@ sptr<Box> createVDelim(const std::string& sym, Env& env, float height, bool roun
 
 }
 
-#endif //LATEX_BOX_FACTORY_H
+#endif //TINYTEX_BOX_FACTORY_H

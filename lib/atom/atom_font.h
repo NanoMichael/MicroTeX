@@ -1,5 +1,5 @@
-#ifndef LATEX_ATOM_FONT_H
-#define LATEX_ATOM_FONT_H
+#ifndef TINYTEX_ATOM_FONT_H
+#define TINYTEX_ATOM_FONT_H
 
 #include "atom/atom.h"
 #include "graphic/font_style.h"
@@ -47,4 +47,4 @@ public:
 
 }
 
-#endif //LATEX_ATOM_FONT_H
+#endif //TINYTEX_ATOM_FONT_H

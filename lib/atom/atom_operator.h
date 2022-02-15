@@ -1,5 +1,5 @@
-#ifndef LATEX_ATOM_OPERATOR_H
-#define LATEX_ATOM_OPERATOR_H
+#ifndef TINYTEX_ATOM_OPERATOR_H
+#define TINYTEX_ATOM_OPERATOR_H
 
 #include "atom/atom.h"
 
@@ -42,4 +42,4 @@ public:
 
 }
 
-#endif //LATEX_ATOM_OPERATOR_H
+#endif //TINYTEX_ATOM_OPERATOR_H
