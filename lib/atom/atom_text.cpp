@@ -4,7 +4,7 @@
 #include "utils/utf.h"
 
 using namespace std;
-using namespace tex;
+using namespace tinytex;
 
 void TextAtom::append(c32 code) {
   appendToUtf8(_txt, code);

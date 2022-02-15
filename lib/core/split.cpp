@@ -4,7 +4,7 @@
 #include "utils/log.h"
 
 using namespace std;
-using namespace tex;
+using namespace tinytex;
 
 #ifdef HAVE_LOG
 
@@ -53,7 +53,7 @@ static void printBox(const sptr<Box>& b, int dep, vector<bool>& lines, int max =
   }
 }
 
-void tex::printBox(const sptr<Box>& box) {
+void tinytex::printBox(const sptr<Box>& box) {
   vector<bool> lines;
   ::printBox(box, 0, lines, box->name().size());
   logv("\n");

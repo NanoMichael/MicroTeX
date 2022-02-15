@@ -5,7 +5,7 @@
 #include "utils/enums.h"
 #include "env/units.h"
 
-namespace tex {
+namespace tinytex {
 
 /** An atom representing a fraction */
 class FracAtom : public Atom {

@@ -5,7 +5,7 @@
 #include "atom/atom_frac.h"
 #include "atom/atom_char.h"
 
-namespace tex {
+namespace tinytex {
 
 macro(binom);
 

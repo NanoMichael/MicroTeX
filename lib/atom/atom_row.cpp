@@ -10,7 +10,7 @@
 #include "utils/utf.h"
 
 using namespace std;
-using namespace tex;
+using namespace tinytex;
 
 bool AtomDecor::isChar() const {
   return _atom->isChar();
@@ -158,7 +158,7 @@ sptr<TextAtom> RowAtom::processContinues(int& i, bool isMathMode) {
     txt->append(code);
     ++cnt;
   };
-  tex::scanContinuedUnicodes(next, collect);
+  tinytex::scanContinuedUnicodes(next, collect);
   if (cnt <= 1) return nullptr;
   i += cnt - 1;
   return txt;

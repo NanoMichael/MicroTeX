@@ -4,7 +4,7 @@
 #include <string>
 
 using namespace std;
-using namespace tex;
+using namespace tinytex;
 
 bool NewCommandMacro::_errIfConflict = true;
 

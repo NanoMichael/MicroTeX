@@ -17,7 +17,7 @@
 #include <QFile>
 #include <QGlyphRun>
 
-using namespace tex;
+using namespace tinytex;
 using namespace std;
 
 QMap<QString, QString> Font_qt::_qtFamilies;
@@ -72,16 +72,16 @@ TextLayout_qt::TextLayout_qt(const std::string& src, FontStyle style, float size
   // _font.setPointSizeF(size);
   _font.setPixelSize(size);
   _font.setFamily("Serif");
-  if (tex::isSansSerif(style)) {
+  if (tinytex::isSansSerif(style)) {
     _font.setFamily("Sans-Serif");
   }
-  if (tex::isMono(style)) {
+  if (tinytex::isMono(style)) {
     _font.setFamily("Monospace");
   }
   // todo fallback font families
   _font.setFamily("Noto Color Emoji");
-  _font.setBold(tex::isBold(style));
-  _font.setItalic(tex::isItalic(style));
+  _font.setBold(tinytex::isBold(style));
+  _font.setItalic(tinytex::isItalic(style));
 }
 
 void TextLayout_qt::getBounds(Rect& r) {

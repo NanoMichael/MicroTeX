@@ -1,7 +1,7 @@
 #include "atom/atom_font.h"
 #include "box/box_single.h"
 
-using namespace tex;
+using namespace tinytex;
 
 sptr<Box> FontStyleAtom::createBox(Env& env) {
   if (_nested) {

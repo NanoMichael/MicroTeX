@@ -1,8 +1,8 @@
 #include "core/parser.h"
 
-using namespace tex;
+using namespace tinytex;
 
-tex::c32 tex::convertToRomanNumber(c32 c) {
+tinytex::c32 tinytex::convertToRomanNumber(c32 c) {
   if (c == 0x66b) {  // Arabic dot
     return '.';
   } else if (0x660 <= c && c <= 0x669) {  // Arabic

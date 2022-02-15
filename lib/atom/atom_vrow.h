@@ -4,7 +4,7 @@
 #include "atom/atom.h"
 #include "atom/atom_space.h"
 
-namespace tex {
+namespace tinytex {
 
 /** An atom representing a vertical row of other atoms. */
 class VRowAtom : public Atom {

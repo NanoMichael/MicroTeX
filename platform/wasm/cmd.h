@@ -1,7 +1,7 @@
 #ifndef LATEX_CMD_H
 #define LATEX_CMD_H
 
-namespace tex {
+namespace tinytex {
 
 using len_t = unsigned int;
 

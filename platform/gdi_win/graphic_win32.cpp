@@ -11,9 +11,9 @@
 #include <windows.h>
 
 using namespace std;
-using namespace tex;
+using namespace tinytex;
 
-std::wstring tex::win32ToWideString(const std::string& str) {
+std::wstring tinytex::win32ToWideString(const std::string& str) {
   std::wstring wstr;
   auto l = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, nullptr, 0);
   wstr.resize(l + 10);
@@ -38,7 +38,7 @@ sptr<Font_win32> Font_win32::getOrCreate(const std::string& file) {
   int num = 0;
   c.GetFamilies(1, ff, &num);
   if (num <= 0) {
-    throw tex::ex_invalid_state("Cannot load font file " + file);
+    throw tinytex::ex_invalid_state("Cannot load font file " + file);
   }
   // search order:
   // regular -> bold -> italic -> bold-italic
@@ -52,7 +52,7 @@ sptr<Font_win32> Font_win32::getOrCreate(const std::string& file) {
   } else if (ff->IsStyleAvailable(Gdiplus::FontStyleBoldItalic)) {
     style = Gdiplus::FontStyleBoldItalic;
   } else {
-    throw tex::ex_invalid_state("No available font in file " + file);
+    throw tinytex::ex_invalid_state("No available font in file " + file);
   }
   auto f = sptrOf<Font_win32>(ff, style);
   _win32Faces[file] = f;
@@ -98,17 +98,17 @@ TextLayout_win32::TextLayout_win32(const std::string& src, FontStyle style, floa
     _format = Gdiplus::StringFormat::GenericTypographic();
   }
   const auto* f = Gdiplus::FontFamily::GenericSerif();
-  if (tex::isSansSerif(style)) {
+  if (tinytex::isSansSerif(style)) {
     f = Gdiplus::FontFamily::GenericSansSerif();
   }
-  if (tex::isMono(style)) {
+  if (tinytex::isMono(style)) {
     f = Gdiplus::FontFamily::GenericMonospace();
   }
   int s = Gdiplus::FontStyleRegular;
-  if (tex::isBold(style)) {
+  if (tinytex::isBold(style)) {
     s |= Gdiplus::FontStyleBold;
   }
-  if (tex::isItalic(style)) {
+  if (tinytex::isItalic(style)) {
     s |= Gdiplus::FontStyleItalic;
   }
   if (!f->IsStyleAvailable(s)) {
@@ -147,7 +147,7 @@ void TextLayout_win32::draw(Graphics2D& g2, float x, float y) {
 
 /**************************************************************************************************/
 
-sptr<tex::Font> PlatformFactory_gdi::createFont(const std::string& file) {
+sptr<tinytex::Font> PlatformFactory_gdi::createFont(const std::string& file) {
   return Font_win32::getOrCreate(file);
 }
 
@@ -239,7 +239,7 @@ std::vector<float> Graphics2D_win32::getDash() {
   return {};
 }
 
-sptr<tex::Font> Graphics2D_win32::getFont() const {
+sptr<tinytex::Font> Graphics2D_win32::getFont() const {
   return _font;
 }
 

@@ -14,7 +14,7 @@
 #include <QString>
 #include <QTextLayout>
 
-namespace tex {
+namespace tinytex {
 
 class CLATEXMATH_EXPORT Font_qt : public Font {
 private:

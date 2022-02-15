@@ -4,7 +4,7 @@
 #include "graphic_wasm.h"
 #include "utils/log.h"
 
-using namespace tex;
+using namespace tinytex;
 
 #ifdef __cplusplus
 extern "C" {

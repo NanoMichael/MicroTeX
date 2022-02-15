@@ -3,7 +3,7 @@
 
 #include "atom/atom.h"
 
-namespace tex {
+namespace tinytex {
 
 class TextAtom : public Atom {
 private:

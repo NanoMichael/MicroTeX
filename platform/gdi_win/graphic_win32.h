@@ -26,7 +26,7 @@ class Bitmap;
 
 }  // namespace Gdiplus
 
-namespace tex {
+namespace tinytex {
 
 std::wstring win32ToWideString(const std::string& str);
 
@@ -118,7 +118,7 @@ public:
 
   std::vector<float> getDash() override;
 
-  sptr<tex::Font> getFont() const override;
+  sptr<tinytex::Font> getFont() const override;
 
   void setFont(const sptr<Font>& font) override;
 
@@ -170,6 +170,6 @@ public:
   void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif  // GRAPHIC_WIN32_H_INCLUDED

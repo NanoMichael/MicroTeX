@@ -1,9 +1,9 @@
 #include "utf.h"
 
 using namespace std;
-using namespace tex;
+using namespace tinytex;
 
-bool tex::isVariationSelector(c32 code) {
+bool tinytex::isVariationSelector(c32 code) {
   if (code <= 0x7ff) return false;
   // variation selectors (Unicode block)
   if (code >= 0xFE00 && code <= 0xFE0F) {
@@ -20,19 +20,19 @@ bool tex::isVariationSelector(c32 code) {
   return false;
 }
 
-bool tex::isZWJ(c32 code) {
+bool tinytex::isZWJ(c32 code) {
   return code == 0x200D;
 }
 
-bool tex::isZWNJ(c32 code) {
+bool tinytex::isZWNJ(c32 code) {
   return code == 0x200C;
 }
 
-bool tex::isJoiner(c32 code) {
+bool tinytex::isJoiner(c32 code) {
   return isZWJ(code) || isZWNJ(code);
 }
 
-void tex::appendToUtf8(std::string& out, c32 code) {
+void tinytex::appendToUtf8(std::string& out, c32 code) {
   if (code <= 0x7f) {
     out.append(1, static_cast<char>(code));
   } else if (code <= 0x7ff) {
@@ -50,7 +50,7 @@ void tex::appendToUtf8(std::string& out, c32 code) {
   }
 }
 
-c32 tex::nextUnicode(const std::string& src, int i, int& cnt) {
+c32 tinytex::nextUnicode(const std::string& src, int i, int& cnt) {
   const auto l = src.length();
   if (i >= l) {
     cnt = 0;
@@ -91,7 +91,7 @@ c32 tex::nextUnicode(const std::string& src, int i, int& cnt) {
   return code;
 }
 
-void tex::scanContinuedUnicodes(
+void tinytex::scanContinuedUnicodes(
   std::function<c32()>&& next,
   std::function<void(c32)>&& collect
 ) {
@@ -99,9 +99,9 @@ void tex::scanContinuedUnicodes(
   collect(x);
   while (true) {
     const c32 a = next();
-    if (tex::isVariationSelector(a)) {
+    if (tinytex::isVariationSelector(a)) {
       collect(a);
-    } else if (tex::isJoiner(a)) {
+    } else if (tinytex::isJoiner(a)) {
       collect(a);
       c32 b = 0;
       do {

@@ -6,7 +6,7 @@
 #include <map>
 #include <string>
 
-namespace tex {
+namespace tinytex {
 
 class Parser;
 
@@ -171,6 +171,6 @@ public:
   ) override;
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif  // MACRO_H_INCLUDED

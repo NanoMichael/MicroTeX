@@ -3,7 +3,7 @@
 
 #include <cstdlib>
 
-namespace tex {
+namespace tinytex {
 
 Cmds::Cmds() {
   data = malloc(CHUNK_SIZE);

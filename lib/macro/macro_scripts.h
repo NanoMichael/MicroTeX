@@ -6,7 +6,7 @@
 #include "atom/atom_sideset.h"
 #include "atom/atom_frac.h"
 
-namespace tex {
+namespace tinytex {
 
 macro(prescript);
 

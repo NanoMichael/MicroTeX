@@ -5,7 +5,7 @@
 #include "unimath/uni_font.h"
 #include "utils/nums.h"
 
-namespace tex {
+namespace tinytex {
 
 class Env {
 private:

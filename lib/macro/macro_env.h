@@ -7,7 +7,7 @@
 #include "core/formula.h"
 #include "atom/atom_matrix.h"
 
-namespace tex {
+namespace tinytex {
 
 inline macro(smallmatrixATATenv) {
   auto* arr = new ArrayFormula();

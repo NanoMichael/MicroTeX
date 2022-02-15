@@ -9,7 +9,7 @@
 #include "unimath/uni_char.h"
 #include "atom/atom_text.h"
 
-namespace tex {
+namespace tinytex {
 
 class AtomDecor;
 

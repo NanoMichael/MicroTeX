@@ -4,7 +4,7 @@
 #include "atom/atom_stack.h"
 #include "atom/atom_zstack.h"
 
-using namespace tex;
+using namespace tinytex;
 
 sptr<Box> SideSetsAtom::createBox(Env& env) {
   _base->_limitsType = LimitsType::noLimits;

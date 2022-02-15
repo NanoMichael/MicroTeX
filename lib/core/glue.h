@@ -4,7 +4,7 @@
 #include "utils/utils.h"
 #include "utils/enums.h"
 
-namespace tex {
+namespace tinytex {
 
 class Env;
 

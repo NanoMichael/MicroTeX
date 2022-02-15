@@ -16,7 +16,7 @@
 #include "utils/utf.h"
 #include "utils/exceptions.h"
 
-namespace tex {
+namespace tinytex {
 
 inline macro(fatalIfCmdConflict) {
   NewCommandMacro::_errIfConflict = args[1] == "true";
@@ -216,6 +216,6 @@ inline macro(includegraphics) {
   return nullptr;
 }
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif  // LATEX_MACRO_MISC_H

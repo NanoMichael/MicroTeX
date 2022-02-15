@@ -8,7 +8,7 @@
 #include <string>
 #include "utils/utils.h"
 
-namespace tex {
+namespace tinytex {
 
 class Graphics2D;
 

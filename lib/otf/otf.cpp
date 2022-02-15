@@ -4,7 +4,7 @@
 
 using namespace std;
 
-namespace tex {
+namespace tinytex {
 
 pair<bool, i16> ClassKerning::operator()(u16 left, u16 right) const {
   const int li = binIndexOf(_leftCount, [&](int i) { return left - _lefts[i << 1]; });
@@ -84,4 +84,4 @@ Otf::~Otf() {
   }
 }
 
-}  // namespace tex
+}  // namespace tinytex

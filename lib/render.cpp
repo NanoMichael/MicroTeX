@@ -12,7 +12,7 @@
 #include "atom/atom_basic.h"
 
 using namespace std;
-using namespace tex;
+using namespace tinytex;
 
 Render::Render(const sptr<Box>& box, float textSize) {
   _box = box;

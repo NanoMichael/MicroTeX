@@ -21,18 +21,18 @@ int main(int argc, char** argv) {
     );
     return 1;
   }
-  const tex::FontSrcFile math{argv[1], argv[2], argv[3]};
-  tex::LaTeX::init(math);
+  const tinytex::FontSrcFile math{argv[1], argv[2], argv[3]};
+  tinytex::LaTeX::init(math);
 
-  tex::PlatformFactory::registerFactory("qt", std::make_unique<tex::PlatformFactory_qt>());
-  tex::PlatformFactory::activate("qt");
+  tinytex::PlatformFactory::registerFactory("qt", std::make_unique<tinytex::PlatformFactory_qt>());
+  tinytex::PlatformFactory::activate("qt");
 
-  tex::LaTeX::setRenderGlyphUsePath(true);
+  tinytex::LaTeX::setRenderGlyphUsePath(true);
 
   MainWindow win(nullptr, argv[4]);
   win.show();
   int ret = app.exec();
 
-  tex::LaTeX::release();
+  tinytex::LaTeX::release();
   return ret;
 }

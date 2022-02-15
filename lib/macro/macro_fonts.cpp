@@ -3,7 +3,7 @@
 #include "utils/exceptions.h"
 #include "latex.h"
 
-namespace tex {
+namespace tinytex {
 
 macro(intertext) {
   if (!tp.isArrayMode())
