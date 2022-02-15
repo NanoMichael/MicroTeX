@@ -1,12 +1,12 @@
 add_executable(
-    LaTeXMemCheck
+    MemCheck
     ../samples/samples.cpp
     mem_check_main.cpp
 )
 
-target_include_directories(LaTeXMemCheck PUBLIC ../samples)
+target_include_directories(MemCheck PUBLIC ../samples)
 
 target_link_libraries(
-    LaTeXMemCheck PRIVATE
-    clatexmath
+    MemCheck PRIVATE
+    titnytex
 )

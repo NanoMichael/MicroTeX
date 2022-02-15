@@ -1,21 +1,21 @@
 if (WASM)
-    add_library(clatexmath STATIC "")
+    add_library(tinytex STATIC "")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
 else (WASM)
-    add_library(clatexmath SHARED "")
+    add_library(tinytex SHARED "")
 endif ()
 
 if (MSVC)
-    target_compile_features(clatexmath PUBLIC cxx_std_17)
-    target_compile_definitions(clatexmath PRIVATE -DCLATEXMATH_LIBRARY)
-    target_compile_definitions(clatexmath PUBLIC -D_HAS_STD_BYTE=0)
+    target_compile_features(tinytex PUBLIC cxx_std_17)
+    target_compile_definitions(tinytex PRIVATE -Dtinytex_LIBRARY)
+    target_compile_definitions(tinytex PUBLIC -D_HAS_STD_BYTE=0)
 endif ()
 
-set_target_properties(clatexmath PROPERTIES VERSION 1.0.0 SOVERSION 1)
+set_target_properties(tinytex PROPERTIES VERSION 1.0.0 SOVERSION 1)
 
 # source files
 target_sources(
-    clatexmath PRIVATE
+    tinytex PRIVATE
     # atom folder
     atom/atom_basic.cpp
     atom/atom_char.cpp
@@ -89,7 +89,7 @@ target_sources(
     latex.cpp
     render.cpp
 )
-target_include_directories(clatexmath PUBLIC .)
+target_include_directories(tinytex PUBLIC .)
 
 # compile option: if debug graphics
 option(GRAPHICS_DEBUG "If enable graphics debug" ON)
