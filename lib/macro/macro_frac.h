@@ -1,5 +1,5 @@
-#ifndef LATEX_MACRO_FRAC_H
-#define LATEX_MACRO_FRAC_H
+#ifndef TINYTEX_MACRO_FRAC_H
+#define TINYTEX_MACRO_FRAC_H
 
 #include "macro/macro_decl.h"
 #include "atom/atom_frac.h"
@@ -50,4 +50,4 @@ macro(genfrac);
 
 }
 
-#endif //LATEX_MACRO_FRAC_H
+#endif //TINYTEX_MACRO_FRAC_H

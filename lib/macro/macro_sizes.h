@@ -1,5 +1,5 @@
-#ifndef LATEX_MACRO_SIZES_H
-#define LATEX_MACRO_SIZES_H
+#ifndef TINYTEX_MACRO_SIZES_H
+#define TINYTEX_MACRO_SIZES_H
 
 #include "macro/macro_decl.h"
 
@@ -87,4 +87,4 @@ inline macro(Biggr) { return _big(tp, args, 4, AtomType::closing); }
 
 }
 
-#endif //LATEX_MACRO_SIZES_H
+#endif //TINYTEX_MACRO_SIZES_H

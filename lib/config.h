@@ -1,5 +1,5 @@
-#ifndef LATEX_CONFIG_H
-#define LATEX_CONFIG_H
+#ifndef TINYTEX_CONFIG_H
+#define TINYTEX_CONFIG_H
 
 // if have glyph render path
 #if GLYPH_RENDER_TYPE == 0 || GLYPH_RENDER_TYPE == 1
@@ -34,4 +34,4 @@
 #define CLATEXMATH_EXPORT
 #endif
 
-#endif  // LATEX_CONFIG_H
+#endif  // TINYTEX_CONFIG_H

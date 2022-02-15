@@ -1,5 +1,5 @@
-#ifndef LATEX_MACRO_ACCENT_H
-#define LATEX_MACRO_ACCENT_H
+#ifndef TINYTEX_MACRO_ACCENT_H
+#define TINYTEX_MACRO_ACCENT_H
 
 #include "macro/macro_decl.h"
 #include "atom/atom_accent.h"
@@ -57,4 +57,4 @@ macro(undertilde);
 
 }
 
-#endif //LATEX_MACRO_ACCENT_H
+#endif //TINYTEX_MACRO_ACCENT_H

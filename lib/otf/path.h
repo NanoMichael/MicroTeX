@@ -1,5 +1,5 @@
-#ifndef LATEX_PATH_H
-#define LATEX_PATH_H
+#ifndef TINYTEX_PATH_H
+#define TINYTEX_PATH_H
 
 #include "config.h"
 
@@ -111,4 +111,4 @@ public:
 }
 
 #endif // HAVE_GLYPH_RENDER_PATH
-#endif //LATEX_PATH_H
+#endif //TINYTEX_PATH_H

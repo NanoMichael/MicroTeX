@@ -1,5 +1,5 @@
-#ifndef LATEX_JSAPI_H
-#define LATEX_JSAPI_H
+#ifndef TINYTEX_JSAPI_H
+#define TINYTEX_JSAPI_H
 
 #include "def.h"
 
@@ -7,17 +7,17 @@
 extern "C" {
 #endif
 
-unsigned int CLATEX_WASM_API js_createTextLayout(
+unsigned int TINYTEX_WASM_API js_createTextLayout(
   const char* txt,
   const char* font
 );
 
-void CLATEX_WASM_API js_getTextLayoutBounds(unsigned int id, float* data);
+void TINYTEX_WASM_API js_getTextLayoutBounds(unsigned int id, float* data);
 
-void CLATEX_WASM_API js_releaseTextLayout(unsigned int id);
+void TINYTEX_WASM_API js_releaseTextLayout(unsigned int id);
 
 #ifdef __cplusplus
 };
 #endif
 
-#endif //LATEX_JSAPI_H
+#endif //TINYTEX_JSAPI_H

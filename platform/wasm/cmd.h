@@ -1,5 +1,5 @@
-#ifndef LATEX_CMD_H
-#define LATEX_CMD_H
+#ifndef TINYTEX_CMD_H
+#define TINYTEX_CMD_H
 
 namespace tinytex {
 
@@ -54,4 +54,4 @@ public:
 
 }
 
-#endif //LATEX_CMD_H
+#endif //TINYTEX_CMD_H

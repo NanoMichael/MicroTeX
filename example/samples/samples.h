@@ -1,5 +1,5 @@
-#ifndef LATEX_SAMPLES_H
-#define LATEX_SAMPLES_H
+#ifndef TINYTEX_SAMPLES_H
+#define TINYTEX_SAMPLES_H
 
 #include <algorithm>
 #include <fstream>
@@ -31,4 +31,4 @@ public:
 
 }  // namespace tinytex
 
-#endif //LATEX_SAMPLES_H
+#endif //TINYTEX_SAMPLES_H

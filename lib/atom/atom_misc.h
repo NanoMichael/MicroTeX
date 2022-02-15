@@ -1,5 +1,5 @@
-#ifndef LATEX_ATOM_MISC_H
-#define LATEX_ATOM_MISC_H
+#ifndef TINYTEX_ATOM_MISC_H
+#define TINYTEX_ATOM_MISC_H
 
 #include "box/box_factory.h"
 #include "box/box_group.h"
@@ -201,4 +201,4 @@ public:
 
 }  // namespace tinytex
 
-#endif  // LATEX_ATOM_MISC_H
+#endif  // TINYTEX_ATOM_MISC_H

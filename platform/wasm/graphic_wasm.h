@@ -1,5 +1,5 @@
-#ifndef LATEX_GRAPHIC_WASM_H
-#define LATEX_GRAPHIC_WASM_H
+#ifndef TINYTEX_GRAPHIC_WASM_H
+#define TINYTEX_GRAPHIC_WASM_H
 
 #include "graphic/graphic.h"
 #include "cmd.h"
@@ -140,4 +140,4 @@ public:
 
 }
 
-#endif //LATEX_GRAPHIC_WASM_H
+#endif //TINYTEX_GRAPHIC_WASM_H

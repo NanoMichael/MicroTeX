@@ -1,5 +1,5 @@
-#ifndef LATEX_ATOM_CHAR_H
-#define LATEX_ATOM_CHAR_H
+#ifndef TINYTEX_ATOM_CHAR_H
+#define TINYTEX_ATOM_CHAR_H
 
 #include "atom/atom.h"
 #include "box/box.h"
@@ -159,4 +159,4 @@ public:
 
 }
 
-#endif //LATEX_ATOM_CHAR_H
+#endif //TINYTEX_ATOM_CHAR_H

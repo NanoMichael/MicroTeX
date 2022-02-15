@@ -1,5 +1,5 @@
-#ifndef LATEX_SPLIT_H
-#define LATEX_SPLIT_H
+#ifndef TINYTEX_SPLIT_H
+#define TINYTEX_SPLIT_H
 
 #include <stack>
 
@@ -38,4 +38,4 @@ public:
 
 }  // namespace tinytex
 
-#endif  // LATEX_SPLIT_H
+#endif  // TINYTEX_SPLIT_H

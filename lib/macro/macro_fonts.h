@@ -1,5 +1,5 @@
-#ifndef LATEX_MACRO_FONTS_H
-#define LATEX_MACRO_FONTS_H
+#ifndef TINYTEX_MACRO_FONTS_H
+#define TINYTEX_MACRO_FONTS_H
 
 #include "macro/macro_decl.h"
 #include "atom/atom_misc.h"
@@ -77,4 +77,4 @@ macro(mathversion);
 
 }
 
-#endif //LATEX_MACRO_FONTS_H
+#endif //TINYTEX_MACRO_FONTS_H

@@ -1,5 +1,5 @@
-#ifndef LATEX_ATOM_BASIC_H
-#define LATEX_ATOM_BASIC_H
+#ifndef TINYTEX_ATOM_BASIC_H
+#define TINYTEX_ATOM_BASIC_H
 
 #include "atom/atom.h"
 #include "atom/atom_row.h"
@@ -304,4 +304,4 @@ public:
 
 }  // namespace tinytex
 
-#endif  // LATEX_ATOM_BASIC_H
+#endif  // TINYTEX_ATOM_BASIC_H

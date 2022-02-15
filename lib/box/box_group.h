@@ -1,5 +1,5 @@
-#ifndef LATEX_BOX_GROUP_H
-#define LATEX_BOX_GROUP_H
+#ifndef TINYTEX_BOX_GROUP_H
+#define TINYTEX_BOX_GROUP_H
 
 #include "atom/atom.h"
 #include "utils/nums.h"
@@ -310,4 +310,4 @@ public:
 
 }  // namespace tinytex
 
-#endif  // LATEX_BOX_GROUP_H
+#endif  // TINYTEX_BOX_GROUP_H

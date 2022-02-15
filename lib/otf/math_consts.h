@@ -1,5 +1,5 @@
-#ifndef LATEX_MATH_CONSTS_H
-#define LATEX_MATH_CONSTS_H
+#ifndef TINYTEX_MATH_CONSTS_H
+#define TINYTEX_MATH_CONSTS_H
 
 #include "utils/utils.h"
 
@@ -151,4 +151,4 @@ public:
 
 }  // namespace tinytex
 
-#endif // LATEX_MATH_CONSTS_H
+#endif // TINYTEX_MATH_CONSTS_H

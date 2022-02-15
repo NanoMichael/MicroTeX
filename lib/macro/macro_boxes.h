@@ -1,5 +1,5 @@
-#ifndef LATEX_MACRO_BOXES_H
-#define LATEX_MACRO_BOXES_H
+#ifndef TINYTEX_MACRO_BOXES_H
+#define TINYTEX_MACRO_BOXES_H
 
 #include "macro/macro_decl.h"
 
@@ -60,4 +60,4 @@ inline macro(fbox) {
 
 }
 
-#endif //LATEX_MACRO_BOXES_H
+#endif //TINYTEX_MACRO_BOXES_H

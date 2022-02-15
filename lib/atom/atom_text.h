@@ -1,5 +1,5 @@
-#ifndef LATEX_ATOM_TEXT_H
-#define LATEX_ATOM_TEXT_H
+#ifndef TINYTEX_ATOM_TEXT_H
+#define TINYTEX_ATOM_TEXT_H
 
 #include "atom/atom.h"
 
@@ -33,4 +33,4 @@ public:
 
 }
 
-#endif //LATEX_ATOM_TEXT_H
+#endif //TINYTEX_ATOM_TEXT_H
