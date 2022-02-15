@@ -6,7 +6,7 @@
 #include "latex.h"
 #include "utils/utf.h"
 
-namespace tex {
+namespace tinytex {
 
 class Samples {
 private:
@@ -29,6 +29,6 @@ public:
   inline int count() const { return _samples.size(); }
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif //LATEX_SAMPLES_H

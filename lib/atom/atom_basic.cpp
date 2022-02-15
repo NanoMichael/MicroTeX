@@ -5,7 +5,7 @@
 #include "env/env.h"
 
 using namespace std;
-using namespace tex;
+using namespace tinytex;
 
 sptr<Box> StyleAtom::createBox(Env& env) {
   return env.withStyle(
@@ -142,7 +142,7 @@ sptr<Box> ExtensibleAtom::createBox(Env& env) {
   const auto len = _getLen(env);
   return (
     _vertical
-    ? tex::createVDelim(_sym, env, len)
-    : tex::createHDelim(_sym, env, len)
+    ? tinytex::createVDelim(_sym, env, len)
+    : tinytex::createHDelim(_sym, env, len)
   );
 }

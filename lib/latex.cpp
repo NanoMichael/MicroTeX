@@ -5,7 +5,7 @@
 #include "utils/string_utils.h"
 
 using namespace std;
-using namespace tex;
+using namespace tinytex;
 
 volatile bool LaTeX::_isInited = false;
 std::string LaTeX::_defaultMathFontName;

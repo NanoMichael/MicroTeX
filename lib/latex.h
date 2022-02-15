@@ -7,7 +7,7 @@
 #include "unimath/uni_font.h"
 #include "render.h"
 
-namespace tex {
+namespace tinytex {
 
 class CLATEXMATH_EXPORT LaTeX {
 private:
@@ -92,7 +92,7 @@ public:
   /**
    * Parse LaTeX string to Render
    *
-   * @param tex the TeX formatted string
+   * @param tinytex the TeX formatted string
    * @param width the width of the 2D graphics context
    * @param textSize the text size
    * @param lineSpace the line space
@@ -114,6 +114,6 @@ public:
   static void release();
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif  // LATEX_LATEX_H

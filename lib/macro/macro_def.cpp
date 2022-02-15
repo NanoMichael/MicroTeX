@@ -14,7 +14,7 @@
 #include "macro/macro_frac.h"
 
 using namespace std;
-using namespace tex;
+using namespace tinytex;
 
 #define mac3(argc, name, code) \
   { code, defMac(argc, name) }
@@ -248,7 +248,7 @@ map<string, MacroInfo*> MacroInfo::_commands{
     mac(2, macro_underaccent, "underaccent"),
     mac(1, macro_undertilde, "undertilde"),
   // endregion
-  // region tex styles
+  // region tinytex styles
     mac(0, macro_texstyle, "displaystyle"),
     mac(0, macro_texstyle, "textstyle"),
     mac(0, macro_texstyle, "scriptstyle"),

@@ -8,7 +8,7 @@
 #include "unimath/uni_symbol.h"
 #include "unimath/uni_font.h"
 
-namespace tex {
+namespace tinytex {
 
 /**
  * An common superclass for atoms that represent one single character and access

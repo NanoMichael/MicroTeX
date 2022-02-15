@@ -3,7 +3,7 @@
 #include "box/box_factory.h"
 #include "box/box_group.h"
 
-using namespace tex;
+using namespace tinytex;
 
 sptr<Box> NthRoot::createBox(Env& env) {
   const auto base = (
@@ -19,7 +19,7 @@ sptr<Box> NthRoot::createBox(Env& env) {
     : math.radicalVerticalGap()
   );
   const auto theta = math.radicalRuleThickness() * env.scale();
-  auto radical = tex::createVDelim("sqrt", env, base->vlen() + gap + theta);
+  auto radical = tinytex::createVDelim("sqrt", env, base->vlen() + gap + theta);
 
   const auto delta = (radical->vlen() - (base->vlen() + gap + theta)) / 2.f;
   const auto rule = sptrOf<RuleBox>(theta, base->_width, 0.f);

@@ -6,7 +6,7 @@
 
 #include "core/parser.h"
 
-namespace tex {
+namespace tinytex {
 
 class MiddleAtom;
 
@@ -131,6 +131,6 @@ public:
   ~ArrayFormula() override = default;
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif  // LATEX_FORMULA_H

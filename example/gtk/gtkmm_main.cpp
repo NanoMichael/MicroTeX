@@ -24,7 +24,7 @@
 
 #include <chrono>
 
-using namespace tex;
+using namespace tinytex;
 
 class TeXDrawingArea : public Gtk::DrawingArea {
 private:
@@ -362,9 +362,9 @@ void getHeadlessOpt(Headless& h, const std::string& key, const std::string& valu
   } else if (key == "-textsize") {
     valueof(value, h._textSize);
   } else if (key == "-foreground") {
-    h._foreground = tex::ColorAtom::getColor(value);
+    h._foreground = tinytex::ColorAtom::getColor(value);
   } else if (key == "-background") {
-    h._background = tex::ColorAtom::getColor(value);
+    h._background = tinytex::ColorAtom::getColor(value);
   } else if (key == "-input") {
     h._input = value;
   } else if (key == "-output") {

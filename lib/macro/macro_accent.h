@@ -7,7 +7,7 @@
 #include "atom/atom_basic.h"
 #include "utils/utf.h"
 
-namespace tex {
+namespace tinytex {
 
 inline macro(accentset) {
   return sptrOf<AccentedAtom>(

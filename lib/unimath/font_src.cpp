@@ -1,6 +1,6 @@
 #include "unimath/font_src.h"
 
-using namespace tex;
+using namespace tinytex;
 
 FontSrc::FontSrc(std::string name, std::string fontFile)
   : name(std::move(name)),

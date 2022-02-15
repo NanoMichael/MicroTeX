@@ -3,7 +3,7 @@
 
 #include "utils/utils.h"
 
-namespace tex {
+namespace tinytex {
 
 template<typename K, typename V>
 struct SortedDictTree {
@@ -67,6 +67,6 @@ public:
   }
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif

@@ -1,7 +1,7 @@
 #include "graphic/graphic_basic.h"
 #include <sstream>
 
-tex::color tex::decodeColor(const std::string& s) {
+tinytex::color tinytex::decodeColor(const std::string& s) {
   if (s[0] == '#') {
     const std::string x = s.substr(1);
     std::stringstream ss;
@@ -19,15 +19,15 @@ tex::color tex::decodeColor(const std::string& s) {
   return black;
 }
 
-bool tex::Point::operator==(const Point& other) const {
+bool tinytex::Point::operator==(const Point& other) const {
   return x == other.x && y == other.y;
 }
 
-bool tex::Rect::operator==(const Rect& other) const {
+bool tinytex::Rect::operator==(const Rect& other) const {
   return x == other.x && y == other.y && w == other.w && h == other.h;
 }
 
-bool tex::Stroke::operator==(const Stroke& other) const {
+bool tinytex::Stroke::operator==(const Stroke& other) const {
   return lineWidth == other.lineWidth
          && miterLimit == other.miterLimit
          && cap == other.cap

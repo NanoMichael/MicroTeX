@@ -28,7 +28,7 @@ public:
   void paintEvent(QPaintEvent* event) override;
 
 private:
-  tex::Render* _render;
+  tinytex::Render* _render;
   float _text_size;
   int _padding;
 };

@@ -3,7 +3,7 @@
 
 #include "macro/macro_decl.h"
 
-namespace tex {
+namespace tinytex {
 
 inline macro(rotatebox) {
   float angle = 0;

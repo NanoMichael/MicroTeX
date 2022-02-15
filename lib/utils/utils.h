@@ -13,7 +13,7 @@
   T(const T&) = delete;   \
   void operator=(const T&) = delete
 
-namespace tex {
+namespace tinytex {
 
 using i8 = std::int8_t;
 using u8 = std::uint8_t;
@@ -89,6 +89,6 @@ int binIndexOf(
   bool returnClosest = false
 );
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif

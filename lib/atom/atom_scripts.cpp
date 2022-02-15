@@ -4,7 +4,7 @@
 #include "atom/atom_basic.h"
 #include "atom/atom_accent.h"
 
-using namespace tex;
+using namespace tinytex;
 using namespace std;
 
 sptr<Box> ScriptsAtom::createBox(Env& env) {

@@ -5,7 +5,7 @@
 #include "utils/nums.h"
 #include "graphic/graphic_basic.h"
 
-namespace tex {
+namespace tinytex {
 
 /***************************************************************************************************
  *                                        rule boxes                                               *
@@ -308,6 +308,6 @@ public:
   boxname(WrapperBox);
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif  // LATEX_BOX_GROUP_H

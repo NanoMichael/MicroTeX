@@ -3,7 +3,7 @@
 
 #include "utils/utils.h"
 
-namespace tex {
+namespace tinytex {
 
 #define TEX_MATH_CONSTS_COUNT 57
 
@@ -17,7 +17,7 @@ class CLMReader;
  * </a>
  * for details.
  * <p>
- * Device-table is JUST IGNORED, so all the fields are represent as tex::i16 directly.
+ * Device-table is JUST IGNORED, so all the fields are represent as tinytex::i16 directly.
  */
 struct MathConsts {
 private:
@@ -149,6 +149,6 @@ public:
   friend CLMReader;
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif // LATEX_MATH_CONSTS_H

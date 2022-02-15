@@ -6,7 +6,7 @@
 #include "utils/string_utils.h"
 #include "utils/exceptions.h"
 
-namespace tex {
+namespace tinytex {
 
 class BinaryReader {
 public:
@@ -341,4 +341,4 @@ Otf* CLMReader::read(size_t len, const u8* bytes) const {
   return read(reader);
 }
 
-}  // namespace tex
+}  // namespace tinytex

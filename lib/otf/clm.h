@@ -4,7 +4,7 @@
 #include "config.h"
 #include "otf/otf.h"
 
-namespace tex {
+namespace tinytex {
 
 class BinaryReader;
 
@@ -53,6 +53,6 @@ public:
   Otf* read(size_t len, const u8* bytes) const;
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif

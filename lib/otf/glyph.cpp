@@ -1,6 +1,6 @@
 #include "otf/glyph.h"
 
-namespace tex {
+namespace tinytex {
 
 const KernRecord KernRecord::empty(0);
 
@@ -48,4 +48,4 @@ Glyph::~Glyph() {
   if (_path != &Path::empty) delete _path;
 }
 
-}  // namespace tex
+}  // namespace tinytex

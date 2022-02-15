@@ -1,7 +1,7 @@
 #include "graphic/graphic.h"
 #include "latex.h"
 
-namespace tex {
+namespace tinytex {
 
 class Font_none : public Font {
 public:
@@ -60,7 +60,7 @@ public:
   }
 
   sptr<Font> getFont() const override {
-    return tex::sptr<Font_none>();
+    return tinytex::sptr<Font_none>();
   }
 
   void setFont(const sptr<Font>& font) override {}
@@ -134,20 +134,20 @@ int main(int argc, char* argv[]) {
     );
     return 1;
   }
-  const tex::FontSrcFile math{argv[1], argv[2], argv[3]};
-  tex::LaTeX::init(math);
+  const tinytex::FontSrcFile math{argv[1], argv[2], argv[3]};
+  tinytex::LaTeX::init(math);
 
-  tex::PlatformFactory::registerFactory("none", std::make_unique<tex::PlatformFactory_none>());
-  tex::PlatformFactory::activate("none");
+  tinytex::PlatformFactory::registerFactory("none", std::make_unique<tinytex::PlatformFactory_none>());
+  tinytex::PlatformFactory::activate("none");
 
-  tex::Samples samples(argv[4]);
+  tinytex::Samples samples(argv[4]);
   for (int i = 0; i < samples.count(); i++) {
-    auto r = tex::LaTeX::parse(samples.next(), 720, 20, 20 / 3.f, tex::black);
-    tex::Graphics2D_none g2;
+    auto r = tinytex::LaTeX::parse(samples.next(), 720, 20, 20 / 3.f, tinytex::black);
+    tinytex::Graphics2D_none g2;
     r->draw(g2, 0, 0);
     delete r;
   }
 
-  tex::LaTeX::release();
+  tinytex::LaTeX::release();
   return 0;
 }

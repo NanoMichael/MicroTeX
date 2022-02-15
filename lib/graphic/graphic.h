@@ -5,7 +5,7 @@
 #include "graphic/font_style.h"
 #include <map>
 
-namespace tex {
+namespace tinytex {
 
 class Graphics2D;
 
@@ -284,6 +284,6 @@ public:
   // endregion
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif  // GRAPHIC_H_INCLUDED

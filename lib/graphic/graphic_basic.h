@@ -4,7 +4,7 @@
 #include "utils/utils.h"
 #include <string>
 
-namespace tex {
+namespace tinytex {
 
 using color = std::uint32_t;
 
@@ -131,6 +131,6 @@ struct Stroke {
   }
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif  // GRAPHIC_BASIC_H_INCLUDED

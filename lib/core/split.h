@@ -7,7 +7,7 @@
 #include "box/box.h"
 #include "box/box_group.h"
 
-namespace tex {
+namespace tinytex {
 
 #ifdef HAVE_LOG
 
@@ -36,6 +36,6 @@ public:
   static sptr<Box> split(const sptr<HBox>& hb, float width, float lineSpace);
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif  // LATEX_SPLIT_H

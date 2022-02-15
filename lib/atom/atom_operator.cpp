@@ -6,7 +6,7 @@
 #include "atom/atom_stack.h"
 #include "env/env.h"
 
-using namespace tex;
+using namespace tinytex;
 
 sptr<Box> OperatorAtom::createBox(Env& env) {
   // case 1: side sets

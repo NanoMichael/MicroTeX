@@ -4,7 +4,7 @@
 #include "atom/atom.h"
 #include "env/units.h"
 
-namespace tex {
+namespace tinytex {
 
 using Args = std::vector<std::string>;
 
@@ -332,6 +332,6 @@ public:
   }
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif  // PARSER_H_INCLUDED

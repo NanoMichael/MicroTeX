@@ -12,7 +12,7 @@
 #include <map>
 #include <QtCore/QString>
 
-namespace tex {
+namespace tinytex {
 
 class Font_skia : public Font {
 

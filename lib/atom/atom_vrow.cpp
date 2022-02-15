@@ -3,7 +3,7 @@
 #include "box/box_group.h"
 #include "box/box_single.h"
 
-using namespace tex;
+using namespace tinytex;
 using namespace std;
 
 VRowAtom::VRowAtom() {

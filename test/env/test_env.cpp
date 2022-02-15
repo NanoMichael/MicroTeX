@@ -6,7 +6,7 @@
 #include "env/units.h"
 
 using namespace std;
-using namespace tex;
+using namespace tinytex;
 
 void show_char(c32 code, const Env& env, bool isMathMode = true) {
   const auto&& chr = env.getChar(code, isMathMode);

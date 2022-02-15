@@ -5,7 +5,7 @@
 #include "utils/utils.h"
 #include "otf/otf.h"
 
-namespace tex {
+namespace tinytex {
 
 /** Source to load font. */
 class CLATEXMATH_EXPORT FontSrc {

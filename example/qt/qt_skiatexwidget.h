@@ -43,7 +43,7 @@ protected:
   void resizeGL(int w, int h) override;
 
 private:
-  tex::TeXRender *_render;
+  tinytex::TeXRender *_render;
   float _text_size;
   int _padding;
   std::wstring _latex{};

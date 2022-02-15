@@ -3,7 +3,7 @@
 
 #include "utils/enums.h"
 
-namespace tex {
+namespace tinytex {
 
 class Graphics2D;
 

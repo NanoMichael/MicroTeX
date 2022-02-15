@@ -4,7 +4,7 @@
 #include "atom/atom.h"
 #include "atom/atom_basic.h"
 
-namespace tex {
+namespace tinytex {
 
 /** An atom representing an nth-root construction */
 class NthRoot : public Atom {

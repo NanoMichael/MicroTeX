@@ -11,7 +11,7 @@
 #include <map>
 #include <vector>
 
-namespace tex {
+namespace tinytex {
 
 /**
  * Parse options from given string. The options are given in the form of
@@ -148,6 +148,6 @@ inline std::string& replaceall(std::string& src, const std::string& from, const 
   return src;
 }
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif
