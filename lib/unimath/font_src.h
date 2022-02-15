@@ -1,5 +1,5 @@
-#ifndef LATEX_FONT_SRC_H
-#define LATEX_FONT_SRC_H
+#ifndef TINYTEX_FONT_SRC_H
+#define TINYTEX_FONT_SRC_H
 
 #include "config.h"
 #include "utils/utils.h"
@@ -59,4 +59,4 @@ using FontSrcList = std::vector<std::unique_ptr<FontSrc>>;
 
 }
 
-#endif //LATEX_FONT_SRC_H
+#endif //TINYTEX_FONT_SRC_H

@@ -1,5 +1,5 @@
-#ifndef LATEX_UNITS_H
-#define LATEX_UNITS_H
+#ifndef TINYTEX_UNITS_H
+#define TINYTEX_UNITS_H
 
 #include "utils/utils.h"
 #include "utils/enums.h"
@@ -71,4 +71,4 @@ public:
 
 }
 
-#endif //LATEX_UNITS_H
+#endif //TINYTEX_UNITS_H

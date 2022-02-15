@@ -1,5 +1,5 @@
-#ifndef LATEX_MACRO_DELIMS_H
-#define LATEX_MACRO_DELIMS_H
+#ifndef TINYTEX_MACRO_DELIMS_H
+#define TINYTEX_MACRO_DELIMS_H
 
 #include "macro/macro_decl.h"
 #include "atom/atom.h"
@@ -74,4 +74,4 @@ macro(left);
 
 }
 
-#endif //LATEX_MACRO_DELIMS_H
+#endif //TINYTEX_MACRO_DELIMS_H

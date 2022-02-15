@@ -1,5 +1,5 @@
-#ifndef LATEX_ATOM_VROW_H
-#define LATEX_ATOM_VROW_H
+#ifndef TINYTEX_ATOM_VROW_H
+#define TINYTEX_ATOM_VROW_H
 
 #include "atom/atom.h"
 #include "atom/atom_space.h"
@@ -52,4 +52,4 @@ public:
 
 }
 
-#endif //LATEX_ATOM_VROW_H
+#endif //TINYTEX_ATOM_VROW_H

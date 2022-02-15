@@ -1,5 +1,5 @@
-#ifndef LATEX_FONT_STYLE_H
-#define LATEX_FONT_STYLE_H
+#ifndef TINYTEX_FONT_STYLE_H
+#define TINYTEX_FONT_STYLE_H
 
 #include "config.h"
 #include "utils/utils.h"
@@ -58,4 +58,4 @@ bool CLATEXMATH_EXPORT isMono(FontStyle style);
 
 }
 
-#endif //LATEX_FONT_STYLE_H
+#endif //TINYTEX_FONT_STYLE_H

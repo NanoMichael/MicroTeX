@@ -1,5 +1,5 @@
-#ifndef LATEX_BOX_SINGLE_H
-#define LATEX_BOX_SINGLE_H
+#ifndef TINYTEX_BOX_SINGLE_H
+#define TINYTEX_BOX_SINGLE_H
 
 #include "atom/atom.h"
 #include "unimath/uni_char.h"
@@ -159,4 +159,4 @@ public:
 
 }
 
-#endif //LATEX_BOX_SINGLE_H
+#endif //TINYTEX_BOX_SINGLE_H

@@ -1,5 +1,5 @@
-#ifndef LATEX_ATOM_FENCE_H
-#define LATEX_ATOM_FENCE_H
+#ifndef TINYTEX_ATOM_FENCE_H
+#define TINYTEX_ATOM_FENCE_H
 
 #include "atom/atom_char.h"
 #include "box/box_single.h"
@@ -58,4 +58,4 @@ public:
 
 }
 
-#endif //LATEX_ATOM_FENCE_H
+#endif //TINYTEX_ATOM_FENCE_H

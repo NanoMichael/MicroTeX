@@ -1,5 +1,5 @@
-#ifndef LATEX_LATEX_H
-#define LATEX_LATEX_H
+#ifndef TINYTEX_TINYTEX_H
+#define TINYTEX_TINYTEX_H
 
 #include <string>
 
@@ -116,4 +116,4 @@ public:
 
 }  // namespace tinytex
 
-#endif  // LATEX_LATEX_H
+#endif  // TINYTEX_TINYTEX_H

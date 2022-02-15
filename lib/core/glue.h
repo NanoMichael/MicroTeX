@@ -1,5 +1,5 @@
-#ifndef LATEX_GLUE_H
-#define LATEX_GLUE_H
+#ifndef TINYTEX_GLUE_H
+#define TINYTEX_GLUE_H
 
 #include "utils/utils.h"
 #include "utils/enums.h"
@@ -67,4 +67,4 @@ public:
 
 }
 
-#endif //LATEX_GLUE_H
+#endif //TINYTEX_GLUE_H

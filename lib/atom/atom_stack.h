@@ -1,5 +1,5 @@
-#ifndef LATEX_ATOM_STACK_H
-#define LATEX_ATOM_STACK_H
+#ifndef TINYTEX_ATOM_STACK_H
+#define TINYTEX_ATOM_STACK_H
 
 #include <utility>
 
@@ -108,4 +108,4 @@ public:
 
 }
 
-#endif //LATEX_ATOM_STACK_H
+#endif //TINYTEX_ATOM_STACK_H

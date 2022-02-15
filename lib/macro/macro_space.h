@@ -1,5 +1,5 @@
-#ifndef LATEX_MACRO_SPACE_H
-#define LATEX_MACRO_SPACE_H
+#ifndef TINYTEX_MACRO_SPACE_H
+#define TINYTEX_MACRO_SPACE_H
 
 #include "macro/macro_decl.h"
 #include "atom/atom_space.h"
@@ -14,4 +14,4 @@ macro(muskips);
 
 }
 
-#endif //LATEX_MACRO_SPACE_H
+#endif //TINYTEX_MACRO_SPACE_H

@@ -1,5 +1,5 @@
-#ifndef LATEX_UNI_SYMBOL_H
-#define LATEX_UNI_SYMBOL_H
+#ifndef TINYTEX_UNI_SYMBOL_H
+#define TINYTEX_UNI_SYMBOL_H
 
 #include "utils/utils.h"
 #include "utils/enums.h"
@@ -33,4 +33,4 @@ public:
 
 }
 
-#endif //LATEX_UNI_SYMBOL_H
+#endif //TINYTEX_UNI_SYMBOL_H

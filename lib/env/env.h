@@ -1,5 +1,5 @@
-#ifndef LATEX_ENV_H
-#define LATEX_ENV_H
+#ifndef TINYTEX_ENV_H
+#define TINYTEX_ENV_H
 
 #include "unimath/uni_symbol.h"
 #include "unimath/uni_font.h"
@@ -226,4 +226,4 @@ public:
 
 }
 
-#endif //LATEX_ENV_H
+#endif //TINYTEX_ENV_H
