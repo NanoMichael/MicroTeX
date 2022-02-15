@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(
-    LaTeX
+    tinytex
     VERSION 1.0.0
-    DESCRIPTION "A dynamic, cross-platform, and embeddable LaTeX rendering library"
+    DESCRIPTION "A tiny, fast, cross-platform, and embeddable LaTeX rendering library"
 )
 
 set(CMAKE_CXX_STANDARD 17)
@@ -27,6 +27,7 @@ else ()
         )
     endif ()
 endif ()
+
 ####################
 #  compile option  #
 ####################

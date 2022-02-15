@@ -23,7 +23,7 @@ using BoxFilter = std::function<bool(const sptr<Box>&)>;
  * You can change the size via method #setWidth and #setHeight, but only the new
  * size is larger will be handled.
  */
-class CLATEXMATH_EXPORT Render {
+class TINYTEX_EXPORT Render {
 private:
   static constexpr color DFT_COLOR = black;
 

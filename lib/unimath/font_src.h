@@ -8,7 +8,7 @@
 namespace tinytex {
 
 /** Source to load font. */
-class CLATEXMATH_EXPORT FontSrc {
+class TINYTEX_EXPORT FontSrc {
 public:
   /**
    * The name(or style name if this font belongs to a font collection)
@@ -26,7 +26,7 @@ public:
 };
 
 /** Font source from file. */
-class CLATEXMATH_EXPORT FontSrcFile : public FontSrc {
+class TINYTEX_EXPORT FontSrcFile : public FontSrc {
 public:
   const std::string clmFile;
 
@@ -40,7 +40,7 @@ public:
 };
 
 /** Font source from data. */
-class CLATEXMATH_EXPORT FontSrcData : public FontSrc {
+class TINYTEX_EXPORT FontSrcData : public FontSrc {
 public:
   const size_t len;
   const u8* data;
