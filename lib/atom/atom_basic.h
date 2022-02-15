@@ -6,7 +6,7 @@
 #include "box/box_single.h"
 #include "unimath/math_type.h"
 
-namespace tex {
+namespace tinytex {
 
 class Formula;
 
@@ -302,6 +302,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif  // LATEX_ATOM_BASIC_H

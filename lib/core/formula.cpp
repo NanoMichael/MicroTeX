@@ -7,7 +7,7 @@
 #include "utils/string_utils.h"
 
 using namespace std;
-using namespace tex;
+using namespace tinytex;
 
 map<string, sptr<Formula>> Formula::_predefFormulas;
 

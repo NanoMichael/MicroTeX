@@ -10,7 +10,7 @@
 
 using namespace std;
 
-namespace tex {
+namespace tinytex {
 
 class Font_cairo : public Font {
 private:
@@ -136,6 +136,6 @@ public:
   void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif  // GRAPHIC_CAIRO_H_INCLUDED

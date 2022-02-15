@@ -12,7 +12,7 @@
 #include "atom/atom_char.h"
 #include "atom/atom_vrow.h"
 
-namespace tex {
+namespace tinytex {
 
 /** An atom representing a big symbol atom (i.e. sigma) */
 class BigSymbolAtom : public Atom {
@@ -199,6 +199,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif  // LATEX_ATOM_MISC_H

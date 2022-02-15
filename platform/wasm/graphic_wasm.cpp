@@ -1,7 +1,7 @@
 #include "graphic_wasm.h"
 #include "jsapi.h"
 
-using namespace tex;
+using namespace tinytex;
 
 bool Font_wasm::operator==(const Font& f) const {
   return true;
@@ -39,15 +39,15 @@ sptr<TextLayout> PlatformFactory_wasm::createTextLayout(
   std::string font;
   font.append(std::to_string(size));
   font.append("px");
-  if (tex::isBold(style)) {
+  if (tinytex::isBold(style)) {
     font.append(" bold");
   }
-  if (tex::isItalic(style)) {
+  if (tinytex::isItalic(style)) {
     font.append(" italic");
   }
-  if (tex::isSansSerif(style)) {
+  if (tinytex::isSansSerif(style)) {
     font.append(" sans-serif");
-  } else if (tex::isMono(style)) {
+  } else if (tinytex::isMono(style)) {
     font.append(" monospace");
   } else {
     font.append(" serif");

@@ -3,7 +3,7 @@
 
 #include "atom/atom.h"
 
-namespace tex {
+namespace tinytex {
 
 /**
  * An atom representing whitespace. The dimension values can be set using different

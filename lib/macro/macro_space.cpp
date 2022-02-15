@@ -1,6 +1,6 @@
 #include "macro/macro_space.h"
 
-namespace tex {
+namespace tinytex {
 
 macro(muskips) {
   SpaceType type = SpaceType::none;

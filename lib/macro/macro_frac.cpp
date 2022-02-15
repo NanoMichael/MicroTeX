@@ -7,7 +7,7 @@
 
 using namespace std;
 
-namespace tex {
+namespace tinytex {
 
 macro(binom) {
   Formula num(tp, args[1], false);

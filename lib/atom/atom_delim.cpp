@@ -4,7 +4,7 @@
 #include "box/box_single.h"
 #include "env/env.h"
 
-using namespace tex;
+using namespace tinytex;
 
 sptr<Box> OverUnderBar::createBox(Env& env) {
   const auto base = _base->createBox(env);
@@ -38,7 +38,7 @@ sptr<Box> OverUnderBar::createBox(Env& env) {
 
 sptr<Box> OverUnderDelimiter::createBox(Env& env) {
   const auto base = _base->createBox(env);
-  const auto delim = tex::createHDelim(_delim, env, base->_width);
+  const auto delim = tinytex::createHDelim(_delim, env, base->_width);
   base->_shift = (delim->_width - base->_width) / 2;
 
   const auto vbox = sptrOf<VBox>();

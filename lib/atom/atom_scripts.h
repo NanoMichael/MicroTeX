@@ -8,7 +8,7 @@
 #include "utils/enums.h"
 #include "utils/utils.h"
 
-namespace tex {
+namespace tinytex {
 
 struct ScriptResult {
   sptr<Box> base = nullptr;

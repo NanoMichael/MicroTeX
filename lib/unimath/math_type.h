@@ -6,7 +6,7 @@
 
 #include <map>
 
-namespace tex {
+namespace tinytex {
 
 /*
  * The math styles. The math glyphs are painted in following styles:

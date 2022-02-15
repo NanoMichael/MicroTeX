@@ -7,7 +7,7 @@
 #include "box/box.h"
 #include "graphic/graphic.h"
 
-namespace tex {
+namespace tinytex {
 
 class Formula;
 
@@ -135,6 +135,6 @@ public:
   Render* build(Formula& f);
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif  // RENDER_H_INCLUDED

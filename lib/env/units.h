@@ -5,7 +5,7 @@
 #include "utils/enums.h"
 #include "env/env.h"
 
-namespace tex {
+namespace tinytex {
 
 /** Represents a dimension */
 struct Dimen {

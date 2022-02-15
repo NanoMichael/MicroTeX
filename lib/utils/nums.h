@@ -4,7 +4,7 @@
 #include <cmath>
 #include <limits>
 
-namespace tex {
+namespace tinytex {
 
 /** Positive infinity */
 static constexpr float POS_INF = std::numeric_limits<float>::infinity();
@@ -19,6 +19,6 @@ static constexpr double PI = 3.1415926535;
 /** Precision, for compare with 0.0f, if a value < PREC, we trade it as 0.0f */
 static constexpr float PREC = 0.01;
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif

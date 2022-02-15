@@ -3,7 +3,7 @@
 
 #include "graphic/graphic_basic.h"
 
-namespace tex {
+namespace tinytex {
 
 /** The graphic debug configs */
 struct DebugConfig {

@@ -5,7 +5,7 @@
 #include "utils/utils.h"
 #include "env/units.h"
 
-namespace tex {
+namespace tinytex {
 
 struct ZStackArgs {
   Alignment align;

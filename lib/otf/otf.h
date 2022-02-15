@@ -5,7 +5,7 @@
 #include "otf/math_consts.h"
 #include "utils/utils.h"
 
-namespace tex {
+namespace tinytex {
 
 class CLMReader;
 
@@ -150,6 +150,6 @@ public:
   friend CLMReader;
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif

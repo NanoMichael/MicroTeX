@@ -3,7 +3,7 @@
 #include "otf/clm.h"
 #include "otf/otf.h"
 
-tex::i32 find_liga(const tex::Otf* font, const char* txt) {
+tinytex::i32 find_liga(const tinytex::Otf* font, const char* txt) {
   auto p = font->ligatures();
   while (p != nullptr && *txt != '\0') {
     auto id = font->glyphId(*txt);
@@ -13,7 +13,7 @@ tex::i32 find_liga(const tex::Otf* font, const char* txt) {
   return p == nullptr ? -1 : p->value();
 }
 
-void show_metrics(const tex::Glyph* glyph) {
+void show_metrics(const tinytex::Glyph* glyph) {
   printf(
     "metrics: [%d, %d, %d]\n",
     glyph->metrics().width(),
@@ -22,14 +22,14 @@ void show_metrics(const tex::Glyph* glyph) {
   );
 }
 
-void show_glyph_assembly(const tex::GlyphAssembly& assembly, const char* dir) {
+void show_glyph_assembly(const tinytex::GlyphAssembly& assembly, const char* dir) {
   printf("%s glyph assembly: italics correction: %d\n", dir, assembly.italicsCorrection());
   printf(
     "glyph | extender | start length | end length | full advance\n"
     "-----------------------------------------------------------\n"  //
   );
-  for (tex::u16 i = 0; i < assembly.partCount(); i++) {
-    const tex::GlyphPart& part = assembly[i];
+  for (tinytex::u16 i = 0; i < assembly.partCount(); i++) {
+    const tinytex::GlyphPart& part = assembly[i];
     printf(
       "%5u | %8d | %12u | %10u | %12u\n",
       part.glyph(),
@@ -41,17 +41,17 @@ void show_glyph_assembly(const tex::GlyphAssembly& assembly, const char* dir) {
   }
 }
 
-void show_math_kern(const tex::MathKern& kern) {
+void show_math_kern(const tinytex::MathKern& kern) {
   if (kern.count() == 0) printf("absent");
-  for (tex::u16 i = 0; i < kern.count(); i++) {
+  for (tinytex::u16 i = 0; i < kern.count(); i++) {
     printf("(%d, %d), ", kern.correctionHeight(i), kern.value(i));
   }
   printf("\n");
 }
 
-void show_math_kerns(const tex::Math& math) {
+void show_math_kerns(const tinytex::Math& math) {
   printf("math kern record:\n");
-  const tex::MathKernRecord& record = math.kernRecord();
+  const tinytex::MathKernRecord& record = math.kernRecord();
   printf("    top left: ");
   show_math_kern(record.topLeft());
   printf("   top right: ");
@@ -62,17 +62,17 @@ void show_math_kerns(const tex::Math& math) {
   show_math_kern(record.bottomRight());
 }
 
-void show_math(tex::Otf* font, const tex::Glyph* glyph) {
-  const tex::Math& math = glyph->math();
-  const tex::Variants& hv = math.horizontalVariants();
+void show_math(tinytex::Otf* font, const tinytex::Glyph* glyph) {
+  const tinytex::Math& math = glyph->math();
+  const tinytex::Variants& hv = math.horizontalVariants();
   printf("horizontal variants: ");
-  for (tex::u16 i = 0; i < hv.count(); i++) {
+  for (tinytex::u16 i = 0; i < hv.count(); i++) {
     printf("%u, ", hv[i]);
   }
   printf("\n");
-  const tex::Variants& vv = math.verticalVariants();
+  const tinytex::Variants& vv = math.verticalVariants();
   printf("vertical variants: ");
-  for (tex::u16 i = 0; i < vv.count(); i++) {
+  for (tinytex::u16 i = 0; i < vv.count(); i++) {
     printf("%u, ", vv[i]);
   }
   printf("\n");
@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) {
     printf("No clm file specified\n");
     exit(1);
   }
-  tex::Otf* font = tex::Otf::fromFile(argv[1]);
+  tinytex::Otf* font = tinytex::Otf::fromFile(argv[1]);
   printf("font from %s\n", argv[1]);
   printf(
     "unicodes count: %u, glyphs count: %u\n"
@@ -102,7 +102,7 @@ int main(int argc, char* argv[]) {
   );
   printf("\n");
 
-  const tex::Glyph* glyph_f = font->glyphOfUnicode('f');
+  const tinytex::Glyph* glyph_f = font->glyphOfUnicode('f');
   printf("glyph info for 'f':\n");
   printf("glyph id: %d, \n", font->glyphId('f'));
   show_metrics(glyph_f);
@@ -121,14 +121,14 @@ int main(int argc, char* argv[]) {
   );
   printf("\n");
 
-  const tex::Glyph* brace_left = font->glyphOfUnicode('{');
+  const tinytex::Glyph* brace_left = font->glyphOfUnicode('{');
   printf("glyph info for '{':\n");
   printf("glyph id: %d\n", font->glyphId('{'));
   show_metrics(brace_left);
   show_math(font, brace_left);
   printf("\n");
 
-  const tex::Glyph* Tau = font->glyphOfUnicode(0x0393);
+  const tinytex::Glyph* Tau = font->glyphOfUnicode(0x0393);
   printf("glyph info for 'Tau':\n");
   printf("glyph id: %d\n", font->glyphId(0x0393));
   show_metrics(Tau);

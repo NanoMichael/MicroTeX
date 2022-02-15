@@ -11,7 +11,7 @@
 #include "utils/string_utils.h"
 #include "utils/utf.h"
 
-namespace tex {
+namespace tinytex {
 
 inline macro(overdelim) {
   const auto& name = args[0];

@@ -12,7 +12,7 @@
 #include "unimath/uni_char.h"
 #include "unimath/uni_symbol.h"
 
-namespace tex {
+namespace tinytex {
 
 /** Represents an open-type font with font-file and font-spec */
 struct OtfFont final {
@@ -126,6 +126,6 @@ public:
   Char getChar(c32 code, FontStyle style, bool isMathMode) const;
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif

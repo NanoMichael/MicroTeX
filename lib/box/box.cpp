@@ -1,7 +1,7 @@
 #include "box/box.h"
 #include "unimath/uni_font.h"
 
-using namespace tex;
+using namespace tinytex;
 using namespace std;
 
 void Box::copyMetrics(const sptr<Box>& box) {

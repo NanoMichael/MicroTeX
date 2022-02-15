@@ -4,7 +4,7 @@
 #include "box/box_single.h"
 
 using namespace std;
-using namespace tex;
+using namespace tinytex;
 
 const Glue Glue::_glueTypes[]{
   {0, 0, 0},

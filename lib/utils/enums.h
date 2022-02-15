@@ -3,7 +3,7 @@
 
 #include "utils/utils.h"
 
-namespace tex {
+namespace tinytex {
 
 /** Formula alignment. */
 enum class Alignment : i8 {
@@ -130,6 +130,6 @@ enum class UnitType : i8 {
   none = -1
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif

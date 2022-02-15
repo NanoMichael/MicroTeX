@@ -9,10 +9,10 @@
 #include "atom/atom_zstack.h"
 #include "atom/atom_font.h"
 
-using namespace tex;
+using namespace tinytex;
 using namespace std;
 
-namespace tex {
+namespace tinytex {
 
 macro(longdiv) {
   long dividend = 0;
@@ -206,4 +206,4 @@ macro(zstack) {
   return sptrOf<ZStackAtom>(hargs, vargs, atom, anchor);
 }
 
-}  // namespace tex
+}  // namespace tinytex

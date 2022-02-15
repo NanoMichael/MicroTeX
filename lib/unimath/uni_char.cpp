@@ -2,7 +2,7 @@
 #include "unimath/uni_font.h"
 #include "utils/log.h"
 
-using namespace tex;
+using namespace tinytex;
 
 Char::Char(c32 c, c32 mc, i32 fid, i32 gid, float s)
   : code(c), mappedCode(mc), fontId(fid), glyphId(gid), scale(s) {}

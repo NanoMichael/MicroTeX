@@ -6,7 +6,7 @@
 #include "utils/utils.h"
 #include "otf/path.h"
 
-namespace tex {
+namespace tinytex {
 
 class CLMReader;
 
@@ -384,6 +384,6 @@ public:
   friend CLMReader;
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif

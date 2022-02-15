@@ -5,7 +5,7 @@
 #include "utils/log.h"
 #include "utils/utf.h"
 
-using namespace tex;
+using namespace tinytex;
 using namespace std;
 
 map<string, Cairo::RefPtr<Cairo::FtFontFace>> Font_cairo::_cairoFtFaces;
@@ -76,16 +76,16 @@ TextLayout_cairo::TextLayout_cairo(const string& src, FontStyle style, float siz
   fd.set_weight(Pango::WEIGHT_NORMAL);
   fd.set_family("Serif");
 
-  if (tex::isSansSerif(style)) {
+  if (tinytex::isSansSerif(style)) {
     fd.set_family("Sans-Serif");
   }
-  if (tex::isMono(style)) {
+  if (tinytex::isMono(style)) {
     fd.set_family("Monospace");
   }
-  if (tex::isBold(style)) {
+  if (tinytex::isBold(style)) {
     fd.set_weight(Pango::WEIGHT_BOLD);
   }
-  if (tex::isItalic(style)) {
+  if (tinytex::isItalic(style)) {
     fd.set_style(Pango::STYLE_ITALIC);
   }
 

@@ -5,7 +5,7 @@
 #include <string>
 #include <utility>
 
-namespace tex {
+namespace tinytex {
 
 /** Superclass of all the possible exceptions that can be thrown */
 class ex_tex : public std::exception {
@@ -53,6 +53,6 @@ public:
   explicit ex_eof(const std::string& filePath) : ex_tex("EOF of " + filePath) {}
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif

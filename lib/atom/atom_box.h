@@ -5,7 +5,7 @@
 #include "atom/atom_row.h"
 #include "graphic/graphic_basic.h"
 
-namespace tex {
+namespace tinytex {
 
 /** An atom representing a boxed base atom */
 class FBoxAtom : public Atom {

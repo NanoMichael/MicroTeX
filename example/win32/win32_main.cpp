@@ -20,10 +20,10 @@
 #define EDITOR_WIDTH 640
 
 using namespace std;
-using namespace tex;
+using namespace tinytex;
 using namespace Gdiplus;
 
-tex::Render* _render = nullptr;
+tinytex::Render* _render = nullptr;
 int _size = 26;
 color _color = 0xff424242;
 Samples* _samples;
@@ -189,7 +189,7 @@ void HandleSize() {
   char* txt = new char[len + 10];
   GetWindowText(hEditSize, txt, len + 10);
   string x = txt;
-  tex::valueof(x, _size);
+  tinytex::valueof(x, _size);
   _render->setTextSize(_size);
   InvalidateRect(hCanvas, nullptr, TRUE);
   UpdateWindow(hCanvas);

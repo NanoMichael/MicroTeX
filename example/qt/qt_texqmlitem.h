@@ -22,7 +22,7 @@ public:
   QString latexString() const;
 
 private:
-  tex::Render* _render;
+  tinytex::Render* _render;
   float _text_size;
   int _padding;
   QString m_latexString;

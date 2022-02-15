@@ -3,7 +3,7 @@
 
 #include "box/box.h"
 
-namespace tex {
+namespace tinytex {
 
 class Env;
 
@@ -89,6 +89,6 @@ public:
   }
 };
 
-}  // namespace tex
+}  // namespace tinytex
 
 #endif  // ATOM_H_INCLUDED

@@ -4,7 +4,7 @@
 #include "graphic/graphic.h"
 #include "cmd.h"
 
-namespace tex {
+namespace tinytex {
 
 /** EMPTY IMPL - no font support */
 class Font_wasm : public Font {
