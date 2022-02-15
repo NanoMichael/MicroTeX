@@ -25,13 +25,13 @@
 
 // export
 #ifdef _MSC_VER
-#if defined(CLATEXMATH_LIBRARY)
-#define CLATEXMATH_EXPORT __declspec(dllexport)
+#if defined(TINYTEX_LIBRARY)
+#define TINYTEX_EXPORT __declspec(dllexport)
 #else
-#define CLATEXMATH_EXPORT __declspec(dllimport)
+#define TINYTEX_EXPORT __declspec(dllimport)
 #endif
 #else
-#define CLATEXMATH_EXPORT
+#define TINYTEX_EXPORT
 #endif
 
 #endif  // TINYTEX_CONFIG_H

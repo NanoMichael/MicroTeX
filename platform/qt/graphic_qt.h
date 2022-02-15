@@ -16,7 +16,7 @@
 
 namespace tinytex {
 
-class CLATEXMATH_EXPORT Font_qt : public Font {
+class TINYTEX_EXPORT Font_qt : public Font {
 private:
   static QMap<QString, QString> _qtFamilies;
 
@@ -36,7 +36,7 @@ public:
 
 /**************************************************************************************************/
 
-class CLATEXMATH_EXPORT TextLayout_qt : public TextLayout {
+class TINYTEX_EXPORT TextLayout_qt : public TextLayout {
 private:
   QFont _font;
   QString _text;
@@ -51,7 +51,7 @@ public:
 
 /**************************************************************************************************/
 
-class CLATEXMATH_EXPORT PlatformFactory_qt : public PlatformFactory {
+class TINYTEX_EXPORT PlatformFactory_qt : public PlatformFactory {
 public:
   sptr<Font> createFont(const std::string& file) override;
 
@@ -60,7 +60,7 @@ public:
 
 /**************************************************************************************************/
 
-class CLATEXMATH_EXPORT Graphics2D_qt : public Graphics2D {
+class TINYTEX_EXPORT Graphics2D_qt : public Graphics2D {
 private:
   QPainter* _painter;
 

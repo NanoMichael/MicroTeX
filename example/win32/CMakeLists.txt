@@ -1,15 +1,15 @@
 add_executable(
-    LaTeXWin32Example
+    Win32Example
     ../samples/samples.cpp
     win32_main.cpp
 )
 
-target_include_directories(LaTeXWin32Example PUBLIC ../samples)
+target_include_directories(Win32Example PUBLIC ../samples)
 
-set_target_properties(LaTeXWin32Example PROPERTIES WIN32_EXECUTABLE ON)
+set_target_properties(Win32Example PROPERTIES WIN32_EXECUTABLE ON)
 
 target_link_libraries(
-    LaTeXWin32Example PRIVATE
-    clatexmath
-    clatexmath-gdi
+    Win32Example PRIVATE
+    tinytex
+    tinytex-gdi
 )

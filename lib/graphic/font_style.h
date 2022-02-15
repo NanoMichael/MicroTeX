@@ -39,22 +39,22 @@ enum class FontStyle : u16 {
 FontStyle findClosestStyle(FontStyle src);
 
 /** Test if the given font style is unspecified*/
-bool CLATEXMATH_EXPORT isUnspecified(FontStyle style);
+bool TINYTEX_EXPORT isUnspecified(FontStyle style);
 
 /** Test if the given font style is roman */
-bool CLATEXMATH_EXPORT isRoman(FontStyle style);
+bool TINYTEX_EXPORT isRoman(FontStyle style);
 
 /** Test if the given font style is bold */
-bool CLATEXMATH_EXPORT isBold(FontStyle style);
+bool TINYTEX_EXPORT isBold(FontStyle style);
 
 /** Test if the given font style is italic */
-bool CLATEXMATH_EXPORT isItalic(FontStyle style);
+bool TINYTEX_EXPORT isItalic(FontStyle style);
 
 /** Test if the given font style is sans-serif */
-bool CLATEXMATH_EXPORT isSansSerif(FontStyle style);
+bool TINYTEX_EXPORT isSansSerif(FontStyle style);
 
 /** Test if the given font style is mono-spaced */
-bool CLATEXMATH_EXPORT isMono(FontStyle style);
+bool TINYTEX_EXPORT isMono(FontStyle style);
 
 }
 

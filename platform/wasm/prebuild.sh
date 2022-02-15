@@ -26,10 +26,10 @@ mkdir "${web_dir}/demo-dist"
 
 # copy to demo
 cp -r "${project_dir}/res" "${web_dir}/demo-dist"
-cp "${build_dir}/platform/wasm/tinytex.wasm" "${web_dir}/demo-dist"
+cp "${build_dir}/platform/wasm/tinytex-wasm.wasm" "${web_dir}/demo-dist"
 cp "${web_dir}/demo/index.html" "${web_dir}/demo-dist"
 cp "${web_dir}/demo/styles.css" "${web_dir}/demo-dist"
 
 # copy to gen
-cp "${build_dir}/platform/wasm/tinytex.wasm" "${web_dir}/gen"
-cp "${build_dir}/platform/wasm/tinytex.js" "${web_dir}/gen"
+cp "${build_dir}/platform/wasm/tinytex-wasm.wasm" "${web_dir}/gen"
+cp "${build_dir}/platform/wasm/tinytex-wasm.js" "${web_dir}/gen"

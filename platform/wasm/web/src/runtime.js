@@ -1,6 +1,6 @@
 'use strict'
 
-import Module from "../gen/tinytex";
+import Module from "../gen/tinytex-wasm";
 
 let runtime = {};
 
