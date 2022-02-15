@@ -89,7 +89,7 @@ function freeHeap(ptr) {
  * @returns {Promise<void>} a promise to init the context
  */
 context.init = function (clmDataUri, fontName = "dft") {
-  if (_runtime != null && _runtime._clatex_isInited()) {
+  if (_runtime != null && _runtime._tinytex_isInited()) {
     throw new Error("the context was initialized already.");
   }
   return initRuntime()
@@ -101,10 +101,10 @@ context.init = function (clmDataUri, fontName = "dft") {
       const dft = _runtime.allocateUTF8(fontName);
       const ptr = copyToHeap(buf);
       try {
-        _runtime._clatex_init(dft, buf.byteLength, ptr);
+        _runtime._tinytex_init(dft, buf.byteLength, ptr);
         _mathFonts.push(fontName);
         _currentMathFont = fontName;
-        _isLittleEndian = _runtime._clatex_isLittleEndian();
+        _isLittleEndian = _runtime._tinytex_isLittleEndian();
       } finally {
         freeHeap(ptr);
         freeHeap(dft);
@@ -114,12 +114,12 @@ context.init = function (clmDataUri, fontName = "dft") {
 
 /** Release the context. */
 context.release = function () {
-  _runtime._clatex_release();
+  _runtime._tinytex_release();
 }
 
 /** Check if context is initialized. */
 context.isInited = function () {
-  return _runtime._clatex_isInited();
+  return _runtime._tinytex_isInited();
 }
 
 /**
@@ -138,7 +138,7 @@ context.addMainFont = function (familyName, clmDataUri, styleName) {
       const sname = _runtime.allocateUTF8(styleName);
       const ptr = copyToHeap(buf);
       try {
-        _runtime._clatex_addMainFont(fname, sname, buf.byteLength, ptr);
+        _runtime._tinytex_addMainFont(fname, sname, buf.byteLength, ptr);
         _mainFonts.push(familyName);
       } finally {
         freeHeap(fname);
@@ -170,7 +170,7 @@ context.setMainFont = function (familyName) {
   }
   const cstr = _runtime.allocateUTF8(familyName);
   try {
-    _runtime._clatex_setDefaultMainFont(cstr);
+    _runtime._tinytex_setDefaultMainFont(cstr);
   } finally {
     freeHeap(cstr);
   }
@@ -197,7 +197,7 @@ context.addMathFont = function (clmDataUri, fontName) {
       const fname = _runtime.allocateUTF8(fontName);
       const ptr = copyToHeap(buf);
       try {
-        _runtime._clatex_addMathFont(fname, buf.byteLength, ptr);
+        _runtime._tinytex_addMathFont(fname, buf.byteLength, ptr);
         _mathFonts.push(fontName);
       } finally {
         freeHeap(fname);
@@ -219,7 +219,7 @@ context.setMathFont = function (fontName) {
   }
   const cstr = _runtime.allocateUTF8(fontName);
   try {
-    _runtime._clatex_setDefaultMathFont(cstr);
+    _runtime._tinytex_setDefaultMathFont(cstr);
   } finally {
     freeHeap(cstr);
   }
@@ -251,7 +251,7 @@ context.parse = function (tex, width, textSize, lineSpace, color) {
   const cstr = _runtime.allocateUTF8(tex);
   let ptr = 0;
   try {
-    ptr = _runtime._clatex_parseRender(cstr, width, textSize, lineSpace, color);
+    ptr = _runtime._tinytex_parseRender(cstr, width, textSize, lineSpace, color);
   } finally {
     freeHeap(cstr);
   }
