@@ -14,5 +14,5 @@ if install_headerfiles
         'string_utils.h',
         'utf.h',
         'utils.h'
-	], subdir: 'clatexmath/utils')
+	], subdir: 'tinytex/utils')
 endif

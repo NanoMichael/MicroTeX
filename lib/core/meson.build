@@ -15,5 +15,5 @@ if install_headerfiles
         'glue.h',
         'parser.h',
         'split.h'
-	], subdir: 'clatexmath/core')
+	], subdir: 'tinytex/core')
 endif

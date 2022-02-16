@@ -13,5 +13,5 @@ if install_headerfiles
 	    'uni_char.h',
 		'uni_font.h',
 		'uni_symbol.h'
-	], subdir: 'clatexmath/unimath')
+	], subdir: 'tinytex/unimath')
 endif

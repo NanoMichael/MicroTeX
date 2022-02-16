@@ -5,8 +5,8 @@ qt_src = [
   'graphic_qt.cpp'
 ]
 
-clatexmath_qt_lib = library('clatexmath-qt', qt_src,
-    link_with: clatexmath_lib,
+tinytex_qt_lib = library('tinytex-qt', qt_src,
+    link_with: tinytex_lib,
     include_directories: inc,
     dependencies: qt_dep,
     version: meson.project_version(),
@@ -14,25 +14,25 @@ clatexmath_qt_lib = library('clatexmath-qt', qt_src,
     install: true
 )
 
-clatexmath_qt_dep = declare_dependency(
-	link_with: [clatexmath_lib, clatexmath_qt_lib],
+tinytex_qt_dep = declare_dependency(
+	link_with: [tinytex_lib, tinytex_qt_lib],
 	include_directories: ['.', inc],
 	version: meson.project_version()
 )
 
 if get_option('TARGET_DEVEL')
-    pkgconfig.generate(clatexmath_qt_lib,
-        libraries: clatexmath_lib,
+    pkgconfig.generate(tinytex_qt_lib,
+        libraries: tinytex_lib,
         version: meson.project_version(),
-        name: 'clatexmath-qt',
-        filebase: 'clatexmath-qt',
-        subdirs: ['clatexmath/platform/qt'],
-        description: 'qt5 backend to cLaTeXMath'
+        name: 'tinytex-qt',
+        filebase: 'tinytex-qt',
+        subdirs: ['tinytex/platform/qt'],
+        description: 'qt5 backend to tinytex'
     )
 endif
 
 if install_headerfiles
     install_headers([
         'graphic_qt.h'
-    ], subdir: 'clatexmath/platform/qt')
+    ], subdir: 'tinytex/platform/qt')
 endif

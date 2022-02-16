@@ -7,12 +7,13 @@ example_gtk_inc = '../samples'
 example_gtk_deps = [
     dependency('gtkmm-3.0'),
     dependency('gtksourceviewmm-3.0'),
-    clatexmath_cairo_dep
+    tinytex_cairo_dep
 ]
 
 executable(
     'LaTeXGtkExample', example_gtk_src,
     include_directories: example_gtk_inc,
+    link_with: [tinytex_cairo_lib, tinytex_lib],
     dependencies: example_gtk_deps,
     install: true
 )

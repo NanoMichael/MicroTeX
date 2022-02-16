@@ -1,4 +1,4 @@
-project('clatexmath', 'cpp',
+project('tinytex', 'cpp',
 	version : '0.0.4',
 	default_options : ['buildtype=release', 'warning_level=0', 'cpp_std=c++17']
 )
