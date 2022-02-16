@@ -32,7 +32,7 @@ void TeXWidget::setTextSize(float size) {
 void TeXWidget::setLaTeX(const std::string& latex) {
   if (_render != nullptr) delete _render;
 
-  _render = LaTeX::parse(
+  _render = TinyTeX::parse(
     latex,
     width() - _padding * 2,
     _text_size,

@@ -1,4 +1,4 @@
-#include "latex.h"
+#include "tinytex.h"
 
 #include "core/formula.h"
 #include "macro/macro.h"
@@ -7,11 +7,11 @@
 using namespace std;
 using namespace tinytex;
 
-volatile bool LaTeX::_isInited = false;
-std::string LaTeX::_defaultMathFontName;
-std::string LaTeX::_defaultMainFontName;
+volatile bool TinyTeX::_isInited = false;
+std::string TinyTeX::_defaultMathFontName;
+std::string TinyTeX::_defaultMainFontName;
 
-void LaTeX::init(const FontSrc& mathFontSrc) {
+void TinyTeX::init(const FontSrc& mathFontSrc) {
   FontContext::addMathFont(mathFontSrc);
   _defaultMathFontName = mathFontSrc.name;
   if (_isInited) return;
@@ -19,16 +19,16 @@ void LaTeX::init(const FontSrc& mathFontSrc) {
   NewCommandMacro::_init_();
 }
 
-bool LaTeX::isInited() {
+bool TinyTeX::isInited() {
   return _isInited;
 }
 
-void LaTeX::release() {
+void TinyTeX::release() {
   MacroInfo::_free_();
   NewCommandMacro::_free_();
 }
 
-void LaTeX::addMainFont(
+void TinyTeX::addMainFont(
   const std::string& name,
   const FontSrcList& srcs
 ) {
@@ -38,37 +38,37 @@ void LaTeX::addMainFont(
   }
 }
 
-void LaTeX::addMathFont(const FontSrc& src) {
+void TinyTeX::addMathFont(const FontSrc& src) {
   FontContext::addMathFont(src);
 }
 
-void LaTeX::setDefaultMathFont(const std::string& name) {
+void TinyTeX::setDefaultMathFont(const std::string& name) {
   _defaultMathFontName = name;
 }
 
-void LaTeX::setDefaultMainFont(const std::string& name) {
+void TinyTeX::setDefaultMainFont(const std::string& name) {
   _defaultMainFontName = name;
 }
 
-void LaTeX::overrideTexStyle(bool enable, TexStyle style) {
+void TinyTeX::overrideTexStyle(bool enable, TexStyle style) {
   RenderBuilder::overrideTexStyle(enable, style);
 }
 
 #if GLYPH_RENDER_TYPE == 0
 
-bool LaTeX::_renderGlyphUsePath = false;
+bool TinyTeX::_renderGlyphUsePath = false;
 
-void LaTeX::setRenderGlyphUsePath(bool use) {
+void TinyTeX::setRenderGlyphUsePath(bool use) {
   _renderGlyphUsePath = use;
 }
 
-bool LaTeX::isRenderGlyphUsePath() {
+bool TinyTeX::isRenderGlyphUsePath() {
   return _renderGlyphUsePath;
 }
 
 #endif
 
-Render* LaTeX::parse(
+Render* TinyTeX::parse(
   const string& latex, int width, float textSize, float lineSpace, color fg,
   const string& mathFontName, const string& mainFontName
 ) {

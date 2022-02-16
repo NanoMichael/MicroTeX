@@ -1,7 +1,7 @@
 #include "macro/macro_fonts.h"
 #include "utils/string_utils.h"
 #include "utils/exceptions.h"
-#include "latex.h"
+#include "tinytex.h"
 
 namespace tinytex {
 
@@ -23,7 +23,7 @@ macro(intertext) {
 }
 
 macro(addmathfont) {
-  LaTeX::addMathFont(FontSrcFile(args[1], args[2], args[3]));
+  TinyTeX::addMathFont(FontSrcFile(args[1], args[2], args[3]));
   return nullptr;
 }
 
@@ -31,7 +31,7 @@ macro(addmainfont) {
   auto src = std::make_unique<FontSrcFile>(args[2], args[3], args[4]);
   FontSrcList srcs;
   srcs.push_back(std::move(src));
-  LaTeX::addMainFont(args[2], srcs);
+  TinyTeX::addMainFont(args[2], srcs);
   return nullptr;
 }
 
@@ -51,7 +51,7 @@ macro(mathversion) {
       mathStyle = MathStyle::upright;
     }
   }
-  LaTeX::setDefaultMathFont(args[1]);
+  TinyTeX::setDefaultMathFont(args[1]);
   return sptrOf<MathFontAtom>(mathStyle, args[1]);
 }
 

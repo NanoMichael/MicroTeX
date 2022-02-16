@@ -1,5 +1,5 @@
 #include "def.h"
-#include "latex.h"
+#include "tinytex.h"
 #include "render.h"
 #include "graphic_wasm.h"
 #include "utils/log.h"
@@ -16,15 +16,15 @@ void TINYTEX_WASM_API tinytex_init(
   const unsigned char* data
 ) {
   FontSrcData src{name, len, data};
-  LaTeX::init(src);
+  TinyTeX::init(src);
 }
 
 void TINYTEX_WASM_API tinytex_release() {
-  LaTeX::release();
+  TinyTeX::release();
 }
 
 bool TINYTEX_WASM_API tinytex_isInited() {
-  return LaTeX::isInited();
+  return TinyTeX::isInited();
 }
 
 void TINYTEX_WASM_API tinytex_addMathFont(
@@ -33,7 +33,7 @@ void TINYTEX_WASM_API tinytex_addMathFont(
   const unsigned char* data
 ) {
   FontSrcData src{name, len, data};
-  LaTeX::addMathFont(src);
+  TinyTeX::addMathFont(src);
 }
 
 void TINYTEX_WASM_API tinytex_addMainFont(
@@ -45,15 +45,15 @@ void TINYTEX_WASM_API tinytex_addMainFont(
   auto src = std::make_unique<FontSrcData>(styleName, len, data);
   FontSrcList list;
   list.push_back(std::move(src));
-  LaTeX::addMainFont(familyName, list);
+  TinyTeX::addMainFont(familyName, list);
 }
 
 void TINYTEX_WASM_API tinytex_setDefaultMathFont(const char* name) {
-  LaTeX::setDefaultMathFont(name);
+  TinyTeX::setDefaultMathFont(name);
 }
 
 void TINYTEX_WASM_API tinytex_setDefaultMainFont(const char* name) {
-  LaTeX::setDefaultMainFont(name);
+  TinyTeX::setDefaultMainFont(name);
 }
 
 void* TINYTEX_WASM_API tinytex_parseRender(
@@ -66,7 +66,7 @@ void* TINYTEX_WASM_API tinytex_parseRender(
 #ifdef HAVE_LOG
   logv("parse: %s\n", tex);
 #endif
-  auto r = LaTeX::parse(tex, width, textSize, lineSpace, color);
+  auto r = TinyTeX::parse(tex, width, textSize, lineSpace, color);
   return reinterpret_cast<void*>(r);
 }
 

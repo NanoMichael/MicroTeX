@@ -87,7 +87,7 @@ target_sources(
     graphic/graphic_basic.cpp
     graphic/graphic.cpp
 
-    latex.cpp
+    tinytex.cpp
     render.cpp
 )
 target_include_directories(tinytex PUBLIC .)
