@@ -1,4 +1,4 @@
-#include "latex.h"
+#include "tinytex.h"
 
 #include "qt_mainwindow.h"
 
@@ -22,17 +22,17 @@ int main(int argc, char** argv) {
     return 1;
   }
   const tinytex::FontSrcFile math{argv[1], argv[2], argv[3]};
-  tinytex::LaTeX::init(math);
+  tinytex::TinyTeX::init(math);
 
   tinytex::PlatformFactory::registerFactory("qt", std::make_unique<tinytex::PlatformFactory_qt>());
   tinytex::PlatformFactory::activate("qt");
 
-  tinytex::LaTeX::setRenderGlyphUsePath(true);
+  tinytex::TinyTeX::setRenderGlyphUsePath(true);
 
   MainWindow win(nullptr, argv[4]);
   win.show();
   int ret = app.exec();
 
-  tinytex::LaTeX::release();
+  tinytex::TinyTeX::release();
   return ret;
 }

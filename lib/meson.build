@@ -4,7 +4,7 @@ inc = []
 install_headerfiles = get_option('TARGET_DEVEL')
 
 tinytex_src = [
-	'latex.cpp',
+	'tinytex.cpp',
 	'render.cpp'
 ]
 src += tinytex_src
@@ -65,7 +65,7 @@ endif
 if install_headerfiles
 	install_headers([
 		'config.h',
-		'latex.h',
+		'tinytex.h',
 		'render.h'
 	], subdir: 'tinytex')
 endif

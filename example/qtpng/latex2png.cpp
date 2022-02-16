@@ -3,7 +3,7 @@
 //
 
 
-#include "latex.h"
+#include "tinytex.h"
 #include "graphic_qt.h"
 #include <QGuiApplication>
 #include <QFile>
@@ -17,13 +17,13 @@
 class TexGuard {
 public:
   TexGuard(const tinytex::FontSrc& math) {
-    tinytex::LaTeX::init(math);
+    tinytex::TinyTeX::init(math);
     tinytex::PlatformFactory::registerFactory("qt", std::make_unique<tinytex::PlatformFactory_qt>());
     tinytex::PlatformFactory::activate("qt");
   }
 
   ~TexGuard() {
-    tinytex::LaTeX::release();
+    tinytex::TinyTeX::release();
   }
 };
 
@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
   }
   QString latex = file.readAll();
   qDebug() << latex;
-  auto render = tinytex::LaTeX::parse(
+  auto render = tinytex::TinyTeX::parse(
     latex.toStdString(),
     600 - 0 * 2,
     20,

@@ -8,5 +8,5 @@ target_include_directories(MemCheck PUBLIC ../samples)
 
 target_link_libraries(
     MemCheck PRIVATE
-    titnytex
+    tinytex
 )

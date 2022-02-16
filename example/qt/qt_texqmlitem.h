@@ -3,7 +3,7 @@
 
 #include <QtQuick/QQuickPaintedItem>
 
-#include "latex.h"
+#include "tinytex.h"
 #include "graphic_qt.h"
 
 class TexQmlItem : public QQuickPaintedItem {

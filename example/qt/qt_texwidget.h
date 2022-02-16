@@ -3,7 +3,7 @@
 
 #include "config.h"
 #include "graphic_qt.h"
-#include "latex.h"
+#include "tinytex.h"
 
 #include <QWidget>
 
