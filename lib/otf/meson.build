@@ -12,5 +12,5 @@ if install_headerfiles
 		'math_consts.h',
 		'otf.h',
 		'path.h'
-	], subdir: 'clatexmath/otf')
+	], subdir: 'tinytex/otf')
 endif

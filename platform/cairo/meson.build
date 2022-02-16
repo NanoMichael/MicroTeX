@@ -10,8 +10,8 @@ cairo_deps = [
     dependency('pangocairo')
 ]
 
-clatexmath_cairo_lib = library('clatexmath-cairo', cairo_src,
-    link_with: clatexmath_lib,
+tinytex_cairo_lib = library('tinytex-cairo', cairo_src,
+    link_with: tinytex_lib,
     include_directories: inc,
     dependencies: cairo_deps,
     version: meson.project_version(),
@@ -19,8 +19,8 @@ clatexmath_cairo_lib = library('clatexmath-cairo', cairo_src,
     install: true
 )
 
-clatexmath_cairo_dep = declare_dependency(
-	link_with: [clatexmath_lib, clatexmath_cairo_lib],
+tinytex_cairo_dep = declare_dependency(
+	link_with: [tinytex_lib, tinytex_cairo_lib],
 	include_directories: ['.', inc],
 	dependencies: [
 		dependency('cairo'),
@@ -30,18 +30,18 @@ clatexmath_cairo_dep = declare_dependency(
 )
 
 if get_option('TARGET_DEVEL')
-    pkgconfig.generate(clatexmath_cairo_lib,
-        libraries: clatexmath_lib,
+    pkgconfig.generate(tinytex_cairo_lib,
+        libraries: tinytex_lib,
         version: meson.project_version(),
-        name: 'clatexmath-cairo',
-        filebase: 'clatexmath-cairo',
-        subdirs: ['clatexmath/platform/cairo'],
-        description: 'cairomm backend to cLaTeXMath'
+        name: 'tinytex-cairo',
+        filebase: 'tinytex-cairo',
+        subdirs: ['tinytex/platform/cairo'],
+        description: 'cairomm backend to tinytex'
     )
 endif
 
 if install_headerfiles
     install_headers([
         'graphic_cairo.h'
-    ], subdir: 'clatexmath/platform/cairo')
+    ], subdir: 'tinytex/platform/cairo')
 endif
