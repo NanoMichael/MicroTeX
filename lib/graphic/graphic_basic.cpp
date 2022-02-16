@@ -1,4 +1,5 @@
 #include "graphic/graphic_basic.h"
+#include "atom/atom_basic.h"
 #include <sstream>
 
 tinytex::color tinytex::decodeColor(const std::string& s) {
@@ -17,6 +18,10 @@ tinytex::color tinytex::decodeColor(const std::string& s) {
     return c;
   }
   return black;
+}
+
+tinytex::color tinytex::getColor(const std::string& name) {
+  return ColorAtom::getColor(name);
 }
 
 bool tinytex::Point::operator==(const Point& other) const {
