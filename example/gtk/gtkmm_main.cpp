@@ -340,8 +340,6 @@ public:
   }
 };
 
-#include "atom/atom_basic.h"
-
 template<typename F>
 void getOpt(const std::string& opt, F&& f) {
   size_t i = opt.find('=');
@@ -362,9 +360,9 @@ void getHeadlessOpt(Headless& h, const std::string& key, const std::string& valu
   } else if (key == "-textsize") {
     valueof(value, h._textSize);
   } else if (key == "-foreground") {
-    h._foreground = tinytex::ColorAtom::getColor(value);
+    h._foreground = tinytex::getColor(value);
   } else if (key == "-background") {
-    h._background = tinytex::ColorAtom::getColor(value);
+    h._background = tinytex::getColor(value);
   } else if (key == "-input") {
     h._input = value;
   } else if (key == "-output") {
