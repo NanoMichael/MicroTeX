@@ -11,5 +11,5 @@ if install_headerfiles
         'box_group.h',
         'box.h',
         'box_single.h'
-	], subdir: 'clatexmath/box')
+	], subdir: 'tinytex/box')
 endif
