@@ -9,7 +9,7 @@
 
 namespace tinytex {
 
-class TINYTEX_EXPORT LaTeX {
+class TINYTEX_EXPORT TinyTeX {
 private:
   static volatile bool _isInited;
   static std::string _defaultMainFontName;

@@ -244,7 +244,7 @@ This section shows how to use this library to display mathematical formulas.
 First, load the required resources at the very beginning:
 
 ```c++
-#include "latex.h"
+#include "tinytex.h"
 
 using namespace tex;
 

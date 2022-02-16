@@ -6,7 +6,7 @@
 #define QT_SKIATEXWIDGET_H
 
 #include "platform/qt/graphic_qt.h"
-#include "latex.h"
+#include "tinytex.h"
 #include <QOpenGLWidget>
 #include <gpu/GrDirectContext.h>
 #include <core/SkSurface.h>

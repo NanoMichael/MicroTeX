@@ -1,4 +1,4 @@
-#include "latex.h"
+#include "tinytex.h"
 #include "graphic_cairo.h"
 #include "samples.h"
 #include "utils/log.h"
@@ -79,7 +79,7 @@ public:
   void setLaTeX(const string& latex) {
     delete _render;
     auto start = std::chrono::high_resolution_clock::now();
-    _render = LaTeX::parse(
+    _render = TinyTeX::parse(
       latex,
       get_allocated_width() - _padding * 2,
       _text_size,
@@ -286,7 +286,7 @@ public:
   float _maxWidth = 720.f;
 
   void generateSingle(const string& code, const string& file) const {
-    auto r = LaTeX::parse(code, _maxWidth, _textSize, _textSize / 3.f, _foreground);
+    auto r = TinyTeX::parse(code, _maxWidth, _textSize, _textSize / 3.f, _foreground);
     const float w = r->getWidth() + _padding * 2;
     const float h = r->getHeight() + _padding * 2;
     auto surface = Cairo::SvgSurface::create(file, w, h);
@@ -454,7 +454,7 @@ int runPerf(const std::string& samplesFilePath) {
   Graphics2D_cairo g2(ctx->cobj());
 
   auto run = [&](const std::string& sample) {
-    auto render = LaTeX::parse(sample, 1024, 20.f, 20.f / 3.f, 0xff424242);
+    auto render = TinyTeX::parse(sample, 1024, 20.f, 20.f / 3.f, 0xff424242);
     long d = 0;
     for (int j = 0; j < 10; j++) {
       d += countDuration([&] { render->draw(g2, 0, 0); });
@@ -465,10 +465,10 @@ int runPerf(const std::string& samplesFilePath) {
 
   for (int i = 0; i < samples.count(); i++) {
     const auto& sample = samples.next();
-    LaTeX::setRenderGlyphUsePath(false);
+    TinyTeX::setRenderGlyphUsePath(false);
     const auto d1 = run(sample);
     printf("%ld, ", d1);
-    LaTeX::setRenderGlyphUsePath(true);
+    TinyTeX::setRenderGlyphUsePath(true);
     const auto d2 = run(sample);
     printf("%ld\n", d2);
   }
@@ -521,7 +521,7 @@ int main(int argc, char* argv[]) {
 
   Pango::init();
   const FontSrcFile math{mathVersionName, clmFile, mathFont};
-  LaTeX::init(math);
+  TinyTeX::init(math);
 
   PlatformFactory::registerFactory("gtk", std::make_unique<PlatformFactory_cairo>());
   PlatformFactory::activate("gtk");
@@ -535,6 +535,6 @@ int main(int argc, char* argv[]) {
     result = runWindow(samplesFile, argv);
   }
 
-  LaTeX::release();
+  TinyTeX::release();
   return result;
 }

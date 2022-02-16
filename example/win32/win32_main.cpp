@@ -1,6 +1,6 @@
 #include "config.h"
 
-#include "latex.h"
+#include "tinytex.h"
 #include "graphic_win32.h"
 #include "samples.h"
 #include "utils/string_utils.h"

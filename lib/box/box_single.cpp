@@ -2,7 +2,7 @@
 #include "env/env.h"
 #include "core/debug_config.h"
 #include "utils/utf.h"
-#include "latex.h"
+#include "tinytex.h"
 #include "utils/exceptions.h"
 
 using namespace std;
@@ -58,7 +58,7 @@ void CharBox::draw(Graphics2D& g2, float x, float y) {
 #elif GLYPH_RENDER_TYPE == 2
   _drawWithFont(_chr, g2, x, y);
 #elif GLYPH_RENDER_TYPE == 0
-  if (LaTeX::isRenderGlyphUsePath()) {
+  if (TinyTeX::isRenderGlyphUsePath()) {
     _drawWithPath(_chr, g2, x, y);
   } else {
     _drawWithFont(_chr, g2, x, y);

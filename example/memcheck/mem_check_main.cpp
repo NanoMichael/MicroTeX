@@ -1,5 +1,5 @@
 #include "graphic/graphic.h"
-#include "latex.h"
+#include "tinytex.h"
 
 namespace tinytex {
 
@@ -135,19 +135,19 @@ int main(int argc, char* argv[]) {
     return 1;
   }
   const tinytex::FontSrcFile math{argv[1], argv[2], argv[3]};
-  tinytex::LaTeX::init(math);
+  tinytex::TinyTeX::init(math);
 
   tinytex::PlatformFactory::registerFactory("none", std::make_unique<tinytex::PlatformFactory_none>());
   tinytex::PlatformFactory::activate("none");
 
   tinytex::Samples samples(argv[4]);
   for (int i = 0; i < samples.count(); i++) {
-    auto r = tinytex::LaTeX::parse(samples.next(), 720, 20, 20 / 3.f, tinytex::black);
+    auto r = tinytex::TinyTeX::parse(samples.next(), 720, 20, 20 / 3.f, tinytex::black);
     tinytex::Graphics2D_none g2;
     r->draw(g2, 0, 0);
     delete r;
   }
 
-  tinytex::LaTeX::release();
+  tinytex::TinyTeX::release();
   return 0;
 }
