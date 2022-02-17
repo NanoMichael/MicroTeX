@@ -7,7 +7,7 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Gui Widgets REQUIRED)
 
 target_include_directories(tinytex-qt PUBLIC .)
 
-target_compile_definitions(tinytex-qt PRIVATE -DCLATEXMATH_LIBRARY)
+target_compile_definitions(tinytex-qt PRIVATE -DTINYTEX_LIBRARY)
 target_link_libraries(
     tinytex-qt PRIVATE
     tinytex
