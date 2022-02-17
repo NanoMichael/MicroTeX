@@ -77,13 +77,13 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
   wndClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
   wndClass.hbrBackground = (HBRUSH) GetStockObject(WHITE_BRUSH);
   wndClass.lpszMenuName = nullptr;
-  wndClass.lpszClassName = TEXT("LaTeX");
+  wndClass.lpszClassName = TEXT("TinyTeX");
 
   RegisterClass(&wndClass);
 
   hWnd = CreateWindow(
-    TEXT("LaTeX"),        // window class name
-    TEXT("LaTeX"),        // window caption
+    TEXT("TinyTeX"),        // window class name
+    TEXT("TinyTeX"),        // window caption
     WS_OVERLAPPEDWINDOW,  // window style
     0,                    // initial x position
     0,                    // initial y position
@@ -106,7 +106,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
 
   delete _render;
   delete _samples;
-  LaTeX::release();
+  TinyTeX::release();
   GdiplusShutdown(gdiplusToken);
   return msg.wParam;
 }  // WinMain
@@ -149,11 +149,11 @@ void init() {
     exit(1);
   }
   const FontSrcFile math{__argv[2], __argv[3], __argv[4]};
-  LaTeX::init(math);
+  TinyTeX::init(math);
   PlatformFactory::registerFactory("gdi", std::make_unique<PlatformFactory_gdi>());
   PlatformFactory::activate("gdi");
   _samples = new Samples(__argv[5]);
-  _render = LaTeX::parse(
+  _render = TinyTeX::parse(
     "\\text{Hello from Tiny\\kern-.1em\\TeX, have fun! Press Ctrl + Enter on editor to show formulas.}",
     720, _size, _size / 3.f, _color
   );
@@ -163,7 +163,7 @@ void HandleNext() {
   delete _render;
   RECT r;
   GetClientRect(hCanvas, &r);
-  _render = LaTeX::parse(_samples->next(), r.right - r.left, _size, _size / 3.f, _color);
+  _render = TinyTeX::parse(_samples->next(), r.right - r.left, _size, _size / 3.f, _color);
   InvalidateRect(hCanvas, nullptr, TRUE);
   UpdateWindow(hCanvas);
 }
@@ -177,7 +177,7 @@ void HandleOK() {
   delete[] data;
   RECT r;
   GetClientRect(hCanvas, &r);
-  _render = LaTeX::parse(txt, r.right - r.left, _size, _size / 3.f, _color);
+  _render = TinyTeX::parse(txt, r.right - r.left, _size, _size / 3.f, _color);
   InvalidateRect(hCanvas, nullptr, TRUE);
   UpdateWindow(hCanvas);
 }
