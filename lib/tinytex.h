@@ -3,8 +3,8 @@
 
 #include <string>
 
+#include "unimath/font_src.h"
 #include "config.h"
-#include "unimath/uni_font.h"
 #include "render.h"
 
 namespace tinytex {
@@ -51,7 +51,7 @@ public:
 
   /**
    * Set the default math font to show formulas while math font
-   * was not given.
+   * was not given when parsing.
    *
    * @param name the math font name, must exists or an `ex_invalid_param`
    * will be thrown when parsing.
@@ -60,8 +60,8 @@ public:
 
   /**
    * Set the default main font to show formulas while main font
-   * was not given. However, if no main font was loaded, the engine
-   * will use the math font to render the glyphs wrapped by command
+   * was not given when parsing. However, if no main font was loaded, the
+   * engine will use the math font to render the glyphs wrapped by command
    * `text`.
    *
    * @param name the main font name, this function will takes no
@@ -97,8 +97,8 @@ public:
    * @param textSize the text size
    * @param lineSpace the line space
    * @param fg the foreground color
-   * @param mathFontName the math font name
-   * @param mainFontName the main font name
+   * @param mathFontName the math font name, default is empty
+   * @param mainFontName the main font name, default is empty
    */
   static Render* parse(
     const std::string& tex,

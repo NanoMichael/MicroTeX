@@ -2,7 +2,7 @@
 #define TINYTEX_FONT_STYLE_H
 
 #include "config.h"
-#include "utils/utils.h"
+#include "utils/types.h"
 
 namespace tinytex {
 

@@ -4,6 +4,7 @@
 #include "graphic/graphic_basic.h"
 #include "graphic/font_style.h"
 #include <map>
+#include <vector>
 
 namespace tinytex {
 
