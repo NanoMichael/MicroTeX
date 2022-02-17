@@ -30,7 +30,7 @@ namespace tinytex {
 
 std::wstring win32ToWideString(const std::string& str);
 
-class CLATEXMATH_EXPORT Font_win32 : public Font {
+class TINYTEX_EXPORT Font_win32 : public Font {
 private:
   static std::map<std::string, sptr<Font_win32>> _win32Faces;
 
@@ -56,7 +56,7 @@ public:
 
 /**************************************************************************************************/
 
-class CLATEXMATH_EXPORT TextLayout_win32 : public TextLayout {
+class TINYTEX_EXPORT TextLayout_win32 : public TextLayout {
 private:
   std::wstring _txt;
   sptr<Font_win32> _font;
@@ -76,7 +76,7 @@ public:
 
 /**************************************************************************************************/
 
-class CLATEXMATH_EXPORT PlatformFactory_gdi : public PlatformFactory {
+class TINYTEX_EXPORT PlatformFactory_gdi : public PlatformFactory {
 public:
   sptr<Font> createFont(const std::string &file) override;
 
@@ -85,7 +85,7 @@ public:
 
 /**************************************************************************************************/
 
-class CLATEXMATH_EXPORT Graphics2D_win32 : public Graphics2D {
+class TINYTEX_EXPORT Graphics2D_win32 : public Graphics2D {
 private:
   static const Gdiplus::StringFormat* _format;
 
