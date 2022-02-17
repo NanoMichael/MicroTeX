@@ -1,7 +1,7 @@
 #ifndef GRAPHIC_BASIC_H_INCLUDED
 #define GRAPHIC_BASIC_H_INCLUDED
 
-#include "utils/utils.h"
+#include "utils/types.h"
 #include "config.h"
 #include <string>
 

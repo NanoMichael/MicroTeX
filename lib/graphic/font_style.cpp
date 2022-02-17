@@ -1,4 +1,5 @@
 #include "graphic/font_style.h"
+#include "utils/utils.h"
 
 using namespace tinytex;
 

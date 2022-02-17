@@ -13,6 +13,7 @@ if install_headerfiles
         'nums.h',
         'string_utils.h',
         'utf.h',
-        'utils.h'
+        'utils.h',
+        'types.h'
 	], subdir: 'tinytex/utils')
 endif

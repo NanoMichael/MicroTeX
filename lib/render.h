@@ -1,17 +1,19 @@
 #ifndef RENDER_H_INCLUDED
 #define RENDER_H_INCLUDED
 
-#include <functional>
-
 #include "config.h"
-#include "box/box.h"
 #include "graphic/graphic.h"
+#include "utils/enums.h"
+
+#include <functional>
 
 namespace tinytex {
 
 class Formula;
 
 class Box;
+
+class BoxGroup;
 
 class Atom;
 

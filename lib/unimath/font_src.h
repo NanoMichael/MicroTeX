@@ -2,10 +2,12 @@
 #define TINYTEX_FONT_SRC_H
 
 #include "config.h"
-#include "utils/utils.h"
-#include "otf/otf.h"
+#include "utils/types.h"
+#include <vector>
 
 namespace tinytex {
+
+class Otf;
 
 /** Source to load font. */
 class TINYTEX_EXPORT FontSrc {
