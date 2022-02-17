@@ -11,7 +11,7 @@ example_gtk_deps = [
 ]
 
 executable(
-    'LaTeXGtkExample', example_gtk_src,
+    'tinytex-gtk-example', example_gtk_src,
     include_directories: example_gtk_inc,
     link_with: [tinytex_cairo_lib, tinytex_lib],
     dependencies: example_gtk_deps,

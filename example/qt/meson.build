@@ -18,7 +18,7 @@ example_qt_src = [
 ]
 
 executable(
-    'LaTeXQtExample', example_qt_src,
+    'tinytex-qt-example', example_qt_src,
     include_directories: example_qt_inc,
     dependencies: example_qt_dep,
     install: true
