@@ -1,12 +1,12 @@
 add_executable(
-    MemCheck
+    tinytex-memcheck
     ../samples/samples.cpp
     mem_check_main.cpp
 )
 
-target_include_directories(MemCheck PUBLIC ../samples)
+target_include_directories(tinytex-memcheck PUBLIC ../samples)
 
 target_link_libraries(
-    MemCheck PRIVATE
+    tinytex-memcheck PRIVATE
     tinytex
 )

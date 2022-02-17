@@ -1,15 +1,15 @@
 add_executable(
-    Win32Example
+    tinytex-win32-example
     ../samples/samples.cpp
     win32_main.cpp
 )
 
-target_include_directories(Win32Example PUBLIC ../samples)
+target_include_directories(tinytex-win32-example PUBLIC ../samples)
 
-set_target_properties(Win32Example PROPERTIES WIN32_EXECUTABLE ON)
+set_target_properties(tinytex-win32-example PROPERTIES WIN32_EXECUTABLE ON)
 
 target_link_libraries(
-    Win32Example PRIVATE
+    tinytex-win32-example PRIVATE
     tinytex
     tinytex-gdi
 )
