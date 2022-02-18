@@ -1,5 +1,6 @@
 #include "graphic_wasm.h"
 #include "jsapi.h"
+#include "utils/utils.h"
 
 using namespace tinytex;
 
