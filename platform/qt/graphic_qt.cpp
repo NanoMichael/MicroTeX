@@ -1,5 +1,6 @@
 #include "graphic_qt.h"
 #include "utils/log.h"
+#include "utils/utils.h"
 
 #include <QDebug>
 
