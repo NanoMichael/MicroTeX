@@ -1,5 +1,3 @@
-#include "config.h"
-
 #include "tinytex.h"
 #include "graphic_win32.h"
 #include "samples.h"
@@ -84,15 +82,15 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
   hWnd = CreateWindow(
     TEXT("TinyTeX"),        // window class name
     TEXT("TinyTeX"),        // window caption
-    WS_OVERLAPPEDWINDOW,  // window style
-    0,                    // initial x position
-    0,                    // initial y position
-    780,                  // initial x size
-    480,                  // initial y size
-    nullptr,                 // parent window handle
-    nullptr,                 // window menu handle
-    hInstance,            // program instance handle
-    nullptr                  // creation parameters
+    WS_OVERLAPPEDWINDOW,    // window style
+    0,                      // initial x position
+    0,                      // initial y position
+    780,                    // initial x size
+    480,                    // initial y size
+    nullptr,                // parent window handle
+    nullptr,                // window menu handle
+    hInstance,              // program instance handle
+    nullptr                 // creation parameters
   );
 
   CreateCtrl(hInstance, hWnd);
@@ -139,12 +137,12 @@ void init() {
     //    <math font file>
     //    <samples file>
     fprintf(
-            stderr,
-            "Required options:\n"
-            "  <math font name>\n"
-            "  <clm data file>\n"
-            "  <math font file>\n"
-            "  <samples file>\n"
+      stderr,
+      "Required options:\n"
+      "  <math font name>\n"
+      "  <clm data file>\n"
+      "  <math font file>\n"
+      "  <samples file>\n"
     );
     exit(1);
   }
