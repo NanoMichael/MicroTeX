@@ -3,6 +3,7 @@
 #include "graphic_win32.h"
 #include "utils/nums.h"
 #include "utils/exceptions.h"
+#include "utils/utils.h"
 
 #include <sstream>
 // fix error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
