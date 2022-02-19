@@ -26,13 +26,6 @@ jobs:
     - name: Downloading CMake 📥
       # Install latest CMake.
       uses: lukka/get-cmake@latest
-    - name: Downloading Vcpkg 📥
-      run: |
-        cd ${{ github.workspace }}
-        mkdir build -force
-        git clone https://github.com/Microsoft/vcpkg.git
-        cd vcpkg
-        .\bootstrap-vcpkg.bat
     - name: Setup Environment (x64)
       uses: ilammy/msvc-dev-cmd@v1
       if: runner.os == 'Windows'
@@ -50,8 +43,9 @@ jobs:
     - name: Configure 🔧
       run: |
         cd ${{ github.workspace }}
+        mkdir build -force
         cd build
-        cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DQT=ON -DCMAKE_BUILD_TYPE=Release -G Ninja
+        cmake .. -DQT=ON -DBUILD_EXAMPLE_QT=ON -DCMAKE_BUILD_TYPE=Release -G Ninja
     - name: Compile 🎲
       run: |
         cd ${{ github.workspace }}
