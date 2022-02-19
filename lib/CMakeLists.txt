@@ -8,7 +8,7 @@ endif ()
 if (MSVC)
     target_compile_features(tinytex PUBLIC cxx_std_17)
     target_compile_definitions(tinytex PRIVATE -DTINYTEX_LIBRARY)
-    target_compile_definitions(tinytex PUBLIC -D_HAS_STD_BYTE=0)
+    target_compile_definitions(tinytex PUBLIC -D_HAS_STD_BYTE=1)
 endif ()
 
 set_target_properties(tinytex PROPERTIES VERSION 1.0.0 SOVERSION 1)
