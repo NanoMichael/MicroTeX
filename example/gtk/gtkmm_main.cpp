@@ -107,7 +107,7 @@ public:
 
   void drawInContext(const Cairo::RefPtr<Cairo::Context>& cr) {
     if (_render == nullptr) return;
-	Graphics2D_cairo g2(cr->cobj());
+    Graphics2D_cairo g2(cr->cobj());
     _render->draw(g2, _padding, _padding);
   }
 
@@ -122,7 +122,7 @@ protected:
     cr->fill();
     if (_render == nullptr) return true;
     auto start = std::chrono::high_resolution_clock::now();
-	Graphics2D_cairo g2(cr->cobj());
+    Graphics2D_cairo g2(cr->cobj());
     _render->draw(g2, _padding, _padding);
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
