@@ -3,10 +3,7 @@ inc = []
 
 install_headerfiles = get_option('TARGET_DEVEL')
 
-tinytex_src = [
-	'tinytex.cpp',
-	'render.cpp'
-]
+tinytex_src = ['tinytex.cpp']
 src += tinytex_src
 
 tinytex_inc = include_directories('.')
@@ -39,6 +36,9 @@ src += unimath_src
 subdir('utils')
 src += utils_src
 
+subdir('render')
+src += render_src
+
 tinytex_lib = library('tinytex', src,
 	include_directories: inc,
 	version: meson.project_version(),
@@ -66,7 +66,6 @@ if install_headerfiles
 	install_headers([
 		'config.h',
 		'tinytex.h',
-		'render.h',
 		'version.h'
 	], subdir: 'tinytex')
 endif

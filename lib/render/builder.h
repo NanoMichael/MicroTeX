@@ -1,77 +1,13 @@
-#ifndef RENDER_H_INCLUDED
-#define RENDER_H_INCLUDED
+#ifndef TINYTEX_BUILDER_H
+#define TINYTEX_BUILDER_H
 
-#include "config.h"
-#include "graphic/graphic.h"
-#include "utils/enums.h"
-
-#include <functional>
+#include "render.h"
 
 namespace tinytex {
 
 class Formula;
 
-class Box;
-
-class BoxGroup;
-
 class Atom;
-
-using BoxFilter = std::function<bool(const sptr<Box>&)>;
-
-/**
- * Object to paint formula, is baseline aligned.
- * <p>
- * You can change the size via method #setWidth and #setHeight, but only the new
- * size is larger will be handled.
- */
-class TINYTEX_EXPORT Render {
-private:
-  static constexpr color DFT_COLOR = black;
-
-  sptr<Box> _box;
-  float _textSize;
-  float _fixedScale;
-  color _fg = black;
-
-  void buildDebug(
-    const sptr<BoxGroup>& parent,
-    const sptr<Box>& box,
-    const BoxFilter& filter
-  );
-
-  static sptr<BoxGroup> wrap(const sptr<Box>& box);
-
-public:
-
-  Render(const sptr<Box>& box, float textSize);
-
-  /** Get the text size of this render */
-  float getTextSize() const;
-
-  /** Get the total height of this render */
-  int getHeight() const;
-
-  /** Get the size amount below the baseline, in positive */
-  int getDepth() const;
-
-  /** Get the width of this render */
-  int getWidth() const;
-
-  float getBaseline() const;
-
-  void setTextSize(float textSize);
-
-  /** Set the foreground color to draw. */
-  void setForeground(color fg);
-
-  void setWidth(int width, Alignment align);
-
-  void setHeight(int height, Alignment align);
-
-  /** Draw the formula */
-  void draw(Graphics2D& g2, int x, int y);
-};
 
 class RenderBuilder {
 private:
@@ -137,6 +73,6 @@ public:
   Render* build(Formula& f);
 };
 
-}  // namespace tinytex
+} // namespace tinytex
 
-#endif  // RENDER_H_INCLUDED
+#endif //TINYTEX_BUILDER_H

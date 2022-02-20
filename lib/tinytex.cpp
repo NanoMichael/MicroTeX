@@ -5,6 +5,7 @@
 #include "macro/macro.h"
 #include "utils/exceptions.h"
 #include "utils/string_utils.h"
+#include "render/builder.h"
 
 using namespace std;
 using namespace tinytex;

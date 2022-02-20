@@ -343,15 +343,13 @@ Otf* CLMReader::read(BinaryReader& reader) {
   const auto minor = reader.read<u8>();
 #ifdef HAVE_GLYPH_RENDER_PATH
   if (!CLM_SUPPORT_GLYPH_PATH(minor)) {
-    throw ex_invalid_param(
-      "clm data does not have glyph path."
-    );
+    throw ex_invalid_param("clm data does not have glyph path.");
   }
 #else
   if (CLM_SUPPORT_GLYPH_PATH(minor)) {
     throw ex_invalid_param(
-      "clm data "
-      " have glyph path, but the program cannot support it, use a different one."
+      "clm data have glyph path, "
+      "but the program cannot support it, use a different one."
     );
   }
 #endif

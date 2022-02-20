@@ -1,7 +1,7 @@
-#ifndef ENUMS_INCLUDED
-#define ENUMS_INCLUDED
+#ifndef TINYTEX_ENUMS_H
+#define TINYTEX_ENUMS_H
 
-#include "utils/utils.h"
+#include "utils/types.h"
 
 namespace tinytex {
 

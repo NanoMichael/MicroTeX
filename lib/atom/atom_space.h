@@ -1,6 +1,7 @@
 #ifndef TINYTEX_ATOM_SPACE_H
 #define TINYTEX_ATOM_SPACE_H
 
+#include "utils/utils.h"
 #include "atom/atom.h"
 
 namespace tinytex {

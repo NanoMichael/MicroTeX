@@ -1,17 +1,20 @@
 #ifndef TINYTEX_TINYTEX_H
 #define TINYTEX_TINYTEX_H
 
+#include "config.h"
+#include "version.h"
+#include "render/render.h"
+#include "unimath/font_src.h"
+#include "utils/enums.h"
+
 #include <string>
 #include <variant>
 
-#include "unimath/font_src.h"
-#include "version.h"
-#include "config.h"
-#include "render.h"
-
 namespace tinytex {
 
-struct TINYTEX_EXPORT InitFontSenseAuto { };
+struct TINYTEX_EXPORT InitFontSenseAuto {
+};
+
 typedef std::variant<const FontSrc*, const std::string, InitFontSenseAuto> Init;
 
 class TINYTEX_EXPORT TinyTeX {

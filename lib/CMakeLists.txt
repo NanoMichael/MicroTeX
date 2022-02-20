@@ -91,9 +91,11 @@ target_sources(
     graphic/font_style.cpp
     graphic/graphic_basic.cpp
     graphic/graphic.cpp
+    # render folder
+    render/render.cpp
+    render/builder.cpp
 
     tinytex.cpp
-    render.cpp
 )
 target_include_directories(tinytex PUBLIC .)
 

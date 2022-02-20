@@ -1,6 +1,6 @@
 #include "def.h"
 #include "tinytex.h"
-#include "render.h"
+#include "render/render.h"
 #include "graphic_wasm.h"
 #include "utils/log.h"
 
