@@ -5,6 +5,7 @@
 #include <variant>
 
 #include "unimath/font_src.h"
+#include "version.h"
 #include "config.h"
 #include "render.h"
 
@@ -24,6 +25,9 @@ private:
 #endif
 
 public:
+  /** The version of the library */
+  static std::string version();
+
   /**
    * Initialize LaTeX context with given math font spec, at least we need
    * a math font to layout formulas.

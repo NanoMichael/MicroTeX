@@ -45,6 +45,8 @@ if (HAVE_LOG)
     add_definitions(-DHAVE_LOG)
 endif ()
 
+include(${PROJECT_SOURCE_DIR}/cmake/version.cmake)
+
 add_subdirectory(lib)
 
 file(COPY res DESTINATION .)

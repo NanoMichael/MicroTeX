@@ -1,7 +1,7 @@
 if (WASM)
     add_library(tinytex STATIC "")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
-else (WASM)
+else ()
     add_library(tinytex SHARED "")
 endif ()
 
@@ -11,8 +11,12 @@ if (MSVC)
     target_compile_definitions(tinytex PUBLIC -D_HAS_STD_BYTE=1)
 endif ()
 
-set_target_properties(tinytex PROPERTIES VERSION 1.0.0 SOVERSION 1)
-set_target_properties(tinytex PROPERTIES CXX_VISIBILITY_PRESET hidden)
+set_target_properties(
+    tinytex PROPERTIES
+    VERSION ${VERSION_NAME}
+    SOVERSION ${VERSION_NUMBER}
+    CXX_VISIBILITY_PRESET hidden
+)
 
 # source files
 target_sources(
@@ -105,6 +109,6 @@ endif ()
 # 2: use typeface only
 if (WASM)
     add_definitions(-DGLYPH_RENDER_TYPE=1)
-else (WASM)
+else ()
     add_definitions(-DGLYPH_RENDER_TYPE=0)
 endif ()
