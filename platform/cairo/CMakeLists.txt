@@ -2,6 +2,13 @@ message(STATUS "Cross-building using GTK")
 
 add_library(tinytex-cairo SHARED graphic_cairo.cpp)
 
+set_target_properties(
+    tinytex-cairo PROPERTIES
+    VERSION ${VERSION_NAME}
+    SOVERSION ${VERSION_NUMBER}
+    CXX_VISIBILITY_PRESET hidden
+)
+
 find_package(Fontconfig REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTKMM REQUIRED IMPORTED_TARGET gtkmm-3.0)

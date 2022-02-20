@@ -1,5 +1,5 @@
 project('tinytex', 'cpp',
-	version : '0.0.4',
+	version : '1.0.0',
 	default_options : ['buildtype=release', 'warning_level=0', 'cpp_std=c++17']
 )
 

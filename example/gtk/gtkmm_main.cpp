@@ -25,6 +25,7 @@
 #include <chrono>
 #include <optional>
 
+using namespace std;
 using namespace tinytex;
 
 class TeXDrawingArea : public Gtk::DrawingArea {

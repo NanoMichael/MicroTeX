@@ -13,26 +13,26 @@ using namespace std;
 namespace cairopp {
 
 struct cairo_font_face_deleter {
-  void operator ()(cairo_font_face_t* ptr) {
+  void operator()(cairo_font_face_t* ptr) {
     cairo_font_face_destroy(ptr);
   }
 };
 
 struct cairo_ctx_deleter {
-  void operator ()(cairo_t* ptr) {
+  void operator()(cairo_t* ptr) {
     cairo_destroy(ptr);
   }
 };
 
-CairoFontFacePtr cairo_font_face_make_cairopp_ptr(cairo_font_face_t* ptr) {
+inline CairoFontFacePtr cairo_font_face_make_cairopp_ptr(cairo_font_face_t* ptr) {
   return CairoFontFacePtr(ptr, cairo_font_face_deleter());
 }
 
-CairoCtxPtr cairo_ctx_make_cairopp_ptr(cairo_t* ptr) {
+inline CairoCtxPtr cairo_ctx_make_cairopp_ptr(cairo_t* ptr) {
   return CairoCtxPtr(ptr, cairo_ctx_deleter());
 }
 
-}
+} // namespace cairopp
 
 map<string, cairopp::CairoFontFacePtr> Font_cairo::_cairoFtFaces;
 
@@ -312,7 +312,7 @@ float Graphics2D_cairo::sy() const {
 void Graphics2D_cairo::drawGlyph(u16 glyph, float x, float y) {
   cairo_set_font_face(_context, _font->getCairoFontFace());
   cairo_set_font_size(_context, _fontSize);
-  cairo_glyph_t g[1] {{glyph, (double) x, (double)y}};
+  cairo_glyph_t g[1]{{glyph, (double) x, (double) y}};
   cairo_show_glyphs(_context, g, 1);
 }
 
@@ -321,7 +321,7 @@ void Graphics2D_cairo::beginPath() {
 }
 
 void Graphics2D_cairo::moveTo(float x, float y) {
-  cairo_move_to(_context, (double) x, (double)y);
+  cairo_move_to(_context, (double) x, (double) y);
 }
 
 void Graphics2D_cairo::lineTo(float x, float y) {
@@ -338,7 +338,8 @@ void Graphics2D_cairo::quadTo(float x1, float y1, float x2, float y2) {
   // for details
   double x0, y0;
   cairo_get_current_point(_context, &x0, &y0);
-  cairo_curve_to(_context,
+  cairo_curve_to(
+    _context,
     2.0 / 3.0 * x1 + 1.0 / 3.0 * x0,
     2.0 / 3.0 * y1 + 1.0 / 3.0 * y0,
     2.0 / 3.0 * x1 + 1.0 / 3.0 * x2,

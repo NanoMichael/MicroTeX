@@ -2,6 +2,13 @@ message(STATUS "Cross-building using Qt")
 
 add_library(tinytex-qt SHARED graphic_qt.cpp)
 
+set_target_properties(
+    tinytex-qt PROPERTIES
+    VERSION ${VERSION_NAME}
+    SOVERSION ${VERSION_NUMBER}
+    CXX_VISIBILITY_PRESET hidden
+)
+
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Gui Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Gui Widgets REQUIRED)
 

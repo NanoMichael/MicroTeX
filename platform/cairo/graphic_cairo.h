@@ -7,32 +7,27 @@
 #include <cairo.h>
 #include <pango/pango.h>
 
-using namespace std;
-
 namespace cairopp {
 
 typedef std::shared_ptr<cairo_font_face_t> CairoFontFacePtr;
 typedef std::shared_ptr<cairo_t> CairoCtxPtr;
 
-CairoFontFacePtr cairo_font_face_make_cairopp_ptr(cairo_font_face_t* ptr);
-CairoCtxPtr cairo_ctx_make_cairopp_ptr(cairo_t* ptr);
-
 } // namespace cairopp
-
 
 namespace tinytex {
 
-class Font_cairo : public Font {
+class TINYTEX_EXPORT Font_cairo : public Font {
 private:
-  static map<string, cairopp::CairoFontFacePtr> _cairoFtFaces;
+  static std::map<std::string, cairopp::CairoFontFacePtr> _cairoFtFaces;
 
   cairo_font_face_t* _fface;
 
-  void loadFont(const string& file);
+  void loadFont(const std::string& file);
 
 public:
-  explicit Font_cairo(const string& file);
-  ~Font_cairo();
+  explicit Font_cairo(const std::string& file);
+
+  ~Font_cairo() override;
 
   cairo_font_face_t* getCairoFontFace() const;
 
@@ -41,15 +36,16 @@ public:
 
 /**************************************************************************************************/
 
-class TextLayout_cairo : public TextLayout {
+class TINYTEX_EXPORT TextLayout_cairo : public TextLayout {
 private:
   static cairopp::CairoCtxPtr _img_context;
   PangoLayout* _layout;
   float _ascent;
 
 public:
-  TextLayout_cairo(const string& src, FontStyle style, float size);
-  ~TextLayout_cairo();
+  TextLayout_cairo(const std::string& src, FontStyle style, float size);
+
+  ~TextLayout_cairo() override;
 
   void getBounds(Rect& r) override;
 
@@ -58,16 +54,16 @@ public:
 
 /**************************************************************************************************/
 
-class PlatformFactory_cairo : public PlatformFactory {
+class TINYTEX_EXPORT PlatformFactory_cairo : public PlatformFactory {
 public:
-  sptr<Font> createFont(const std::string &file) override;
+  sptr<Font> createFont(const std::string& file) override;
 
-  sptr<TextLayout> createTextLayout(const std::string &src, FontStyle style, float size) override;
+  sptr<TextLayout> createTextLayout(const std::string& src, FontStyle style, float size) override;
 };
 
 /**************************************************************************************************/
 
-class Graphics2D_cairo : public Graphics2D {
+class TINYTEX_EXPORT Graphics2D_cairo : public Graphics2D {
 private:
   cairo_t* _context;
   color _color;
@@ -80,7 +76,8 @@ private:
 
 public:
   explicit Graphics2D_cairo(cairo_t* context);
-  ~Graphics2D_cairo();
+
+  ~Graphics2D_cairo() override;
 
   cairo_t* getCairoContext() const;
 
