@@ -14,21 +14,27 @@ std::string TinyTeX::_defaultMathFontName;
 std::string TinyTeX::_defaultMainFontName;
 
 void TinyTeX::init(Init init) {
+  auto initialization = [&]() {
+    if (_isInited) return;
+    _isInited = true;
+    NewCommandMacro::_init_();
+  };
+
   const FontSrc** mathFontSrc = std::get_if<const FontSrc*>(&init);
-  if (mathFontSrc) {
+  if (mathFontSrc != nullptr) {
     FontContext::addMathFont(**mathFontSrc);
     _defaultMathFontName = (*mathFontSrc)->name;
-    goto initialization;
+    return initialization();
   }
 
   {
-  auto mathfont = fontsense_lookup();
+  auto mathfont = FontsenseLookup();
   {
   const std::string* mathFontName= std::get_if<const std::string>(&init);
-  if (mathFontName) {
+  if (mathFontName != nullptr) {
     _defaultMathFontName = *mathFontName;
-	FontContext().selectMathFont(_defaultMathFontName);
-    goto initialization;
+    FontContext().selectMathFont(_defaultMathFontName);
+    return initialization();
   }
   }
 
@@ -38,9 +44,7 @@ void TinyTeX::init(Init init) {
     throw ex_invalid_param("no math font found by fontsense");
   }
 
-  initialization:if (_isInited) return;
-  _isInited = true;
-  NewCommandMacro::_init_();
+  return initialization();
 }
 
 bool TinyTeX::isInited() {
