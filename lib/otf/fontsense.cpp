@@ -65,19 +65,19 @@ font_paths_t get_font_paths() {
 		if (fs::exists(p))
 			for (const auto& entry : fs::directory_iterator(p)) {
 				fs::path path = entry.path();
-				std::string stem = path.stem();
-				std::string ext = path.extension();
+				std::string stem = path.stem().string();
+				std::string ext = path.extension().string();
 				font_paths_t::iterator it = font_paths.find(stem);
 				if (it != font_paths.end()) {
 					if (ext == ".otf" && !it->second.first)
-						it->second.first = strdup(path.c_str());
+						it->second.first = strdup(path.string().c_str());
 					if (ext == ".clm" && !it->second.second)
-						it->second.second = strdup(path.c_str());
+						it->second.second = strdup(path.string().c_str());
 
 				} else {
 					font_paths.emplace(stem, std::pair(
-						ext == ".otf" ? strdup(path.c_str()) : NULL,
-						ext == ".clm" ? strdup(path.c_str()) : NULL
+						ext == ".otf" ? strdup(path.string().c_str()) : NULL,
+						ext == ".clm" ? strdup(path.string().c_str()) : NULL
 					));
 				}
 			}
