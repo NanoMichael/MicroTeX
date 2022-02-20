@@ -23,6 +23,7 @@
 #include <pangomm/init.h>
 
 #include <chrono>
+#include <optional>
 
 using namespace tinytex;
 
@@ -480,6 +481,7 @@ int main(int argc, char* argv[]) {
   bool isHeadless = false;
   bool isPerf = false;
   Headless h;
+  std::optional<std::string> fontsense;
   std::string mathVersionName = "dft";
   std::string mathFont, clmFile;
   std::string samplesFile;
@@ -493,6 +495,8 @@ int main(int argc, char* argv[]) {
     } else if (key == "-samples") {
       samplesFile = value;
       h._samplesFile = value;
+	} else if (key == "-fontsense") {
+		fontsense = value;
     } else {
       getHeadlessOpt(h, key, value);
     }
@@ -509,7 +513,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  if (mathVersionName.empty() || mathFont.empty() || clmFile.empty()) {
+  if (!fontsense.has_value() && (mathVersionName.empty() || mathFont.empty() || clmFile.empty())) {
     printf(
       RED_ANSI
       "No math font or clm file was given, exit...\n"
@@ -520,8 +524,17 @@ int main(int argc, char* argv[]) {
   }
 
   Pango::init();
-  const FontSrcFile math{mathVersionName, clmFile, mathFont};
-  TinyTeX::init(&math);
+  Init init;
+  if (fontsense.has_value())
+    if (fontsense.value().empty())
+      init =  InitFontSenseAuto {};
+    else
+      init.emplace<1>(fontsense.value());
+  else {
+    const FontSrcFile font = FontSrcFile {mathVersionName, clmFile, mathFont};
+    init = &font;
+  }
+  TinyTeX::init(init);
 
   PlatformFactory::registerFactory("gtk", std::make_unique<PlatformFactory_cairo>());
   PlatformFactory::activate("gtk");

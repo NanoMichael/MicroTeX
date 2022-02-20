@@ -27,6 +27,7 @@ void TinyTeX::init(Init init) {
   const std::string* mathFontName= std::get_if<const std::string>(&init);
   if (mathFontName) {
     _defaultMathFontName = *mathFontName;
+	FontContext().selectMathFont(_defaultMathFontName);
     goto initialization;
   }
   }
@@ -34,7 +35,7 @@ void TinyTeX::init(Init init) {
   if (mathfont)
     _defaultMathFontName = mathfont.value();
   else
-    throw ex_invalid_state("no math font found by fontsense");
+    throw ex_invalid_param("no math font found by fontsense");
   }
 
   initialization:if (_isInited) return;
