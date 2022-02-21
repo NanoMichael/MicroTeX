@@ -113,7 +113,7 @@ public:
    */
   static Render* parse(
     const std::string& tex,
-    int width,
+    float width,
     float textSize,
     float lineSpace,
     color fg,

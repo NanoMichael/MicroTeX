@@ -105,7 +105,7 @@ bool TinyTeX::isRenderGlyphUsePath() {
 #endif
 
 Render* TinyTeX::parse(
-  const string& latex, int width, float textSize, float lineSpace, color fg,
+  const string& latex, float width, float textSize, float lineSpace, color fg,
   const string& mathFontName, const string& mainFontName
 ) {
   Formula formula(latex);
@@ -116,9 +116,9 @@ Render* TinyTeX::parse(
     .setTextSize(textSize)
     .setMathFontName(mathFontName.empty() ? _defaultMathFontName : mathFontName)
     .setMainFontName(mainFontName.empty() ? _defaultMainFontName : mainFontName)
-    .setWidth(UnitType::pixel, width, align)
+    .setWidth({width, UnitType::pixel}, align)
     .setIsMaxWidth(isInline)
-    .setLineSpace(UnitType::pixel, lineSpace)
+    .setLineSpace({lineSpace, UnitType::pixel})
     .setForeground(fg)
     .build(formula);
   return render;

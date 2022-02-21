@@ -2,6 +2,7 @@
 #define TINYTEX_BUILDER_H
 
 #include "render.h"
+#include "env/units.h"
 
 namespace tinytex {
 
@@ -15,9 +16,9 @@ private:
   static TexStyle _overrideStyle;
 
   TexStyle _style = TexStyle::display;
-  UnitType _widthUnit = UnitType::none;
-  UnitType _lineSpaceUnit = UnitType::none;
-  float _textSize = 0, _textWidth = 0, _lineSpace = 0;
+  Dimen _textWidth;
+  Dimen _lineSpace;
+  float _textSize = 0;
   bool _isMaxWidth = false;
   color _fg = black;
   Alignment _align = Alignment::none;
@@ -47,9 +48,8 @@ public:
     return *this;
   }
 
-  inline RenderBuilder& setWidth(UnitType unit, float width, Alignment align) {
-    _widthUnit = unit;
-    _textWidth = width;
+  inline RenderBuilder& setWidth(const Dimen& dimen, Alignment align) {
+    _textWidth = dimen;
     _align = align;
     return *this;
   }
@@ -66,7 +66,7 @@ public:
 
   RenderBuilder& setIsMaxWidth(bool i);
 
-  RenderBuilder& setLineSpace(UnitType unit, float space);
+  RenderBuilder& setLineSpace(const Dimen& dimen);
 
   Render* build(const sptr<Atom>& f);
 

@@ -7,6 +7,8 @@
 
 namespace tinytex {
 
+struct Dimen;
+
 class Env {
 private:
   static constexpr float FIXED_TEXT_SIZE = 1000;
@@ -57,11 +59,11 @@ public:
   /** Get the scale factor of the given style */
   float scale(TexStyle style) const;
 
-  /** Set environment width with given unit */
-  Env& setTextWidth(UnitType unit, float width);
+  /** Set environment width with given dimension. */
+  Env& setTextWidth(const Dimen& dimen);
 
-  /** Set line space with given unit */
-  Env& setLineSpace(UnitType unit, float space);
+  /** Set line space with given dimension. */
+  Env& setLineSpace(const Dimen& dimen);
 
   /** Set current style to display formulas */
   inline Env& setStyle(TexStyle style) {

@@ -21,13 +21,13 @@ float Env::scale() const {
   return scale(_style);
 }
 
-Env& Env::setTextWidth(UnitType unit, float width) {
-  _textWidth = Units::fsize(unit, width, *this);
+Env& Env::setTextWidth(const Dimen& dimen) {
+  _textWidth = Units::fsize(dimen, *this);
   return *this;
 }
 
-Env& Env::setLineSpace(UnitType unit, float space) {
-  _lineSpace = Units::fsize(unit, space, *this);
+Env& Env::setLineSpace(const Dimen& dimen) {
+  _lineSpace = Units::fsize(dimen, *this);
   return *this;
 }
 

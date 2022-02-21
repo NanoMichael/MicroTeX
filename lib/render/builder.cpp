@@ -11,17 +11,16 @@ using namespace tinytex;
 TexStyle RenderBuilder::_overrideStyle = TexStyle::text;
 bool RenderBuilder::_enableOverrideStyle = false;
 
-RenderBuilder& RenderBuilder::setLineSpace(UnitType unit, float space) {
-  if (_widthUnit == UnitType::none) {
+RenderBuilder& RenderBuilder::setLineSpace(const Dimen& dimen) {
+  if (!dimen.isValid()) {
     throw ex_invalid_state("Cannot set line space without having specified a width!");
   }
-  _lineSpace = space;
-  _lineSpaceUnit = unit;
+  _lineSpace = dimen;
   return *this;
 }
 
 RenderBuilder& RenderBuilder::setIsMaxWidth(bool i) {
-  if (_widthUnit == UnitType::none) {
+  if (!_textWidth.isValid()) {
     throw ex_invalid_state("Cannot set 'isMaxWidth' without having specified a width!");
   }
   if (i) {
@@ -74,20 +73,20 @@ Render* RenderBuilder::build(const sptr<Atom>& fc) {
 
   const auto style = _enableOverrideStyle ? _overrideStyle : _style;
   Env env(style, fctx, _textSize);
-  const auto isLimitedWidth = _widthUnit != UnitType::none && _textWidth != 0;
+  const auto isLimitedWidth = !_textWidth.isEmpty();
   if (isLimitedWidth) {
-    env.setTextWidth(_widthUnit, _textWidth);
+    env.setTextWidth(_textWidth);
   }
-  if (_lineSpaceUnit != UnitType::none) {
-    env.setLineSpace(_lineSpaceUnit, _lineSpace);
+  if (_lineSpace.isValid()) {
+    env.setLineSpace(_lineSpace);
   }
 
   Render* render;
   auto box = f->createBox(env);
   if (isLimitedWidth) {
     HBox* hb;
-    if (_lineSpaceUnit != UnitType::none && _lineSpace != 0) {
-      auto space = Units::fsize(_lineSpaceUnit, _lineSpace, env);
+    if (!_lineSpace.isEmpty()) {
+      auto space = Units::fsize(_lineSpace, env);
       auto split = BoxSplitter::split(box, env.textWidth(), space);
       hb = new HBox(split, _isMaxWidth ? split->_width : env.textWidth(), _align);
     } else {

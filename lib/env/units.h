@@ -12,9 +12,9 @@ struct Dimen {
   float val = 0.f;
   UnitType unit = UnitType::none;
 
-  inline bool isValid() {
-    return unit != UnitType::none;
-  }
+  inline bool isValid() const { return unit != UnitType::none; }
+
+  inline bool isEmpty() const { return !isValid() || val == 0.f; }
 
   inline Dimen& operator-() {
     val = -val;

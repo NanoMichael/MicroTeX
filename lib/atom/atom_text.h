@@ -2,6 +2,7 @@
 #define TINYTEX_ATOM_TEXT_H
 
 #include "atom/atom.h"
+#include <string>
 
 namespace tinytex {
 

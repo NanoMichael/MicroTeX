@@ -2,6 +2,7 @@
 #define MACRO_H_INCLUDED
 
 #include "atom/atom.h"
+#include "utils/utils.h"
 
 #include <map>
 #include <string>
@@ -109,6 +110,8 @@ public:
   //      \scalebox{0.5}[2]{\LaTeX}
   const int _posOpts;
 
+  no_copy_assign(MacroInfo);
+
   MacroInfo() : _argc(0), _posOpts(0) {}
 
   MacroInfo(int argc, int posOpts) : _argc(argc), _posOpts(posOpts) {}
@@ -132,6 +135,8 @@ private:
   Macro* const _macro;
 
 public:
+  no_copy_assign(InflationMacroInfo);
+
   InflationMacroInfo(Macro* macro, int argc)
     : _macro(macro), MacroInfo(argc) {}
 
@@ -157,7 +162,7 @@ private:
   MacroDelegate _delegate;
 
 public:
-  PreDefMacro() = delete;
+  no_copy_assign(PreDefMacro);
 
   PreDefMacro(int argc, int posOpts, MacroDelegate delegate)
     : MacroInfo(argc, posOpts), _delegate(delegate) {}
