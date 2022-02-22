@@ -2,7 +2,6 @@
 #define TINYTEX_GLUE_H
 
 #include "utils/utils.h"
-#include "utils/enums.h"
 
 namespace tinytex {
 

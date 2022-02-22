@@ -3,7 +3,6 @@
 
 #include "config.h"
 #include "graphic/graphic.h"
-#include "utils/enums.h"
 
 #include <functional>
 

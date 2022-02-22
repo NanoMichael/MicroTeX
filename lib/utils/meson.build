@@ -7,7 +7,6 @@ utils_src = [
 if install_headerfiles
 	install_headers([
 		'dict_tree.h',
-        'enums.h',
         'exceptions.h',
         'log.h',
         'nums.h',

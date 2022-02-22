@@ -2,7 +2,7 @@
 #define TINYTEX_UNI_SYMBOL_H
 
 #include "utils/utils.h"
-#include "utils/enums.h"
+#include "utils/types.h"
 
 namespace tinytex {
 

@@ -2,7 +2,6 @@
 #define TINYTEX_UNITS_H
 
 #include "utils/utils.h"
-#include "utils/enums.h"
 #include "env/env.h"
 
 namespace tinytex {

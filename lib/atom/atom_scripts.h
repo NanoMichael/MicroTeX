@@ -5,7 +5,6 @@
 #include "atom/atom_space.h"
 #include "box/box_single.h"
 #include "box/box_group.h"
-#include "utils/enums.h"
 #include "utils/utils.h"
 
 namespace tinytex {

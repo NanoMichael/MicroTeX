@@ -2,7 +2,6 @@
 #define TINYTEX_ATOM_FRAC_H
 
 #include "atom/atom.h"
-#include "utils/enums.h"
 #include "env/units.h"
 
 namespace tinytex {

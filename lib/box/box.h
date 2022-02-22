@@ -1,7 +1,7 @@
 #ifndef TINYTEX_BOX_H
 #define TINYTEX_BOX_H
 
-#include "utils/enums.h"
+#include "utils/types.h"
 #include <vector>
 
 namespace tinytex {

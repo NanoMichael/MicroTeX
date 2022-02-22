@@ -5,7 +5,6 @@
 #include "version.h"
 #include "render/render.h"
 #include "unimath/font_src.h"
-#include "utils/enums.h"
 
 #include <string>
 #include <variant>
