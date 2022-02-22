@@ -18,6 +18,10 @@ using c32 = char32_t;
 template<typename T>
 using sptr = std::shared_ptr<T>;
 
+/** Type alias shared_ptr<T> to uptr<T> */
+template<typename T>
+using uptr = std::unique_ptr<T>;
+
 }
 
 #endif //TINYTEX_TYPES_H

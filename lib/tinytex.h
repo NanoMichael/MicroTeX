@@ -17,15 +17,11 @@ struct TINYTEX_EXPORT InitFontSenseAuto {
 
 typedef std::variant<const FontSrc*, const std::string, InitFontSenseAuto> Init;
 
+struct Config;
+
 class TINYTEX_EXPORT TinyTeX {
 private:
-  static volatile bool _isInited;
-  static std::string _defaultMainFontName;
-  static std::string _defaultMathFontName;
-
-#if GLYPH_RENDER_TYPE == 0
-  static bool _renderGlyphUsePath;
-#endif
+  static Config* _config;
 
 public:
   /** The version of the library */
@@ -90,15 +86,19 @@ public:
    */
   static void overrideTexStyle(bool enable, TexStyle style = TexStyle::text);
 
-#if GLYPH_RENDER_TYPE == 0
-
-  /** Set if use path to render glyphs */
+  /**
+   * Set if use path to render glyphs, only works when compile option
+   * GLYPH_RENDER_TYPE equals to 0 (that means render glyphs use font and path
+   * both), otherwise this function takes no effect.
+   */
   static void setRenderGlyphUsePath(bool use);
 
-  /** Test if currently use path to render glyphs */
+  /**
+   * Test if currently use path to render glyphs, only works when compile option
+   * GLYPH_RENDER_TYPE equals to 0 (that means render glyphs use font and path
+   * both), otherwise the return value always be false.
+   */
   static bool isRenderGlyphUsePath();
-
-#endif
 
   /**
    * Parse LaTeX string to Render

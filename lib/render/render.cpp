@@ -9,26 +9,18 @@
 using namespace std;
 using namespace tinytex;
 
-Render::Render(const sptr<Box>& box, float textSize) {
-  _box = box;
-  _textSize = textSize;
-  _fixedScale = _textSize / Env::fixedTextSize();
-  const auto& debugConfig = DebugConfig::INSTANCE;
-  if (debugConfig.enable) {
-    const auto group = wrap(box);
-    _box = group;
-    BoxFilter filter = [&](const sptr<Box>& b) {
-      return (
-        debugConfig.showOnlyChar
-        ? dynamic_cast<CharBox*>(b.get()) != nullptr
-        : !b->isSpace()
-      );
-    };
-    buildDebug(nullptr, group, filter);
-  }
-}
+namespace tinytex {
 
-sptr<BoxGroup> Render::wrap(const sptr<Box>& box) {
+using BoxFilter = std::function<bool(const sptr<Box>&)>;
+
+struct RenderConfig {
+  sptr<Box> root;
+  float textSize;
+  float fixedScale;
+  color fg;
+};
+
+static sptr<BoxGroup> wrap(const sptr<Box>& box) {
   sptr<BoxGroup> parent;
   if (auto group = dynamic_pointer_cast<BoxGroup>(box); group != nullptr) {
     parent = group;
@@ -38,7 +30,7 @@ sptr<BoxGroup> Render::wrap(const sptr<Box>& box) {
   return parent;
 }
 
-void Render::buildDebug(
+static void buildDebug(
   const sptr<BoxGroup>& parent,
   const sptr<Box>& box,
   const BoxFilter& filter
@@ -68,46 +60,74 @@ void Render::buildDebug(
   }
 }
 
+} // namespace tinytex
+
+Render::Render(const sptr<Box>& box, float textSize) {
+  _config = new RenderConfig{box, textSize, textSize / Env::fixedTextSize(), black};
+  const auto& debugConfig = DebugConfig::INSTANCE;
+  if (debugConfig.enable) {
+    const auto group = tinytex::wrap(box);
+    _config->root = group;
+    BoxFilter filter = [&](const sptr<Box>& b) {
+      return (
+        debugConfig.showOnlyChar
+        ? dynamic_cast<CharBox*>(b.get()) != nullptr
+        : !b->isSpace()
+      );
+    };
+    tinytex::buildDebug(nullptr, group, filter);
+  }
+}
+
+Render::~Render() {
+  delete _config;
+}
+
 float Render::getTextSize() const {
-  return _textSize;
+  return _config->textSize;
 }
 
 int Render::getHeight() const {
-  return (int) ((_box->_height + _box->_depth) * _fixedScale);
+  auto box = _config->root;
+  return (int) (box->vlen() * _config->fixedScale);
 }
 
 int Render::getDepth() const {
-  return (int) (_box->_depth * _fixedScale);
+  return (int) (_config->root->_depth * _config->fixedScale);
 }
 
 int Render::getWidth() const {
-  return (int) (_box->_width * _fixedScale);
+  return (int) (_config->root->_width * _config->fixedScale);
 }
 
 float Render::getBaseline() const {
-  return _box->_height / (_box->_height + _box->_depth);
+  auto box = _config->root;
+  return box->_height / box->vlen();
 }
 
 void Render::setTextSize(float textSize) {
-  _textSize = textSize;
-  _fixedScale = _textSize / Env::fixedTextSize();
+  _config->textSize = textSize;
+  _config->fixedScale = textSize / Env::fixedTextSize();
 }
 
 void Render::setForeground(color fg) {
-  _fg = fg;
+  _config->fg = fg;
 }
 
 void Render::draw(Graphics2D& g2, int x, int y) {
   color old = g2.getColor();
-  g2.setColor(isTransparent(_fg) ? DFT_COLOR : _fg);
+  auto fixedScale = _config->fixedScale;
+  auto box = _config->root;
+
+  g2.setColor(isTransparent(_config->fg) ? black : _config->fg);
   g2.translate(x, y);
-  g2.scale(_fixedScale, _fixedScale);
+  g2.scale(fixedScale, fixedScale);
 
   // draw formula box
-  _box->draw(g2, 0, _box->_height);
+  box->draw(g2, 0, box->_height);
 
   // restore
-  g2.scale(1.f / _fixedScale, 1.f / _fixedScale);
+  g2.scale(1.f / fixedScale, 1.f / fixedScale);
   g2.translate(-x, -y);
   g2.setColor(old);
 }

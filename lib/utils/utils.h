@@ -20,6 +20,11 @@ inline sptr<T> sptrOf(Args&& ... args) {
   return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
+template<typename T, typename... Args>
+inline uptr<T> uptrOf(Args&& ... args) {
+  return std::make_unique<T>(std::forward<Args>(args)...);
+}
+
 /** Template version to find the max value of the given list */
 template<typename T, typename ... Args>
 inline T maxOf(Args&& ... args) {

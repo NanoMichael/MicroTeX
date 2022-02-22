@@ -10,9 +10,20 @@
 using namespace std;
 using namespace tinytex;
 
-volatile bool TinyTeX::_isInited = false;
-std::string TinyTeX::_defaultMathFontName;
-std::string TinyTeX::_defaultMainFontName;
+namespace tinytex {
+
+struct Config {
+  bool isInited;
+  std::string defaultMainFontName;
+  std::string defaultMathFontName;
+  bool renderGlyphUsePath;
+};
+
+static Config TINYTEX_CONFIG{false, "", "", false};
+
+} // namespace tinytex
+
+Config* TinyTeX::_config = &tinytex::TINYTEX_CONFIG;
 
 std::string TinyTeX::version() {
   return std::to_string(TINYTEX_VERSION_MAJOR) + "."
@@ -22,15 +33,15 @@ std::string TinyTeX::version() {
 
 void TinyTeX::init(Init init) {
   auto initialization = [&]() {
-    if (_isInited) return;
-    _isInited = true;
+    if (_config->isInited) return;
+    _config->isInited = true;
     NewCommandMacro::_init_();
   };
 
   const FontSrc** mathFontSrc = std::get_if<const FontSrc*>(&init);
   if (mathFontSrc != nullptr) {
     FontContext::addMathFont(**mathFontSrc);
-    _defaultMathFontName = (*mathFontSrc)->name;
+    _config->defaultMathFontName = (*mathFontSrc)->name;
     return initialization();
   }
 
@@ -39,14 +50,14 @@ void TinyTeX::init(Init init) {
     {
       const std::string* mathFontName = std::get_if<const std::string>(&init);
       if (mathFontName != nullptr) {
-        _defaultMathFontName = *mathFontName;
-        FontContext().selectMathFont(_defaultMathFontName);
+        _config->defaultMathFontName = *mathFontName;
+        FontContext().selectMathFont(_config->defaultMathFontName);
         return initialization();
       }
     }
 
     if (mathfont) {
-      _defaultMathFontName = mathfont.value();
+      _config->defaultMathFontName = mathfont.value();
     } else {
       throw ex_invalid_param("no math font found by fontsense");
     }
@@ -56,7 +67,7 @@ void TinyTeX::init(Init init) {
 }
 
 bool TinyTeX::isInited() {
-  return _isInited;
+  return _config->isInited;
 }
 
 void TinyTeX::release() {
@@ -69,8 +80,8 @@ void TinyTeX::addMainFont(
   const FontSrcList& srcs
 ) {
   FontContext::addMainFont(name, srcs);
-  if (_defaultMainFontName.empty()) {
-    _defaultMainFontName = name;
+  if (_config->defaultMainFontName.empty()) {
+    _config->defaultMainFontName = name;
   }
 }
 
@@ -79,30 +90,24 @@ void TinyTeX::addMathFont(const FontSrc& src) {
 }
 
 void TinyTeX::setDefaultMathFont(const std::string& name) {
-  _defaultMathFontName = name;
+  _config->defaultMathFontName = name;
 }
 
 void TinyTeX::setDefaultMainFont(const std::string& name) {
-  _defaultMainFontName = name;
+  _config->defaultMainFontName = name;
 }
 
 void TinyTeX::overrideTexStyle(bool enable, TexStyle style) {
   RenderBuilder::overrideTexStyle(enable, style);
 }
 
-#if GLYPH_RENDER_TYPE == 0
-
-bool TinyTeX::_renderGlyphUsePath = false;
-
 void TinyTeX::setRenderGlyphUsePath(bool use) {
-  _renderGlyphUsePath = use;
+  _config->renderGlyphUsePath = use;
 }
 
 bool TinyTeX::isRenderGlyphUsePath() {
-  return _renderGlyphUsePath;
+  return _config->renderGlyphUsePath;
 }
-
-#endif
 
 Render* TinyTeX::parse(
   const string& latex, float width, float textSize, float lineSpace, color fg,
@@ -114,8 +119,16 @@ Render* TinyTeX::parse(
   Render* render = RenderBuilder()
     .setStyle(isInline ? TexStyle::text : TexStyle::display)
     .setTextSize(textSize)
-    .setMathFontName(mathFontName.empty() ? _defaultMathFontName : mathFontName)
-    .setMainFontName(mainFontName.empty() ? _defaultMainFontName : mainFontName)
+    .setMathFontName(
+      mathFontName.empty()
+      ? _config->defaultMathFontName
+      : mathFontName
+    )
+    .setMainFontName(
+      mainFontName.empty()
+      ? _config->defaultMainFontName
+      : mainFontName
+    )
     .setWidth({width, UnitType::pixel}, align)
     .setIsMaxWidth(isInline)
     .setLineSpace({lineSpace, UnitType::pixel})
