@@ -16,7 +16,7 @@ enum class FontStyle : u16 {
   frak = 0b10000,  // fraktur
   bb = 0b100000,   // double-struck
   sf = 0b1000000,  // sans-serif
-  tt = 0b10000000, // type-writer
+  tt = 0b10000000, // type-writer (monospaced)
   // composed styles
   bfit = bf | it,
   bfcal = bf | cal,

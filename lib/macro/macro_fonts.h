@@ -23,7 +23,7 @@ inline macro(textfont) {
 
 inline sptr<Atom> _textfontnested(Parser& tp, Args& args, FontStyle style) {
   const auto atom = Formula(tp, args[1], false, false)._root;
-  return sptrOf<FontStyleAtom>(style, false, atom);
+  return sptrOf<FontStyleAtom>(style, false, atom, true);
 }
 
 inline macro(textit) {
