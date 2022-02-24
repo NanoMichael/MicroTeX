@@ -46,11 +46,12 @@ public:
   virtual ~TextLayout() = default;
 };
 
+struct PlatformFactoryData;
+
 /** Simple factory to create platform specific Font and TextLayout. */
 class TINYTEX_EXPORT PlatformFactory {
 private:
-  static std::map<std::string, std::unique_ptr<PlatformFactory>> _factories;
-  static std::string _currentFactory;
+  static PlatformFactoryData* _data;
 
 public:
   virtual ~PlatformFactory() = default;

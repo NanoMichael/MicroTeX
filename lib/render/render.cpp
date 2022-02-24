@@ -13,7 +13,7 @@ namespace tinytex {
 
 using BoxFilter = std::function<bool(const sptr<Box>&)>;
 
-struct RenderConfig {
+struct RenderData {
   sptr<Box> root;
   float textSize;
   float fixedScale;
@@ -63,11 +63,11 @@ static void buildDebug(
 } // namespace tinytex
 
 Render::Render(const sptr<Box>& box, float textSize) {
-  _config = new RenderConfig{box, textSize, textSize / Env::fixedTextSize(), black};
+  _data = new RenderData{box, textSize, textSize / Env::fixedTextSize(), black};
   const auto& debugConfig = DebugConfig::INSTANCE;
   if (debugConfig.enable) {
     const auto group = tinytex::wrap(box);
-    _config->root = group;
+    _data->root = group;
     BoxFilter filter = [&](const sptr<Box>& b) {
       return (
         debugConfig.showOnlyChar
@@ -80,46 +80,46 @@ Render::Render(const sptr<Box>& box, float textSize) {
 }
 
 Render::~Render() {
-  delete _config;
+  delete _data;
 }
 
 float Render::getTextSize() const {
-  return _config->textSize;
+  return _data->textSize;
 }
 
 int Render::getHeight() const {
-  auto box = _config->root;
-  return (int) (box->vlen() * _config->fixedScale);
+  auto box = _data->root;
+  return (int) (box->vlen() * _data->fixedScale);
 }
 
 int Render::getDepth() const {
-  return (int) (_config->root->_depth * _config->fixedScale);
+  return (int) (_data->root->_depth * _data->fixedScale);
 }
 
 int Render::getWidth() const {
-  return (int) (_config->root->_width * _config->fixedScale);
+  return (int) (_data->root->_width * _data->fixedScale);
 }
 
 float Render::getBaseline() const {
-  auto box = _config->root;
+  auto box = _data->root;
   return box->_height / box->vlen();
 }
 
 void Render::setTextSize(float textSize) {
-  _config->textSize = textSize;
-  _config->fixedScale = textSize / Env::fixedTextSize();
+  _data->textSize = textSize;
+  _data->fixedScale = textSize / Env::fixedTextSize();
 }
 
 void Render::setForeground(color fg) {
-  _config->fg = fg;
+  _data->fg = fg;
 }
 
 void Render::draw(Graphics2D& g2, int x, int y) {
   color old = g2.getColor();
-  auto fixedScale = _config->fixedScale;
-  auto box = _config->root;
+  auto fixedScale = _data->fixedScale;
+  auto box = _data->root;
 
-  g2.setColor(isTransparent(_config->fg) ? black : _config->fg);
+  g2.setColor(isTransparent(_data->fg) ? black : _data->fg);
   g2.translate(x, y);
   g2.scale(fixedScale, fixedScale);
 

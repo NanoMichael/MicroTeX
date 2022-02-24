@@ -72,7 +72,7 @@ RowAtom::RowAtom(const sptr<Atom>& atom)
   if (atom != nullptr) {
     auto* x = dynamic_cast<RowAtom*>(atom.get());
     if (x != nullptr) {
-      // no need to make an row, the only element of a row
+      // no need to make a row, the only element of a row
       _elements.insert(_elements.end(), x->_elements.begin(), x->_elements.end());
     } else {
       _elements.push_back(atom);

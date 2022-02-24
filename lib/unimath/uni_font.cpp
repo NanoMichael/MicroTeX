@@ -119,6 +119,9 @@ void FontContext::addMathFont(const FontSrc& src) {
     return;
   }
   auto spec = src.loadOtf();
+  if (!spec->isMathFont()) {
+    throw ex_invalid_param("'" + src.name + "' is not a math font.");
+  }
   auto otf = sptrOf<OtfFont>(_lastId++, spec, src.fontFile);
   _fonts.push_back(otf);
   _mathFonts[name] = otf;
@@ -171,7 +174,7 @@ Char FontContext::getChar(c32 code, FontStyle style, bool isMathMode) const {
   } else {
     sptr<const OtfFont> font = _mainFont == nullptr ? nullptr : _mainFont->get(style);
     if (font == nullptr && _mainFont != nullptr) font = _mainFont->get(FontStyle::none);
-    // fallback to math font, at least we have a math font
+    // fallback to math font, at least we have one
     if (font == nullptr) font = _mathFont;
     return {code, code, font->id, font->otf().glyphId(code)};
   }

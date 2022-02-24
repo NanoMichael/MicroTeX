@@ -1,5 +1,5 @@
-#ifndef GLYPH_INCLUDED
-#define GLYPH_INCLUDED
+#ifndef TINYTEX_GLYPH_H
+#define TINYTEX_GLYPH_H
 
 #include "config.h"
 #include "utils/dict_tree.h"

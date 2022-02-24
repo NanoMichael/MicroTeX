@@ -48,8 +48,8 @@ bool isJoiner(c32 code);
  * @param collect function to collect the given Unicode-point
  */
 void scanContinuedUnicodes(
-  std::function<c32()>&& next,
-  std::function<void(c32)>&& collect
+  const std::function<c32()>& next,
+  const std::function<void(c32)>& collect
 );
 
 }  // namespace tinytex

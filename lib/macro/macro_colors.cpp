@@ -14,7 +14,7 @@ macro(definecolor) {
   } else if (args[2] == "rgb") {
     StrTokenizer stok(cs, ":,");
     if (stok.count() != 3)
-      throw ex_parse("The color definition must have three components!");
+      throw ex_parse("RGB color must have three components!");
     float r, g, b;
     std::string R = stok.next(), G = stok.next(), B = stok.next();
     valueof(trim(R), r);
@@ -24,7 +24,7 @@ macro(definecolor) {
   } else if (args[2] == "cmyk") {
     StrTokenizer stok(cs, ":,");
     if (stok.count() != 4)
-      throw ex_parse("The color definition must have four components!");
+      throw ex_parse("CMYK color must have four components!");
     float cmyk[4];
     for (float& i : cmyk) {
       std::string X = stok.next();
@@ -33,7 +33,7 @@ macro(definecolor) {
     float k = 1 - cmyk[3];
     c = rgb(k * (1 - cmyk[0]), k * (1 - cmyk[1]), k * (1 - cmyk[2]));
   } else {
-    throw ex_parse("Color model is incorrect!");
+    throw ex_parse("Invalid color model!");
   }
 
   ColorAtom::defineColor(args[1], c);

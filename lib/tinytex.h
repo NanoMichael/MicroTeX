@@ -27,7 +27,7 @@ public:
   static std::string version();
 
   /**
-   * Initialize LaTeX context with given math font spec, at least we need
+   * Initialize TinyTeX context with given math font spec, at least we need
    * a math font to layout formulas.
    *
    * @param mathFontSrc the font source to load math font
@@ -92,20 +92,16 @@ public:
    */
   static void setRenderGlyphUsePath(bool use);
 
-  /**
-   * Test if currently use path to render glyphs, only works when compile option
-   * GLYPH_RENDER_TYPE equals to 0 (that means render glyphs use font and path
-   * both), otherwise the return value always be false.
-   */
+  /** Test if currently use path to render glyphs. */
   static bool isRenderGlyphUsePath();
 
   /**
    * Parse LaTeX string to Render
    *
-   * @param tinytex the TeX formatted string
-   * @param width the width of the 2D graphics context
-   * @param textSize the text size
-   * @param lineSpace the line space
+   * @param tex the LaTeX formatted string (in UTF-8)
+   * @param width the width of the 2D graphics context (in pixel)
+   * @param textSize the text size in pixel
+   * @param lineSpace the line space in pixel
    * @param fg the foreground color
    * @param mathFontName the math font name, default is empty
    * @param mainFontName the main font name, default is empty
@@ -120,7 +116,7 @@ public:
     const std::string& mainFontName = ""
   );
 
-  /** Release the LaTeX context */
+  /** Release the TinyTeX context */
   static void release();
 };
 

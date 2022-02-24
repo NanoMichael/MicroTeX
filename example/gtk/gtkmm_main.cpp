@@ -293,7 +293,7 @@ public:
     const float h = r->getHeight() + _padding * 2;
     auto surface = Cairo::SvgSurface::create(file, w, h);
     auto context = Cairo::Context::create(surface);
-	Graphics2D_cairo g2(context->cobj());
+    Graphics2D_cairo g2(context->cobj());
     if (!isTransparent(_background)) {
       g2.setColor(_background);
       g2.fillRect(0, 0, w, h);

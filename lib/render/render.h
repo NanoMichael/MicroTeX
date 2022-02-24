@@ -10,12 +10,12 @@ namespace tinytex {
 
 class Box;
 
-struct RenderConfig;
+struct RenderData;
 
 /** Object to paint formula, is baseline aligned. */
 class TINYTEX_EXPORT Render {
 private:
-  RenderConfig* _config;
+  RenderData* _data;
 
 public:
   Render(const sptr<Box>& box, float textSize);
@@ -27,11 +27,11 @@ public:
 
   /**
    * Get the total height of this render, equals to
-   * ascent + descent (or namely "depth", height below the baseline).
+   * ascent + descent (or namely "depth", distance below the baseline).
    */
   int getHeight() const;
 
-  /** Get the height below the baseline, in positive. */
+  /** Get the distance below the baseline, in positive. */
   int getDepth() const;
 
   /** Get the width of this render. */

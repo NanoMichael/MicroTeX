@@ -1,5 +1,5 @@
-#ifndef OTF_INCLUDED
-#define OTF_INCLUDED
+#ifndef TINYTEX_OTF_H
+#define TINYTEX_OTF_H
 
 #include "otf/glyph.h"
 #include "otf/math_consts.h"

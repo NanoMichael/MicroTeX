@@ -92,8 +92,8 @@ c32 tinytex::nextUnicode(const std::string& src, int i, int& cnt) {
 }
 
 void tinytex::scanContinuedUnicodes(
-  std::function<c32()>&& next,
-  std::function<void(c32)>&& collect
+  const std::function<c32()>& next,
+  const std::function<void(c32)>& collect
 ) {
   const c32 x = next();
   collect(x);

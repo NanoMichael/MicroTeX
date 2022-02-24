@@ -8,14 +8,14 @@ namespace tinytex {
 inline macro(declaremathsizes) {
   float a, b, c, d;
   valueof(args[1], a), valueof(args[2], b), valueof(args[3], c), valueof(args[4], d);
-  // DefaultTeXFont::setMathSizes(a, b, c, c);
+  // TODO setMathSizes(a, b, c, d);
   return nullptr;
 }
 
 inline macro(magnification) {
   float x;
   valueof(args[1], x);
-  // DefaultTeXFont::setMagnification(x);
+  // TODO setMagnification(x);
   return nullptr;
 }
 

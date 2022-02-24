@@ -102,11 +102,19 @@ void TinyTeX::overrideTexStyle(bool enable, TexStyle style) {
 }
 
 void TinyTeX::setRenderGlyphUsePath(bool use) {
+#if GLYPH_RENDER_TYPE == 0
   _config->renderGlyphUsePath = use;
+#endif
 }
 
 bool TinyTeX::isRenderGlyphUsePath() {
+#if GLYPH_RENDER_TYPE == 0
   return _config->renderGlyphUsePath;
+#elif GLYPH_RENDER_TYPE == 1
+  return true;
+#else
+  return false;
+#endif
 }
 
 Render* TinyTeX::parse(
