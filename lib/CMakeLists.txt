@@ -114,3 +114,32 @@ if (WASM)
 else ()
     add_definitions(-DGLYPH_RENDER_TYPE=0)
 endif ()
+
+set(
+    TINYTEX_PUBLIC_HEADERS
+    config.h
+    version.h
+    tinytex.h
+    render/render.h
+    utils/types.h
+    unimath/font_src.h
+    # graphic
+    graphic/font_style.h
+    graphic/graphic_basic.h
+    graphic/graphic.h
+)
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    TinyTeXConfigVersion.cmake
+    VERSION ${VERSION_NAME}
+    COMPATIBILITY SameMajorVersion
+)
+
+install(
+    TARGETS tinytex
+    EXPORT TinyTeXTargets
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+)
