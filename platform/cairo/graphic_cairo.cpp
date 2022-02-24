@@ -10,6 +10,30 @@
 using namespace tinytex;
 using namespace std;
 
+namespace cairopp {
+
+struct cairo_font_face_deleter {
+  void operator ()(cairo_font_face_t* ptr) {
+    cairo_font_face_destroy(ptr);
+  }
+};
+
+struct cairo_ctx_deleter {
+  void operator ()(cairo_t* ptr) {
+    cairo_destroy(ptr);
+  }
+};
+
+CairoFontFacePtr cairo_font_face_make_cairopp_ptr(cairo_font_face_t* ptr) {
+  return CairoFontFacePtr(ptr, cairo_font_face_deleter());
+}
+
+CairoCtxPtr cairo_ctx_make_cairopp_ptr(cairo_t* ptr) {
+  return CairoCtxPtr(ptr, cairo_ctx_deleter());
+}
+
+}
+
 map<string, cairopp::CairoFontFacePtr> Font_cairo::_cairoFtFaces;
 
 Font_cairo::Font_cairo(const string& file) {
