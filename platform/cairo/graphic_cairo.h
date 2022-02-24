@@ -11,28 +11,11 @@ using namespace std;
 
 namespace cairopp {
 
-struct cairo_font_face_deleter {
-  void operator ()(cairo_font_face_t* ptr) {
-    cairo_font_face_destroy(ptr);
-  }
-};
-
-struct cairo_ctx_deleter {
-  void operator ()(cairo_t* ptr) {
-    cairo_destroy(ptr);
-  }
-};
-
 typedef std::shared_ptr<cairo_font_face_t> CairoFontFacePtr;
 typedef std::shared_ptr<cairo_t> CairoCtxPtr;
 
-CairoFontFacePtr cairo_font_face_make_cairopp_ptr(cairo_font_face_t* ptr) {
-  return CairoFontFacePtr(ptr, cairo_font_face_deleter());
-}
-
-CairoCtxPtr cairo_ctx_make_cairopp_ptr(cairo_t* ptr) {
-  return CairoCtxPtr(ptr, cairo_ctx_deleter());
-}
+CairoFontFacePtr cairo_font_face_make_cairopp_ptr(cairo_font_face_t* ptr);
+CairoCtxPtr cairo_ctx_make_cairopp_ptr(cairo_t* ptr);
 
 } // namespace cairopp
 
