@@ -27,7 +27,7 @@ public:
     return t;
   }
 
-  const char* read_string() {
+  const char* readString() {
     size_t len = lookfwd(0x00);
     const char* ret = (const char*)readBytes(len);
     return ret;
@@ -118,8 +118,8 @@ public:
 };
 
 void CLMReader::readMeta(Otf& font, BinaryReader& reader) {
-  font._name = std::string(reader.read_string());
-  font._family = std::string(reader.read_string());
+  font._name = std::string(reader.readString());
+  font._family = std::string(reader.readString());
   font._isMathFont = reader.read<bool>();
   font._em = reader.read<u16>();
   font._xHeight = reader.read<u16>();
