@@ -14,6 +14,25 @@ namespace fs = std::filesystem;
 
 namespace tinytex {
 
+#ifdef _WIN32
+#include <windows.h>
+// Get dir of executable
+// For example, the full path is c:\x\y\z\a.exe
+// return c:\x\y\z\
+//
+std::string getDirOfExecutable() {
+  char szBuff[MAX_PATH] = {0};
+  // WIN API: GetModuleFileNameA
+  // retrieves the path of the executable file of the current process
+  // see https://docs.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulefilenamea
+  GetModuleFileNameA(nullptr,szBuff, MAX_PATH);
+  std::string exePath(szBuff);
+  auto pos = exePath.find_last_of('\\');
+  // pos + 1 for adding last \ to path
+  return exePath.substr(0, pos + 1);
+}
+#endif
+
 font_paths_t GetFontPaths() {
   std::queue<std::string> paths;
   // checks if TINYTEX_FONTDIR exists. If it does, it pushes it to potential paths.
@@ -47,6 +66,9 @@ font_paths_t GetFontPaths() {
 
   paths.push("/usr/local/share/" FONTDIR);
   paths.push("/usr/share/" FONTDIR);
+#else
+  auto exeDir = getDirOfExecutable();
+  paths.push(exeDir + std::string("share/" FONTDIR));
 #endif
 
   font_paths_t font_paths;
