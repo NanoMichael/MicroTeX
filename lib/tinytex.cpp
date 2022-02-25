@@ -46,7 +46,7 @@ void TinyTeX::init(Init init) {
   }
 
   {
-    auto mathfont = FontsenseLookup();
+    auto mathfont = fontsenseLookup();
     {
       const std::string* mathFontName = std::get_if<const std::string>(&init);
       if (mathFontName != nullptr) {

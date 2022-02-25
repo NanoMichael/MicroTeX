@@ -1,10 +1,9 @@
 #include "fontsense.h"
 #include "unimath/uni_font.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <queue>
-#include <string.h>
-#include <sstream>
+#include <cstring>
 #include <filesystem>
 #include <optional>
 
@@ -33,7 +32,7 @@ std::string getDirOfExecutable() {
 }
 #endif
 
-font_paths_t GetFontPaths() {
+font_paths_t getFontPaths() {
   std::queue<std::string> paths;
   // checks if TINYTEX_FONTDIR exists. If it does, it pushes it to potential paths.
   char* devdir = getenv("TINYTEX_FONTDIR");
@@ -51,7 +50,7 @@ font_paths_t GetFontPaths() {
   if (data_dirs && *data_dirs) {
     std::stringstream data_dir_paths(data_dirs);
     std::string data_dir_path;
-    while(getline(data_dir_paths, data_dir_path, ':'))
+    while (getline(data_dir_paths, data_dir_path, ':'))
       paths.push(data_dir_path + "/" + FONTDIR);
   }
 
@@ -78,7 +77,7 @@ font_paths_t GetFontPaths() {
    * all files in it. For each font there should be a stem.otf and
    * stem.clm file available. This function checks if the filestem
    * is already in the font map and if it is, looks at the current
-   * file extention and sets the current path to it it if is unset.
+   * file extension and sets the current path to it it if is unset.
    * If the stem is not currently in the map it adds it together
    * with the current file as clm or otf.
    */
@@ -86,7 +85,7 @@ font_paths_t GetFontPaths() {
     fs::path p = paths.front();
     if (fs::exists(p))
       for (const auto& entry : fs::directory_iterator(p)) {
-        fs::path path = entry.path();
+        const fs::path& path = entry.path();
         std::string stem = path.stem().string();
         std::string ext = path.extension().string();
         font_paths_t::iterator it = font_paths.find(stem);
@@ -110,7 +109,7 @@ font_paths_t GetFontPaths() {
    * Iterate over all font paths in map and remove all of them
    * where either the oth or clm path is NULL.
    */
-  for (font_paths_t::iterator it = font_paths.begin(); it != font_paths.end(); ) {
+  for (font_paths_t::iterator it = font_paths.begin(); it != font_paths.end();) {
     if (!it->second.first || !it->second.second)
       font_paths.erase(it++);
     else
@@ -120,29 +119,28 @@ font_paths_t GetFontPaths() {
   return font_paths;
 }
 
-void FontPathsFree(font_paths_t font_paths) {
-  for (auto [_stem, files] : font_paths) {
+void fontPathsFree(font_paths_t font_paths) {
+  for (auto[_stem, files] : font_paths) {
     free(files.first);
     free(files.second);
   }
 }
 
-std::optional<const std::string> FontsenseLookup() {
+std::optional<const std::string> fontsenseLookup() {
   std::optional<std::string> mathfont;
 
-  font_paths_t font_paths = GetFontPaths();
+  font_paths_t font_paths = getFontPaths();
 
   font_families_t font_families;
 
-  for (const auto& [_stem, files] : font_paths) {
+  for (const auto&[_stem, files] : font_paths) {
     Otf* font = Otf::fromFile(files.second);
     if (font->isMathFont()) {
       FontContext::addMathFont(FontSrcSense(font, std::string(files.first)));
 
       if (!mathfont)
         mathfont = font->name();
-    }
-    else {
+    } else {
       font_families_t::iterator it = font_families.find(font->family());
       if (it != font_families.end()) {
         auto iit = it->second.find(font->name());
@@ -150,21 +148,23 @@ std::optional<const std::string> FontsenseLookup() {
           it->second.emplace(font->name(), FontSrcSense(font, std::string(files.first)));
         }
       } else {
-        std::map<std::string, FontSrcSense> family { {
-          font->name(),
-          FontSrcSense(font, std::string(files.first))
-        } };
+        std::map<std::string, FontSrcSense> family{
+          {
+            font->name(),
+            FontSrcSense(font, std::string(files.first))
+          }
+        };
         font_families.emplace(font->family(), std::move(family));
       }
     }
   }
 
-  for (auto [family, fonts] : font_families) {
+  for (auto[family, fonts] : font_families) {
     FontSrcList font_list;
 #ifdef HAVE_LOG
     printf("family: %s\n", family.c_str());
 #endif
-    for (auto [_name, src] : fonts) {
+    for (auto[_name, src] : fonts) {
 #ifdef HAVE_LOG
       printf("found: %s\n", _name.c_str());
 #endif
@@ -173,7 +173,7 @@ std::optional<const std::string> FontsenseLookup() {
     FontContext::addMainFont(family, font_list);
   }
 
-  FontPathsFree(font_paths);
+  fontPathsFree(font_paths);
 
   return mathfont;
 }

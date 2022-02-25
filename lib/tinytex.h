@@ -14,7 +14,7 @@ namespace tinytex {
 struct TINYTEX_EXPORT InitFontSenseAuto {
 };
 
-typedef std::variant<const FontSrc*, const std::string, InitFontSenseAuto> Init;
+using Init = std::variant<const FontSrc*, const std::string, InitFontSenseAuto>;
 
 struct Config;
 
@@ -27,10 +27,10 @@ public:
   static std::string version();
 
   /**
-   * Initialize TinyTeX context with given math font spec, at least we need
+   * Initialize TinyTeX context by given Init, at least we need
    * a math font to layout formulas.
    *
-   * @param mathFontSrc the font source to load math font
+   * @param init the font source to load math font
    */
   static void init(Init init);
 
