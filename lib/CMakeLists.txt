@@ -13,8 +13,8 @@ endif ()
 
 set_target_properties(
     tinytex PROPERTIES
-    VERSION ${VERSION_NAME}
-    SOVERSION ${VERSION_NUMBER}
+    VERSION ${PROJECT_VERSION}
+    SOVERSION 0
     CXX_VISIBILITY_PRESET hidden
 )
 
@@ -102,7 +102,7 @@ target_include_directories(tinytex PUBLIC .)
 # compile option: if debug graphics
 option(GRAPHICS_DEBUG "If enable graphics debug" ON)
 if (GRAPHICS_DEBUG)
-    add_definitions(-DGRAPHICS_DEBUG)
+    target_compile_definitions(tinytex PRIVATE -DGRAPHICS_DEBUG)
 endif ()
 
 set(_HAVE_AUTO_FONT_FIND ON)
@@ -121,7 +121,7 @@ option(HAVE_AUTO_FONT_FIND "If enable auto font find" ${_HAVE_AUTO_FONT_FIND})
 # 0: use path and typeface both
 # 1: use path only
 # 2: use typeface only
-add_definitions(-DGLYPH_RENDER_TYPE=${_GLYPH_RENDER_TYPE})
+target_compile_definitions(tinytex PRIVATE -DGLYPH_RENDER_TYPE=${_GLYPH_RENDER_TYPE})
 
 configure_file(options.h.in options.h @ONLY)
 target_include_directories(tinytex PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
@@ -129,7 +129,6 @@ target_include_directories(tinytex PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 set(
     TINYTEX_PUBLIC_HEADERS
     config.h
-    version.h
     tinytex.h
     render/render.h
     utils/types.h
@@ -144,7 +143,7 @@ set(
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
     TinyTeXConfigVersion.cmake
-    VERSION ${VERSION_NAME}
+    VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion
 )
 
