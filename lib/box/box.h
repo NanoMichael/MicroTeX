@@ -3,6 +3,7 @@
 
 #include "utils/types.h"
 #include <vector>
+#include <string>
 
 namespace tinytex {
 
