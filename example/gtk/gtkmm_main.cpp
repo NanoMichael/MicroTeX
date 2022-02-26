@@ -525,17 +525,20 @@ int main(int argc, char* argv[]) {
   }
 
   Pango::init();
-  Init init;
-  if (fontsense.has_value())
-    if (fontsense.value().empty())
-      init = InitFontSenseAuto{};
-    else
+  if (fontsense.has_value()) {
+    if (fontsense.value().empty()) {
+      Init init = InitFontSenseAuto{};
+      TinyTeX::init(init);
+    } else {
+      Init init;
       init.emplace<1>(fontsense.value());
-  else {
+      TinyTeX::init(init);
+    }
+  } else {
     const FontSrcFile font = FontSrcFile{mathVersionName, clmFile, mathFont};
-    init = &font;
+    Init init = &font;
+    TinyTeX::init(init);
   }
-  TinyTeX::init(init);
 
   PlatformFactory::registerFactory("gtk", std::make_unique<PlatformFactory_cairo>());
   PlatformFactory::activate("gtk");
