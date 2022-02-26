@@ -1,5 +1,3 @@
-#include "config.h"
-
 #include "graphic_win32.h"
 #include "utils/nums.h"
 #include "utils/exceptions.h"

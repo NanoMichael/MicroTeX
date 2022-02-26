@@ -2,7 +2,7 @@
 #define GRAPHIC_BASIC_H_INCLUDED
 
 #include "utils/types.h"
-#include "config.h"
+#include "export.h"
 #include <string>
 
 namespace tinytex {

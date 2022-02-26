@@ -1,7 +1,7 @@
 #ifndef TINYTEX_FONT_SRC_H
 #define TINYTEX_FONT_SRC_H
 
-#include "config.h"
+#include "export.h"
 #include "utils/types.h"
 #include <vector>
 #include <string>

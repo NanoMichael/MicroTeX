@@ -1,7 +1,7 @@
 #ifndef GRAPHIC_QT_H_INCLUDED
 #define GRAPHIC_QT_H_INCLUDED
 
-#include "config.h"
+#include "export.h"
 #include "graphic/graphic.h"
 
 #include <string>
