@@ -39,13 +39,14 @@ src += utils_src
 subdir('render')
 src += render_src
 
+tinytex_version = meson.project_version().split('.')
 configure_file(
     input: 'config.h.in',
     output: 'config.h',
     configuration: {
-        'PROJECT_VERSION_MAJOR': 1,
-        'PROJECT_VERSION_MINOR': 0,
-        'PROJECT_VERSION_PATCH': 0,
+        'PROJECT_VERSION_MAJOR': tinytex_version[0],
+        'PROJECT_VERSION_MINOR': tinytex_version[1],
+        'PROJECT_VERSION_PATCH': tinytex_version[2],
         'HAVE_AUTO_FONT_FIND': get_option('HAVE_AUTO_FONT_FIND'),
     },
     format: 'cmake@'

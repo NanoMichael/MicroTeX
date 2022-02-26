@@ -126,10 +126,6 @@ target_compile_definitions(tinytex PRIVATE -DGLYPH_RENDER_TYPE=${_GLYPH_RENDER_T
 configure_file(config.h.in config.h @ONLY)
 target_include_directories(tinytex PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
-if (HAVE_AUTO_FONT_FIND)
-    target_link_libraries(tinytex stdc++fs)
-endif ()
-
 set(
     TINYTEX_PUBLIC_HEADERS
     export.h
