@@ -2,10 +2,9 @@ cmake_minimum_required(VERSION 3.16)
 
 project(
     tinytex
+    VERSION 1.0.0
     DESCRIPTION "A tiny, fast, cross-platform, and embeddable LaTeX rendering library"
 )
-
-include(${PROJECT_SOURCE_DIR}/cmake/version.cmake)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

@@ -3,7 +3,6 @@
 
 #include "config.h"
 #include "options.h"
-#include "version.h"
 #include "render/render.h"
 #include "unimath/font_src.h"
 
