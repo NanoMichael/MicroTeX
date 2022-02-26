@@ -31,6 +31,8 @@ std::string TinyTeX::version() {
          + std::to_string(TINYTEX_VERSION_PATCH);
 }
 
+#ifdef HAVE_AUTO_FONT_FIND
+
 void TinyTeX::init(Init init) {
   auto initialization = [&]() {
     if (_config->isInited) return;
@@ -64,6 +66,16 @@ void TinyTeX::init(Init init) {
   }
 
   return initialization();
+}
+
+#endif // HAVE_AUTO_FONT_FIND
+
+void TinyTeX::init(const FontSrc& mathFontSrc) {
+  FontContext::addMathFont(mathFontSrc);
+  _config->defaultMathFontName = mathFontSrc.name;
+  if (_config->isInited) return;
+  _config->isInited = true;
+  NewCommandMacro::_init_();
 }
 
 bool TinyTeX::isInited() {

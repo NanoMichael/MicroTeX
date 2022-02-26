@@ -2,11 +2,15 @@
 #define TINYTEX_TINYTEX_H
 
 #include "config.h"
+#include "options.h"
 #include "version.h"
 #include "render/render.h"
 #include "unimath/font_src.h"
 
 #include <string>
+
+#ifdef HAVE_AUTO_FONT_FIND
+
 #include <variant>
 
 namespace tinytex {
@@ -14,7 +18,40 @@ namespace tinytex {
 struct TINYTEX_EXPORT InitFontSenseAuto {
 };
 
+/**
+ * TinyTeX context initialization.
+ * <ol>
+ *  <li> If a FontSrc presents, the context will load math font from the given font source.
+ *  <li> If a InitFontSenseAuto presents, fill the search dirs by following rules:
+ *    <ul>
+ *      <li> If environment variable `TINYTEX_FONTDIR` is set, add it into search dirs.
+ *      <li> If environment variable `XDG_DATA_HOME` is set, add `${XDG_DATA_HOME}/tinytex` into
+ *           search dirs.
+ *      <li> If environment variable `XDG_DATA_DIRS` is set, iterate over the list and add the sub
+ *           dir `tinytex` of each item into search dirs.
+ *      <li> If the current platform is WIN32, add the dir `share/tinytex` where its parent is the
+ *           executable running dir into search dirs.
+ *      <li> Otherwise, try the following ways:
+ *      <ul>
+ *        <li> If environment variable `HOME` is set, add dir `${HOME}/.local/share/tinytex` into
+ *             search dirs.
+ *        <li> Add `/usr/local/share/tinytex` into search dirs.
+ *        <li> Add `/usr/share/tinytex` into search dirs.
+ *      </ul>
+ *      And then iterate over the search dirs, add all found fonts to context, and select the first
+ *      found math font as the default.
+ *    </ul>
+ *  <li> If a string presents, follow the above way to init the context but select the math font
+ *       which its name was given by this string as the default.
+ * </ol>
+ */
 using Init = std::variant<const FontSrc*, const std::string, InitFontSenseAuto>;
+
+} // namespace tinytex
+
+#endif // HAVE_AUTO_FONT_FIND
+
+namespace tinytex {
 
 struct Config;
 
@@ -26,13 +63,23 @@ public:
   /** The version of the library */
   static std::string version();
 
+#ifdef HAVE_AUTO_FONT_FIND
+
   /**
-   * Initialize TinyTeX context by given Init, at least we need
-   * a math font to layout formulas.
-   *
-   * @param init the font source to load math font
+   * Initialize TinyTeX context by given Init, at least we need a math font
+   * to layout formulas.
    */
   static void init(Init init);
+
+#endif // HAVE_AUTO_FONT_FIND
+
+  /**
+   * Initialize the context with given math font source, at least we need a
+   * math font to layout formulas.
+   *
+   * @param mathFontSrc the font source to
+   */
+  static void init(const FontSrc& mathFontSrc);
 
   /** Check if context is initialized */
   static bool isInited();
@@ -49,7 +96,7 @@ public:
   );
 
   /**
-   * Add math font to context.
+   * Add a math font to context.
    *
    * @param src font source to load
    */

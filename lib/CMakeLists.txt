@@ -77,7 +77,7 @@ target_sources(
     utils/utils.cpp
     # otf folder
     otf/clm.cpp
-	otf/fontsense.cpp
+    otf/fontsense.cpp
     otf/glyph.cpp
     otf/otf.cpp
     otf/path.cpp
@@ -105,15 +105,26 @@ if (GRAPHICS_DEBUG)
     add_definitions(-DGRAPHICS_DEBUG)
 endif ()
 
-# compile option: the glyph render type
+set(_HAVE_AUTO_FONT_FIND ON)
+set(_GLYPH_RENDER_TYPE 0)
+
+if (WASM)
+    set(_HAVE_AUTO_FONT_FIND OFF)
+    set(_GLYPH_RENDER_TYPE 1)
+endif ()
+
+# compile option: HAVE_AUTO_FONT_FIND if enable auto font find
+# this option is exported to users, will write into file 'options.h'
+option(HAVE_AUTO_FONT_FIND "If enable auto font find" ${_HAVE_AUTO_FONT_FIND})
+
+# compile option: GLYPH_RENDER_TYPE the glyph render type
 # 0: use path and typeface both
 # 1: use path only
 # 2: use typeface only
-if (WASM)
-    add_definitions(-DGLYPH_RENDER_TYPE=1)
-else ()
-    add_definitions(-DGLYPH_RENDER_TYPE=0)
-endif ()
+add_definitions(-DGLYPH_RENDER_TYPE=${_GLYPH_RENDER_TYPE})
+
+configure_file(options.h.in options.h @ONLY)
+target_include_directories(tinytex PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 set(
     TINYTEX_PUBLIC_HEADERS
@@ -123,6 +134,7 @@ set(
     render/render.h
     utils/types.h
     unimath/font_src.h
+    options.h
     # graphic
     graphic/font_style.h
     graphic/graphic_basic.h

@@ -1,3 +1,7 @@
+#include "options.h"
+
+#ifdef HAVE_AUTO_FONT_FIND
+
 #include "fontsense.h"
 #include "unimath/uni_font.h"
 
@@ -5,13 +9,22 @@
 #include <queue>
 #include <cstring>
 #include <filesystem>
-#include <optional>
 
 namespace fs = std::filesystem;
 
 #define FONTDIR "tinytex"
 
 namespace tinytex {
+
+// Map<FileStem, <OTF File, CLM File>>
+typedef std::map<std::string, std::pair<char*, char*>> font_paths_t;
+
+// Map<FontFamily, Map<Name, Fonts>>
+typedef std::map<std::string, std::map<std::string, FontSrcSense>> font_families_t;
+
+font_paths_t getFontPaths();
+
+void fontPathsFree(font_paths_t font_paths);
 
 #ifdef _WIN32
 #include <windows.h>
@@ -56,7 +69,7 @@ font_paths_t getFontPaths() {
 
 #ifndef _WIN32
   char* home = getenv("HOME");
-  if (home || *home) {
+  if (home != nullptr && *home != '\0') {
     char* userdata_fallback;
     asprintf(&userdata_fallback, "%s/.local/share/%s/", home, FONTDIR);
     paths.push(std::string(userdata_fallback));
@@ -179,3 +192,5 @@ std::optional<const std::string> fontsenseLookup() {
 }
 
 }
+
+#endif // HAVE_AUTO_FONT_FIND

@@ -496,8 +496,8 @@ int main(int argc, char* argv[]) {
     } else if (key == "-samples") {
       samplesFile = value;
       h._samplesFile = value;
-	} else if (key == "-fontsense") {
-		fontsense = value;
+    } else if (key == "-fontsense") {
+      fontsense = value;
     } else {
       getHeadlessOpt(h, key, value);
     }
@@ -528,11 +528,11 @@ int main(int argc, char* argv[]) {
   Init init;
   if (fontsense.has_value())
     if (fontsense.value().empty())
-      init =  InitFontSenseAuto {};
+      init = InitFontSenseAuto{};
     else
       init.emplace<1>(fontsense.value());
   else {
-    const FontSrcFile font = FontSrcFile {mathVersionName, clmFile, mathFont};
+    const FontSrcFile font = FontSrcFile{mathVersionName, clmFile, mathFont};
     init = &font;
   }
   TinyTeX::init(init);

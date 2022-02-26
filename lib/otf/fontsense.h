@@ -1,20 +1,18 @@
-#include <map>
+#include "options.h"
+
+#ifdef HAVE_AUTO_FONT_FIND
+#ifndef TINYTEX_FONTSENSE_H
+#define TINYTEX_FONTSENSE_H
+
 #include <optional>
 #include <string>
 
-#include "otf/otf.h"
-#include "unimath/font_src.h"
-
 namespace tinytex {
-// Map<FileStem, <OTF File, CLM File>>
-typedef std::map<std::string, std::pair<char*, char*>> font_paths_t;
 
-// Map<FontFamily, Map<Name, Fonts>>
-typedef std::map<std::string, std::map<std::string, FontSrcSense>> font_families_t;
-
-font_paths_t getFontPaths();
-
-void fontPathsFree(font_paths_t font_paths);
-
+/** Find font resources auto. Return the first found math font name. */
 std::optional<const std::string> fontsenseLookup();
+
 }
+
+#endif // TINYTEX_FONTSENSE_H
+#endif // HAVE_AUTO_FONT_FIND
