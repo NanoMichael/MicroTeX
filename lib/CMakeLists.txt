@@ -123,7 +123,7 @@ option(HAVE_AUTO_FONT_FIND "If enable auto font find" ${_HAVE_AUTO_FONT_FIND})
 # 2: use typeface only
 target_compile_definitions(tinytex PRIVATE -DGLYPH_RENDER_TYPE=${_GLYPH_RENDER_TYPE})
 
-configure_file(options.h.in options.h @ONLY)
+configure_file(config.h.in config.h @ONLY)
 target_include_directories(tinytex PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 set(

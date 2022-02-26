@@ -1,4 +1,4 @@
-#include "options.h"
+#include "config.h"
 
 #ifdef HAVE_AUTO_FONT_FIND
 #ifndef TINYTEX_FONTSENSE_H

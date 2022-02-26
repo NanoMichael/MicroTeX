@@ -1,8 +1,7 @@
-#include "options.h"
+#include "fontsense.h"
 
 #ifdef HAVE_AUTO_FONT_FIND
 
-#include "fontsense.h"
 #include "unimath/uni_font.h"
 
 #include <cstdlib>
