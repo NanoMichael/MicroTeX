@@ -39,6 +39,18 @@ src += utils_src
 subdir('render')
 src += render_src
 
+configure_file(
+    input: 'config.h.in',
+    output: 'config.h',
+    configuration: {
+        'PROJECT_VERSION_MAJOR': 1,
+        'PROJECT_VERSION_MINOR': 0,
+        'PROJECT_VERSION_PATCH': 0,
+        'HAVE_AUTO_FONT_FIND': get_option('HAVE_AUTO_FONT_FIND'),
+    },
+    format: 'cmake@'
+)
+
 tinytex_lib = library('tinytex', src,
 	include_directories: inc,
 	version: meson.project_version(),
