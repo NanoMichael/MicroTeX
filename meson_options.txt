@@ -1,3 +1,5 @@
+option('HAVE_AUTO_FONT_FIND', type: 'boolean', value: true)
+
 # generate pkgconfig files & install headers
 option('TARGET_DEVEL', type : 'boolean', value : true)
 
