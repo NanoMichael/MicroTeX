@@ -64,7 +64,7 @@ endif
 
 if install_headerfiles
 	install_headers([
-		'config.h',
+		'export.h',
 		'tinytex.h'
 	], subdir: 'tinytex')
 endif

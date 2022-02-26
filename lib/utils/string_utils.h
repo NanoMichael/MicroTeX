@@ -1,7 +1,6 @@
 #ifndef STRING_UTILS_H_INCLUDED
 #define STRING_UTILS_H_INCLUDED
 
-#include "config.h"
 #include <algorithm>
 #include <cerrno>
 #include <climits>

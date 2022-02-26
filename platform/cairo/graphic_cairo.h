@@ -1,7 +1,7 @@
 #ifndef GRAPHIC_CAIRO_H_INCLUDED
 #define GRAPHIC_CAIRO_H_INCLUDED
 
-#include "config.h"
+#include "export.h"
 #include "graphic/graphic.h"
 
 #include <cairo.h>

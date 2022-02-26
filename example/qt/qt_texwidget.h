@@ -1,7 +1,6 @@
 #ifndef QT_TEXWIDGET_H
 #define QT_TEXWIDGET_H
 
-#include "config.h"
 #include "graphic_qt.h"
 #include "tinytex.h"
 

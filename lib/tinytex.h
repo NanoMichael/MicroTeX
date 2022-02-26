@@ -1,7 +1,7 @@
 #ifndef TINYTEX_TINYTEX_H
 #define TINYTEX_TINYTEX_H
 
-#include "config.h"
+#include "export.h"
 #include "options.h"
 #include "render/render.h"
 #include "unimath/font_src.h"

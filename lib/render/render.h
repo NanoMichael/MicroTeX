@@ -1,7 +1,7 @@
 #ifndef TINYTEX_RENDER_H
 #define TINYTEX_RENDER_H
 
-#include "config.h"
+#include "export.h"
 #include "graphic/graphic.h"
 
 #include <functional>

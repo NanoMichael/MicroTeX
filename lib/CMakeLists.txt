@@ -128,7 +128,7 @@ target_include_directories(tinytex PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 
 set(
     TINYTEX_PUBLIC_HEADERS
-    config.h
+    export.h
     tinytex.h
     render/render.h
     utils/types.h
