@@ -2,7 +2,6 @@
 
 #include <cstring>
 
-#include "config.h"
 #include "utils/string_utils.h"
 #include "utils/exceptions.h"
 
@@ -13,6 +12,7 @@ public:
   virtual ~BinaryReader() = default;
 
   virtual const u8* readBytes(size_t bytes) = 0;
+
   virtual size_t lookfwd(u8 until) = 0;
 
   template<typename T>
@@ -29,7 +29,7 @@ public:
 
   const char* readString() {
     size_t len = lookfwd(0x00);
-    const char* ret = (const char*)readBytes(len);
+    const char* ret = (const char*) readBytes(len);
     return ret;
   }
 };

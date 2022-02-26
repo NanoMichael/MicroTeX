@@ -1,7 +1,7 @@
 #ifndef TINYTEX_PATH_H
 #define TINYTEX_PATH_H
 
-#include "config.h"
+#include "otf/otfconfig.h"
 
 #ifdef HAVE_GLYPH_RENDER_PATH
 

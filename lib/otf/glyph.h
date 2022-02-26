@@ -1,7 +1,6 @@
 #ifndef TINYTEX_GLYPH_H
 #define TINYTEX_GLYPH_H
 
-#include "config.h"
 #include "utils/dict_tree.h"
 #include "utils/utils.h"
 #include "otf/path.h"
