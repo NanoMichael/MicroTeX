@@ -1,5 +1,6 @@
 #include "graphic/graphic.h"
 #include "tinytex.h"
+#include "utils/utils.h"
 
 namespace tinytex {
 

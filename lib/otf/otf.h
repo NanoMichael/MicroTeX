@@ -84,6 +84,7 @@ public:
 
   /** Get the postscript family name of this font */
   inline std::string& name() { return _name; }
+
   /** Get the full postscript name of this font */
   inline std::string& family() { return _family; }
 
