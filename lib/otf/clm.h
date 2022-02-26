@@ -1,7 +1,6 @@
-#ifndef CLM_INCLUDED
-#define CLM_INCLUDED
+#ifndef TINYTEX_CLM_H
+#define TINYTEX_CLM_H
 
-#include "config.h"
 #include "otf/otf.h"
 
 namespace tinytex {
@@ -31,13 +30,13 @@ private:
 
   static Math* readMath(BinaryReader& reader);
 
-  static Path* readPath(BinaryReader& reader);
-
 #ifdef HAVE_GLYPH_RENDER_PATH
 
-  static Glyph* readGlyph(bool isMathFont, BinaryReader& reader);
+  static Path* readPath(BinaryReader& reader);
 
 #endif
+
+  static Glyph* readGlyph(bool isMathFont, BinaryReader& reader);
 
   static void readGlyphs(Otf& font, BinaryReader& reader);
 
