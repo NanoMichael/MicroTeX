@@ -11,15 +11,55 @@ set_target_properties(
 
 find_package(Fontconfig REQUIRED)
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(GTKMM REQUIRED IMPORTED_TARGET gtkmm-3.0)
-pkg_check_modules(CairoMM REQUIRED IMPORTED_TARGET cairomm-1.0)
+pkg_check_modules(Cairo REQUIRED IMPORTED_TARGET cairo)
+pkg_check_modules(Pango REQUIRED IMPORTED_TARGET pango)
+pkg_check_modules(Pangocairo REQUIRED IMPORTED_TARGET pangocairo)
 
-target_include_directories(tinytex-cairo PUBLIC .)
+target_include_directories(
+    tinytex-cairo PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:include/tinytex-cairo>
+)
 
 target_link_libraries(
     tinytex-cairo PRIVATE
     tinytex
-    PkgConfig::GTKMM   #include <pangomm/fontdescription.h>
-    PkgConfig::CairoMM #include <cairomm/context.h>
     Fontconfig::Fontconfig
+    PkgConfig::Cairo
+    PkgConfig::Pango
+    PkgConfig::Pangocairo
+)
+
+################
+# installation #
+################
+install(
+    TARGETS tinytex-cairo
+    EXPORT tinytex-cairoTargets
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+)
+install(
+    FILES graphic_cairo.h
+    DESTINATION include/tinytex-cairo
+)
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    tinytex-cairoConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+install(
+    EXPORT tinytex-cairoTargets
+    FILE tinytex-cairoTargets.cmake
+    NAMESPACE tinytex::
+    DESTINATION lib/cmake/tinytex-cairo
+)
+configure_file(tinytex-cairoConfig.cmake.in tinytex-cairoConfig.cmake @ONLY)
+install(
+    FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/tinytex-cairoConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/tinytex-cairoConfigVersion.cmake"
+    DESTINATION lib/cmake/tinytex-cairo
 )
