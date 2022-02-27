@@ -6,6 +6,9 @@ project(
     DESCRIPTION "A tiny, fast, cross-platform, and embeddable LaTeX rendering library"
 )
 
+# the API (and ABI) is compatible when TINYTEX_API_VERSION is the same
+set(TINYTEX_API_VERSION 1)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if (MSVC) # MSVC Compat

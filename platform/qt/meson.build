@@ -10,7 +10,7 @@ tinytex_qt_lib = library('tinytex-qt', qt_src,
     include_directories: inc,
     dependencies: qt_dep,
     version: meson.project_version(),
-    soversion: 0,
+    soversion: tinytex_api_version,
     install: true
 )
 

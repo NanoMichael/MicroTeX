@@ -5,6 +5,9 @@ project('tinytex', 'cpp',
 
 cpp = meson.get_compiler('cpp')
 
+# the API (and ABI) is compatiable if API version is the same
+tinytex_api_version = 1
+
 if get_option('TARGET_DEVEL')
   pkgconfig = import('pkgconfig')
 endif

@@ -14,7 +14,7 @@ endif ()
 set_target_properties(
     tinytex PROPERTIES
     VERSION ${PROJECT_VERSION}
-    SOVERSION 0
+    SOVERSION ${TINYTEX_API_VERSION}
     CXX_VISIBILITY_PRESET hidden
 )
 
