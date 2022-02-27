@@ -52,6 +52,9 @@ add_subdirectory(lib)
 
 file(COPY res DESTINATION .)
 
+#####################
+# optional features #
+#####################
 if (GTK)
     add_subdirectory(platform/cairo)
     if (BUILD_EXAMPLE_GTK)
@@ -83,3 +86,14 @@ endif ()
 if (BUILD_EXAMPLE_MEMCHECK)
     add_subdirectory(example/memcheck)
 endif ()
+
+################
+# installation #
+################
+
+# install resources
+install(DIRECTORY res/ DESTINATION share/tinytex)
+
+# install prebuilt scripts
+install(FILES prebuilt/otf2clm.py DESTINATION bin)
+install(PROGRAMS prebuilt/otf2clm.sh DESTINATION bin RENAME otf2clm)

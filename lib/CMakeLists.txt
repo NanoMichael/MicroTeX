@@ -97,7 +97,15 @@ target_sources(
 
     tinytex.cpp
 )
-target_include_directories(tinytex PUBLIC .)
+target_include_directories(
+    tinytex PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:include/tinytex>
+)
+
+###################
+# compile options #
+###################
 
 # compile option: if debug graphics
 option(GRAPHICS_DEBUG "If enable graphics debug" ON)
@@ -114,8 +122,12 @@ if (WASM)
 endif ()
 
 # compile option: HAVE_AUTO_FONT_FIND if enable auto font find
-# this option is exported to users, will write into file 'options.h'
+# this option is exported to users, will write into file 'config.h'
 option(HAVE_AUTO_FONT_FIND "If enable auto font find" ${_HAVE_AUTO_FONT_FIND})
+
+if (HAVE_AUTO_FONT_FIND)
+    target_link_libraries(tinytex stdc++fs)
+endif ()
 
 # compile option: GLYPH_RENDER_TYPE the glyph render type
 # 0: use path and typeface both
@@ -124,33 +136,62 @@ option(HAVE_AUTO_FONT_FIND "If enable auto font find" ${_HAVE_AUTO_FONT_FIND})
 target_compile_definitions(tinytex PRIVATE -DGLYPH_RENDER_TYPE=${_GLYPH_RENDER_TYPE})
 
 configure_file(config.h.in config.h @ONLY)
-target_include_directories(tinytex PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(tinytex PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
 
-set(
-    TINYTEX_PUBLIC_HEADERS
-    export.h
-    tinytex.h
-    render/render.h
-    utils/types.h
-    unimath/font_src.h
-    options.h
-    # graphic
-    graphic/font_style.h
-    graphic/graphic_basic.h
-    graphic/graphic.h
+################
+# installation #
+################
+
+install(
+    TARGETS tinytex
+    EXPORT tinytexTargets
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
 )
 
+# public headers
+set(TINYTEX_INCLUDE "include/tinytex")
+install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/config.h export.h tinytex.h tinytexapi.h
+    DESTINATION ${TINYTEX_INCLUDE}
+)
+install(
+    FILES utils/types.h
+    DESTINATION "${TINYTEX_INCLUDE}/utils"
+)
+install(
+    FILES render/render.h
+    DESTINATION "${TINYTEX_INCLUDE}/render"
+)
+install(
+    FILES unimath/font_src.h
+    DESTINATION "${TINYTEX_INCLUDE}/unimath"
+)
+install(
+    FILES graphic/graphic.h graphic/font_style.h graphic/graphic_basic.h
+    DESTINATION "${TINYTEX_INCLUDE}/graphic"
+)
+
+# install targets
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
-    TinyTeXConfigVersion.cmake
+    tinytexConfigVersion.cmake
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY SameMajorVersion
 )
 
 install(
-    TARGETS tinytex
-    EXPORT TinyTeXTargets
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
+    EXPORT tinytexTargets
+    FILE tinytexTargets.cmake
+    NAMESPACE tinytex::
+    DESTINATION lib/cmake/tinytex
+)
+
+configure_file(tinytexConfig.cmake.in tinytexConfig.cmake @ONLY)
+install(
+    FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/tinytexConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/tinytexConfigVersion.cmake"
+    DESTINATION lib/cmake/tinytex
 )
