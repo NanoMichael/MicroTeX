@@ -30,36 +30,5 @@ target_link_libraries(
     PkgConfig::Pangocairo
 )
 
-################
-# installation #
-################
-install(
-    TARGETS tinytex-cairo
-    EXPORT tinytex-cairoTargets
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
-)
-install(
-    FILES graphic_cairo.h
-    DESTINATION include/tinytex-cairo
-)
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file(
-    tinytex-cairoConfigVersion.cmake
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion
-)
-install(
-    EXPORT tinytex-cairoTargets
-    FILE tinytex-cairoTargets.cmake
-    NAMESPACE tinytex::
-    DESTINATION lib/cmake/tinytex-cairo
-)
-configure_file(tinytex-cairoConfig.cmake.in tinytex-cairoConfig.cmake @ONLY)
-install(
-    FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/tinytex-cairoConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/tinytex-cairoConfigVersion.cmake"
-    DESTINATION lib/cmake/tinytex-cairo
-)
+tinytex_install_target(tinytex-cairo)
+tinytex_install_headers(tinytex-cairo HEADERS graphic_cairo.h)

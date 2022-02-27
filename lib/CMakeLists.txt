@@ -125,10 +125,6 @@ endif ()
 # this option is exported to users, will write into file 'config.h'
 option(HAVE_AUTO_FONT_FIND "If enable auto font find" ${_HAVE_AUTO_FONT_FIND})
 
-if (HAVE_AUTO_FONT_FIND)
-    target_link_libraries(tinytex stdc++fs)
-endif ()
-
 # compile option: GLYPH_RENDER_TYPE the glyph render type
 # 0: use path and typeface both
 # 1: use path only
@@ -141,56 +137,16 @@ target_include_directories(tinytex PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINA
 ################
 # installation #
 ################
-install(
-    TARGETS tinytex
-    EXPORT tinytexTargets
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-    RUNTIME DESTINATION bin
+tinytex_install_target(tinytex)
+tinytex_install_headers(
+    tinytex
+    HEADERS ${CMAKE_CURRENT_BINARY_DIR}/config.h export.h tinytex.h tinytexapi.h
 )
-
-# public headers
-set(TINYTEX_INCLUDE "include/tinytex")
-install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/config.h export.h tinytex.h tinytexapi.h
-    DESTINATION ${TINYTEX_INCLUDE}
-)
-install(
-    FILES utils/types.h
-    DESTINATION "${TINYTEX_INCLUDE}/utils"
-)
-install(
-    FILES render/render.h
-    DESTINATION "${TINYTEX_INCLUDE}/render"
-)
-install(
-    FILES unimath/font_src.h
-    DESTINATION "${TINYTEX_INCLUDE}/unimath"
-)
-install(
-    FILES graphic/graphic.h graphic/font_style.h graphic/graphic_basic.h
-    DESTINATION "${TINYTEX_INCLUDE}/graphic"
-)
-
-# install targets
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file(
-    tinytexConfigVersion.cmake
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion
-)
-
-install(
-    EXPORT tinytexTargets
-    FILE tinytexTargets.cmake
-    NAMESPACE tinytex::
-    DESTINATION lib/cmake/tinytex
-)
-
-configure_file(tinytexConfig.cmake.in tinytexConfig.cmake @ONLY)
-install(
-    FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/tinytexConfig.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/tinytexConfigVersion.cmake"
-    DESTINATION lib/cmake/tinytex
+tinytex_install_headers(tinytex PREFIX utils HEADERS utils/types.h)
+tinytex_install_headers(tinytex PREFIX render HEADERS render/render.h)
+tinytex_install_headers(tinytex PREFIX unimath HEADERS unimath/font_src.h)
+tinytex_install_headers(
+    tinytex
+    PREFIX graphic
+    HEADERS graphic/graphic.h graphic/font_style.h graphic/graphic_basic.h
 )
