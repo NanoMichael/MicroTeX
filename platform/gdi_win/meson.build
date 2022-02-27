@@ -11,7 +11,7 @@ tinytex_gdi_lib = library('tinytex-gdi', gdi_src,
     include_directories: inc,
     dependencies: gdi_deps,
     version: meson.project_version(),
-    soversion: 0,
+    soversion: tinytex_api_version,
     install: true
 )
 

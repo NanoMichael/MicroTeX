@@ -4,8 +4,8 @@ add_library(tinytex-gdi SHARED graphic_win32.cpp)
 
 set_target_properties(
     tinytex-gdi PROPERTIES
-    VERSION ${VERSION_NAME}
-    SOVERSION ${VERSION_NUMBER}
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${TINYTEX_API_VERSION}
     CXX_VISIBILITY_PRESET hidden
 )
 

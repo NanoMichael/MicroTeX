@@ -15,7 +15,7 @@ tinytex_cairo_lib = library('tinytex-cairo', cairo_src,
     include_directories: inc,
     dependencies: cairo_deps,
     version: meson.project_version(),
-    soversion: 0,
+    soversion: tinytex_api_version,
     install: true
 )
 

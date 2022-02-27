@@ -55,7 +55,7 @@ configure_file(
 tinytex_lib = library('tinytex', src,
 	include_directories: inc,
 	version: meson.project_version(),
-	soversion: 0,
+	soversion: tinytex_api_version,
 	install: true
 )
 
