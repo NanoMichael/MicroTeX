@@ -9,8 +9,6 @@ add_executable(
 
 set_target_properties(
     tinytex-wasm PROPERTIES
-    VERSION ${PROJECT_VERSION}
-    SOVERSION ${TINYTEX_API_VERSION}
     CXX_VISIBILITY_PRESET hidden
 )
 
