@@ -1,4 +1,16 @@
-function(TINYTEX_INSTALL TARGET)
+function(TINYTEX_INSTALL_HEADERS TARGET)
+    cmake_parse_arguments(H " " "PREFIX" "HEADERS" ${ARGN})
+    foreach (X IN ITEMS ${H_HEADERS})
+        if (H_PREFIX)
+            set(_DST "include/${TARGET}/${H_PREFIX}")
+        else ()
+            set(_DST "include/${TARGET}")
+        endif ()
+        install(FILES ${X} DESTINATION ${_DST})
+    endforeach ()
+endfunction()
+
+function(TINYTEX_INSTALL_TARGET TARGET)
     install(
         TARGETS ${TARGET}
         EXPORT ${TARGET}Targets
