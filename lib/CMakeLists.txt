@@ -141,7 +141,6 @@ target_include_directories(tinytex PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINA
 ################
 # installation #
 ################
-
 install(
     TARGETS tinytex
     EXPORT tinytexTargets

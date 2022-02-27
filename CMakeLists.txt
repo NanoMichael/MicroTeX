@@ -48,6 +48,8 @@ if (HAVE_LOG)
     add_definitions(-DHAVE_LOG)
 endif ()
 
+include(TinyTeXInstall.cmake)
+
 add_subdirectory(lib)
 
 file(COPY res DESTINATION .)
