@@ -1,10 +1,8 @@
 #ifndef TINYTEX_SAMPLES_H
 #define TINYTEX_SAMPLES_H
 
-#include <algorithm>
-#include <fstream>
-#include "tinytex.h"
-#include "utils/utf.h"
+#include <string>
+#include <vector>
 
 namespace tinytex {
 
