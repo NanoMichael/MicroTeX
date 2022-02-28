@@ -41,8 +41,8 @@ src += render_src
 
 tinytex_version = meson.project_version().split('.')
 configure_file(
-    input: 'config.h.in',
-    output: 'config.h',
+    input: 'tinytexconfig.h.in',
+    output: 'tinytexconfig.h',
     configuration: {
         'PROJECT_VERSION_MAJOR': tinytex_version[0],
         'PROJECT_VERSION_MINOR': tinytex_version[1],
@@ -77,7 +77,7 @@ endif
 
 if install_headerfiles
 	install_headers([
-		'export.h',
+		'tinytexexport.h',
 		'tinytex.h'
 	], subdir: 'tinytex')
 endif

@@ -122,7 +122,7 @@ if (WASM)
 endif ()
 
 # compile option: HAVE_AUTO_FONT_FIND if enable auto font find
-# this option is exported to users, will write into file 'config.h'
+# this option is exported to users, will write into file 'tinytexconfig.h'
 option(HAVE_AUTO_FONT_FIND "If enable auto font find" ${_HAVE_AUTO_FONT_FIND})
 
 # compile option: GLYPH_RENDER_TYPE the glyph render type
@@ -131,7 +131,7 @@ option(HAVE_AUTO_FONT_FIND "If enable auto font find" ${_HAVE_AUTO_FONT_FIND})
 # 2: use typeface only
 target_compile_definitions(tinytex PRIVATE -DGLYPH_RENDER_TYPE=${_GLYPH_RENDER_TYPE})
 
-configure_file(config.h.in config.h @ONLY)
+configure_file(tinytexconfig.h.in tinytexconfig.h @ONLY)
 target_include_directories(tinytex PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
 
 ################
@@ -140,7 +140,7 @@ target_include_directories(tinytex PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINA
 tinytex_install_target(tinytex)
 tinytex_install_headers(
     tinytex
-    HEADERS ${CMAKE_CURRENT_BINARY_DIR}/config.h export.h tinytex.h tinytexapi.h
+    HEADERS ${CMAKE_CURRENT_BINARY_DIR}/config.h tinytexexport.h tinytex.h tinytexapi.h
 )
 tinytex_install_headers(tinytex PREFIX utils HEADERS utils/types.h)
 tinytex_install_headers(tinytex PREFIX render HEADERS render/render.h)

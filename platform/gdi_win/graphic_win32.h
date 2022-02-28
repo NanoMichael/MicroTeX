@@ -1,7 +1,7 @@
 #ifndef GRAPHIC_WIN32_H_INCLUDED
 #define GRAPHIC_WIN32_H_INCLUDED
 
-#include "export.h"
+#include "tinytexexport.h"
 #include "graphic/graphic.h"
 #include <map>
 

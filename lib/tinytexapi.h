@@ -3,8 +3,8 @@
 
 /** All-in-one header */
 
-#include "config.h"
-#include "export.h"
+#include "tinytexconfig.h"
+#include "tinytexexport.h"
 #include "tinytex.h"
 #include "utils/types.h"
 #include "render/render.h"

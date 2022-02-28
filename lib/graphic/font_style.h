@@ -1,7 +1,7 @@
 #ifndef TINYTEX_FONT_STYLE_H
 #define TINYTEX_FONT_STYLE_H
 
-#include "export.h"
+#include "tinytexexport.h"
 #include "utils/types.h"
 
 namespace tinytex {

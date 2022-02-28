@@ -2,3 +2,4 @@ node_modules/
 gen/
 dist/
 demo-dist/
+npm-debug.log
