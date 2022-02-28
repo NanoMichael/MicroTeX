@@ -140,7 +140,7 @@ target_include_directories(tinytex PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINA
 tinytex_install_target(tinytex)
 tinytex_install_headers(
     tinytex
-    HEADERS ${CMAKE_CURRENT_BINARY_DIR}/config.h tinytexexport.h tinytex.h tinytexapi.h
+    HEADERS ${CMAKE_CURRENT_BINARY_DIR}/tinytexconfig.h tinytexexport.h tinytex.h tinytexapi.h
 )
 tinytex_install_headers(tinytex PREFIX utils HEADERS utils/types.h)
 tinytex_install_headers(tinytex PREFIX render HEADERS render/render.h)

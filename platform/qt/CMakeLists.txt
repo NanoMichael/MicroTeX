@@ -12,7 +12,11 @@ set_target_properties(
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Gui Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Gui Widgets REQUIRED)
 
-target_include_directories(tinytex-qt PUBLIC .)
+target_include_directories(
+    tinytex-qt PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<INSTALL_INTERFACE:include/tinytex-qt>
+)
 
 target_compile_definitions(tinytex-qt PRIVATE -DTINYTEX_LIBRARY)
 target_link_libraries(
@@ -20,3 +24,6 @@ target_link_libraries(
     tinytex
     Qt${QT_VERSION_MAJOR}::Gui
 )
+
+tinytex_install_target(tinytex-qt)
+tinytex_install_headers(tinytex-qt HEADERS graphic_qt.h)
