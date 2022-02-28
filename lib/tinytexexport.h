@@ -1,5 +1,5 @@
-#ifndef TINYTEX_EXPORT_H
-#define TINYTEX_EXPORT_H
+#ifndef TINYTEX_TINYTEXEXPORT_H
+#define TINYTEX_TINYTEXEXPORT_H
 
 #ifdef _MSC_VER
 #include "vcruntime.h"
@@ -20,4 +20,4 @@
 #   define TINYTEX_EXPORT
 #endif
 
-#endif //TINYTEX_EXPORT_H
+#endif //TINYTEX_TINYTEXEXPORT_H

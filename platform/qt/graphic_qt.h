@@ -1,7 +1,7 @@
 #ifndef GRAPHIC_QT_H_INCLUDED
 #define GRAPHIC_QT_H_INCLUDED
 
-#include "export.h"
+#include "tinytexexport.h"
 #include "graphic/graphic.h"
 
 #include <string>
