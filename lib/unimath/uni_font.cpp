@@ -131,29 +131,53 @@ bool FontContext::hasMathFont() {
   return !_mathFonts.empty();
 }
 
+bool FontContext::isMathFontExists(const std::string& name) {
+  return _mainFonts.find(name) != _mainFonts.end();
+}
+
+bool FontContext::isMainFontExists(const std::string& familyName) {
+  return _mainFonts.find(familyName) != _mainFonts.end();
+}
+
+std::vector<std::string> FontContext::mathFonts() {
+  return keys(_mathFonts);
+}
+
+std::vector<std::string> FontContext::mainFonts() {
+  return keys(_mainFonts);
+}
+
 sptr<const OtfFont> FontContext::getFont(i32 id) {
   if (id >= _fonts.size() || id < 0) return nullptr;
   return _fonts[id];
 }
 
-void FontContext::selectMathFont(const string& name) {
+bool FontContext::selectMathFont(const string& name) {
   const auto it = _mathFonts.find(name);
   if (it == _mathFonts.end()) {
-    throw ex_invalid_param("Math font '" + name + "' does not exists!");
+#ifdef HAVE_LOG
+    loge("Math font '%s' does not exists!", name.c_str());
+#endif
+    return false;
   }
   _mathFont = it->second;
+  return true;
 }
 
-void FontContext::selectMainFont(const string& name) {
-  if (name.empty()) {
+bool FontContext::selectMainFont(const string& familyName) {
+  if (familyName.empty()) {
     _mainFont = nullptr;
-    return;
+    return false;
   }
-  const auto it = _mainFonts.find(name);
+  const auto it = _mainFonts.find(familyName);
   if (it == _mainFonts.end()) {
-    throw ex_invalid_param("Main font '" + name + "' does not exists!");
+#ifdef HAVE_LOG
+    loge("Main font '%s' does not exists!", familyName.c_str());
+#endif
+    return false;
   }
   _mainFont = it->second;
+  return true;
 }
 
 Char FontContext::getChar(const Symbol& symbol, FontStyle style) const {

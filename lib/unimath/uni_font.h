@@ -104,14 +104,29 @@ public:
   /** Check if has math font */
   static bool hasMathFont();
 
+  /** Test if given math font exists. */
+  static bool isMathFontExists(const std::string& name);
+
+  /** Test if given main font exists. */
+  static bool isMainFontExists(const std::string& familyName);
+
+  /** Get all the loaded math font names. */
+  static std::vector<std::string> mathFonts();
+
+  /** Get all the loaded main font family names. */
+  static std::vector<std::string> mainFonts();
+
   /** Get font-spec from given id, return nullptr if not found. */
   static sptr<const OtfFont> getFont(i32 id);
 
-  /** Select math font by the given version name */
-  void selectMathFont(const std::string& name);
+  /** Select math font by the given name, returns false if not found. */
+  bool selectMathFont(const std::string& name);
 
-  /** Select main font by the given version name, empty to use math font */
-  void selectMainFont(const std::string& name);
+  /**
+   * Select main font by the given name, empty to use math font and
+   * returns false, and returns false if given family can not be found.
+   */
+  bool selectMainFont(const std::string& familyName);
 
   /** Get the math font currently in use */
   inline const OtfFont& mathFont() const { return *_mathFont; }

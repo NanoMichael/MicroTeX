@@ -37,7 +37,7 @@ public:
   }
 
   /**
-   * Get the child match the given key or null if not found.
+   * Get the child match the given key, or null if not found.
    * 
    * @param key the key to match
    */

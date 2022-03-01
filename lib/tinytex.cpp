@@ -43,6 +43,9 @@ void TinyTeX::init(Init init) {
   const FontSrc** mathFontSrc = std::get_if<const FontSrc*>(&init);
   if (mathFontSrc != nullptr) {
     const auto name = FontContext::addMathFont(**mathFontSrc);
+    if (name.empty()) {
+      throw ex_invalid_param("Given font is not a math font!");
+    }
     _config->defaultMathFontName = name;
     return initialization();
   }
@@ -61,7 +64,7 @@ void TinyTeX::init(Init init) {
     if (mathfont) {
       _config->defaultMathFontName = mathfont.value();
     } else {
-      throw ex_invalid_param("no math font found by fontsense");
+      throw ex_invalid_param("No math font found by fontsense.");
     }
   }
 
@@ -72,6 +75,9 @@ void TinyTeX::init(Init init) {
 
 void TinyTeX::init(const FontSrc& mathFontSrc) {
   const auto name = FontContext::addMathFont(mathFontSrc);
+  if (name.empty()) {
+    throw ex_invalid_param("Given font is not a math font!");
+  }
   _config->defaultMathFontName = name;
   if (_config->isInited) return;
   _config->isInited = true;
@@ -88,25 +94,39 @@ void TinyTeX::release() {
 }
 
 void TinyTeX::addMainFont(
-  const std::string& name,
+  const std::string& familyName,
   const FontSrcList& srcs
 ) {
-  FontContext::addMainFont(name, srcs);
+  FontContext::addMainFont(familyName, srcs);
   if (_config->defaultMainFontName.empty()) {
-    _config->defaultMainFontName = name;
+    _config->defaultMainFontName = familyName;
   }
 }
 
-void TinyTeX::addMathFont(const FontSrc& src) {
-  FontContext::addMathFont(src);
+bool TinyTeX::addMathFont(const FontSrc& src) {
+  return !FontContext::addMathFont(src).empty();
 }
 
-void TinyTeX::setDefaultMathFont(const std::string& name) {
+bool TinyTeX::setDefaultMathFont(const std::string& name) {
+  if (!FontContext::isMathFontExists(name)) return false;
   _config->defaultMathFontName = name;
+  return true;
 }
 
-void TinyTeX::setDefaultMainFont(const std::string& name) {
-  _config->defaultMainFontName = name;
+bool TinyTeX::setDefaultMainFont(const std::string& name) {
+  if (name.empty() || FontContext::isMainFontExists(name)) {
+    _config->defaultMainFontName = name;
+    return true;
+  }
+  return false;
+}
+
+std::vector<std::string> TinyTeX::mathFontNames() {
+  return FontContext::mathFonts();
+}
+
+std::vector<std::string> TinyTeX::mainFontNames() {
+  return FontContext::mainFonts();
 }
 
 void TinyTeX::overrideTexStyle(bool enable, TexStyle style) {

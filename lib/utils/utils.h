@@ -8,6 +8,7 @@
 #include <locale>
 #include <sstream>
 #include <algorithm>
+#include <map>
 
 #define no_copy_assign(T) \
   T(const T&) = delete;   \
@@ -23,6 +24,15 @@ inline sptr<T> sptrOf(Args&& ... args) {
 template<typename T, typename... Args>
 inline uptr<T> uptrOf(Args&& ... args) {
   return std::make_unique<T>(std::forward<Args>(args)...);
+}
+
+template<typename K, typename V>
+inline std::vector<K> keys(const std::map<K, V>& map) {
+  std::vector<K> v;
+  for (auto& it : map) {
+    v.push_back(it.first);
+  }
+  return v;
 }
 
 /** Template version to find the max value of the given list */
