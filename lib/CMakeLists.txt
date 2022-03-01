@@ -11,6 +11,14 @@ if (MSVC)
     target_compile_definitions(tinytex PUBLIC -D_HAS_STD_BYTE=1)
 endif ()
 
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin" AND CMAKE_HOST_SYSTEM_VERSION VERSION_LESS 19)
+    # std::filesystem is not available under macOS 10.15
+    message(STATUS "Running on Mojave or lower, linking with Boost::filesystem")
+    find_package(Boost REQUIRED COMPONENTS filesystem)
+    target_link_libraries(tinytex PRIVATE Boost::filesystem)
+    target_compile_definitions(tinytex PRIVATE USE_BOOST_FILESYSTEM)
+endif ()
+
 set_target_properties(
     tinytex PROPERTIES
     VERSION ${PROJECT_VERSION}

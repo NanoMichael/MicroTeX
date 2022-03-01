@@ -8,10 +8,13 @@
 #include <cstdlib>
 #include <queue>
 #include <cstring>
+#ifdef USE_BOOST_FILESYSTEM
+#include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
+#else
 #include <filesystem>
-
 namespace fs = std::filesystem;
-
+#endif
 #define FONTDIR "tinytex"
 
 namespace tinytex {
