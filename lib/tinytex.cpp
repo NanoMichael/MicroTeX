@@ -55,8 +55,11 @@ void TinyTeX::init(Init init) {
     {
       const std::string* mathFontName = std::get_if<const std::string>(&init);
       if (mathFontName != nullptr) {
+        const auto& name = *mathFontName;
+        if (!FontContext::isMathFontExists(name)) {
+          throw ex_invalid_param("'" + name + "' does not exists!");
+        }
         _config->defaultMathFontName = *mathFontName;
-        FontContext().selectMathFont(_config->defaultMathFontName);
         return initialization();
       }
     }
