@@ -52,7 +52,25 @@ configure_file(
     format: 'cmake@'
 )
 
+fs_lib = []
+if cpp.has_link_argument('-lstdc++fs')
+	fs_lib += cpp.find_library('stdc++fs')
+elif cpp.has_link_argument('-lc++fs')
+	fs_lib += cpp.find_library('c++fs')
+elif cpp.has_link_argument('-lc++experimental')
+	fs_lib += cpp.find_library('c++experimental')
+endif
+
+if not cpp.has_header('filesystem')
+	if cpp.has_header('experimental/filesystem')
+		add_project_arguments('-DUSE_EXPERIMENTAL_FILESYSTEM', language: 'cpp')
+	else
+		error('outdated stdlib')
+	endif
+endif
+
 tinytex_lib = library('tinytex', src,
+	dependencies: fs_lib,
 	include_directories: inc,
 	version: meson.project_version(),
 	soversion: tinytex_api_version,
