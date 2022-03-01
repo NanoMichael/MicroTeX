@@ -535,6 +535,18 @@ int main(int argc, char* argv[]) {
     TinyTeX::init(init);
   }
 
+  printf("loaded math fonts:\n\t");
+  for (auto& str : TinyTeX::mathFontNames()) {
+    printf("%s, ", str.c_str());
+  }
+  printf("\n");
+
+  printf("loaded main fonts:\n\t");
+  for (auto& str: TinyTeX::mainFontNames()) {
+    printf("%s, ", str.c_str());
+  }
+  printf("\n");
+
   PlatformFactory::registerFactory("gtk", std::make_unique<PlatformFactory_cairo>());
   PlatformFactory::activate("gtk");
 

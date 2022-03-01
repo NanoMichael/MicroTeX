@@ -7,6 +7,7 @@
 #include "unimath/font_src.h"
 
 #include <string>
+#include <vector>
 
 #ifdef HAVE_AUTO_FONT_FIND
 
@@ -76,7 +77,7 @@ public:
    * Initialize the context with given math font source, at least we need a
    * math font to layout formulas.
    *
-   * @param mathFontSrc the font source to
+   * @param mathFontSrc the font source to load
    */
   static void init(const FontSrc& mathFontSrc);
 
@@ -86,11 +87,11 @@ public:
   /**
    * Add main font (collection) to context.
    *
-   * @param name the name of the font (collection)
-   * @param srcs font spec to load
+   * @param familyName the family name of the font (collection)
+   * @param srcs fonts to load
    */
   static void addMainFont(
-    const std::string& name,
+    const std::string& familyName,
     const FontSrcList& srcs
   );
 
@@ -98,29 +99,38 @@ public:
    * Add a math font to context.
    *
    * @param src font source to load
+   * @returns false if given font is not a math font
    */
-  static void addMathFont(const FontSrc& src);
+  static bool addMathFont(const FontSrc& src);
 
   /**
-   * Set the default math font to show formulas while math font
-   * was not given when parsing.
+   * Set the default math font to show formulas, if no math font was given
+   * when parsing, the context will use the given default math font. If it
+   * is not exists, this function takes no effect.
    *
-   * @param name the math font name, must exists or an `ex_invalid_param`
-   * will be thrown when parsing.
+   * @param name the math font name
+   * @returns true if given math font exists, false otherwise
    */
-  static void setDefaultMathFont(const std::string& name);
+  static bool setDefaultMathFont(const std::string& name);
 
   /**
-   * Set the default main font to show formulas while main font
-   * was not given when parsing. However, if no main font was loaded, the
-   * engine will use the math font to render the glyphs wrapped by command
-   * `text`.
+   * Set the default main font to show formulas, if no main font was given
+   * when parsing, the context will use the given default main font. However,
+   * if no main font was loaded, the context will use the math font to render
+   * the glyphs wrapped by command `text*`.
    *
-   * @param name the main font name, this function will takes no
-   * effect if it is empty, or if the font was not loaded, an
-   * `ex_invalid_param` will be thrown when parsing.
+   * @param name the main font name, if it is empty, that means fallback to
+   * the math font
+   * @returns true if given font exists (special case: always returns true if
+   * given name is empty), false otherwise.
    */
-  static void setDefaultMainFont(const std::string& name);
+  static bool setDefaultMainFont(const std::string& name);
+
+  /** Get all the loaded math font names. */
+  static std::vector<std::string> mathFontNames();
+
+  /** Get all the loaded main font names. */
+  static std::vector<std::string> mainFontNames();
 
   /**
    * Override the style to display formulas. If #enable is true, the '$', '$$',
