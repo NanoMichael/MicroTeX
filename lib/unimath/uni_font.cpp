@@ -132,7 +132,7 @@ bool FontContext::hasMathFont() {
 }
 
 bool FontContext::isMathFontExists(const std::string& name) {
-  return _mainFonts.find(name) != _mainFonts.end();
+  return _mathFonts.find(name) != _mathFonts.end();
 }
 
 bool FontContext::isMainFontExists(const std::string& familyName) {
