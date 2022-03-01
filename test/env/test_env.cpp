@@ -25,18 +25,17 @@ void show_char(c32 code, const Env& env, bool isMathMode = true) {
 }
 
 int main(int argc, char* argv[]) {
-  if (argc < 4) {
+  if (argc < 3) {
     fprintf(
       stderr,
       "Usage:\n"
-      "  <math font name> e.g.: xits\n"
       "  <clm file path>\n"
       "  <font file path>\n"
     );
     exit(1);
   }
   // load math font to context
-  FontSrcFile src{string(argv[1]), string(argv[2]), string(argv[3])};
+  FontSrcFile src{string(argv[1]), string(argv[2])};
   FontContext::addMathFont(src);
   // create a font context and env
   auto fc = sptrOf<FontContext>();
