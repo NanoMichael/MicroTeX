@@ -14,14 +14,13 @@ int main(int argc, char** argv) {
     fprintf(
       stderr,
       "Required options:\n"
-      "  <math font name>\n"
       "  <clm data file>\n"
       "  <math font file>\n"
       "  <samples file>\n"
     );
     return 1;
   }
-  const tinytex::FontSrcFile math{argv[1], argv[2], argv[3]};
+  const tinytex::FontSrcFile math{argv[1], argv[2]};
   tinytex::TinyTeX::init(&math);
 
   tinytex::PlatformFactory::registerFactory("qt", std::make_unique<tinytex::PlatformFactory_qt>());
@@ -29,7 +28,7 @@ int main(int argc, char** argv) {
 
   tinytex::TinyTeX::setRenderGlyphUsePath(true);
 
-  MainWindow win(nullptr, argv[4]);
+  MainWindow win(nullptr, argv[3]);
   win.show();
   int ret = app.exec();
 

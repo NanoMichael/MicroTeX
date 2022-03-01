@@ -42,8 +42,8 @@ void TinyTeX::init(Init init) {
 
   const FontSrc** mathFontSrc = std::get_if<const FontSrc*>(&init);
   if (mathFontSrc != nullptr) {
-    FontContext::addMathFont(**mathFontSrc);
-    _config->defaultMathFontName = (*mathFontSrc)->name;
+    const auto name = FontContext::addMathFont(**mathFontSrc);
+    _config->defaultMathFontName = name;
     return initialization();
   }
 
@@ -71,8 +71,8 @@ void TinyTeX::init(Init init) {
 #endif // HAVE_AUTO_FONT_FIND
 
 void TinyTeX::init(const FontSrc& mathFontSrc) {
-  FontContext::addMathFont(mathFontSrc);
-  _config->defaultMathFontName = mathFontSrc.name;
+  const auto name = FontContext::addMathFont(mathFontSrc);
+  _config->defaultMathFontName = name;
   if (_config->isInited) return;
   _config->isInited = true;
   NewCommandMacro::_init_();

@@ -70,7 +70,6 @@ int main(int argc, char** argv) {
   }
 
   tinytex::FontSrcFile math{
-    "xits",
     clmPath.toStdString(),
     mathFontPath.toStdString()
   };

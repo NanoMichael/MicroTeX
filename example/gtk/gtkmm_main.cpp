@@ -413,8 +413,6 @@ int runHelp() {
     "      config the max width of the graphics context, the default is 720 pixels; this option\n"
     "      has weak limits on the SVG images, thus the width of the SVG image may be wider than\n"
     "      the value defined by this option\n\n" B
-    "  -mathversion=[NAME]\n" R
-    "      the default math version name, default is 'dft'\n\n" B
     "  -mathfont=<FILE>\n" R
     "      the math font file to display formulas\n\n" B
     "  -clm=<FILE>\n" R
@@ -483,7 +481,6 @@ int main(int argc, char* argv[]) {
   bool isPerf = false;
   Headless h;
   std::optional<std::string> fontsense;
-  std::string mathVersionName = "dft";
   std::string mathFont, clmFile;
   std::string samplesFile;
   auto f = [&](const std::string& key, const std::string& value) {
@@ -491,8 +488,6 @@ int main(int argc, char* argv[]) {
       mathFont = value;
     } else if (key == "-clm") {
       clmFile = value;
-    } else if (key == "-mathversion") {
-      mathVersionName = value;
     } else if (key == "-samples") {
       samplesFile = value;
       h._samplesFile = value;
@@ -514,7 +509,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  if (!fontsense.has_value() && (mathVersionName.empty() || mathFont.empty() || clmFile.empty())) {
+  if (!fontsense.has_value() && (mathFont.empty() || clmFile.empty())) {
     printf(
       RED_ANSI
       "No math font or clm file was given, exit...\n"
@@ -535,7 +530,7 @@ int main(int argc, char* argv[]) {
       TinyTeX::init(init);
     }
   } else {
-    const FontSrcFile font = FontSrcFile{mathVersionName, clmFile, mathFont};
+    const FontSrcFile font = FontSrcFile{clmFile, mathFont};
     Init init = &font;
     TinyTeX::init(init);
   }

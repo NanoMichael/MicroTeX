@@ -86,17 +86,20 @@ public:
   /**
    * Add main font (collection) to context.
    *
-   * @param versionName the name of this font (collection)
+   * @param familyName the family name of this font (collection)
    * @param params font-spec to load, the name of the font-spec is the font
    * style, e.g: rm(stands for roman), bf(stands for bold) etc.
    */
   static void addMainFont(
-    const std::string& versionName,
+    const std::string& familyName,
     const FontSrcList& srcs
   );
 
-  /** Add math font to context. */
-  static void addMathFont(const FontSrc& src);
+  /**
+   * Add a math font to context. Returns the name of the loaded font, or an
+   * empty string if given font is not a math font.
+   */
+  static std::string addMathFont(const FontSrc& src);
 
   /** Check if has math font */
   static bool hasMathFont();

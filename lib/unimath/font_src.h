@@ -13,15 +13,10 @@ class Otf;
 /** Source to load font. */
 class TINYTEX_EXPORT FontSrc {
 public:
-  /**
-   * The name(or style name if this font belongs to a font collection)
-   * of this font.
-   */
-  const std::string name;
   /** The font file path, may be empty if glyphs are drawn by graphical-paths. */
   const std::string fontFile;
 
-  FontSrc(std::string name, std::string fontFile);
+  explicit FontSrc(std::string fontFile);
 
   virtual sptr<Otf> loadOtf() const = 0;
 
@@ -33,8 +28,7 @@ class TINYTEX_EXPORT FontSrcFile : public FontSrc {
 public:
   const std::string clmFile;
 
-  FontSrcFile(
-    std::string name,
+  explicit FontSrcFile(
     std::string clmFile,
     std::string fontFile = ""
   );
@@ -49,7 +43,6 @@ public:
   const u8* data;
 
   FontSrcData(
-    std::string name,
     size_t len,
     const u8* data,
     std::string fontFile = ""
@@ -60,9 +53,9 @@ public:
 
 class FontSrcSense : public FontSrc {
 public:
-	Otf* clm_file;
+	Otf* otf;
 
-	FontSrcSense(Otf* clm_file, std::string font_file);
+	FontSrcSense(Otf* otf, std::string fontFile = "");
 
 	sptr<Otf> loadOtf() const override;
 };

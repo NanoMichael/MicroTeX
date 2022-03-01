@@ -103,8 +103,8 @@ sptr<FontFamily> FontContext::getOrCreateFontFamily(const std::string& version) 
   return f;
 }
 
-void FontContext::addMainFont(const std::string& versionName, const FontSrcList& srcs) {
-  auto f = getOrCreateFontFamily(versionName);
+void FontContext::addMainFont(const std::string& familyName, const FontSrcList& srcs) {
+  auto f = getOrCreateFontFamily(familyName);
   for (const auto& src : srcs) {
     auto spec = src->loadOtf();
     auto otf = sptrOf<OtfFont>(_lastId++, spec, src->fontFile);
@@ -113,19 +113,18 @@ void FontContext::addMainFont(const std::string& versionName, const FontSrcList&
   }
 }
 
-void FontContext::addMathFont(const FontSrc& src) {
-  const auto& name = src.name;
-  if (_mathFonts.find(name) != _mathFonts.end()) {
-    // already loaded
-    return;
-  }
+string FontContext::addMathFont(const FontSrc& src) {
   auto spec = src.loadOtf();
   if (!spec->isMathFont()) {
-    throw ex_invalid_param("'" + src.name + "' is not a math font.");
+#ifdef HAVE_LOG
+    loge("'%s' is not a math font.\n", spec->name().c_str());
+#endif
+    return "";
   }
   auto otf = sptrOf<OtfFont>(_lastId++, spec, src.fontFile);
   _fonts.push_back(otf);
-  _mathFonts[name] = otf;
+  _mathFonts[spec->name()] = otf;
+  return spec->name();
 }
 
 bool FontContext::hasMathFont() {
