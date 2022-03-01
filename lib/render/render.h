@@ -4,8 +4,6 @@
 #include "tinytexexport.h"
 #include "graphic/graphic.h"
 
-#include <functional>
-
 namespace tinytex {
 
 class Box;

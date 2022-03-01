@@ -1,10 +1,11 @@
 #include "render.h"
-
 #include "atom/atom.h"
 #include "core/split.h"
 #include "core/debug_config.h"
 #include "env/env.h"
 #include "box/box_single.h"
+
+#include <functional>
 
 using namespace std;
 using namespace tinytex;

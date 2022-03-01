@@ -128,20 +128,19 @@ int main(int argc, char* argv[]) {
     fprintf(
       stderr,
       "Required options:\n"
-      "  <math font name>\n"
       "  <clm data file>\n"
       "  <math font file>\n"
       "  <samples file>\n"
     );
     return 1;
   }
-  const tinytex::FontSrcFile math{argv[1], argv[2], argv[3]};
+  const tinytex::FontSrcFile math{argv[1], argv[2]};
   tinytex::TinyTeX::init(&math);
 
   tinytex::PlatformFactory::registerFactory("none", std::make_unique<tinytex::PlatformFactory_none>());
   tinytex::PlatformFactory::activate("none");
 
-  tinytex::Samples samples(argv[4]);
+  tinytex::Samples samples(argv[3]);
   for (int i = 0; i < samples.count(); i++) {
     auto r = tinytex::TinyTeX::parse(samples.next(), 720, 20, 20 / 3.f, tinytex::black);
     tinytex::Graphics2D_none g2;

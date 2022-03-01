@@ -3,20 +3,18 @@
 
 using namespace tinytex;
 
-FontSrc::FontSrc(std::string name, std::string fontFile)
-  : name(std::move(name)),
-    fontFile(std::move(fontFile)) {}
+FontSrc::FontSrc(std::string fontFile) : fontFile(std::move(fontFile)) {}
 
-FontSrcFile::FontSrcFile(std::string name, std::string clmFile, std::string fontFile)
-  : FontSrc(std::move(name), std::move(fontFile)),
+FontSrcFile::FontSrcFile(std::string clmFile, std::string fontFile)
+  : FontSrc(std::move(fontFile)),
     clmFile(std::move(clmFile)) {}
 
 sptr<Otf> FontSrcFile::loadOtf() const {
   return sptr<Otf>(Otf::fromFile(clmFile.c_str()));
 }
 
-FontSrcData::FontSrcData(std::string name, size_t len, const u8* data, std::string fontFile)
-  : FontSrc(std::move(name), std::move(fontFile)),
+FontSrcData::FontSrcData(size_t len, const u8* data, std::string fontFile)
+  : FontSrc(std::move(fontFile)),
     len(len),
     data(data) {}
 
@@ -24,10 +22,10 @@ sptr<Otf> FontSrcData::loadOtf() const {
   return sptr<Otf>(Otf::fromData(len, data));
 }
 
-FontSrcSense::FontSrcSense(Otf* clm_file, std::string font_file)
-	: FontSrc(clm_file->name(), std::move(font_file)),
-	  clm_file(clm_file) {}
+FontSrcSense::FontSrcSense(Otf* otf, std::string fontFile)
+  : FontSrc(std::move(fontFile)),
+    otf(otf) {}
 
 sptr<Otf> FontSrcSense::loadOtf() const {
-	return sptr<Otf>(clm_file);
+  return sptr<Otf>(otf);
 }

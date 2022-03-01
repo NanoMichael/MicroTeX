@@ -130,27 +130,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
 }  // WndProc
 
 void init() {
-  if (__argc < 6) {
-    //  Required options:
-    //    <math font name>
-    //    <math clm data file>
-    //    <math font file>
-    //    <samples file>
+  if (__argc < 5) {
     fprintf(
       stderr,
       "Required options:\n"
-      "  <math font name>\n"
       "  <clm data file>\n"
       "  <math font file>\n"
       "  <samples file>\n"
     );
     exit(1);
   }
-  const FontSrcFile math{__argv[2], __argv[3], __argv[4]};
+  const FontSrcFile math{__argv[2], __argv[3]};
   TinyTeX::init(&math);
   PlatformFactory::registerFactory("gdi", std::make_unique<PlatformFactory_gdi>());
   PlatformFactory::activate("gdi");
-  _samples = new Samples(__argv[5]);
+  _samples = new Samples(__argv[4]);
   _render = TinyTeX::parse(
     "\\text{Hello from Tiny\\kern-.1em\\TeX, have fun! Press Ctrl + Enter on editor to show formulas.}",
     720, _size, _size / 3.f, _color
