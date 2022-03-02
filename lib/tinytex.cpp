@@ -33,58 +33,54 @@ std::string TinyTeX::version() {
 
 #ifdef HAVE_AUTO_FONT_FIND
 
-void TinyTeX::init(Init init) {
-  auto initialization = [&]() {
-    if (_config->isInited) return;
-    _config->isInited = true;
-    NewCommandMacro::_init_();
-  };
+struct InitVisitor {
 
-  const FontSrc** mathFontSrc = std::get_if<const FontSrc*>(&init);
-  if (mathFontSrc != nullptr) {
-    const auto name = FontContext::addMathFont(**mathFontSrc);
+  string operator()(const FontSrc* src) {
+    auto name = FontContext::addMathFont(*src);
     if (name.empty()) {
       throw ex_invalid_param("Given font is not a math font!");
     }
-    _config->defaultMathFontName = name;
-    return initialization();
+    return name;
   }
 
-  {
-    auto mathfont = fontsenseLookup();
-    {
-      const std::string* mathFontName = std::get_if<const std::string>(&init);
-      if (mathFontName != nullptr) {
-        const auto& name = *mathFontName;
-        if (!FontContext::isMathFontExists(name)) {
-          throw ex_invalid_param("'" + name + "' does not exists!");
-        }
-        _config->defaultMathFontName = *mathFontName;
-        return initialization();
-      }
+  string operator()(const string& name) {
+    fontsenseLookup();
+    if (!FontContext::isMathFontExists(name)) {
+      throw ex_invalid_param("Math font '" + name + "' does not exists!");
     }
-
-    if (mathfont) {
-      _config->defaultMathFontName = mathfont.value();
-    } else {
-      throw ex_invalid_param("No math font found by fontsense.");
-    }
+    return name;
   }
 
-  return initialization();
+  string operator()(const InitFontSenseAuto& sense) {
+    auto mathFont = fontsenseLookup();
+    if (!mathFont.has_value()) {
+      throw ex_invalid_param("No math font found by font-sense.");
+    }
+    return mathFont.value();
+  }
+};
+
+string TinyTeX::init(const Init& init) {
+  if (_config->isInited) return "";
+  auto name = std::visit(InitVisitor(), init);
+  _config->defaultMathFontName = name;
+  _config->isInited = true;
+  NewCommandMacro::_init_();
+  return name;
 }
 
 #endif // HAVE_AUTO_FONT_FIND
 
-void TinyTeX::init(const FontSrc& mathFontSrc) {
-  const auto name = FontContext::addMathFont(mathFontSrc);
+string TinyTeX::init(const FontSrc& mathFontSrc) {
+  if (_config->isInited) return "";
+  const auto& name = FontContext::addMathFont(mathFontSrc);
   if (name.empty()) {
     throw ex_invalid_param("Given font is not a math font!");
   }
   _config->defaultMathFontName = name;
-  if (_config->isInited) return;
   _config->isInited = true;
   NewCommandMacro::_init_();
+  return name;
 }
 
 bool TinyTeX::isInited() {
@@ -106,8 +102,8 @@ void TinyTeX::addMainFont(
   }
 }
 
-bool TinyTeX::addMathFont(const FontSrc& src) {
-  return !FontContext::addMathFont(src).empty();
+string TinyTeX::addMathFont(const FontSrc& src) {
+  return FontContext::addMathFont(src);
 }
 
 bool TinyTeX::setDefaultMathFont(const std::string& name) {

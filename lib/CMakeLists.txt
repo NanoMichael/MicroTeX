@@ -125,6 +125,10 @@ endif ()
 # this option is exported to users, will write into file 'tinytexconfig.h'
 option(HAVE_AUTO_FONT_FIND "If enable auto font find" ${_HAVE_AUTO_FONT_FIND})
 
+if (HAVE_AUTO_FONT_FIND)
+    target_link_libraries(tinytex stdc++fs)
+endif ()
+
 # compile option: GLYPH_RENDER_TYPE the glyph render type
 # 0: use path and typeface both
 # 1: use path only

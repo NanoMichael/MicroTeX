@@ -51,15 +51,6 @@ public:
   sptr<Otf> loadOtf() const override;
 };
 
-class FontSrcSense : public FontSrc {
-public:
-	Otf* otf;
-
-	FontSrcSense(Otf* otf, std::string fontFile = "");
-
-	sptr<Otf> loadOtf() const override;
-};
-
 using FontSrcList = std::vector<std::unique_ptr<FontSrc>>;
 
 }

@@ -454,7 +454,7 @@ sptr<Atom> Parser::processEscape() {
   auto rm = sptrOf<FontStyleAtom>(
     FontStyle::tt,
     false,
-    Formula("\\text{{\\backslash}" + cmd + "}")._root
+    Formula("\\mathtt{{\\backslash}" + cmd + "}")._root
   );
   return sptrOf<ColorAtom>(rm, TRANSPARENT, RED);
 }
