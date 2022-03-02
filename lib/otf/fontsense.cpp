@@ -15,6 +15,19 @@ namespace fs = std::filesystem;
 
 namespace tinytex {
 
+class FontSrcSense : public FontSrc {
+public:
+  Otf* otf;
+
+  FontSrcSense(Otf* otf, std::string fontFile = "")
+    : FontSrc(std::move(fontFile)),
+      otf(otf) {}
+
+  sptr<Otf> loadOtf() const override {
+    return sptr<Otf>(otf);
+  }
+};
+
 // Map<FileStem, <OTF File, CLM File>>
 typedef std::map<std::string, std::pair<char*, char*>> font_paths_t;
 

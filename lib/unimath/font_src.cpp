@@ -21,11 +21,3 @@ FontSrcData::FontSrcData(size_t len, const u8* data, std::string fontFile)
 sptr<Otf> FontSrcData::loadOtf() const {
   return sptr<Otf>(Otf::fromData(len, data));
 }
-
-FontSrcSense::FontSrcSense(Otf* otf, std::string fontFile)
-  : FontSrc(std::move(fontFile)),
-    otf(otf) {}
-
-sptr<Otf> FontSrcSense::loadOtf() const {
-  return sptr<Otf>(otf);
-}

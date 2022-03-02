@@ -8,7 +8,7 @@ namespace tinytex {
 
 /** Enum represents all supported font style */
 enum class FontStyle : u16 {
-  none = 0,
+  none = 0,        // unspecified, choose an appropriate style depends on context
   rm = 0b1,        // roman
   bf = 0b10,       // bold
   it = 0b100,      // italic

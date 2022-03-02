@@ -68,8 +68,10 @@ public:
   /**
    * Initialize TinyTeX context by given Init, at least we need a math font
    * to layout formulas.
+   *
+   * @returns the math font name
    */
-  static void init(Init init);
+  static std::string init(const Init& init);
 
 #endif // HAVE_AUTO_FONT_FIND
 
@@ -78,8 +80,9 @@ public:
    * math font to layout formulas.
    *
    * @param mathFontSrc the font source to load
+   * @returns the math font name
    */
-  static void init(const FontSrc& mathFontSrc);
+  static std::string init(const FontSrc& mathFontSrc);
 
   /** Check if context is initialized */
   static bool isInited();
@@ -99,9 +102,9 @@ public:
    * Add a math font to context.
    *
    * @param src font source to load
-   * @returns false if given font is not a math font
+   * @returns the math font name, empty if given font is not a math font
    */
-  static bool addMathFont(const FontSrc& src);
+  static std::string addMathFont(const FontSrc& src);
 
   /**
    * Set the default math font to show formulas, if no math font was given
