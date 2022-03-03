@@ -14,6 +14,7 @@ OtfFont::OtfFont(i32 id, sptr<const Otf> spec, std::string fontFile) noexcept
 
 /*********************************************************************************/
 
+
 FontStyle FontFamily::fontStyleOf(const std::string& name) {
   // TODO: more composed styles
   static const map<string, FontStyle> nameStyle{
@@ -32,11 +33,11 @@ FontStyle FontFamily::fontStyleOf(const std::string& name) {
   return it->second;
 }
 
-void FontFamily::add(const std::string& styleName, const sptr<const OtfFont>& font) {
-  const auto style = fontStyleOf(styleName);
+void FontFamily::add(const sptr<const OtfFont>& font) {
+  const auto style = static_cast<FontStyle>(font->otfSpec->style());
 #ifdef HAVE_LOG
   if (_styles.find(style) != _styles.end()) {
-    loge("the style '%s' has a font already, but you can replace it anyway\n", styleName.c_str());
+    loge("the style '%x' has a font already, but you can replace it anyway\n", style);
   }
 #endif
   _styles[style] = font;
@@ -108,7 +109,7 @@ void FontContext::addMainFont(const std::string& versionName, const FontSrcList&
     auto spec = src->loadOtf();
     auto otf = sptrOf<OtfFont>(_lastId++, spec, src->fontFile);
     _fonts.push_back(otf);
-    f->add(src->name, otf);
+    f->add(otf);
   }
 }
 

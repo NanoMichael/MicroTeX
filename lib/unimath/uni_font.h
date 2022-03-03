@@ -38,8 +38,8 @@ public:
   /** Get the FontStyle from the given style name */
   static FontStyle fontStyleOf(const std::string& name);
 
-  /** Add a font to this family with given style */
-  void add(const std::string& styleName, const sptr<const OtfFont>& font);
+  /** Add a font to this family with it's given style */
+  void add(const sptr<const OtfFont>& font);
 
   /** Get the font corresponding to the given style, return null if not found */
   sptr<const OtfFont> get(FontStyle style) const;
