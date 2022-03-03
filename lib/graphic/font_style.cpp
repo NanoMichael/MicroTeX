@@ -4,6 +4,14 @@
 using namespace tinytex;
 
 FontStyle tinytex::findClosestStyle(const FontStyle src) {
+  u16 x = static_cast<u16>(src);
+  // roman or none
+  if (x == 0 || x == 1) return src;
+  // the last bit is 1, that means added a roman style, remove it
+  if ((x & 0x1) == 1) x &= 0xfffe;
+  // single bit, that means a single style
+  if ((x & (x - 1)) == 0) return static_cast<FontStyle>(x);
+  // find the max match from composed styles
   static const FontStyle composedStyles[]{
     FontStyle::bfit, FontStyle::bfcal, FontStyle::bffrak,
     FontStyle::sfbf, FontStyle::sfit, FontStyle::sfbfit,
@@ -11,7 +19,7 @@ FontStyle tinytex::findClosestStyle(const FontStyle src) {
   u32 similarity = 0;
   FontStyle target = FontStyle::none;
   for (FontStyle style: composedStyles) {
-    const auto n = countSetBits(static_cast<u16>(src) & static_cast<u16>(style));
+    const auto n = countSetBits(x & static_cast<u16>(style));
     if (n > similarity) {
       target = style;
       similarity = n;

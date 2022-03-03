@@ -46,8 +46,13 @@ void FontFamily::add(const sptr<const OtfFont>& font) {
 sptr<const OtfFont> FontFamily::get(FontStyle style) const {
   const auto it = _styles.find(style);
   if (it == _styles.end()) {
-    const auto rm = _styles.find(FontStyle::rm);
-    return rm == _styles.end() ? nullptr : rm->second;
+    FontStyle closest = findClosestStyle(style);
+    const auto t = _styles.find(closest);
+    if (t == _styles.end()) {
+      const auto rm = _styles.find(FontStyle::rm);
+      return rm == _styles.end() ? nullptr : rm->second;
+    }
+    return t->second;
   }
   return it->second;
 }
