@@ -699,8 +699,8 @@ def parse_otf(file_path, have_glyph_path, output_file_path, userstyle=""):
         f.write(struct.pack('c', bytes('c', 'ascii')))
         f.write(struct.pack('c', bytes('l', 'ascii')))
         f.write(struct.pack('c', bytes('m', 'ascii')))
-        # current major version 3
-        f.write(struct.pack('!H', 3))
+        # current major version 4
+        f.write(struct.pack('!H', 4))
         # minor version, if support glyph path
         f.write(struct.pack('B', 2 if have_glyph_path else 1))
         f.write(struct.pack(str(len(name) + 1) + 's', bytes(name, 'utf-8')))
