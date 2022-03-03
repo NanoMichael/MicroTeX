@@ -121,6 +121,7 @@ void CLMReader::readMeta(Otf& font, BinaryReader& reader) {
   font._name = std::string(reader.readString());
   font._family = std::string(reader.readString());
   font._isMathFont = reader.read<bool>();
+  font._style = reader.read<u16>();
   font._em = reader.read<u16>();
   font._xHeight = reader.read<u16>();
   font._ascent = reader.read<u16>();

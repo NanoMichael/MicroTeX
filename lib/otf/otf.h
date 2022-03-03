@@ -49,6 +49,8 @@ private:
   std::string _name;
   std::string _family;
 
+  u16 _style;
+
   u16 _unicodeCount = 0;
   u32* _unicodes = nullptr;
   u16* _unicodeGlyphs = nullptr;
@@ -88,9 +90,11 @@ public:
   /** Get the full postscript name of this font */
   inline std::string& family() { return _family; }
 
-
   /** Test if this font is a math font */
   inline bool isMathFont() const { return _isMathFont; }
+
+  /** Get the font style in clm (short enum see [lib/graphics/font_style.h: FontStyle]) format **/
+  inline u16 style() const { return _style; }
 
   /** Get the char count covered by this font */
   inline u16 unicodesCount() const { return _unicodeCount; }

@@ -587,7 +587,62 @@ def write_glyphs(f, glyphs, glyph_name_id_map, is_math_font, have_glyph_path):
             write_path(glyph[3])
 
 
-def parse_otf(file_path, have_glyph_path, output_file_path):
+def parse_fontstyle(font, userstyle):
+    NONE = 0b00000000
+    RM =   0b00000001
+    BF =   0b00000010
+    IT =   0b00000100
+    CAL =  0b00001000
+    FRAK = 0b00010000
+    BB =   0b00100000
+    SF =   0b01000000
+    TT =   0b10000000
+
+    style = NONE
+
+    if (userstyle == None or userstyle == ""):
+        if (font.os2_weight >= 700):
+            style |= BF
+
+        if (font.os2_stylemap == 0x40):
+            style |= RM
+        if (font.os2_stylemap == 0x21):
+            style |= (BF | IT)
+        if (font.os2_stylemap == 0x20):
+            style |= BF
+        if (font.os2_stylemap == 0x01):
+            style |= IT
+
+        if (font.macstyle != -1):
+            if (font.macstyle & 0b01 == 0b01):
+                style |= BF
+            if (font.macstyle & 0b10 == 0b10):
+                style |= IT
+
+        if (font.fullname.upper().__contains__("MONO")):
+            style |= TT
+    else:
+        userstyles = userstyle.split(",")
+        if ("rm" in userstyles):
+            style |= RM
+        if ("bf" in userstyles):
+            style |= BF
+        if ("it" in userstyles):
+            style |= IT
+        if ("cal" in userstyles):
+            style |= CAL
+        if ("frak" in userstyles):
+            style |= FRAK
+        if ("bb" in userstyles):
+            style |= BB
+        if ("sf" in userstyles):
+            style |= SF
+        if ("tt" in userstyles):
+            style |= TT
+
+    return style
+
+def parse_otf(file_path, have_glyph_path, output_file_path, userstyle = ""):
     print("parsing font " + file_path + ", please wait...")
     font = fontforge.open(file_path)
 
@@ -633,6 +688,7 @@ def parse_otf(file_path, have_glyph_path, output_file_path):
 
     name = font.fullname
     family = font.familyname
+    style = parse_fontstyle(font, userstyle)
     em = font.em
     xheight = font.xHeight
     ascent = font.ascent
@@ -649,6 +705,7 @@ def parse_otf(file_path, have_glyph_path, output_file_path):
         f.write(struct.pack(str(len(name)+1) + 's', bytes(name, 'utf-8')))
         f.write(struct.pack(str(len(family)+1) + 's', bytes(family, 'utf-8')))
         f.write(struct.pack('?', is_math_font))
+        f.write(struct.pack('!H', style))
         f.write(struct.pack('!H', em))
         f.write(struct.pack('!H', int(xheight)))
         f.write(struct.pack('!H', ascent))
@@ -710,10 +767,14 @@ def main():
             sys.argv[4]
         )
     else:
+        userstyle = ""
+        if (len(sys.argv) > 5):
+            userstyle = sys.argv[5]
         parse_otf(
             sys.argv[2],
             sys.argv[3] == 'true',
-            sys.argv[4]
+            sys.argv[4],
+            userstyle
         )
         print("The generated clm data file was saved into file: " + sys.argv[4])
 
