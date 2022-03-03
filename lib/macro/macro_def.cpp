@@ -200,8 +200,7 @@ map<string, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_mathds, "mathds"),
     mac(1, macro_bold, "bold"),
     mac(1, macro_bold, "boldsymbol"),
-    mac(2, macro_addmathfont, "addmathfont"),
-    mac(3, macro_addmainfont, "addmainfont"),
+    mac(2, macro_addfont, "addfont"),
   // endregion
   // region nested styles
     mac(1, macro_text, "mbox"),

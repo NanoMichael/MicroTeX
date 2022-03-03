@@ -148,7 +148,7 @@ tinytex_install_headers(
 )
 tinytex_install_headers(tinytex PREFIX utils HEADERS utils/types.h)
 tinytex_install_headers(tinytex PREFIX render HEADERS render/render.h)
-tinytex_install_headers(tinytex PREFIX unimath HEADERS unimath/font_src.h)
+tinytex_install_headers(tinytex PREFIX unimath HEADERS unimath/font_src.h unimath/font_meta.h)
 tinytex_install_headers(
     tinytex
     PREFIX graphic

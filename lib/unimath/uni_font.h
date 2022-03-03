@@ -11,6 +11,7 @@
 #include "unimath/font_src.h"
 #include "unimath/uni_char.h"
 #include "unimath/uni_symbol.h"
+#include "unimath/font_meta.h"
 
 namespace tinytex {
 
@@ -58,7 +59,7 @@ private:
   sptr<FontFamily> _mainFont = nullptr;
   sptr<const OtfFont> _mathFont = nullptr;
 
-  static sptr<FontFamily> getOrCreateFontFamily(const std::string& version);
+  static sptr<FontFamily> getOrCreateFontFamily(const std::string& family);
 
 public:
   no_copy_assign(FontContext);
@@ -83,23 +84,8 @@ public:
    */
   static FontStyle mainFontStyleOf(const std::string& name);
 
-  /**
-   * Add main font (collection) to context.
-   *
-   * @param familyName the family name of this font (collection)
-   * @param params font-spec to load, the name of the font-spec is the font
-   * style, e.g: rm(stands for roman), bf(stands for bold) etc.
-   */
-  static void addMainFont(
-    const std::string& familyName,
-    const FontSrcList& srcs
-  );
-
-  /**
-   * Add a math font to context. Returns the name of the loaded font, or an
-   * empty string if given font is not a math font.
-   */
-  static std::string addMathFont(const FontSrc& src);
+  /** Add a font to context, returns its meta info. */
+  static FontMeta addFont(const FontSrc& src);
 
   /** Check if has math font */
   static bool hasMathFont();
@@ -109,6 +95,9 @@ public:
 
   /** Test if given main font exists. */
   static bool isMainFontExists(const std::string& familyName);
+
+  /** Get math font meta info by given font name. */
+  static FontMeta mathFontMetaOf(const std::string& name);
 
   /** Get all the loaded math font names. */
   static std::vector<std::string> mathFonts();

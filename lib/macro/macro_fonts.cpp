@@ -22,16 +22,8 @@ macro(intertext) {
   return nullptr;
 }
 
-macro(addmathfont) {
-  TinyTeX::addMathFont(FontSrcFile(args[1], args[2]));
-  return nullptr;
-}
-
-macro(addmainfont) {
-  auto src = std::make_unique<FontSrcFile>(args[2], args[3]);
-  FontSrcList srcs;
-  srcs.push_back(std::move(src));
-  TinyTeX::addMainFont(args[2], srcs);
+macro(addfont) {
+  TinyTeX::addFont(FontSrcFile(args[1], args[2]));
   return nullptr;
 }
 

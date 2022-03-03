@@ -78,6 +78,7 @@ endif
 if install_headerfiles
 	install_headers([
 		'tinytexexport.h',
-		'tinytex.h'
+		'tinytex.h',
+		'tinytexconfig.h'
 	], subdir: 'tinytex')
 endif

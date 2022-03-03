@@ -37,7 +37,7 @@ void FontFamily::add(const sptr<const OtfFont>& font) {
   const auto style = static_cast<FontStyle>(font->otfSpec->style());
 #ifdef HAVE_LOG
   if (_styles.find(style) != _styles.end()) {
-    loge("the style '%x' has a font already, but you can replace it anyway\n", style);
+    loge("the style '%hx' has a font already, but you can replace it anyway\n", style);
   }
 #endif
   _styles[style] = font;
@@ -91,44 +91,48 @@ FontStyle FontContext::mainFontStyleOf(const std::string& name) {
   return FontFamily::fontStyleOf(name);
 }
 
-sptr<FontFamily> FontContext::getOrCreateFontFamily(const std::string& version) {
+sptr<FontFamily> FontContext::getOrCreateFontFamily(const std::string& family) {
   sptr<FontFamily> f;
-  auto it = _mainFonts.find(version);
+  auto it = _mainFonts.find(family);
   if (it == _mainFonts.end()) {
     f = sptrOf<FontFamily>();
-    _mainFonts[version] = f;
+    _mainFonts[family] = f;
   } else {
     f = it->second;
   }
   return f;
 }
 
-void FontContext::addMainFont(const std::string& familyName, const FontSrcList& srcs) {
-  auto f = getOrCreateFontFamily(familyName);
-  for (const auto& src : srcs) {
-    auto spec = src->loadOtf();
-    auto otf = sptrOf<OtfFont>(_lastId++, spec, src->fontFile);
-    _fonts.push_back(otf);
-    f->add(otf);
-  }
-}
-
-string FontContext::addMathFont(const FontSrc& src) {
+FontMeta FontContext::addFont(const FontSrc& src) {
   auto spec = src.loadOtf();
-  if (!spec->isMathFont()) {
-#ifdef HAVE_LOG
-    loge("'%s' is not a math font.\n", spec->name().c_str());
-#endif
-    return "";
-  }
   auto otf = sptrOf<OtfFont>(_lastId++, spec, src.fontFile);
   _fonts.push_back(otf);
-  _mathFonts[spec->name()] = otf;
-  return spec->name();
+  if (spec->isMathFont()) {
+    _mathFonts[spec->name()] = otf;
+  } else {
+    auto f = getOrCreateFontFamily(spec->family());
+    f->add(otf);
+  }
+  return {
+    spec->family(), spec->name(),
+    static_cast<const FontStyle>(spec->style()), spec->isMathFont()
+  };
 }
 
 bool FontContext::hasMathFont() {
   return !_mathFonts.empty();
+}
+
+FontMeta FontContext::mathFontMetaOf(const std::string& name) {
+  auto it = _mathFonts.find(name);
+  if (it == _mathFonts.end()) {
+    return {};
+  }
+  const auto& spec = it->second->otf();
+  return {
+    spec.family(), spec.name(),
+    static_cast<FontStyle>(spec.style()), spec.isMathFont()
+  };
 }
 
 bool FontContext::isMathFontExists(const std::string& name) {

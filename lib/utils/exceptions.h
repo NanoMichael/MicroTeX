@@ -50,7 +50,7 @@ public:
 
 class ex_eof : public ex_tex {
 public:
-  explicit ex_eof(const std::string& filePath) : ex_tex("EOF of " + filePath) {}
+  explicit ex_eof(const std::string& msg) : ex_tex(msg) {}
 };
 
 }  // namespace tinytex

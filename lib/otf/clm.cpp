@@ -1,9 +1,8 @@
 #include "otf/clm.h"
-
-#include <cstring>
-
 #include "utils/string_utils.h"
 #include "utils/exceptions.h"
+
+#include <cstring>
 
 namespace tinytex {
 
@@ -22,7 +21,7 @@ public:
     auto shift = bytes - 1;
     T t = 0;
     for (std::size_t i = 0; i < bytes; i++) {
-      t |= (T) (*(p + i)) << ((shift - i) * 8);
+      t |= static_cast<T>(*(p + i)) << ((shift - i) * 8);
     }
     return t;
   }

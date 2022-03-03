@@ -9,6 +9,7 @@ unimath_src = [
 if install_headerfiles
 	install_headers([
 	    'font_src.h',
+	    'font_meta.h',
 	    'math_type.h',
 	    'uni_char.h',
 		'uni_font.h',
