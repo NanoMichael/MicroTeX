@@ -4,13 +4,14 @@
 #ifndef TINYTEX_FONTSENSE_H
 #define TINYTEX_FONTSENSE_H
 
+#include "unimath/font_meta.h"
 #include <optional>
 #include <string>
 
 namespace tinytex {
 
 /** Find font resources auto. Return the first found math font name. */
-std::optional<const std::string> fontsenseLookup();
+std::optional<FontMeta> fontsenseLookup();
 
 }
 

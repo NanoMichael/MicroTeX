@@ -14,7 +14,7 @@ namespace tinytex {
 
 struct Config {
   bool isInited;
-  std::string defaultMainFontName;
+  std::string defaultMainFontFamily;
   std::string defaultMathFontName;
   bool renderGlyphUsePath;
 };
@@ -35,23 +35,23 @@ std::string TinyTeX::version() {
 
 struct InitVisitor {
 
-  string operator()(const FontSrc* src) {
-    auto name = FontContext::addMathFont(*src);
-    if (name.empty()) {
-      throw ex_invalid_param("Given font is not a math font!");
+  FontMeta operator()(const FontSrc* src) {
+    auto meta = FontContext::addFont(*src);
+    if (!meta.isMathFont) {
+      throw ex_invalid_param("'" + meta.name + "' is not a math font!");
     }
-    return name;
+    return meta;
   }
 
-  string operator()(const string& name) {
+  FontMeta operator()(const string& name) {
     fontsenseLookup();
     if (!FontContext::isMathFontExists(name)) {
       throw ex_invalid_param("Math font '" + name + "' does not exists!");
     }
-    return name;
+    return FontContext::mathFontMetaOf(name);
   }
 
-  string operator()(const InitFontSenseAuto& sense) {
+  FontMeta operator()(const InitFontSenseAuto& sense) {
     auto mathFont = fontsenseLookup();
     if (!mathFont.has_value()) {
       throw ex_invalid_param("No math font found by font-sense.");
@@ -60,27 +60,27 @@ struct InitVisitor {
   }
 };
 
-string TinyTeX::init(const Init& init) {
-  if (_config->isInited) return "";
-  auto name = std::visit(InitVisitor(), init);
-  _config->defaultMathFontName = name;
+FontMeta TinyTeX::init(const Init& init) {
+  if (_config->isInited) return {};
+  auto meta = std::visit(InitVisitor(), init);
+  _config->defaultMathFontName = meta.name;
   _config->isInited = true;
   NewCommandMacro::_init_();
-  return name;
+  return meta;
 }
 
 #endif // HAVE_AUTO_FONT_FIND
 
-string TinyTeX::init(const FontSrc& mathFontSrc) {
-  if (_config->isInited) return "";
-  const auto& name = FontContext::addMathFont(mathFontSrc);
-  if (name.empty()) {
-    throw ex_invalid_param("Given font is not a math font!");
+FontMeta TinyTeX::init(const FontSrc& mathFontSrc) {
+  if (_config->isInited) return {};
+  auto meta = FontContext::addFont(mathFontSrc);
+  if (!meta.isValid()) {
+    throw ex_invalid_param("'" + meta.name + "' is not a math font!");
   }
-  _config->defaultMathFontName = name;
+  _config->defaultMathFontName = meta.name;
   _config->isInited = true;
   NewCommandMacro::_init_();
-  return name;
+  return meta;
 }
 
 bool TinyTeX::isInited() {
@@ -92,18 +92,15 @@ void TinyTeX::release() {
   NewCommandMacro::_free_();
 }
 
-void TinyTeX::addMainFont(
-  const std::string& familyName,
-  const FontSrcList& srcs
-) {
-  FontContext::addMainFont(familyName, srcs);
-  if (_config->defaultMainFontName.empty()) {
-    _config->defaultMainFontName = familyName;
+FontMeta TinyTeX::addFont(const FontSrc& src) {
+  auto meta = FontContext::addFont(src);
+  if (meta.isMathFont && _config->defaultMathFontName.empty()) {
+    _config->defaultMathFontName = meta.name;
   }
-}
-
-string TinyTeX::addMathFont(const FontSrc& src) {
-  return FontContext::addMathFont(src);
+  if (!meta.isMathFont && _config->defaultMainFontFamily.empty()) {
+    _config->defaultMainFontFamily = meta.family;
+  }
+  return meta;
 }
 
 bool TinyTeX::setDefaultMathFont(const std::string& name) {
@@ -112,9 +109,9 @@ bool TinyTeX::setDefaultMathFont(const std::string& name) {
   return true;
 }
 
-bool TinyTeX::setDefaultMainFont(const std::string& name) {
-  if (name.empty() || FontContext::isMainFontExists(name)) {
-    _config->defaultMainFontName = name;
+bool TinyTeX::setDefaultMainFont(const std::string& family) {
+  if (family.empty() || FontContext::isMainFontExists(family)) {
+    _config->defaultMainFontFamily = family;
     return true;
   }
   return false;
@@ -150,7 +147,7 @@ bool TinyTeX::isRenderGlyphUsePath() {
 
 Render* TinyTeX::parse(
   const string& latex, float width, float textSize, float lineSpace, color fg,
-  const string& mathFontName, const string& mainFontName
+  const string& mathFontName, const string& mainFontFamily
 ) {
   Formula formula(latex);
   const auto isInline = !startswith(latex, "$$") && !startswith(latex, "\\[");
@@ -164,9 +161,9 @@ Render* TinyTeX::parse(
       : mathFontName
     )
     .setMainFontName(
-      mainFontName.empty()
-      ? _config->defaultMainFontName
-      : mainFontName
+      mainFontFamily.empty()
+      ? _config->defaultMainFontFamily
+      : mainFontFamily
     )
     .setWidth({width, UnitType::pixel}, align)
     .setIsMaxWidth(isInline)

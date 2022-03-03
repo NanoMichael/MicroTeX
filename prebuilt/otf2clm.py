@@ -642,7 +642,8 @@ def parse_fontstyle(font, userstyle):
 
     return style
 
-def parse_otf(file_path, have_glyph_path, output_file_path, userstyle = ""):
+
+def parse_otf(file_path, have_glyph_path, output_file_path, userstyle=""):
     print("parsing font " + file_path + ", please wait...")
     font = fontforge.open(file_path)
 
@@ -702,8 +703,8 @@ def parse_otf(file_path, have_glyph_path, output_file_path, userstyle = ""):
         f.write(struct.pack('!H', 3))
         # minor version, if support glyph path
         f.write(struct.pack('B', 2 if have_glyph_path else 1))
-        f.write(struct.pack(str(len(name)+1) + 's', bytes(name, 'utf-8')))
-        f.write(struct.pack(str(len(family)+1) + 's', bytes(family, 'utf-8')))
+        f.write(struct.pack(str(len(name) + 1) + 's', bytes(name, 'utf-8')))
+        f.write(struct.pack(str(len(family) + 1) + 's', bytes(family, 'utf-8')))
         f.write(struct.pack('?', is_math_font))
         f.write(struct.pack('!H', style))
         f.write(struct.pack('!H', em))
@@ -729,11 +730,20 @@ def batch_parse(input_dir, have_glyph_path, output_dir):
     for f in fs:
         if f.endswith('.otf'):
             name = os.path.basename(f)[0:-4]
-            save_name = name + "-path.clm" if have_glyph_path else name + ".clm"
+            save_name = name + ".clm2" if have_glyph_path else name + ".clm1"
             save_path = os.path.join(output_dir, save_name)
             input_file = os.path.join(input_dir, f)
             parse_otf(input_file, have_glyph_path, save_path)
     print("The generated clm data files were saved into directory: " + output_dir)
+
+
+def single_parse(input_file, have_glyph_path, output_dir, user_style):
+    import os
+    name = os.path.basename(input_file)[0:-4]
+    save_name = name + ".clm2" if have_glyph_path else name + ".clm1"
+    save_path =  os.path.join(output_dir, save_name)
+    parse_otf(input_file, have_glyph_path, save_path, user_style)
+    print("The generated clm data file was saved into directory: " + output_dir);
 
 
 usage = """
@@ -744,7 +754,8 @@ Usage:
         --single \\
         <path/to/OTF-font> \\
         <if_parse_glyph_path: true | false> \\
-        <path/to/save/clm_file>
+        <dir/to/save/clm_file> \\
+        <font-style list, split by ','>
 
     or with batch mode:
         --batch \\
@@ -752,7 +763,19 @@ Usage:
         <if_parse_glyph_path: true | false> \\
         <dir/to/save/clm_files>
 
-    the batch mode will not run in recursive
+    The batch mode will not run in recursive, allowed font styles are:
+        rm: roman
+        bf: bold
+        it: italic
+        cal: calligraphic
+        frak: fraktur
+        bb: double struck
+        sf: sans-serif
+        tt: type-writer
+
+    If no font styles are given, trying to read it from font, but only
+    the following styles will be taken into account:
+        rm, bf, it, tt
 """
 
 
@@ -770,13 +793,12 @@ def main():
         userstyle = ""
         if (len(sys.argv) > 5):
             userstyle = sys.argv[5]
-        parse_otf(
+        single_parse(
             sys.argv[2],
             sys.argv[3] == 'true',
             sys.argv[4],
             userstyle
         )
-        print("The generated clm data file was saved into file: " + sys.argv[4])
 
 
 if __name__ == "__main__":

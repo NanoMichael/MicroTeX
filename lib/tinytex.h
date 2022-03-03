@@ -5,6 +5,7 @@
 #include "tinytexconfig.h"
 #include "render/render.h"
 #include "unimath/font_src.h"
+#include "unimath/font_meta.h"
 
 #include <string>
 #include <vector>
@@ -69,9 +70,9 @@ public:
    * Initialize TinyTeX context by given Init, at least we need a math font
    * to layout formulas.
    *
-   * @returns the math font name
+   * @returns the math font meta info
    */
-  static std::string init(const Init& init);
+  static FontMeta init(const Init& init);
 
 #endif // HAVE_AUTO_FONT_FIND
 
@@ -80,31 +81,15 @@ public:
    * math font to layout formulas.
    *
    * @param mathFontSrc the font source to load
-   * @returns the math font name
+   * @returns the math font meta info
    */
-  static std::string init(const FontSrc& mathFontSrc);
+  static FontMeta init(const FontSrc& mathFontSrc);
 
   /** Check if context is initialized */
   static bool isInited();
 
-  /**
-   * Add main font (collection) to context.
-   *
-   * @param familyName the family name of the font (collection)
-   * @param srcs fonts to load
-   */
-  static void addMainFont(
-    const std::string& familyName,
-    const FontSrcList& srcs
-  );
-
-  /**
-   * Add a math font to context.
-   *
-   * @param src font source to load
-   * @returns the math font name, empty if given font is not a math font
-   */
-  static std::string addMathFont(const FontSrc& src);
+  /** Add a font to context, returns its meta info. */
+  static FontMeta addFont(const FontSrc& src);
 
   /**
    * Set the default math font to show formulas, if no math font was given
@@ -122,17 +107,17 @@ public:
    * if no main font was loaded, the context will use the math font to render
    * the glyphs wrapped by command `text*`.
    *
-   * @param name the main font name, if it is empty, that means fallback to
+   * @param family the main font family, if it is empty, that means fallback to
    * the math font
    * @returns true if given font exists (special case: always returns true if
    * given name is empty), false otherwise.
    */
-  static bool setDefaultMainFont(const std::string& name);
+  static bool setDefaultMainFont(const std::string& family);
 
   /** Get all the loaded math font names. */
   static std::vector<std::string> mathFontNames();
 
-  /** Get all the loaded main font names. */
+  /** Get all the loaded main font family names. */
   static std::vector<std::string> mainFontNames();
 
   /**
@@ -163,7 +148,7 @@ public:
    * @param lineSpace the line space in pixel
    * @param fg the foreground color
    * @param mathFontName the math font name, default is empty
-   * @param mainFontName the main font name, default is empty
+   * @param mainFontFamily the main font name, default is empty
    */
   static Render* parse(
     const std::string& tex,
@@ -172,7 +157,7 @@ public:
     float lineSpace,
     color fg,
     const std::string& mathFontName = "",
-    const std::string& mainFontName = ""
+    const std::string& mainFontFamily = ""
   );
 
   /** Release the TinyTeX context */

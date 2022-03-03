@@ -85,10 +85,10 @@ public:
   static Otf* fromData(size_t len, const u8* data);
 
   /** Get the full postscript name of this font */
-  inline std::string& name() { return _name; }
+  inline std::string name() const { return _name; }
 
   /** Get the postscript family name of this font */
-  inline std::string& family() { return _family; }
+  inline std::string family() const { return _family; }
 
   /** Test if this font is a math font */
   inline bool isMathFont() const { return _isMathFont; }
