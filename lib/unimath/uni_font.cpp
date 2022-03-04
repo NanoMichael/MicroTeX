@@ -14,6 +14,14 @@ OtfFont::OtfFont(i32 id, sptr<const Otf> spec, std::string fontFile) noexcept
 
 /*********************************************************************************/
 
+const vector<FontStyle>& FontFamily::supportedStyles() {
+  static const vector<FontStyle> styles{
+    FontStyle::rm, FontStyle::bf, FontStyle::it,
+    FontStyle::sf, FontStyle::tt, FontStyle::cal,
+    FontStyle::frak, FontStyle::bfit, FontStyle::sfbfit
+  };
+  return styles;
+}
 
 FontStyle FontFamily::fontStyleOf(const std::string& name) {
   // TODO: more composed styles
@@ -187,6 +195,17 @@ bool FontContext::selectMainFont(const string& familyName) {
   }
   _mainFont = it->second;
   return true;
+}
+
+u16 FontContext::mainSpace() {
+  if (_mainFont == nullptr) return mathFont().otf().space();
+  for (auto style : FontFamily::supportedStyles()) {
+    auto f = _mainFont->get(style);
+    if (f != nullptr) {
+      return f->otf().space();
+    }
+  }
+  return mathFont().otf().space();
 }
 
 Char FontContext::getChar(const Symbol& symbol, FontStyle style) const {

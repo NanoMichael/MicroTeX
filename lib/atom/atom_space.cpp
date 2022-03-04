@@ -9,13 +9,13 @@ using namespace tinytex;
 
 sptr<Box> SpaceAtom::createBox(Env& env) {
   if (!_blankSpace) {
-    float w = Units::fsize(_wUnit, _width, env);
-    float h = Units::fsize(_hUnit, _height, env);
-    float d = Units::fsize(_dUnit, _depth, env);
+    float w = Units::fsize(_unit, _width, env);
+    float h = Units::fsize(_unit, _height, env);
+    float d = Units::fsize(_unit, _depth, env);
     return sptrOf<StrutBox>(w, h, d, 0.f);
   }
   if (_blankType == SpaceType::none) {
-    return sptrOf<StrutBox>(env.space(), 0.f, 0.f, 0.f);
+    return sptrOf<StrutBox>(env.space(_isMathMode), 0.f, 0.f, 0.f);
   }
   return Glue::get(_blankType, env);
 }

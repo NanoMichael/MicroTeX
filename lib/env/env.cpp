@@ -51,8 +51,11 @@ float Env::xHeight() const {
   return _fctx->getFont(lastFontId())->otf().xHeight() * scale();
 }
 
-float Env::space() const {
-  return _fctx->mathFont().otf().space() * scale();
+float Env::space(bool isMathMode) const {
+  if (isMathMode) {
+    return _fctx->mathFont().otf().space() * scale();
+  }
+  return _fctx->mainSpace() * scale();
 }
 
 float Env::ruleThickness() const {

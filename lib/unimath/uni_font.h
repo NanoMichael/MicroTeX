@@ -36,6 +36,8 @@ public:
 
   FontFamily() = default;
 
+  static const std::vector<FontStyle>& supportedStyles();
+
   /** Get the FontStyle from the given style name */
   static FontStyle fontStyleOf(const std::string& name);
 
@@ -119,6 +121,9 @@ public:
 
   /** Get the math font currently in use */
   inline const OtfFont& mathFont() const { return *_mathFont; }
+
+  /** Get the space size of main font. */
+  u16 mainSpace();
 
   /** Get the id of the math font currently in use */
   inline i32 mathFontId() const { return _mathFont->id; }

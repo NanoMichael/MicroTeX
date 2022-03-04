@@ -126,7 +126,7 @@ public:
   float xHeight() const;
 
   /** The space size of the current environment */
-  float space() const;
+  float space(bool isMathMode) const;
 
   /** The rule thickness, equals to the fraction rule thickness */
   float ruleThickness() const;
