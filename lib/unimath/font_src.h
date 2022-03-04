@@ -51,8 +51,6 @@ public:
   sptr<Otf> loadOtf() const override;
 };
 
-using FontSrcList = std::vector<std::unique_ptr<FontSrc>>;
-
 }
 
 #endif //TINYTEX_FONT_SRC_H

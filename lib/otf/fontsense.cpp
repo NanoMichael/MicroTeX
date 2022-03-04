@@ -89,9 +89,11 @@ font_paths_t getFontPaths() {
   char* home = getenv("HOME");
   if (home != nullptr && *home != '\0') {
     char* userdata_fallback;
-    asprintf(&userdata_fallback, "%s/.local/share/%s/", home, FONTDIR);
-    paths.push(std::string(userdata_fallback));
-    free(userdata_fallback);
+    auto n = asprintf(&userdata_fallback, "%s/.local/share/%s/", home, FONTDIR);
+    if (n > 0) {
+      paths.push(std::string(userdata_fallback));
+      free(userdata_fallback);
+    }
   }
 
   paths.push("/usr/local/share/" FONTDIR);

@@ -13,9 +13,9 @@ void show_char(c32 code, const Env& env, bool isMathMode = true) {
   std::u32string str;
   str.append(1, chr.mappedCode);
   printf(
-    "font style: %x: "
+    "font style: %hx: "
     "{ code: %X, map: %X, font: %d, glyph: %d, scale: %f }\n",
-    env.mathFontStyle(),
+    static_cast<u16>(env.mathFontStyle()),
     chr.code,
     chr.mappedCode,
     chr.fontId,
@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
   }
   // load math font to context
   FontSrcFile src{string(argv[1]), string(argv[2])};
-  FontContext::addMathFont(src);
+  FontContext::addFont(src);
   // create a font context and env
   auto fc = sptrOf<FontContext>();
   fc->selectMathFont(argv[1]);
@@ -56,8 +56,7 @@ int main(int argc, char* argv[]) {
     "1sp = %f\n"
     "1pt = %f\n"
     "1dd = %f\n"
-    "1cc = %f\n"
-    "1x8 = %f\n",
+    "1cc = %f\n",
     Units::fsize(UnitType::em, 1.f, env),
     Units::fsize(UnitType::ex, 1.f, env),
     Units::fsize(UnitType::pixel, 1.f, env),
