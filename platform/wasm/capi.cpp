@@ -3,6 +3,7 @@
 #include "render/render.h"
 #include "graphic_wasm.h"
 #include "utils/log.h"
+#include "unimath/font_meta.h"
 
 using namespace tinytex;
 
@@ -10,13 +11,15 @@ using namespace tinytex;
 extern "C" {
 #endif
 
-void TINYTEX_WASM_API tinytex_init(
-  const char* name,
+typedef void* FontMetaPtr;
+
+FontMetaPtr TINYTEX_WASM_API tinytex_init(
   unsigned long len,
   const unsigned char* data
 ) {
-  FontSrcData src{name, len, data};
-  TinyTeX::init(src);
+  FontSrcData src{len, data};
+  auto meta = TinyTeX::init(src);
+  return new FontMeta(meta);
 }
 
 void TINYTEX_WASM_API tinytex_release() {
@@ -27,25 +30,35 @@ bool TINYTEX_WASM_API tinytex_isInited() {
   return TinyTeX::isInited();
 }
 
-void TINYTEX_WASM_API tinytex_addMathFont(
-  const char* name,
+FontMetaPtr TINYTEX_WASM_API tinytex_addFont(
   unsigned long len,
   const unsigned char* data
 ) {
-  FontSrcData src{name, len, data};
-  TinyTeX::addMathFont(src);
+  FontSrcData src{len, data};
+  auto meta = TinyTeX::addFont(src);
+  return new FontMeta(meta);
 }
 
-void TINYTEX_WASM_API tinytex_addMainFont(
-  const char* familyName,
-  const char* styleName,
-  unsigned long len,
-  const unsigned char* data
-) {
-  auto src = std::make_unique<FontSrcData>(styleName, len, data);
-  FontSrcList list;
-  list.push_back(std::move(src));
-  TinyTeX::addMainFont(familyName, list);
+const char* TINYTEX_WASM_API tinytex_getFontFamily(FontMetaPtr ptr) {
+  auto* meta = (FontMeta*) ptr;
+  // no need to copy
+  return meta->family.c_str();
+}
+
+const char* TINYTEX_WASM_API tinytex_getFontName(FontMetaPtr ptr) {
+  auto* meta = (FontMeta*) ptr;
+  // no need to copy
+  return meta->name.c_str();
+}
+
+bool TINYTEX_WASM_API tinytex_isMathFont(FontMetaPtr ptr) {
+  auto* meta = (FontMeta*) ptr;
+  return meta->isMathFont;
+}
+
+void TINYTEX_WASM_API tinytex_releaseFontMeta(FontMetaPtr ptr) {
+  auto* meta = (FontMeta*) ptr;
+  delete meta;
 }
 
 void TINYTEX_WASM_API tinytex_setDefaultMathFont(const char* name) {

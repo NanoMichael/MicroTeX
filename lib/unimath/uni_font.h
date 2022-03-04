@@ -100,10 +100,10 @@ public:
   static FontMeta mathFontMetaOf(const std::string& name);
 
   /** Get all the loaded math font names. */
-  static std::vector<std::string> mathFonts();
+  static std::vector<std::string> mathFontNames();
 
   /** Get all the loaded main font family names. */
-  static std::vector<std::string> mainFonts();
+  static std::vector<std::string> mainFontFamilies();
 
   /** Get font-spec from given id, return nullptr if not found. */
   static sptr<const OtfFont> getFont(i32 id);

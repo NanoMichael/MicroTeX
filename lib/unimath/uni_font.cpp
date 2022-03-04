@@ -148,11 +148,11 @@ bool FontContext::isMainFontExists(const std::string& familyName) {
   return _mainFonts.find(familyName) != _mainFonts.end();
 }
 
-std::vector<std::string> FontContext::mathFonts() {
+std::vector<std::string> FontContext::mathFontNames() {
   return keys(_mathFonts);
 }
 
-std::vector<std::string> FontContext::mainFonts() {
+std::vector<std::string> FontContext::mainFontFamilies() {
   return keys(_mainFonts);
 }
 

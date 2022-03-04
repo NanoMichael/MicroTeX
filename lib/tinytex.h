@@ -118,7 +118,7 @@ public:
   static std::vector<std::string> mathFontNames();
 
   /** Get all the loaded main font family names. */
-  static std::vector<std::string> mainFontNames();
+  static std::vector<std::string> mainFontFamilies();
 
   /**
    * Override the style to display formulas. If #enable is true, the '$', '$$',

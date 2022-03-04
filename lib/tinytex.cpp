@@ -118,11 +118,11 @@ bool TinyTeX::setDefaultMainFont(const std::string& family) {
 }
 
 std::vector<std::string> TinyTeX::mathFontNames() {
-  return FontContext::mathFonts();
+  return FontContext::mathFontNames();
 }
 
-std::vector<std::string> TinyTeX::mainFontNames() {
-  return FontContext::mainFonts();
+std::vector<std::string> TinyTeX::mainFontFamilies() {
+  return FontContext::mainFontFamilies();
 }
 
 void TinyTeX::overrideTexStyle(bool enable, TexStyle style) {

@@ -6,45 +6,45 @@ import {context} from '../dist/tinytex';
 
 let editor = null
 
-// the math fonts
-const mathFonts = {
-  "xits": "./res/xits/XITSMath-Regular-path.clm",
-  "lm": "./res/lm-math/latinmodern-math-path.clm",
-  "dejavu": "./res/tex-gyre/texgyredejavu-math-path.clm",
-  "fm": "./res/firamath/FiraMath-Regular-path.clm"
-};
-// the main fonts
-const mainFonts = {
-  "xits": {
-    "rm": "./res/xits/XITS-Regular-path.clm",
-    "it": "./res/xits/XITS-Italic-path.clm",
-    "bf": "./res/xits/XITS-Bold-path.clm",
-    "bfit": "./res/xits/XITS-BoldItalic-path.clm"
-  }
-}
+const fonts = [
+  "./res/xits/XITSMath-Regular.clm2",
+  "./res/lm-math/latinmodern-math.clm2",
+  "./res/tex-gyre/texgyredejavu-math.clm2",
+  "./res/firamath/FiraMath-Regular.clm2",
+  "./res/xits/XITS-Regular.clm2",
+  "./res/xits/XITS-Italic.clm2",
+  "./res/xits/XITS-Bold.clm2",
+  "./res/xits/XITS-BoldItalic.clm2"
+];
 
 context
-  .init(mathFonts["xits"], "xits")
+  .init(fonts[0])
   .then(_ => {
-    Object.entries(mathFonts).forEach(([name, path]) => {
-      // the 'xits' was already loaded while init
-      // ignore the result, we do it in parallel
-      if (name !== "xits") context.addMathFont(path, name);
-    });
+    const p = fonts.slice(1).map(path => context.addFont(path))
+    return Promise.all(p);
   })
   .then(_ => {
-    const xits = mainFonts.xits;
-    Object.entries(xits).forEach(([style, path]) => {
-      // ignore the result, we do it in parallel
-      context.addMainFont("xits", path, style);
-    });
-  })
-  .then(_ => {
+    console.log("init & add font finished")
     const hello = `\\text{Hello from Tiny\\kern-.1em\\TeX 🥰, have fun!}`;
     parse(hello);
+    initFontOptions();
     initEditor(hello);
     listenEvents()
   });
+
+function initFontOptions() {
+  let selectMain = document.getElementById('main-font');
+  context.getMainFontFamilyNames().forEach(f => {
+    selectMain.add(new Option(f, f));
+  })
+  // special case: none fallback to math font
+  selectMain.add(new Option("none", "none"));
+
+  let selectMath = document.getElementById('fonts')
+  context.getMathFontNames().forEach(f => {
+    selectMath.add(new Option(f, f));
+  })
+}
 
 function initEditor(str) {
   editor = ace.edit("editor");
