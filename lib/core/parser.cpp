@@ -708,7 +708,7 @@ void Parser::parse() {
       case ' ': {
         _pos++;
         if (!_isMathMode) {  // we are in text mode
-          _formula->add(sptrOf<SpaceAtom>());
+          _formula->add(sptrOf<SpaceAtom>(false));
           _formula->add(sptrOf<BreakMarkAtom>());
           while (_pos < _len) {
             ch = _latex[_pos];
