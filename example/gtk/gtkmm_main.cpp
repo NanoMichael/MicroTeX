@@ -542,7 +542,7 @@ int main(int argc, char* argv[]) {
   printf("\n");
 
   printf("loaded main fonts:\n\t");
-  for (auto& str: TinyTeX::mainFontNames()) {
+  for (auto& str: TinyTeX::mainFontFamilies()) {
     printf("%s, ", str.c_str());
   }
   printf("\n");

@@ -8,18 +8,18 @@ let context = {};
 /**
  * The loaded main font
  *
- * @type {String[]}
+ * @type {Set<String>}
  * @private
  */
-let _mainFonts = [];
+let _mainFontFamilies = new Set();
 
 /**
  * The loaded math font names.
  *
- * @type {String[]}
+ * @type {Set<String>}
  * @private
  */
-let _mathFonts = [];
+let _mathFontNames = new Set();
 
 /**
  * The current math font name.
@@ -27,15 +27,15 @@ let _mathFonts = [];
  * @type {string}
  * @private
  */
-let _currentMathFont = "";
+let _currentMathFontName = "";
 
 /**
- * The current main font name.
+ * The current main font family.
  *
  * @type {string}
  * @private
  */
-let _currentMainFont = "";
+let _currentMainFontFamily = "";
 
 /**
  * The byte order
@@ -78,38 +78,75 @@ function copyToHeap(arrayBuffer) {
  * @param {Number} ptr the pointer of the heap memory
  */
 function freeHeap(ptr) {
+  if (ptr === undefined || !ptr) return;
   _runtime._free(ptr);
+}
+
+/**
+ * Load clm data from uri
+ *
+ * @param {String} clmDataUri the clm data uri
+ * @param {function(number, number)} f callback after clm data was loaded
+ */
+function loadClm(clmDataUri, f) {
+  return fetch(clmDataUri)
+    .then(res => res.arrayBuffer())
+    .then(buf => {
+      const ptr = copyToHeap(buf);
+      try {
+        const len = buf.byteLength;
+        return [len, f(len, ptr)]
+      } finally {
+        freeHeap(ptr);
+      }
+      return [0, 0]
+    })
+    .then(([len, meta]) => {
+      if (!meta) return;
+      // get font meta info
+      const cname = _runtime._tinytex_getFontName(meta);
+      const fontName = _runtime.UTF8ToString(cname);
+      const isMathFont = _runtime._tinytex_isMathFont(meta);
+
+      if (isMathFont) {
+        _mathFontNames.add(fontName);
+        if (_currentMathFontName === "") {
+          _currentMathFontName = fontName;
+        }
+        console.log(`add math font, '${fontName}', size: ${len}`)
+      } else {
+        const cstr = _runtime._tinytex_getFontFamily(meta);
+        const familyName = _runtime.UTF8ToString(cstr);
+        _mainFontFamilies.add(familyName);
+        if (_currentMainFontFamily === "") {
+          _currentMainFontFamily = familyName;
+        }
+        console.log(`add main font, '{${familyName}, ${fontName}}', size: ${len}`)
+      }
+      // do not forget to release the meta info
+      _runtime._tinytex_releaseFontMeta(meta);
+    });
 }
 
 /**
  * Init the context with given clm data uri.
  *
  * @param {String} clmDataUri the clm data uri
- * @param {String} fontName the font name, default is "dft"
  * @returns {Promise<void>} a promise to init the context
  */
-context.init = function (clmDataUri, fontName = "dft") {
+context.init = function (clmDataUri) {
   if (_runtime != null && _runtime._tinytex_isInited()) {
     throw new Error("the context was initialized already.");
   }
   return initRuntime()
     .then(r => _runtime = r)
-    .then(_ => fetch(clmDataUri))
-    .then(res => res.arrayBuffer())
-    .then(buf => {
-      console.log("init with '" + fontName + "' clm data size: " + buf.byteLength);
-      const dft = _runtime.allocateUTF8(fontName);
-      const ptr = copyToHeap(buf);
-      try {
-        _runtime._tinytex_init(dft, buf.byteLength, ptr);
-        _mathFonts.push(fontName);
-        _currentMathFont = fontName;
-        _isLittleEndian = _runtime._tinytex_isLittleEndian();
-      } finally {
-        freeHeap(ptr);
-        freeHeap(dft);
-      }
-    });
+    .then(_ => loadClm(
+      clmDataUri,
+      (len, data) => _runtime._tinytex_init(len, data))
+    )
+    .then(_ => {
+      _isLittleEndian = _runtime._tinytex_isLittleEndian();
+    })
 }
 
 /** Release the context. */
@@ -123,38 +160,15 @@ context.isInited = function () {
 }
 
 /**
- * Add a main font to context.
+ * Add a font to context.
  *
- * @param {String} familyName the font family name
  * @param {String} clmDataUri the clm data uri
- * @param {String} styleName the font style name,
- * e.g: rm(stands for roman), bf(stands for bold) etc
  */
-context.addMainFont = function (familyName, clmDataUri, styleName) {
-  return fetch(clmDataUri)
-    .then(res => res.arrayBuffer())
-    .then(buf => {
-      const fname = _runtime.allocateUTF8(familyName);
-      const sname = _runtime.allocateUTF8(styleName);
-      const ptr = copyToHeap(buf);
-      try {
-        _runtime._tinytex_addMainFont(fname, sname, buf.byteLength, ptr);
-        _mainFonts.push(familyName);
-      } finally {
-        freeHeap(fname);
-        freeHeap(sname);
-        freeHeap(ptr);
-      }
-      if (_currentMainFont === "") {
-        this.setMainFont(familyName);
-      }
-      console.log(
-        "add main font, family: '" + familyName
-        + "', style: '" + styleName
-        + "' successfully, size: "
-        + buf.byteLength
-      );
-    })
+context.addFont = function (clmDataUri) {
+  return loadClm(
+    clmDataUri,
+    (len, ptr) => _runtime._tinytex_addFont(len, ptr)
+  );
 }
 
 /**
@@ -165,46 +179,17 @@ context.addMainFont = function (familyName, clmDataUri, styleName) {
  * @throws {TypeError} if the font was not added.
  */
 context.setMainFont = function (familyName) {
-  if (familyName !== "" && !_mainFonts.includes(familyName)) {
+  if (familyName !== "" && !_mainFontFamilies.has(familyName)) {
     throw new TypeError("the font family `" + familyName + "` has no font.");
   }
   const cstr = _runtime.allocateUTF8(familyName);
   try {
     _runtime._tinytex_setDefaultMainFont(cstr);
+    _currentMainFontFamily = familyName;
   } finally {
     freeHeap(cstr);
   }
-  _currentMainFont = familyName;
-  console.log("set main font: " + familyName);
-}
-
-/**
- * Add a math font to context.
- *
- * @param {String} clmDataUri the clm data uri
- * @param {String} fontName the font name
- * @return {Promise<void>} a promise to add the math font
- * @throws {Error} if the given font name was added already or the
- * clm data can not be parsed
- */
-context.addMathFont = function (clmDataUri, fontName) {
-  if (_mathFonts.includes(fontName)) {
-    throw new Error("font `" + fontName + "` was added already.");
-  }
-  return fetch(clmDataUri)
-    .then(res => res.arrayBuffer())
-    .then(buf => {
-      const fname = _runtime.allocateUTF8(fontName);
-      const ptr = copyToHeap(buf);
-      try {
-        _runtime._tinytex_addMathFont(fname, buf.byteLength, ptr);
-        _mathFonts.push(fontName);
-      } finally {
-        freeHeap(fname);
-        freeHeap(ptr);
-      }
-      console.log("add math font '" + fontName + "' successfully, size: " + buf.byteLength);
-    });
+  console.log(`set main font: ${familyName}`);
 }
 
 /**
@@ -214,17 +199,17 @@ context.addMathFont = function (clmDataUri, fontName) {
  * @throws {TypeError} if the font was not added
  */
 context.setMathFont = function (fontName) {
-  if (!_mathFonts.includes(fontName)) {
+  if (!_mathFontNames.has(fontName)) {
     throw new TypeError("the font `" + fontName + "` was not added.");
   }
   const cstr = _runtime.allocateUTF8(fontName);
   try {
     _runtime._tinytex_setDefaultMathFont(cstr);
+    _currentMathFontName = fontName;
   } finally {
     freeHeap(cstr);
   }
-  _currentMathFont = fontName;
-  console.log("set math font: " + fontName);
+  console.log(`set math font: ${fontName}`);
 }
 
 /**
@@ -233,17 +218,27 @@ context.setMathFont = function (fontName) {
  *
  * @return {String[]} the copy of the loaded math fonts
  */
-context.getMathFonts = function () {
-  return [..._mathFonts];
+context.getMathFontNames = function () {
+  return [..._mathFontNames];
+}
+
+/**
+ * Get the main font family names added to the context, returns an empty
+ * array if no main font was added.
+ *
+ * @return {String[]} the copy of the loaded main font family names
+ */
+context.getMainFontFamilyNames = function () {
+  return [..._mainFontFamilies];
 }
 
 /**
  * Parse a LaTeX formatted string.
  *
  * @param {string} tex the LaTeX formatted string to be parsed
- * @param {number} width the width of the graphical context
- * @param {number} textSize the text size to paint the formula
- * @param {number} lineSpace the line space to layout multi-lines formulas
+ * @param {number} width the width of the graphical context (in pixel)
+ * @param {number} textSize the text size to paint the formula (in pixel)
+ * @param {number} lineSpace the line space to layout multi-lines formulas (in pixel)
  * @param {number} color \#AARRGGBB formatted color
  * @returns {Render} a render to paint the parsed formula
  */
