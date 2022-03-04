@@ -40,7 +40,7 @@ subdir('render')
 src += render_src
 
 tinytex_version = meson.project_version().split('.')
-configure_file(
+config_h = configure_file(
     input: 'tinytexconfig.h.in',
     output: 'tinytexconfig.h',
     configuration: {
@@ -71,7 +71,7 @@ if get_option('TARGET_DEVEL')
         name: 'tinytex',
         filebase: 'tinytex',
         subdirs: 'tinytex',
-        description: 'A dynamic, cross-platform, and embeddable LaTeX rendering library'
+        description: 'A tiny, fast, cross-platform, and embeddable LaTeX rendering library'
     )
 endif
 
@@ -79,6 +79,6 @@ if install_headerfiles
 	install_headers([
 		'tinytexexport.h',
 		'tinytex.h',
-		'tinytexconfig.h'
+		config_h
 	], subdir: 'tinytex')
 endif
