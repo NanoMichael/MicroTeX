@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 project(
     tinytex
     VERSION 1.0.0
@@ -9,26 +13,11 @@ project(
 # the API (and ABI) is compatible when TINYTEX_API_VERSION is the same
 set(TINYTEX_API_VERSION 1)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if (MSVC) # MSVC Compat
     add_compile_options("/utf-8")
     # make binaries together
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-else ()
-    # check if compiler has c++17 support
-    include(CheckCXXCompilerFlag)
-    CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
-
-    if (COMPILER_SUPPORTS_CXX17)
-        message(STATUS "${CMAKE_CXX_COMPILER} has c++17 support.")
-    else ()
-        message(
-            FATAL_ERROR
-            "The compiler ${CMAKE_CXX_COMPILER} has no c++17 support. Please use one that supports c++17."
-        )
-    endif ()
 endif ()
 
 ####################
