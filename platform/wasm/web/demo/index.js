@@ -25,12 +25,23 @@ context
   })
   .then(_ => {
     console.log("init & add font finished")
-    const hello = `\\text{Hello from Tiny\\kern-.1em\\TeX 🥰, have fun!}`;
-    parse(hello);
+    const str = hello();
     initFontOptions();
-    initEditor(hello);
+    initEditor(str);
     listenEvents()
   });
+
+function hello() {
+  let hello = `\\text{Hello from Tiny\\kern-.1em\\TeX 🥰, have fun!}`;
+  const arg = getQueryParam("tex");
+  if (arg != null) {
+    hello = arg;
+    if (arg.startsWith('"')) hello = hello.substring(1);
+    if (arg.endsWith('"')) hello = hello.substring(0, hello.length - 1);
+  }
+  parse(hello);
+  return hello;
+}
 
 function initFontOptions() {
   let selectMain = document.getElementById('main-font');
@@ -181,3 +192,11 @@ function Examples(examplesUrl) {
 }
 
 const examples = new Examples('./res/SAMPLES.tex');
+
+function getQueryParam(name) {
+  const reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+  const r = window.location.search.substr(1).match(reg);
+  if (r != null) return unescape(r[2]);
+  return null;
+
+}
