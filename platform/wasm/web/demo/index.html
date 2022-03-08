@@ -11,6 +11,20 @@
 <body>
 
 <div class="container">
+  <!-- the top part -->
+  <div class="action-bar">
+    <label class="label">Main font:</label>
+    <select id="main-font" class="fonts"></select>
+    <label>Math font:</label>
+    <select id="fonts" class="fonts"></select>
+    <label class="size-label">Text size:</label>
+    <input
+        class="text-size" id="textsize"
+        type="number" min="5" max="100" step="2" value="30"/>
+    <button class="next" id="next">Next example</button>
+  </div>
+
+  <!-- the sections -->
   <div class="section">
     <div class="left" id="left">
       <div id="wrapper"></div>
@@ -18,17 +32,6 @@
 
     <div class="right">
       <div class="editor" id="editor"></div>
-      <div class="bottom">
-        <label>Main font:</label>
-        <select id="main-font" class="fonts"></select>
-        <label>Math font:</label>
-        <select id="fonts" class="fonts"></select>
-        <label class="size-label">Text size:</label>
-        <input
-            class="text-size" id="textsize"
-            type="number" min="5" max="100" step="2" value="30"/>
-        <button class="next" id="next">Next example</button>
-      </div>
     </div>
   </div>
 

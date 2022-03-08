@@ -5,13 +5,13 @@
   bottom: 0;
   left: 0;
   right: 0;
+  padding: 8pt;
 
   display: flex;
   flex-direction: column;
 }
 
 .section {
-  margin: 8px;
   flex-grow: 1;
 
   display: flex;
@@ -51,11 +51,13 @@
   padding: 8pt;
 }
 
-.bottom {
+.action-bar {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  margin-top: 8pt;
+  padding: 8pt;
+  align-items: baseline;
+  background-color: lightgray;
 }
 
 .fonts {
