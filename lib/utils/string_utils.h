@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <cerrno>
 #include <climits>
-#include <sstream>
 #include <string>
 #include <functional>
 #include <map>
@@ -21,16 +20,17 @@ std::map<std::string, std::string> parseOption(const std::string& options);
 /** Convert a value to string */
 template<class T>
 inline std::string tostring(T val) {
-  std::ostringstream os;
-  os << val;
-  return os.str();
+  return std::to_string(val);
+}
+
+inline std::string tostring(char val) {
+  return {val};
 }
 
 template<class T>
 inline void valueof(const std::string& s, T& val) {
-  std::stringstream ss;
-  ss << s;
-  ss >> val;
+  char* endptr = nullptr;
+  val = strtod(s.c_str(), &endptr);
 }
 
 inline bool str2int(const char* str, size_t len, int& res, int radix) {
@@ -81,13 +81,6 @@ inline std::string& rtrim(std::string& s) {
 /** Ignore left and right side whitespace in a string */
 inline std::string& trim(std::string& s) {
   return ltrim(rtrim(s));
-}
-
-/** Split string with specified delimiter */
-inline void split(const std::string& str, char del, std::vector<std::string>& res) {
-  std::stringstream ss(str);
-  std::string tok;
-  while (std::getline(ss, tok, del)) res.push_back(tok);
 }
 
 inline bool startswith(const std::string& str, const std::string& cmp) {

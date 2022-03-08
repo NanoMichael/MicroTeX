@@ -6,8 +6,6 @@
 #include <functional>
 #include <vector>
 #include <locale>
-#include <sstream>
-#include <algorithm>
 #include <map>
 
 #define no_copy_assign(T) \
@@ -39,14 +37,6 @@ inline std::vector<K> keys(const std::map<K, V>& map) {
 template<typename T, typename ... Args>
 inline T maxOf(Args&& ... args) {
   return std::max({args...});
-}
-
-/** Convert args to string */
-template<typename... Args>
-inline std::string sstr(Args&& ... args) {
-  std::ostringstream str;
-  (str <<  ... << args);
-  return str.str();
 }
 
 /** Get number of set bits in binary representation of the given number */

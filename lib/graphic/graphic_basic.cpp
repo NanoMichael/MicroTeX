@@ -1,14 +1,15 @@
 #include "graphic/graphic_basic.h"
 #include "atom/atom_basic.h"
-#include <sstream>
+#include "utils/string_utils.h"
 
 tinytex::color tinytex::decodeColor(const std::string& s) {
   if (s[0] == '#') {
     const std::string x = s.substr(1);
-    std::stringstream ss;
-    ss << std::hex << x;
-    color c;
-    ss >> c;
+    color c = black;
+    auto success = str2int(s.c_str() + 1, s.length() - 1, reinterpret_cast<int&>(c), 16);
+    if (!success) {
+      return black;
+    }
     if (s.size() == 7) {
       // set alpha value
       c |= 0xff000000;

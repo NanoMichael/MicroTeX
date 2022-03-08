@@ -73,7 +73,7 @@ int CharBox::lastFontId() {
 std::string CharBox::toString() const {
   std::string str;
   appendToUtf8(str, _chr.mappedCode);
-  return sstr(str, " scale: ", _chr.scale);
+  return str + " scale: " + std::to_string(_chr.scale);
 }
 
 TextBox::TextBox(const std::string& str, FontStyle style, float size) {

@@ -65,13 +65,17 @@ map<string, string> tinytex::parseOption(const string& options) {
   if (options.empty()) return {};
 
   map<string, string> res;
-  StrTokenizer tokens(options, ",");
+  StrTokenizer tokens(options, ";,");
   const int c = tokens.count();
   for (int i = 0; i < c; i++) {
     std::string tok = tokens.next();
     trim(tok);
-    std::vector<std::string> optarg;
-    split(tok, '=', optarg);
+    StrTokenizer opt(tok, "=");
+    const int n = opt.count();
+    std::vector<std::string> optarg(n);
+    for (int j = 0; j < n; j++) {
+      optarg.push_back(opt.next());
+    }
     if (!optarg.empty()) {
       if (optarg.size() == 2) {
         res[trim(optarg[0])] = trim(optarg[1]);
