@@ -1,6 +1,6 @@
 example_qt_dep = [
   dependency('qt5', modules: ['Core', 'Gui', 'Widgets']),
-  tinytex_qt_dep
+  microtex_qt_dep
 ]
 
 example_qt_inc = ['../samples', inc]

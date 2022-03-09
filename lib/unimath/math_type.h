@@ -1,5 +1,5 @@
-#ifndef TINYTEX_MATH_TYPE_H
-#define TINYTEX_MATH_TYPE_H
+#ifndef MICROTEX_MATH_TYPE_H
+#define MICROTEX_MATH_TYPE_H
 
 #include "utils/utils.h"
 #include "graphic/font_style.h"
@@ -122,4 +122,4 @@ public:
 
 }
 
-#endif //TINYTEX_MATH_TYPE_H
+#endif //MICROTEX_MATH_TYPE_H

@@ -1,5 +1,5 @@
-#ifndef TINYTEX_ATOM_SCRIPTS_H
-#define TINYTEX_ATOM_SCRIPTS_H
+#ifndef MICROTEX_ATOM_SCRIPTS_H
+#define MICROTEX_ATOM_SCRIPTS_H
 
 #include "atom/atom.h"
 #include "atom/atom_space.h"
@@ -48,4 +48,4 @@ public:
 
 }
 
-#endif //TINYTEX_ATOM_SCRIPTS_H
+#endif //MICROTEX_ATOM_SCRIPTS_H

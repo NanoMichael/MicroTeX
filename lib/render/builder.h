@@ -1,5 +1,5 @@
-#ifndef TINYTEX_BUILDER_H
-#define TINYTEX_BUILDER_H
+#ifndef MICROTEX_BUILDER_H
+#define MICROTEX_BUILDER_H
 
 #include "render.h"
 #include "env/units.h"
@@ -73,6 +73,6 @@ public:
   Render* build(Formula& f);
 };
 
-} // namespace tinytex
+} // namespace microtex
 
-#endif //TINYTEX_BUILDER_H
+#endif //MICROTEX_BUILDER_H

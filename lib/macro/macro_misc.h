@@ -1,5 +1,5 @@
-#ifndef TINYTEX_MACRO_MISC_H
-#define TINYTEX_MACRO_MISC_H
+#ifndef MICROTEX_MACRO_MISC_H
+#define MICROTEX_MACRO_MISC_H
 
 #include <memory>
 
@@ -216,6 +216,6 @@ inline macro(includegraphics) {
   return nullptr;
 }
 
-}  // namespace tinytex
+}  // namespace microtex
 
-#endif  // TINYTEX_MACRO_MISC_H
+#endif  // MICROTEX_MACRO_MISC_H

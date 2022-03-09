@@ -14,4 +14,4 @@ fi
 git remote add origin git@github.com:NanoMichael/cLaTeXMath
 git add .
 git commit -m "publish page"
-git push -f origin HEAD:tinytex-page
+git push -f origin HEAD:microtex-page

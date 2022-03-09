@@ -1,5 +1,5 @@
-#ifndef TINYTEX_ATOM_ROOT_H
-#define TINYTEX_ATOM_ROOT_H
+#ifndef MICROTEX_ATOM_ROOT_H
+#define MICROTEX_ATOM_ROOT_H
 
 #include "atom/atom.h"
 #include "atom/atom_basic.h"
@@ -25,4 +25,4 @@ public:
 
 }
 
-#endif //TINYTEX_ATOM_ROOT_H
+#endif //MICROTEX_ATOM_ROOT_H

@@ -2,7 +2,7 @@
 
 import ace from 'ace-builds';
 import 'ace-builds/src-min-noconflict/mode-latex';
-import {context} from '../dist/tinytex';
+import {context} from '../dist/microtex';
 
 let editor = null
 
@@ -32,7 +32,7 @@ context
   });
 
 function hello() {
-  let hello = `\\text{Hello from Tiny\\kern-.1em\\TeX 🥰, have fun!}`;
+  let hello = `\\text{Hello from \\MicroTeX 🥰, have fun!}`;
   const arg = getQueryParam("tex");
   if (arg != null) {
     hello = arg;

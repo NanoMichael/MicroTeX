@@ -5,13 +5,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 project(
-    tinytex
+    microtex
     VERSION 1.0.0
-    DESCRIPTION "A tiny, fast, cross-platform, and embeddable LaTeX rendering library"
+    DESCRIPTION "A micro, fast, cross-platform, and embeddable LaTeX rendering library"
 )
 
-# the API (and ABI) is compatible when TINYTEX_API_VERSION is the same
-set(TINYTEX_API_VERSION 1)
+# the API (and ABI) is compatible when MICROTEX_API_VERSION is the same
+set(MICROTEX_API_VERSION 1)
 
 if (MSVC) # MSVC Compat
     add_compile_options("/utf-8")
@@ -37,7 +37,7 @@ if (HAVE_LOG)
     add_definitions(-DHAVE_LOG)
 endif ()
 
-include(TinyTeXInstall.cmake)
+include(MicroTeXInstall.cmake)
 
 add_subdirectory(lib)
 
@@ -83,7 +83,7 @@ endif ()
 ################
 
 # install resources
-install(DIRECTORY res/ DESTINATION share/tinytex)
+install(DIRECTORY res/ DESTINATION share/microtex)
 
 # install prebuilt scripts
 install(FILES prebuilt/otf2clm.py DESTINATION bin)

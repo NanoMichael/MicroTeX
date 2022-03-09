@@ -1,5 +1,5 @@
-#ifndef TINYTEX_SAMPLES_H
-#define TINYTEX_SAMPLES_H
+#ifndef MICROTEX_SAMPLES_H
+#define MICROTEX_SAMPLES_H
 
 #include <string>
 #include <vector>
@@ -27,6 +27,6 @@ public:
   inline int count() const { return _samples.size(); }
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
-#endif //TINYTEX_SAMPLES_H
+#endif //MICROTEX_SAMPLES_H

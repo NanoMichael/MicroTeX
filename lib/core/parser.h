@@ -332,6 +332,6 @@ public:
   }
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif  // PARSER_H_INCLUDED

@@ -53,7 +53,7 @@ static void printBox(const sptr<Box>& b, int dep, vector<bool>& lines, int max =
   }
 }
 
-void tinytex::printBox(const sptr<Box>& box) {
+void microtex::printBox(const sptr<Box>& box) {
   vector<bool> lines;
   ::printBox(box, 0, lines, box->name().size());
   logv("\n");

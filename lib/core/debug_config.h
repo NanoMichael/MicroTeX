@@ -1,5 +1,5 @@
-#ifndef TINYTEX_DEBUG_CONFIG_H
-#define TINYTEX_DEBUG_CONFIG_H
+#ifndef MICROTEX_DEBUG_CONFIG_H
+#define MICROTEX_DEBUG_CONFIG_H
 
 #include "graphic/graphic_basic.h"
 

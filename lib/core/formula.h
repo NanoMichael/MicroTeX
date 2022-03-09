@@ -1,5 +1,5 @@
-#ifndef TINYTEX_FORMULA_H
-#define TINYTEX_FORMULA_H
+#ifndef MICROTEX_FORMULA_H
+#define MICROTEX_FORMULA_H
 
 #include <string>
 #include <utility>
@@ -131,6 +131,6 @@ public:
   ~ArrayFormula() override = default;
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
-#endif  // TINYTEX_FORMULA_H
+#endif  // MICROTEX_FORMULA_H

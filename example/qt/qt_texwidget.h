@@ -2,7 +2,7 @@
 #define QT_TEXWIDGET_H
 
 #include "graphic_qt.h"
-#include "tinytex.h"
+#include "microtex.h"
 
 #include <QWidget>
 

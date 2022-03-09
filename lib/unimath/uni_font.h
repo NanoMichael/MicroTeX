@@ -138,6 +138,6 @@ public:
   Char getChar(c32 code, FontStyle style, bool isMathMode) const;
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif

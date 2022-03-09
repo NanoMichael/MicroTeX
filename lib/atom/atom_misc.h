@@ -1,5 +1,5 @@
-#ifndef TINYTEX_ATOM_MISC_H
-#define TINYTEX_ATOM_MISC_H
+#ifndef MICROTEX_ATOM_MISC_H
+#define MICROTEX_ATOM_MISC_H
 
 #include "box/box_factory.h"
 #include "box/box_group.h"
@@ -199,6 +199,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
-#endif  // TINYTEX_ATOM_MISC_H
+#endif  // MICROTEX_ATOM_MISC_H

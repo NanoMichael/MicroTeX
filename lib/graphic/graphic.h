@@ -49,7 +49,7 @@ public:
 struct PlatformFactoryData;
 
 /** Simple factory to create platform specific Font and TextLayout. */
-class TINYTEX_EXPORT PlatformFactory {
+class MICROTEX_EXPORT PlatformFactory {
 private:
   static PlatformFactoryData* _data;
 
@@ -286,6 +286,6 @@ public:
   // endregion
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif  // GRAPHIC_H_INCLUDED

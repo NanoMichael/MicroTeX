@@ -1,5 +1,5 @@
-#ifndef TINYTEX_BOX_GROUP_H
-#define TINYTEX_BOX_GROUP_H
+#ifndef MICROTEX_BOX_GROUP_H
+#define MICROTEX_BOX_GROUP_H
 
 #include "atom/atom.h"
 #include "utils/nums.h"
@@ -308,6 +308,6 @@ public:
   boxname(WrapperBox);
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
-#endif  // TINYTEX_BOX_GROUP_H
+#endif  // MICROTEX_BOX_GROUP_H

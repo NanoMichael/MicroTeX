@@ -1,7 +1,7 @@
 #ifndef GRAPHIC_WIN32_H_INCLUDED
 #define GRAPHIC_WIN32_H_INCLUDED
 
-#include "tinytexexport.h"
+#include "microtexexport.h"
 #include "graphic/graphic.h"
 #include <map>
 
@@ -25,11 +25,11 @@ class Bitmap;
 
 }  // namespace Gdiplus
 
-namespace tinytex {
+namespace microtex {
 
 std::wstring win32ToWideString(const std::string& str);
 
-class TINYTEX_EXPORT Font_win32 : public Font {
+class MICROTEX_EXPORT Font_win32 : public Font {
 private:
   static std::map<std::string, sptr<Font_win32>> _win32Faces;
 
@@ -55,7 +55,7 @@ public:
 
 /**************************************************************************************************/
 
-class TINYTEX_EXPORT TextLayout_win32 : public TextLayout {
+class MICROTEX_EXPORT TextLayout_win32 : public TextLayout {
 private:
   std::wstring _txt;
   sptr<Font_win32> _font;
@@ -75,7 +75,7 @@ public:
 
 /**************************************************************************************************/
 
-class TINYTEX_EXPORT PlatformFactory_gdi : public PlatformFactory {
+class MICROTEX_EXPORT PlatformFactory_gdi : public PlatformFactory {
 public:
   sptr<Font> createFont(const std::string &file) override;
 
@@ -84,7 +84,7 @@ public:
 
 /**************************************************************************************************/
 
-class TINYTEX_EXPORT Graphics2D_win32 : public Graphics2D {
+class MICROTEX_EXPORT Graphics2D_win32 : public Graphics2D {
 private:
   static const Gdiplus::StringFormat* _format;
 
@@ -117,7 +117,7 @@ public:
 
   std::vector<float> getDash() override;
 
-  sptr<tinytex::Font> getFont() const override;
+  sptr<microtex::Font> getFont() const override;
 
   void setFont(const sptr<Font>& font) override;
 
@@ -169,6 +169,6 @@ public:
   void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif  // GRAPHIC_WIN32_H_INCLUDED

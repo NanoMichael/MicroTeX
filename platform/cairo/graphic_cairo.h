@@ -1,7 +1,7 @@
 #ifndef GRAPHIC_CAIRO_H_INCLUDED
 #define GRAPHIC_CAIRO_H_INCLUDED
 
-#include "tinytexexport.h"
+#include "microtexexport.h"
 #include "graphic/graphic.h"
 
 #include <cairo.h>
@@ -16,7 +16,7 @@ typedef std::shared_ptr<cairo_t> CairoCtxPtr;
 
 namespace microtex {
 
-class TINYTEX_EXPORT Font_cairo : public Font {
+class MICROTEX_EXPORT Font_cairo : public Font {
 private:
   static std::map<std::string, cairopp::CairoFontFacePtr> _cairoFtFaces;
 
@@ -36,7 +36,7 @@ public:
 
 /**************************************************************************************************/
 
-class TINYTEX_EXPORT TextLayout_cairo : public TextLayout {
+class MICROTEX_EXPORT TextLayout_cairo : public TextLayout {
 private:
   static cairopp::CairoCtxPtr _img_context;
   PangoLayout* _layout;
@@ -54,7 +54,7 @@ public:
 
 /**************************************************************************************************/
 
-class TINYTEX_EXPORT PlatformFactory_cairo : public PlatformFactory {
+class MICROTEX_EXPORT PlatformFactory_cairo : public PlatformFactory {
 public:
   sptr<Font> createFont(const std::string& file) override;
 
@@ -63,7 +63,7 @@ public:
 
 /**************************************************************************************************/
 
-class TINYTEX_EXPORT Graphics2D_cairo : public Graphics2D {
+class MICROTEX_EXPORT Graphics2D_cairo : public Graphics2D {
 private:
   cairo_t* _context;
   color _color;
@@ -144,6 +144,6 @@ public:
   void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif  // GRAPHIC_CAIRO_H_INCLUDED

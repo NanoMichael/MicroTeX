@@ -1,4 +1,4 @@
-#include "tinytex.h"
+#include "microtex.h"
 #include "graphic_win32.h"
 #include "samples.h"
 #include "utils/string_utils.h"
@@ -18,10 +18,10 @@
 #define EDITOR_WIDTH 640
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 using namespace Gdiplus;
 
-tinytex::Render* _render = nullptr;
+microtex::Render* _render = nullptr;
 int _size = 26;
 color _color = 0xff424242;
 Samples* _samples;
@@ -75,13 +75,13 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
   wndClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
   wndClass.hbrBackground = (HBRUSH) GetStockObject(WHITE_BRUSH);
   wndClass.lpszMenuName = nullptr;
-  wndClass.lpszClassName = TEXT("TinyTeX");
+  wndClass.lpszClassName = TEXT("MicroTeX");
 
   RegisterClass(&wndClass);
 
   hWnd = CreateWindow(
-    TEXT("TinyTeX"),        // window class name
-    TEXT("TinyTeX"),        // window caption
+    TEXT("MicroTeX"),        // window class name
+    TEXT("MicroTeX"),        // window caption
     WS_OVERLAPPEDWINDOW,    // window style
     0,                      // initial x position
     0,                      // initial y position
@@ -104,7 +104,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
 
   delete _render;
   delete _samples;
-  TinyTeX::release();
+  MicroTeX::release();
   GdiplusShutdown(gdiplusToken);
   return msg.wParam;
 }  // WinMain
@@ -141,11 +141,11 @@ void init() {
     exit(1);
   }
   const FontSrcFile math{__argv[2], __argv[3]};
-  TinyTeX::init(&math);
+  MicroTeX::init(&math);
   PlatformFactory::registerFactory("gdi", std::make_unique<PlatformFactory_gdi>());
   PlatformFactory::activate("gdi");
   _samples = new Samples(__argv[4]);
-  _render = TinyTeX::parse(
+  _render = MicroTeX::parse(
     "\\text{Hello from Tiny\\kern-.1em\\TeX, have fun! Press Ctrl + Enter on editor to show formulas.}",
     720, _size, _size / 3.f, _color
   );
@@ -155,7 +155,7 @@ void HandleNext() {
   delete _render;
   RECT r;
   GetClientRect(hCanvas, &r);
-  _render = TinyTeX::parse(_samples->next(), r.right - r.left, _size, _size / 3.f, _color);
+  _render = MicroTeX::parse(_samples->next(), r.right - r.left, _size, _size / 3.f, _color);
   InvalidateRect(hCanvas, nullptr, TRUE);
   UpdateWindow(hCanvas);
 }
@@ -169,7 +169,7 @@ void HandleOK() {
   delete[] data;
   RECT r;
   GetClientRect(hCanvas, &r);
-  _render = TinyTeX::parse(txt, r.right - r.left, _size, _size / 3.f, _color);
+  _render = MicroTeX::parse(txt, r.right - r.left, _size, _size / 3.f, _color);
   InvalidateRect(hCanvas, nullptr, TRUE);
   UpdateWindow(hCanvas);
 }
@@ -181,7 +181,7 @@ void HandleSize() {
   char* txt = new char[len + 10];
   GetWindowText(hEditSize, txt, len + 10);
   string x = txt;
-  tinytex::valueof(x, _size);
+  microtex::valueof(x, _size);
   _render->setTextSize(_size);
   InvalidateRect(hCanvas, nullptr, TRUE);
   UpdateWindow(hCanvas);

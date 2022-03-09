@@ -5,24 +5,24 @@ qt_src = [
   'graphic_qt.cpp'
 ]
 
-tinytex_qt_lib = library('microtex-qt', qt_src,
-    link_with: tinytex_lib,
+microtex_qt_lib = library('microtex-qt', qt_src,
+    link_with: microtex_lib,
     include_directories: inc,
     dependencies: qt_dep,
     version: meson.project_version(),
-    soversion: tinytex_api_version,
+    soversion: microtex_api_version,
     install: true
 )
 
-tinytex_qt_dep = declare_dependency(
-	link_with: [tinytex_lib, tinytex_qt_lib],
+microtex_qt_dep = declare_dependency(
+	link_with: [microtex_lib, microtex_qt_lib],
 	include_directories: ['.', inc],
 	version: meson.project_version()
 )
 
 if get_option('TARGET_DEVEL')
-    pkgconfig.generate(tinytex_qt_lib,
-        libraries: tinytex_lib,
+    pkgconfig.generate(microtex_qt_lib,
+        libraries: microtex_lib,
         version: meson.project_version(),
         name: 'microtex-qt',
         filebase: 'microtex-qt',

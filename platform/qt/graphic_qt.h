@@ -1,7 +1,7 @@
 #ifndef GRAPHIC_QT_H_INCLUDED
 #define GRAPHIC_QT_H_INCLUDED
 
-#include "tinytexexport.h"
+#include "microtexexport.h"
 #include "graphic/graphic.h"
 
 #include <string>
@@ -16,7 +16,7 @@
 
 namespace microtex {
 
-class TINYTEX_EXPORT Font_qt : public Font {
+class MICROTEX_EXPORT Font_qt : public Font {
 private:
   static QMap<QString, QString> _qtFamilies;
 
@@ -36,7 +36,7 @@ public:
 
 /**************************************************************************************************/
 
-class TINYTEX_EXPORT TextLayout_qt : public TextLayout {
+class MICROTEX_EXPORT TextLayout_qt : public TextLayout {
 private:
   QFont _font;
   QString _text;
@@ -51,7 +51,7 @@ public:
 
 /**************************************************************************************************/
 
-class TINYTEX_EXPORT PlatformFactory_qt : public PlatformFactory {
+class MICROTEX_EXPORT PlatformFactory_qt : public PlatformFactory {
 public:
   sptr<Font> createFont(const std::string& file) override;
 
@@ -60,7 +60,7 @@ public:
 
 /**************************************************************************************************/
 
-class TINYTEX_EXPORT Graphics2D_qt : public Graphics2D {
+class MICROTEX_EXPORT Graphics2D_qt : public Graphics2D {
 private:
   QPainter* _painter;
 

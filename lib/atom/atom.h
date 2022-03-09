@@ -89,6 +89,6 @@ public:
   }
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif  // ATOM_H_INCLUDED

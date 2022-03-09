@@ -1,8 +1,8 @@
-#ifndef TINYTEX_TINYTEX_H
-#define TINYTEX_TINYTEX_H
+#ifndef MICROTEX_MICROTEX_H
+#define MICROTEX_MICROTEX_H
 
-#include "tinytexexport.h"
-#include "tinytexconfig.h"
+#include "microtexexport.h"
+#include "microtexconfig.h"
 #include "render/render.h"
 #include "unimath/font_src.h"
 #include "unimath/font_meta.h"
@@ -16,28 +16,28 @@
 
 namespace microtex {
 
-struct TINYTEX_EXPORT InitFontSenseAuto {
+struct MICROTEX_EXPORT InitFontSenseAuto {
 };
 
 /**
- * TinyTeX context initialization.
+ * MicroTeX context initialization.
  * <ol>
  *  <li> If a FontSrc presents, the context will load math font from the given font source.
  *  <li> If a InitFontSenseAuto presents, fill the search dirs by following rules:
  *    <ul>
- *      <li> If environment variable `TINYTEX_FONTDIR` is set, add it into search dirs.
- *      <li> If environment variable `XDG_DATA_HOME` is set, add `${XDG_DATA_HOME}/tinytex` into
+ *      <li> If environment variable `MICROTEX_FONTDIR` is set, add it into search dirs.
+ *      <li> If environment variable `XDG_DATA_HOME` is set, add `${XDG_DATA_HOME}/microtex` into
  *           search dirs.
  *      <li> If environment variable `XDG_DATA_DIRS` is set, iterate over the list and add the sub
- *           dir `tinytex` of each item into search dirs.
- *      <li> If the current platform is WIN32, add the dir `share/tinytex` where its parent is the
+ *           dir `microtex` of each item into search dirs.
+ *      <li> If the current platform is WIN32, add the dir `share/microtex` where its parent is the
  *           executable running dir into search dirs.
  *      <li> Otherwise, try the following ways:
  *      <ul>
- *        <li> If environment variable `HOME` is set, add dir `${HOME}/.local/share/tinytex` into
+ *        <li> If environment variable `HOME` is set, add dir `${HOME}/.local/share/microtex` into
  *             search dirs.
- *        <li> Add `/usr/local/share/tinytex` into search dirs.
- *        <li> Add `/usr/share/tinytex` into search dirs.
+ *        <li> Add `/usr/local/share/microtex` into search dirs.
+ *        <li> Add `/usr/share/microtex` into search dirs.
  *      </ul>
  *      And then iterate over the search dirs, add all found fonts to context, and select the first
  *      found math font as the default.
@@ -48,7 +48,7 @@ struct TINYTEX_EXPORT InitFontSenseAuto {
  */
 using Init = std::variant<const FontSrc*, const std::string, InitFontSenseAuto>;
 
-} // namespace tinytex
+} // namespace microtex
 
 #endif // HAVE_AUTO_FONT_FIND
 
@@ -56,7 +56,7 @@ namespace microtex {
 
 struct Config;
 
-class TINYTEX_EXPORT TinyTeX {
+class MICROTEX_EXPORT MicroTeX {
 private:
   static Config* _config;
 
@@ -67,7 +67,7 @@ public:
 #ifdef HAVE_AUTO_FONT_FIND
 
   /**
-   * Initialize TinyTeX context by given Init, at least we need a math font
+   * Initialize MicroTeX context by given Init, at least we need a math font
    * to layout formulas.
    *
    * @returns the math font meta info
@@ -163,10 +163,10 @@ public:
     const std::string& mainFontFamily = ""
   );
 
-  /** Release the TinyTeX context */
+  /** Release the MicroTeX context */
   static void release();
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
-#endif  // TINYTEX_TINYTEX_H
+#endif  // MICROTEX_MICROTEX_H

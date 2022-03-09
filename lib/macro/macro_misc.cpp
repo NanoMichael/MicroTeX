@@ -206,4 +206,4 @@ macro(zstack) {
   return sptrOf<ZStackAtom>(hargs, vargs, atom, anchor);
 }
 
-}  // namespace tinytex
+}  // namespace microtex

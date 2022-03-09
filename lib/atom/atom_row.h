@@ -1,5 +1,5 @@
-#ifndef TINYTEX_ATOM_ROW_H
-#define TINYTEX_ATOM_ROW_H
+#ifndef MICROTEX_ATOM_ROW_H
+#define MICROTEX_ATOM_ROW_H
 
 #include <bitset>
 
@@ -186,4 +186,4 @@ public:
 
 }
 
-#endif //TINYTEX_ATOM_ROW_H
+#endif //MICROTEX_ATOM_ROW_H

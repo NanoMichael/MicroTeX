@@ -1,5 +1,5 @@
-#ifndef TINYTEX_ATOM_ZSTACK_H
-#define TINYTEX_ATOM_ZSTACK_H
+#ifndef MICROTEX_ATOM_ZSTACK_H
+#define MICROTEX_ATOM_ZSTACK_H
 
 #include "atom/atom.h"
 #include "utils/utils.h"
@@ -36,4 +36,4 @@ public:
 
 }
 
-#endif //TINYTEX_ATOM_ZSTACK_H
+#endif //MICROTEX_ATOM_ZSTACK_H

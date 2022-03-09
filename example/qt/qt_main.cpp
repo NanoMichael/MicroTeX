@@ -1,4 +1,4 @@
-#include "tinytex.h"
+#include "microtex.h"
 
 #include "qt_mainwindow.h"
 
@@ -21,17 +21,17 @@ int main(int argc, char** argv) {
     return 1;
   }
   const microtex::FontSrcFile math{argv[1], argv[2]};
-  microtex::TinyTeX::init(&math);
+  microtex::MicroTeX::init(&math);
 
   microtex::PlatformFactory::registerFactory("qt", std::make_unique<microtex::PlatformFactory_qt>());
   microtex::PlatformFactory::activate("qt");
 
-  microtex::TinyTeX::setRenderGlyphUsePath(true);
+  microtex::MicroTeX::setRenderGlyphUsePath(true);
 
   MainWindow win(nullptr, argv[3]);
   win.show();
   int ret = app.exec();
 
-  microtex::TinyTeX::release();
+  microtex::MicroTeX::release();
   return ret;
 }

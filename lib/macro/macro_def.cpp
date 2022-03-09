@@ -247,7 +247,7 @@ map<string, MacroInfo*> MacroInfo::_commands{
     mac(2, macro_underaccent, "underaccent"),
     mac(1, macro_undertilde, "undertilde"),
   // endregion
-  // region tinytex styles
+  // region microtex styles
     mac(0, macro_texstyle, "displaystyle"),
     mac(0, macro_texstyle, "textstyle"),
     mac(0, macro_texstyle, "scriptstyle"),

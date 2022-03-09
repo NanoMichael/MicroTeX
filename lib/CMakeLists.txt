@@ -1,34 +1,34 @@
 if (WASM)
-    add_library(tinytex STATIC "")
+    add_library(microtex STATIC "")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
 else ()
-    add_library(tinytex SHARED "")
+    add_library(microtex SHARED "")
 endif ()
 
 if (MSVC)
-    target_compile_features(tinytex PUBLIC cxx_std_17)
-    target_compile_definitions(tinytex PRIVATE -DTINYTEX_LIBRARY)
-    target_compile_definitions(tinytex PUBLIC -D_HAS_STD_BYTE=1)
+    target_compile_features(microtex PUBLIC cxx_std_17)
+    target_compile_definitions(microtex PRIVATE -DMICROTEX_LIBRARY)
+    target_compile_definitions(microtex PUBLIC -D_HAS_STD_BYTE=1)
 endif ()
 
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin" AND CMAKE_HOST_SYSTEM_VERSION VERSION_LESS 19)
     # std::filesystem is not available under macOS 10.15
     message(STATUS "Running on Mojave or lower, linking with Boost::filesystem")
     find_package(Boost REQUIRED COMPONENTS filesystem)
-    target_link_libraries(tinytex PRIVATE Boost::filesystem)
-    target_compile_definitions(tinytex PRIVATE USE_BOOST_FILESYSTEM)
+    target_link_libraries(microtex PRIVATE Boost::filesystem)
+    target_compile_definitions(microtex PRIVATE USE_BOOST_FILESYSTEM)
 endif ()
 
 set_target_properties(
-    tinytex PROPERTIES
+    microtex PROPERTIES
     VERSION ${PROJECT_VERSION}
-    SOVERSION ${TINYTEX_API_VERSION}
+    SOVERSION ${MICROTEX_API_VERSION}
     CXX_VISIBILITY_PRESET hidden
 )
 
 # source files
 target_sources(
-    tinytex PRIVATE
+    microtex PRIVATE
     # atom folder
     atom/atom_basic.cpp
     atom/atom_char.cpp
@@ -103,12 +103,12 @@ target_sources(
     render/render.cpp
     render/builder.cpp
 
-    tinytex.cpp
+    microtex.cpp
 )
 target_include_directories(
-    tinytex PUBLIC
+    microtex PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:include/tinytex>
+    $<INSTALL_INTERFACE:include/microtex>
 )
 
 ###################
@@ -118,7 +118,7 @@ target_include_directories(
 # compile option: if debug graphics
 option(GRAPHICS_DEBUG "If enable graphics debug" ON)
 if (GRAPHICS_DEBUG)
-    target_compile_definitions(tinytex PRIVATE -DGRAPHICS_DEBUG)
+    target_compile_definitions(microtex PRIVATE -DGRAPHICS_DEBUG)
 endif ()
 
 set(_HAVE_AUTO_FONT_FIND ON)
@@ -130,31 +130,34 @@ if (WASM)
 endif ()
 
 # compile option: HAVE_AUTO_FONT_FIND if enable auto font find
-# this option is exported to users, will write into file 'tinytexconfig.h'
+# this option is exported to users, will write into file 'microtexconfig.h'
 option(HAVE_AUTO_FONT_FIND "If enable auto font find" ${_HAVE_AUTO_FONT_FIND})
+if (HAVE_AUTO_FONT_FIND)
+    target_link_libraries(microtex stdc++fs)
+endif ()
 
 # compile option: GLYPH_RENDER_TYPE the glyph render type
 # 0: use path and typeface both
 # 1: use path only
 # 2: use typeface only
-target_compile_definitions(tinytex PRIVATE -DGLYPH_RENDER_TYPE=${_GLYPH_RENDER_TYPE})
+target_compile_definitions(microtex PRIVATE -DGLYPH_RENDER_TYPE=${_GLYPH_RENDER_TYPE})
 
-configure_file(tinytexconfig.h.in tinytexconfig.h @ONLY)
-target_include_directories(tinytex PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
+configure_file(microtexconfig.h.in microtexconfig.h @ONLY)
+target_include_directories(microtex PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>)
 
 ################
 # installation #
 ################
-tinytex_install_target(tinytex)
-tinytex_install_headers(
-    tinytex
-    HEADERS ${CMAKE_CURRENT_BINARY_DIR}/tinytexconfig.h tinytexexport.h tinytex.h tinytexapi.h
+microtex_install_target(microtex)
+microtex_install_headers(
+    microtex
+    HEADERS ${CMAKE_CURRENT_BINARY_DIR}/microtexconfig.h microtexexport.h microtex.h microtexapi.h
 )
-tinytex_install_headers(tinytex PREFIX utils HEADERS utils/types.h)
-tinytex_install_headers(tinytex PREFIX render HEADERS render/render.h)
-tinytex_install_headers(tinytex PREFIX unimath HEADERS unimath/font_src.h unimath/font_meta.h)
-tinytex_install_headers(
-    tinytex
+microtex_install_headers(microtex PREFIX utils HEADERS utils/types.h)
+microtex_install_headers(microtex PREFIX render HEADERS render/render.h)
+microtex_install_headers(microtex PREFIX unimath HEADERS unimath/font_src.h unimath/font_meta.h)
+microtex_install_headers(
+    microtex
     PREFIX graphic
     HEADERS graphic/graphic.h graphic/font_style.h graphic/graphic_basic.h
 )

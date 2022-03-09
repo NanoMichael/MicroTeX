@@ -1,5 +1,5 @@
-#ifndef TINYTEX_MACRO_COLORS_H
-#define TINYTEX_MACRO_COLORS_H
+#ifndef MICROTEX_MACRO_COLORS_H
+#define MICROTEX_MACRO_COLORS_H
 
 #include "macro/macro_decl.h"
 #include "atom/atom_misc.h"
@@ -39,4 +39,4 @@ macro(definecolor);
 
 }
 
-#endif //TINYTEX_MACRO_COLORS_H
+#endif //MICROTEX_MACRO_COLORS_H

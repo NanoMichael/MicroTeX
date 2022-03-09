@@ -1,5 +1,5 @@
-#ifndef TINYTEX_ATOM_BOX_H
-#define TINYTEX_ATOM_BOX_H
+#ifndef MICROTEX_ATOM_BOX_H
+#define MICROTEX_ATOM_BOX_H
 
 #include "atom/atom.h"
 #include "atom/atom_row.h"
@@ -66,4 +66,4 @@ public:
 
 }
 
-#endif //TINYTEX_ATOM_BOX_H
+#endif //MICROTEX_ATOM_BOX_H

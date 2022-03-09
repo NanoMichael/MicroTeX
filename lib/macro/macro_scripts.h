@@ -1,5 +1,5 @@
-#ifndef TINYTEX_MACRO_SCRIPTS_H
-#define TINYTEX_MACRO_SCRIPTS_H
+#ifndef MICROTEX_MACRO_SCRIPTS_H
+#define MICROTEX_MACRO_SCRIPTS_H
 
 #include "macro/macro_decl.h"
 #include "atom/atom_misc.h"
@@ -14,4 +14,4 @@ macro(sideset);
 
 }
 
-#endif //TINYTEX_MACRO_SCRIPTS_H
+#endif //MICROTEX_MACRO_SCRIPTS_H

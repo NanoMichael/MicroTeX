@@ -1,8 +1,8 @@
-#include "tinytexconfig.h"
+#include "microtexconfig.h"
 
 #ifdef HAVE_AUTO_FONT_FIND
-#ifndef TINYTEX_FONTSENSE_H
-#define TINYTEX_FONTSENSE_H
+#ifndef MICROTEX_FONTSENSE_H
+#define MICROTEX_FONTSENSE_H
 
 #include "unimath/font_meta.h"
 #include <optional>
@@ -15,5 +15,5 @@ std::optional<FontMeta> fontsenseLookup();
 
 }
 
-#endif // TINYTEX_FONTSENSE_H
+#endif // MICROTEX_FONTSENSE_H
 #endif // HAVE_AUTO_FONT_FIND

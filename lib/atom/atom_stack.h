@@ -1,5 +1,5 @@
-#ifndef TINYTEX_ATOM_STACK_H
-#define TINYTEX_ATOM_STACK_H
+#ifndef MICROTEX_ATOM_STACK_H
+#define MICROTEX_ATOM_STACK_H
 
 #include <utility>
 
@@ -108,4 +108,4 @@ public:
 
 }
 
-#endif //TINYTEX_ATOM_STACK_H
+#endif //MICROTEX_ATOM_STACK_H

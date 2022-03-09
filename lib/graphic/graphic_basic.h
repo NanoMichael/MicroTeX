@@ -2,7 +2,7 @@
 #define GRAPHIC_BASIC_H_INCLUDED
 
 #include "utils/types.h"
-#include "tinytexexport.h"
+#include "microtexexport.h"
 #include <string>
 
 namespace microtex {
@@ -30,56 +30,56 @@ static constexpr color CYAN = cyan;
 static constexpr color MAGENTA = magenta;
 
 /** Construct a 32 bit true color with its alpha, red, green and blue channel*/
-inline color TINYTEX_EXPORT argb(int a, int r, int g, int b) {
+inline color MICROTEX_EXPORT argb(int a, int r, int g, int b) {
   return (a << 24) | (r << 16) | (g << 8) | b;
 }
 
-inline color TINYTEX_EXPORT rgb(int r, int g, int b) {
+inline color MICROTEX_EXPORT rgb(int r, int g, int b) {
   return argb(0xff, r, g, b);
 }
 
-inline color TINYTEX_EXPORT argb(float a, float r, float g, float b) {
+inline color MICROTEX_EXPORT argb(float a, float r, float g, float b) {
   return argb((int) (a * 255), (int) (r * 255), (int) (g * 255), (int) (b * 255));
 }
 
-inline color TINYTEX_EXPORT rgb(float r, float g, float b) {
+inline color MICROTEX_EXPORT rgb(float r, float g, float b) {
   return argb(1.f, r, g, b);
 }
 
-inline color TINYTEX_EXPORT color_a(color c) {
+inline color MICROTEX_EXPORT color_a(color c) {
   return c >> 24;
 }
 
-inline color TINYTEX_EXPORT color_r(color c) {
+inline color MICROTEX_EXPORT color_r(color c) {
   return c >> 16 & 0x00ff;
 }
 
-inline color TINYTEX_EXPORT color_g(color c) {
+inline color MICROTEX_EXPORT color_g(color c) {
   return c >> 8 & 0x0000ff;
 }
 
-inline color TINYTEX_EXPORT color_b(color c) {
+inline color MICROTEX_EXPORT color_b(color c) {
   return c & 0x000000ff;
 }
 
-inline color TINYTEX_EXPORT cmyk(float c, float m, float y, float k) {
+inline color MICROTEX_EXPORT cmyk(float c, float m, float y, float k) {
   float kk = 1.f - k;
   return rgb(kk * (1 - c), kk * (1 - m), kk * (1 - y));
 }
 
 /** Test if the given color is transparent */
-inline bool TINYTEX_EXPORT isTransparent(color c) {
+inline bool MICROTEX_EXPORT isTransparent(color c) {
   return (c >> 24 == 0);
 }
 
 /** Convert #AARRGGBB or #RRGGBB formatted string into color. */
-color TINYTEX_EXPORT decodeColor(const std::string& s);
+color MICROTEX_EXPORT decodeColor(const std::string& s);
 
 /** Get a color from given name, return black if not found. */
-color TINYTEX_EXPORT getColor(const std::string& name);
+color MICROTEX_EXPORT getColor(const std::string& name);
 
 /** Represents a point in 2D plane */
-struct TINYTEX_EXPORT Point {
+struct MICROTEX_EXPORT Point {
   float x, y;
 
   Point() : x(0), y(0) {}
@@ -89,7 +89,7 @@ struct TINYTEX_EXPORT Point {
   bool operator==(const Point& other) const;
 };
 
-struct TINYTEX_EXPORT Rect {
+struct MICROTEX_EXPORT Rect {
   float x, y, w, h;
 
   Rect() : x(0), y(0), w(0), h(0) {}
@@ -100,20 +100,20 @@ struct TINYTEX_EXPORT Rect {
 };
 
 /** Stroke cap type */
-enum TINYTEX_EXPORT Cap {
+enum MICROTEX_EXPORT Cap {
   CAP_BUTT,
   CAP_ROUND,
   CAP_SQUARE
 };
 
 /** Stroke join type */
-enum TINYTEX_EXPORT Join {
+enum MICROTEX_EXPORT Join {
   JOIN_BEVEL,
   JOIN_MITER,
   JOIN_ROUND
 };
 
-struct TINYTEX_EXPORT Stroke {
+struct MICROTEX_EXPORT Stroke {
   float lineWidth;
   float miterLimit;
   Cap cap;
@@ -135,6 +135,6 @@ struct TINYTEX_EXPORT Stroke {
   }
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif  // GRAPHIC_BASIC_H_INCLUDED

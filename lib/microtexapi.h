@@ -1,11 +1,11 @@
-#ifndef TINYTEX_API_H
-#define TINYTEX_API_H
+#ifndef MICROTEX_API_H
+#define MICROTEX_API_H
 
 /** All-in-one header */
 
-#include "tinytexconfig.h"
-#include "tinytexexport.h"
-#include "tinytex.h"
+#include "microtexconfig.h"
+#include "microtexexport.h"
+#include "microtex.h"
 #include "utils/types.h"
 #include "render/render.h"
 #include "unimath/font_src.h"
@@ -13,4 +13,4 @@
 #include "graphic/font_style.h"
 #include "graphic/graphic_basic.h"
 
-#endif // TINYTEX_API_H
+#endif // MICROTEX_API_H

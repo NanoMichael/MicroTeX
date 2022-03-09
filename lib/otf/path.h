@@ -1,5 +1,5 @@
-#ifndef TINYTEX_PATH_H
-#define TINYTEX_PATH_H
+#ifndef MICROTEX_PATH_H
+#define MICROTEX_PATH_H
 
 #include "otf/otfconfig.h"
 
@@ -111,4 +111,4 @@ public:
 }
 
 #endif // HAVE_GLYPH_RENDER_PATH
-#endif //TINYTEX_PATH_H
+#endif //MICROTEX_PATH_H

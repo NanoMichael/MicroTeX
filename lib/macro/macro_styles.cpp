@@ -1,6 +1,6 @@
 #include "macro/macro_styles.h"
 #include "utils/utf.h"
-#include "tinytex.h"
+#include "microtex.h"
 #include "atom/atom_basic.h"
 
 namespace microtex {
@@ -21,10 +21,10 @@ TexStyle texStyleOf(const std::string& str) {
 
 macro(everymath) {
   if (args[1].empty()) {
-    TinyTeX::overrideTexStyle(false);
+    MicroTeX::overrideTexStyle(false);
   } else {
     TexStyle style = texStyleOf(args[1].substr(1));
-    TinyTeX::overrideTexStyle(true, style);
+    MicroTeX::overrideTexStyle(true, style);
   }
   return nullptr;
 }

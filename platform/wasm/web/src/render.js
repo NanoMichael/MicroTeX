@@ -43,7 +43,7 @@ function Render(nativeRender, isLittleEndian) {
    * @return {Number}
    */
   this.getWidth = function () {
-    return runtime._tinytex_getRenderWidth(_nativeRender);
+    return runtime._microtex_getRenderWidth(_nativeRender);
   }
 
   /**
@@ -52,7 +52,7 @@ function Render(nativeRender, isLittleEndian) {
    * @return {Number}
    */
   this.getHeight = function () {
-    return runtime._tinytex_getRenderHeight(_nativeRender);
+    return runtime._microtex_getRenderHeight(_nativeRender);
   }
 
   /**
@@ -61,7 +61,7 @@ function Render(nativeRender, isLittleEndian) {
    * @return {Number}
    */
   this.getDepth = function () {
-    return runtime._tinytex_getRenderDepth(_nativeRender);
+    return runtime._microtex_getRenderDepth(_nativeRender);
   }
 
   const capMap = {0: "butt", 1: "round", 2: "square"};
@@ -75,7 +75,7 @@ function Render(nativeRender, isLittleEndian) {
    * @param {Number} y the y coordinate
    */
   this.draw = function (ctx, x, y) {
-    const ptr = runtime._tinytex_getDrawingData(_nativeRender, x, y);
+    const ptr = runtime._microtex_getDrawingData(_nativeRender, x, y);
     // make a view to iterate drawing commands
     const v = new DataView(runtime.HEAPU8.buffer);
     let offset = 0;
@@ -235,7 +235,7 @@ function Render(nativeRender, isLittleEndian) {
 
   /** Release the native render. */
   this.release = function () {
-    runtime._tinytex_deleteRender(nativeRender);
+    runtime._microtex_deleteRender(nativeRender);
   }
 }
 

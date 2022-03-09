@@ -1,5 +1,5 @@
-#ifndef TINYTEX_UNI_SYMBOL_H
-#define TINYTEX_UNI_SYMBOL_H
+#ifndef MICROTEX_UNI_SYMBOL_H
+#define MICROTEX_UNI_SYMBOL_H
 
 #include "utils/utils.h"
 #include "utils/types.h"
@@ -33,4 +33,4 @@ public:
 
 }
 
-#endif //TINYTEX_UNI_SYMBOL_H
+#endif //MICROTEX_UNI_SYMBOL_H

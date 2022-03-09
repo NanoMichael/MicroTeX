@@ -1,5 +1,5 @@
-#ifndef TINYTEX_MACRO_TYPES_H
-#define TINYTEX_MACRO_TYPES_H
+#ifndef MICROTEX_MACRO_TYPES_H
+#define MICROTEX_MACRO_TYPES_H
 
 #include "macro/macro_decl.h"
 
@@ -45,4 +45,4 @@ inline macro(mathclose) {
 
 }
 
-#endif //TINYTEX_MACRO_TYPES_H
+#endif //MICROTEX_MACRO_TYPES_H

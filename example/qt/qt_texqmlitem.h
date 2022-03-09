@@ -3,7 +3,7 @@
 
 #include <QtQuick/QQuickPaintedItem>
 
-#include "tinytex.h"
+#include "microtex.h"
 #include "graphic_qt.h"
 
 class TexQmlItem : public QQuickPaintedItem {
@@ -22,7 +22,7 @@ public:
   QString latexString() const;
 
 private:
-  tinytex::Render* _render;
+  microtex::Render* _render;
   float _text_size;
   int _padding;
   QString m_latexString;
