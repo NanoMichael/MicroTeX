@@ -129,6 +129,9 @@ public:
    */
   static void overrideTexStyle(bool enable, TexStyle style = TexStyle::text);
 
+  /** Test if has the ability use path to render glyphs. */
+  static bool hasGlyphPathRender();
+
   /**
    * Set if use path to render glyphs, only works when compile option
    * GLYPH_RENDER_TYPE equals to 0 (that means render glyphs use font and path

@@ -129,6 +129,14 @@ void TinyTeX::overrideTexStyle(bool enable, TexStyle style) {
   RenderBuilder::overrideTexStyle(enable, style);
 }
 
+bool TinyTeX::hasGlyphPathRender() {
+#ifdef HAVE_GLYPH_RENDER_PATH
+  return true;
+#else
+  return false;
+#endif
+}
+
 void TinyTeX::setRenderGlyphUsePath(bool use) {
 #if GLYPH_RENDER_TYPE == 0
   _config->renderGlyphUsePath = use;
