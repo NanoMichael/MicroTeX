@@ -8,9 +8,9 @@
 #include <functional>
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 
-namespace tinytex {
+namespace microtex {
 
 using BoxFilter = std::function<bool(const sptr<Box>&)>;
 
@@ -67,7 +67,7 @@ Render::Render(const sptr<Box>& box, float textSize) {
   _data = new RenderData{box, textSize, textSize / Env::fixedTextSize(), black};
   const auto& debugConfig = DebugConfig::INSTANCE;
   if (debugConfig.enable) {
-    const auto group = tinytex::wrap(box);
+    const auto group = microtex::wrap(box);
     _data->root = group;
     BoxFilter filter = [&](const sptr<Box>& b) {
       return (
@@ -76,7 +76,7 @@ Render::Render(const sptr<Box>& box, float textSize) {
         : !b->isSpace()
       );
     };
-    tinytex::buildDebug(nullptr, group, filter);
+    microtex::buildDebug(nullptr, group, filter);
   }
 }
 

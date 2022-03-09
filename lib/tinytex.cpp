@@ -8,9 +8,9 @@
 #include "render/builder.h"
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 
-namespace tinytex {
+namespace microtex {
 
 struct Config {
   bool isInited;
@@ -23,7 +23,7 @@ static Config TINYTEX_CONFIG{false, "", "", false};
 
 } // namespace tinytex
 
-Config* TinyTeX::_config = &tinytex::TINYTEX_CONFIG;
+Config* TinyTeX::_config = &microtex::TINYTEX_CONFIG;
 
 std::string TinyTeX::version() {
   return std::to_string(TINYTEX_VERSION_MAJOR) + "."

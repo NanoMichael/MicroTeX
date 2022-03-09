@@ -2,7 +2,7 @@
 #include "tinytex.h"
 #include "utils/utils.h"
 
-namespace tinytex {
+namespace microtex {
 
 class Font_none : public Font {
 public:
@@ -61,7 +61,7 @@ public:
   }
 
   sptr<Font> getFont() const override {
-    return tinytex::sptr<Font_none>();
+    return microtex::sptr<Font_none>();
   }
 
   void setFont(const sptr<Font>& font) override {}
@@ -134,20 +134,20 @@ int main(int argc, char* argv[]) {
     );
     return 1;
   }
-  const tinytex::FontSrcFile math{argv[1], argv[2]};
-  tinytex::TinyTeX::init(&math);
+  const microtex::FontSrcFile math{argv[1], argv[2]};
+  microtex::TinyTeX::init(&math);
 
-  tinytex::PlatformFactory::registerFactory("none", std::make_unique<tinytex::PlatformFactory_none>());
-  tinytex::PlatformFactory::activate("none");
+  microtex::PlatformFactory::registerFactory("none", std::make_unique<microtex::PlatformFactory_none>());
+  microtex::PlatformFactory::activate("none");
 
-  tinytex::Samples samples(argv[3]);
+  microtex::Samples samples(argv[3]);
   for (int i = 0; i < samples.count(); i++) {
-    auto r = tinytex::TinyTeX::parse(samples.next(), 720, 20, 20 / 3.f, tinytex::black);
-    tinytex::Graphics2D_none g2;
+    auto r = microtex::TinyTeX::parse(samples.next(), 720, 20, 20 / 3.f, microtex::black);
+    microtex::Graphics2D_none g2;
     r->draw(g2, 0, 0);
     delete r;
   }
 
-  tinytex::TinyTeX::release();
+  microtex::TinyTeX::release();
   return 0;
 }

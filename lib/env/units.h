@@ -4,7 +4,7 @@
 #include "utils/utils.h"
 #include "env/env.h"
 
-namespace tinytex {
+namespace microtex {
 
 /** Represents a dimension */
 struct Dimen {

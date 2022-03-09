@@ -2,7 +2,7 @@
 #include "env/units.h"
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 
 float Env::PIXELS_PER_POINT = 1.f;
 

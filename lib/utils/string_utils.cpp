@@ -3,7 +3,7 @@
 #include <utility>
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 
 StrTokenizer::StrTokenizer(string str) : _str(std::move(str)) {
   _del = " \t\n\r\f";
@@ -61,7 +61,7 @@ std::string StrTokenizer::next() {
   return "";
 }
 
-map<string, string> tinytex::parseOption(const string& options) {
+map<string, string> microtex::parseOption(const string& options) {
   if (options.empty()) return {};
 
   map<string, string> res;

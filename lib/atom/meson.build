@@ -45,5 +45,5 @@ if install_headerfiles
         'atom_text.h',
         'atom_vrow.h',
         'atom_zstack.h'
-	], subdir: 'tinytex/atom')
+	], subdir: 'microtex/atom')
 endif

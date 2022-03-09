@@ -3,7 +3,7 @@
 
 #include "box/box.h"
 
-namespace tinytex {
+namespace microtex {
 
 class Env;
 

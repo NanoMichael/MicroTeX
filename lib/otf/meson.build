@@ -14,5 +14,5 @@ if install_headerfiles
 		'math_consts.h',
 		'otf.h',
 		'path.h'
-	], subdir: 'tinytex/otf')
+	], subdir: 'microtex/otf')
 endif

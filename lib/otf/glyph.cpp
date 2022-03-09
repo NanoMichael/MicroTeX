@@ -1,6 +1,6 @@
 #include "otf/glyph.h"
 
-namespace tinytex {
+namespace microtex {
 
 const KernRecord KernRecord::empty(0);
 

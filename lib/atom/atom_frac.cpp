@@ -4,7 +4,7 @@
 #include "box/box_group.h"
 #include "box/box_single.h"
 
-using namespace tinytex;
+using namespace microtex;
 
 FracAtom::FracAtom(
   const sptr<Atom>& num, const sptr<Atom>& den, bool rule,

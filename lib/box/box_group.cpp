@@ -6,7 +6,7 @@
 #include "box/box_single.h"
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 
 /************************************* horizontal box implementation ******************************/
 

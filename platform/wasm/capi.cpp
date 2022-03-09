@@ -5,7 +5,7 @@
 #include "utils/log.h"
 #include "unimath/font_meta.h"
 
-using namespace tinytex;
+using namespace microtex;
 
 #ifdef __cplusplus
 extern "C" {

@@ -7,7 +7,7 @@
 #include "box/box.h"
 #include "box/box_group.h"
 
-namespace tinytex {
+namespace microtex {
 
 #ifdef HAVE_LOG
 

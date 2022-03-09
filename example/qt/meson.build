@@ -18,7 +18,7 @@ example_qt_src = [
 ]
 
 executable(
-    'tinytex-qt-example', example_qt_src,
+    'microtex-qt-example', example_qt_src,
     include_directories: example_qt_inc,
     dependencies: example_qt_dep,
     install: true

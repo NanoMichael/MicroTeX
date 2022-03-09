@@ -3,7 +3,7 @@
 
 #include "utils/utils.h"
 
-namespace tinytex {
+namespace microtex {
 
 #define TEX_MATH_CONSTS_COUNT 57
 

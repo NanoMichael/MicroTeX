@@ -6,7 +6,7 @@
 #include "utils/exceptions.h"
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 
 CharBox::CharBox(const Char& chr) : _chr(chr) {
   _width = chr.width();
@@ -14,7 +14,7 @@ CharBox::CharBox(const Char& chr) : _chr(chr) {
   _depth = chr.depth();
 }
 
-namespace tinytex {
+namespace microtex {
 
 #if GLYPH_RENDER_TYPE == 0 || GLYPH_RENDER_TYPE == 2
 

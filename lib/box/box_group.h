@@ -5,7 +5,7 @@
 #include "utils/nums.h"
 #include "graphic/graphic_basic.h"
 
-namespace tinytex {
+namespace microtex {
 
 /***************************************************************************************************
  *                                        rule boxes                                               *

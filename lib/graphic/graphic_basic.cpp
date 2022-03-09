@@ -2,7 +2,7 @@
 #include "atom/atom_basic.h"
 #include "utils/string_utils.h"
 
-tinytex::color tinytex::decodeColor(const std::string& s) {
+microtex::color microtex::decodeColor(const std::string& s) {
   if (s[0] == '#') {
     const std::string x = s.substr(1);
     color c = black;
@@ -21,19 +21,19 @@ tinytex::color tinytex::decodeColor(const std::string& s) {
   return black;
 }
 
-tinytex::color tinytex::getColor(const std::string& name) {
+microtex::color microtex::getColor(const std::string& name) {
   return ColorAtom::getColor(name);
 }
 
-bool tinytex::Point::operator==(const Point& other) const {
+bool microtex::Point::operator==(const Point& other) const {
   return x == other.x && y == other.y;
 }
 
-bool tinytex::Rect::operator==(const Rect& other) const {
+bool microtex::Rect::operator==(const Rect& other) const {
   return x == other.x && y == other.y && w == other.w && h == other.h;
 }
 
-bool tinytex::Stroke::operator==(const Stroke& other) const {
+bool microtex::Stroke::operator==(const Stroke& other) const {
   return lineWidth == other.lineWidth
          && miterLimit == other.miterLimit
          && cap == other.cap

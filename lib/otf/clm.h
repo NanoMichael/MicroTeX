@@ -3,7 +3,7 @@
 
 #include "otf/otf.h"
 
-namespace tinytex {
+namespace microtex {
 
 class BinaryReader;
 

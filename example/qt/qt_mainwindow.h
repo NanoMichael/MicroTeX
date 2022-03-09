@@ -36,7 +36,7 @@ protected:
   QTextEdit* _textedit;
   QSpinBox* _sizespin;
 
-  tinytex::Samples _samples;
+  microtex::Samples _samples;
 };
 
 #endif

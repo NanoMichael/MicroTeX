@@ -5,7 +5,7 @@
 #include "otf/math_consts.h"
 #include "utils/utils.h"
 
-namespace tinytex {
+namespace microtex {
 
 class CLMReader;
 

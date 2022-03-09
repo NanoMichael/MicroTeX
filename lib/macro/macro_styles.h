@@ -7,7 +7,7 @@
 #include "core/formula.h"
 #include "atom/atom_misc.h"
 
-namespace tinytex {
+namespace microtex {
 
 TexStyle texStyleOf(const std::string& str);
 

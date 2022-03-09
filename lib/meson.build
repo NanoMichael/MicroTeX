@@ -3,7 +3,7 @@ inc = []
 
 install_headerfiles = get_option('TARGET_DEVEL')
 
-tinytex_src = ['tinytex.cpp']
+tinytex_src = ['microtex.cpp']
 src += tinytex_src
 
 tinytex_inc = include_directories('.')
@@ -69,7 +69,7 @@ if not cpp.has_header('filesystem')
 	endif
 endif
 
-tinytex_lib = library('tinytex', src,
+tinytex_lib = library('microtex', src,
 	dependencies: fs_lib,
 	include_directories: inc,
 	version: meson.project_version(),
@@ -86,9 +86,9 @@ tinytex_dep = declare_dependency(
 if get_option('TARGET_DEVEL')
     pkgconfig.generate(tinytex_lib,
         version: meson.project_version(),
-        name: 'tinytex',
-        filebase: 'tinytex',
-        subdirs: 'tinytex',
+        name: 'microtex',
+        filebase: 'microtex',
+        subdirs: 'microtex',
         description: 'A tiny, fast, cross-platform, and embeddable LaTeX rendering library'
     )
 endif
@@ -96,7 +96,7 @@ endif
 if install_headerfiles
 	install_headers([
 		'tinytexexport.h',
-		'tinytex.h',
+		'microtex.h',
 		config_h
-	], subdir: 'tinytex')
+	], subdir: 'microtex')
 endif

@@ -4,7 +4,7 @@
 #include "box/box_single.h"
 #include "utils/utf.h"
 
-using namespace tinytex;
+using namespace microtex;
 using namespace std;
 
 std::string FixedCharAtom::name() const {
@@ -77,7 +77,7 @@ Char CharAtom::getChar(Env& env) const {
 
 std::string CharAtom::name() const {
   std::string str;
-  tinytex::appendToUtf8(str, _unicode);
+  microtex::appendToUtf8(str, _unicode);
   return str;
 }
 

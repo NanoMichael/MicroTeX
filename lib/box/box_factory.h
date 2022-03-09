@@ -3,7 +3,7 @@
 
 #include "atom/atom.h"
 
-namespace tinytex {
+namespace microtex {
 
 class SymbolAtom;
 

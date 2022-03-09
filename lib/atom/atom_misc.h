@@ -12,7 +12,7 @@
 #include "atom/atom_char.h"
 #include "atom/atom_vrow.h"
 
-namespace tinytex {
+namespace microtex {
 
 /** An atom representing a big symbol atom (i.e. sigma) */
 class BigSymbolAtom : public Atom {

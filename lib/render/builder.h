@@ -4,7 +4,7 @@
 #include "render.h"
 #include "env/units.h"
 
-namespace tinytex {
+namespace microtex {
 
 class Formula;
 

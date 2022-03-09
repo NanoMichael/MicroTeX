@@ -16,14 +16,14 @@
 
 class TexGuard {
 public:
-  TexGuard(const tinytex::FontSrc& math) {
-    tinytex::TinyTeX::init(&math);
-    tinytex::PlatformFactory::registerFactory("qt", std::make_unique<tinytex::PlatformFactory_qt>());
-    tinytex::PlatformFactory::activate("qt");
+  TexGuard(const microtex::FontSrc& math) {
+    microtex::TinyTeX::init(&math);
+    microtex::PlatformFactory::registerFactory("qt", std::make_unique<microtex::PlatformFactory_qt>());
+    microtex::PlatformFactory::activate("qt");
   }
 
   ~TexGuard() {
-    tinytex::TinyTeX::release();
+    microtex::TinyTeX::release();
   }
 };
 
@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  tinytex::FontSrcFile math{
+  microtex::FontSrcFile math{
     clmPath.toStdString(),
     mathFontPath.toStdString()
   };
@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
   }
   QString latex = file.readAll();
   qDebug() << latex;
-  auto render = tinytex::TinyTeX::parse(
+  auto render = microtex::TinyTeX::parse(
     latex.toStdString(),
     600 - 0 * 2,
     20,
@@ -111,7 +111,7 @@ int main(int argc, char** argv) {
   img.fill(Qt::white);
   QPainter painter(&img);
   painter.setRenderHint(QPainter::Antialiasing, true);
-  tinytex::Graphics2D_qt g2(&painter);
+  microtex::Graphics2D_qt g2(&painter);
   render->draw(g2, 0, 0);
   ok = img.save(pngName);
   if (!ok) {

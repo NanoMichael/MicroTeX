@@ -4,7 +4,7 @@
 #include <string>
 #include "utils/utils.h"
 
-namespace tinytex {
+namespace microtex {
 
 /** Append an Unicode code-point to an utf-8 string */
 void appendToUtf8(std::string& out, c32 code);

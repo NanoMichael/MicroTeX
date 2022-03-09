@@ -1,7 +1,7 @@
 #ifndef TINYTEX_CMD_H
 #define TINYTEX_CMD_H
 
-namespace tinytex {
+namespace microtex {
 
 using len_t = unsigned int;
 

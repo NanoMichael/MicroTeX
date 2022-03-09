@@ -5,7 +5,7 @@
 #include "core/parser.h"
 #include "atom/atom.h"
 
-namespace tinytex {
+namespace microtex {
 
 #ifndef macro
 #define macro(name) sptr<Atom> macro_##name(Parser& tp, Args& args)

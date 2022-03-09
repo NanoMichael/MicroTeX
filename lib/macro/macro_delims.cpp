@@ -2,7 +2,7 @@
 #include "atom/atom_stack.h"
 #include "utils/utf.h"
 
-namespace tinytex {
+namespace microtex {
 
 using namespace std;
 

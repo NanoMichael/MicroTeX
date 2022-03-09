@@ -3,7 +3,7 @@
 
 #include "macro/macro_decl.h"
 
-namespace tinytex {
+namespace microtex {
 
 inline sptr<Atom> _math_type(Parser& tp, Args& args, AtomType type) {
   return sptrOf<TypedAtom>(type, type, Formula(tp, args[1], false)._root);

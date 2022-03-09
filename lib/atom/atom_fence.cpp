@@ -6,11 +6,11 @@
 #include "core/glue.h"
 #include "env/env.h"
 
-using namespace tinytex;
+using namespace microtex;
 
 sptr<Box> MiddleAtom::createBox(Env& env) {
   if (_height == 0) return _placeholder;
-  return tinytex::createVDelim(_sym, env, _height, true);
+  return microtex::createVDelim(_sym, env, _height, true);
 }
 
 sptr<Box> FencedAtom::createBox(Env& env) {
@@ -41,7 +41,7 @@ sptr<Box> FencedAtom::createBox(Env& env) {
   auto hbox = sptrOf<HBox>();
 
   if (!_l.empty() && _l != ".") {
-    auto l = tinytex::createVDelim(_l, env, h, true);
+    auto l = microtex::createVDelim(_l, env, h, true);
     center(l);
     hbox->add(l);
     if (!base->isSpace()) {
@@ -55,7 +55,7 @@ sptr<Box> FencedAtom::createBox(Env& env) {
     if (!base->isSpace()) {
       hbox->add(Glue::get(_base->rightType(), AtomType::closing, env));
     }
-    auto r = tinytex::createVDelim(_r, env, h, true);
+    auto r = microtex::createVDelim(_r, env, h, true);
     center(r);
     hbox->add(r);
   }

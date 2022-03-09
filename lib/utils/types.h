@@ -4,7 +4,7 @@
 #include <memory>
 #include <cinttypes>
 
-namespace tinytex {
+namespace microtex {
 
 using i8 = std::int8_t;
 using u8 = std::uint8_t;

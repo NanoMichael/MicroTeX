@@ -14,7 +14,7 @@
 
 #include <variant>
 
-namespace tinytex {
+namespace microtex {
 
 struct TINYTEX_EXPORT InitFontSenseAuto {
 };
@@ -52,7 +52,7 @@ using Init = std::variant<const FontSrc*, const std::string, InitFontSenseAuto>;
 
 #endif // HAVE_AUTO_FONT_FIND
 
-namespace tinytex {
+namespace microtex {
 
 struct Config;
 

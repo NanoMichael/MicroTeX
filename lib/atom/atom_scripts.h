@@ -7,7 +7,7 @@
 #include "box/box_group.h"
 #include "utils/utils.h"
 
-namespace tinytex {
+namespace microtex {
 
 struct ScriptResult {
   sptr<Box> base = nullptr;

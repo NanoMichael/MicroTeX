@@ -1,9 +1,9 @@
 #include "graphic/font_style.h"
 #include "utils/utils.h"
 
-using namespace tinytex;
+using namespace microtex;
 
-FontStyle tinytex::findClosestStyle(const FontStyle src) {
+FontStyle microtex::findClosestStyle(const FontStyle src) {
   u16 x = static_cast<u16>(src);
   // roman or none
   if (x == 0 || x == 1) return src;
@@ -28,26 +28,26 @@ FontStyle tinytex::findClosestStyle(const FontStyle src) {
   return target;
 }
 
-bool tinytex::isUnspecified(FontStyle style) {
+bool microtex::isUnspecified(FontStyle style) {
   return style == FontStyle::none;
 }
 
-bool tinytex::isRoman(FontStyle style) {
+bool microtex::isRoman(FontStyle style) {
   return style != FontStyle::invalid && (static_cast<u16>(style) & static_cast<u16>(FontStyle::rm)) != 0;
 }
 
-bool tinytex::isBold(FontStyle style) {
+bool microtex::isBold(FontStyle style) {
   return style != FontStyle::invalid && (static_cast<u16>(style) & static_cast<u16>(FontStyle::bf)) != 0;
 }
 
-bool tinytex::isItalic(FontStyle style) {
+bool microtex::isItalic(FontStyle style) {
   return style != FontStyle::invalid && (static_cast<u16>(style) & static_cast<u16>(FontStyle::it)) != 0;
 }
 
-bool tinytex::isSansSerif(FontStyle style) {
+bool microtex::isSansSerif(FontStyle style) {
   return style != FontStyle::invalid && (static_cast<u16>(style) & static_cast<u16>(FontStyle::sf)) != 0;
 }
 
-bool tinytex::isMono(FontStyle style) {
+bool microtex::isMono(FontStyle style) {
   return style != FontStyle::invalid && (static_cast<u16>(style) & static_cast<u16>(FontStyle::tt)) != 0;
 }

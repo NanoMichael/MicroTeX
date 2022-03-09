@@ -6,7 +6,7 @@
 #include "graphic/font_style.h"
 #include "graphic/graphic_basic.h"
 
-namespace tinytex {
+namespace microtex {
 
 class TextLayout;
 

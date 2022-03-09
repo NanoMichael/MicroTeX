@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace tinytex {
+namespace microtex {
 
 class Samples {
 private:

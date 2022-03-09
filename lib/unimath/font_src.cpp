@@ -1,7 +1,7 @@
 #include "unimath/font_src.h"
 #include "otf/otf.h"
 
-using namespace tinytex;
+using namespace microtex;
 
 FontSrc::FontSrc(std::string fontFile) : fontFile(std::move(fontFile)) {}
 

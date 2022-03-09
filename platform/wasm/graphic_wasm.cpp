@@ -2,7 +2,7 @@
 #include "jsapi.h"
 #include "utils/utils.h"
 
-using namespace tinytex;
+using namespace microtex;
 
 bool Font_wasm::operator==(const Font& f) const {
   return true;
@@ -40,15 +40,15 @@ sptr<TextLayout> PlatformFactory_wasm::createTextLayout(
   std::string font;
   font.append(std::to_string(size));
   font.append("px");
-  if (tinytex::isBold(style)) {
+  if (microtex::isBold(style)) {
     font.append(" bold");
   }
-  if (tinytex::isItalic(style)) {
+  if (microtex::isItalic(style)) {
     font.append(" italic");
   }
-  if (tinytex::isSansSerif(style)) {
+  if (microtex::isSansSerif(style)) {
     font.append(" sans-serif");
-  } else if (tinytex::isMono(style)) {
+  } else if (microtex::isMono(style)) {
     font.append(" monospace");
   } else {
     font.append(" serif");

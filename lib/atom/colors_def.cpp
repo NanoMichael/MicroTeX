@@ -5,9 +5,9 @@
   { name, cmyk(c, m, y, k) }
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 
-map<string, tinytex::color> tinytex::ColorAtom::_colors{
+map<string, microtex::color> microtex::ColorAtom::_colors{
   {"black", black},
   {"white", white},
   {"red", red},

@@ -14,7 +14,7 @@ typedef std::shared_ptr<cairo_t> CairoCtxPtr;
 
 } // namespace cairopp
 
-namespace tinytex {
+namespace microtex {
 
 class TINYTEX_EXPORT Font_cairo : public Font {
 private:

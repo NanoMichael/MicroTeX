@@ -4,7 +4,7 @@
 #include "atom/atom.h"
 #include "env/units.h"
 
-namespace tinytex {
+namespace microtex {
 
 /** An atom representing a fraction */
 class FracAtom : public Atom {

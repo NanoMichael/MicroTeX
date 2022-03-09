@@ -9,10 +9,10 @@
 #include "atom/atom_zstack.h"
 #include "atom/atom_font.h"
 
-using namespace tinytex;
+using namespace microtex;
 using namespace std;
 
-namespace tinytex {
+namespace microtex {
 
 macro(longdiv) {
   long dividend = 0;

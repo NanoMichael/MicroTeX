@@ -20,7 +20,7 @@ namespace fs = std::filesystem;
 #endif
 #define FONTDIR "tinytex"
 
-namespace tinytex {
+namespace microtex {
 
 class FontSrcSense : public FontSrc {
 public:

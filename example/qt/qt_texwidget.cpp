@@ -1,6 +1,6 @@
 #include "qt_texwidget.h"
 
-using namespace tinytex;
+using namespace microtex;
 
 TeXWidget::TeXWidget(QWidget* parent, float text_size)
   : QWidget(parent),

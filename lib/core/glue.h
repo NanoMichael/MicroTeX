@@ -3,7 +3,7 @@
 
 #include "utils/utils.h"
 
-namespace tinytex {
+namespace microtex {
 
 class Env;
 

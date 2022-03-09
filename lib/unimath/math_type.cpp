@@ -2,7 +2,7 @@
 #include "utils/utils.h"
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 
 // IMPORTANT: sorted by the reserved code, you must sort this after add item
 const pair<c32, c32> MathVersion::_reserved[]{

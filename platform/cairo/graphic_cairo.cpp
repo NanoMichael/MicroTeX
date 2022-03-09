@@ -7,7 +7,7 @@
 #include "utils/log.h"
 #include "utils/utf.h"
 
-using namespace tinytex;
+using namespace microtex;
 using namespace std;
 
 namespace cairopp {
@@ -107,16 +107,16 @@ TextLayout_cairo::TextLayout_cairo(const string& src, FontStyle style, float siz
   pango_font_description_set_weight(fd, PANGO_WEIGHT_NORMAL);
   pango_font_description_set_family_static(fd, "Serif");
 
-  if (tinytex::isSansSerif(style)) {
+  if (microtex::isSansSerif(style)) {
     pango_font_description_set_family_static(fd, "Sans-Serif");
   }
-  if (tinytex::isMono(style)) {
+  if (microtex::isMono(style)) {
     pango_font_description_set_family_static(fd, "Monospace");
   }
-  if (tinytex::isBold(style)) {
+  if (microtex::isBold(style)) {
     pango_font_description_set_weight(fd, PANGO_WEIGHT_BOLD);
   }
-  if (tinytex::isItalic(style)) {
+  if (microtex::isItalic(style)) {
     pango_font_description_set_style(fd, PANGO_STYLE_ITALIC);
   }
 

@@ -11,7 +11,7 @@
 
 using namespace std;
 
-namespace tinytex {
+namespace microtex {
 
 static constexpr auto ROUND_TOL = 10; // in font design unit
 
@@ -67,7 +67,7 @@ static sptr<Box> createDelim(const std::string& sym, Env& env, const float len, 
 
   deque<pair<int, sptr<Box>>> f;
   vector<sptr<Box>> r;
-  auto fl = 0.f, rl = 0.f, max = tinytex::F_MAX;
+  auto fl = 0.f, rl = 0.f, max = microtex::F_MAX;
 
   auto run = [&](int i) {
     const auto& part = assembly[i];

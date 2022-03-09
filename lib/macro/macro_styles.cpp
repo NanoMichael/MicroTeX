@@ -3,7 +3,7 @@
 #include "tinytex.h"
 #include "atom/atom_basic.h"
 
-namespace tinytex {
+namespace microtex {
 
 TexStyle texStyleOf(const std::string& str) {
   TexStyle style = TexStyle::text;

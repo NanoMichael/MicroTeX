@@ -4,7 +4,7 @@
 #include "utils/log.h"
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 
 #ifdef HAVE_LOG
 

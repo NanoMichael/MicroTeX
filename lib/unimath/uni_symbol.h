@@ -4,7 +4,7 @@
 #include "utils/utils.h"
 #include "utils/types.h"
 
-namespace tinytex {
+namespace microtex {
 
 struct Symbol {
 private:

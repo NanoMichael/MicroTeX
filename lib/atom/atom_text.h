@@ -4,7 +4,7 @@
 #include "atom/atom.h"
 #include <string>
 
-namespace tinytex {
+namespace microtex {
 
 class TextAtom : public Atom {
 private:

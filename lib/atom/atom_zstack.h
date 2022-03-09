@@ -5,7 +5,7 @@
 #include "utils/utils.h"
 #include "env/units.h"
 
-namespace tinytex {
+namespace microtex {
 
 struct ZStackArgs {
   Alignment align;

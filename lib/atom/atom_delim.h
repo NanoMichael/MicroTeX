@@ -7,7 +7,7 @@
 #include "atom/atom_char.h"
 #include "atom/atom_space.h"
 
-namespace tinytex {
+namespace microtex {
 
 class OverUnderBar : public Atom {
 private:

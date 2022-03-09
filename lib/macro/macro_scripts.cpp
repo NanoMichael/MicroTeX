@@ -2,7 +2,7 @@
 #include "atom/atom_scripts.h"
 #include "atom/atom_basic.h"
 
-namespace tinytex {
+namespace microtex {
 
 using namespace std;
 

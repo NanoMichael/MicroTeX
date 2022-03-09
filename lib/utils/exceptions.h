@@ -5,7 +5,7 @@
 #include <string>
 #include <utility>
 
-namespace tinytex {
+namespace microtex {
 
 /** Superclass of all the possible exceptions that can be thrown */
 class ex_tex : public std::exception {
