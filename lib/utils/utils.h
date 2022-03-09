@@ -82,6 +82,6 @@ int binIndexOf(
   bool returnClosest = false
 );
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif

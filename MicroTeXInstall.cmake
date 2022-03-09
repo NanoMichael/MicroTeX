@@ -1,4 +1,4 @@
-function(TINYTEX_INSTALL_HEADERS TARGET)
+function(MICROTEX_INSTALL_HEADERS TARGET)
     cmake_parse_arguments(H " " "PREFIX" "HEADERS" ${ARGN})
     foreach (X IN ITEMS ${H_HEADERS})
         if (H_PREFIX)
@@ -10,7 +10,7 @@ function(TINYTEX_INSTALL_HEADERS TARGET)
     endforeach ()
 endfunction()
 
-function(TINYTEX_INSTALL_TARGET TARGET)
+function(MICROTEX_INSTALL_TARGET TARGET)
     install(
         TARGETS ${TARGET}
         EXPORT ${TARGET}Targets
@@ -27,7 +27,7 @@ function(TINYTEX_INSTALL_TARGET TARGET)
     install(
         EXPORT ${TARGET}Targets
         FILE ${TARGET}Targets.cmake
-        NAMESPACE tinytex::
+        NAMESPACE microtex::
         DESTINATION lib/cmake/${TARGET}
     )
     configure_file(${TARGET}Config.cmake.in ${TARGET}Config.cmake @ONLY)

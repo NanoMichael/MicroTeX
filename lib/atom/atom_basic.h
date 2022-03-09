@@ -1,5 +1,5 @@
-#ifndef TINYTEX_ATOM_BASIC_H
-#define TINYTEX_ATOM_BASIC_H
+#ifndef MICROTEX_ATOM_BASIC_H
+#define MICROTEX_ATOM_BASIC_H
 
 #include "atom/atom.h"
 #include "atom/atom_row.h"
@@ -302,6 +302,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
-#endif  // TINYTEX_ATOM_BASIC_H
+#endif  // MICROTEX_ATOM_BASIC_H

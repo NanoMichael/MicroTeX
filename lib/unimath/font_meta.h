@@ -1,13 +1,13 @@
-#ifndef TINYTEX_FONT_META_H
-#define TINYTEX_FONT_META_H
+#ifndef MICROTEX_FONT_META_H
+#define MICROTEX_FONT_META_H
 
-#include "tinytexexport.h"
+#include "microtexexport.h"
 #include <graphic/font_style.h>
 #include <string>
 
 namespace microtex {
 
-struct TINYTEX_EXPORT FontMeta {
+struct MICROTEX_EXPORT FontMeta {
   std::string family;
   std::string name;
   FontStyle style;
@@ -20,4 +20,4 @@ struct TINYTEX_EXPORT FontMeta {
 
 }
 
-#endif //TINYTEX_FONT_META_H
+#endif //MICROTEX_FONT_META_H

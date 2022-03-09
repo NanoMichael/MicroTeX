@@ -84,4 +84,4 @@ Otf::~Otf() {
   }
 }
 
-}  // namespace tinytex
+}  // namespace microtex

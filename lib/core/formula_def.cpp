@@ -157,5 +157,5 @@ map<string, string> Formula::_predefFormulaStrs{
   {"IJ",               "{I\\kern-0.065em J}"},
   {"ij",               "{i\\kern-0.065em j}"},
   {"idotsint",         "\\int\\cdots\\int"},
-  {"TinyTeX",          "\\text{Tiny\\kern-.1em\\TeX}"},
+  {"MicroTeX",         "\\text{\\mu\\kern-.1em\\TeX}"},
 };

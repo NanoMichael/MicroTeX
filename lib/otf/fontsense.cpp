@@ -3,7 +3,7 @@
 #ifdef HAVE_AUTO_FONT_FIND
 
 #include "unimath/uni_font.h"
-#include "tinytex.h"
+#include "microtex.h"
 
 #include <cstdlib>
 #include <queue>
@@ -18,7 +18,7 @@ namespace fs = std::experimental::filesystem;
 #include <filesystem>
 namespace fs = std::filesystem;
 #endif
-#define FONTDIR "tinytex"
+#define FONTDIR "microtex"
 
 namespace microtex {
 
@@ -71,8 +71,8 @@ std::string getDirOfExecutable() {
 
 font_paths_t getFontPaths() {
   std::queue<std::string> paths;
-  // checks if TINYTEX_FONTDIR exists. If it does, it pushes it to potential paths.
-  char* devdir = getenv("TINYTEX_FONTDIR");
+  // checks if MICROTEX_FONTDIR exists. If it does, it pushes it to potential paths.
+  char* devdir = getenv("MICROTEX_FONTDIR");
   if (devdir && *devdir)
     paths.push(std::string(devdir));
 
@@ -174,7 +174,7 @@ std::optional<FontMeta> fontsenseLookup() {
 
   for (const auto&[_stem, files] : font_paths) {
     Otf* font = Otf::fromFile(files.second);
-    auto meta = TinyTeX::addFont(FontSrcSense(font, files.first));
+    auto meta = MicroTeX::addFont(FontSrcSense(font, files.first));
     if (font->isMathFont()) {
       if (!mathfont) mathfont = meta;
     }

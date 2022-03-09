@@ -1,5 +1,5 @@
-#ifndef TINYTEX_SPLIT_H
-#define TINYTEX_SPLIT_H
+#ifndef MICROTEX_SPLIT_H
+#define MICROTEX_SPLIT_H
 
 #include <stack>
 
@@ -36,6 +36,6 @@ public:
   static sptr<Box> split(const sptr<HBox>& hb, float width, float lineSpace);
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
-#endif  // TINYTEX_SPLIT_H
+#endif  // MICROTEX_SPLIT_H

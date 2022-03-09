@@ -48,4 +48,4 @@ Glyph::~Glyph() {
   if (_path != &Path::empty) delete _path;
 }
 
-}  // namespace tinytex
+}  // namespace microtex

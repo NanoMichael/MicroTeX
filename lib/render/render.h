@@ -1,7 +1,7 @@
-#ifndef TINYTEX_RENDER_H
-#define TINYTEX_RENDER_H
+#ifndef MICROTEX_RENDER_H
+#define MICROTEX_RENDER_H
 
-#include "tinytexexport.h"
+#include "microtexexport.h"
 #include "graphic/graphic.h"
 
 namespace microtex {
@@ -11,7 +11,7 @@ class Box;
 struct RenderData;
 
 /** Object to paint formula, is baseline aligned. */
-class TINYTEX_EXPORT Render {
+class MICROTEX_EXPORT Render {
 private:
   RenderData* _data;
 
@@ -51,6 +51,6 @@ public:
   void draw(Graphics2D& g2, int x, int y);
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif  // RENDER_H_INCLUDED

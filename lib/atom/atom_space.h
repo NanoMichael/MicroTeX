@@ -1,5 +1,5 @@
-#ifndef TINYTEX_ATOM_SPACE_H
-#define TINYTEX_ATOM_SPACE_H
+#ifndef MICROTEX_ATOM_SPACE_H
+#define MICROTEX_ATOM_SPACE_H
 
 #include "utils/utils.h"
 #include "atom/atom.h"
@@ -37,4 +37,4 @@ public:
 
 }
 
-#endif //TINYTEX_ATOM_SPACE_H
+#endif //MICROTEX_ATOM_SPACE_H

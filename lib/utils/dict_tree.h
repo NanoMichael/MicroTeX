@@ -67,6 +67,6 @@ public:
   }
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif

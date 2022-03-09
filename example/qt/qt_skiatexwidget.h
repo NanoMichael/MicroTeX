@@ -6,7 +6,7 @@
 #define QT_SKIATEXWIDGET_H
 
 #include "platform/qt/graphic_qt.h"
-#include "tinytex.h"
+#include "microtex.h"
 #include <QOpenGLWidget>
 #include <gpu/GrDirectContext.h>
 #include <core/SkSurface.h>
@@ -43,7 +43,7 @@ protected:
   void resizeGL(int w, int h) override;
 
 private:
-  tinytex::TeXRender *_render;
+  microtex::TeXRender *_render;
   float _text_size;
   int _padding;
   std::wstring _latex{};

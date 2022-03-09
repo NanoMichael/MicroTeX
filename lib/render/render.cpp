@@ -61,7 +61,7 @@ static void buildDebug(
   }
 }
 
-} // namespace tinytex
+} // namespace microtex
 
 Render::Render(const sptr<Box>& box, float textSize) {
   _data = new RenderData{box, textSize, textSize / Env::fixedTextSize(), black};

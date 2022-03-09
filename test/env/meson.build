@@ -6,5 +6,5 @@ include = include_directories('../../lib')
 
 executable('env', src,
     include_directories: include,
-    link_with: tinytex_lib
+    link_with: microtex_lib
 )

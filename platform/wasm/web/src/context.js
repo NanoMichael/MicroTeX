@@ -104,9 +104,9 @@ function loadClm(clmDataUri, f) {
     .then(([len, meta]) => {
       if (!meta) return;
       // get font meta info
-      const cname = _runtime._tinytex_getFontName(meta);
+      const cname = _runtime._microtex_getFontName(meta);
       const fontName = _runtime.UTF8ToString(cname);
-      const isMathFont = _runtime._tinytex_isMathFont(meta);
+      const isMathFont = _runtime._microtex_isMathFont(meta);
 
       if (isMathFont) {
         _mathFontNames.add(fontName);
@@ -115,7 +115,7 @@ function loadClm(clmDataUri, f) {
         }
         console.log(`add math font, '${fontName}', size: ${len}`)
       } else {
-        const cstr = _runtime._tinytex_getFontFamily(meta);
+        const cstr = _runtime._microtex_getFontFamily(meta);
         const familyName = _runtime.UTF8ToString(cstr);
         _mainFontFamilies.add(familyName);
         if (_currentMainFontFamily === "") {
@@ -124,7 +124,7 @@ function loadClm(clmDataUri, f) {
         console.log(`add main font, '{${familyName}, ${fontName}}', size: ${len}`)
       }
       // do not forget to release the meta info
-      _runtime._tinytex_releaseFontMeta(meta);
+      _runtime._microtex_releaseFontMeta(meta);
     });
 }
 
@@ -135,28 +135,28 @@ function loadClm(clmDataUri, f) {
  * @returns {Promise<void>} a promise to init the context
  */
 context.init = function (clmDataUri) {
-  if (_runtime != null && _runtime._tinytex_isInited()) {
+  if (_runtime != null && _runtime._microtex_isInited()) {
     throw new Error("the context was initialized already.");
   }
   return initRuntime()
     .then(r => _runtime = r)
     .then(_ => loadClm(
       clmDataUri,
-      (len, data) => _runtime._tinytex_init(len, data))
+      (len, data) => _runtime._microtex_init(len, data))
     )
     .then(_ => {
-      _isLittleEndian = _runtime._tinytex_isLittleEndian();
+      _isLittleEndian = _runtime._microtex_isLittleEndian();
     })
 }
 
 /** Release the context. */
 context.release = function () {
-  _runtime._tinytex_release();
+  _runtime._microtex_release();
 }
 
 /** Check if context is initialized. */
 context.isInited = function () {
-  return _runtime._tinytex_isInited();
+  return _runtime._microtex_isInited();
 }
 
 /**
@@ -167,7 +167,7 @@ context.isInited = function () {
 context.addFont = function (clmDataUri) {
   return loadClm(
     clmDataUri,
-    (len, ptr) => _runtime._tinytex_addFont(len, ptr)
+    (len, ptr) => _runtime._microtex_addFont(len, ptr)
   );
 }
 
@@ -184,7 +184,7 @@ context.setMainFont = function (familyName) {
   }
   const cstr = _runtime.allocateUTF8(familyName);
   try {
-    _runtime._tinytex_setDefaultMainFont(cstr);
+    _runtime._microtex_setDefaultMainFont(cstr);
     _currentMainFontFamily = familyName;
   } finally {
     freeHeap(cstr);
@@ -204,7 +204,7 @@ context.setMathFont = function (fontName) {
   }
   const cstr = _runtime.allocateUTF8(fontName);
   try {
-    _runtime._tinytex_setDefaultMathFont(cstr);
+    _runtime._microtex_setDefaultMathFont(cstr);
     _currentMathFontName = fontName;
   } finally {
     freeHeap(cstr);
@@ -246,7 +246,7 @@ context.parse = function (tex, width, textSize, lineSpace, color) {
   const cstr = _runtime.allocateUTF8(tex);
   let ptr = 0;
   try {
-    ptr = _runtime._tinytex_parseRender(cstr, width, textSize, lineSpace, color);
+    ptr = _runtime._microtex_parseRender(cstr, width, textSize, lineSpace, color);
   } finally {
     freeHeap(cstr);
   }

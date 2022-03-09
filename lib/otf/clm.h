@@ -1,5 +1,5 @@
-#ifndef TINYTEX_CLM_H
-#define TINYTEX_CLM_H
+#ifndef MICROTEX_CLM_H
+#define MICROTEX_CLM_H
 
 #include "otf/otf.h"
 
@@ -52,6 +52,6 @@ public:
   Otf* read(size_t len, const u8* bytes) const;
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif

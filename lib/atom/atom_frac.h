@@ -1,5 +1,5 @@
-#ifndef TINYTEX_ATOM_FRAC_H
-#define TINYTEX_ATOM_FRAC_H
+#ifndef MICROTEX_ATOM_FRAC_H
+#define MICROTEX_ATOM_FRAC_H
 
 #include "atom/atom.h"
 #include "env/units.h"
@@ -44,4 +44,4 @@ public:
 
 }
 
-#endif //TINYTEX_ATOM_FRAC_H
+#endif //MICROTEX_ATOM_FRAC_H

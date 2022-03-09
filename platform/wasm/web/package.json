@@ -1,5 +1,5 @@
 {
-  "name": "tinytex",
+  "name": "microtex",
   "version": "1.0.0",
   "description": "A tiny LaTeX math formula rendering library",
   "main": "src/index.js",

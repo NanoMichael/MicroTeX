@@ -19,6 +19,6 @@ static constexpr double PI = 3.1415926535;
 /** Precision, for compare with 0.0f, if a value < PREC, we trade it as 0.0f */
 static constexpr float PREC = 0.01;
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif

@@ -12,11 +12,11 @@ struct PlatformFactoryData {
   string currentFactory;
 };
 
-static PlatformFactoryData TINYTEX_PLATFORM_FACTORY_DATA_INSTANCE;
+static PlatformFactoryData MICROTEX_PLATFORM_FACTORY_DATA_INSTANCE;
 
-} // namespace tinytex
+} // namespace microtex
 
-PlatformFactoryData* PlatformFactory::_data = &TINYTEX_PLATFORM_FACTORY_DATA_INSTANCE;
+PlatformFactoryData* PlatformFactory::_data = &MICROTEX_PLATFORM_FACTORY_DATA_INSTANCE;
 
 void microtex::PlatformFactory::registerFactory(const string& name, uptr<PlatformFactory> factory) {
   _data->factories[name] = std::move(factory);

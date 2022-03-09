@@ -1,5 +1,5 @@
-#ifndef TINYTEX_MACRO_DECL_H
-#define TINYTEX_MACRO_DECL_H
+#ifndef MICROTEX_MACRO_DECL_H
+#define MICROTEX_MACRO_DECL_H
 
 #include "core/formula.h"
 #include "core/parser.h"
@@ -13,4 +13,4 @@ namespace microtex {
 
 }
 
-#endif //TINYTEX_MACRO_DECL_H
+#endif //MICROTEX_MACRO_DECL_H

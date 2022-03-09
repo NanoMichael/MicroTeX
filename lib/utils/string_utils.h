@@ -140,6 +140,6 @@ inline std::string& replaceall(std::string& src, const std::string& from, const 
   return src;
 }
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif

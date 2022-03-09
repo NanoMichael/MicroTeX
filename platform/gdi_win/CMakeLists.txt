@@ -1,20 +1,20 @@
 message(STATUS "Build using GDI+ for Windows")
 
-add_library(tinytex-gdi SHARED graphic_win32.cpp)
+add_library(microtex-gdi SHARED graphic_win32.cpp)
 
 set_target_properties(
-    tinytex-gdi PROPERTIES
+    microtex-gdi PROPERTIES
     VERSION ${PROJECT_VERSION}
-    SOVERSION ${TINYTEX_API_VERSION}
+    SOVERSION ${MICROTEX_API_VERSION}
     CXX_VISIBILITY_PRESET hidden
 )
 
-target_compile_definitions(tinytex-gdi PRIVATE -DTINYTEX_LIBRARY)
+target_compile_definitions(microtex-gdi PRIVATE -DMICROTEX_LIBRARY)
 
-target_include_directories(tinytex-gdi PUBLIC .)
+target_include_directories(microtex-gdi PUBLIC .)
 
 target_link_libraries(
-    tinytex-gdi PUBLIC
-    tinytex
+    microtex-gdi PUBLIC
+    microtex
     gdiplus
 )

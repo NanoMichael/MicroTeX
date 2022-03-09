@@ -1,5 +1,5 @@
-#ifndef TINYTEX_GLUE_H
-#define TINYTEX_GLUE_H
+#ifndef MICROTEX_GLUE_H
+#define MICROTEX_GLUE_H
 
 #include "utils/utils.h"
 
@@ -66,4 +66,4 @@ public:
 
 }
 
-#endif //TINYTEX_GLUE_H
+#endif //MICROTEX_GLUE_H

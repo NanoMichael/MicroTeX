@@ -1,5 +1,5 @@
-#ifndef TINYTEX_GLYPH_H
-#define TINYTEX_GLYPH_H
+#ifndef MICROTEX_GLYPH_H
+#define MICROTEX_GLYPH_H
 
 #include "utils/dict_tree.h"
 #include "utils/utils.h"
@@ -383,6 +383,6 @@ public:
   friend CLMReader;
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif

@@ -3,7 +3,7 @@
 
 #include "qt_texqmlitem.h"
 
-using namespace tinytex;
+using namespace microtex;
 
 TexQmlItem::TexQmlItem(QQuickItem* parent, float text_size)
   : QQuickPaintedItem(parent)

@@ -1,5 +1,5 @@
-#ifndef TINYTEX_BOX_H
-#define TINYTEX_BOX_H
+#ifndef MICROTEX_BOX_H
+#define MICROTEX_BOX_H
 
 #include "utils/types.h"
 #include <vector>
@@ -190,4 +190,4 @@ public:
 
 }
 
-#endif //TINYTEX_BOX_H
+#endif //MICROTEX_BOX_H

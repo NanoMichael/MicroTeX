@@ -1,5 +1,5 @@
-#ifndef TINYTEX_TYPES_H
-#define TINYTEX_TYPES_H
+#ifndef MICROTEX_TYPES_H
+#define MICROTEX_TYPES_H
 
 #include <memory>
 #include <cinttypes>
@@ -149,4 +149,4 @@ enum class UnitType : i8 {
 
 }
 
-#endif //TINYTEX_TYPES_H
+#endif //MICROTEX_TYPES_H

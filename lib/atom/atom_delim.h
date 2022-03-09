@@ -1,5 +1,5 @@
-#ifndef TINYTEX_ATOM_DELIM_H
-#define TINYTEX_ATOM_DELIM_H
+#ifndef MICROTEX_ATOM_DELIM_H
+#define MICROTEX_ATOM_DELIM_H
 
 #include <utility>
 
@@ -54,4 +54,4 @@ public:
 
 }
 
-#endif //TINYTEX_ATOM_DELIM_H
+#endif //MICROTEX_ATOM_DELIM_H

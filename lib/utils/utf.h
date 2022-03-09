@@ -52,6 +52,6 @@ void scanContinuedUnicodes(
   const std::function<void(c32)>& collect
 );
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif

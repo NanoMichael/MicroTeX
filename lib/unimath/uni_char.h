@@ -1,5 +1,5 @@
-#ifndef TINYTEX_UNI_CHAR_H
-#define TINYTEX_UNI_CHAR_H
+#ifndef MICROTEX_UNI_CHAR_H
+#define MICROTEX_UNI_CHAR_H
 
 #include "utils/utils.h"
 #include "otf/glyph.h"
@@ -106,4 +106,4 @@ struct Char final {
 
 }
 
-#endif //TINYTEX_UNI_CHAR_H
+#endif //MICROTEX_UNI_CHAR_H

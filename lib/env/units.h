@@ -1,5 +1,5 @@
-#ifndef TINYTEX_UNITS_H
-#define TINYTEX_UNITS_H
+#ifndef MICROTEX_UNITS_H
+#define MICROTEX_UNITS_H
 
 #include "utils/utils.h"
 #include "env/env.h"
@@ -70,4 +70,4 @@ public:
 
 }
 
-#endif //TINYTEX_UNITS_H
+#endif //MICROTEX_UNITS_H

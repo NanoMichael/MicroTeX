@@ -1,7 +1,7 @@
-#ifndef TINYTEX_FONT_SRC_H
-#define TINYTEX_FONT_SRC_H
+#ifndef MICROTEX_FONT_SRC_H
+#define MICROTEX_FONT_SRC_H
 
-#include "tinytexexport.h"
+#include "microtexexport.h"
 #include "utils/types.h"
 #include <vector>
 #include <string>
@@ -11,7 +11,7 @@ namespace microtex {
 class Otf;
 
 /** Source to load font. */
-class TINYTEX_EXPORT FontSrc {
+class MICROTEX_EXPORT FontSrc {
 public:
   /** The font file path, may be empty if glyphs are drawn by graphical-paths. */
   const std::string fontFile;
@@ -24,7 +24,7 @@ public:
 };
 
 /** Font source from file. */
-class TINYTEX_EXPORT FontSrcFile : public FontSrc {
+class MICROTEX_EXPORT FontSrcFile : public FontSrc {
 public:
   const std::string clmFile;
 
@@ -37,7 +37,7 @@ public:
 };
 
 /** Font source from data. */
-class TINYTEX_EXPORT FontSrcData : public FontSrc {
+class MICROTEX_EXPORT FontSrcData : public FontSrc {
 public:
   const size_t len;
   const u8* data;
@@ -53,4 +53,4 @@ public:
 
 }
 
-#endif //TINYTEX_FONT_SRC_H
+#endif //MICROTEX_FONT_SRC_H

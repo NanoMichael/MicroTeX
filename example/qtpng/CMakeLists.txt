@@ -4,8 +4,8 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Gui REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Gui REQUIRED)
 target_link_libraries(
     latex2png PRIVATE
-    tinytex
-    tinytex-qt
+    microtex
+    microtex-qt
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Gui
 )

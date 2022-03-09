@@ -1,5 +1,5 @@
-#ifndef TINYTEX_OTFCONFIG_H
-#define TINYTEX_OTFCONFIG_H
+#ifndef MICROTEX_OTFCONFIG_H
+#define MICROTEX_OTFCONFIG_H
 
 // if have glyph render path
 #if GLYPH_RENDER_TYPE == 0 || GLYPH_RENDER_TYPE == 1
@@ -19,4 +19,4 @@
 // If clm supports glyph path
 #define CLM_SUPPORT_GLYPH_PATH(minorVersion) ((minorVersion) == 2)
 
-#endif //TINYTEX_OTFCONFIG_H
+#endif //MICROTEX_OTFCONFIG_H

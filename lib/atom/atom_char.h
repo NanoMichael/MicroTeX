@@ -1,5 +1,5 @@
-#ifndef TINYTEX_ATOM_CHAR_H
-#define TINYTEX_ATOM_CHAR_H
+#ifndef MICROTEX_ATOM_CHAR_H
+#define MICROTEX_ATOM_CHAR_H
 
 #include "atom/atom.h"
 #include "box/box.h"
@@ -159,4 +159,4 @@ public:
 
 }
 
-#endif //TINYTEX_ATOM_CHAR_H
+#endif //MICROTEX_ATOM_CHAR_H

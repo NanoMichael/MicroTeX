@@ -53,6 +53,6 @@ public:
   explicit ex_eof(const std::string& msg) : ex_tex(msg) {}
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif

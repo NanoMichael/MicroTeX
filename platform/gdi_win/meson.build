@@ -6,24 +6,24 @@ gdi_deps = [
     gdi_dep
 ]
 
-tinytex_gdi_lib = library('microtex-gdi', gdi_src,
-    link_with: [tinytex_lib],
+microtex_gdi_lib = library('microtex-gdi', gdi_src,
+    link_with: [microtex_lib],
     include_directories: inc,
     dependencies: gdi_deps,
     version: meson.project_version(),
-    soversion: tinytex_api_version,
+    soversion: microtex_api_version,
     install: true
 )
 
-tinytex_gdi_dep = declare_dependency(
-	link_with: [tinytex_lib, tinytex_gdi_lib],
+microtex_gdi_dep = declare_dependency(
+	link_with: [microtex_lib, microtex_gdi_lib],
 	include_directories: ['.', inc],
 	version: meson.project_version()
 )
 
 if get_option('TARGET_DEVEL')
-    pkgconfig.generate(tinytex_gdi_lib,
-        libraries: tinytex_lib,
+    pkgconfig.generate(microtex_gdi_lib,
+        libraries: microtex_lib,
         version: meson.project_version(),
         name: 'microtex-gdi',
         filebase: 'microtex-gdi',

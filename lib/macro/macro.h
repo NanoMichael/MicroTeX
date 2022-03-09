@@ -176,6 +176,6 @@ public:
   ) override;
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif  // MACRO_H_INCLUDED

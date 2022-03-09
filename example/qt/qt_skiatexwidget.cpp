@@ -10,7 +10,7 @@
 #include <svg/SkSVGCanvas.h>
 #include <core/SkStream.h>
 
-using namespace tinytex;
+using namespace microtex;
 
 static bool AllowEGL;
 

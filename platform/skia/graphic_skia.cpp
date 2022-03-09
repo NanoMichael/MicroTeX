@@ -6,7 +6,7 @@
 
 #include <utility>
 
-using namespace tinytex;
+using namespace microtex;
 using namespace std;
 
 std::map<std::pair<std::string, int>, int> Font_skia::_test;

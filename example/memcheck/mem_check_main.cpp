@@ -1,5 +1,5 @@
 #include "graphic/graphic.h"
-#include "tinytex.h"
+#include "microtex.h"
 #include "utils/utils.h"
 
 namespace microtex {
@@ -135,19 +135,19 @@ int main(int argc, char* argv[]) {
     return 1;
   }
   const microtex::FontSrcFile math{argv[1], argv[2]};
-  microtex::TinyTeX::init(&math);
+  microtex::MicroTeX::init(&math);
 
   microtex::PlatformFactory::registerFactory("none", std::make_unique<microtex::PlatformFactory_none>());
   microtex::PlatformFactory::activate("none");
 
   microtex::Samples samples(argv[3]);
   for (int i = 0; i < samples.count(); i++) {
-    auto r = microtex::TinyTeX::parse(samples.next(), 720, 20, 20 / 3.f, microtex::black);
+    auto r = microtex::MicroTeX::parse(samples.next(), 720, 20, 20 / 3.f, microtex::black);
     microtex::Graphics2D_none g2;
     r->draw(g2, 0, 0);
     delete r;
   }
 
-  microtex::TinyTeX::release();
+  microtex::MicroTeX::release();
   return 0;
 }

@@ -373,4 +373,4 @@ Otf* CLMReader::read(size_t len, const u8* bytes) const {
   return read(reader);
 }
 
-}  // namespace tinytex
+}  // namespace microtex

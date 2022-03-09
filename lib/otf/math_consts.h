@@ -1,5 +1,5 @@
-#ifndef TINYTEX_MATH_CONSTS_H
-#define TINYTEX_MATH_CONSTS_H
+#ifndef MICROTEX_MATH_CONSTS_H
+#define MICROTEX_MATH_CONSTS_H
 
 #include "utils/utils.h"
 
@@ -17,7 +17,7 @@ class CLMReader;
  * </a>
  * for details.
  * <p>
- * Device-table is JUST IGNORED, so all the fields are represent as tinytex::i16 directly.
+ * Device-table is JUST IGNORED, so all the fields are represent as microtex::i16 directly.
  */
 struct MathConsts {
 private:
@@ -149,6 +149,6 @@ public:
   friend CLMReader;
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
-#endif // TINYTEX_MATH_CONSTS_H
+#endif // MICROTEX_MATH_CONSTS_H

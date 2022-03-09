@@ -1,5 +1,5 @@
-#ifndef TINYTEX_OTF_H
-#define TINYTEX_OTF_H
+#ifndef MICROTEX_OTF_H
+#define MICROTEX_OTF_H
 
 #include "otf/glyph.h"
 #include "otf/math_consts.h"
@@ -164,6 +164,6 @@ public:
   friend CLMReader;
 };
 
-}  // namespace tinytex
+}  // namespace microtex
 
 #endif

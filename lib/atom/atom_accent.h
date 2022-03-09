@@ -1,5 +1,5 @@
-#ifndef TINYTEX_ATOM_ACCENT_H
-#define TINYTEX_ATOM_ACCENT_H
+#ifndef MICROTEX_ATOM_ACCENT_H
+#define MICROTEX_ATOM_ACCENT_H
 
 #include "atom/atom.h"
 #include "atom/atom_char.h"
@@ -52,4 +52,4 @@ public:
 
 }
 
-#endif //TINYTEX_ATOM_ACCENT_H
+#endif //MICROTEX_ATOM_ACCENT_H

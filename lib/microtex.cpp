@@ -1,4 +1,4 @@
-#include "tinytex.h"
+#include "microtex.h"
 
 #include "core/formula.h"
 #include "otf/fontsense.h"
@@ -19,16 +19,16 @@ struct Config {
   bool renderGlyphUsePath;
 };
 
-static Config TINYTEX_CONFIG{false, "", "", false};
+static Config MICROTEX_CONFIG{false, "", "", false};
 
-} // namespace tinytex
+} // namespace microtex
 
-Config* TinyTeX::_config = &microtex::TINYTEX_CONFIG;
+Config* MicroTeX::_config = &microtex::MICROTEX_CONFIG;
 
-std::string TinyTeX::version() {
-  return std::to_string(TINYTEX_VERSION_MAJOR) + "."
-         + std::to_string(TINYTEX_VERSION_MINOR) + "."
-         + std::to_string(TINYTEX_VERSION_PATCH);
+std::string MicroTeX::version() {
+  return std::to_string(MICROTEX_VERSION_MAJOR) + "."
+         + std::to_string(MICROTEX_VERSION_MINOR) + "."
+         + std::to_string(MICROTEX_VERSION_PATCH);
 }
 
 #ifdef HAVE_AUTO_FONT_FIND
@@ -60,7 +60,7 @@ struct InitVisitor {
   }
 };
 
-FontMeta TinyTeX::init(const Init& init) {
+FontMeta MicroTeX::init(const Init& init) {
   if (_config->isInited) return {};
   auto meta = std::visit(InitVisitor(), init);
   _config->defaultMathFontName = meta.name;
@@ -71,7 +71,7 @@ FontMeta TinyTeX::init(const Init& init) {
 
 #endif // HAVE_AUTO_FONT_FIND
 
-FontMeta TinyTeX::init(const FontSrc& mathFontSrc) {
+FontMeta MicroTeX::init(const FontSrc& mathFontSrc) {
   if (_config->isInited) return {};
   auto meta = FontContext::addFont(mathFontSrc);
   if (!meta.isValid()) {
@@ -83,16 +83,16 @@ FontMeta TinyTeX::init(const FontSrc& mathFontSrc) {
   return meta;
 }
 
-bool TinyTeX::isInited() {
+bool MicroTeX::isInited() {
   return _config->isInited;
 }
 
-void TinyTeX::release() {
+void MicroTeX::release() {
   MacroInfo::_free_();
   NewCommandMacro::_free_();
 }
 
-FontMeta TinyTeX::addFont(const FontSrc& src) {
+FontMeta MicroTeX::addFont(const FontSrc& src) {
   auto meta = FontContext::addFont(src);
   if (meta.isMathFont && _config->defaultMathFontName.empty()) {
     _config->defaultMathFontName = meta.name;
@@ -103,13 +103,13 @@ FontMeta TinyTeX::addFont(const FontSrc& src) {
   return meta;
 }
 
-bool TinyTeX::setDefaultMathFont(const std::string& name) {
+bool MicroTeX::setDefaultMathFont(const std::string& name) {
   if (!FontContext::isMathFontExists(name)) return false;
   _config->defaultMathFontName = name;
   return true;
 }
 
-bool TinyTeX::setDefaultMainFont(const std::string& family) {
+bool MicroTeX::setDefaultMainFont(const std::string& family) {
   if (family.empty() || FontContext::isMainFontExists(family)) {
     _config->defaultMainFontFamily = family;
     return true;
@@ -117,19 +117,19 @@ bool TinyTeX::setDefaultMainFont(const std::string& family) {
   return false;
 }
 
-std::vector<std::string> TinyTeX::mathFontNames() {
+std::vector<std::string> MicroTeX::mathFontNames() {
   return FontContext::mathFontNames();
 }
 
-std::vector<std::string> TinyTeX::mainFontFamilies() {
+std::vector<std::string> MicroTeX::mainFontFamilies() {
   return FontContext::mainFontFamilies();
 }
 
-void TinyTeX::overrideTexStyle(bool enable, TexStyle style) {
+void MicroTeX::overrideTexStyle(bool enable, TexStyle style) {
   RenderBuilder::overrideTexStyle(enable, style);
 }
 
-bool TinyTeX::hasGlyphPathRender() {
+bool MicroTeX::hasGlyphPathRender() {
 #ifdef HAVE_GLYPH_RENDER_PATH
   return true;
 #else
@@ -137,13 +137,13 @@ bool TinyTeX::hasGlyphPathRender() {
 #endif
 }
 
-void TinyTeX::setRenderGlyphUsePath(bool use) {
+void MicroTeX::setRenderGlyphUsePath(bool use) {
 #if GLYPH_RENDER_TYPE == 0
   _config->renderGlyphUsePath = use;
 #endif
 }
 
-bool TinyTeX::isRenderGlyphUsePath() {
+bool MicroTeX::isRenderGlyphUsePath() {
 #if GLYPH_RENDER_TYPE == 0
   return _config->renderGlyphUsePath;
 #elif GLYPH_RENDER_TYPE == 1
@@ -153,7 +153,7 @@ bool TinyTeX::isRenderGlyphUsePath() {
 #endif
 }
 
-Render* TinyTeX::parse(
+Render* MicroTeX::parse(
   const string& latex, float width, float textSize, float lineSpace, color fg,
   const string& mathFontName, const string& mainFontFamily
 ) {

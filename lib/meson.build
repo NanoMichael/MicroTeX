@@ -3,11 +3,11 @@ inc = []
 
 install_headerfiles = get_option('TARGET_DEVEL')
 
-tinytex_src = ['microtex.cpp']
-src += tinytex_src
+microtex_src = ['microtex.cpp']
+src += microtex_src
 
-tinytex_inc = include_directories('.')
-inc += tinytex_inc
+microtex_inc = include_directories('.')
+inc += microtex_inc
 
 subdir('atom')
 src += atom_src
@@ -39,14 +39,14 @@ src += utils_src
 subdir('render')
 src += render_src
 
-tinytex_version = meson.project_version().split('.')
+microtex_version = meson.project_version().split('.')
 config_h = configure_file(
-    input: 'tinytexconfig.h.in',
-    output: 'tinytexconfig.h',
+    input: 'microtexconfig.h.in',
+    output: 'microtexconfig.h',
     configuration: {
-        'PROJECT_VERSION_MAJOR': tinytex_version[0],
-        'PROJECT_VERSION_MINOR': tinytex_version[1],
-        'PROJECT_VERSION_PATCH': tinytex_version[2],
+        'PROJECT_VERSION_MAJOR': microtex_version[0],
+        'PROJECT_VERSION_MINOR': microtex_version[1],
+        'PROJECT_VERSION_PATCH': microtex_version[2],
         'HAVE_AUTO_FONT_FIND': get_option('HAVE_AUTO_FONT_FIND'),
     },
     format: 'cmake@'
@@ -69,33 +69,33 @@ if not cpp.has_header('filesystem')
 	endif
 endif
 
-tinytex_lib = library('microtex', src,
+microtex_lib = library('microtex', src,
 	dependencies: fs_lib,
 	include_directories: inc,
 	version: meson.project_version(),
-	soversion: tinytex_api_version,
+	soversion: microtex_api_version,
 	install: true
 )
 
-tinytex_dep = declare_dependency(
-	link_with: tinytex_lib,
+microtex_dep = declare_dependency(
+	link_with: microtex_lib,
 	include_directories: inc,
 	version: meson.project_version()
 )
 
 if get_option('TARGET_DEVEL')
-    pkgconfig.generate(tinytex_lib,
+    pkgconfig.generate(microtex_lib,
         version: meson.project_version(),
         name: 'microtex',
         filebase: 'microtex',
         subdirs: 'microtex',
-        description: 'A tiny, fast, cross-platform, and embeddable LaTeX rendering library'
+        description: 'A micro, fast, cross-platform, and embeddable LaTeX rendering library'
     )
 endif
 
 if install_headerfiles
 	install_headers([
-		'tinytexexport.h',
+		'microtexexport.h',
 		'microtex.h',
 		config_h
 	], subdir: 'microtex')
