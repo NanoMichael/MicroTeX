@@ -8,6 +8,8 @@
 #include <cstdlib>
 #include <queue>
 #include <cstring>
+#include <sstream>
+
 #ifdef USE_BOOST_FILESYSTEM
 #include <boost/filesystem.hpp>
 namespace fs = boost::filesystem;
@@ -18,6 +20,7 @@ namespace fs = std::experimental::filesystem;
 #include <filesystem>
 namespace fs = std::filesystem;
 #endif
+
 #define FONTDIR "microtex"
 
 namespace microtex {
