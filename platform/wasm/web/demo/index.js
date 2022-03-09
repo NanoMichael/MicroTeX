@@ -93,6 +93,29 @@ function listenEvents() {
     parse(str);
     editor.setValue(str);
   };
+  // resize
+  const left = document.getElementById('left');
+  const section = document.getElementById('section');
+  const resize = document.getElementById('pan-resize');
+  let isDown = 0;
+  resize.addEventListener('mousedown', () => {
+    isDown = 1;
+    const move = e => {
+      if (isDown === 1) {
+        const x = e.clientX - section.getBoundingClientRect().left;
+        left.style.flexBasis = x + "px";
+      } else {
+        end();
+      }
+    };
+    const end = () => {
+      isDown = 0;
+      document.body.removeEventListener('mousemove', move);
+      document.body.removeEventListener('mouseup', end);
+    };
+    document.body.addEventListener('mousemove', move);
+    document.body.addEventListener('mouseup', end);
+  });
 }
 
 function fixDpi(canvas) {
