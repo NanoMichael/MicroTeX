@@ -4,7 +4,7 @@
 #include "atom/atom_char.h"
 #include "box/box_single.h"
 
-namespace tinytex {
+namespace microtex {
 
 /**
  * An atom representing a middle atom which must be rounded by a left and right

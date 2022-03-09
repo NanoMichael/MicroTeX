@@ -5,7 +5,7 @@
 #include "box/box_single.h"
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 
 sptr<Box> SpaceAtom::createBox(Env& env) {
   if (!_blankSpace) {

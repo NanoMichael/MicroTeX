@@ -4,7 +4,7 @@
 #include "tinytexexport.h"
 #include "utils/types.h"
 
-namespace tinytex {
+namespace microtex {
 
 /** Enum represents all supported font style */
 enum class FontStyle : u16 {

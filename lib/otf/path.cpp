@@ -5,7 +5,7 @@
 #include "graphic/graphic.h"
 #include "utils/string_utils.h"
 
-namespace tinytex {
+namespace microtex {
 
 PathCmd::PathCmd(char cmd, const i16* args) noexcept: cmd(cmd), args(args) {}
 
@@ -43,7 +43,7 @@ std::string PathCmd::toString() const {
   std::string str;
   str.append(1, cmd).append(1, ' ');
   for (int i = 0; i < argsCount(cmd); i++) {
-    str.append(tinytex::tostring(args[i])).append(1, ' ');
+    str.append(microtex::tostring(args[i])).append(1, ' ');
   }
   str.append(1, '\n');
   return str;

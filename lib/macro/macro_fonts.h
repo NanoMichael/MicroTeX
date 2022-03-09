@@ -7,7 +7,7 @@
 #include "unimath/uni_font.h"
 #include "utils/utf.h"
 
-namespace tinytex {
+namespace microtex {
 
 inline macro(text) {
   const auto atom = Formula(tp, args[1], false, false)._root;

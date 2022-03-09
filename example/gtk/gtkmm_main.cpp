@@ -26,7 +26,7 @@
 #include <optional>
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 
 class TeXDrawingArea : public Gtk::DrawingArea {
 private:
@@ -362,9 +362,9 @@ void getHeadlessOpt(Headless& h, const std::string& key, const std::string& valu
   } else if (key == "-textsize") {
     valueof(value, h._textSize);
   } else if (key == "-foreground") {
-    h._foreground = tinytex::getColor(value);
+    h._foreground = microtex::getColor(value);
   } else if (key == "-background") {
-    h._background = tinytex::getColor(value);
+    h._background = microtex::getColor(value);
   } else if (key == "-input") {
     h._input = value;
   } else if (key == "-output") {

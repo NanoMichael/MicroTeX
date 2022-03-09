@@ -14,7 +14,7 @@
 #include "macro/macro_frac.h"
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 
 #define mac3(argc, name, code) \
   { code, defMac(argc, name) }

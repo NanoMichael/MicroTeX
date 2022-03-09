@@ -6,7 +6,7 @@
 #include <map>
 #include <vector>
 
-namespace tinytex {
+namespace microtex {
 
 class Graphics2D;
 

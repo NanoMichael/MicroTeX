@@ -6,10 +6,10 @@
 #include "env/units.h"
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 
 sptr<Box> BigSymbolAtom::createBox(Env& env) {
-  auto b = tinytex::createVDelim(_delim, env, _size);
+  auto b = microtex::createVDelim(_delim, env, _size);
   const auto axis = env.mathConsts().axisHeight() * env.scale();
   b->_shift = -(b->vlen() / 2 - b->_height) - axis;
   return sptrOf<HBox>(b);

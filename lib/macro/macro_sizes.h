@@ -3,7 +3,7 @@
 
 #include "macro/macro_decl.h"
 
-namespace tinytex {
+namespace microtex {
 
 inline macro(declaremathsizes) {
   float a, b, c, d;

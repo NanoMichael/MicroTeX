@@ -4,7 +4,7 @@
 #include "atom/atom.h"
 #include "atom/atom_char.h"
 
-namespace tinytex {
+namespace microtex {
 
 /** An atom representing another atom with an accent symbol above it */
 class AccentedAtom : public Atom {

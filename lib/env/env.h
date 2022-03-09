@@ -5,7 +5,7 @@
 #include "unimath/uni_font.h"
 #include "utils/nums.h"
 
-namespace tinytex {
+namespace microtex {
 
 struct Dimen;
 

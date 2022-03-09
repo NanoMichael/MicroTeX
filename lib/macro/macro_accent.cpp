@@ -1,6 +1,6 @@
 #include "macro/macro_accent.h"
 
-namespace tinytex {
+namespace microtex {
 
 macro(accentbiss) {
   std::string acc;

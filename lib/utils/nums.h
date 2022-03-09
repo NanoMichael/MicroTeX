@@ -4,7 +4,7 @@
 #include <cmath>
 #include <limits>
 
-namespace tinytex {
+namespace microtex {
 
 /** Positive infinity */
 static constexpr float POS_INF = std::numeric_limits<float>::infinity();

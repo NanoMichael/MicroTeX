@@ -7,5 +7,5 @@ if install_headerfiles
     install_headers([
         'render.h',
         'builder.h'
-    ], subdir: 'tinytex/render')
+    ], subdir: 'microtex/render')
 endif

@@ -5,7 +5,7 @@
 #include "graphic/font_style.h"
 #include "env/env.h"
 
-namespace tinytex {
+namespace microtex {
 
 class FontStyleAtom : public Atom {
 private:

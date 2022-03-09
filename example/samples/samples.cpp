@@ -4,7 +4,7 @@
 #include <fstream>
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 
 void Samples::readSamples(const string& path) {
   string line;

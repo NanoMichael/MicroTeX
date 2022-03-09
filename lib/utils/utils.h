@@ -12,7 +12,7 @@
   T(const T&) = delete;   \
   void operator=(const T&) = delete
 
-namespace tinytex {
+namespace microtex {
 
 template<typename T, typename... Args>
 inline sptr<T> sptrOf(Args&& ... args) {

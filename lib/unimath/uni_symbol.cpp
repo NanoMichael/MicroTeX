@@ -3,7 +3,7 @@
 
 using namespace std;
 
-namespace tinytex {
+namespace microtex {
 
 static constexpr auto ord = static_cast<i8>(AtomType::ordinary) << 8;
 static constexpr auto rel = static_cast<i8>(AtomType::relation) << 8;

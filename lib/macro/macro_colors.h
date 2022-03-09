@@ -7,7 +7,7 @@
 #include "atom/atom_basic.h"
 #include "utils/utf.h"
 
-namespace tinytex {
+namespace microtex {
 
 inline macro(fgcolor) {
   auto a = Formula(tp, args[2])._root;

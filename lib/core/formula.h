@@ -6,7 +6,7 @@
 
 #include "core/parser.h"
 
-namespace tinytex {
+namespace microtex {
 
 class MiddleAtom;
 

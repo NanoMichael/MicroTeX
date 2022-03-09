@@ -1,7 +1,7 @@
 #include "core/formula.h"
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 
 const map<c32, string> Formula::_charToSymbol{
   {'+', "plus"},

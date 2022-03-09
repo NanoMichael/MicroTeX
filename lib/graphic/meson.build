@@ -9,5 +9,5 @@ if install_headerfiles
 		'font_style.h',
         'graphic_basic.h',
         'graphic.h'
-	], subdir: 'tinytex/graphic')
+	], subdir: 'microtex/graphic')
 endif

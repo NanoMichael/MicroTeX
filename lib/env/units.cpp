@@ -4,7 +4,7 @@
 #include "utils/string_utils.h"
 #include "utils/utf.h"
 
-using namespace tinytex;
+using namespace microtex;
 using namespace std;
 
 // IMPORTANT: sorted by the unit name, you must resort this array after add item

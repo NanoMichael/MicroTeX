@@ -8,7 +8,7 @@
 #include <optional>
 #include <string>
 
-namespace tinytex {
+namespace microtex {
 
 /** Find font resources auto. Return the first found math font name. */
 std::optional<FontMeta> fontsenseLookup();

@@ -11,5 +11,5 @@ if install_headerfiles
         'box_group.h',
         'box.h',
         'box_single.h'
-	], subdir: 'tinytex/box')
+	], subdir: 'microtex/box')
 endif

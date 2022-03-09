@@ -9,7 +9,7 @@
 #include <memory>
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 
 color MatrixAtom::LINE_COLOR = transparent;
 

@@ -7,5 +7,5 @@ if install_headerfiles
     install_headers([
         'env.h',
         'units.h'
-    ], subdir: 'tinytex/env')
+    ], subdir: 'microtex/env')
 endif

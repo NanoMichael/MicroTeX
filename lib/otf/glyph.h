@@ -5,7 +5,7 @@
 #include "utils/utils.h"
 #include "otf/path.h"
 
-namespace tinytex {
+namespace microtex {
 
 class CLMReader;
 

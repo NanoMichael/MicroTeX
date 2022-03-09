@@ -4,7 +4,7 @@
 #include "env/env.h"
 #include "env/units.h"
 
-using namespace tinytex;
+using namespace microtex;
 
 sptr<Box> ZStackAtom::createBox(Env& env) {
   const auto anchor = _anchor->createBox(env);

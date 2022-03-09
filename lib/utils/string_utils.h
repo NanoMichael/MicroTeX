@@ -9,7 +9,7 @@
 #include <map>
 #include <vector>
 
-namespace tinytex {
+namespace microtex {
 
 /**
  * Parse options from given string. The options are given in the form of

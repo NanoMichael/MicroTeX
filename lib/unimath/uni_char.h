@@ -4,7 +4,7 @@
 #include "utils/utils.h"
 #include "otf/glyph.h"
 
-namespace tinytex {
+namespace microtex {
 
 struct OtfFont;
 

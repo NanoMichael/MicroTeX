@@ -2,7 +2,7 @@
 #include "utils/string_utils.h"
 #include "utils/exceptions.h"
 
-namespace tinytex {
+namespace microtex {
 
 macro(definecolor) {
   color c = TRANSPARENT;

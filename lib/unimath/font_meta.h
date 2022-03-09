@@ -5,7 +5,7 @@
 #include <graphic/font_style.h>
 #include <string>
 
-namespace tinytex {
+namespace microtex {
 
 struct TINYTEX_EXPORT FontMeta {
   std::string family;

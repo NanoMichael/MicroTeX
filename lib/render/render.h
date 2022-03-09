@@ -4,7 +4,7 @@
 #include "tinytexexport.h"
 #include "graphic/graphic.h"
 
-namespace tinytex {
+namespace microtex {
 
 class Box;
 

@@ -14,5 +14,5 @@ if install_headerfiles
         'utf.h',
         'utils.h',
         'types.h'
-	], subdir: 'tinytex/utils')
+	], subdir: 'microtex/utils')
 endif

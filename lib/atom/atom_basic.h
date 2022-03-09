@@ -6,7 +6,7 @@
 #include "box/box_single.h"
 #include "unimath/math_type.h"
 
-namespace tinytex {
+namespace microtex {
 
 class Formula;
 

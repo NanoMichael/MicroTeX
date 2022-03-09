@@ -10,7 +10,7 @@ example_gdi_deps = [
 ]
 
 executable(
-    'tinytex-win32-example', example_gdi_src,
+    'microtex-win32-example', example_gdi_src,
     include_directories: example_gdi_inc,
     link_with: [tinytex_gdi_lib, tinytex_lib],
     dependencies: example_gdi_deps,

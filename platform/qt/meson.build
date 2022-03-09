@@ -5,7 +5,7 @@ qt_src = [
   'graphic_qt.cpp'
 ]
 
-tinytex_qt_lib = library('tinytex-qt', qt_src,
+tinytex_qt_lib = library('microtex-qt', qt_src,
     link_with: tinytex_lib,
     include_directories: inc,
     dependencies: qt_dep,
@@ -24,15 +24,15 @@ if get_option('TARGET_DEVEL')
     pkgconfig.generate(tinytex_qt_lib,
         libraries: tinytex_lib,
         version: meson.project_version(),
-        name: 'tinytex-qt',
-        filebase: 'tinytex-qt',
-        subdirs: ['tinytex/platform/qt'],
-        description: 'qt5 backend to tinytex'
+        name: 'microtex-qt',
+        filebase: 'microtex-qt',
+        subdirs: ['microtex/platform/qt'],
+        description: 'qt5 backend to microtex'
     )
 endif
 
 if install_headerfiles
     install_headers([
         'graphic_qt.h'
-    ], subdir: 'tinytex/platform/qt')
+    ], subdir: 'microtex/platform/qt')
 endif

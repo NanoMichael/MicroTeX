@@ -4,7 +4,7 @@
 #include "atom/atom.h"
 #include "env/units.h"
 
-namespace tinytex {
+namespace microtex {
 
 using Args = std::vector<std::string>;
 

@@ -5,7 +5,7 @@
 #include "box/box_single.h"
 #include "box/box_group.h"
 
-using namespace tinytex;
+using namespace microtex;
 using namespace std;
 
 const std::vector<StackElement> StackAtom::_defaultOrder = {

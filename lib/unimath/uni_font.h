@@ -13,7 +13,7 @@
 #include "unimath/uni_symbol.h"
 #include "unimath/font_meta.h"
 
-namespace tinytex {
+namespace microtex {
 
 /** Represents an open-type font with font-file and font-spec */
 struct OtfFont final {

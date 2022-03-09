@@ -4,7 +4,7 @@
 #include "env/env.h"
 #include "env/units.h"
 
-using namespace tinytex;
+using namespace microtex;
 
 float OvalAtom::_multiplier = 0.5f;
 float OvalAtom::_diameter = 0.f;

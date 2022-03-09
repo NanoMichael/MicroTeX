@@ -16,7 +16,7 @@
 #include "utils/utf.h"
 #include "utils/exceptions.h"
 
-namespace tinytex {
+namespace microtex {
 
 inline macro(fatalIfCmdConflict) {
   NewCommandMacro::_errIfConflict = args[1] == "true";

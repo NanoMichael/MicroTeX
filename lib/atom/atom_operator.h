@@ -3,7 +3,7 @@
 
 #include "atom/atom.h"
 
-namespace tinytex {
+namespace microtex {
 
 /**
  * An atom representing a "big operator" (or an atom that acts as one) together

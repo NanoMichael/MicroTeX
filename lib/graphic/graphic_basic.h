@@ -5,7 +5,7 @@
 #include "tinytexexport.h"
 #include <string>
 
-namespace tinytex {
+namespace microtex {
 
 using color = std::uint32_t;
 

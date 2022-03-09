@@ -7,7 +7,7 @@
 #include "atom/atom_space.h"
 #include "atom/atom_char.h"
 
-namespace tinytex {
+namespace microtex {
 
 class ArrayFormula;
 

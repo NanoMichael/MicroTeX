@@ -20,18 +20,18 @@ int main(int argc, char** argv) {
     );
     return 1;
   }
-  const tinytex::FontSrcFile math{argv[1], argv[2]};
-  tinytex::TinyTeX::init(&math);
+  const microtex::FontSrcFile math{argv[1], argv[2]};
+  microtex::TinyTeX::init(&math);
 
-  tinytex::PlatformFactory::registerFactory("qt", std::make_unique<tinytex::PlatformFactory_qt>());
-  tinytex::PlatformFactory::activate("qt");
+  microtex::PlatformFactory::registerFactory("qt", std::make_unique<microtex::PlatformFactory_qt>());
+  microtex::PlatformFactory::activate("qt");
 
-  tinytex::TinyTeX::setRenderGlyphUsePath(true);
+  microtex::TinyTeX::setRenderGlyphUsePath(true);
 
   MainWindow win(nullptr, argv[3]);
   win.show();
   int ret = app.exec();
 
-  tinytex::TinyTeX::release();
+  microtex::TinyTeX::release();
   return ret;
 }

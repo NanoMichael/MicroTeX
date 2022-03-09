@@ -6,7 +6,7 @@
 #include "atom/atom.h"
 #include "env/units.h"
 
-namespace tinytex {
+namespace microtex {
 
 /** Arguments to place stacked atoms */
 struct StackArgs {

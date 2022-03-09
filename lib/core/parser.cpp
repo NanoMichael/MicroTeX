@@ -14,7 +14,7 @@
 #include "utils/exceptions.h"
 
 using namespace std;
-using namespace tinytex;
+using namespace microtex;
 
 const char Parser::ESCAPE = '\\';
 const char Parser::L_GROUP = '{';
@@ -831,14 +831,14 @@ sptr<Atom> Parser::getCharAtom() {
   int n = 0, m = 0, cnt = 0;
   c32 chr = 0;
   const auto next = [&]() {
-    return tinytex::nextUnicode(_latex, _pos + n, m);
+    return microtex::nextUnicode(_latex, _pos + n, m);
   };
   const auto collect = [&](c32 code) {
     n += m;
     cnt++;
     chr = code;
   };
-  tinytex::scanContinuedUnicodes(next, collect);
+  microtex::scanContinuedUnicodes(next, collect);
   auto atom = (
     cnt == 1
     ? getCharAtom(chr)
@@ -849,7 +849,7 @@ sptr<Atom> Parser::getCharAtom() {
 }
 
 sptr<Atom> Parser::getCharAtom(c32 chr) {
-  const c32 code = tinytex::convertToRomanNumber(chr);
+  const c32 code = microtex::convertToRomanNumber(chr);
   if (_isMathMode) {
     const auto it = Formula::_charToSymbol.find(code);
     if (it != Formula::_charToSymbol.end()) {

@@ -29,5 +29,5 @@ if install_headerfiles
         'macro_space.h',
         'macro_styles.h',
         'macro_types.h'
-    ], subdir: 'tinytex/macro')
+    ], subdir: 'microtex/macro')
 endif

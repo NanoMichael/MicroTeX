@@ -3,7 +3,7 @@
 
 #include "atom/atom.h"
 
-namespace tinytex {
+namespace microtex {
 
 /** An atom representing scripts around of a base atom */
 class SideSetsAtom : public Atom {

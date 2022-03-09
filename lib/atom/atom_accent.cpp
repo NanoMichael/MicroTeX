@@ -5,7 +5,7 @@
 #include "box/box_group.h"
 #include "utils/exceptions.h"
 
-using namespace tinytex;
+using namespace microtex;
 using namespace std;
 
 void AccentedAtom::setupBase(const sptr<Atom>& base) {

@@ -4,7 +4,7 @@
 
 #include <cstring>
 
-namespace tinytex {
+namespace microtex {
 
 class BinaryReader {
 public:

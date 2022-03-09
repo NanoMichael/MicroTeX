@@ -10,7 +10,7 @@ cairo_deps = [
     dependency('pangocairo')
 ]
 
-tinytex_cairo_lib = library('tinytex-cairo', cairo_src,
+tinytex_cairo_lib = library('microtex-cairo', cairo_src,
     link_with: tinytex_lib,
     include_directories: inc,
     dependencies: cairo_deps,
@@ -33,15 +33,15 @@ if get_option('TARGET_DEVEL')
     pkgconfig.generate(tinytex_cairo_lib,
         libraries: tinytex_lib,
         version: meson.project_version(),
-        name: 'tinytex-cairo',
-        filebase: 'tinytex-cairo',
-        subdirs: ['tinytex/platform/cairo'],
-        description: 'cairomm backend to tinytex'
+        name: 'microtex-cairo',
+        filebase: 'microtex-cairo',
+        subdirs: ['microtex/platform/cairo'],
+        description: 'cairomm backend to microtex'
     )
 endif
 
 if install_headerfiles
     install_headers([
         'graphic_cairo.h'
-    ], subdir: 'tinytex/platform/cairo')
+    ], subdir: 'microtex/platform/cairo')
 endif

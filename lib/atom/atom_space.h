@@ -4,7 +4,7 @@
 #include "utils/utils.h"
 #include "atom/atom.h"
 
-namespace tinytex {
+namespace microtex {
 
 /** An atom representing whitespace. */
 class SpaceAtom : public Atom {

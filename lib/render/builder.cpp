@@ -6,7 +6,7 @@
 #include "box/box_single.h"
 #include "box/box_group.h"
 
-using namespace tinytex;
+using namespace microtex;
 
 TexStyle RenderBuilder::_overrideStyle = TexStyle::text;
 bool RenderBuilder::_enableOverrideStyle = false;

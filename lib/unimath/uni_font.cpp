@@ -7,7 +7,7 @@
 
 using namespace std;
 
-namespace tinytex {
+namespace microtex {
 
 OtfFont::OtfFont(i32 id, sptr<const Otf> spec, std::string fontFile) noexcept
   : id(id), fontFile(std::move(fontFile)), otfSpec(std::move(spec)) {}

@@ -7,7 +7,7 @@
 #include <map>
 #include <string>
 
-namespace tinytex {
+namespace microtex {
 
 class Parser;
 

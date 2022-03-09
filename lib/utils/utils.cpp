@@ -1,29 +1,29 @@
 #include "utils/utils.h"
 
-const std::locale& tinytex::defaultLocale() {
+const std::locale& microtex::defaultLocale() {
   static const std::locale locale("en_US.UTF-8");
   return locale;
 }
 
-bool tinytex::isUnicodeLower(c32 code) {
+bool microtex::isUnicodeLower(c32 code) {
   // the type-cast is necessary, or a std::bad_cast will be thrown,
   // because std::toupper is a template function
   return std::islower((wchar_t) code, defaultLocale());
 }
 
-bool tinytex::isUnicodeDigit(c32 code) {
+bool microtex::isUnicodeDigit(c32 code) {
   return std::isdigit((wchar_t) code, defaultLocale());
 }
 
-tinytex::c32 tinytex::toUnicodeUpper(c32 code) {
+microtex::c32 microtex::toUnicodeUpper(c32 code) {
   return std::toupper((wchar_t) code, defaultLocale());
 }
 
-tinytex::c32 tinytex::toUnicodeLower(c32 code) {
+microtex::c32 microtex::toUnicodeLower(c32 code) {
   return std::tolower((wchar_t) code, defaultLocale());
 }
 
-int tinytex::binIndexOf(
+int microtex::binIndexOf(
   int count,
   const std::function<int(int)>& compare,
   bool returnClosest
