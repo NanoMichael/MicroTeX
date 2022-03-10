@@ -422,12 +422,16 @@ bool Parser::isValidName(const string& cmd) const {
   int l = cmd.length();
   while (p < l) {
     c = cmd[p];
-    if (!isalpha(c) && (_atIsLetter == 0 || c != '@'))
+    if (!isAlpha(c) && (_atIsLetter == 0 || c != '@'))
       break;
     p++;
   }
 
-  return isalpha(c);
+  return isAlpha(c);
+}
+
+bool Parser::isValidCharInCmd(char ch) const {
+  return isAlpha(ch) || (_atIsLetter != 0 && ch == '@');
 }
 
 sptr<Atom> Parser::processEscape() {
