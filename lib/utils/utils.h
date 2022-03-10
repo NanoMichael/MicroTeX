@@ -7,6 +7,7 @@
 #include <vector>
 #include <locale>
 #include <map>
+#include <algorithm>
 
 #define no_copy_assign(T) \
   T(const T&) = delete;   \
@@ -22,6 +23,10 @@ inline sptr<T> sptrOf(Args&& ... args) {
 template<typename T, typename... Args>
 inline uptr<T> uptrOf(Args&& ... args) {
   return std::make_unique<T>(std::forward<Args>(args)...);
+}
+
+inline bool isAlpha(char c) {
+  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
 template<typename K, typename V>

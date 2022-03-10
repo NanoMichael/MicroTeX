@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
 #ifdef BUILD_SKIA
   initGL();
 #endif
-  if (argc < 5) {
+  if (argc < 4) {
     fprintf(
       stderr,
       "Required options:\n"
@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
 
   MainWindow win(nullptr, argv[3]);
   win.show();
-  int ret = app.exec();
+  int ret = QApplication::exec();
 
   microtex::MicroTeX::release();
   return ret;

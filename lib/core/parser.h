@@ -327,9 +327,7 @@ public:
    * Test the validity of a character in a command. It must contains only
    * alpha characters and eventually a @ if makeAtletter activated
    */
-  inline bool isValidCharInCmd(char ch) const {
-    return isalpha(ch) || (_atIsLetter != 0 && ch == '@');
-  }
+  bool isValidCharInCmd(char ch) const;
 };
 
 }  // namespace microtex

@@ -1,5 +1,4 @@
 #include <cstring>
-#include <cmath>
 #include "env/units.h"
 #include "utils/string_utils.h"
 #include "utils/utf.h"
@@ -115,7 +114,7 @@ Dimen Units::getDimen(const std::string& lgth) {
   if (lgth.empty()) return {0.f, UnitType::none};
 
   size_t i = 0;
-  for (; i < lgth.length() && !isalpha(lgth[i]); i++);
+  for (; i < lgth.length() && !isAlpha(lgth[i]); i++);
   float f = 0;
   valueof(lgth.substr(0, i), f);
 
