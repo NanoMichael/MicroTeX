@@ -5,7 +5,7 @@ import {runtime} from "./runtime";
 /**
  * Convert a \#AARRGGBB color to CSS color.
  *
- * @param {Number} color the \#AARRGGBB color
+ * @param {number} color the \#AARRGGBB color
  */
 function toCSSColor(color) {
   const css = ((color << 8) >>> 0 | color >>> 24) >>> 0;
@@ -29,7 +29,7 @@ const argBuf = new Float32Array(8);
  * Create a Render to paint formulas. You MUST call {@link Render.release} to free
  * memory after this render is unused.
  *
- * @param {Number} nativeRender the pointer of native render parsed by the engine
+ * @param {number} nativeRender the pointer of native render parsed by the engine
  * @param {boolean} isLittleEndian if the byte order is little endian
  * @constructor
  */
@@ -40,7 +40,7 @@ function Render(nativeRender, isLittleEndian) {
   /**
    * Get the paintable formula width.
    *
-   * @return {Number}
+   * @return {number}
    */
   this.getWidth = function () {
     return runtime._microtex_getRenderWidth(_nativeRender);
@@ -49,16 +49,25 @@ function Render(nativeRender, isLittleEndian) {
   /**
    * Get the height of the render.
    *
-   * @return {Number}
+   * @return {number}
    */
   this.getHeight = function () {
     return runtime._microtex_getRenderHeight(_nativeRender);
   }
 
   /**
+   * Get distance above baseline.
+   *
+   * @return {number}
+   */
+  this.getBaseline = function () {
+    return this.getHeight() - this.getDepth();
+  }
+
+  /**
    * Get the depth below the baseline, in positive.
    *
-   * @return {Number}
+   * @return {number}
    */
   this.getDepth = function () {
     return runtime._microtex_getRenderDepth(_nativeRender);
@@ -71,12 +80,12 @@ function Render(nativeRender, isLittleEndian) {
    * Draw the formula on point (x, y).
    *
    * @param {CanvasRenderingContext2D} ctx the graphical (2D) context
-   * @param {Number} x the x coordinate
-   * @param {Number} y the y coordinate
+   * @param {number} x the x coordinate
+   * @param {number} y the y coordinate
    */
   this.draw = function (ctx, x, y) {
     const ptr = runtime._microtex_getDrawingData(_nativeRender, x, y);
-    // make a view to iterate drawing commands
+    // make a view to iterate over drawing commands
     const v = new DataView(runtime.HEAPU8.buffer);
     let offset = 0;
 

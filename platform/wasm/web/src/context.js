@@ -8,7 +8,7 @@ let context = {};
 /**
  * The loaded main font
  *
- * @type {Set<String>}
+ * @type {Set<string>}
  * @private
  */
 let _mainFontFamilies = new Set();
@@ -16,7 +16,7 @@ let _mainFontFamilies = new Set();
 /**
  * The loaded math font names.
  *
- * @type {Set<String>}
+ * @type {Set<string>}
  * @private
  */
 let _mathFontNames = new Set();
@@ -59,7 +59,7 @@ let _runtime = null;
  * call {@link freeHeap} after this memory is unused.
  *
  * @param {ArrayBuffer} arrayBuffer
- * @returns {Number} the pointer of the heap memory
+ * @returns {number} the pointer of the heap memory
  */
 function copyToHeap(arrayBuffer) {
   const numBytes = arrayBuffer.byteLength;
@@ -75,7 +75,7 @@ function copyToHeap(arrayBuffer) {
 /**
  * Release heap memory.
  *
- * @param {Number} ptr the pointer of the heap memory
+ * @param {number} ptr the pointer of the heap memory
  */
 function freeHeap(ptr) {
   if (ptr === undefined || !ptr) return;
@@ -85,7 +85,7 @@ function freeHeap(ptr) {
 /**
  * Load clm data from uri
  *
- * @param {String} clmDataUri the clm data uri
+ * @param {string} clmDataUri the clm data uri
  * @param {function(number, number)} f callback after clm data was loaded
  */
 function loadClm(clmDataUri, f) {
@@ -131,7 +131,7 @@ function loadClm(clmDataUri, f) {
 /**
  * Init the context with given clm data uri.
  *
- * @param {String} clmDataUri the clm data uri
+ * @param {string} clmDataUri the clm data uri
  * @returns {Promise<void>} a promise to init the context
  */
 context.init = function (clmDataUri) {
@@ -162,7 +162,7 @@ context.isInited = function () {
 /**
  * Add a font to context.
  *
- * @param {String} clmDataUri the clm data uri
+ * @param {string} clmDataUri the clm data uri
  */
 context.addFont = function (clmDataUri) {
   return loadClm(
@@ -174,7 +174,7 @@ context.addFont = function (clmDataUri) {
 /**
  * Set main font to render formulas. The font MUST be added to the context.
  *
- * @param {String} familyName the family name, the engine will use math font
+ * @param {string} familyName the family name, the engine will use math font
  * to render text if is empty.
  * @throws {TypeError} if the font was not added.
  */
@@ -195,7 +195,7 @@ context.setMainFont = function (familyName) {
 /**
  * Set math font to render formulas. The font MUST be added to the context.
  *
- * @param {String} fontName the font name
+ * @param {string} fontName the font name
  * @throws {TypeError} if the font was not added
  */
 context.setMathFont = function (fontName) {
@@ -216,7 +216,7 @@ context.setMathFont = function (fontName) {
  * Get the math fonts added to the context, return an empty array if the
  * context was not initialized.
  *
- * @return {String[]} the copy of the loaded math fonts
+ * @return {string[]} the copy of the loaded math fonts
  */
 context.getMathFontNames = function () {
   return [..._mathFontNames];
@@ -226,7 +226,7 @@ context.getMathFontNames = function () {
  * Get the main font family names added to the context, returns an empty
  * array if no main font was added.
  *
- * @return {String[]} the copy of the loaded main font family names
+ * @return {string[]} the copy of the loaded main font family names
  */
 context.getMainFontFamilyNames = function () {
   return [..._mainFontFamilies];

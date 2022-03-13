@@ -74,7 +74,7 @@ map<string, string> microtex::parseOption(const string& options) {
     const int n = opt.count();
     std::vector<std::string> optarg(n);
     for (int j = 0; j < n; j++) {
-      optarg.push_back(opt.next());
+      optarg[j] = opt.next();
     }
     if (!optarg.empty()) {
       if (optarg.size() == 2) {

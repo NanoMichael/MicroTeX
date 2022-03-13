@@ -8,7 +8,8 @@ export default [{
   output: {
     file: './dist/microtex.js',
     format: 'esm',
-    name: 'microtex'
+    name: 'microtex',
+    sourcemap: true
   },
   plugins: [
     babel({
@@ -25,7 +26,8 @@ export default [{
     globals: {
       'ace-builds': 'ace',
       'ace': 'ace'
-    }
+    },
+    sourcemap: true
   },
   plugins: [
     babel(),

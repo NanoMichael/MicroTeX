@@ -2,7 +2,10 @@
 
 import ace from 'ace-builds';
 import 'ace-builds/src-min-noconflict/mode-latex';
-import {context} from '../dist/microtex';
+import * as microtex from "../dist/microtex"
+import {examples} from "./examples";
+import * as utils from "./utils"
+import {helloDemo} from "./hello";
 
 let editor = null
 
@@ -17,23 +20,27 @@ const fonts = [
   "./res/xits/XITS-BoldItalic.clm2"
 ];
 
-context
+microtex
+  .context
   .init(fonts[0])
   .then(_ => {
-    const p = fonts.slice(1).map(path => context.addFont(path))
+    console.log("init finished...");
+    const str = hello();
+    initEditor(str);
+    listenResize();
+    listenEvents();
+  })
+  .then(_ => {
+    const p = fonts.slice(1).map(path => microtex.context.addFont(path));
     return Promise.all(p);
   })
   .then(_ => {
-    console.log("init & add font finished")
-    const str = hello();
     initFontOptions();
-    initEditor(str);
-    listenEvents()
   });
 
 function hello() {
-  let hello = `\\text{Hello from \\MicroTeX 🥰, have fun!}`;
-  const arg = getQueryParam("tex");
+  let hello = helloDemo;
+  const arg = utils.getQueryParam("tex");
   if (arg != null) {
     hello = arg;
     if (arg.startsWith('"')) hello = hello.substring(1);
@@ -45,16 +52,16 @@ function hello() {
 
 function initFontOptions() {
   let selectMain = document.getElementById('main-font');
-  context.getMainFontFamilyNames().forEach(f => {
+  microtex.context.getMainFontFamilyNames().forEach(f => {
     selectMain.add(new Option(f, f));
   })
   // special case: none fallback to math font
   selectMain.add(new Option("none", "none"));
 
   let selectMath = document.getElementById('fonts')
-  context.getMathFontNames().forEach(f => {
+  microtex.context.getMathFontNames().forEach(f => {
     selectMath.add(new Option(f, f));
-  })
+  });
 }
 
 function initEditor(str) {
@@ -62,39 +69,38 @@ function initEditor(str) {
   editor.session.setMode("ace/mode/latex");
   editor.getSession().setTabSize(2);
   editor.setValue(str);
-  editor.getSession().on('change', () => {
-    if (context.isInited()) {
-      parse(editor.getValue());
-    }
-  });
+  editor.getSession().on('change', () => parse(editor.getValue()));
 }
 
 function listenEvents() {
-  document.getElementById('main-font').onchange = e => {
-    if (!context.isInited()) return;
+  document.getElementById('main-font').onchange = () => {
     const option = document.getElementById("main-font").value;
     const name = option === "none" ? "" : option;
-    context.setMainFont(name);
+    microtex.context.setMainFont(name);
     parse(editor.getValue());
   };
-  document.getElementById('fonts').onchange = e => {
-    if (!context.isInited()) return;
+  document.getElementById('fonts').onchange = () => {
     const option = document.getElementById("fonts").value;
-    context.setMathFont(option);
+    microtex.context.setMathFont(option);
     parse(editor.getValue());
   };
-  document.getElementById('textsize').onchange = e => {
-    if (!context.isInited()) return;
+  document.getElementById('textsize').onchange = () => {
     parse(editor.getValue());
   };
-  document.getElementById('next').onclick = e => {
-    if (!examples.isInited() || !context.isInited()) return;
+  document.getElementById('next').onclick = () => {
+    if (!examples.isInited()) return;
     let str = examples.next();
     parse(str);
     editor.setValue(str);
   };
-  // resize
+  document.getElementById('mode').onchange = () => {
+    parse(editor.getValue());
+  };
+}
+
+function listenResize() {
   const left = document.getElementById('left');
+  const right = document.getElementById('right');
   const section = document.getElementById('section');
   const resize = document.getElementById('pan-resize');
   let isDown = 0;
@@ -102,8 +108,11 @@ function listenEvents() {
     isDown = 1;
     const move = e => {
       if (isDown === 1) {
-        const x = e.clientX - section.getBoundingClientRect().left;
+        const w = section.getBoundingClientRect().width;
+        let x = e.clientX - section.getBoundingClientRect().left;
+        x = Math.min(Math.max(x, 100), w - 100);
         left.style.flexBasis = x + "px";
+        right.style.flexBasis = (w - x) + "px";
       } else {
         end();
       }
@@ -118,108 +127,83 @@ function listenEvents() {
   });
 }
 
-function fixDpi(canvas) {
-  let dpi = window.devicePixelRatio || 1;
-  if (dpi === 1) return;
-  let sw = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
-  let sh = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
-  console.log(`style size: ${sw}, ${sh}, ${dpi}`);
-  // scale
-  canvas.width = sw * dpi;
-  canvas.height = sh * dpi;
+function parse(str) {
+  const wrapper = document.getElementById("wrapper");
+  wrapper.removeAllChildren();
+  const mode = document.getElementById("mode").value;
+  if (mode === "text") {
+    parseText(wrapper, str);
+  } else {
+    parseRender(str, wrapper);
+  }
 }
 
-const padding = 16;
+function parseText(container, str) {
+  const size = +document.getElementById("textsize").value;
 
-function parse(str) {
+  let k = 0;
+  let p = createParagraph();
+
+  function createParagraph() {
+    let p = document.createElement("p");
+    p.style.fontSize = size + "px";
+    return p;
+  }
+
+  function appendText(end) {
+    const t = document.createTextNode(str.substring(k, end));
+    p.append(t);
+    k = end;
+  }
+
+  for (let i = 0; i < str.length; i++) {
+    const c = str[i];
+    if (c === '\n' && i + 1 < str.length && str[i + 1] === '\n') {
+      i += 2;
+      appendText(i);
+      container.append(p);
+      p = createParagraph();
+    } else if (c === '$') {
+      let tex = "";
+      let inline = true;
+      if (i + 1 < str.length && str[i + 1] === '$') {
+        inline = false;
+        tex = str.takeUntil((j, x) => j > i + 1 && x === '$' && str[j - 1] === '$', i, true);
+      } else {
+        inline = true;
+        tex = str.takeUntil((j, x) => j > i && x === '$', i, true);
+      }
+      if (tex.length <= 0) continue;
+      appendText(i);
+      parseRender(tex, p, 2, inline);
+      i += tex.length - 1;
+      k += tex.length;
+    }
+  }
+
+  appendText(str.length);
+  container.append(p);
+}
+
+function parseRender(str, parent, padding = 8, inline = true) {
   // get text size
   const sizeStr = document.getElementById("textsize").value;
-  const size = parseInt(sizeStr);
+  // browser has PPI = 96
+  const size = parseInt(sizeStr) * (96 / 72);
   // get content width
-  let width = document.getElementById("left").offsetWidth - padding;
+  let width = document.getElementById("wrapper").offsetWidth - padding * 2;
 
   let r = null;
   try {
-    r = context.parse(str, width, size, size / 3, 0x3b3b3b);
+    r = microtex.context.parse(str, width, size, size / 3, 0x3b3b3b);
   } catch (e) {
     console.log(e);
     return;
   }
 
-  const wrapper = document.getElementById("wrapper");
-  if (wrapper.lastChild) {
-    wrapper.removeChild(wrapper.lastChild);
-  }
-
-  function attach() {
-    const canvas = document.createElement("canvas");
-    canvas.style.width = (r.getWidth() + padding) + "px";
-    canvas.style.height = (r.getHeight() + padding) + "px";
-    canvas.width = r.getWidth() + padding;
-    canvas.height = r.getHeight() + padding;
-    // append to left
-    wrapper.appendChild(canvas);
-    // fix dpi
-    fixDpi(canvas);
-    return canvas;
-  }
-
-  // draw the render
-  function draw(canvas) {
-    const ctx = canvas.getContext('2d');
-    r.draw(ctx, padding / 2, padding / 2);
-  }
-
-  const canvas = attach();
-  draw(canvas);
+  const canvas = parent.attachCanvas(r, padding, inline);
+  const ctx = canvas.getContext('2d');
+  r.draw(ctx, padding, padding);
 
   r.release();
-}
-
-function Examples(examplesUrl) {
-  let isInited = false;
-
-  this.isInited = function () {
-    return isInited;
-  }
-
-  fetch(examplesUrl)
-    .then(res => res.text())
-    .then(txt => readExamples(txt));
-
-  let samples = [];
-  let i = -1;
-
-  function readExamples(txt) {
-    const lines = txt.split(/\r?\n/);
-    let str = "";
-    lines.forEach(v => {
-      if (/^%+$/.test(v)) {
-        samples.push(str);
-        str = "";
-      } else {
-        str += v + "\n";
-      }
-    });
-    isInited = true;
-  }
-
-  this.count = function () {
-    return samples.length;
-  }
-
-  this.next = function () {
-    i = (i + 1) % this.count();
-    return samples[i];
-  }
-}
-
-const examples = new Examples('./res/SAMPLES.tex');
-
-function getQueryParam(name) {
-  const reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-  const r = window.location.search.substr(1).match(reg);
-  if (r != null) return unescape(r[2]);
-  return null;
-
 }
