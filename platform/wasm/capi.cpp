@@ -74,12 +74,13 @@ void* MICROTEX_WASM_API microtex_parseRender(
   int width,
   float textSize,
   float lineSpace,
-  unsigned int color
+  unsigned int color,
+  bool fillWidth
 ) {
 #ifdef HAVE_LOG
   logv("parse: %s\n", tex);
 #endif
-  auto r = MicroTeX::parse(tex, width, textSize, lineSpace, color);
+  auto r = MicroTeX::parse(tex, width, textSize, lineSpace, color, fillWidth);
   return reinterpret_cast<void*>(r);
 }
 

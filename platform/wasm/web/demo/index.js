@@ -195,7 +195,7 @@ function parseRender(str, parent, padding = 8, inline = true) {
 
   let r = null;
   try {
-    r = microtex.context.parse(str, width, size, size / 3, 0x3b3b3b);
+    r = microtex.context.parse(str, width, size, size / 3, 0x3b3b3b, false);
   } catch (e) {
     console.log(e);
     return;

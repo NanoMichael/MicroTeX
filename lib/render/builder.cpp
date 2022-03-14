@@ -19,40 +19,6 @@ RenderBuilder& RenderBuilder::setLineSpace(const Dimen& dimen) {
   return *this;
 }
 
-RenderBuilder& RenderBuilder::setIsMaxWidth(bool i) {
-  if (!_textWidth.isValid()) {
-    throw ex_invalid_state("Cannot set 'isMaxWidth' without having specified a width!");
-  }
-  if (i) {
-    // Currently isMaxWidth==true does not work with
-    // Alignment::center or Alignment::right (see HBox constructor)
-    //
-    // The case (1) we don't support by setting align := Alignment::left
-    // here is this:
-    //      \text{hello world\\hello} with align=Alignment::center (but forced
-    //      to Alignment::left) and isMaxWidth==true results in:
-    //      [hello world]
-    //      [hello ]
-    // and NOT:
-    //      [hello world]
-    //      [ hello ]
-    //
-    // However, this case (2) is currently not supported anyway
-    // (Alignment::center with isMaxWidth==false):
-    //      [ hello world ]
-    //      [ hello ]
-    // and NOT:
-    //      [ hello world ]
-    //      [ hello ]
-    //
-    // => until (2) is solved, we stick with the hack to set align
-    // := Alignment::left!
-    _align = Alignment::left;
-  }
-  _isMaxWidth = i;
-  return *this;
-}
-
 Render* RenderBuilder::build(Formula& f) {
   return build(f._root);
 }
@@ -88,9 +54,9 @@ Render* RenderBuilder::build(const sptr<Atom>& fc) {
     if (!_lineSpace.isEmpty()) {
       auto space = Units::fsize(_lineSpace, env);
       auto split = BoxSplitter::split(box, env.textWidth(), space);
-      hb = new HBox(split, _isMaxWidth ? split->_width : env.textWidth(), _align);
+      hb = new HBox(split, _fillWidth ? env.textWidth() : split->_width, _align);
     } else {
-      hb = new HBox(box, _isMaxWidth ? box->_width : env.textWidth(), _align);
+      hb = new HBox(box, _fillWidth ? env.textWidth() : box->_width, _align);
     }
     render = new Render(sptr<Box>(hb), _textSize);
   } else {

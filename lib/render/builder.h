@@ -19,7 +19,7 @@ private:
   Dimen _textWidth;
   Dimen _lineSpace;
   float _textSize = 0;
-  bool _isMaxWidth = false;
+  bool _fillWidth = false;
   color _fg = black;
   Alignment _align = Alignment::none;
   std::string _mathFontName;
@@ -64,7 +64,10 @@ public:
     return *this;
   }
 
-  RenderBuilder& setIsMaxWidth(bool i);
+  inline RenderBuilder& setFillWidth(bool i) {
+    _fillWidth = i;
+    return *this;
+  }
 
   RenderBuilder& setLineSpace(const Dimen& dimen);
 

@@ -145,11 +145,15 @@ public:
   /**
    * Parse LaTeX string to Render
    *
-   * @param tex the LaTeX formatted string (in UTF-8)
-   * @param width the width of the 2D graphics context (in pixel)
+   * @param tex the (La)TeX string to parse (in UTF-8 encoding)
+   * @param width the width of the 2D graphics context (in pixel) to limit the
+   *    formula layout, the engine will trying to wrap the layout if it overflows
+   *    the width, but will fails if formula cannot be split.
    * @param textSize the text size in pixel
    * @param lineSpace the line space in pixel
    * @param fg the foreground color
+   * @param fillWidth whether fill the graphics context if is in inter-line mode,
+   *    default is true
    * @param mathFontName the math font name, default is empty
    * @param mainFontFamily the main font name, default is empty
    */
@@ -159,6 +163,7 @@ public:
     float textSize,
     float lineSpace,
     color fg,
+    bool fillWidth = true,
     const std::string& mathFontName = "",
     const std::string& mainFontFamily = ""
   );

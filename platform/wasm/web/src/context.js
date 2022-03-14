@@ -240,17 +240,21 @@ context.getMainFontFamilyNames = function () {
  * @param {number} textSize the text size to paint the formula (in pixel)
  * @param {number} lineSpace the line space to layout multi-lines formulas (in pixel)
  * @param {number} color \#AARRGGBB formatted color
+ * @param {boolean} fillWidth whether fill the graphical context if is in inter-line mode
  * @returns {Render} a render to paint the parsed formula
  */
-context.parse = function (tex, width, textSize, lineSpace, color) {
+context.parse = function (
+  tex, width, textSize,
+  lineSpace, color, fillWidth = true
+) {
   const cstr = _runtime.allocateUTF8(tex);
   let ptr = 0;
   try {
-    ptr = _runtime._microtex_parseRender(cstr, width, textSize, lineSpace, color);
+    ptr = _runtime._microtex_parseRender(cstr, width, textSize, lineSpace, color, fillWidth);
   } finally {
     freeHeap(cstr);
   }
   return new Render(ptr, _isLittleEndian);
 }
 
-export {context}
+export {context};

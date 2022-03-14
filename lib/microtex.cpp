@@ -155,7 +155,7 @@ bool MicroTeX::isRenderGlyphUsePath() {
 
 Render* MicroTeX::parse(
   const string& latex, float width, float textSize, float lineSpace, color fg,
-  const string& mathFontName, const string& mainFontFamily
+  bool fillWidth, const string& mathFontName, const string& mainFontFamily
 ) {
   Formula formula(latex);
   const auto isInline = !startswith(latex, "$$") && !startswith(latex, "\\[");
@@ -174,7 +174,7 @@ Render* MicroTeX::parse(
       : mainFontFamily
     )
     .setWidth({width, UnitType::pixel}, align)
-    .setIsMaxWidth(isInline)
+    .setFillWidth(!isInline && fillWidth)
     .setLineSpace({lineSpace, UnitType::pixel})
     .setForeground(fg)
     .build(formula);
