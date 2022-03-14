@@ -187,9 +187,9 @@ function parseText(container, str) {
 
 function parseRender(str, parent, padding = 8, inline = true) {
   // get text size
-  const sizeStr = document.getElementById("textsize").value;
+  const v = +document.getElementById("textsize").value;
   // browser has PPI = 96
-  const size = parseInt(sizeStr) * (96 / 72);
+  const size = v * (96 / 72);
   // get content width
   let width = document.getElementById("wrapper").offsetWidth - padding * 2;
 
@@ -203,6 +203,7 @@ function parseRender(str, parent, padding = 8, inline = true) {
 
   const canvas = parent.attachCanvas(r, padding, inline);
   const ctx = canvas.getContext('2d');
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
   r.draw(ctx, padding, padding);
 
   r.release();

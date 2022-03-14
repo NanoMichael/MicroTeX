@@ -9,10 +9,10 @@ HTMLElement.prototype.removeAllChildren = function () {
 HTMLCanvasElement.prototype.fixDpi = function () {
   const dpi = window.devicePixelRatio || 1;
   if (dpi === 1) return;
-  const sw = +getComputedStyle(this).getPropertyValue("width").slice(0, -2);
-  const sh = +getComputedStyle(this).getPropertyValue("height").slice(0, -2);
-  this.width = Math.floor(sw * dpi);
-  this.height = Math.floor(sh * dpi);
+  const w = +this.style.width.slice(0, -2);
+  const h = +this.style.height.slice(0, -2);
+  this.width = Math.floor(w * dpi);
+  this.height = Math.floor(h * dpi);
 }
 
 HTMLElement.prototype.attachCanvas = function (render, padding, inline = true) {
