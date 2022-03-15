@@ -226,6 +226,7 @@ map<string, MacroInfo*> MacroInfo::_commands{
     mac(1, macro_accentbiss, "r"),
   // endregion
   // region math accents
+    mac(1, macro_accents, "not"),
     mac(1, macro_accents, "hat"),
     mac(1, macro_accents, "widehat"),
     mac(1, macro_accents, "check"),
