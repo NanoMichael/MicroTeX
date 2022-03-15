@@ -7,7 +7,7 @@
 #endif
 
 // The clm data major version
-#define CLM_VER_MAJOR 4
+#define CLM_VER_MAJOR 5
 
 // The clm data minor version, must be 1 or 2
 #ifdef HAVE_GLYPH_RENDER_PATH
