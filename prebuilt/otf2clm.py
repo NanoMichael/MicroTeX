@@ -134,10 +134,11 @@ def read_scripts(glyph, subtable_names):
     '''
     Return an array of glyph names to represents scripts variants 
     '''
-    return chain(
+    scripts = chain(
         partial(fmap, lambda subtable_name: glyph.getPosSub(subtable_name)),
         partial(fmap, lambda infos: infos[2:])
     )(subtable_names)
+    return list(scripts)
 
 
 def read_glyph_assembly(get_assembly):
@@ -335,11 +336,12 @@ def read_scripts_subtables(font):
     Return array of scripts variants subtable name
     The feature tag is 'ssty'
     '''
-    return _read_lookup_subtables(
+    subtables = _read_lookup_subtables(
         font,
         lambda info: info[0] == 'gsub_alternate' and any(
             t[0] == 'ssty' for t in info[2])
     )(font.gsub_lookups)
+    return list(subtables)
 
 
 def read_kern_subtables(font):
@@ -600,44 +602,44 @@ def parse_fontstyle(font, userstyle):
 
     style = NONE
 
-    if (userstyle == None or userstyle == ""):
-        if (font.os2_weight >= 700):
+    if userstyle is None or userstyle == "":
+        if font.os2_weight >= 700:
             style |= BF
 
-        if (font.os2_stylemap == 0x40):
+        if font.os2_stylemap == 0x40:
             style |= RM
-        if (font.os2_stylemap == 0x21):
+        if font.os2_stylemap == 0x21:
             style |= (BF | IT)
-        if (font.os2_stylemap == 0x20):
+        if font.os2_stylemap == 0x20:
             style |= BF
-        if (font.os2_stylemap == 0x01):
+        if font.os2_stylemap == 0x01:
             style |= IT
 
-        if (font.macstyle != -1):
-            if (font.macstyle & 0b01 == 0b01):
+        if font.macstyle != -1:
+            if font.macstyle & 0b01 == 0b01:
                 style |= BF
-            if (font.macstyle & 0b10 == 0b10):
+            if font.macstyle & 0b10 == 0b10:
                 style |= IT
 
-        if (font.fullname.upper().__contains__("MONO")):
+        if font.fullname.upper().__contains__("MONO"):
             style |= TT
     else:
         userstyles = userstyle.split(",")
-        if ("rm" in userstyles):
+        if "rm" in userstyles:
             style |= RM
-        if ("bf" in userstyles):
+        if "bf" in userstyles:
             style |= BF
-        if ("it" in userstyles):
+        if "it" in userstyles:
             style |= IT
-        if ("cal" in userstyles):
+        if "cal" in userstyles:
             style |= CAL
-        if ("frak" in userstyles):
+        if "frak" in userstyles:
             style |= FRAK
-        if ("bb" in userstyles):
+        if "bb" in userstyles:
             style |= BB
-        if ("sf" in userstyles):
+        if "sf" in userstyles:
             style |= SF
-        if ("tt" in userstyles):
+        if "tt" in userstyles:
             style |= TT
 
     return style
@@ -699,8 +701,8 @@ def parse_otf(file_path, have_glyph_path, output_file_path, userstyle=""):
         f.write(struct.pack('c', bytes('c', 'ascii')))
         f.write(struct.pack('c', bytes('l', 'ascii')))
         f.write(struct.pack('c', bytes('m', 'ascii')))
-        # current major version 4
-        f.write(struct.pack('!H', 4))
+        # current major version 5
+        f.write(struct.pack('!H', 5))
         # minor version, if support glyph path
         f.write(struct.pack('B', 2 if have_glyph_path else 1))
         f.write(struct.pack(str(len(name) + 1) + 's', bytes(name, 'utf-8')))
@@ -741,7 +743,7 @@ def single_parse(input_file, have_glyph_path, output_dir, user_style):
     import os
     name = os.path.basename(input_file)[0:-4]
     save_name = name + ".clm2" if have_glyph_path else name + ".clm1"
-    save_path =  os.path.join(output_dir, save_name)
+    save_path = os.path.join(output_dir, save_name)
     parse_otf(input_file, have_glyph_path, save_path, user_style)
     print("The generated clm data file was saved into directory: " + output_dir);
 
