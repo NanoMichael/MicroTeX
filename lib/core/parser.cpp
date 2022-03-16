@@ -300,22 +300,22 @@ string Parser::getCmdWithArgs(const string& cmd) {
   if (mac == nullptr) {
     return "\\" + cmd;
   }
-  int mac_opts = mac->_posOpts;
+  int mac_opts = mac->opt;
 
   // return as format: \cmd[opt][...]{arg}{...}
 
   vector<string> mac_args;
-  getOptsArgs(mac->_argc, mac_opts, mac_args);
+  getOptsArgs(mac->argc, mac_opts, mac_args);
   string mac_arg("\\");
   mac_arg.append(cmd);
-  for (int j = 0; j < mac->_posOpts; j++) {
-    string arg_t = mac_args[mac->_argc + j + 1];
+  for (int j = 0; j < mac->opt; j++) {
+    string arg_t = mac_args[mac->argc + j + 1];
     if (!arg_t.empty()) {
       mac_arg.append("[").append(arg_t).append("]");
     }
   }
 
-  for (int j = 0; j < mac->_argc; j++) {
+  for (int j = 0; j < mac->argc; j++) {
     string arg_t = mac_args[j + 1];
     if (!arg_t.empty()) {
       mac_arg.append("{").append(arg_t).append("}");
@@ -464,10 +464,10 @@ sptr<Atom> Parser::processEscape() {
 }
 
 sptr<Atom> Parser::processCmd(const string& cmd, MacroInfo* mac) {
-  int opts = mac->_posOpts;
+  int opts = mac->opt;
 
   Args args;
-  getOptsArgs(mac->_argc, opts, args);
+  getOptsArgs(mac->argc, opts, args);
   // we promise the first argument is the command name itself
   args[0] = cmd;
 
@@ -610,7 +610,7 @@ void Parser::preprocess(string& cmd, Args& args, int& pos) {
 void Parser::preprocessNewCmd(string& cmd, Args& args, int& pos) {
   // The macro must exists
   auto mac = MacroInfo::get(cmd);
-  getOptsArgs(mac->_argc, mac->_posOpts, args);
+  getOptsArgs(mac->argc, mac->opt, args);
   mac->invoke(*this, args);
   _latex.erase(pos, _pos - pos);
   _len = _latex.length();
@@ -620,7 +620,7 @@ void Parser::preprocessNewCmd(string& cmd, Args& args, int& pos) {
 void Parser::inflateNewCmd(string& cmd, Args& args, int& pos) {
   // The macro must exists
   auto mac = MacroInfo::get(cmd);
-  getOptsArgs(mac->_argc, mac->_posOpts, args);
+  getOptsArgs(mac->argc, mac->opt, args);
   args[0] = cmd;
   try {
     mac->invoke(*this, args);
@@ -642,10 +642,10 @@ void Parser::inflateEnv(string& cmd, Args& args, int& pos) {
     throw ex_parse("Unknown environment: " + args[1]);
   }
   vector<string> optargs;
-  getOptsArgs(mac->_argc - 1, 0, optargs);
+  getOptsArgs(mac->argc - 1, 0, optargs);
   string grp = getGroup("\\begin{" + args[1] + "}", "\\end{" + args[1] + "}");
   string expr = "{\\makeatletter \\" + args[1] + "@env";
-  for (int i = 1; i <= mac->_argc - 1; i++) expr += "{" + optargs[i] + "}";
+  for (int i = 1; i <= mac->argc - 1; i++) expr += "{" + optargs[i] + "}";
   expr += "{" + grp + "}\\makeatother}";
   _latex.replace(pos, _pos - pos, expr);
   _len = _latex.length();

@@ -91,9 +91,10 @@ public:
 };
 
 class MacroInfo {
-public:
+private:
   static std::map<std::string, MacroInfo*> _commands;
 
+public:
   /** Add a macro, replace it if the macro is exists. */
   static void add(const std::string& name, MacroInfo* mac);
 
@@ -101,26 +102,27 @@ public:
   static MacroInfo* get(const std::string& name);
 
   // Number of arguments
-  const int _argc;
+  const int argc;
   // Options' position, can be  0, 1 and 2
   // 0 represents this macro has no options
   // 1 represents the options appear after the command name, e.g.:
   //      \sqrt[3]{2}
   // 2 represents the options appear after the first argument, e.g.:
   //      \scalebox{0.5}[2]{\LaTeX}
-  const int _posOpts;
+  const int opt;
 
   no_copy_assign(MacroInfo);
 
-  MacroInfo() : _argc(0), _posOpts(0) {}
+  MacroInfo() : argc(0), opt(0) {}
 
-  MacroInfo(int argc, int posOpts) : _argc(argc), _posOpts(posOpts) {}
+  MacroInfo(int argc, int opt) : argc(argc), opt(opt) {}
 
-  explicit MacroInfo(int argc) : _argc(argc), _posOpts(0) {}
+  explicit MacroInfo(int argc) : argc(argc), opt(0) {}
 
   virtual sptr<Atom> invoke(
     Parser& tp,
-    std::vector<std::string>& args) {
+    std::vector<std::string>& args
+  ) {
     return nullptr;
   }
 
