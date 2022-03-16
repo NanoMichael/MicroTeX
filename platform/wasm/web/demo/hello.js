@@ -11,8 +11,8 @@ $x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}$.
 And inter-line formula, for example, the Maxwell equation:
 $$\\text{Maxwell equations:}\\left\\{
 \\begin{array}{ll}
-  \\Nabla\\cdot\\mathbf{E}=0 & \\Nabla\\cdot\\mathbf{E}=-\\frac{\\partial\\mathbf{B}}{\\partial t},\\\\
-  \\Nabla\\cdot\\mathbf{B}=0 & \\Nabla\\cdot\\mathbf{B}=\\mu_0\\varepsilon_0\\frac{\\partial\\mathbf{E}}{\\partial t}.
+  \\Nabla\\cdot\\mathbf{E}=0 & \\Nabla\\times\\mathbf{E}=-\\frac{\\partial\\mathbf{B}}{\\partial t},\\\\
+  \\Nabla\\cdot\\mathbf{B}=0 & \\Nabla\\times\\mathbf{B}=\\mu_0\\varepsilon_0\\frac{\\partial\\mathbf{E}}{\\partial t}.
 \\end{array}
 \\right.$$
 
