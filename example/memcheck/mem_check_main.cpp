@@ -123,8 +123,21 @@ public:
 
 #include "samples.h"
 
+#include <chrono>
+
+template<typename F>
+auto countDuration(const F& f) {
+  auto start = std::chrono::high_resolution_clock::now();
+  auto res = f();
+  auto stop = std::chrono::high_resolution_clock::now();
+  return std::make_pair(
+    std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count(),
+    res
+  );
+}
+
 int main(int argc, char* argv[]) {
-  if (argc < 5) {
+  if (argc < 4) {
     fprintf(
       stderr,
       "Required options:\n"
@@ -140,13 +153,19 @@ int main(int argc, char* argv[]) {
   microtex::PlatformFactory::registerFactory("none", std::make_unique<microtex::PlatformFactory_none>());
   microtex::PlatformFactory::activate("none");
 
+  long total = 0;
   microtex::Samples samples(argv[3]);
   for (int i = 0; i < samples.count(); i++) {
-    auto r = microtex::MicroTeX::parse(samples.next(), 720, 20, 20 / 3.f, microtex::black);
+    auto[d, r] = countDuration([&]() {
+      return microtex::MicroTeX::parse(samples.next(), 720, 20, 20 / 3.f, microtex::black);
+    });
+    total += d;
+    printf("time: %ld(us)\n", d);
     microtex::Graphics2D_none g2;
     r->draw(g2, 0, 0);
     delete r;
   }
+  printf("total time: %ld(us)\n", total);
 
   microtex::MicroTeX::release();
   return 0;
