@@ -40,13 +40,15 @@ inline macro(overset) {
 
 inline macro(underset) {
   const auto& under = StackArgs::autoSpace(Formula(tp, args[1], false)._root);
-  sptr<Atom> a = sptrOf<StackAtom>(Formula(tp, args[2], false)._root, under, false);
+  auto a = sptrOf<StackAtom>(Formula(tp, args[2], false)._root, under, false);
   return sptrOf<TypedAtom>(AtomType::relation, AtomType::relation, a);
 }
 
 inline macro(underaccent) {
   const StackArgs under{Formula(tp, args[1], false)._root, UnitType::mu, 1.f, true};
-  return sptrOf<StackAtom>(Formula(tp, args[2], false)._root, under, false);
+  auto a = sptrOf<StackAtom>(Formula(tp, args[2], false)._root, under, false);
+  a->setAdjustBottom(true);
+  return a;
 }
 
 macro(accentbiss);

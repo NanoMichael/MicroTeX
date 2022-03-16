@@ -112,5 +112,10 @@ StackResult StackAtom::createStack(Env& env) {
   vbox->_depth = vbox->_height + vbox->_depth - h;
   vbox->_height = h;
 
+  // if is under accent, adjust with kerning
+  if (_adjustBottom) {
+    vbox->add(sptrOf<StrutBox>(0.f, -env.mathConsts().accentBaseHeight(), 0.f, 0.f));
+  }
+
   return {vbox, center->_shift - vbox->leftMostPos()};
 }

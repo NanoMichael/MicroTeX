@@ -48,6 +48,7 @@ private:
   StackArgs _over;
   StackArgs _under;
   float _maxWidth = 0.f;
+  bool _adjustBottom = false;
   std::vector<StackElement> _order;
 
   static const std::vector<StackElement> _defaultOrder;
@@ -79,6 +80,10 @@ public:
 
   inline void setBaseAtom(const sptr<Atom>& base) {
     _base = base;
+  }
+
+  inline void setAdjustBottom(bool adjust) {
+    _adjustBottom = adjust;
   }
 
   inline void setOver(StackArgs over) {
