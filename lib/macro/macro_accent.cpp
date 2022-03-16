@@ -63,6 +63,7 @@ macro(undertilde) {
   );
   auto a = Formula(tp, args[1], false)._root;
   const StackArgs under{tilde, UnitType::mu, 0.5f, true};
+  stack->setAdjustBottom(true);
   stack->setBaseAtom(a);
   stack->setUnder(under);
   return sptr<StackAtom>(stack);
