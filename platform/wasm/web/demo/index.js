@@ -45,6 +45,8 @@ function hello() {
     hello = arg;
     if (arg.startsWith('"')) hello = hello.substring(1);
     if (arg.endsWith('"')) hello = hello.substring(0, hello.length - 1);
+    const mode = document.getElementById("mode");
+    mode.selectedIndex = 1;
   }
   parse(hello);
   return hello;
