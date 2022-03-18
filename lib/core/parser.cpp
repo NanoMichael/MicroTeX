@@ -267,10 +267,7 @@ string Parser::getCmd() {
 
   while (_pos < _len) {
     ch = _latex[_pos];
-    if ((ch < 'a' || ch > 'z')
-        && (ch < 'A' || ch > 'Z')
-        && (_atIsLetter == 0 || ch != '@')
-      )
+    if (!isAlpha(ch) && (_atIsLetter == 0 || ch != '@'))
       break;
 
     _pos++;
