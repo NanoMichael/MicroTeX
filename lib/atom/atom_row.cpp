@@ -49,7 +49,7 @@ void AtomDecor::setPreviousAtom(const sptr<AtomDecor>& prev) {
   if (row != nullptr) row->setPreviousAtom(prev);
 }
 
-bool RowAtom::_breakEveywhere = false;
+bool RowAtom::_breakEverywhere = false;
 
 bitset<16> RowAtom::_binSet = bitset<16>()
   .set(static_cast<i8>(AtomType::binaryOperator))
@@ -290,7 +290,7 @@ sptr<Box> RowAtom::createBox(Env& env) {
 
     // 6. Add break mark to box
     if (_breakable) {
-      if (_breakEveywhere) {
+      if (_breakEverywhere) {
         hbox->addBreakPosition(hbox->size());
       } else {
         if (hasBreak) {

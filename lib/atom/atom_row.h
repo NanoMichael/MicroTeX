@@ -137,7 +137,7 @@ private:
   sptr<TextAtom> processContinues(int& i, bool isMathMode);
 
 public:
-  static bool _breakEveywhere;
+  static bool _breakEverywhere;
 
   bool _lookAtLastAtom;
 
