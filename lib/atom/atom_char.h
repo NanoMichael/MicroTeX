@@ -17,7 +17,7 @@ namespace microtex {
 class CharSymbol : public Atom {
 private:
   /**
-   * Row will mark certain CharSymbol atoms as a text symbol. Subsup wil use
+   * Row will mark certain CharSymbol atoms as a text symbol. Subsup will use
    * this property for a certain spacing rule.
    */
   bool _isText;
