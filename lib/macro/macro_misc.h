@@ -24,7 +24,7 @@ inline macro(fatalIfCmdConflict) {
 }
 
 inline macro(breakEverywhere) {
-  RowAtom::_breakEveywhere = args[1] == "true";
+  RowAtom::_breakEverywhere = args[1] == "true";
   return nullptr;
 }
 
