@@ -263,7 +263,7 @@ string Parser::getOverArgument() {
 
 string Parser::getCmd() {
   int spos = ++_pos;
-  char ch = L'\0';
+  char ch = '\0';
 
   while (_pos < _len) {
     ch = _latex[_pos];
@@ -276,7 +276,7 @@ string Parser::getCmd() {
     _pos++;
   }
 
-  if (ch == L'\0') return "";
+  if (ch == '\0') return "";
 
   if (_pos == spos) _pos++;
 
