@@ -25,6 +25,16 @@ function toCSSColor(color) {
  */
 const argBuf = new Float32Array(8);
 
+/** Extension method to support with font. */
+CanvasRenderingContext2D.prototype.fillTextWithFont = function (txt, x, y, font) {
+  this.fillText(txt, x, y);
+}
+
+/** Extension method to support with id. */
+CanvasRenderingContext2D.prototype.beginPathWithId = function (id) {
+  this.beginPath();
+}
+
 /**
  * Create a Render to paint formulas. You MUST call {@link Render.release} to free
  * memory after this render is unused.
@@ -79,7 +89,7 @@ function Render(nativeRender, isLittleEndian) {
   /**
    * Draw the formula on point (x, y).
    *
-   * @param {CanvasRenderingContext2D} ctx the graphical (2D) context
+   * @param ctx the graphical (2D) context
    * @param {number} x the x coordinate
    * @param {number} y the y coordinate
    */
@@ -95,17 +105,15 @@ function Render(nativeRender, isLittleEndian) {
       return x;
     }
 
-    function getU32() {
-      const x = v.getUint32(ptr + offset, _isLittleEndian);
-      offset += 4;
+    function getNum(size, f) {
+      const x = f(ptr + offset, _isLittleEndian);
+      offset += size;
       return x;
     }
 
-    function getF32() {
-      const x = v.getFloat32(ptr + offset, _isLittleEndian);
-      offset += 4;
-      return x;
-    }
+    const getI32 = () => getNum(4, v.getInt32.bind(v));
+    const getU32 = () => getNum(4, v.getUint32.bind(v));
+    const getF32 = () => getNum(4, v.getFloat32.bind(v));
 
     function getF32s(cnt) {
       for (let j = 0; j < cnt; j++) {
@@ -117,13 +125,17 @@ function Render(nativeRender, isLittleEndian) {
 
     /** Make a round rectangle. */
     function roundRect(x, y, w, h, rx, ry) {
-      const r = Math.max(rx, ry);
-      const d = Math.PI / 180;
+      const r = Math.min(rx, ry, w / 2, h / 2);
       ctx.beginPath();
-      ctx.arc(x + r, y + r, r, 180 * d, 270 * d);
-      ctx.arc(x + w - r, y + r, r, -90 * d, 0);
-      ctx.arc(x + w - r, y + h - r, r, 0, 90 * d);
-      ctx.arc(x + r, y + h - r, r, 90 * d, 180 * d);
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
       ctx.closePath();
     }
 
@@ -190,7 +202,6 @@ function Render(nativeRender, isLittleEndian) {
           break;
         case 11: // fillPath
           ctx.fill();
-          ctx.beginPath();
           break;
         case 12: // drawLine
           const dl = getF32s(4);
@@ -218,15 +229,16 @@ function Render(nativeRender, isLittleEndian) {
           ctx.fill();
           break;
         case 17: // beginPath
-          ctx.beginPath();
+          const pid = getI32();
+          ctx.beginPathWithId(pid);
           break;
         case 18: // drawTextLayout
           const id = getU32();
           const xy = getF32s(2);
           const old = ctx.font;
           const value = runtime.textLayout.map.get(id);
-          ctx.font = value.font;
-          ctx.fillText(value.text, xy[0], xy[1]);
+          ctx.font = runtime.textLayout.toCSSFont(value.font);
+          ctx.fillTextWithFont(value.text, xy[0], xy[1], value.font);
           ctx.font = old;
           break;
         case 19: // setDash

@@ -279,6 +279,9 @@ Math* CLMReader::readMath(BinaryReader& reader) {
 #ifdef HAVE_GLYPH_RENDER_PATH
 
 Path* CLMReader::readPath(BinaryReader& reader) {
+  // !NOT THREAD SAFE
+  static i32 id = 0;
+
   const auto len = reader.read<u16>();
   if (len == 0) return nullptr;
   auto cmds = new PathCmd* [len];
@@ -291,7 +294,7 @@ Path* CLMReader::readPath(BinaryReader& reader) {
     }
     cmds[i] = new PathCmd(cmd, args);
   }
-  return new Path(len, cmds);
+  return new Path(++id, len, cmds);
 }
 
 #endif

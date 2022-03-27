@@ -53,13 +53,13 @@ PathCmd::~PathCmd() {
   delete[] args;
 }
 
-Path Path::empty(0, nullptr);
+Path Path::empty(-1, 0, nullptr);
 
-Path::Path(u16 cmdCnt, PathCmd** cmds) noexcept: _cmdCnt(cmdCnt), _cmds(cmds) {}
+Path::Path(i32 id, u16 cmdCnt, PathCmd** cmds) noexcept: _id(id), _cmdCnt(cmdCnt), _cmds(cmds) {}
 
 void Path::draw(Graphics2D& g2) const {
   if (isEmpty()) return;
-  g2.beginPath();
+  g2.beginPath(_id);
   int mx = 0, my = 0; // the first point to move to
   int px = 0, py = 0; // the current point
   int cx = 0, cy = 0; // the last control point

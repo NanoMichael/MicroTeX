@@ -189,24 +189,28 @@ function parseText(container, str) {
 
 function parseRender(str, parent, padding = 8, inline = true) {
   // get text size
-  const v = +document.getElementById("textsize").value;
-  // browser has PPI = 96
-  const size = v * (96 / 72);
+  const size = +document.getElementById("textsize").value * 1.2;
   // get content width
   let width = document.getElementById("wrapper").offsetWidth - padding * 2;
 
   let r = null;
   try {
-    r = microtex.context.parse(str, width, size, size / 3, 0x3b3b3b, false);
+    r = microtex.context.parse(str, width, size, size / 3, 0xff3b3b3b, false);
   } catch (e) {
     console.log(e);
     return;
   }
 
-  const canvas = parent.attachCanvas(r, padding, inline);
-  const ctx = canvas.getContext('2d');
-  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-  r.draw(ctx, padding, padding);
+  // const canvas = parent.attachCanvas(r, padding, inline);
+  // const ctx = canvas.getContext('2d');
+  // ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  // r.draw(ctx, padding, padding);
+
+  const svg = new microtex.SvgCanvas(r.getWidth() + padding * 2, r.getHeight() + padding * 2);
+  r.draw(svg, padding, padding);
+  const e = svg.getSvg();
+  e.style.verticalAlign = (-r.getDepth() - padding) + "px";
+  parent.appendChild(e);
 
   r.release();
 }

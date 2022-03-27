@@ -316,7 +316,7 @@ void Graphics2D_cairo::drawGlyph(u16 glyph, float x, float y) {
   cairo_show_glyphs(_context, g, 1);
 }
 
-void Graphics2D_cairo::beginPath() {
+void Graphics2D_cairo::beginPath(i32 id) {
   cairo_new_path(_context);
 }
 

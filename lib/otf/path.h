@@ -89,13 +89,14 @@ struct PathCmd {
 /** A group of PathCmd */
 struct Path {
 private:
+  const i32 _id;
   const u16 _cmdCnt;
   PathCmd** _cmds;
 
 public:
   no_copy_assign(Path);
 
-  Path(u16 cmdCnt, PathCmd** cmds) noexcept;
+  Path(i32 id, u16 cmdCnt, PathCmd** cmds) noexcept;
 
   inline bool isEmpty() const { return _cmdCnt <= 0; }
 

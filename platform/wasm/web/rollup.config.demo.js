@@ -3,21 +3,7 @@ import {terser} from "rollup-plugin-terser";
 import {nodeResolve} from '@rollup/plugin-node-resolve';
 import commonjs from "@rollup/plugin-commonjs";
 
-export default [{
-  input: './src/index.js',
-  output: {
-    file: './dist/microtex.js',
-    format: 'esm',
-    name: 'microtex',
-    sourcemap: true
-  },
-  plugins: [
-    babel({
-      exclude: 'node_modules/**'
-    }),
-    terser()
-  ]
-}, {
+export default {
   input: './demo/index.js',
   output: {
     file: './demo-dist/index.js',
@@ -35,4 +21,4 @@ export default [{
     commonjs(),
     terser()
   ]
-}];
+};

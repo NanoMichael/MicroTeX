@@ -3,7 +3,7 @@
 import {initRuntime} from "./runtime";
 import {Render} from './render';
 
-let context = {};
+const context = {};
 
 /**
  * The loaded main font

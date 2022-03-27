@@ -37,22 +37,28 @@ sptr<TextLayout> PlatformFactory_wasm::createTextLayout(
   const std::string& src,
   FontStyle style, float size
 ) {
-  std::string font;
-  font.append(std::to_string(size));
-  font.append("px");
-  if (microtex::isBold(style)) {
-    font.append(" bold");
-  }
-  if (microtex::isItalic(style)) {
-    font.append(" italic");
-  }
+  std::string font("{");
+  font
+    .append("\"font-weight\":")
+    .append(microtex::isBold(style) ? "\"bold\"" : "\"normal\"");
+  font
+    .append(1, ',')
+    .append("\"font-style\":")
+    .append(microtex::isItalic(style) ? "\"italic\"" : "\"normal\"");
+  font
+    .append(1, ',')
+    .append("\"font-size\":")
+    .append(std::to_string(size))
+    .append(1, ',')
+    .append("\"font-family\":");
   if (microtex::isSansSerif(style)) {
-    font.append(" sans-serif");
+    font.append("\"sans-serif\"");
   } else if (microtex::isMono(style)) {
-    font.append(" monospace");
+    font.append("\"monospace\"");
   } else {
-    font.append(" serif");
+    font.append("\"serif\"");
   }
+  font.append(1, '}');
   const auto id = js_createTextLayout(src.c_str(), font.c_str());
   return sptrOf<TextLayout_wasm>(id);
 }
@@ -145,8 +151,8 @@ float Graphics2D_wasm::sy() const { return _sy; }
 
 void Graphics2D_wasm::drawGlyph(u16 glyph, float x, float y) {}
 
-void Graphics2D_wasm::beginPath() {
-  _cmds.put((u8) 17);
+void Graphics2D_wasm::beginPath(i32 id) {
+  _cmds.put((u8) 17, id);
 }
 
 void Graphics2D_wasm::moveTo(float x, float y) {

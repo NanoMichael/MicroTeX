@@ -198,8 +198,13 @@ public:
 
   // region path commands
 
-  /** Begin a new path. */
-  virtual void beginPath() = 0;
+  /**
+   * Begin a new path. We promise every path begin with function `beginPath` and
+   * end with `fillPath`. You may cache the path via its id.
+   *
+   * @param id the path id, if id < 0 that means the path is not cacheable.
+   */
+  virtual void beginPath(i32 id) = 0;
 
   /** Begin a path, move to point (x, y). */
   virtual void moveTo(float x, float y) = 0;

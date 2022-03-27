@@ -2,8 +2,8 @@ mergeInto(LibraryManager.library, {
   /**
    * Create a text layout from given text and font.
    *
-   * @param {Number} src the string pointer from native side
-   * @param {Number} font the font style string pointer
+   * @param {number} src the string pointer from native side
+   * @param {number} font the font style string pointer
    * @return {number} the layout id
    */
   js_createTextLayout: function (src, font) {
@@ -14,6 +14,15 @@ mergeInto(LibraryManager.library, {
       textLayout.ctx = canvas.getContext('2d');
       textLayout.map = new Map();
       textLayout.id = 0;
+      textLayout.toCSSFont = function (json) {
+        return Object
+          .entries(JSON.parse(json))
+          .reduce((p, [k, v]) => {
+            let n = p + " " + v;
+            if (k === "font-size") n += "px";
+            return n;
+          }, "");
+      }
       Module.textLayout = textLayout;
     }
 
@@ -35,28 +44,28 @@ mergeInto(LibraryManager.library, {
   /**
    * Get text layout bounds.
    *
-   * @param {Number} id the layout id
-   * @param {Number} ptr the bounds buffer from native
+   * @param {number} id the layout id
+   * @param {number} ptr the bounds buffer from native
    */
   js_getTextLayoutBounds: function (id, ptr) {
     const textLayout = Module.textLayout;
     // the value must be exists
     const value = textLayout.map.get(id);
     const ctx = textLayout.ctx;
-    ctx.font = value.font;
+    ctx.font = textLayout.toCSSFont(value.font);
     // measure the text and get its metrics
     const m = ctx.measureText(value.text);
     const v = new Float32Array(Module.HEAP8.buffer, ptr);
     v[0] = m.width;
     v[1] = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent;
     v[2] = -m.actualBoundingBoxAscent;
-    console.log(`js getTextLayoutBounds(${id}, ${ptr})`);
+    console.log(`js getTextLayoutBounds(${id}, ${ptr}, ${ctx.font})`);
   },
 
   /**
    * Release current text layout.
    *
-   * @param {Number} id the layout id
+   * @param {number} id the layout id
    */
   js_releaseTextLayout: function (id) {
     Module.textLayout.map.delete(id);

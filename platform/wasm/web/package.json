@@ -5,12 +5,12 @@
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prebuild": "sh ../prebuild.sh",
-    "build": "rollup --config"
+    "build:lib": "sh ../prebuild.sh && rollup --config rollup.config.lib.js",
+    "build:demo": "rollup --config rollup.config.demo.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NanoMichael/cLaTeXMath.git"
+    "url": "git+https://github.com/NanoMichael/MicroTeX.git"
   },
   "keywords": [
     "LaTeX",
@@ -21,9 +21,9 @@
   "author": "Nano <artiano@hotmail.com> (https://github.com/nanomichael)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/NanoMichael/cLaTeXMath/issues"
+    "url": "https://github.com/NanoMichael/MicroTeX/issues"
   },
-  "homepage": "https://github.com/NanoMichael/cLaTeXMath#readme",
+  "homepage": "https://github.com/NanoMichael/MicroTeX#readme",
   "devDependencies": {
     "@babel/core": "^7.16.7",
     "@babel/preset-env": "^7.16.8",
