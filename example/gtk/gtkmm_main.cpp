@@ -318,7 +318,7 @@ public:
     }
     if (samples.count() == 0) return 1;
     for (int i = 0; i < samples.count(); i++) {
-      generateSingle(samples.next(), _outputDir + "/" + _prefix + tostring(i) + ".svg");
+      generateSingle(samples.next(), _outputDir + "/" + _prefix + toString(i) + ".svg");
     }
     return 0;
   }
@@ -360,7 +360,7 @@ void getHeadlessOpt(Headless& h, const std::string& key, const std::string& valu
   } else if (key == "-prefix") {
     h._prefix = value;
   } else if (key == "-textsize") {
-    valueof(value, h._textSize);
+    valueOf(value, h._textSize);
   } else if (key == "-foreground") {
     h._foreground = microtex::getColor(value);
   } else if (key == "-background") {
@@ -370,9 +370,9 @@ void getHeadlessOpt(Headless& h, const std::string& key, const std::string& valu
   } else if (key == "-output") {
     h._outputFile = value;
   } else if (key == "-padding") {
-    valueof(value, h._padding);
+    valueOf(value, h._padding);
   } else if (key == "-maxwidth") {
-    valueof(value, h._maxWidth);
+    valueOf(value, h._maxWidth);
   }
 }
 

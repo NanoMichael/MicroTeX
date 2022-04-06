@@ -116,12 +116,12 @@ Dimen Units::getDimen(const std::string& lgth) {
   size_t i = 0;
   for (; i < lgth.length() && !isAlpha(lgth[i]); i++);
   float f = 0;
-  valueof(lgth.substr(0, i), f);
+  valueOf(lgth.substr(0, i), f);
 
   UnitType unit = UnitType::none;
   string str = lgth.substr(i);
   string x = trim(str);
-  tolower(x);
+  toLower(x);
   if (i != lgth.size()) unit = getUnit(x);
 
   return {f, unit};

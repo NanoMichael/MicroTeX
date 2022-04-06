@@ -19,16 +19,16 @@ std::map<std::string, std::string> parseOption(const std::string& options);
 
 /** Convert a value to string */
 template<class T>
-inline std::string tostring(T val) {
+inline std::string toString(T val) {
   return std::to_string(val);
 }
 
-inline std::string tostring(char val) {
+inline std::string toString(char val) {
   return {val};
 }
 
 template<class T>
-inline void valueof(const std::string& s, T& val) {
+inline void valueOf(const std::string& s, T& val) {
   char* endptr = nullptr;
   val = strtod(s.c_str(), &endptr);
 }
@@ -47,7 +47,7 @@ inline bool str2int(const char* str, size_t len, int& res, int radix) {
 }
 
 /** Transform a string to lowercase */
-inline std::string& tolower(std::string& src) {
+inline std::string& toLower(std::string& src) {
   std::transform(src.begin(), src.end(), src.begin(), ::tolower);
   return src;
 }
@@ -83,11 +83,11 @@ inline std::string& trim(std::string& s) {
   return ltrim(rtrim(s));
 }
 
-inline bool startswith(const std::string& str, const std::string& cmp) {
+inline bool startsWith(const std::string& str, const std::string& cmp) {
   return str.find(cmp) == 0;
 }
 
-inline bool endswith(const std::string& str, const std::string& cmp) {
+inline bool endsWith(const std::string& str, const std::string& cmp) {
   return str.rfind(cmp) == (str.length() - cmp.length());
 }
 
@@ -113,7 +113,7 @@ public:
  * Returns a replacement string for the given one that has all backslashes
  * and dollar signs escaped
  */
-inline std::string& quotereplace(const std::string& src, std::string& out) {
+inline std::string& quoteReplace(const std::string& src, std::string& out) {
   for (size_t i = 0; i < src.length(); i++) {
     char c = src[i];
     if (c == '\\' || c == '$') out.append(1, '\\');
@@ -123,14 +123,14 @@ inline std::string& quotereplace(const std::string& src, std::string& out) {
 }
 
 /** Replace string with specified string in the first */
-inline std::string& replacefirst(std::string& src, const std::string& from, const std::string& to) {
+inline std::string& replaceFirst(std::string& src, const std::string& from, const std::string& to) {
   size_t start = src.find(from);
   if (start == std::string::npos) return src;
   src.replace(start, from.length(), to);
   return src;
 }
 
-inline std::string& replaceall(std::string& src, const std::string& from, const std::string& to) {
+inline std::string& replaceAll(std::string& src, const std::string& from, const std::string& to) {
   if (from.empty()) return src;
   size_t start = 0;
   while ((start = src.find(from, start)) != std::string::npos) {

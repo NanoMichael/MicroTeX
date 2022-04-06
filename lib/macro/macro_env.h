@@ -55,7 +55,7 @@ inline macro(alignatATATenv) {
   par.parse();
   arr->checkDimensions();
   size_t n = 0;
-  valueof(args[1], n);
+  valueOf(args[1], n);
   if (arr->cols() != 2 * n) throw ex_parse("Bad number of equations in alignat environment!");
 
   return sptrOf<MatrixAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MatrixType::alignAt);
@@ -75,7 +75,7 @@ inline macro(alignedatATATenv) {
   p.parse();
   arr->checkDimensions();
   size_t n = 0;
-  valueof(args[1], n);
+  valueOf(args[1], n);
   if (arr->cols() != 2 * n) {
     throw ex_parse("Bad number of equations in alignedat environment!");
   }
@@ -121,7 +121,7 @@ inline macro(gatheredATATenv) {
 
 inline macro(multicolumn) {
   int n = 0;
-  valueof(args[1], n);
+  valueOf(args[1], n);
   tp.addAtom(sptrOf<MulticolumnAtom>(n, args[2], Formula(tp, args[3])._root));
   ((ArrayFormula*) tp._formula)->addCol(n);
   return nullptr;
@@ -131,9 +131,9 @@ inline macro(hdotsfor) {
   if (!tp.isArrayMode())
     throw ex_parse("Command 'hdotsfor' only available in array mode!");
   int n = 0;
-  valueof(args[1], n);
+  valueOf(args[1], n);
   float f = 1.f;
-  if (!args[2].empty()) valueof(args[2], f);
+  if (!args[2].empty()) valueOf(args[2], f);
   tp.addAtom(sptrOf<HdotsforAtom>(n, f));
   ((ArrayFormula*) tp._formula)->addCol(n);
   return nullptr;
@@ -148,7 +148,7 @@ inline macro(hline) {
 inline macro(multirow) {
   if (!tp.isArrayMode()) throw ex_parse("Command \\multirow must used in array environment!");
   int n = 0;
-  valueof(args[1], n);
+  valueOf(args[1], n);
   tp.addAtom(sptrOf<MultiRowAtom>(n, args[2], Formula(tp, args[3])._root));
   return nullptr;
 }

@@ -16,9 +16,9 @@ namespace microtex {
 
 macro(longdiv) {
   long dividend = 0;
-  valueof(args[1], dividend);
+  valueOf(args[1], dividend);
   long divisor = 0;
-  valueof(args[2], divisor);
+  valueOf(args[2], divisor);
   if (divisor == 0) throw ex_parse("Divisor must not be 0.");
   return sptrOf<LongDivAtom>(divisor, dividend);
 }
@@ -32,10 +32,10 @@ macro(char) {
   });
   int radix = 10;
   int offset = 0;
-  if (startswith(str, "'")) {
+  if (startsWith(str, "'")) {
     radix = 8;
     offset = 1;
-  } else if (startswith(str, "\"")) {
+  } else if (startsWith(str, "\"")) {
     radix = 16;
     offset = 1;
   }
@@ -94,7 +94,7 @@ macro(newcommand) {
   if (!tp.isValidName(newcmd))
     throw ex_parse("Invalid name for the command '" + newcmd);
 
-  if (!args[3].empty()) valueof(args[3], argc);
+  if (!args[3].empty()) valueOf(args[3], argc);
 
   if (args[4].empty()) {
     NewCommandMacro::addNewCommand(newcmd.substr(1), args[2], argc);
@@ -111,7 +111,7 @@ macro(renewcommand) {
   if (!tp.isValidName(newcmd))
     throw ex_parse("Invalid name for the command: " + newcmd);
 
-  if (!args[3].empty()) valueof(args[3], argc);
+  if (!args[3].empty()) valueOf(args[3], argc);
 
   if (args[4].empty()) {
     NewCommandMacro::addRenewCommand(newcmd.substr(1), args[2], argc);
@@ -135,7 +135,7 @@ macro(romannumeral) {
   string roman;
 
   int num;
-  valueof(trim(args[1]), num);
+  valueOf(trim(args[1]), num);
   for (int i = 0; i < 13; i++) {
     while (num >= numbers[i]) {
       roman += letters[i];
@@ -144,7 +144,7 @@ macro(romannumeral) {
   }
 
   if (args[0][0] == 'r') {
-    tolower(roman);
+    toLower(roman);
   }
 
   return sptrOf<FontStyleAtom>(

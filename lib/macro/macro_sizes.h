@@ -7,14 +7,14 @@ namespace microtex {
 
 inline macro(declaremathsizes) {
   float a, b, c, d;
-  valueof(args[1], a), valueof(args[2], b), valueof(args[3], c), valueof(args[4], d);
+  valueOf(args[1], a), valueOf(args[2], b), valueOf(args[3], c), valueOf(args[4], d);
   // TODO setMathSizes(a, b, c, d);
   return nullptr;
 }
 
 inline macro(magnification) {
   float x;
-  valueof(args[1], x);
+  valueOf(args[1], x);
   // TODO setMagnification(x);
   return nullptr;
 }

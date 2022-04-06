@@ -340,7 +340,7 @@ Otf* CLMReader::read(BinaryReader& reader) {
   if (ver != CLM_VER_MAJOR) {
     throw ex_invalid_param(
       "clm data does not match the required version (" +
-      tostring(CLM_VER_MAJOR) + ")!"
+        toString(CLM_VER_MAJOR) + ")!"
     );
   }
   const auto minor = reader.read<u8>();

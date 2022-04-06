@@ -43,7 +43,7 @@ std::string PathCmd::toString() const {
   std::string str;
   str.append(1, cmd).append(1, ' ');
   for (int i = 0; i < argsCount(cmd); i++) {
-    str.append(microtex::tostring(args[i])).append(1, ' ');
+    str.append(microtex::toString(args[i])).append(1, ' ');
   }
   str.append(1, '\n');
   return str;

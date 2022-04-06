@@ -101,7 +101,7 @@ inline macro(makeatother) {
 
 inline macro(newenvironment) {
   int opt = 0;
-  if (!args[4].empty()) valueof(args[4], opt);
+  if (!args[4].empty()) valueOf(args[4], opt);
 
   NewEnvironmentMacro::addNewEnvironment(args[1], args[2], args[3], opt);
   return nullptr;
@@ -109,7 +109,7 @@ inline macro(newenvironment) {
 
 inline macro(renewenvironment) {
   int opt = 0;
-  if (!args[4].empty()) valueof(args[4], opt);
+  if (!args[4].empty()) valueOf(args[4], opt);
 
   NewEnvironmentMacro::addRenewEnvironment(args[1], args[2], args[3], opt);
   return nullptr;

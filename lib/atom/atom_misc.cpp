@@ -100,7 +100,7 @@ RotateAtom::RotateAtom(const sptr<Atom>& base, const string& angle, const string
   : _angle(0), _option(Rotation::none), _x(0._em), _y(0._em) {
   _type = base->_type;
   _base = base;
-  valueof(angle, _angle);
+  valueOf(angle, _angle);
   _option = RotateBox::getOrigin(option);
 }
 
@@ -154,7 +154,7 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
   for (int i = 0; i < s; i++) {
     auto num = Formula(results[i])._root;
     if (i == 1) {
-      string divisor = tostring(_divisor);
+      string divisor = toString(_divisor);
       auto rparen = SymbolAtom::get("rparen");
       auto big = sptrOf<BigSymbolAtom>(rparen, 1);
       auto raise = sptrOf<RaiseAtom>(big, -1._tt, 0._tt, 0._tt);
@@ -182,17 +182,17 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
 
 void LongDivAtom::calculate(vector<string>& results) const {
   long quotient = _dividend / _divisor;
-  results.push_back(tostring(quotient));
-  string x = tostring(quotient);
+  results.push_back(toString(quotient));
+  string x = toString(quotient);
   size_t len = x.length();
   long remaining = _dividend;
-  results.push_back(tostring(remaining));
+  results.push_back(toString(remaining));
   for (size_t i = 0; i < len; i++) {
     long b = (x[i] - '0') * pow(10, len - i - 1);
     long product = b * _divisor;
     remaining = remaining - product;
-    results.push_back(tostring(product));
-    results.push_back(tostring(remaining));
+    results.push_back(toString(product));
+    results.push_back(toString(remaining));
   }
 }
 

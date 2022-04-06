@@ -84,7 +84,7 @@ void MatrixAtom::parsePositions(string opt, vector<Alignment>& lpos) {
         tp->getOptsArgs(2, 0, args);
         pos += tp->getPos();
         int nrep = 0;
-        valueof(args[1], nrep);
+        valueOf(args[1], nrep);
         string str;
         for (int j = 0; j < nrep; j++) str += args[2];
         opt.insert(pos, str);
@@ -396,7 +396,7 @@ void MatrixAtom::applyCell(WrapperBox& box, int i, int j) {
     for (const auto& s : row->second) s->apply(box);
   }
   // 3. apply cell specifier
-  const string key = tostring(i) + tostring(j);
+  const string key = toString(i) + toString(j);
   auto cell = _matrix->_cellSpecifiers.find(key);
   if (cell != _matrix->_cellSpecifiers.end()) {
     for (const auto& s : cell->second) s->apply(box);

@@ -158,7 +158,7 @@ Render* MicroTeX::parse(
   bool fillWidth, const string& mathFontName, const string& mainFontFamily
 ) {
   Formula formula(latex);
-  const auto isInline = !startswith(latex, "$$") && !startswith(latex, "\\[");
+  const auto isInline = !startsWith(latex, "$$") && !startsWith(latex, "\\[");
   const auto align = isInline ? Alignment::left : Alignment::center;
   Render* render = RenderBuilder()
     .setStyle(isInline ? TexStyle::text : TexStyle::display)

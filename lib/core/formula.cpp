@@ -127,7 +127,7 @@ void ArrayFormula::addRowSpecifier(const sptr<CellSpecifier>& spe) {
 }
 
 void ArrayFormula::addCellSpecifier(const sptr<CellSpecifier>& spe) {
-  string str = tostring(_row) + tostring(_col);
+  string str = toString(_row) + toString(_col);
   auto it = _cellSpecifiers.find(str);
   if (it == _cellSpecifiers.end()) {
     _cellSpecifiers[str] = vector<sptr<CellSpecifier>>

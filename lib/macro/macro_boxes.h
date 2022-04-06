@@ -7,7 +7,7 @@ namespace microtex {
 
 inline macro(rotatebox) {
   float angle = 0;
-  if (!args[1].empty()) valueof(args[1], angle);
+  if (!args[1].empty()) valueOf(args[1], angle);
   return sptrOf<RotateAtom>(Formula(tp, args[2])._root, angle, args[3]);
 }
 
@@ -17,10 +17,10 @@ inline macro(reflectbox) {
 
 inline macro(scalebox) {
   float sx = 1, sy = 1;
-  valueof(args[1], sx);
+  valueOf(args[1], sx);
 
   if (args[3].empty()) sy = sx;
-  else valueof(args[3], sy);
+  else valueOf(args[3], sy);
 
   if (sx == 0) sx = 1;
   if (sy == 0) sy = 1;
@@ -43,7 +43,7 @@ inline macro(ovalbox) {
 
 inline macro(cornersize) {
   float size = 0.5f;
-  valueof(args[1], size);
+  valueOf(args[1], size);
   if (size <= 0 || size > 0.5f) size = 0.5f;
   OvalAtom::_multiplier = size;
   OvalAtom::_diameter = 0;

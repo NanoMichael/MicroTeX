@@ -81,16 +81,16 @@ void NewCommandMacro::execute(Parser& tp, vector<string>& args) {
   if (!args[argc + 1].empty()) {
     dec = 1;
     // quotereplace(args[argc + 1], rep);
-    replaceall(code, "#1", args[argc + 1]);
+    replaceAll(code, "#1", args[argc + 1]);
   } else if (it != _replacements.end()) {
     dec = 1;
     // quotereplace(it->second, rep);
-    replaceall(code, "#1", it->second);
+    replaceAll(code, "#1", it->second);
   }
 
   for (int i = 1; i <= argc; i++) {
     rep = args[i];
-    replaceall(code, "#" + tostring(i + dec), rep);
+    replaceAll(code, "#" + toString(i + dec), rep);
   }
   // push back as returned value (inflated macro)
   args.push_back(code);
@@ -102,7 +102,7 @@ void NewEnvironmentMacro::addNewEnvironment(
   int argc
 ) {
   string n = name + "@env";
-  string def = begDef + " #" + tostring(argc + 1) + " " + endDef;
+  string def = begDef + " #" + toString(argc + 1) + " " + endDef;
   addNewCommand(n, def, argc + 1);
 }
 
@@ -119,7 +119,7 @@ void NewEnvironmentMacro::addRenewEnvironment(
   }
   addRenewCommand(
     name + "@env",
-    begDef + " #" + tostring(argc + 1) + " " + endDef,
+    begDef + " #" + toString(argc + 1) + " " + endDef,
     argc + 1
   );
 }

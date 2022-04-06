@@ -132,7 +132,7 @@ string Parser::getGroup(char open, char close) {
     if (group != 0) return _latex.substr(spos + 1, _pos - spos - 1);
     return _latex.substr(spos + 1, _pos - spos - 2);
   }
-  throw ex_parse("Missing '" + tostring((char) open) + "'!");
+  throw ex_parse("Missing '" + toString((char) open) + "'!");
 }
 
 string Parser::getGroup(const string& open, const string& close) {
@@ -386,7 +386,7 @@ void Parser::getOptsArgs(int argc, int opts, Args& args) {
       args[i] = getGroup(L_GROUP, R_GROUP);
     } catch (ex_parse& e) {
       if (_latex[_pos] != '\\') {
-        args[i] = tostring(_latex[_pos]);
+        args[i] = toString(_latex[_pos]);
         _pos++;
       } else {
         args[i] = getCmdWithArgs(getCmd());

@@ -87,13 +87,13 @@ color ColorAtom::getColor(std::string name) {
   if (name[0] == '#') return decodeColor(name);
   if (name.find(',') == string::npos) {
     // find from predefined colors
-    auto it = _colors.find(tolower(name));
+    auto it = _colors.find(toLower(name));
     if (it != _colors.end()) return it->second;
     // AARRGGBB formatted color
     if (name.find('.') == string::npos) return decodeColor("#" + name);
     // gray color
     float x = 0.f;
-    valueof(name, x);
+    valueOf(name, x);
     if (x != 0.f) {
       float g = min(1.f, max(x, 0.f));
       return rgb(g, g, g);
@@ -111,9 +111,9 @@ color ColorAtom::getColor(std::string name) {
     string B = toks.next();
 
     float r = 0.f, g = 0.f, b = 0.f;
-    valueof(trim(R), r);
-    valueof(trim(G), g);
-    valueof(trim(B), b);
+    valueOf(trim(R), r);
+    valueOf(trim(G), g);
+    valueOf(trim(B), b);
 
     if (r == 0.f && g == 0.f && b == 0.f) return _default;
 
@@ -135,10 +135,10 @@ color ColorAtom::getColor(std::string name) {
     string M = toks.next();
     string Y = toks.next();
     string K = toks.next();
-    valueof(trim(C), c);
-    valueof(trim(M), m);
-    valueof(trim(Y), y);
-    valueof(trim(K), k);
+    valueOf(trim(C), c);
+    valueOf(trim(M), m);
+    valueOf(trim(Y), y);
+    valueOf(trim(K), k);
 
     if (c == 0.f && m == 0.f && y == 0.f && k == 0.f) return _default;
 

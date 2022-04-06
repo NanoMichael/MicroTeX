@@ -37,13 +37,13 @@ inline macro(underline) {
 
 inline macro(Braket) {
   std::string str(args[1]);
-  replaceall(str, "\\|", "\\middle\\vert ");
+  replaceAll(str, "\\|", "\\middle\\vert ");
   return Formula(tp, "\\left\\langle " + str + "\\right\\rangle")._root;
 }
 
 inline macro(Set) {
   std::string str(args[1]);
-  replacefirst(str, "\\|", "\\middle\\vert ");
+  replaceFirst(str, "\\|", "\\middle\\vert ");
   return Formula(tp, "\\left\\{" + str + "\\right\\}")._root;
 }
 

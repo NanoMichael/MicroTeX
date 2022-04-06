@@ -119,7 +119,7 @@ macro(genfrac) {
   }
 
   int style = 0;
-  if (!args[4].empty()) valueof(args[4], style);
+  if (!args[4].empty()) valueOf(args[4], style);
 
   Formula num(tp, args[5], false);
   Formula den(tp, args[6], false);

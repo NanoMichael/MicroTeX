@@ -10,8 +10,8 @@ macro(intertext) {
     throw ex_parse("Command \\intertext must used in array environment!");
 
   std::string str(args[1]);
-  replaceall(str, "^{\\prime}", "\'");
-  replaceall(str, "^{\\prime\\prime}", "\'\'");
+  replaceAll(str, "^{\\prime}", "\'");
+  replaceAll(str, "^{\\prime\\prime}", "\'\'");
 
   auto a = Formula(tp, str, false, false)._root;
   sptr<Atom> ra = sptrOf<FontStyleAtom>(FontStyle::rm, false, a);
