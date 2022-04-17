@@ -40,11 +40,11 @@ public:
   );
 
   AtomType leftType() const override {
-    return _accentee->leftType();
+    return _accentee == nullptr ? AtomType::ordinary : _accentee->leftType();
   }
 
   AtomType rightType() const override {
-    return _accentee->rightType();
+    return _accentee == nullptr ? AtomType::ordinary : _accentee->rightType();
   }
 
   sptr<Box> createBox(Env& env) override;
