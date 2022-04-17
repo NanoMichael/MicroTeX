@@ -181,7 +181,7 @@ void HandleSize() {
   char* txt = new char[len + 10];
   GetWindowText(hEditSize, txt, len + 10);
   string x = txt;
-  microtex::valueof(x, _size);
+  microtex::valueOf(x, _size);
   _render->setTextSize(_size);
   InvalidateRect(hCanvas, nullptr, TRUE);
   UpdateWindow(hCanvas);
