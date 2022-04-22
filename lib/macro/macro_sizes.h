@@ -43,6 +43,7 @@ inline macro(sizes) {
     f = 2.5f;
 
   auto a = Formula(tp, tp.getOverArgument(), false, tp.isMathMode())._root;
+  a = a == nullptr ? sptrOf<EmptyAtom>() : a;
   return sptrOf<ScaleAtom>(a, f);
 }
 
