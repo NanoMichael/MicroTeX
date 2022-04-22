@@ -115,9 +115,9 @@ enum MICROTEX_EXPORT Join {
 
 struct MICROTEX_EXPORT Stroke {
   float lineWidth;
-  float miterLimit;
   Cap cap;
   Join join;
+  float miterLimit;
 
   Stroke()
     : lineWidth(1.f), cap(CAP_ROUND), join(JOIN_ROUND), miterLimit(0) {}
