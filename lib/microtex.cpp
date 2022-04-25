@@ -7,6 +7,8 @@
 #include "utils/string_utils.h"
 #include "render/builder.h"
 
+#include <clocale>
+
 using namespace std;
 using namespace microtex;
 
@@ -62,6 +64,7 @@ struct InitVisitor {
 
 FontMeta MicroTeX::init(const Init& init) {
   if (_config->isInited) return {};
+  std::setlocale(LC_NUMERIC, "C"); // workaround for decimal parsing on German (decimal comma) systems
   auto meta = std::visit(InitVisitor(), init);
   _config->defaultMathFontName = meta.name;
   _config->isInited = true;
@@ -73,6 +76,7 @@ FontMeta MicroTeX::init(const Init& init) {
 
 FontMeta MicroTeX::init(const FontSrc& mathFontSrc) {
   if (_config->isInited) return {};
+  std::setlocale(LC_NUMERIC, "C"); // workaround for decimal parsing on German (decimal comma) systems
   auto meta = FontContext::addFont(mathFontSrc);
   if (!meta.isValid()) {
     throw ex_invalid_param("'" + meta.name + "' is not a math font!");
