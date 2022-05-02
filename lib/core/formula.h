@@ -28,12 +28,12 @@ private:
   static std::map<std::string, std::string> _predefFormulaStrs;
 
   Parser _parser;
+  std::vector<sptr<MiddleAtom>> _middle;
 
 public:
   // character-to-symbol mappings
   static const std::map<c32, std::string> _charToSymbol;
 
-  std::vector<sptr<MiddleAtom>> _middle;
   // the root atom of the "atom tree" that represents the formula
   sptr<Atom> _root;
 
@@ -73,6 +73,8 @@ public:
    * @param latex the latex formula
    */
   void setLaTeX(const std::string& latex);
+
+  const std::vector<sptr<MiddleAtom>>& middle();
 
   /** Inserts an atom at the end of the current formula. */
   Formula* add(const sptr<Atom>& a);

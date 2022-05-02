@@ -45,7 +45,7 @@ macro(left) {
   auto sr = dynamic_pointer_cast<CharSymbol>(right);
   if (sl != nullptr && sr != nullptr) {
     Formula tf(tp, grep, false);
-    return sptrOf<FencedAtom>(tf._root, sl->name(), sr->name(), tf._middle);
+    return sptrOf<FencedAtom>(tf._root, sl->name(), sr->name(), tf.middle());
   }
 
   auto* ra = new RowAtom();

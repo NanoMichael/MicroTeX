@@ -39,6 +39,10 @@ void Formula::setLaTeX(const string& latex) {
   if (!latex.empty()) _parser.parse();
 }
 
+const std::vector<sptr<MiddleAtom>>& Formula::middle() {
+  return _middle;
+}
+
 Formula* Formula::add(const sptr<Atom>& a) {
   if (a == nullptr) return this;
   auto atom = dynamic_pointer_cast<MiddleAtom>(a);

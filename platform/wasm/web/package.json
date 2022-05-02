@@ -5,8 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:lib": "sh ../prebuild.sh && rollup --config rollup.config.lib.js",
-    "build:demo": "rollup --config rollup.config.demo.js"
+    "build:lib": "sh ../prebuild-lib.sh && rollup --config rollup.config.lib.js",
+    "build:demo": "sh ../prebuild-demo.sh && rollup --config rollup.config.demo.js"
   },
   "repository": {
     "type": "git",

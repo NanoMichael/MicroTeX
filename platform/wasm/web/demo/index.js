@@ -98,6 +98,9 @@ function listenEvents() {
   document.getElementById('mode').onchange = () => {
     parse(editor.getValue());
   };
+  document.getElementById('rendering-mode').onchange = () => {
+    parse(editor.getValue());
+  };
 }
 
 function listenResize() {
@@ -201,16 +204,40 @@ function parseRender(str, parent, padding = 8, inline = true) {
     return;
   }
 
-  // const canvas = parent.attachCanvas(r, padding, inline);
-  // const ctx = canvas.getContext('2d');
-  // ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-  // r.draw(ctx, padding, padding);
+  const drawCanvas = () => {
+    const canvas = parent.attachCanvas(r, padding, inline);
+    adjustStyle(canvas, inline);
+    const ctx = canvas.getContext('2d');
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    r.draw(ctx, padding, padding);
+  };
 
-  const svg = new microtex.SvgCanvas(r.getWidth() + padding * 2, r.getHeight() + padding * 2);
-  r.draw(svg, padding, padding);
-  const e = svg.getSvg();
-  e.style.verticalAlign = (-r.getDepth() - padding) + "px";
-  parent.appendChild(e);
+  const drawSvg = () => {
+    const svg = new microtex.SvgCanvas(r.getWidth() + padding * 2, r.getHeight() + padding * 2);
+    r.draw(svg, padding, padding);
+    const e = svg.getSvg();
+    e.style.verticalAlign = (-r.getDepth() - padding) + "px";
+    adjustStyle(e, inline);
+    parent.appendChild(e);
+  };
+
+  // rendering mode
+  const mode = document.getElementById('rendering-mode').value;
+  console.log(`rendering mode: ${mode}`)
+  if (mode === 'Canvas') {
+    drawCanvas();
+  } else {
+    drawSvg();
+  }
 
   r.release();
+}
+
+function adjustStyle(e, inline) {
+  if (inline) return;
+  e.style.display = "block";
+  e.style.marginLeft = "auto";
+  e.style.marginRight = "auto";
+  e.style.marginTop = "8px";
+  e.style.marginBottom = "8px";
 }

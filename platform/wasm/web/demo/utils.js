@@ -23,13 +23,6 @@ HTMLElement.prototype.attachCanvas = function (render, padding, inline = true) {
   canvas.width = render.getWidth() + p;
   canvas.height = render.getHeight() + p;
   canvas.style.verticalAlign = (-render.getDepth() - padding) + "px";
-  if (!inline) {
-    canvas.style.display = "block";
-    canvas.style.marginLeft = "auto";
-    canvas.style.marginRight = "auto";
-    canvas.style.marginTop = "8px";
-    canvas.style.marginBottom = "8px";
-  }
   this.appendChild(canvas);
   canvas.fixDpi();
   return canvas;
