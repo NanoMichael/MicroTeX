@@ -11,14 +11,6 @@ if (MSVC)
     target_compile_definitions(microtex PUBLIC -D_HAS_STD_BYTE=1)
 endif ()
 
-if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin" AND CMAKE_HOST_SYSTEM_VERSION VERSION_LESS 19)
-    # std::filesystem is not available under macOS 10.15
-    message(STATUS "Running on Mojave or lower, linking with Boost::filesystem")
-    find_package(Boost REQUIRED COMPONENTS filesystem)
-    target_link_libraries(microtex PRIVATE Boost::filesystem)
-    target_compile_definitions(microtex PRIVATE USE_BOOST_FILESYSTEM)
-endif ()
-
 set_target_properties(
     microtex PROPERTIES
     VERSION ${PROJECT_VERSION}
@@ -132,6 +124,40 @@ endif ()
 # compile option: HAVE_AUTO_FONT_FIND if enable auto font find
 # this option is exported to users, will write into file 'microtexconfig.h'
 option(HAVE_AUTO_FONT_FIND "If enable auto font find" ${_HAVE_AUTO_FONT_FIND})
+
+macro(CHECK_FS LIB_NAME)
+    try_compile(
+        _HAS_FS
+        "${CMAKE_BINARY_DIR}/temp"
+        "${CMAKE_SOURCE_DIR}/test/has_filesystem.cpp"
+        CMAKE_FLAGS -DCMAKE_CXX_STANDARD=17 -DCMAKE_CXX_STANDARD_REQUIRED=ON
+        LINK_LIBRARIES ${LIB_NAME}
+    )
+    set(_HAS_STD_FS ${_HAS_FS})
+endmacro()
+
+if (HAVE_AUTO_FONT_FIND)
+    # iterate the preset std c++ filesystem libraries
+    foreach (LIB IN ITEMS stdc++fs;c++fs;c++experimental)
+        check_fs(${LIB})
+        message(STATUS "Test for: ${LIB}, has std fs: ${_HAS_STD_FS}")
+        if (_HAS_STD_FS)
+            # special case: use the experimental filesystem
+            if (${LIB} STREQUAL "c++experimental")
+                target_compile_definitions(microtex PRIVATE -DUSE_EXPERIMENTAL_FILESYSTEM)
+            endif ()
+            target_link_libraries(microtex ${LIB})
+            break()
+        endif ()
+    endforeach ()
+    # oops... no std filesystem was found, use boost instead
+    if (NOT _HAS_STD_FS)
+        message(STATUS "No std c++ filesystem was found, use boost filesystem instead")
+        find_package(Boost REQUIRED COMPONENTS filesystem)
+        target_link_libraries(microtex PRIVATE Boost::filesystem)
+        target_compile_definitions(microtex PRIVATE USE_BOOST_FILESYSTEM)
+    endif ()
+endif ()
 
 # compile option: GLYPH_RENDER_TYPE the glyph render type
 # 0: use path and typeface both
