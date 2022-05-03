@@ -38,3 +38,5 @@ function(MICROTEX_INSTALL_TARGET TARGET)
         DESTINATION lib/cmake/${TARGET}
     )
 endfunction()
+
+set(_HAS_MICROTEX_INSTALL TRUE)

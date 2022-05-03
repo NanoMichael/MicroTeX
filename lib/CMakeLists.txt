@@ -1,4 +1,4 @@
-if (WASM)
+if (WASM OR BUILD_STATIC)
     add_library(microtex STATIC "")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
 else ()
@@ -6,6 +6,7 @@ else ()
 endif ()
 
 if (MSVC)
+    add_compile_options("/utf-8")
     target_compile_features(microtex PUBLIC cxx_std_17)
     target_compile_definitions(microtex PRIVATE -DMICROTEX_LIBRARY)
     target_compile_definitions(microtex PUBLIC -D_HAS_STD_BYTE=1)
@@ -137,7 +138,7 @@ macro(CHECK_FS LIB_NAME)
 endmacro()
 
 if (HAVE_AUTO_FONT_FIND)
-    # iterate the preset std c++ filesystem libraries
+    # iterate over the preset std c++ filesystem libraries
     foreach (LIB IN ITEMS stdc++fs;c++fs;c++experimental)
         check_fs(${LIB})
         message(STATUS "Test for: ${LIB}, has std fs: ${_HAS_STD_FS}")
@@ -171,16 +172,18 @@ target_include_directories(microtex PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BIN
 ################
 # installation #
 ################
-microtex_install_target(microtex)
-microtex_install_headers(
-    microtex
-    HEADERS ${CMAKE_CURRENT_BINARY_DIR}/microtexconfig.h microtexexport.h microtex.h microtexapi.h
-)
-microtex_install_headers(microtex PREFIX utils HEADERS utils/types.h)
-microtex_install_headers(microtex PREFIX render HEADERS render/render.h)
-microtex_install_headers(microtex PREFIX unimath HEADERS unimath/font_src.h unimath/font_meta.h)
-microtex_install_headers(
-    microtex
-    PREFIX graphic
-    HEADERS graphic/graphic.h graphic/font_style.h graphic/graphic_basic.h
-)
+if (_HAS_MICROTEX_INSTALL)
+    microtex_install_target(microtex)
+    microtex_install_headers(
+        microtex
+        HEADERS ${CMAKE_CURRENT_BINARY_DIR}/microtexconfig.h microtexexport.h microtex.h microtexapi.h
+    )
+    microtex_install_headers(microtex PREFIX utils HEADERS utils/types.h)
+    microtex_install_headers(microtex PREFIX render HEADERS render/render.h)
+    microtex_install_headers(microtex PREFIX unimath HEADERS unimath/font_src.h unimath/font_meta.h)
+    microtex_install_headers(
+        microtex
+        PREFIX graphic
+        HEADERS graphic/graphic.h graphic/font_style.h graphic/graphic_basic.h
+    )
+endif ()
