@@ -19,9 +19,11 @@ struct Config {
   std::string defaultMainFontFamily;
   std::string defaultMathFontName;
   bool renderGlyphUsePath;
+  bool enableOverrideTeXStyle;
+  TexStyle overrideTeXStyle;
 };
 
-static Config MICROTEX_CONFIG{false, "", "", false};
+static Config MICROTEX_CONFIG{false, "", "", false, false, TexStyle::text};
 
 } // namespace microtex
 
@@ -130,7 +132,8 @@ std::vector<std::string> MicroTeX::mainFontFamilies() {
 }
 
 void MicroTeX::overrideTexStyle(bool enable, TexStyle style) {
-  RenderBuilder::overrideTexStyle(enable, style);
+  _config->enableOverrideTeXStyle = enable;
+  _config->overrideTeXStyle = style;
 }
 
 bool MicroTeX::hasGlyphPathRender() {
@@ -159,13 +162,20 @@ bool MicroTeX::isRenderGlyphUsePath() {
 
 Render* MicroTeX::parse(
   const string& latex, float width, float textSize, float lineSpace, color fg,
-  bool fillWidth, const string& mathFontName, const string& mainFontFamily
+  bool fillWidth, const OverrideTeXStyle& overrideTeXStyle,
+  const string& mathFontName, const string& mainFontFamily
 ) {
   Formula formula(latex);
   const auto isInline = !startsWith(latex, "$$") && !startsWith(latex, "\\[");
   const auto align = isInline ? Alignment::left : Alignment::center;
+  TexStyle style = isInline ? TexStyle::text : TexStyle::display;
+  if (overrideTeXStyle.enable) {
+    style = overrideTeXStyle.style;
+  } else if (_config->enableOverrideTeXStyle) {
+    style = _config->overrideTeXStyle;
+  }
   Render* render = RenderBuilder()
-    .setStyle(isInline ? TexStyle::text : TexStyle::display)
+    .setStyle(style)
     .setTextSize(textSize)
     .setMathFontName(
       mathFontName.empty()

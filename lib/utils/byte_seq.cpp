@@ -1,18 +1,18 @@
-#include "cmd.h"
+#include "utils/byte_seq.h"
 #include "utils/log.h"
 
 #include <cstdlib>
 
 namespace microtex {
 
-Cmds::Cmds() {
+ByteSeq::ByteSeq() {
   data = malloc(CHUNK_SIZE);
-  // the first 4 bytes are the bytes size used
+  // the first 4 bytes is the bytes size used
   index = 4;
   capacity = CHUNK_SIZE;
 }
 
-void Cmds::ensureCapacity(len_t required) {
+void ByteSeq::ensureCapacity(len_t required) {
   if (index + required < capacity) {
     return;
   }
@@ -23,7 +23,7 @@ void Cmds::ensureCapacity(len_t required) {
   capacity += CHUNK_SIZE;
 }
 
-void* Cmds::finish() {
+void* ByteSeq::finish() {
 #ifdef HAVE_LOG
   logv("finish drawing commands, bytes: %lu\n", index);
 #endif

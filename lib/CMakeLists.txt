@@ -1,6 +1,5 @@
-if (WASM OR BUILD_STATIC)
+if (BUILD_STATIC)
     add_library(microtex STATIC "")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
 else ()
     add_library(microtex SHARED "")
 endif ()
@@ -12,6 +11,7 @@ if (MSVC)
     target_compile_definitions(microtex PUBLIC -D_HAS_STD_BYTE=1)
 endif ()
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
 set_target_properties(
     microtex PROPERTIES
     VERSION ${PROJECT_VERSION}
@@ -73,6 +73,7 @@ target_sources(
     env/env.cpp
     env/units.cpp
     # utils folder
+    utils/byte_seq.cpp
     utils/string_utils.cpp
     utils/utf.cpp
     utils/utils.cpp
@@ -114,27 +115,21 @@ if (GRAPHICS_DEBUG)
     target_compile_definitions(microtex PRIVATE -DGRAPHICS_DEBUG)
 endif ()
 
-set(_HAVE_AUTO_FONT_FIND ON)
-set(_GLYPH_RENDER_TYPE 0)
-
-if (WASM)
-    set(_HAVE_AUTO_FONT_FIND OFF)
-    set(_GLYPH_RENDER_TYPE 1)
-endif ()
-
 # compile option: HAVE_AUTO_FONT_FIND if enable auto font find
 # this option is exported to users, will write into file 'microtexconfig.h'
-option(HAVE_AUTO_FONT_FIND "If enable auto font find" ${_HAVE_AUTO_FONT_FIND})
+option(HAVE_AUTO_FONT_FIND "If enable auto font find" ON)
 
 macro(CHECK_FS LIB_NAME)
-    try_compile(
-        _HAS_FS
-        "${CMAKE_BINARY_DIR}/temp"
-        "${CMAKE_SOURCE_DIR}/test/has_filesystem.cpp"
-        CMAKE_FLAGS -DCMAKE_CXX_STANDARD=17 -DCMAKE_CXX_STANDARD_REQUIRED=ON
-        LINK_LIBRARIES ${LIB_NAME}
-    )
-    set(_HAS_STD_FS ${_HAS_FS})
+    if (EXISTS "${CMAKE_SOURCE_DIR}/test/has_filesystem.cpp")
+        try_compile(
+            _HAS_FS
+            "${CMAKE_BINARY_DIR}/temp"
+            "${CMAKE_SOURCE_DIR}/test/has_filesystem.cpp"
+            CMAKE_FLAGS -DCMAKE_CXX_STANDARD=17 -DCMAKE_CXX_STANDARD_REQUIRED=ON
+            LINK_LIBRARIES ${LIB_NAME}
+        )
+        set(_HAS_STD_FS ${_HAS_FS})
+    endif ()
 endmacro()
 
 if (HAVE_AUTO_FONT_FIND)
@@ -160,6 +155,9 @@ if (HAVE_AUTO_FONT_FIND)
     endif ()
 endif ()
 
+if (NOT DEFINED _GLYPH_RENDER_TYPE)
+    set(_GLYPH_RENDER_TYPE 0)
+endif ()
 # compile option: GLYPH_RENDER_TYPE the glyph render type
 # 0: use path and typeface both
 # 1: use path only

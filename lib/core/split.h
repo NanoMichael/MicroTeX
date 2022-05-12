@@ -30,10 +30,10 @@ private:
 
   static int getBreakPosition(const sptr<HBox>& hb, int index);
 
-public:
-  static sptr<Box> split(const sptr<Box>& box, float width, float lineSpace);
+  static std::pair<bool, sptr<Box>> split(const sptr<HBox>& hb, float width, float lineSpace);
 
-  static sptr<Box> split(const sptr<HBox>& hb, float width, float lineSpace);
+public:
+  static std::pair<bool, sptr<Box>> split(const sptr<Box>& box, float width, float lineSpace);
 };
 
 }  // namespace microtex

@@ -56,6 +56,11 @@ namespace microtex {
 
 struct Config;
 
+struct MICROTEX_EXPORT OverrideTeXStyle {
+  bool enable;
+  TexStyle style;
+};
+
 class MICROTEX_EXPORT MicroTeX {
 private:
   static Config* _config;
@@ -125,7 +130,7 @@ public:
    * '\(' and '\[' will be ignored, and force to use the given overridden style.
    *
    * @param enable whether enable the overridden style, false to cancel
-   * @param style the target style to override
+   * @param style the target style
    */
   static void overrideTexStyle(bool enable, TexStyle style = TexStyle::text);
 
@@ -148,14 +153,21 @@ public:
    * @param tex the (La)TeX string to parse (in UTF-8 encoding)
    * @param width the width of the 2D graphics context (in pixel) to limit the
    *    formula layout, the engine will trying to wrap the layout if it overflows
-   *    the width, but will fails if formula cannot be split.
+   *    the width, but will fails if formula cannot be split. Pass 0 if it is
+   *    unlimited.
    * @param textSize the text size in pixel
    * @param lineSpace the line space in pixel
    * @param fg the foreground color
    * @param fillWidth whether fill the graphics context if is in inter-line mode,
-   *    default is true
-   * @param mathFontName the math font name, default is empty
-   * @param mainFontFamily the main font name, default is empty
+   *    default is true. If given width is unlimited, the engine will not trying
+   *    to split the formula, and the parsed Render will has its own intrinsic
+   *    width.
+   * @param overrideTeXStyle whether override the preset TeX style
+   * @param mathFontName the math font name, empty to use the preset (the font
+   *    passed in method init and setDefaultMathFont) math font.
+   * @param mainFontFamily the main font family name, empty to use the preset (the
+   *    font passed in method setDefaultMainFont or math font if not given) main
+   *    font family.
    */
   static Render* parse(
     const std::string& tex,
@@ -164,6 +176,7 @@ public:
     float lineSpace,
     color fg,
     bool fillWidth = true,
+    const OverrideTeXStyle& overrideTeXStyle = {false, TexStyle::text},
     const std::string& mathFontName = "",
     const std::string& mainFontFamily = ""
   );

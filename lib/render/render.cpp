@@ -19,6 +19,7 @@ struct RenderData {
   float textSize;
   float fixedScale;
   color fg;
+  bool isSplit;
 };
 
 static sptr<BoxGroup> wrap(const sptr<Box>& box) {
@@ -63,8 +64,8 @@ static void buildDebug(
 
 } // namespace microtex
 
-Render::Render(const sptr<Box>& box, float textSize) {
-  _data = new RenderData{box, textSize, textSize / Env::fixedTextSize(), black};
+Render::Render(const sptr<Box>& box, float textSize, bool isSplit) {
+  _data = new RenderData{box, textSize, textSize / Env::fixedTextSize(), black, isSplit};
   const auto& debugConfig = DebugConfig::INSTANCE;
   if (debugConfig.enable) {
     const auto group = microtex::wrap(box);
@@ -104,6 +105,10 @@ int Render::getWidth() const {
 float Render::getBaseline() const {
   auto box = _data->root;
   return box->_height / box->vlen();
+}
+
+bool Render::isSplit() const {
+  return _data->isSplit;
 }
 
 void Render::setTextSize(float textSize) {

@@ -16,7 +16,7 @@ private:
   RenderData* _data;
 
 public:
-  Render(const sptr<Box>& box, float textSize);
+  Render(const sptr<Box>& box, float textSize, bool isSplit = false);
 
   ~Render();
 
@@ -38,9 +38,12 @@ public:
   /** Get the ratio of ascent to total height. */
   float getBaseline() const;
 
+  /** Test if is split to multi-lines. */
+  bool isSplit() const;
+
   /**
-   * Set the text size to draw. Notice that the dimension (width, height, depth)
-   * will change follow the text size change.
+   * Set text size to draw. Notice that the dimension (width, height, depth)
+   * will change following the text size change.
    */
   void setTextSize(float textSize);
 
