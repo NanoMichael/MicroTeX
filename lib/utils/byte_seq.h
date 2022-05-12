@@ -1,11 +1,13 @@
-#ifndef MICROTEX_CMD_H
-#define MICROTEX_CMD_H
+#ifndef MICROTEX_BYTE_SEQ_H
+#define MICROTEX_BYTE_SEQ_H
+
+#include "utils/utils.h"
 
 namespace microtex {
 
 using len_t = unsigned int;
 
-class Cmds {
+class ByteSeq {
 private:
   static constexpr len_t CHUNK_SIZE = 4 * 1024; // 4KB
 
@@ -39,8 +41,9 @@ private:
   void ensureCapacity(len_t required);
 
 public:
+  no_copy_assign(ByteSeq);
 
-  Cmds();
+  ByteSeq();
 
   template<typename T, typename... Ts>
   void put(T t, Ts... ts) {
@@ -54,4 +57,4 @@ public:
 
 }
 
-#endif //MICROTEX_CMD_H
+#endif //MICROTEX_BYTE_SEQ_H

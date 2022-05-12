@@ -4,7 +4,6 @@ add_executable(
     microtex-wasm
     capi.cpp
     graphic_wasm.cpp
-    cmd.cpp
 )
 
 set_target_properties(

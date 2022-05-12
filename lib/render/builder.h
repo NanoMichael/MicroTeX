@@ -12,9 +12,6 @@ class Atom;
 
 class RenderBuilder {
 private:
-  static bool _enableOverrideStyle;
-  static TexStyle _overrideStyle;
-
   TexStyle _style = TexStyle::display;
   Dimen _textWidth;
   Dimen _lineSpace;
@@ -27,11 +24,6 @@ private:
 
 public:
   RenderBuilder() = default;
-
-  inline static void overrideTexStyle(bool enable, TexStyle style) {
-    _enableOverrideStyle = enable;
-    _overrideStyle = style;
-  }
 
   inline RenderBuilder& setStyle(TexStyle style) {
     _style = style;

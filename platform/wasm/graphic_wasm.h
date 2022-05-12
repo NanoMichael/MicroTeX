@@ -2,7 +2,7 @@
 #define MICROTEX_GRAPHIC_WASM_H
 
 #include "graphic/graphic.h"
-#include "cmd.h"
+#include "utils/byte_seq.h"
 
 namespace microtex {
 
@@ -49,7 +49,7 @@ class Graphics2D_wasm : public Graphics2D {
 private:
   color _color;
   Stroke _stroke;
-  Cmds _cmds;
+  ByteSeq _cmds;
   float _sx, _sy;
 
 public:

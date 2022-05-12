@@ -41,6 +41,15 @@ endif ()
 
 include(MicroTeXInstall.cmake)
 
+#####################
+# config for wasm   #
+#####################
+if (WASM)
+    set(BUILD_STATIC TRUE)
+    set(HAVE_AUTO_FONT_FIND FALSE)
+    set(_GLYPH_RENDER_TYPE 1)
+endif ()
+
 add_subdirectory(lib)
 
 file(COPY res DESTINATION .)

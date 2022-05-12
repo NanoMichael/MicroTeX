@@ -61,11 +61,11 @@ void microtex::printBox(const sptr<Box>& box) {
 
 #endif  // HAVE_LOG
 
-sptr<Box> BoxSplitter::split(const sptr<Box>& b, float width, float lineSpace) {
+std::pair<bool, sptr<Box>> BoxSplitter::split(const sptr<Box>& b, float width, float lineSpace) {
   auto h = dynamic_pointer_cast<HBox>(b);
   sptr<Box> box;
   if (h != nullptr) {
-    auto box = split(h, width, lineSpace);
+    auto[splitted, box] = split(h, width, lineSpace);
 #ifdef HAVE_LOG
     if (box != b) {
       logv("[BEFORE SPLIT]:\n");
@@ -77,22 +77,23 @@ sptr<Box> BoxSplitter::split(const sptr<Box>& b, float width, float lineSpace) {
       printBox(box);
     }
 #endif
-    return box;
+    return {splitted, box};
   }
 #ifdef HAVE_LOG
   logv("[BOX TREE]:\n");
   printBox(b);
 #endif
-  return b;
+  return {false, b};
 }
 
-sptr<Box> BoxSplitter::split(const sptr<HBox>& hb, float width, float lineSpace) {
-  if (width == 0 || hb->_width <= width) return hb;
+std::pair<bool, sptr<Box>> BoxSplitter::split(const sptr<HBox>& hb, float width, float lineSpace) {
+  if (width == 0 || hb->_width <= width) return {false, hb};
 
   auto* vbox = new VBox();
   sptr<HBox> first, second;
   stack<Position> positions;
   sptr<HBox> hbox = hb;
+  bool splitted = false;
 
   while (hbox->_width > width && canBreak(positions, hbox, width) != hbox->_width) {
     Position pos = positions.top();
@@ -110,15 +111,16 @@ sptr<Box> BoxSplitter::split(const sptr<HBox>& hb, float width, float lineSpace)
       second = hboxes.second;
     }
     vbox->add(first, lineSpace);
+    splitted = true;
     hbox = second;
   }
 
   if (second != nullptr) {
     vbox->add(second, lineSpace);
-    return sptr<Box>(vbox);
+    return {splitted, sptr<Box>(vbox)};
   }
 
-  return hbox;
+  return {splitted, hbox};
 }
 
 float BoxSplitter::canBreak(stack<Position>& s, const sptr<HBox>& hbox, const float width) {

@@ -6,7 +6,7 @@
 using namespace microtex;
 using namespace std;
 
-// IMPORTANT: sorted by the unit name, you must resort this array after add item
+// IMPORTANT: sorted by the unit name, you must re-sort this array after add item
 const pair<const char*, UnitType> Units::_units[]{
   {"bp",    UnitType::point},
   {"cc",    UnitType::cc},

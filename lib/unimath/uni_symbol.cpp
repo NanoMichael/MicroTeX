@@ -17,7 +17,7 @@ static constexpr auto puc = static_cast<i8>(AtomType::punctuation) << 8;
 static constexpr i8 N = 1 << 1;
 static constexpr i8 F = 1;
 
-// IMPORTANT: sorted by the name, you must resort this array after add item
+// IMPORTANT: sorted by the name, you must re-sort this array after add item
 const Symbol Symbol::_symbols[]{
   {0x00023, ord,     "#"},
   {0x00024, ord,     "$"},

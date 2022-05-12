@@ -8,9 +8,6 @@
 
 using namespace microtex;
 
-TexStyle RenderBuilder::_overrideStyle = TexStyle::text;
-bool RenderBuilder::_enableOverrideStyle = false;
-
 RenderBuilder& RenderBuilder::setLineSpace(const Dimen& dimen) {
   if (!dimen.isValid()) {
     throw ex_invalid_state("Cannot set line space without having specified a width!");
@@ -37,7 +34,7 @@ Render* RenderBuilder::build(const sptr<Atom>& fc) {
   fctx->selectMathFont(_mathFontName);
   fctx->selectMainFont(_mainFontName);
 
-  const auto style = _enableOverrideStyle ? _overrideStyle : _style;
+  const auto style = _style;
   Env env(style, fctx, _textSize);
   const auto isLimitedWidth = !_textWidth.isEmpty();
   if (isLimitedWidth) {
@@ -51,14 +48,16 @@ Render* RenderBuilder::build(const sptr<Atom>& fc) {
   auto box = f->createBox(env);
   if (isLimitedWidth) {
     HBox* hb;
+    bool isBoxSplit = false;
     if (!_lineSpace.isEmpty()) {
       auto space = Units::fsize(_lineSpace, env);
-      auto split = BoxSplitter::split(box, env.textWidth(), space);
+      auto[isSplit, split] = BoxSplitter::split(box, env.textWidth(), space);
+      isBoxSplit = isSplit;
       hb = new HBox(split, _fillWidth ? env.textWidth() : split->_width, _align);
     } else {
       hb = new HBox(box, _fillWidth ? env.textWidth() : box->_width, _align);
     }
-    render = new Render(sptr<Box>(hb), _textSize);
+    render = new Render(sptr<Box>(hb), _textSize, isBoxSplit);
   } else {
     render = new Render(box, _textSize);
   }
