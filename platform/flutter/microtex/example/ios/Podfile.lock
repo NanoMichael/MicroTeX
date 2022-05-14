@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - microtex (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - microtex (from `.symlinks/plugins/microtex/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  microtex:
+    :path: ".symlinks/plugins/microtex/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  microtex: 7746fc459fd202a4eb25f628c6730c11b9232225
+
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+
+COCOAPODS: 1.11.3

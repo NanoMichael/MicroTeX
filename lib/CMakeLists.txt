@@ -185,3 +185,8 @@ if (_HAS_MICROTEX_INSTALL)
         HEADERS graphic/graphic.h graphic/font_style.h graphic/graphic_basic.h
     )
 endif ()
+
+if (DEFINED IS_OSX_IOS)
+    set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/products)
+    install(TARGETS microtex DESTINATION lib)
+endif()
