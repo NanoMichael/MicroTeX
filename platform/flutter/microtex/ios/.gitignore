@@ -36,3 +36,8 @@ Icon?
 /Flutter/Generated.xcconfig
 /Flutter/ephemeral/
 /Flutter/flutter_export_environment.sh
+
+capi
+capi_build/
+libs/
+ios.toolchain.cmake

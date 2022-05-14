@@ -68,6 +68,8 @@ class NativeBindings {
   void _init() {
     if (Platform.isLinux || Platform.isAndroid) {
       _nativeLib = DynamicLibrary.open('libmicrotex-flutter.so');
+    } else if (Platform.isIOS || Platform.isMacOS) {
+      _nativeLib = DynamicLibrary.process();
     }
     if (kDebugMode) print(_nativeLib);
     // context

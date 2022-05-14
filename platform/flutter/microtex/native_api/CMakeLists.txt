@@ -29,8 +29,12 @@ set(_GLYPH_RENDER_TYPE 1)
 add_subdirectory(lib)
 
 message(STATUS "Building with flutter")
+set(BUILD_TYPE SHARED)
+if (DEFINED IS_OSX_IOS)
+    set(BUILD_TYPE STATIC)
+endif()
 add_library(
-    microtex-flutter SHARED
+    microtex-flutter ${BUILD_TYPE}
     graphic_flutter.cpp
     dart_reg.cpp
     capi.cpp
@@ -43,3 +47,8 @@ target_link_libraries(
     microtex-flutter PRIVATE
     microtex
 )
+
+if (DEFINED IS_OSX_IOS)
+    set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/products)
+    install(TARGETS microtex-flutter DESTINATION lib)
+endif()

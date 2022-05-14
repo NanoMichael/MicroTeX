@@ -8,8 +8,12 @@
 #import "microtex-Swift.h"
 #endif
 
+#import "dummy.h"
+
 @implementation MicrotexPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   [SwiftMicrotexPlugin registerWithRegistrar:registrar];
+  // dummy function call to keep microtex lib
+  microtex_isLittleEndian();
 }
 @end
