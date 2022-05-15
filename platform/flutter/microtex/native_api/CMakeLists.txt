@@ -26,7 +26,11 @@ endif ()
 set(BUILD_STATIC TRUE)
 set(HAVE_AUTO_FONT_FIND FALSE)
 set(_GLYPH_RENDER_TYPE 1)
-add_subdirectory(lib)
+if (WIN32)
+    add_subdirectory(wlib)
+else()
+    add_subdirectory(lib)
+endif()
 
 message(STATUS "Building with flutter")
 set(BUILD_TYPE SHARED)
@@ -43,6 +47,7 @@ set_target_properties(
     microtex-flutter PROPERTIES
     CXX_VISIBILITY_PRESET hidden
 )
+target_compile_definitions(microtex-flutter PRIVATE -DMICROTEX_LIBRARY)
 target_link_libraries(
     microtex-flutter PRIVATE
     microtex

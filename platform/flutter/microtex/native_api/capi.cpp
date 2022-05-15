@@ -10,7 +10,7 @@ extern "C" {
 
 typedef void* FontMetaPtr;
 
-void MICROTEX_EXPORT microtex_registerCallbacks(
+MICROTEX_EXPORT void microtex_registerCallbacks(
   F_createTextLayout createTextLayout,
   F_getTextLayoutBounds getTextLayoutBounds,
   F_releaseTextLayout releaseTextLayout
@@ -20,7 +20,7 @@ void MICROTEX_EXPORT microtex_registerCallbacks(
   dart_releaseTextLayout = releaseTextLayout;
 }
 
-FontMetaPtr MICROTEX_EXPORT microtex_init(
+MICROTEX_EXPORT FontMetaPtr microtex_init(
   unsigned long len,
   const unsigned char* data
 ) {
@@ -32,15 +32,15 @@ FontMetaPtr MICROTEX_EXPORT microtex_init(
   return new FontMeta(meta);
 }
 
-void MICROTEX_EXPORT microtex_release() {
+MICROTEX_EXPORT void microtex_release() {
   MicroTeX::release();
 }
 
-bool MICROTEX_EXPORT microtex_isInited() {
+MICROTEX_EXPORT bool microtex_isInited() {
   return MicroTeX::isInited();
 }
 
-FontMetaPtr MICROTEX_EXPORT microtex_addFont(
+MICROTEX_EXPORT FontMetaPtr microtex_addFont(
   unsigned long len,
   const unsigned char* data
 ) {
@@ -49,37 +49,37 @@ FontMetaPtr MICROTEX_EXPORT microtex_addFont(
   return new FontMeta(meta);
 }
 
-const char* MICROTEX_EXPORT microtex_getFontFamily(FontMetaPtr ptr) {
+MICROTEX_EXPORT const char* microtex_getFontFamily(FontMetaPtr ptr) {
   auto* meta = (FontMeta*) ptr;
   // no need to copy
   return meta->family.c_str();
 }
 
-const char* MICROTEX_EXPORT microtex_getFontName(FontMetaPtr ptr) {
+MICROTEX_EXPORT const char* microtex_getFontName(FontMetaPtr ptr) {
   auto* meta = (FontMeta*) ptr;
   // no need to copy
   return meta->name.c_str();
 }
 
-bool MICROTEX_EXPORT microtex_isMathFont(FontMetaPtr ptr) {
+MICROTEX_EXPORT bool microtex_isMathFont(FontMetaPtr ptr) {
   auto* meta = (FontMeta*) ptr;
   return meta->isMathFont;
 }
 
-void MICROTEX_EXPORT microtex_releaseFontMeta(FontMetaPtr ptr) {
+MICROTEX_EXPORT void microtex_releaseFontMeta(FontMetaPtr ptr) {
   auto* meta = (FontMeta*) ptr;
   delete meta;
 }
 
-void MICROTEX_EXPORT microtex_setDefaultMathFont(const char* name) {
+MICROTEX_EXPORT void microtex_setDefaultMathFont(const char* name) {
   MicroTeX::setDefaultMathFont(name);
 }
 
-void MICROTEX_EXPORT microtex_setDefaultMainFont(const char* name) {
+MICROTEX_EXPORT void microtex_setDefaultMainFont(const char* name) {
   MicroTeX::setDefaultMainFont(name);
 }
 
-void* MICROTEX_EXPORT microtex_parseRender(
+MICROTEX_EXPORT void* microtex_parseRender(
   const char* tex,
   int width,
   float textSize,
@@ -99,53 +99,53 @@ void* MICROTEX_EXPORT microtex_parseRender(
   return reinterpret_cast<void*>(r);
 }
 
-void MICROTEX_EXPORT microtex_deleteRender(void* render) {
+MICROTEX_EXPORT void microtex_deleteRender(void* render) {
   auto r = reinterpret_cast<Render*>(render);
   delete r;
 }
 
-void* MICROTEX_EXPORT microtex_getDrawingData(void* render, int x, int y) {
+MICROTEX_EXPORT void* microtex_getDrawingData(void* render, int x, int y) {
   auto r = reinterpret_cast<Render*>(render);
   Graphics2D_flutter g2;
   r->draw(g2, x, y);
   return g2.getDrawingData();
 }
 
-void MICROTEX_EXPORT microtex_freeDrawingData(void* data) {
+MICROTEX_EXPORT void microtex_freeDrawingData(void* data) {
   free(data);
 }
 
-bool MICROTEX_EXPORT microtex_isLittleEndian() {
+MICROTEX_EXPORT bool microtex_isLittleEndian() {
   int n = 1;
   return *((char*) &n) == 1;
 }
 
-int MICROTEX_EXPORT microtex_getRenderWidth(void* render) {
+MICROTEX_EXPORT int microtex_getRenderWidth(void* render) {
   auto r = reinterpret_cast<Render*>(render);
   return r->getWidth();
 }
 
-int MICROTEX_EXPORT microtex_getRenderHeight(void* render) {
+MICROTEX_EXPORT int microtex_getRenderHeight(void* render) {
   auto r = reinterpret_cast<Render*>(render);
   return r->getHeight();
 }
 
-int MICROTEX_EXPORT microtex_getRenderDepth(void* render) {
+MICROTEX_EXPORT int microtex_getRenderDepth(void* render) {
   auto r = reinterpret_cast<Render*>(render);
   return r->getDepth();
 }
 
-bool MICROTEX_EXPORT microtex_isRenderSplit(void* render) {
+MICROTEX_EXPORT bool microtex_isRenderSplit(void* render) {
   auto r = reinterpret_cast<Render*>(render);
   return r->isSplit();
 }
 
-void MICROTEX_EXPORT microtex_setRenderTextSize(void* render, float size) {
+MICROTEX_EXPORT void microtex_setRenderTextSize(void* render, float size) {
   auto r = reinterpret_cast<Render*>(render);
   r->setTextSize(size);
 }
 
-void MICROTEX_EXPORT microtex_setRenderForeground(void* render, color c) {
+MICROTEX_EXPORT void microtex_setRenderForeground(void* render, color c) {
   auto r = reinterpret_cast<Render*>(render);
   r->setForeground(c);
 }

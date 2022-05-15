@@ -22,7 +22,8 @@ typedef RegisterCallbacks = void Function(
 
 typedef native_parse = Pointer Function(
     Pointer<Utf8>, Int32, Float, Float, Uint32, Bool, Bool, Uint32);
-typedef Parse = Pointer Function(Pointer<Utf8>, int, double, double, int, bool, bool, int);
+typedef Parse = Pointer Function(
+    Pointer<Utf8>, int, double, double, int, bool, bool, int);
 
 class NativeBindings {
   static final instance = NativeBindings._();
@@ -70,6 +71,10 @@ class NativeBindings {
       _nativeLib = DynamicLibrary.open('libmicrotex-flutter.so');
     } else if (Platform.isIOS || Platform.isMacOS) {
       _nativeLib = DynamicLibrary.process();
+    } else if (Platform.isWindows) {
+      _nativeLib = DynamicLibrary.open('microtex-flutter.dll');
+    } else {
+      // should never happen
     }
     if (kDebugMode) print(_nativeLib);
     // context
