@@ -6,19 +6,27 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 # not be changed
 set(PLUGIN_NAME "microtex_plugin")
 
-add_library(${PLUGIN_NAME} SHARED
+add_library(
+  ${PLUGIN_NAME} SHARED
   "microtex_plugin.cpp"
 )
 apply_standard_settings(${PLUGIN_NAME})
-set_target_properties(${PLUGIN_NAME} PROPERTIES
-  CXX_VISIBILITY_PRESET hidden)
+set_target_properties(
+  ${PLUGIN_NAME} PROPERTIES
+  CXX_VISIBILITY_PRESET hidden
+)
 target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
-target_include_directories(${PLUGIN_NAME} INTERFACE
-  "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_include_directories(
+  ${PLUGIN_NAME} INTERFACE
+  "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
 target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin)
 
+add_subdirectory(native_api)
+
 # List of absolute paths to libraries that should be bundled with the plugin
-set(microtex_bundled_libraries
-  ""
+set(
+  microtex_bundled_libraries
+  "${CMAKE_CURRENT_BINARY_DIR}/native_api/$<$<CONFIG:Debug>:Debug>$<$<CONFIG:Release>:Release>/microtex-flutter.dll"
   PARENT_SCOPE
 )

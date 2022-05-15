@@ -9,9 +9,10 @@ if (MSVC)
     target_compile_features(microtex PUBLIC cxx_std_17)
     target_compile_definitions(microtex PRIVATE -DMICROTEX_LIBRARY)
     target_compile_definitions(microtex PUBLIC -D_HAS_STD_BYTE=1)
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
 endif ()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
 set_target_properties(
     microtex PROPERTIES
     VERSION ${PROJECT_VERSION}
