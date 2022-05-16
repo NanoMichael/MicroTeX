@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 
-cmake_policy(SET CMP0077 NEW)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -23,20 +21,20 @@ if (MSVC)
 endif ()
 
 # The microtex library, we build it as static lib
-set(BUILD_STATIC TRUE)
-set(HAVE_AUTO_FONT_FIND FALSE)
+set(_BUILD_STATIC TRUE)
+set(_HAVE_AUTO_FONT_FIND FALSE)
 set(_GLYPH_RENDER_TYPE 1)
 if (WIN32)
     add_subdirectory(wlib)
-else()
+else ()
     add_subdirectory(lib)
-endif()
+endif ()
 
 message(STATUS "Building with flutter")
 set(BUILD_TYPE SHARED)
 if (DEFINED IS_OSX_IOS)
     set(BUILD_TYPE STATIC)
-endif()
+endif ()
 add_library(
     microtex-flutter ${BUILD_TYPE}
     graphic_flutter.cpp
@@ -56,4 +54,4 @@ target_link_libraries(
 if (DEFINED IS_OSX_IOS)
     set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/products)
     install(TARGETS microtex-flutter DESTINATION lib)
-endif()
+endif ()
