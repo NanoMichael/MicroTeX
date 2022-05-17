@@ -2,6 +2,7 @@
 
 import {initRuntime} from "./runtime";
 import {Render} from './render';
+import {createTextLayout, getTextLayoutBounds, releaseTextLayout} from "./textlayout";
 
 const context = {};
 
@@ -140,13 +141,20 @@ context.init = function (clmDataUri) {
   }
   return initRuntime()
     .then(r => _runtime = r)
+    .then(_ => {
+      const a = _runtime.addFunction(createTextLayout, 'iii');
+      const b = _runtime.addFunction(getTextLayoutBounds, 'vii');
+      const c = _runtime.addFunction(releaseTextLayout, 'vi');
+      const d = _runtime.addFunction((id) => false, 'ii');
+      _runtime._microtex_registerCallbacks(a, b, c, d);
+    })
     .then(_ => loadClm(
       clmDataUri,
       (len, data) => _runtime._microtex_init(len, data))
     )
     .then(_ => {
       _isLittleEndian = _runtime._microtex_isLittleEndian();
-    })
+    });
 }
 
 /** Release the context. */

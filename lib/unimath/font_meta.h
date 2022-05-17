@@ -2,7 +2,7 @@
 #define MICROTEX_FONT_META_H
 
 #include "microtexexport.h"
-#include <graphic/font_style.h>
+#include "graphic/font_style.h"
 #include <string>
 
 namespace microtex {

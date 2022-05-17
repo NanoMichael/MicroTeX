@@ -2,10 +2,8 @@
 
 web_dir="$(pwd)"
 
-# go to project root dir
-cd ../../../
-project_dir=$(pwd)
-build_dir="${project_dir}/buildwasm"
+cd .. || return
+build_dir="$(pwd)/build"
 
 # build the wasm target
 if [ ! -d "${build_dir}" ]; then
@@ -14,7 +12,7 @@ fi
 
 cd "${build_dir}" || return
 
-emcmake cmake -DCMAKE_BUILD_TYPE=Release -DHAVE_LOG=OFF -DWASM=ON ..
+emcmake cmake -DCMAKE_BUILD_TYPE=Release -DHAVE_LOG=OFF -DWASM=ON -DHAVE_CWRAPPER=ON ..
 emmake make -j8
 
 rm -rf "${web_dir}/dist"
@@ -24,8 +22,8 @@ mkdir "${web_dir}/gen"
 mkdir "${web_dir}/dist"
 
 # copy to gen
-cp "${build_dir}/platform/wasm/microtex-wasm.wasm" "${web_dir}/gen"
-cp "${build_dir}/platform/wasm/microtex-wasm.js" "${web_dir}/gen"
+cp "${build_dir}/microtex-wasm.wasm" "${web_dir}/gen"
+cp "${build_dir}/microtex-wasm.js" "${web_dir}/gen"
 
 # copy to dist
-cp "${build_dir}/platform/wasm/microtex-wasm.wasm" "${web_dir}/dist"
+cp "${build_dir}/microtex-wasm.wasm" "${web_dir}/dist"

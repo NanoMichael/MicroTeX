@@ -32,7 +32,6 @@ option(BUILD_EXAMPLE_QT "Build Qt example, only work with -DQT=ON flag" OFF)
 option(BUILD_EXAMPLE_QTPNG "Build Qt png example, only work with -DQT=ON flag" OFF)
 option(GDI "Build with GDI" OFF)
 option(BUILD_EXAMPLE_WIN32 "Build Win32 GDI example, only work with -DGDI=ON flag" OFF)
-option(WASM "Build with WebAssembly" OFF)
 option(BUILD_EXAMPLE_MEMCHECK "Build memory check example" OFF)
 option(HAVE_LOG "If enable log" ON)
 if (HAVE_LOG)
@@ -40,15 +39,6 @@ if (HAVE_LOG)
 endif ()
 
 include(MicroTeXInstall.cmake)
-
-#####################
-# config for wasm   #
-#####################
-if (WASM)
-    set(BUILD_STATIC TRUE)
-    set(HAVE_AUTO_FONT_FIND FALSE)
-    set(_GLYPH_RENDER_TYPE 1)
-endif ()
 
 add_subdirectory(lib)
 
