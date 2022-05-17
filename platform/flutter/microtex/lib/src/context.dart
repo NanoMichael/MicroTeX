@@ -4,15 +4,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:ffi/ffi.dart';
 import 'package:flutter/services.dart';
+import 'package:microtex/microtex.dart';
+import 'package:microtex/src/bindings.dart';
+import 'package:microtex/src/bounds.dart';
 import 'package:microtex/src/fontdesc.dart';
 import 'package:microtex/src/pathcache.dart';
-import 'package:microtex/src/texstyle.dart';
+import 'package:microtex/src/textlayout.dart';
 
-import 'bindings.dart';
-import 'bounds.dart';
-import 'fontmeta.dart';
-import 'render.dart';
-import 'textlayout.dart';
+bool _debugMicroTeX = false;
+
+set debugMicroTeX(bool value) => _debugMicroTeX = value;
+
+bool get debugMicroTeX => _debugMicroTeX && kDebugMode;
 
 /// The MicroTeX context wrapper for Flutter from native. You must call [initialize]
 /// to initialize the context before using.
@@ -82,7 +85,7 @@ class MicroTeX {
       false,
     );
     register(a, b, c, d);
-    if (kDebugMode) print(register);
+    if (debugMicroTeX) print(register);
   }
 
   static int _createTextLayout(Pointer<Utf8> txt, Pointer<FontDesc> font) {
@@ -99,7 +102,7 @@ class MicroTeX {
 
   static bool _isPathExists(int id) {
     final exists = PathCache.instance[id] != null;
-    if (kDebugMode) print("isPathExists($id) = $exists");
+    if (debugMicroTeX) print("isPathExists($id) = $exists");
     return exists;
   }
 
@@ -123,7 +126,7 @@ class MicroTeX {
     final isMathFont = _bindings.isMathFont(m);
     // push to font meta list
     final meta = FontMeta(fontFamily, fontName, isMathFont);
-    if (kDebugMode) print(meta);
+    if (debugMicroTeX) print(meta);
     _fonts.add(meta);
     // release meta pointer in C
     _bindings.releaseFontMeta(m);

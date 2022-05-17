@@ -13,7 +13,7 @@ void main() async {
     textLayoutSansSerif: 'Noto Sans',
     textLayoutMonospace: 'Noto Mono',
   );
-  debugPaintBaselinesEnabled = true;
+  debugMicroTeX = true;
   runApp(const MyApp());
 }
 
@@ -31,19 +31,17 @@ class MyApp extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                color: Colors.red[100],
-                child: const LaTeX(
-                  latex: "\\LaTeX\\MicroTeX\\AndroidTeX",
-                  textSize: 50,
-                  color: Colors.teal,
-                ),
+              const LaTeX(
+                latex: "\\text{Hello World!}",
+                textSize: 100,
+                color: Colors.black,
               ),
               const Text(
-                "Hello world!🥰",
+                "Hello World!",
                 style: TextStyle(
-                  fontSize: 50,
-                  fontFamily: "Comic Mono",
+                  fontSize: 100,
+                  fontFamily: "XITS Math",
+                  color: Colors.black,
                 ),
               ),
               RichText(
@@ -51,7 +49,11 @@ class MyApp extends StatelessWidget {
                   children: [
                     const TextSpan(
                       text: "Hello!",
-                      style: TextStyle(color: Colors.black, fontSize: 50),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 50,
+                        fontFamily: 'XITS Math',
+                      ),
                     ),
                     WidgetSpan(
                       alignment: PlaceholderAlignment.baseline,
@@ -59,9 +61,9 @@ class MyApp extends StatelessWidget {
                       child: Container(
                         color: Colors.red[100],
                         child: const LaTeX(
-                          latex: "x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}\\debug{}",
+                          latex: "F(\\omega)=\\int_{-\\infty}^{+\\infty}f(t)e^{-i\\omega_nt}dt",
                           textSize: 50,
-                          style: TeXStyle.display,
+                          style: TeXStyle.text,
                           color: Colors.teal,
                         ),
                       ),

@@ -1,9 +1,9 @@
 import 'dart:ffi';
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:microtex/src/bindings.dart';
+import 'package:microtex/src/context.dart';
 import 'package:microtex/src/pathcache.dart';
 import 'package:microtex/src/textlayout.dart';
 
@@ -42,7 +42,7 @@ class Render {
   final _argBuf = Float32List(8);
 
   void draw(Canvas canvas) {
-    if (kDebugMode) print("Render.draw");
+    if (debugMicroTeX) print("Render.draw");
     // get the drawing commands from native render
     final drawingData = _bindings.getDrawingData(_nativeInstance, 0, 0);
     // the first 4 bytes is the total count of byte used

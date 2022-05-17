@@ -1,6 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:microtex/src/context.dart';
 import 'package:microtex/src/fontdesc.dart';
 
 class TextLayout {
@@ -63,7 +63,7 @@ class TextLayout {
   }
 
   static void release(int id) {
-    if (kDebugMode) {
+    if (debugMicroTeX) {
       print('TextLayout.relase($id)');
     }
     _texts.remove(id);
