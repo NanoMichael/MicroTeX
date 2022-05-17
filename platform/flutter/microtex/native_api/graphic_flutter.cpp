@@ -140,8 +140,9 @@ float Graphics2D_flutter::sy() const { return _sy; }
 
 void Graphics2D_flutter::drawGlyph(u16 glyph, float x, float y) {}
 
-void Graphics2D_flutter::beginPath(i32 id) {
+bool Graphics2D_flutter::beginPath(i32 id) {
   _cmds.put((u8) 17, id);
+  return dart_isPathExists(id);
 }
 
 void Graphics2D_flutter::moveTo(float x, float y) {

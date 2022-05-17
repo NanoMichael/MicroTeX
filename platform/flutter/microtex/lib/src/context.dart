@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:ffi/ffi.dart';
 import 'package:flutter/services.dart';
 import 'package:microtex/src/fontdesc.dart';
+import 'package:microtex/src/pathcache.dart';
 import 'package:microtex/src/texstyle.dart';
 
 import 'bindings.dart';
@@ -76,7 +77,11 @@ class MicroTeX {
     final c = Pointer.fromFunction<Void Function(Uint32)>(
       TextLayout.release,
     );
-    register(a, b, c);
+    final d = Pointer.fromFunction<Bool Function(Uint32)>(
+      _isPathExists,
+      false,
+    );
+    register(a, b, c, d);
     if (kDebugMode) print(register);
   }
 
@@ -90,6 +95,12 @@ class MicroTeX {
       ..width = b[0]
       ..height = b[1]
       ..ascent = b[2];
+  }
+
+  static bool _isPathExists(int id) {
+    final exists = PathCache.instance[id] != null;
+    if (kDebugMode) print("isPathExists($id) = $exists");
+    return exists;
   }
 
   Future<FontMeta> _loadCLM(

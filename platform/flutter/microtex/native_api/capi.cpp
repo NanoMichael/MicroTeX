@@ -13,11 +13,13 @@ typedef void* FontMetaPtr;
 MICROTEX_EXPORT void microtex_registerCallbacks(
   F_createTextLayout createTextLayout,
   F_getTextLayoutBounds getTextLayoutBounds,
-  F_releaseTextLayout releaseTextLayout
+  F_releaseTextLayout releaseTextLayout,
+  F_isPathExists isPathExists
 ) {
   dart_createTextLayout = createTextLayout;
   dart_getTextLayoutBounds = getTextLayoutBounds;
   dart_releaseTextLayout = releaseTextLayout;
+  dart_isPathExists = isPathExists;
 }
 
 MICROTEX_EXPORT FontMetaPtr microtex_init(
