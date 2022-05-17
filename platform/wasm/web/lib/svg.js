@@ -216,7 +216,7 @@ function SvgCanvas(width, height) {
     let e = createElement("text");
     e.textContent = txt;
     Object
-      .entries(JSON.parse(font))
+      .entries(font)
       .forEach(([k, v]) => e.setAttribute(k, v.toString()));
     this.translate(x, y);
     this.applyNode(e, true);

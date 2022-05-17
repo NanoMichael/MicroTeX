@@ -94,7 +94,7 @@ public:
 
   void drawGlyph(u16 glyph, float x, float y) override {}
 
-  void beginPath(i32 id) override {}
+  bool beginPath(i32 id) override { return false; }
 
   void moveTo(float x, float y) override {}
 

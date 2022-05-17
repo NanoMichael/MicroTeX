@@ -1,6 +1,7 @@
 'use strict'
 
 import {runtime} from "./runtime";
+import {getTextLayout, toCSSFont} from "./textlayout";
 
 /**
  * Convert a \#AARRGGBB color to CSS color.
@@ -236,8 +237,8 @@ function Render(nativeRender, isLittleEndian) {
           const id = getU32();
           const xy = getF32s(2);
           const old = ctx.font;
-          const value = runtime.textLayout.map.get(id);
-          ctx.font = runtime.textLayout.toCSSFont(value.font);
+          const value = getTextLayout(id);
+          ctx.font = toCSSFont(value.font);
           ctx.fillTextWithFont(value.text, xy[0], xy[1], value.font);
           ctx.font = old;
           break;

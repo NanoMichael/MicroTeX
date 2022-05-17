@@ -20,4 +20,12 @@
 #   define MICROTEX_EXPORT
 #endif
 
+// emscripten
+#if defined(__EMSCRIPTEN__)
+#   include <emscripten.h>
+#   define MICROTEX_CAPI EMSCRIPTEN_KEEPALIVE
+#else
+#   define MICROTEX_CAPI MICROTEX_EXPORT
+#endif
+
 #endif //MICROTEX_MICROTEXEXPORT_H
