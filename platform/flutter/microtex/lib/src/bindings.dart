@@ -70,11 +70,11 @@ class NativeBindings {
 
   void _init() {
     if (Platform.isLinux || Platform.isAndroid) {
-      _nativeLib = DynamicLibrary.open('libmicrotex-flutter.so');
+      _nativeLib = DynamicLibrary.open('libmicrotex.so');
     } else if (Platform.isIOS || Platform.isMacOS) {
       _nativeLib = DynamicLibrary.process();
     } else if (Platform.isWindows) {
-      _nativeLib = DynamicLibrary.open('microtex-flutter.dll');
+      _nativeLib = DynamicLibrary.open('microtex.dll');
     } else {
       // should never happen
     }

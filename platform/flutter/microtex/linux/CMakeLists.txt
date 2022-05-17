@@ -23,11 +23,11 @@ target_include_directories(
 target_link_libraries(${PLUGIN_NAME} PRIVATE flutter)
 target_link_libraries(${PLUGIN_NAME} PRIVATE PkgConfig::GTK)
 
-add_subdirectory(native_api)
+add_subdirectory(nativelib)
 
 # List of absolute paths to libraries that should be bundled with the plugin
 set(
     microtex_bundled_libraries
-    "${CMAKE_CURRENT_BINARY_DIR}/native_api/libmicrotex-flutter.so"
+    "${CMAKE_CURRENT_BINARY_DIR}/nativelib/lib/libmicrotex.so"
     PARENT_SCOPE
 )

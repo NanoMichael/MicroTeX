@@ -15,14 +15,19 @@ endif ()
 
 set_target_properties(
     microtex PROPERTIES
-    VERSION ${PROJECT_VERSION}
-    SOVERSION ${MICROTEX_API_VERSION}
     CXX_VISIBILITY_PRESET hidden
 )
 
-# source files
-target_sources(
-    microtex PRIVATE
+if (NOT DEFINED _DISABLE_ALIAS)
+    set_target_properties(
+        microtex PROPERTIES
+        VERSION ${PROJECT_VERSION}
+        SOVERSION ${MICROTEX_API_VERSION}
+    )
+endif ()
+
+set(
+    _SRCS
     # atom folder
     atom/atom_basic.cpp
     atom/atom_char.cpp
@@ -74,7 +79,6 @@ target_sources(
     env/env.cpp
     env/units.cpp
     # utils folder
-    utils/byte_seq.cpp
     utils/string_utils.cpp
     utils/utf.cpp
     utils/utils.cpp
@@ -100,6 +104,22 @@ target_sources(
 
     microtex.cpp
 )
+
+message(STATUS "Have cwrapper: ${HAVE_CWRAPPER}")
+if (DEFINED HAVE_CWRAPPER AND HAVE_CWRAPPER)
+    set(
+        _SRCS
+        ${_SRCS}
+        wrapper/callback.cpp
+        wrapper/graphic_wrapper.cpp
+        wrapper/cwrapper.cpp
+        wrapper/byte_seq.cpp
+    )
+    target_compile_definitions(microtex PUBLIC -DHAVE_CWRAPPER)
+endif ()
+
+# source files
+target_sources(microtex PRIVATE ${_SRCS})
 target_include_directories(
     microtex PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
@@ -188,6 +208,13 @@ if (_HAS_MICROTEX_INSTALL)
         PREFIX graphic
         HEADERS graphic/graphic.h graphic/font_style.h graphic/graphic_basic.h
     )
+    if (DEFINED HAVE_CWRAPPER AND HAVE_CWRAPPER)
+        microtex_install_headers(
+            microtex
+            PREFIX wrapper
+            HEADERS wrapper/callback.h wrapper/cwrapper.h
+        )
+    endif ()
 endif ()
 
 if (DEFINED IS_OSX_IOS)

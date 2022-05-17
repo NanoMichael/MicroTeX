@@ -1,4 +1,6 @@
-#include "utils/byte_seq.h"
+#ifdef HAVE_CWRAPPER
+
+#include "wrapper/byte_seq.h"
 #include "utils/log.h"
 
 #include <cstdlib>
@@ -33,3 +35,5 @@ void* ByteSeq::finish() {
 }
 
 }
+
+#endif //HAVE_CWRAPPER

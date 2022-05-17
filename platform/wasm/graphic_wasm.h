@@ -2,7 +2,7 @@
 #define MICROTEX_GRAPHIC_WASM_H
 
 #include "graphic/graphic.h"
-#include "utils/byte_seq.h"
+#include "wrapper/byte_seq.h"
 
 namespace microtex {
 
