@@ -1,7 +1,7 @@
 import 'dart:ffi';
 import 'dart:io';
 import 'package:ffi/ffi.dart';
-import 'package:flutter/foundation.dart';
+import 'package:microtex/src/context.dart';
 import 'package:microtex/src/fontdesc.dart';
 
 import 'bounds.dart';
@@ -78,7 +78,7 @@ class NativeBindings {
     } else {
       // should never happen
     }
-    if (kDebugMode) print(_nativeLib);
+    if (debugMicroTeX) print(_nativeLib);
     // context
     registerCallbacks = _nativeLib
         .lookup<NativeFunction<register_callbacks>>(

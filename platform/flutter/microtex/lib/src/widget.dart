@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:microtex/microtex.dart';
 
@@ -59,7 +58,7 @@ class RenderLaTeX extends RenderBox {
       _render?.setColor(color.value);
       needPaint = true;
     }
-    if (kDebugMode) {
+    if (debugMicroTeX) {
       print(
         'RenderLaTeX.update'
         '{parse: $needParse, layout: $needLayout, paint: $needPaint}',
@@ -95,7 +94,7 @@ class RenderLaTeX extends RenderBox {
     }
     _lastMaxWidth = maxWidth;
     if (r == null || reparse) {
-      if (kDebugMode) {
+      if (debugMicroTeX) {
         print(
           'RenderLaTeX.performLayout'
           '{render: $r, reparse: $reparse}',
