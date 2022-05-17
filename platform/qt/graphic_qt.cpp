@@ -262,8 +262,9 @@ void Graphics2D_qt::drawGlyph(u16 glyph, float x, float y) {
   _painter->drawGlyphRun({x, y}, g);
 }
 
-void Graphics2D_qt::beginPath(i32 id) {
+bool Graphics2D_qt::beginPath(i32 id) {
   _path = QPainterPath();
+  return false;
 }
 
 void Graphics2D_qt::moveTo(float x, float y) {

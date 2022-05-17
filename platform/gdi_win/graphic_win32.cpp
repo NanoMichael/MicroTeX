@@ -294,8 +294,9 @@ void Graphics2D_win32::drawGlyph(u16 glyph, float x, float y) {
   _g->DrawDriverString(&glyph, 1, f.get(), _brush, &p, 0, nullptr);
 }
 
-void Graphics2D_win32::beginPath(i32 _id) {
+bool Graphics2D_win32::beginPath(i32 id) {
   // not supported
+  return false;
 }
 
 void Graphics2D_win32::moveTo(float x, float y) {

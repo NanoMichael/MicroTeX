@@ -59,7 +59,11 @@ Path::Path(i32 id, u16 cmdCnt, PathCmd** cmds) noexcept: _id(id), _cmdCnt(cmdCnt
 
 void Path::draw(Graphics2D& g2) const {
   if (isEmpty()) return;
-  g2.beginPath(_id);
+  const auto cached = g2.beginPath(_id);
+  if (cached) {
+    g2.fillPath();
+    return;
+  }
   int mx = 0, my = 0; // the first point to move to
   int px = 0, py = 0; // the current point
   int cx = 0, cy = 0; // the last control point

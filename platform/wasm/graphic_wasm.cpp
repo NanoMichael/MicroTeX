@@ -151,8 +151,10 @@ float Graphics2D_wasm::sy() const { return _sy; }
 
 void Graphics2D_wasm::drawGlyph(u16 glyph, float x, float y) {}
 
-void Graphics2D_wasm::beginPath(i32 id) {
+bool Graphics2D_wasm::beginPath(i32 id) {
   _cmds.put((u8) 17, id);
+  // TODO
+  return false;
 }
 
 void Graphics2D_wasm::moveTo(float x, float y) {
