@@ -16,6 +16,8 @@ void MICROTEX_WASM_API js_getTextLayoutBounds(unsigned int id, float* data);
 
 void MICROTEX_WASM_API js_releaseTextLayout(unsigned int id);
 
+void MICROTEX_WASM_API js_isPathExists(unsigned int id);
+
 #ifdef __cplusplus
 };
 #endif

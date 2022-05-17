@@ -11,10 +11,8 @@ class LaTeX extends LeafRenderObjectWidget {
   const LaTeX({
     Key? key,
     required this.latex,
-    int? maxWidth,
     double? textSize,
     Color? color,
-    bool? fillMaxWidth,
     this.style,
   })  : textSize = textSize ?? 20,
         color = color ?? const Color(0xFF424242),

@@ -14,7 +14,7 @@ import 'render.dart';
 import 'textlayout.dart';
 
 /// The MicroTeX context wrapper for Flutter from native. You must call [initialize]
-/// to initialize the context before use it.
+/// to initialize the context before using.
 class MicroTeX {
   MicroTeX._();
 

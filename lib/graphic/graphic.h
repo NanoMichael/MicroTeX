@@ -203,8 +203,12 @@ public:
    * end with `fillPath`. You may cache the path via its id.
    *
    * @param id the path id, if id < 0 that means the path is not cacheable.
+   * @returns true if the path we using with the given id is exists, false otherwise.
+   * This is for optimizing purpose, if the engine find the path is already exists,
+   * the following path drawing command will be ignored. If path caching is not
+   * supported, just return false.
    */
-  virtual void beginPath(i32 id) = 0;
+  virtual bool beginPath(i32 id) = 0;
 
   /** Begin a path, move to point (x, y). */
   virtual void moveTo(float x, float y) = 0;
