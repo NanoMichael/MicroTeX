@@ -13,4 +13,10 @@
 #include "graphic/font_style.h"
 #include "graphic/graphic_basic.h"
 
+#ifdef HAVE_CWRAPPER
+
+#include "wrapper/cwrapper.h"
+
+#endif
+
 #endif // MICROTEX_API_H

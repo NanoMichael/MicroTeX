@@ -1,27 +1,29 @@
-#ifndef MICROTEX_GRAPHIC_FLUTTER_H
-#define MICROTEX_GRAPHIC_FLUTTER_H
+#ifndef MICROTEX_GRAPHIC_WRAPPER_H
+#define MICROTEX_GRAPHIC_WRAPPER_H
+
+#ifdef HAVE_CWRAPPER
 
 #include "graphic/graphic.h"
-#include "utils/byte_seq.h"
+#include "wrapper/byte_seq.h"
 
 namespace microtex {
 
 /** EMPTY IMPL - no font support */
-class Font_flutter : public Font {
+class Font_wrapper : public Font {
 public:
   bool operator==(const Font& f) const override;
 };
 
 /**********************************************************************************/
 
-class TextLayout_flutter : public TextLayout {
+class TextLayout_wrapper : public TextLayout {
 private:
   const unsigned int _id;
 
 public:
-  explicit TextLayout_flutter(unsigned int id);
+  explicit TextLayout_wrapper(unsigned int id);
 
-  ~TextLayout_flutter() noexcept override;
+  ~TextLayout_wrapper() noexcept override;
 
   void getBounds(Rect& bounds) override;
 
@@ -30,7 +32,7 @@ public:
 
 /**********************************************************************************/
 
-class PlatformFactory_flutter : public PlatformFactory {
+class PlatformFactory_wrapper : public PlatformFactory {
 public:
   sptr<Font> createFont(const std::string& file) override;
 
@@ -43,7 +45,7 @@ public:
 
 /**********************************************************************************/
 
-class Graphics2D_flutter : public Graphics2D {
+class Graphics2D_wrapper : public Graphics2D {
 private:
   color _color;
   Stroke _stroke;
@@ -51,7 +53,7 @@ private:
   float _sx, _sy;
 
 public:
-  Graphics2D_flutter();
+  Graphics2D_wrapper();
 
   void* getDrawingData();
 
@@ -138,4 +140,6 @@ public:
 
 }
 
-#endif //MICROTEX_GRAPHIC_FLUTTER_H
+#endif //HAVE_CWRAPPER
+
+#endif //MICROTEX_GRAPHIC_WRAPPER_H

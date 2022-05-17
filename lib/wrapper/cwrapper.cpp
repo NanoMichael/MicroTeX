@@ -1,6 +1,9 @@
+#ifdef HAVE_CWRAPPER
+
+#include "wrapper/cwrapper.h"
+#include "wrapper/graphic_wrapper.h"
 #include "microtex.h"
-#include "dart_reg.h"
-#include "graphic_flutter.h"
+#include "utils/log.h"
 
 using namespace microtex;
 
@@ -8,27 +11,25 @@ using namespace microtex;
 extern "C" {
 #endif
 
-typedef void* FontMetaPtr;
-
 MICROTEX_EXPORT void microtex_registerCallbacks(
   F_createTextLayout createTextLayout,
   F_getTextLayoutBounds getTextLayoutBounds,
   F_releaseTextLayout releaseTextLayout,
   F_isPathExists isPathExists
 ) {
-  dart_createTextLayout = createTextLayout;
-  dart_getTextLayoutBounds = getTextLayoutBounds;
-  dart_releaseTextLayout = releaseTextLayout;
-  dart_isPathExists = isPathExists;
+  microtex_createTextLayout = createTextLayout;
+  microtex_getTextLayoutBounds = getTextLayoutBounds;
+  microtex_releaseTextLayout = releaseTextLayout;
+  microtex_isPathExists = isPathExists;
 }
 
 MICROTEX_EXPORT FontMetaPtr microtex_init(
   unsigned long len,
   const unsigned char* data
 ) {
-  auto factory = std::make_unique<PlatformFactory_flutter>();
-  PlatformFactory::registerFactory("flutter", std::move(factory));
-  PlatformFactory::activate("flutter");
+  auto factory = std::make_unique<PlatformFactory_wrapper>();
+  PlatformFactory::registerFactory("__wrapper__", std::move(factory));
+  PlatformFactory::activate("__wrapper__");
   FontSrcData src{len, data};
   auto meta = MicroTeX::init(src);
   return new FontMeta(meta);
@@ -81,7 +82,7 @@ MICROTEX_EXPORT void microtex_setDefaultMainFont(const char* name) {
   MicroTeX::setDefaultMainFont(name);
 }
 
-MICROTEX_EXPORT void* microtex_parseRender(
+MICROTEX_EXPORT RenderPtr microtex_parseRender(
   const char* tex,
   int width,
   float textSize,
@@ -98,22 +99,22 @@ MICROTEX_EXPORT void* microtex_parseRender(
     tex, width, textSize, lineSpace, color, fillWidth,
     {enableOverrideTeXStyle, static_cast<TexStyle>(texStyle)}
   );
-  return reinterpret_cast<void*>(r);
+  return reinterpret_cast<RenderPtr>(r);
 }
 
-MICROTEX_EXPORT void microtex_deleteRender(void* render) {
+MICROTEX_EXPORT void microtex_deleteRender(RenderPtr render) {
   auto r = reinterpret_cast<Render*>(render);
   delete r;
 }
 
-MICROTEX_EXPORT void* microtex_getDrawingData(void* render, int x, int y) {
+MICROTEX_EXPORT DrawingData microtex_getDrawingData(RenderPtr render, int x, int y) {
   auto r = reinterpret_cast<Render*>(render);
-  Graphics2D_flutter g2;
+  Graphics2D_wrapper g2;
   r->draw(g2, x, y);
   return g2.getDrawingData();
 }
 
-MICROTEX_EXPORT void microtex_freeDrawingData(void* data) {
+MICROTEX_EXPORT void microtex_freeDrawingData(DrawingData data) {
   free(data);
 }
 
@@ -122,32 +123,32 @@ MICROTEX_EXPORT bool microtex_isLittleEndian() {
   return *((char*) &n) == 1;
 }
 
-MICROTEX_EXPORT int microtex_getRenderWidth(void* render) {
+MICROTEX_EXPORT int microtex_getRenderWidth(RenderPtr render) {
   auto r = reinterpret_cast<Render*>(render);
   return r->getWidth();
 }
 
-MICROTEX_EXPORT int microtex_getRenderHeight(void* render) {
+MICROTEX_EXPORT int microtex_getRenderHeight(RenderPtr render) {
   auto r = reinterpret_cast<Render*>(render);
   return r->getHeight();
 }
 
-MICROTEX_EXPORT int microtex_getRenderDepth(void* render) {
+MICROTEX_EXPORT int microtex_getRenderDepth(RenderPtr render) {
   auto r = reinterpret_cast<Render*>(render);
   return r->getDepth();
 }
 
-MICROTEX_EXPORT bool microtex_isRenderSplit(void* render) {
+MICROTEX_EXPORT bool microtex_isRenderSplit(RenderPtr render) {
   auto r = reinterpret_cast<Render*>(render);
   return r->isSplit();
 }
 
-MICROTEX_EXPORT void microtex_setRenderTextSize(void* render, float size) {
+MICROTEX_EXPORT void microtex_setRenderTextSize(RenderPtr render, float size) {
   auto r = reinterpret_cast<Render*>(render);
   r->setTextSize(size);
 }
 
-MICROTEX_EXPORT void microtex_setRenderForeground(void* render, color c) {
+MICROTEX_EXPORT void microtex_setRenderForeground(RenderPtr render, color c) {
   auto r = reinterpret_cast<Render*>(render);
   r->setForeground(c);
 }
@@ -155,3 +156,5 @@ MICROTEX_EXPORT void microtex_setRenderForeground(void* render, color c) {
 #ifdef __cplusplus
 }
 #endif
+
+#endif //HAVE_CWRAPPER

@@ -78,7 +78,7 @@ if [ ! -d "$build_dir" ]; then
   mkdir "$build_dir"
 fi
 
-cd "$build_dir"
+cd "$build_dir" || exit 1
 cmake  .. -G Xcode \
   -DCMAKE_TOOLCHAIN_FILE=../ios.toolchain.cmake \
   -DPLATFORM=$platform \

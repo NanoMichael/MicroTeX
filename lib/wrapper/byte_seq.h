@@ -1,6 +1,8 @@
 #ifndef MICROTEX_BYTE_SEQ_H
 #define MICROTEX_BYTE_SEQ_H
 
+#ifdef HAVE_CWRAPPER
+
 #include "utils/utils.h"
 
 namespace microtex {
@@ -56,5 +58,7 @@ public:
 };
 
 }
+
+#endif //HAVE_CWRAPPER
 
 #endif //MICROTEX_BYTE_SEQ_H
