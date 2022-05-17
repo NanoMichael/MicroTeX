@@ -9,21 +9,23 @@ import 'bounds.dart';
 typedef create_text_layout = Uint32 Function(Pointer<Utf8>, Pointer<FontDesc>);
 typedef get_text_layout_bounds = Void Function(Uint32, Pointer<Bounds>);
 typedef release_text_layout = Void Function(Uint32);
+typedef is_path_exists = Bool Function(Uint32);
 typedef register_callbacks = Void Function(
   Pointer<NativeFunction<create_text_layout>>,
   Pointer<NativeFunction<get_text_layout_bounds>>,
   Pointer<NativeFunction<release_text_layout>>,
+  Pointer<NativeFunction<is_path_exists>>,
 );
 typedef RegisterCallbacks = void Function(
   Pointer<NativeFunction<create_text_layout>>,
   Pointer<NativeFunction<get_text_layout_bounds>>,
   Pointer<NativeFunction<release_text_layout>>,
+  Pointer<NativeFunction<is_path_exists>>,
 );
 
 typedef native_parse = Pointer Function(
     Pointer<Utf8>, Int32, Float, Float, Uint32, Bool, Bool, Uint32);
-typedef Parse = Pointer Function(
-    Pointer<Utf8>, int, double, double, int, bool, bool, int);
+typedef Parse = Pointer Function(Pointer<Utf8>, int, double, double, int, bool, bool, int);
 
 class NativeBindings {
   static final instance = NativeBindings._();

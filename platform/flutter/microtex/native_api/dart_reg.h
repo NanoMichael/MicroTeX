@@ -22,10 +22,12 @@ struct FontDesc {
 typedef unsigned int (* F_createTextLayout)(const char*, FontDesc* f);
 typedef void (* F_getTextLayoutBounds)(unsigned int id, TextLayoutBounds* b);
 typedef void (* F_releaseTextLayout)(unsigned int id);
+typedef bool (* F_isPathExists)(unsigned int id);
 
 extern F_createTextLayout dart_createTextLayout;
 extern F_getTextLayoutBounds dart_getTextLayoutBounds;
 extern F_releaseTextLayout dart_releaseTextLayout;
+extern F_isPathExists dart_isPathExists;
 
 #ifdef __cplusplus
 }

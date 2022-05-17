@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:microtex/src/bindings.dart';
+import 'package:microtex/src/pathcache.dart';
 import 'package:microtex/src/textlayout.dart';
 
 class Render {
@@ -79,6 +80,7 @@ class Render {
     // consume the first 4 bytes
     getU32();
     var sx = 1.0, sy = 1.0;
+    var pathId = 0;
     var path = Path();
 
     while (offset < len) {
@@ -139,6 +141,7 @@ class Render {
           break;
         case 11: // fillPath
           _paint.style = PaintingStyle.fill;
+          PathCache.instance[pathId] = path;
           canvas.drawPath(path, _paint);
           break;
         case 12: // drawLine
@@ -180,8 +183,10 @@ class Render {
           );
           break;
         case 17: // beginPath
-          final pid = getI32(); // TODO, path id ignored
-          path = Path();
+          final pid = getI32();
+          final p = PathCache.instance[pid];
+          path = p ?? Path();
+          pathId = pid;
           break;
         case 18: // drawTextLayout
           final id = getU32();
