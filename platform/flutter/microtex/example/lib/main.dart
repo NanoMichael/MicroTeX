@@ -31,50 +31,77 @@ class MyApp extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const LaTeX(
-                latex: "\\text{Hello World!}",
-                textSize: 100,
-                color: Colors.black,
-              ),
-              const Text(
-                "Hello World!",
-                style: TextStyle(
-                  fontSize: 100,
-                  fontFamily: "XITS Math",
-                  color: Colors.black,
-                ),
-              ),
-              RichText(
-                text: TextSpan(
-                  children: [
-                    const TextSpan(
-                      text: "Hello!",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 50,
-                        fontFamily: 'XITS Math',
-                      ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  SizedBox(
+                    width: 150,
+                    child: Text(
+                      'render by text:',
+                      style: TextStyle(fontSize: 20),
                     ),
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.baseline,
-                      baseline: TextBaseline.alphabetic,
-                      child: Container(
-                        color: Colors.red[100],
-                        child: const LaTeX(
-                          latex: "F(\\omega)=\\int_{-\\infty}^{+\\infty}f(t)e^{-i\\omega_nt}dt",
-                          textSize: 50,
-                          style: TeXStyle.text,
-                          color: Colors.teal,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+                  ),
+                  Text(
+                    'Hello World!',
+                    style: TextStyle(
+                      fontSize: 100,
+                      fontFamily: 'XITS Math',
+                    ),
+                  ),
+                ],
               ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  SizedBox(
+                    width: 150,
+                    child: Text(
+                      'render by path:',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  LaTeX(
+                    latex: "\\text{Hello World!}",
+                    textSize: 100,
+                    style: TeXStyle.text,
+                    color: Colors.black,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 50),
+              _buildRichText(),
             ],
           ),
         ),
       ),
     );
   }
+
+  Widget _buildRichText() => RichText(
+        text: TextSpan(
+          children: [
+            const TextSpan(
+              text: "Hello!",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 50,
+                fontFamily: 'XITS Math',
+              ),
+            ),
+            WidgetSpan(
+              alignment: PlaceholderAlignment.baseline,
+              baseline: TextBaseline.alphabetic,
+              child: Container(
+                color: Colors.red[100],
+                child: const LaTeX(
+                  latex: "F(\\omega)=\\int_{-\\infty}^{+\\infty}f(t)e^{-i\\omega_nt}dt",
+                  textSize: 50,
+                  style: TeXStyle.text,
+                  color: Colors.black,
+                ),
+              ),
+            )
+          ],
+        ),
+      );
 }
