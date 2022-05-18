@@ -22,11 +22,11 @@ target_include_directories(
 )
 target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin)
 
-add_subdirectory(native_api)
+add_subdirectory(nativelib)
 
 # List of absolute paths to libraries that should be bundled with the plugin
 set(
   microtex_bundled_libraries
-  "${CMAKE_CURRENT_BINARY_DIR}/native_api/$<$<CONFIG:Debug>:Debug>$<$<CONFIG:Release>:Release>/microtex-flutter.dll"
+  "${CMAKE_CURRENT_BINARY_DIR}/nativelib/wlib/$<CONFIG>/microtex.dll"
   PARENT_SCOPE
 )
