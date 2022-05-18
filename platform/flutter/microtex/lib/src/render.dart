@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:microtex/src/bindings.dart';
 import 'package:microtex/src/context.dart';
