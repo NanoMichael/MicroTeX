@@ -14,6 +14,7 @@ void main() async {
     textLayoutMonospace: 'Noto Mono',
   );
   debugMicroTeX = true;
+  debugPaintSizeEnabled = false;
   runApp(const MyApp());
 }
 
@@ -31,42 +32,34 @@ class MyApp extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  SizedBox(
-                    width: 150,
-                    child: Text(
-                      'render by text:',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                  Text(
-                    'Hello World!',
-                    style: TextStyle(
-                      fontSize: 100,
-                      fontFamily: 'XITS Math',
-                    ),
-                  ),
-                ],
+              _buildRow(
+                'render by text',
+                () => const Text(
+                  'Hello World!',
+                  style: TextStyle(fontSize: 100, fontFamily: 'XITS Math'),
+                ),
               ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  SizedBox(
-                    width: 150,
-                    child: Text(
-                      'render by path:',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                  LaTeX(
-                    latex: "\\text{Hello World!}",
-                    textSize: 100,
-                    style: TeXStyle.text,
-                    color: Colors.black,
-                  ),
-                ],
+              _buildRow(
+                'render by path with blur filter',
+                () => const LaTeX(
+                  latex: "\\text{Hello World!}",
+                  textSize: 100,
+                  style: TeXStyle.text,
+                  color: Colors.black,
+                  filterSigma: 0.7,
+                ),
+              ),
+              const SizedBox(
+                height: 25,
+              ),
+              _buildRow(
+                'render by path without blur filter',
+                () => const LaTeX(
+                  latex: "\\text{Hello World!}",
+                  textSize: 100,
+                  style: TeXStyle.text,
+                  color: Colors.black,
+                ),
               ),
               const SizedBox(height: 50),
               _buildRichText(),
@@ -74,6 +67,24 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  _buildRow(String desc, Widget Function() build) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
+          width: 150,
+          child: Text(
+            desc,
+            textAlign: TextAlign.right,
+            style: const TextStyle(fontSize: 18),
+          ),
+        ),
+        const SizedBox(width: 10),
+        build(),
+      ],
     );
   }
 
@@ -98,6 +109,7 @@ class MyApp extends StatelessWidget {
                   textSize: 50,
                   style: TeXStyle.text,
                   color: Colors.black,
+                  filterSigma: 0.7,
                 ),
               ),
             )

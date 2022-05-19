@@ -6,6 +6,7 @@ class LaTeX extends LeafRenderObjectWidget {
   final double textSize;
   final Color color;
   final TeXStyle? style;
+  final double? filterSigma;
 
   const LaTeX({
     Key? key,
@@ -13,18 +14,19 @@ class LaTeX extends LeafRenderObjectWidget {
     double? textSize,
     Color? color,
     this.style,
+    this.filterSigma,
   })  : textSize = textSize ?? 20,
         color = color ?? const Color(0xFF424242),
         super(key: key);
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return RenderLaTeX(latex, textSize, color, style);
+    return RenderLaTeX(latex, textSize, color, style, filterSigma);
   }
 
   @override
   void updateRenderObject(BuildContext context, covariant RenderLaTeX obj) {
-    obj.update(latex, textSize, color, style);
+    obj.update(latex, textSize, color, style, filterSigma);
   }
 }
 
@@ -33,13 +35,14 @@ class RenderLaTeX extends RenderBox {
   double _textSize;
   Color _color;
   TeXStyle? _style;
+  double? _filterSigma;
 
   double _lastMaxWidth = 0;
   Render? _render;
 
-  RenderLaTeX(this._latex, this._textSize, this._color, this._style);
+  RenderLaTeX(this._latex, this._textSize, this._color, this._style, this._filterSigma);
 
-  void update(String latex, double textSize, Color color, TeXStyle? style) {
+  void update(String latex, double textSize, Color color, TeXStyle? style, double? filterSigma) {
     var needParse = false;
     if (_latex != latex || _style != style) {
       _latex = latex;
@@ -53,9 +56,11 @@ class RenderLaTeX extends RenderBox {
       needLayout = true;
     }
     var needPaint = false;
-    if (_color != color) {
+    if (_color != color || _filterSigma != filterSigma) {
       _color = color;
+      _filterSigma = filterSigma;
       _render?.setColor(color.value);
+      _render?.filterSigma = filterSigma;
       needPaint = true;
     }
     if (debugMicroTeX) {
@@ -111,6 +116,7 @@ class RenderLaTeX extends RenderBox {
         _style != null,
         _style ?? TeXStyle.text,
       );
+      r.filterSigma = _filterSigma;
       _render = r;
     }
     size = Size(r.width.toDouble(), r.height.toDouble());
@@ -125,8 +131,10 @@ class RenderLaTeX extends RenderBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
+    final r = _render;
+    if (r == null) return;
     context.canvas.translate(offset.dx, offset.dy);
-    _render?.draw(context.canvas);
+    r.draw(context.canvas);
     context.canvas.translate(-offset.dx, -offset.dy);
   }
 }
