@@ -12,6 +12,11 @@ class Render {
   final NativeBindings _bindings;
   final Pointer _nativeInstance;
   final Endian _endian;
+  // If filter is enabled, using a bluring to simulate the 'grid fitting' on glyhs
+  // to get a much clear rendering, but will cost a lot of time, especially for
+  // complex formulas.
+  // See [https://github.com/flutter/flutter/issues/104017].
+  double? filterSigma;
 
   Render(this._bindings, this._nativeInstance, bool isLittleEndian)
       : _endian = isLittleEndian ? Endian.little : Endian.big;
@@ -142,8 +147,12 @@ class Render {
           break;
         case 11: // fillPath
           _paint.style = PaintingStyle.fill;
+          final sigma = filterSigma;
+          final p = sigma == null
+              ? _paint
+              : (_paint.copy()..maskFilter = MaskFilter.blur(BlurStyle.inner, sigma / sx));
           PathCache.instance[pathId] = path;
-          canvas.drawPath(path, _paint);
+          canvas.drawPath(path, p);
           break;
         case 12: // drawLine
           final dl = getF32s(4);
@@ -211,5 +220,25 @@ class Render {
   @override
   String toString() {
     return "Render{$width, $height, $depth}";
+  }
+}
+
+extension _PaintExt on Paint {
+  Paint copy() {
+    return Paint()
+      ..isAntiAlias = isAntiAlias
+      ..color = color
+      ..blendMode = blendMode
+      ..style = style
+      ..strokeWidth = strokeWidth
+      ..strokeCap = strokeCap
+      ..strokeJoin = strokeJoin
+      ..strokeMiterLimit = strokeMiterLimit
+      ..maskFilter = maskFilter
+      ..filterQuality = filterQuality
+      ..shader = shader
+      ..colorFilter = colorFilter
+      ..imageFilter = imageFilter
+      ..invertColors = invertColors;
   }
 }

@@ -9,5 +9,5 @@ class PathCache {
 
   Path? operator [](int id) => _map[id];
 
-  void operator []=(int id, Path path) => _map[id] = path;
+  void operator []=(int id, Path path) => _map.putIfAbsent(id, () => path);
 }
