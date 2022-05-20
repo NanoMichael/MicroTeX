@@ -100,11 +100,7 @@ class MicroTeX {
       ..ascent = b[2];
   }
 
-  static bool _isPathExists(int id) {
-    final exists = PathCache.instance[id] != null;
-    if (debugMicroTeX) print("isPathExists($id) = $exists");
-    return exists;
-  }
+  static bool _isPathExists(int id) => PathCache.instance[id] != null;
 
   Future<FontMeta> _loadCLM(
     String clmAsset,
