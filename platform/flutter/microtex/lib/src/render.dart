@@ -150,7 +150,7 @@ class Render {
           final sigma = filterSigma;
           final p = sigma == null
               ? _paint
-              : (_paint.copy()..maskFilter = MaskFilter.blur(BlurStyle.inner, sigma / sx));
+              : (_paint.copy()..maskFilter = MaskFilter.blur(BlurStyle.normal, sigma / sx));
           PathCache.instance[pathId] = path;
           canvas.drawPath(path, p);
           break;
