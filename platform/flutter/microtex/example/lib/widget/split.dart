@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class VerticalSplitView extends StatefulWidget {
+class SplitView extends StatefulWidget {
   final Widget left;
   final Widget right;
   final double ratio;
   final double dividerThickness;
 
-  const VerticalSplitView({
+  const SplitView({
     Key? key,
     required this.left,
     required this.right,
@@ -15,10 +15,10 @@ class VerticalSplitView extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<VerticalSplitView> createState() => _VerticalSplitViewState();
+  State<SplitView> createState() => _SplitViewState();
 }
 
-class _VerticalSplitViewState extends State<VerticalSplitView> {
+class _SplitViewState extends State<SplitView> {
   double _ratio = 0;
 
   @override
@@ -36,6 +36,7 @@ class _VerticalSplitViewState extends State<VerticalSplitView> {
       return SizedBox(
         width: constraints.maxWidth,
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(width: lw, child: widget.left),
             GestureDetector(

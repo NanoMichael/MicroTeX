@@ -1,12 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:microtex/microtex.dart';
 
+class Blur {
+  final BlurStyle style;
+  final double sigma;
+
+  const Blur(this.style, this.sigma);
+
+  @override
+  bool operator ==(Object other) {
+    return other is Blur && style == other.style && sigma == other.sigma;
+  }
+
+  @override
+  int get hashCode => hashValues(style, sigma);
+}
+
 class LaTeX extends LeafRenderObjectWidget {
   final String latex;
   final double textSize;
   final Color color;
   final TeXStyle? style;
-  final double? filterSigma;
+  final Blur? blur;
 
   const LaTeX({
     Key? key,
@@ -14,19 +29,19 @@ class LaTeX extends LeafRenderObjectWidget {
     double? textSize,
     Color? color,
     this.style,
-    this.filterSigma,
+    this.blur,
   })  : textSize = textSize ?? 20,
         color = color ?? const Color(0xFF424242),
         super(key: key);
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return RenderLaTeX(latex, textSize, color, style, filterSigma);
+    return RenderLaTeX(latex, textSize, color, style, blur);
   }
 
   @override
   void updateRenderObject(BuildContext context, covariant RenderLaTeX obj) {
-    obj.update(latex, textSize, color, style, filterSigma);
+    obj.update(latex, textSize, color, style, blur);
   }
 }
 
@@ -35,14 +50,14 @@ class RenderLaTeX extends RenderBox {
   double _textSize;
   Color _color;
   TeXStyle? _style;
-  double? _filterSigma;
+  Blur? _blur;
 
   double _lastMaxWidth = 0;
   Render? _render;
 
-  RenderLaTeX(this._latex, this._textSize, this._color, this._style, this._filterSigma);
+  RenderLaTeX(this._latex, this._textSize, this._color, this._style, this._blur);
 
-  void update(String latex, double textSize, Color color, TeXStyle? style, double? filterSigma) {
+  void update(String latex, double textSize, Color color, TeXStyle? style, Blur? blur) {
     var needParse = false;
     if (_latex != latex || _style != style) {
       _latex = latex;
@@ -56,11 +71,11 @@ class RenderLaTeX extends RenderBox {
       needLayout = true;
     }
     var needPaint = false;
-    if (_color != color || _filterSigma != filterSigma) {
+    if (_color != color || _blur != blur) {
       _color = color;
-      _filterSigma = filterSigma;
+      _blur = blur;
       _render?.setColor(color.value);
-      _render?.filterSigma = filterSigma;
+      _render?.blur = blur;
       needPaint = true;
     }
     if (debugMicroTeX) {
@@ -116,7 +131,7 @@ class RenderLaTeX extends RenderBox {
         _style != null,
         _style ?? TeXStyle.text,
       );
-      r.filterSigma = _filterSigma;
+      r.blur = _blur;
       _render = r;
     }
     size = Size(r.width.toDouble(), r.height.toDouble());
