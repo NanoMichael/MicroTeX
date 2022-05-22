@@ -46,6 +46,14 @@ class MicroTeX {
   /// no main font was given, thus the context fallbacks to the math font.
   String get currentMainFontFamilyName => _currentMainFontFamilyName;
 
+  List<FontMeta> get mathFonts {
+    return _fonts.where((element) => element.isMathFont).toList();
+  }
+
+  List<FontMeta> get mainFonts {
+    return _fonts.where((element) => !element.isMathFont).toList();
+  }
+
   set currentMainFontFamilyName(value) {
     if (_currentMainFontFamilyName == value) return;
     _currentMainFontFamilyName = value;
@@ -130,7 +138,8 @@ class MicroTeX {
   }
 
   Future<void> _initWithCLM(String clmAsset) async {
-    await _loadCLM(clmAsset, (len, buf) => _bindings.init(len, buf));
+    final meta = await _loadCLM(clmAsset, (len, buf) => _bindings.init(len, buf));
+    currentMathFontName = meta.fontName;
   }
 
   /// Add a clm font from assets.

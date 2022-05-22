@@ -14,5 +14,10 @@ void main() async {
   );
   debugMicroTeX = false;
   debugPaintSizeEnabled = false;
-  runApp(const EditScreen());
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: EditScreen(),
+    ),
+  );
 }

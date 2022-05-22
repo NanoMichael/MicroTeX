@@ -1,4 +1,3 @@
-
 Hello from $\MicroTeX$, welcome 🥰! $\MicroTeX$ is a fast, cross-platform and embeddable $\LaTeX$ (part of) rendering library.
 
 It supports complex math formula layout and rendering, for example, the Fourier transform: $F(\omega)=\int_{-\infty}^{+\infty}f(t)e^{-i\omega_nt}dt$
