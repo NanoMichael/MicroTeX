@@ -123,6 +123,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.8.1"
+  rich_text_controller:
+    dependency: "direct main"
+    description:
+      name: rich_text_controller
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.4.0"
   sky_engine:
     dependency: transitive
     description: flutter
