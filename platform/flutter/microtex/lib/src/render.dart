@@ -1,10 +1,9 @@
 import 'dart:ffi';
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:microtex/microtex.dart';
 import 'package:microtex/src/bindings.dart';
-import 'package:microtex/src/context.dart';
 import 'package:microtex/src/pathcache.dart';
 import 'package:microtex/src/textlayout.dart';
 
@@ -12,11 +11,12 @@ class Render {
   final NativeBindings _bindings;
   final Pointer _nativeInstance;
   final Endian _endian;
+
   // If filter is enabled, using a bluring to simulate the 'grid fitting' on glyhs
   // to get a much clear rendering, but will cost a lot of time, especially for
   // complex formulas.
   // See [https://github.com/flutter/flutter/issues/104017].
-  double? filterSigma;
+  Blur? blur;
 
   Render(this._bindings, this._nativeInstance, bool isLittleEndian)
       : _endian = isLittleEndian ? Endian.little : Endian.big;
@@ -147,10 +147,10 @@ class Render {
           break;
         case 11: // fillPath
           _paint.style = PaintingStyle.fill;
-          final sigma = filterSigma;
-          final p = sigma == null
+          final b = blur;
+          final p = b == null
               ? _paint
-              : (_paint.copy()..maskFilter = MaskFilter.blur(BlurStyle.normal, sigma / sx));
+              : (_paint.copy()..maskFilter = MaskFilter.blur(b.style, b.sigma / sx));
           PathCache.instance[pathId] = path;
           canvas.drawPath(path, p);
           break;

@@ -53,7 +53,8 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/XITSMath-Regular.clm2
+    - assets/xits/XITSMath-Regular.clm2
+    - assets/EXAMPLE.txt
 
   # To add assets to your application, add an assets section, like this:
   # assets:
