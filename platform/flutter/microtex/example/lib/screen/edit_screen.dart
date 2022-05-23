@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinbox/material.dart';
 import 'package:microtex/microtex.dart';
 import 'package:microtex_example/widget/rich.dart';
 import 'package:microtex_example/widget/split.dart';
@@ -61,14 +62,67 @@ class _EditScreenState extends State<EditScreen> {
     void Function(String? value) onChanged,
   ) {
     return [
-      Text(title),
+      Text(
+        title,
+        style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 18),
+      ),
       ...sections.map(
         (e) => ListTile(
           title: Text(e),
+          horizontalTitleGap: 0,
+          contentPadding: const EdgeInsets.only(left: 8),
           leading: Radio(value: e, groupValue: selected, onChanged: onChanged),
         ),
       )
     ];
+  }
+
+  _textSize() {
+    return SpinBox(
+      min: 10,
+      max: 200,
+      value: 20,
+      decoration: const InputDecoration(labelText: 'TextSize'),
+      onChanged: (value) => {},
+    );
+  }
+
+  _settings() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ..._section('Mode', 'text', ['text', 'LaTeX'], (value) {}),
+        ..._section(
+          'Math Font',
+          MicroTeX.instance.currentMathFontName,
+          MicroTeX.instance.mathFonts.map((e) => e.fontName).toList(),
+          (value) {},
+        ),
+        ..._section(
+          'Main Font',
+          MicroTeX.instance.currentMainFontFamilyName.isEmpty
+              ? 'none'
+              : MicroTeX.instance.currentMainFontFamilyName,
+          MicroTeX.instance.mainFonts
+                  .map((e) => e.fontFamily)
+                  .toSet()
+                  .toList() +
+              ['none'],
+          (value) {},
+        ),
+        Container(
+          constraints: const BoxConstraints(maxWidth: 300),
+          padding: const EdgeInsets.only(left: 10),
+          child: const Text(
+            'If you just want to use the math font to render the text '
+            'wrapped by command "text", just set it to "none".',
+          ),
+        ),
+        const SizedBox(height: 20),
+        _textSize(),
+      ],
+    );
   }
 
   Future<void> _showSettings(BuildContext context) async {
@@ -78,21 +132,7 @@ class _EditScreenState extends State<EditScreen> {
       builder: (context) {
         return AlertDialog(
           title: const Text('Settings'),
-          content: StatefulBuilder(
-            builder: (context, setState) {
-              return Column(
-                children: [
-                  ..._section(
-                    'Math Font',
-                    MicroTeX.instance.currentMathFontName,
-                    MicroTeX.instance.mathFonts.map((e) => e.fontName).toList(),
-                    (value) {},
-                  ),
-                  const Text('Main Font:'),
-                ],
-              );
-            },
-          ),
+          content: StatefulBuilder(builder: (context, setState) => _settings()),
           actions: [
             TextButton(
               child: const Text('OK'),
