@@ -30,6 +30,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   rich_text_controller: ^1.4.0
+  flutter_spinbox: ^0.9.0
 
 dev_dependencies:
   flutter_test:
