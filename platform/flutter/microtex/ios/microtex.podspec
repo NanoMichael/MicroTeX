@@ -18,7 +18,7 @@ A micro, fast, cross-platform, and embeddable LaTeX rendering library.
   s.platform = :ios, '9.0'
 
   s.libraries = 'c++'
-  s.vendored_libraries = 'libs/libmicrotex-flutter.a', 'libs/libmicrotex.a'
+  s.vendored_libraries = 'libs/libmicrotex.a'
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386 arm64' }
