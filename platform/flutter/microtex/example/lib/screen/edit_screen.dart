@@ -6,7 +6,8 @@ import 'package:flutter_spinbox/material.dart';
 import 'package:microtex/microtex.dart';
 import 'package:microtex_example/widget/rich.dart';
 import 'package:microtex_example/widget/split.dart';
-import 'package:rich_text_controller/rich_text_controller.dart';
+import 'package:microtex_example/widget/tex_highlight_controller.dart';
+import 'package:microtex_example/widget/tex_input_controller.dart';
 
 class _Settings {
   String mode;
@@ -104,11 +105,7 @@ class _EditScreenState extends State<EditScreen> {
           MicroTeX.instance.currentMainFontFamilyName.isEmpty
               ? 'none'
               : MicroTeX.instance.currentMainFontFamilyName,
-          MicroTeX.instance.mainFonts
-                  .map((e) => e.fontFamily)
-                  .toSet()
-                  .toList() +
-              ['none'],
+          MicroTeX.instance.mainFonts.map((e) => e.fontFamily).toSet().toList() + ['none'],
           (value) {},
         ),
         Container(
@@ -194,15 +191,8 @@ class _EditScreenState extends State<EditScreen> {
   }
 
   _buildTextField(String? txt) {
-    final controller = RichTextController(
-      deleteOnBack: false,
-      text: txt,
-      patternMatchMap: {
-        RegExp(r'\\[a-zA-Z]+'): const TextStyle(color: Colors.blueAccent),
-        RegExp(r'\$'): const TextStyle(color: Colors.deepOrange),
-      },
-      onMatch: (matches) => matches.join(),
-    );
+    // final controller = TeXHighlightController(text: txt);
+    final controller = TeXInputController(text: txt);
     return TextField(
       controller: controller,
       keyboardType: TextInputType.multiline,
