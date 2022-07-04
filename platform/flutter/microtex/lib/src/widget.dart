@@ -40,8 +40,8 @@ class LaTeX extends LeafRenderObjectWidget {
   }
 
   @override
-  void updateRenderObject(BuildContext context, covariant RenderLaTeX obj) {
-    obj.update(latex, textSize, color, style, blur);
+  void updateRenderObject(BuildContext context, covariant RenderLaTeX renderObject) {
+    renderObject.update(latex, textSize, color, style, blur);
   }
 }
 

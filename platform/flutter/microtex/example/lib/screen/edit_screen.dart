@@ -7,7 +7,6 @@ import 'package:microtex/microtex.dart';
 import 'package:microtex_example/widget/rich.dart';
 import 'package:microtex_example/widget/split.dart';
 import 'package:microtex_example/widget/tex_highlight_controller.dart';
-import 'package:microtex_example/widget/tex_input_controller.dart';
 
 class _Settings {
   String mode;
@@ -102,9 +101,7 @@ class _EditScreenState extends State<EditScreen> {
         ),
         ..._section(
           'Main Font',
-          MicroTeX.instance.currentMainFontFamilyName.isEmpty
-              ? 'none'
-              : MicroTeX.instance.currentMainFontFamilyName,
+          MicroTeX.instance.currentMainFontFamilyName.isEmpty ? 'none' : MicroTeX.instance.currentMainFontFamilyName,
           MicroTeX.instance.mainFonts.map((e) => e.fontFamily).toSet().toList() + ['none'],
           (value) {},
         ),
@@ -191,14 +188,14 @@ class _EditScreenState extends State<EditScreen> {
   }
 
   _buildTextField(String? txt) {
-    // final controller = TeXHighlightController(text: txt);
-    final controller = TeXInputController(text: txt);
+    final controller = TeXHighlightController(text: txt);
+    // final controller = TeXInputController(text: txt);
     return TextField(
       controller: controller,
       keyboardType: TextInputType.multiline,
       maxLines: null,
       style: const TextStyle(
-        fontFamily: 'monospace',
+        fontFamily: 'Monaco',
         fontFamilyFallback: ['Noto Color Emoji'],
       ),
       decoration: const InputDecoration(
