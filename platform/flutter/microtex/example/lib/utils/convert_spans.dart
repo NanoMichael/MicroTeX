@@ -46,7 +46,8 @@ class SpanConverter {
       latex: tex,
       textSize: style.fontSize,
       color: style.color,
-      blur: const Blur(BlurStyle.normal, 0.34),
+      style: TeXStyle.display,
+      // blur: const Blur(BlurStyle.normal, 0.34),
     );
     if (isInline) {
       return t;

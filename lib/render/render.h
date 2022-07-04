@@ -1,8 +1,8 @@
 #ifndef MICROTEX_RENDER_H
 #define MICROTEX_RENDER_H
 
-#include "microtexexport.h"
 #include "graphic/graphic.h"
+#include "microtexexport.h"
 
 namespace microtex {
 
@@ -56,4 +56,4 @@ public:
 
 }  // namespace microtex
 
-#endif  // RENDER_H_INCLUDED
+#endif  // MICROTEX_RENDER_H

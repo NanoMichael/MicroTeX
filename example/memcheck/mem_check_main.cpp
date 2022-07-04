@@ -148,7 +148,7 @@ int main(int argc, char* argv[]) {
     return 1;
   }
   const microtex::FontSrcFile math{argv[1], argv[2]};
-  microtex::MicroTeX::init(&math);
+  microtex::MicroTeX::init(math);
 
   microtex::PlatformFactory::registerFactory("none", std::make_unique<microtex::PlatformFactory_none>());
   microtex::PlatformFactory::activate("none");
