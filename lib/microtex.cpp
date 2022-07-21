@@ -80,7 +80,7 @@ FontMeta MicroTeX::init(const FontSrc& mathFontSrc) {
   if (_config->isInited) return {};
   std::setlocale(LC_NUMERIC, "C"); // workaround for decimal parsing on German (decimal comma) systems
   auto meta = FontContext::addFont(mathFontSrc);
-  if (!meta.isValid()) {
+  if (!meta.isMathFont) {
     throw ex_invalid_param("'" + meta.name + "' is not a math font!");
   }
   _config->defaultMathFontName = meta.name;
@@ -145,15 +145,15 @@ bool MicroTeX::hasGlyphPathRender() {
 }
 
 void MicroTeX::setRenderGlyphUsePath(bool use) {
-#if GLYPH_RENDER_TYPE == 0
+#if GLYPH_RENDER_TYPE == GLYPH_RENDER_TYPE_BOTH
   _config->renderGlyphUsePath = use;
 #endif
 }
 
 bool MicroTeX::isRenderGlyphUsePath() {
-#if GLYPH_RENDER_TYPE == 0
+#if GLYPH_RENDER_TYPE == GLYPH_RENDER_TYPE_BOTH
   return _config->renderGlyphUsePath;
-#elif GLYPH_RENDER_TYPE == 1
+#elif GLYPH_RENDER_TYPE == GLYPH_RENDER_TYPE_PATH
   return true;
 #else
   return false;

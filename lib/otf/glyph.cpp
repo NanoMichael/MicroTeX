@@ -45,7 +45,9 @@ Math::~Math() {
 Glyph::~Glyph() {
   if (_kernRecord != &KernRecord::empty) delete _kernRecord;
   if (_math != &Math::empty) delete _math;
+#ifdef HAVE_GLYPH_RENDER_PATH
   if (_path != &Path::empty) delete _path;
+#endif
 }
 
 }  // namespace microtex

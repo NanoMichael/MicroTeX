@@ -287,7 +287,7 @@ Path* CLMReader::readPath(BinaryReader& reader) {
   auto cmds = new PathCmd* [len];
   for (u16 i = 0; i < len; i++) {
     const auto cmd = reader.read<char>();
-    const auto cnt = PathCmd::argsCount(cmd);
+    const auto cnt = microtex::pathCmdArgsCount(cmd);
     auto args = new i16[cnt];
     for (u16 j = 0; j < cnt; j++) {
       args[j] = reader.read<i16>();
@@ -297,9 +297,23 @@ Path* CLMReader::readPath(BinaryReader& reader) {
   return new Path(++id, len, cmds);
 }
 
-#endif
+#else
 
-Glyph* CLMReader::readGlyph(bool isMathFont, BinaryReader& reader) {
+void CLMReader::skipGlyphPath(BinaryReader& reader) {
+  const auto len = reader.read<u16>();
+  if (len == 0) return;
+  for (u16 i = 0; i < len; i++) {
+    const auto cmd = reader.read<char>();
+    const auto cnt = microtex::pathCmdArgsCount(cmd);
+    for (u16 j = 0; j < cnt; j++) {
+      reader.read<i16>();
+    }
+  }
+}
+
+#endif //HAVE_GLYPH_RENDER_PATH
+
+Glyph* CLMReader::readGlyph(bool isMathFont, bool hasGlyphPath, BinaryReader& reader) {
   auto* glyph = new Glyph();
   // Metrics is required
   glyph->_metrics._width = reader.read<i16>();
@@ -312,17 +326,27 @@ Glyph* CLMReader::readGlyph(bool isMathFont, BinaryReader& reader) {
   glyph->_math = isMathFont ? readMath(reader) : &Math::empty;
 #ifdef HAVE_GLYPH_RENDER_PATH
   // read path
-  auto path = readPath(reader);
-  glyph->_path = path == nullptr ? &Path::empty : path;
+  if (hasGlyphPath) {
+    auto path = readPath(reader);
+    glyph->_path = path == nullptr ? &Path::empty : path;
+  } else {
+    // The font does not have glyph paths, although we have the path render
+    // capability
+    glyph->_path = &Path::empty;
+  }
+#else
+  // Need to skip the glyph paths, because we don't have the path render
+  // capability
+  if (hasGlyphPath) skipGlyphPath(reader);
 #endif
   return glyph;
 }
 
-void CLMReader::readGlyphs(Otf& font, BinaryReader& reader) {
+void CLMReader::readGlyphs(Otf& font, bool hasGlyphPath, BinaryReader& reader) {
   const u16 count = reader.read<u16>();
   auto** glyphs = new Glyph* [count];
   for (u16 i = 0; i < count; i++) {
-    glyphs[i] = readGlyph(font._isMathFont, reader);
+    glyphs[i] = readGlyph(font._isMathFont, hasGlyphPath, reader);
   }
   font._glyphCount = count;
   font._glyphs = glyphs;
@@ -339,30 +363,32 @@ Otf* CLMReader::read(BinaryReader& reader) {
   const auto ver = reader.read<u16>();
   if (ver != CLM_VER_MAJOR) {
     throw ex_invalid_param(
-      "clm data does not match the required version (" +
+      "clm data (with version: " + toString(ver) +
+      ") does not match the required version (" +
         toString(CLM_VER_MAJOR) + ")!"
     );
   }
   const auto minor = reader.read<u8>();
-#ifdef HAVE_GLYPH_RENDER_PATH
-  if (!CLM_SUPPORT_GLYPH_PATH(minor)) {
-    throw ex_invalid_param("clm data does not have glyph path.");
-  }
-#else
-  if (CLM_SUPPORT_GLYPH_PATH(minor)) {
-    throw ex_invalid_param(
-      "clm data have glyph path, "
-      "but the program cannot support it, use a different one."
-    );
+  const bool hasGlyphPath = CLM_SUPPORT_GLYPH_PATH(minor);
+#if GLYPH_RENDER_TYPE == GLYPH_RENDER_TYPE_PATH
+  if (!hasGlyphPath) {
+    throw ex_invalid_param("The given clm data does not have glyph paths.");
   }
 #endif
   // read otf-spec
   Otf* font = new Otf();
+  font->_hasGlyphPath = hasGlyphPath;
+#ifdef HAVE_GLYPH_RENDER_PATH
+  font->_hasGlyphPath = hasGlyphPath;
+#else
+  // We don't have the path render capability
+  font->_hasGlyphPath = false;
+#endif
   readMeta(*font, reader);
   readClassKernings(*font, reader);
   font->_ligatures = readLigatures(reader);
   font->_mathConsts = font->_isMathFont ? readMathConsts(reader) : nullptr;
-  readGlyphs(*font, reader);
+  readGlyphs(*font, hasGlyphPath, reader);
   return font;
 }
 

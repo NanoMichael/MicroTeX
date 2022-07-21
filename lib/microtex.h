@@ -39,9 +39,9 @@ struct MICROTEX_EXPORT InitFontSenseAuto {
  *        <li> Add `/usr/local/share/microtex` into search dirs.
  *        <li> Add `/usr/share/microtex` into search dirs.
  *      </ul>
- *      And then iterate over the search dirs, add all found fonts to context, and select the first
- *      found math font as the default.
  *    </ul>
+ *    And then iterate over the search dirs, add all found fonts to context, and select the first
+ *    found math font as the default.
  *  <li> If a string presents, follow the above way to init the context but select the math font
  *       which its name was given by this string as the default.
  * </ol>
@@ -115,7 +115,7 @@ public:
    * @param family the main font family, if it is empty, that means fallback to
    * the math font
    * @returns true if given font exists (special case: always returns true if
-   * given name is empty), false otherwise.
+   * given family is empty), false otherwise.
    */
   static bool setDefaultMainFont(const std::string& family);
 
@@ -134,7 +134,7 @@ public:
    */
   static void overrideTexStyle(bool enable, TexStyle style = TexStyle::text);
 
-  /** Test if has the ability use path to render glyphs. */
+  /** Test if has the ability to use path to render glyphs. */
   static bool hasGlyphPathRender();
 
   /**

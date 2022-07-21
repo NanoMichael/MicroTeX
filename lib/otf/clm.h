@@ -34,11 +34,15 @@ private:
 
   static Path* readPath(BinaryReader& reader);
 
+#else
+
+  static void skipGlyphPath(BinaryReader& reader);
+
 #endif
 
-  static Glyph* readGlyph(bool isMathFont, BinaryReader& reader);
+  static Glyph* readGlyph(bool isMathFont, bool hasGlyphPath, BinaryReader& reader);
 
-  static void readGlyphs(Otf& font, BinaryReader& reader);
+  static void readGlyphs(Otf& font, bool hasGlyphPath, BinaryReader& reader);
 
   static Otf* read(BinaryReader& reader);
 

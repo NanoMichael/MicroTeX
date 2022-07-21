@@ -182,6 +182,9 @@ endif ()
 if (NOT DEFINED _GLYPH_RENDER_TYPE)
     set(_GLYPH_RENDER_TYPE 0)
 endif ()
+if (DEFINED GLYPH_RENDER_TYPE)
+    set(_GLYPH_RENDER_TYPE ${GLYPH_RENDER_TYPE})
+endif ()
 # compile option: GLYPH_RENDER_TYPE the glyph render type
 # 0: use path and typeface both
 # 1: use path only

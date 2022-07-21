@@ -321,7 +321,7 @@ public:
   inline const Variants& scriptsVariants() const { return *_scriptsVariants; }
 
   /**
-   * This allows constructing very large versions of the glyph by stacking the componants together
+   * This allows constructing very large versions of the glyph by stacking the components together
    * horizontally. Some components may be repeated so there is no bound on the size.
    *
    * This is different from horizontalVariants which expects prebuilt glyphs of various fixed sizes.
