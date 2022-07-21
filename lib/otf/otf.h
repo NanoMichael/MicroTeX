@@ -62,6 +62,7 @@ private:
 
   bool _isMathFont = false;
   MathConsts* _mathConsts = nullptr;
+  bool _hasGlyphPath = false;
 
   LigaTable* _ligatures = nullptr;
   u16 _classKerningCount = 0;
@@ -92,6 +93,12 @@ public:
 
   /** Test if this font is a math font */
   inline bool isMathFont() const { return _isMathFont; }
+
+  /**
+   * Test if this font has glyph's path.
+   * Always is false if GLYPH_RENDER_TYPE equals to GLYPH_RENDER_TYPE_TYPEFACE.
+   */
+  inline bool hasGlyphPath() const { return _hasGlyphPath; }
 
   /** Get the font style in clm (short enum see [lib/graphics/font_style.h: FontStyle]) format **/
   inline u16 style() const { return _style; }

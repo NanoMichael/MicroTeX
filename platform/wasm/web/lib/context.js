@@ -60,7 +60,7 @@ let _runtime = null;
  * call {@link freeHeap} after this memory is unused.
  *
  * @param {ArrayBuffer} arrayBuffer
- * @returns {number} the pointer of the heap memory
+ * @returns {number} the pointer to the heap memory
  */
 function copyToHeap(arrayBuffer) {
   const numBytes = arrayBuffer.byteLength;
@@ -76,7 +76,7 @@ function copyToHeap(arrayBuffer) {
 /**
  * Release heap memory.
  *
- * @param {number} ptr the pointer of the heap memory
+ * @param {number} ptr the pointer to the heap memory
  */
 function freeHeap(ptr) {
   if (ptr === undefined || !ptr) return;
@@ -180,7 +180,7 @@ context.addFont = function (clmDataUri) {
 }
 
 /**
- * Set main font to render formulas. The font MUST be added to the context.
+ * Set main font to render formulas. The font MUST hava been added to the context.
  *
  * @param {string} familyName the family name, the engine will use math font
  * to render text if is empty.
@@ -201,7 +201,7 @@ context.setMainFont = function (familyName) {
 }
 
 /**
- * Set math font to render formulas. The font MUST be added to the context.
+ * Set math font to render formulas. The font MUST have been added to the context.
  *
  * @param {string} fontName the font name
  * @throws {TypeError} if the font was not added

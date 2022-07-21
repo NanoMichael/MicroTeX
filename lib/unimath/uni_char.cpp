@@ -63,7 +63,7 @@ float Char::topAccentAttachment() const {
   return t == Otf::undefinedMathValue ? width() / 2.f : t * scale;
 }
 
-static Char variant(const Char& chr, u32 index, std::function<const Variants&(const Glyph*)>&& f) {
+static Char variant(const Char& chr, u32 index, const std::function<const Variants&(const Glyph*)>& f) {
   auto g = chr.glyph();
   const auto& v = f(g);
   if (v.isEmpty()) return chr;

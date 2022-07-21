@@ -1,9 +1,11 @@
 #include "box_single.h"
-#include "env/env.h"
+
 #include "core/debug_config.h"
-#include "utils/utf.h"
+#include "env/env.h"
 #include "microtex.h"
 #include "utils/exceptions.h"
+#include "utils/utf.h"
+#include "utils/log.h"
 
 using namespace std;
 using namespace microtex;
@@ -16,7 +18,7 @@ CharBox::CharBox(const Char& chr) : _chr(chr) {
 
 namespace microtex {
 
-#if GLYPH_RENDER_TYPE == 0 || GLYPH_RENDER_TYPE == 2
+#ifdef HAVE_GLYPH_RENDER_TYPEFACE
 
 void _drawWithFont(const Char& chr, Graphics2D& g2, float x, float y) {
   auto factory = PlatformFactory::get();
@@ -35,7 +37,7 @@ void _drawWithFont(const Char& chr, Graphics2D& g2, float x, float y) {
 
 #endif
 
-#if GLYPH_RENDER_TYPE == 0 || GLYPH_RENDER_TYPE == 1
+#ifdef HAVE_GLYPH_RENDER_PATH
 
 void _drawWithPath(const Char& chr, Graphics2D& g2, float x, float y) {
   const auto old = g2.getColor();
@@ -50,15 +52,26 @@ void _drawWithPath(const Char& chr, Graphics2D& g2, float x, float y) {
 }
 
 #endif
-}
+}  // namespace microtex
 
 void CharBox::draw(Graphics2D& g2, float x, float y) {
-#if GLYPH_RENDER_TYPE == 1
+#if GLYPH_RENDER_TYPE == GLYPH_RENDER_TYPE_PATH
   _drawWithPath(_chr, g2, x, y);
-#elif GLYPH_RENDER_TYPE == 2
+#elif GLYPH_RENDER_TYPE == GLYPH_RENDER_TYPE_TYPEFACE
   _drawWithFont(_chr, g2, x, y);
-#elif GLYPH_RENDER_TYPE == 0
-  if (MicroTeX::isRenderGlyphUsePath()) {
+#elif GLYPH_RENDER_TYPE == GLYPH_RENDER_TYPE_BOTH
+  auto font = _chr.otfFont();
+  const bool hasGlyphPath = font != nullptr && font->otf().hasGlyphPath();
+#ifdef HAVE_LOG
+  if (MicroTeX::isRenderGlyphUsePath() && !hasGlyphPath) {
+    logv(
+      "Render use glyph path, but the font '%s' does not have glyph paths, "
+      "fallback to use font instead.\n",
+      font->otf().name().c_str()
+    );
+  }
+#endif
+  if (MicroTeX::isRenderGlyphUsePath() && hasGlyphPath) {
     _drawWithPath(_chr, g2, x, y);
   } else {
     _drawWithFont(_chr, g2, x, y);
@@ -115,7 +128,7 @@ void LineBox::draw(Graphics2D& g2, float x, float y) {
 }
 
 RuleBox::RuleBox(float thickness, float width, float shift, color c, bool trueshift)
-  : _color(c), _speShift(0) {
+    : _color(c), _speShift(0) {
   _height = thickness;
   _width = width;
   if (trueshift) {

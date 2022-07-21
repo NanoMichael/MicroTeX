@@ -2,11 +2,18 @@
 #define MICROTEX_PATH_H
 
 #include "otf/otfconfig.h"
+#include "utils/utils.h"
+
+namespace microtex {
+
+/** Get the arguments count of the given path command. */
+u16 pathCmdArgsCount(char cmd);
+
+} // namespace microtex
 
 #ifdef HAVE_GLYPH_RENDER_PATH
 
 #include <string>
-#include "utils/utils.h"
 
 namespace microtex {
 
@@ -82,8 +89,6 @@ struct PathCmd {
   std::string toString() const;
 
   ~PathCmd();
-
-  static u16 argsCount(char cmd);
 };
 
 /** A group of PathCmd */
@@ -109,7 +114,7 @@ public:
   static Path empty;
 };
 
-}
+} // namespace microtex
 
 #endif // HAVE_GLYPH_RENDER_PATH
 #endif //MICROTEX_PATH_H

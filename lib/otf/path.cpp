@@ -1,15 +1,6 @@
 #include "otf/path.h"
 
-#ifdef HAVE_GLYPH_RENDER_PATH
-
-#include "graphic/graphic.h"
-#include "utils/string_utils.h"
-
-namespace microtex {
-
-PathCmd::PathCmd(char cmd, const i16* args) noexcept: cmd(cmd), args(args) {}
-
-u16 PathCmd::argsCount(char cmd) {
+microtex::u16 microtex::pathCmdArgsCount(char cmd) {
   switch (cmd) {
     case 'M':
     case 'm':
@@ -39,10 +30,19 @@ u16 PathCmd::argsCount(char cmd) {
   }
 }
 
+#ifdef HAVE_GLYPH_RENDER_PATH
+
+#include "graphic/graphic.h"
+#include "utils/string_utils.h"
+
+namespace microtex {
+
+PathCmd::PathCmd(char cmd, const i16* args) noexcept: cmd(cmd), args(args) {}
+
 std::string PathCmd::toString() const {
   std::string str;
   str.append(1, cmd).append(1, ' ');
-  for (int i = 0; i < argsCount(cmd); i++) {
+  for (int i = 0; i < pathCmdArgsCount(cmd); i++) {
     str.append(microtex::toString(args[i])).append(1, ' ');
   }
   str.append(1, '\n');
