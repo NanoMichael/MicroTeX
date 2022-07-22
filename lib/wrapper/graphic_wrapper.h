@@ -8,9 +8,15 @@
 
 namespace microtex {
 
-/** EMPTY IMPL - no font support */
 class Font_wrapper : public Font {
+private:
+  std::string _name;
+
 public:
+  explicit Font_wrapper(std::string name);
+
+  const std::string& name() const;
+
   bool operator==(const Font& f) const override;
 };
 
@@ -52,90 +58,114 @@ private:
   ByteSeq _cmds;
   float _sx, _sy;
 
+  sptr<Font> _font;
+  float _fontSize;
+
 public:
   Graphics2D_wrapper();
 
   void* getDrawingData();
 
-  void setColor(color c) override; // 0
+  // cmd: 0
+  void setColor(color c) override;
 
   color getColor() const override;
 
-  void setStroke(const Stroke& s) override; // 1
+  // cmd: 1
+  void setStroke(const Stroke& s) override;
 
   const Stroke& getStroke() const override;
 
-  void setStrokeWidth(float w) override; // 1
+  // cmd: 1
+  void setStrokeWidth(float w) override;
 
-  void setDash(const std::vector<float>& dash) override; // 19
+  // cmd: 2
+  void setDash(const std::vector<float>& dash) override;
 
   std::vector<float> getDash() override;
 
-  // region EMPTY IMPL - no font support
   sptr<Font> getFont() const override;
 
+  // cmd: 3
   void setFont(const sptr<Font>& font) override;
 
   float getFontSize() const override;
 
+  // cmd: 4
   void setFontSize(float size) override;
-  // endregion
 
-  void translate(float dx, float dy) override; // 2
+  // cmd: 5
+  void translate(float dx, float dy) override;
 
-  void scale(float sx, float sy) override; // 3
+  // cmd: 6
+  void scale(float sx, float sy) override;
 
-  void rotate(float angle) override; // 4
+  // cmd: 7
+  void rotate(float angle) override;
 
-  void rotate(float angle, float px, float py) override; // 4
+  // cmd: 7
+  void rotate(float angle, float px, float py) override;
 
-  void reset() override; // 5
+  // cmd: 8
+  void reset() override;
 
   float sx() const override;
 
   float sy() const override;
 
-  // region EMPTY IMPL - no glyph support
+  // cmd: 9
   void drawGlyph(u16 glyph, float x, float y) override;
-  // endregion
 
-  bool beginPath(i32 id) override; // 17
+  // cmd: 10
+  bool beginPath(i32 id) override;
 
-  void moveTo(float x, float y) override; // 6
+  // cmd: 11
+  void moveTo(float x, float y) override;
 
-  void lineTo(float x, float y) override; // 7
+  // cmd: 12
+  void lineTo(float x, float y) override;
 
+  // cmd: 13
   void cubicTo(
     float x1, float y1,
     float x2, float y2,
     float x3, float y3
-  ) override; // 8
+  ) override;
 
-  void quadTo(float x1, float y1, float x2, float y2) override; // 9
+  // cmd: 14
+  void quadTo(float x1, float y1, float x2, float y2) override;
 
-  void closePath() override; // 10
+  // cmd: 15
+  void closePath() override;
 
-  void fillPath() override; // 11
+  // cmd: 16
+  void fillPath(i32 id) override;
 
-  void drawLine(float x1, float y1, float x2, float y2) override; // 12
+  // cmd: 17
+  void drawLine(float x1, float y1, float x2, float y2) override;
 
-  void drawRect(float x, float y, float w, float h) override; // 13
+  // cmd: 18
+  void drawRect(float x, float y, float w, float h) override;
 
-  void fillRect(float x, float y, float w, float h) override; // 14
+  // cmd: 19
+  void fillRect(float x, float y, float w, float h) override;
 
+  // cmd: 20
   void drawRoundRect(
     float x, float y,
     float w, float h,
     float rx, float ry
-  ) override; // 15
+  ) override;
 
+  // cmd: 21
   void fillRoundRect(
     float x, float y,
     float w, float h,
     float rx, float ry
-  ) override; // 16
+  ) override;
 
-  void drawTextLayout(unsigned int id, float x, float y); // 18
+  // cmd: 22
+  void drawTextLayout(unsigned int id, float x, float y);
 };
 
 }

@@ -5,8 +5,14 @@
 
 using namespace microtex;
 
+Font_wrapper::Font_wrapper(std::string name) : _name(std::move(name)) {}
+
+const std::string& Font_wrapper::name() const {
+  return _name;
+}
+
 bool Font_wrapper::operator==(const Font& f) const {
-  return true;
+  return _name == static_cast<const Font_wrapper&>(f)._name;
 }
 
 /**********************************************************************************/
@@ -49,8 +55,7 @@ sptr<TextLayout> PlatformFactory_wrapper::createTextLayout(
 }
 
 sptr<Font> PlatformFactory_wrapper::createFont(const std::string& file) {
-  // EMPTY IMPL
-  return sptrOf<Font_wrapper>();
+  return sptrOf<Font_wrapper>(file);
 }
 
 /**********************************************************************************/
@@ -94,7 +99,7 @@ const Stroke& Graphics2D_wrapper::getStroke() const {
 void Graphics2D_wrapper::setDash(const std::vector<float>& dash) {
   // TODO only support command, no pattern was given
   const auto hasDash = !dash.empty();
-  _cmds.put((u8) 19, hasDash ? (u8) 1 : (u8) 0);
+  _cmds.put((u8) 2, hasDash ? (u8) 1 : (u8) 0);
 }
 
 std::vector<float> Graphics2D_wrapper::getDash() {
@@ -102,97 +107,104 @@ std::vector<float> Graphics2D_wrapper::getDash() {
 }
 
 sptr<Font> Graphics2D_wrapper::getFont() const {
-  return sptrOf<Font_wrapper>();
+  return _font;
 }
 
-void Graphics2D_wrapper::setFont(const sptr<Font>& font) {}
+void Graphics2D_wrapper::setFont(const sptr<Font>& font) {
+  _font = font;
+  _cmds.put((u8) 3, std::static_pointer_cast<Font_wrapper>(_font)->name().c_str());
+}
 
 float Graphics2D_wrapper::getFontSize() const {
-  return 1.f;
+  return _fontSize;
 }
 
-void Graphics2D_wrapper::setFontSize(float size) {}
+void Graphics2D_wrapper::setFontSize(float size) {
+  _cmds.put((u8) 4, size);
+}
 
 void Graphics2D_wrapper::translate(float dx, float dy) {
-  _cmds.put((u8) 2, dx, dy);
+  _cmds.put((u8) 5, dx, dy);
 }
 
 void Graphics2D_wrapper::scale(float sx, float sy) {
   _sx *= sx;
   _sy *= sy;
-  _cmds.put((u8) 3, sx, sy);
+  _cmds.put((u8) 6, sx, sy);
 }
 
 void Graphics2D_wrapper::rotate(float angle) {
-  _cmds.put((u8) 4, angle, 0.f, 0.f);
+  _cmds.put((u8) 7, angle, 0.f, 0.f);
 }
 
 void Graphics2D_wrapper::rotate(float angle, float px, float py) {
-  _cmds.put((u8) 4, angle, px, py);
+  _cmds.put((u8) 7, angle, px, py);
 }
 
 void Graphics2D_wrapper::reset() {
   _sx = _sy = 1.f;
-  _cmds.put((u8) 5);
+  _cmds.put((u8) 8);
 }
 
 float Graphics2D_wrapper::sx() const { return _sx; }
 
 float Graphics2D_wrapper::sy() const { return _sy; }
 
-void Graphics2D_wrapper::drawGlyph(u16 glyph, float x, float y) {}
+void Graphics2D_wrapper::drawGlyph(u16 glyph, float x, float y) {
+  _cmds.put((u8) 9, glyph, x, y);
+}
 
 bool Graphics2D_wrapper::beginPath(i32 id) {
-  _cmds.put((u8) 17, id);
+  _cmds.put((u8) 10, id);
   return microtex_isPathExists(id);
 }
 
 void Graphics2D_wrapper::moveTo(float x, float y) {
-  _cmds.put((u8) 6, x, y);
+  _cmds.put((u8) 11, x, y);
 }
 
 void Graphics2D_wrapper::lineTo(float x, float y) {
-  _cmds.put((u8) 7, x, y);
+  _cmds.put((u8) 12, x, y);
 }
 
 void Graphics2D_wrapper::cubicTo(float x1, float y1, float x2, float y2, float x3, float y3) {
-  _cmds.put((u8) 8, x1, y1, x2, y2, x3, y3);
+  _cmds.put((u8) 13, x1, y1, x2, y2, x3, y3);
 }
 
 void Graphics2D_wrapper::quadTo(float x1, float y1, float x2, float y2) {
-  _cmds.put((u8) 9, x1, y1, x2, y2);
+  _cmds.put((u8) 14, x1, y1, x2, y2);
 }
 
 void Graphics2D_wrapper::closePath() {
-  _cmds.put((u8) 10);
+  _cmds.put((u8) 15);
 }
 
-void Graphics2D_wrapper::fillPath() {
-  _cmds.put((u8) 11);
+void Graphics2D_wrapper::fillPath(i32 id) {
+  _cmds.put((u8) 16, id);
 }
 
 void Graphics2D_wrapper::drawLine(float x1, float y1, float x2, float y2) {
-  _cmds.put((u8) 12, x1, y1, x2, y2);
+  _cmds.put((u8) 17, x1, y1, x2, y2);
 }
 
 void Graphics2D_wrapper::drawRect(float x, float y, float w, float h) {
-  _cmds.put((u8) 13, x, y, w, h);
+  _cmds.put((u8) 18, x, y, w, h);
 }
 
 void Graphics2D_wrapper::fillRect(float x, float y, float w, float h) {
-  _cmds.put((u8) 14, x, y, w, h);
+  _cmds.put((u8) 19, x, y, w, h);
 }
 
 void Graphics2D_wrapper::drawRoundRect(float x, float y, float w, float h, float rx, float ry) {
-  _cmds.put((u8) 15, x, y, w, h, rx, ry);
+  _cmds.put((u8) 20, x, y, w, h, rx, ry);
 }
 
 void Graphics2D_wrapper::fillRoundRect(float x, float y, float w, float h, float rx, float ry) {
-  _cmds.put((u8) 16, x, y, w, h, rx, ry);
+  _cmds.put((u8) 21, x, y, w, h, rx, ry);
 }
 
 void Graphics2D_wrapper::drawTextLayout(unsigned int id, float x, float y) {
-  _cmds.put((u8) 18, id, x, y);
+  _cmds.put((u8) 22, id, x, y);
 }
 
 #endif // HAVE_CWRAPPER

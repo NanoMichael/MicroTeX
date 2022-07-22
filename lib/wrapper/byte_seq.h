@@ -15,23 +15,29 @@ private:
 
   static inline len_t sizeOf() { return 0; }
 
+  static inline len_t sizeOf(const char* str) {
+    return strlen(str) + 1;
+  }
+
   template<typename T, typename... Ts>
   static len_t sizeOf(const T& t, const Ts& ... ts) {
     return sizeof(T) + sizeOf(ts...);
   }
 
-  len_t index;
-  len_t capacity;
-  void* data;
+  len_t _index;
+  len_t _capacity;
+  void* _data;
 
   inline void _put() {}
+
+  void _put(const char* str);
 
   template<typename T>
   void _put(T t) {
     auto l = sizeof(T);
-    T* ptr = (T*) ((char*) data + index);
+    T* ptr = (T*) ((char*) _data + _index);
     *ptr = t;
-    index += l;
+    _index += l;
   }
 
   template<typename T, typename... Ts>
@@ -59,6 +65,6 @@ public:
 
 }
 
-#endif //HAVE_CWRAPPER
+#endif // HAVE_CWRAPPER
 
-#endif //MICROTEX_BYTE_SEQ_H
+#endif // MICROTEX_BYTE_SEQ_H

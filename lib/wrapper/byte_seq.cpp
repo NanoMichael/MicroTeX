@@ -8,30 +8,36 @@
 namespace microtex {
 
 ByteSeq::ByteSeq() {
-  data = malloc(CHUNK_SIZE);
+  _data = malloc(CHUNK_SIZE);
   // the first 4 bytes is the bytes size used
-  index = 4;
-  capacity = CHUNK_SIZE;
+  _index = 4;
+  _capacity = CHUNK_SIZE;
+}
+
+void ByteSeq::_put(const char* str) {
+  auto l = sizeOf(str);
+  strcpy((char*) _data + _index, str);
+  _index += l;
 }
 
 void ByteSeq::ensureCapacity(len_t required) {
-  if (index + required < capacity) {
+  if (_index + required < _capacity) {
     return;
   }
 #ifdef HAVE_LOG
-  logv("grow buffer, capacity: %lu, to be add: %lu\n", capacity, required);
+  logv("grow buffer, _capacity: %lu, to be add: %lu\n", _capacity, required);
 #endif
-  data = realloc(data, capacity + CHUNK_SIZE);
-  capacity += CHUNK_SIZE;
+  _data = realloc(_data, _capacity + CHUNK_SIZE);
+  _capacity += CHUNK_SIZE;
 }
 
 void* ByteSeq::finish() {
 #ifdef HAVE_LOG
-  logv("finish drawing commands, bytes: %lu\n", index);
+  logv("finish drawing commands, bytes: %lu\n", _index);
 #endif
-  auto ptr = (unsigned int*) data;
-  *ptr = index;
-  return data;
+  auto ptr = (unsigned int*) _data;
+  *ptr = _index;
+  return _data;
 }
 
 }

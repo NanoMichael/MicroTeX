@@ -106,7 +106,7 @@ public:
 
   void closePath() override {}
 
-  void fillPath() override {}
+  void fillPath(i32 id) override {}
 
   void drawLine(float x1, float y1, float x2, float y2) override {}
 
