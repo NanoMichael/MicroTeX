@@ -37,7 +37,7 @@ microtex::u16 microtex::pathCmdArgsCount(char cmd) {
 
 namespace microtex {
 
-PathCmd::PathCmd(char cmd, const i16* args) noexcept: cmd(cmd), args(args) {}
+PathCmd::PathCmd(char cmd, const i16* args) noexcept : cmd(cmd), args(args) {}
 
 std::string PathCmd::toString() const {
   std::string str;
@@ -55,18 +55,18 @@ PathCmd::~PathCmd() {
 
 Path Path::empty(-1, 0, nullptr);
 
-Path::Path(i32 id, u16 cmdCnt, PathCmd** cmds) noexcept: _id(id), _cmdCnt(cmdCnt), _cmds(cmds) {}
+Path::Path(i32 id, u16 cmdCnt, PathCmd** cmds) noexcept : _id(id), _cmdCnt(cmdCnt), _cmds(cmds) {}
 
 void Path::draw(Graphics2D& g2) const {
   if (isEmpty()) return;
   const auto cached = g2.beginPath(_id);
   if (cached) {
-    g2.fillPath();
+    g2.fillPath(_id);
     return;
   }
-  int mx = 0, my = 0; // the first point to move to
-  int px = 0, py = 0; // the current point
-  int cx = 0, cy = 0; // the last control point
+  int mx = 0, my = 0;  // the first point to move to
+  int px = 0, py = 0;  // the current point
+  int cx = 0, cy = 0;  // the last control point
   for (u16 i = 0; i < _cmdCnt; i++) {
     const auto& cmd = *_cmds[i];
     if (!cmd.isValid()) continue;
@@ -169,7 +169,7 @@ void Path::draw(Graphics2D& g2) const {
         break;
     }
   }
-  g2.fillPath();
+  g2.fillPath(_id);
 }
 
 std::string Path::toString() const {
@@ -185,6 +185,6 @@ Path::~Path() {
   delete[] _cmds;
 }
 
-}
+}  // namespace microtex
 
-#endif // HAVE_GLYPH_RENDER_PATH
+#endif  // HAVE_GLYPH_RENDER_PATH

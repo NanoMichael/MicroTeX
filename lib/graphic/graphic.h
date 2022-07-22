@@ -203,12 +203,12 @@ public:
   // region path commands
 
   /**
-   * Begin a new path. We promise every path begin with function `beginPath` and
-   * end with `fillPath`. You may cache the path via its id.
+   * Begin a new path. We promise every path begin with function [beginPath] and
+   * end with [fillPath]. You may cache the path via its id.
    *
    * @param id the path id, if id < 0 that means the path is not cacheable.
    * @returns true if the path about to draw given by the id is exists, false otherwise.
-   * This is for optimizing purpose, if the engine find the path is already exists, the
+   * The id is for optimizing purpose, if the engine find the path is already exists, the
    * following path drawing command will be ignored. If path caching is not supported,
    * just return false.
    */
@@ -235,8 +235,12 @@ public:
   /** Close the path. */
   virtual void closePath() = 0;
 
-  /** Fill the path. */
-  virtual void fillPath() = 0;
+  /**
+   * Fill the path with the given id.
+   *
+   * @param id the path id. If the path is not cacheable, it always is -1.
+   */
+  virtual void fillPath(i32 id) = 0;
 
   // endregion
 

@@ -36,6 +36,10 @@ CanvasRenderingContext2D.prototype.beginPathWithId = function (id) {
   this.beginPath();
 }
 
+CanvasRenderingContext2D.prototype.fillPathWithId = function (id) {
+  this.fill();
+}
+
 /**
  * Create a Render to paint formulas. You MUST call {@link Render.release} to free
  * memory after this render is unused.
@@ -112,6 +116,7 @@ function Render(nativeRender, isLittleEndian) {
       return x;
     }
 
+    const getU16 = () => getNum(2, v.getUint16.bind(v));
     const getI32 = () => getNum(4, v.getInt32.bind(v));
     const getU32 = () => getNum(4, v.getUint32.bind(v));
     const getF32 = () => getNum(4, v.getFloat32.bind(v));
@@ -122,6 +127,10 @@ function Render(nativeRender, isLittleEndian) {
         offset += 4;
       }
       return argBuf;
+    }
+
+    function forwardString() {
+      while (getU8() !== 0);
     }
 
     /** Make a round rectangle. */
@@ -163,77 +172,99 @@ function Render(nativeRender, isLittleEndian) {
           ctx.lineCap = capMap[cap];
           ctx.lineJoin = joinMap[join];
           break;
-        case 2: // translate
+        case 2: // setDash
+          const hasDash = getU8() === 1;
+          const dash = hasDash ? [5 / sx, 5 / sx] : [];
+          ctx.setLineDash(dash);
+          break;
+        case 3: // setFont
+          // TODO does not support font yet
+          // consume the bytes
+          forwardString();
+          break;
+        case 4: // setFontSize
+          // TODO does not support font yet
+          // consume the bytes
+          getF32();
+          break;
+        case 5: // translate
           const t = getF32s(2);
           ctx.translate(t[0], t[1]);
           break;
-        case 3: // scale
+        case 6: // scale
           const s = getF32s(2);
           sx *= s[0];
           sy *= s[1];
           ctx.scale(s[0], s[1]);
           break;
-        case 4: // rotate
+        case 7: // rotate
           const r = getF32s(3);
           ctx.translate(r[1], r[2]);
           ctx.rotate(r[0]);
           ctx.translate(-r[1], -r[2]);
           break;
-        case 5: // reset
+        case 8: // reset
           ctx.setTransform(1, 0, 0, 1, 0, 0);
           break;
-        case 6: // moveTo
+        case 9: // drawGlyph
+          // TODO: doest not support draw glyph yet
+          // consume the bytes
+          getU16();
+          getF32s(2);
+          break;
+        case 10: // beginPath
+          const pid = getI32();
+          ctx.beginPathWithId(pid);
+          break;
+        case 11: // moveTo
           const m = getF32s(2);
           ctx.moveTo(m[0], m[1]);
           break;
-        case 7: // lineTo
+        case 12: // lineTo
           const l = getF32s(2);
           ctx.lineTo(l[0], l[1]);
           break;
-        case 8: // cubicTo
+        case 13: // cubicTo
           const c = getF32s(6);
           ctx.bezierCurveTo(c[0], c[1], c[2], c[3], c[4], c[5]);
           break;
-        case 9: // quadTo
+        case 14: // quadTo
           const q = getF32s(4);
           ctx.quadraticCurveTo(q[0], q[1], q[2], q[3]);
           break;
-        case 10: // closePath
+        case 15: // closePath
           ctx.closePath();
           break;
-        case 11: // fillPath
-          ctx.fill();
+        case 16: // fillPath
+          const pathId = getI32();
+          ctx.fillPathWithId(pathId);
           break;
-        case 12: // drawLine
+        case 17: // drawLine
           const dl = getF32s(4);
           ctx.beginPath();
           ctx.moveTo(dl[0], dl[1]);
           ctx.lineTo(dl[2], dl[3]);
           ctx.stroke();
           break;
-        case 13: // drawRect
+        case 18: // drawRect
           const dr = getF32s(4);
           ctx.strokeRect(dr[0], dr[1], dr[2], dr[3]);
           break;
-        case 14: // fillRect
+        case 19: // fillRect
           const fr = getF32s(4);
           ctx.fillRect(fr[0], fr[1], fr[2], fr[3]);
           break;
-        case 15: // drawRoundRect
+        case 20: // drawRoundRect
           const rr = getF32s(6);
           roundRect(rr[0], rr[1], rr[2], rr[3], rr[4], rr[5]);
           ctx.stroke();
           break;
-        case 16: // fillRoundRect
+        case 21: // fillRoundRect
           const rf = getF32s(6);
           roundRect(rf[0], rf[1], rf[2], rf[3], rf[4], rf[5]);
           ctx.fill();
           break;
-        case 17: // beginPath
-          const pid = getI32();
-          ctx.beginPathWithId(pid);
-          break;
-        case 18: // drawTextLayout
+        case 22: // drawTextLayout
           const id = getU32();
           const xy = getF32s(2);
           const old = ctx.font;
@@ -241,11 +272,6 @@ function Render(nativeRender, isLittleEndian) {
           ctx.font = toCSSFont(value.font);
           ctx.fillTextWithFont(value.text, xy[0], xy[1], value.font);
           ctx.font = old;
-          break;
-        case 19: // setDash
-          const hasDash = getU8() === 1;
-          const dash = hasDash ? [5 / sx, 5 / sx] : [];
-          ctx.setLineDash(dash);
           break;
         default:
           // invalid drawing command
