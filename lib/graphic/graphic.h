@@ -60,7 +60,9 @@ public:
    * Create font from file. You may cache the loaded platform specific font
    * to avoid repetitive loading.
    *
-   * @param file file path to load
+   * @param file the 'font file' doesn't have to be a real font file, it depends
+   * on the font source you given before. See [lib/unimath/font_src.h :: FontSrc]
+   * for details.
    */
   virtual sptr<Font> createFont(const std::string& file) = 0;
 
@@ -68,7 +70,9 @@ public:
    * Create a TextLayout with given text and font
    *
    * @param src the source text to layout and draw
-   * @param style the font style
+   * @param style the font style. Unlike the fonts the engine using internally,
+   * you are free to create the font you want based on the given style, the style
+   * is for reference, not a constraint.
    * @param size the font size
    */
   virtual sptr<TextLayout> createTextLayout(const std::string& src, FontStyle style, float size) = 0;
@@ -93,7 +97,7 @@ public:
 
   /**
    * Set the color of the context
-   * 
+   *
    * @param c required color
    */
   virtual void setColor(color c) = 0;
@@ -203,10 +207,10 @@ public:
    * end with `fillPath`. You may cache the path via its id.
    *
    * @param id the path id, if id < 0 that means the path is not cacheable.
-   * @returns true if the path we using with the given id is exists, false otherwise.
-   * This is for optimizing purpose, if the engine find the path is already exists,
-   * the following path drawing command will be ignored. If path caching is not
-   * supported, just return false.
+   * @returns true if the path about to draw given by the id is exists, false otherwise.
+   * This is for optimizing purpose, if the engine find the path is already exists, the
+   * following path drawing command will be ignored. If path caching is not supported,
+   * just return false.
    */
   virtual bool beginPath(i32 id) = 0;
 
@@ -240,7 +244,7 @@ public:
 
   /**
    * Draw line
-   * 
+   *
    * @param x1 start point in x-direction
    * @param y1 start point in y-direction
    * @param x2 end point in x-direction

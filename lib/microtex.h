@@ -139,35 +139,48 @@ public:
 
   /**
    * Set if use path to render glyphs, only works when compile option
-   * GLYPH_RENDER_TYPE equals to 0 (that means render glyphs use font and path
-   * both), otherwise this function takes no effect.
+   * GLYPH_RENDER_TYPE is GLYPH_RENDER_TYPE_BOTH (equals to 0, that means render
+   * glyphs use font and path both), otherwise this function takes no effect.
    */
   static void setRenderGlyphUsePath(bool use);
 
-  /** Test if currently use path to render glyphs. */
+  /**
+   * Test if currently use path to render glyphs.
+   *
+   * If compile option GLYPH_RENDER_TYPE is GLYPH_RENDER_TYPE_BOTH, it depends
+   * on your setting (via function [setRenderGlyphUsePath]). If your setting
+   * is true and current `clm data` does not support path rendering, this function
+   * also returns true, but will gives you a warn message if you have compile
+   * option HAVE_LOG is ON.
+   *
+   * If compile option GLYPH_RENDER_TYPE is GLYPH_RENDER_TYPE_PATH (equals to 1),
+   * always returns true.
+   *
+   * Otherwise (GLYPH_RENDER_TYPE is GLYPH_RENDER_TYPE_TYPEFACE, equals to 2),
+   * always returns false.
+   */
   static bool isRenderGlyphUsePath();
 
   /**
-   * Parse LaTeX string to Render
+   * Parse (La)TeX string to Render.
    *
    * @param tex the (La)TeX string to parse (in UTF-8 encoding)
    * @param width the width of the 2D graphics context (in pixel) to limit the
-   *    formula layout, the engine will trying to wrap the layout if it overflows
-   *    the width, but will fails if formula cannot be split. Pass 0 if it is
-   *    unlimited.
+   * formula layout, the engine will trying to wrap the layout if it overflows
+   * the width, but will fails if formula cannot be split. Pass 0 if it is
+   * unlimited.
    * @param textSize the text size in pixel
    * @param lineSpace the line space in pixel
    * @param fg the foreground color
    * @param fillWidth whether fill the graphics context if is in inter-line mode,
-   *    default is true. If given width is unlimited, the engine will not trying
-   *    to split the formula, and the parsed Render will has its own intrinsic
-   *    width.
+   * defaults to true. If the given width is unlimited, the engine will not trying
+   * to split the formula, and the parsed Render will has its own intrinsic width.
    * @param overrideTeXStyle whether override the preset TeX style
    * @param mathFontName the math font name, empty to use the preset (the font
-   *    passed in method init and setDefaultMathFont) math font.
+   * passed in method [init] and [setDefaultMathFont]) math font.
    * @param mainFontFamily the main font family name, empty to use the preset (the
-   *    font passed in method setDefaultMainFont or math font if not given) main
-   *    font family.
+   * font passed in method [setDefaultMainFont] or math font if not given) main
+   * font family.
    */
   static Render* parse(
     const std::string& tex,
