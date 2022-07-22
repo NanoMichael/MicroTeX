@@ -12,10 +12,10 @@ extern "C" {
 #endif
 
 MICROTEX_CAPI void microtex_registerCallbacks(
-  F_createTextLayout createTextLayout,
-  F_getTextLayoutBounds getTextLayoutBounds,
-  F_releaseTextLayout releaseTextLayout,
-  F_isPathExists isPathExists
+  CBCreateTextLayout createTextLayout,
+  CBGetTextLayoutBounds getTextLayoutBounds,
+  CBReleaseTextLayout releaseTextLayout,
+  CBIsPathExists isPathExists
 ) {
   microtex_createTextLayout = createTextLayout;
   microtex_getTextLayoutBounds = getTextLayoutBounds;
@@ -77,6 +77,8 @@ MICROTEX_CAPI FontMetaPtr microtex_addFont(
 ) {
   FontSrcData src{len, data};
   auto meta = MicroTeX::addFont(src);
+  // create a new FontMeta from heap
+  // [microtex_releaseFontMeta] must be called after this object has no usages.
   return new FontMeta(meta);
 }
 

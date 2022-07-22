@@ -18,7 +18,11 @@ namespace microtex {
 /** Represents an open-type font with font-file and font-spec */
 struct OtfFont final {
   const i32 id;
-  /** The font file path, may be empty if glyphs are drawn by graphical-paths. */
+  /**
+   * The font file (descriptor), may be empty if glyphs are drawn by graphical-paths.
+   *
+   * See [lib/unimath/font_src.h :: FontSrc] for details.
+   */
   const std::string fontFile;
   const sptr<const Otf> otfSpec;
 

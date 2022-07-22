@@ -13,7 +13,14 @@ class Otf;
 /** Source to load font. */
 class MICROTEX_EXPORT FontSrc {
 public:
-  /** The font file path, may be empty if glyphs are drawn by graphical-paths. */
+  /**
+   * The font file (descriptor), may be empty if glyphs are drawn by graphical-paths.
+   *
+   * NOTICE: the 'fontFile' doesn't have to be a real font file, it could be a font id,
+   * a font name, or something like that, because all font loading will be done on the
+   * user side (you can preload the font resources and gives its id, name or something
+   * can distinguish various fonts).
+   */
   const std::string fontFile;
 
   explicit FontSrc(std::string fontFile);

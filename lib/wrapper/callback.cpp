@@ -2,9 +2,9 @@
 
 #include "wrapper/callback.h"
 
-F_createTextLayout microtex_createTextLayout = nullptr;
-F_getTextLayoutBounds microtex_getTextLayoutBounds = nullptr;
-F_releaseTextLayout microtex_releaseTextLayout = nullptr;
-F_isPathExists microtex_isPathExists = nullptr;
+CBCreateTextLayout microtex_createTextLayout = nullptr;
+CBGetTextLayoutBounds microtex_getTextLayoutBounds = nullptr;
+CBReleaseTextLayout microtex_releaseTextLayout = nullptr;
+CBIsPathExists microtex_isPathExists = nullptr;
 
 #endif
