@@ -4,9 +4,9 @@ import {nodeResolve} from '@rollup/plugin-node-resolve';
 import commonjs from "@rollup/plugin-commonjs";
 
 export default {
-  input: './demo/index.js',
+  input: './example/index.js',
   output: {
-    file: './demo-dist/index.js',
+    file: './example-dist/index.js',
     format: 'esm',
     name: 'app',
     globals: {

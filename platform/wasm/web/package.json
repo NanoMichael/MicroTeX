@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:lib": "sh ../prebuild-lib.sh && rollup --config rollup.config.lib.js",
-    "build:demo": "sh ../prebuild-demo.sh && rollup --config rollup.config.demo.js"
+    "build:example": "sh ../prebuild-example.sh && rollup --config rollup.config.example.js"
   },
   "repository": {
     "type": "git",
