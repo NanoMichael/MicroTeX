@@ -191,6 +191,8 @@ function SvgCanvas(width, height) {
 
   this.fill = () => this.flush(true);
 
+  this.fillPathWithId = (id) => this.flush(true);
+
   this.stroke = () => this.flush(false);
 
   this.rect = function (x, y, w, h) {

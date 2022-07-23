@@ -3,6 +3,7 @@
 
 #ifdef HAVE_CWRAPPER
 
+#include <cstring>
 #include "utils/utils.h"
 
 namespace microtex {

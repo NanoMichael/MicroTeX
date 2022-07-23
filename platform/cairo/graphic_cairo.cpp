@@ -353,7 +353,7 @@ void Graphics2D_cairo::closePath() {
   cairo_close_path(_context);
 }
 
-void Graphics2D_cairo::fillPath() {
+void Graphics2D_cairo::fillPath(i32 id) {
   cairo_fill(_context);
 }
 
