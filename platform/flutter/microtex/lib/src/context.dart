@@ -22,10 +22,12 @@ bool get debugMicroTeX => _debugMicroTeX && kDebugMode;
 class MicroTeX {
   MicroTeX._();
 
-  static final instance = MicroTeX._();
+  static final _instance = MicroTeX._();
+
+  factory MicroTeX() => _instance;
 
   late final bool _isLittleEndian;
-  final _bindings = NativeBindings.instance;
+  final _bindings = NativeBindings();
   final _fonts = <FontMeta>[];
 
   String _currentMathFontName = "";
@@ -108,7 +110,7 @@ class MicroTeX {
       ..ascent = b[2];
   }
 
-  static bool _isPathExists(int id) => PathCache.instance[id] != null;
+  static bool _isPathExists(int id) => PathCache()[id] != null;
 
   Future<FontMeta> _loadCLM(
     String clmAsset,
@@ -131,7 +133,7 @@ class MicroTeX {
     // push to font meta list
     final meta = FontMeta(fontFamily, fontName, isMathFont);
     if (debugMicroTeX) print(meta);
-    _fonts.add(meta);
+    if (meta.isValid) _fonts.add(meta);
     // release meta pointer in C
     _bindings.releaseFontMeta(m);
     return meta;

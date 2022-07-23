@@ -16,5 +16,5 @@ sptr<Box> TextAtom::createBox(Env& env) {
     ? env.mathFontStyle()
     : env.textFontStyle()
   );
-  return sptrOf<TextBox>(_txt, style, env.fixedTextSize() * env.scale());
+  return sptrOf<TextBox>(_txt, style, Env::fixedTextSize() * env.scale());
 }

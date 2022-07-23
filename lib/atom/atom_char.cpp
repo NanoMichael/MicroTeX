@@ -90,7 +90,7 @@ sptr<Box> CharAtom::createBox(Env& env) {
   } else {
     fontStyle = _mathMode ? env.mathFontStyle() : env.textFontStyle();
   }
-  return sptrOf<TextBox>(name(), fontStyle, env.fixedTextSize() * env.scale());
+  return sptrOf<TextBox>(name(), fontStyle, Env::fixedTextSize() * env.scale());
 }
 
 sptr<Box> BreakMarkAtom::createBox(Env& env) {

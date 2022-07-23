@@ -53,6 +53,7 @@ class SpanConverter {
       return t;
     }
     return LayoutBuilder(builder: (context, constraints) {
+      print('build: ${constraints.maxWidth}');
       return SizedBox(
         width: constraints.maxWidth,
         child: Center(child: t),
