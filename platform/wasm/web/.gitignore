@@ -1,5 +1,5 @@
 node_modules/
 gen/
 dist/
-demo-dist/
+example-dist/
 npm-debug.log
