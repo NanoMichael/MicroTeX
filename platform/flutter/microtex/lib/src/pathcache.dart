@@ -1,9 +1,13 @@
 import 'dart:ui';
 
 class PathCache {
-  static final instance = PathCache._();
+  static final _instance = PathCache._();
 
   PathCache._();
+
+  factory PathCache() {
+    return _instance;
+  }
 
   final _map = <int, Path>{};
 

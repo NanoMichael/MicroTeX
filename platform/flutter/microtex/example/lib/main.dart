@@ -6,7 +6,7 @@ import 'package:microtex_example/screen/edit_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await MicroTeX.instance.initialize(
+  await MicroTeX().initialize(
     clmAsset: 'assets/xits/XITSMath-Regular.clm2',
     textLayoutSerif: 'Noto Color Emoji',
     textLayoutSansSerif: 'Noto Color Emoji',

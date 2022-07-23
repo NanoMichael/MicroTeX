@@ -1,4 +1,4 @@
-/// Keep in sync with [native_api/lib/utils/types.h]
+/// Keep in sync with [nativelib/lib/utils/types.h]
 enum TeXStyle {
   display,
   display1,

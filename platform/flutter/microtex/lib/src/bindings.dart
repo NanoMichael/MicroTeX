@@ -23,13 +23,10 @@ typedef RegisterCallbacks = void Function(
   Pointer<NativeFunction<is_path_exists>>,
 );
 
-typedef native_parse = Pointer Function(
-    Pointer<Utf8>, Int32, Float, Float, Uint32, Bool, Bool, Uint32);
+typedef native_parse = Pointer Function(Pointer<Utf8>, Int32, Float, Float, Uint32, Bool, Bool, Uint32);
 typedef Parse = Pointer Function(Pointer<Utf8>, int, double, double, int, bool, bool, int);
 
 class NativeBindings {
-  static final instance = NativeBindings._();
-
   late final DynamicLibrary _nativeLib;
 
   // context
@@ -67,6 +64,8 @@ class NativeBindings {
   NativeBindings._() {
     _init();
   }
+
+  factory NativeBindings() => NativeBindings._();
 
   void _init() {
     if (Platform.isLinux || Platform.isAndroid) {

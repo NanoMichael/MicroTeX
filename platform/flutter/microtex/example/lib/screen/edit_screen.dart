@@ -95,14 +95,14 @@ class _EditScreenState extends State<EditScreen> {
         ..._section('Mode', 'text', ['text', 'LaTeX'], (value) {}),
         ..._section(
           'Math Font',
-          MicroTeX.instance.currentMathFontName,
-          MicroTeX.instance.mathFonts.map((e) => e.fontName).toList(),
+          MicroTeX().currentMathFontName,
+          MicroTeX().mathFonts.map((e) => e.fontName).toList(),
           (value) {},
         ),
         ..._section(
           'Main Font',
-          MicroTeX.instance.currentMainFontFamilyName.isEmpty ? 'none' : MicroTeX.instance.currentMainFontFamilyName,
-          MicroTeX.instance.mainFonts.map((e) => e.fontFamily).toSet().toList() + ['none'],
+          MicroTeX().currentMainFontFamilyName.isEmpty ? 'none' : MicroTeX().currentMainFontFamilyName,
+          MicroTeX().mainFonts.map((e) => e.fontFamily).toSet().toList() + ['none'],
           (value) {},
         ),
         Container(

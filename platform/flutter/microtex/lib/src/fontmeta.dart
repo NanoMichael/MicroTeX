@@ -5,6 +5,8 @@ class FontMeta {
 
   FontMeta(this.fontFamily, this.fontName, this.isMathFont);
 
+  bool get isValid => fontFamily.isNotEmpty && fontName.isNotEmpty;
+
   @override
   String toString() {
     return "FontMeta{$fontFamily, $fontName, $isMathFont}";

@@ -12,10 +12,10 @@ class Render {
   final Pointer _nativeInstance;
   final Endian _endian;
 
-  // If filter is enabled, using a bluring to simulate the 'grid fitting' on glyhs
-  // to get a much clear rendering, but will cost a lot of time, especially for
-  // complex formulas.
-  // See [https://github.com/flutter/flutter/issues/104017].
+  /// If filter is enabled, using a bluring to simulate the 'grid fitting' on glyhs
+  /// to get a much clear rendering, but will cost a lot of time, especially for
+  /// complex formulas.
+  /// See [https://github.com/flutter/flutter/issues/104017].
   Blur? blur;
 
   Render(this._bindings, this._nativeInstance, bool isLittleEndian)
@@ -148,10 +148,8 @@ class Render {
         case 11: // fillPath
           _paint.style = PaintingStyle.fill;
           final b = blur;
-          final p = b == null
-              ? _paint
-              : (_paint.copy()..maskFilter = MaskFilter.blur(b.style, b.sigma / sx));
-          PathCache.instance[pathId] = path;
+          final p = b == null ? _paint : (_paint.copy()..maskFilter = MaskFilter.blur(b.style, b.sigma / sx));
+          PathCache()[pathId] = path;
           canvas.drawPath(path, p);
           break;
         case 12: // drawLine
@@ -172,11 +170,7 @@ class Render {
           final rr = getF32s(6);
           _paint.style = PaintingStyle.stroke;
           canvas.drawRRect(
-            RRect.fromRectXY(
-              Rect.fromLTWH(rr[0], rr[1], rr[2], rr[3]),
-              rr[4],
-              rr[5],
-            ),
+            RRect.fromRectXY(Rect.fromLTWH(rr[0], rr[1], rr[2], rr[3]), rr[4], rr[5]),
             _paint,
           );
           break;
@@ -184,17 +178,13 @@ class Render {
           final rf = getF32s(6);
           _paint.style = PaintingStyle.fill;
           canvas.drawRRect(
-            RRect.fromRectXY(
-              Rect.fromLTWH(rf[0], rf[1], rf[2], rf[3]),
-              rf[4],
-              rf[5],
-            ),
+            RRect.fromRectXY(Rect.fromLTWH(rf[0], rf[1], rf[2], rf[3]), rf[4], rf[5]),
             _paint,
           );
           break;
         case 17: // beginPath
           final pid = getI32();
-          final p = PathCache.instance[pid];
+          final p = PathCache()[pid];
           path = p ?? Path();
           pathId = pid;
           break;

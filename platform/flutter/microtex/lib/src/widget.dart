@@ -120,7 +120,7 @@ class RenderLaTeX extends RenderBox {
           '{render: $r, reparse: $reparse}',
         );
       }
-      r = MicroTeX.instance.parse(
+      r = MicroTeX().parse(
         _latex,
         _lastMaxWidth == double.infinity ? 0 : _lastMaxWidth.toInt(),
         _textSize,
