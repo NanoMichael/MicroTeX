@@ -25,7 +25,7 @@ void ByteSeq::ensureCapacity(len_t required) {
     return;
   }
 #ifdef HAVE_LOG
-  logv("grow buffer, _capacity: %lu, to be add: %lu\n", _capacity, required);
+  logv("grow buffer, _capacity: %u, to be add: %u\n", _capacity, required);
 #endif
   _data = realloc(_data, _capacity + CHUNK_SIZE);
   _capacity += CHUNK_SIZE;
@@ -33,7 +33,7 @@ void ByteSeq::ensureCapacity(len_t required) {
 
 void* ByteSeq::finish() {
 #ifdef HAVE_LOG
-  logv("finish drawing commands, bytes: %lu\n", _index);
+  logv("finish drawing commands, bytes: %u\n", _index);
 #endif
   auto ptr = (unsigned int*) _data;
   *ptr = _index;

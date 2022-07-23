@@ -18,7 +18,7 @@ set_target_properties(
     CXX_VISIBILITY_PRESET hidden
 )
 
-if (NOT DEFINED _DISABLE_ALIAS)
+if (NOT DEFINED _DISABLE_ALIAS AND NOT _DISABLE_ALIAS)
     set_target_properties(
         microtex PROPERTIES
         VERSION ${PROJECT_VERSION}

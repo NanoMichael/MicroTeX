@@ -179,11 +179,13 @@ function Render(nativeRender, isLittleEndian) {
           break;
         case 3: // setFont
           // TODO does not support font yet
+          // since CanvasRenderingContext2D does not support glyph drawing
           // consume the bytes
           forwardString();
           break;
         case 4: // setFontSize
           // TODO does not support font yet
+          // since CanvasRenderingContext2D does not support glyph drawing
           // consume the bytes
           getF32();
           break;
@@ -207,7 +209,8 @@ function Render(nativeRender, isLittleEndian) {
           ctx.setTransform(1, 0, 0, 1, 0, 0);
           break;
         case 9: // drawGlyph
-          // TODO: doest not support draw glyph yet
+          // TODO: does not support draw glyph yet
+          // since CanvasRenderingContext2D does not support glyph drawing
           // consume the bytes
           getU16();
           getF32s(2);
