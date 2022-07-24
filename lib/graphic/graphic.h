@@ -214,7 +214,7 @@ public:
    */
   virtual bool beginPath(i32 id) = 0;
 
-  /** Begin a path, move to point (x, y). */
+  /** Move to point (x, y). */
   virtual void moveTo(float x, float y) = 0;
 
   /** Add a line to path. */

@@ -42,4 +42,4 @@ void* ByteSeq::finish() {
 
 }
 
-#endif //HAVE_CWRAPPER
+#endif // HAVE_CWRAPPER

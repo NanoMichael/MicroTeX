@@ -27,4 +27,4 @@
 // If clm supports glyph path
 #define CLM_SUPPORT_GLYPH_PATH(minorVersion) ((minorVersion) == 2)
 
-#endif //MICROTEX_OTFCONFIG_H
+#endif // MICROTEX_OTFCONFIG_H
