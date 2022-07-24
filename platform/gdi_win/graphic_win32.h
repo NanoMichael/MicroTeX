@@ -153,7 +153,7 @@ public:
 
   void closePath() override;
 
-  void fillPath() override;
+  void fillPath(i32 id) override;
 
   /** Draw text */
   void drawText(const std::wstring& src, float x, float y);

@@ -319,7 +319,7 @@ void Graphics2D_win32::closePath() {
   // not supported
 }
 
-void Graphics2D_win32::fillPath() {
+void Graphics2D_win32::fillPath(i32 id) {
   // not supported
 }
 

@@ -287,7 +287,7 @@ void Graphics2D_qt::closePath() {
   _path.closeSubpath();
 }
 
-void Graphics2D_qt::fillPath() {
+void Graphics2D_qt::fillPath(i32 id) {
   _painter->fillPath(_path, getQBrush());
 }
 
