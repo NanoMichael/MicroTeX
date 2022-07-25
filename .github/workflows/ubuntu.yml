@@ -57,7 +57,7 @@ jobs:
           cd ${{ github.workspace }}
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release -DCAIRO=ON -DBUILD_EXAMPLE_GTKMM=ON -DGTK=ON -DBUILD_EXAMPLE_GTK=ON -DQT=ON -DBUILD_EXAMPLE_QT=ON -DBUILD_EXAMPLE_QTPNG=ON -DBUILD_EXAMPLE_MEMCHECK=ON -DWASM=OFF -DHAVE_LOG=ON -G Ninja
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DHAVE_AUTO_FONT_FIND=ON -DCAIRO=ON -DBUILD_EXAMPLE_GTKMM=ON -DGTK=ON -DBUILD_EXAMPLE_GTK=ON -DQT=ON -DBUILD_EXAMPLE_QT=ON -DBUILD_EXAMPLE_QTPNG=ON -DBUILD_EXAMPLE_MEMCHECK=ON -DWASM=OFF -DHAVE_LOG=ON -G Ninja
       - name: Compile 🎲
         run: |
           cd ${{ github.workspace }}
@@ -82,4 +82,4 @@ jobs:
           cd ${{ github.workspace }}
           cd platform/wasm/web
           npm install
-          npm run build:lib && npm run build:demo
+          npm run build:lib && npm run build:example
