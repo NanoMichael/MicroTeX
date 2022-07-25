@@ -1,7 +1,6 @@
 name: Windows Qt
 
 on: 
-  - push
   - pull_request
 
 jobs:

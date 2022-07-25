@@ -1,7 +1,6 @@
 name: Windows GDI+
 
 on:
-  - push
   - pull_request
 
 jobs:
