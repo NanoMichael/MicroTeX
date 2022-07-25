@@ -45,7 +45,7 @@ jobs:
         cd ${{ github.workspace }}
         mkdir build -force
         cd build
-        cmake .. -DQT=ON -DBUILD_EXAMPLE_QT=ON -DCMAKE_BUILD_TYPE=Release -G Ninja
+        cmake .. -DHAVE_AUTO_FONT_FIND=ON -DQT=ON -DBUILD_EXAMPLE_QT=ON -DCMAKE_BUILD_TYPE=Release -G Ninja
     - name: Compile 🎲
       run: |
         cd ${{ github.workspace }}
