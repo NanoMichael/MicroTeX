@@ -103,19 +103,38 @@ MICROTEX_CAPI void microtex_releaseFontMeta(FontMetaPtr ptr);
 
 /**
  * Set the default math font by name.
- * See [lib/microtex.h :: MicroTex::setDefaultMathFont] for details.
+ * See [lib/microtex.h: MicroTex::setDefaultMathFont] for details.
  */
 MICROTEX_CAPI void microtex_setDefaultMathFont(const char* name);
 
 /**
  * Set the default main font family by name.
- * See [lib/microtex.h :: MicroTex::setDefaultMainFont] for details.
+ * See [lib/microtex.h: MicroTex::setDefaultMainFont] for details.
  */
 MICROTEX_CAPI void microtex_setDefaultMainFont(const char* name);
 
+/** Tet is has the ability to use path to render glyphs. */
+MICROTEX_CAPI bool microtex_hasGlyphPathRender();
+
 /**
- * Parse a (La)TeX string (in UTF-8 encoding) to Render.
- * See [lib/microtex.h :: MicroTeX::parse] for details.
+ * Set if use path to render glyphs, only works when compile option
+ * GLYPH_RENDER_TYPE is GLYPH_RENDER_TYPE_BOTH (equals to 0, that means render
+ * glyphs use font and path both), otherwise this function takes no effect.
+ */
+MICROTEX_CAPI void microtex_setRenderGlyphUsePath(bool use);
+
+/**
+ * Test if currently use path to render glyphs.
+ *
+ * See [lib/microtex.h: MicroTeX::isRenderGlyphUsePath] for details.
+ */
+MICROTEX_CAPI bool microtex_isRenderGlyphUsePath();
+
+/**
+ * Parse a (La)TeX string (in UTF-8 encoding) to Render. You must
+ * call [microtex_deleteRender] after it has no usages.
+ *
+ * See [lib/microtex.h: MicroTeX::parse] for details.
  */
 MICROTEX_CAPI RenderPtr microtex_parseRender(
   const char* tex,
@@ -133,9 +152,131 @@ MICROTEX_CAPI void microtex_deleteRender(RenderPtr render);
 
 /**
  * Get the drawing data from the render created by [microtex_parseRender] before.
- * It generates the drawing commands from the render.
+ * It generates the drawing commands from the render. You must call
+ * [microtex_freeDrawingData] after it has no usages.
  *
- * TODO
+ * The drawing data are arranged by following format:
+ *
+ * @code
+ * bytes    desc
+ * -----------------------------------------------------
+ *     4    number of bytes of the drawing data
+ *     1    drawing command (e.g. drawLine, setColor...)
+ * @endcode
+ *
+ * And for each drawing command, followed by its arguments, the tables below
+ * shows the drawing commands and its arguments.
+ *
+ * Short for data types:
+ *
+ * @code
+ * data type    bytes short
+ * ------------------------
+ *          int   4   i32
+ * unsigned int   4   u32
+ * unsigned short 2   u16
+ * float          4   f32
+ * bool           1   u8
+ * @endcode
+ *
+ * And arguments for each drawing command:
+ *
+ * @code
+ * cmd  args                desc
+ * -----------------------------------------------------------------------
+ *   0          color: u32  Set color.
+ *
+ *   1    line width : f32  Set line stroke.
+ *        miter limit: f32
+ *           line cap: u32
+ *          line join: u32
+ *
+ *   2        has dash: u8  Set if draw dash line, users are free to use
+ *                          various dash patterns.
+ *
+ *   3 font family: string  Set font by font family name, the name is 0
+ *                          terminated.
+ *
+ *   4      font size: f32  Set the font size.
+ *
+ *   5        delta-x: f32  Translate the context by delta-x and delta-y.
+ *            delta-y: f32
+ *
+ *   6        scale-x: f32  Scale the context by scale-x and scale-y.
+ *            scale-y: f32
+ *
+ *   7         radian: f32  Rotate the context by the given radian and
+ *            pivot-x: f32  pivot.
+ *            pivot-y: f32
+ *
+ *   8                 N/A  Reset the transformation of the context.
+ *
+ *   9          glyph: u16  Draw a single glyph at given point (x, y),
+ *                  x: f32  the glyphs drawing should be baseline
+ *                  y: f32  aligned.
+ *
+ *  10        path-id: i32  Begin a path with id. The id will be >= 0
+ *                          if the path is cacheable, otherwise it will
+ *                          be < 0. The engine will use [CBIsPathExists]
+ *                          to determine if the path is in cache.
+ *
+ *  11              x: f32  Move to point (x, y).
+ *                  y: f32
+ *
+ *  12              x: f32  Add a line with its end point (x, y) to path.
+ *                  y: f32
+ *
+ *  13             x1: f32  Add a cubic Bezier spline to path, with control
+ *                 y1: f32  points (x1, y1), (x2, y2) and the final point
+ *                 x2: f32  (x3, y3).
+ *                 y2: f32
+ *                 x3: f32
+ *                 y3: f32
+ *
+ *  14             x1: f32  Add a quadratic Bezier spline to path, with control
+ *                 y1: f32  point (x1, y1) and the final point (x2, y2).
+ *                 x2: f32
+ *                 y2: f32
+ *
+ *  15                 N/A  Close the path.
+ *
+ *  16             id: i32  Fill the path with the given id. If the path is not
+ *                          cacheable, it always is -1.
+ *
+ *  17             x1: f32  Draw a line from (x1, y1) to (x2, y2).
+ *                 y1: f32
+ *                 x2: f32
+ *                 y2: f32
+ *
+ *  18              x: f32  Draw an outlined rectangle at point (x, y) with its
+ *                  y: f32  width (w) and height (h).
+ *                  w: f32
+ *                  h: f32
+ *
+ *  19              x: f32  Draw a rectangle at point (x, y) with its width (w)
+ *                  y: f32  and height (h).
+ *                  w: f32
+ *                  h: f32
+ *
+ *  20              x: f32  Draw an outlined round rectangle at point (x, y) with
+ *                  y: f32  its width (w), height (h), radius in x-direction (rx)
+ *                  w: f32  and radius in y-direction (ry).
+ *                  h: f32
+ *                 rx: f32
+ *                 ry: f32
+ *
+ *  21              x: f32  Draw a round rectangle at point (x, y) with its width
+ *                  y: f32  (w), height (h), radius in x-direction (rx) and radius
+ *                  w: f32  in y-direction (ry).
+ *                  h: f32
+ *                 rx: f32
+ *                 ry: f32
+ *
+ *  22             id: u32  Draw a text-layout by given id at point (x, y). The id
+ *                  x: f32  was generated by [CBCreateTextLayout].
+ *                  y: f32
+ * @endcode
+ *
  */
 MICROTEX_CAPI DrawingData microtex_getDrawingData(RenderPtr render, int x, int y);
 

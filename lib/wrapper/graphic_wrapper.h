@@ -24,10 +24,10 @@ public:
 
 class TextLayout_wrapper : public TextLayout {
 private:
-  const unsigned int _id;
+  const u32 _id;
 
 public:
-  explicit TextLayout_wrapper(unsigned int id);
+  explicit TextLayout_wrapper(u32 id);
 
   ~TextLayout_wrapper() noexcept override;
 
@@ -165,7 +165,7 @@ public:
   ) override;
 
   // cmd: 22
-  void drawTextLayout(unsigned int id, float x, float y);
+  void drawTextLayout(u32 id, float x, float y);
 };
 
 }

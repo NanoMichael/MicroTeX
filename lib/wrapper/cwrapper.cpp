@@ -112,6 +112,18 @@ MICROTEX_CAPI void microtex_setDefaultMainFont(const char* name) {
   MicroTeX::setDefaultMainFont(name);
 }
 
+MICROTEX_CAPI bool microtex_hasGlyphPathRender() {
+  return MicroTeX::hasGlyphPathRender();
+}
+
+MICROTEX_CAPI void microtex_setRenderGlyphUsePath(bool use) {
+  return MicroTeX::setRenderGlyphUsePath(use);
+}
+
+MICROTEX_CAPI bool microtex_isRenderGlyphUsePath() {
+  return MicroTeX::isRenderGlyphUsePath();
+}
+
 MICROTEX_CAPI RenderPtr microtex_parseRender(
   const char* tex,
   int width,
