@@ -1,15 +1,7 @@
 name: Ubuntu
 
 on:
-  push:
-    branches:
-      - master
-      - openmath
-      - wasm
-  pull_request:
-    branches:
-      - master
-      - openmath
+  - pull_request
 
 jobs:
   build_by_meson:
