@@ -28,7 +28,7 @@ if (DEFINED IS_OSX_IOS)
 endif ()
 set(_DISABLE_ALIAS TRUE)
 set(_HAVE_AUTO_FONT_FIND FALSE)
-set(_GLYPH_RENDER_TYPE 1)
+set(_GLYPH_RENDER_TYPE 0)
 set(HAVE_CWRAPPER TRUE)
 
 # win32 has different symbolic-link type

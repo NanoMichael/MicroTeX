@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flutter/rendering.dart';
 import 'package:microtex/microtex.dart';
@@ -71,6 +73,17 @@ class Render {
       return x;
     }
 
+    String getString() {
+      final utf8 = <int>[];
+      var byte = getU8();
+      while (byte != 0) {
+        utf8.add(byte);
+        byte = getU8();
+      }
+      return const Utf8Decoder().convert(utf8);
+    }
+
+    int getU16() => getNum(2, (offset) => v.getUint16(offset, _endian));
     int getI32() => getNum(4, (offset) => v.getInt32(offset, _endian));
     int getU32() => getNum(4, (offset) => v.getUint32(offset, _endian));
     double getF32() => getNum(4, (offset) => v.getFloat32(offset, _endian));
@@ -86,8 +99,27 @@ class Render {
     // consume the first 4 bytes
     getU32();
     var sx = 1.0, sy = 1.0;
-    var pathId = 0;
     var path = Path();
+
+    var fontFamily = "";
+    // var glyphs = <int>[];
+    // var positions = <Offset>[];
+    var fontSize = 0.0;
+
+    // void flushGlyphRun() {
+    //   if (glyphs.isEmpty) return;
+    //   final run = GlyphRun(
+    //     glyphs: Uint16List.fromList(glyphs),
+    //     positions: [...positions],
+    //     fontFamily: fontFamily,
+    //     fontSize: fontSize,
+    //   );
+    //   fontFamily = '';
+    //   glyphs = [];
+    //   positions = [];
+    //   fontSize = 0.0;
+    //   canvas.drawGlyphRun(run, const Offset(0, 0), _paint);
+    // }
 
     while (offset < len) {
       final cmd = getU8();
@@ -107,66 +139,114 @@ class Render {
             ..strokeCap = _caps[cap]
             ..strokeJoin = _joins[join];
           break;
-        case 2: // translate
+        case 2: // setDash
+          final hasDash = getU8() == 1;
+          final dash = hasDash ? [5 / sx, 5 / sx] : [];
+          // Flutter does not support dashing lines
+          break;
+        case 3: // setFont
+          // TODO
+          final family = getString();
+          print('font family: $family');
+          // Font family changes, flush the glyph run
+          // if (fontFamily != '' && fontFamily != family) {
+          //   flushGlyphRun();
+          // }
+          fontFamily = family;
+          break;
+        case 4: // setFontSize
+          // TODO
+          final size = getF32();
+          print('font size: $size');
+          // Font size changes, flush the glyph run
+          // if (fontSize != 0.0 && fontSize != size) {
+          //   flushGlyphRun();
+          // }
+          fontSize = size;
+          break;
+        case 5: // translate
+          // flushGlyphRun();
           final t = getF32s(2);
           canvas.translate(t[0], t[1]);
           break;
-        case 3: // scale
+        case 6: // scale
+          // flushGlyphRun();
           final s = getF32s(2);
           sx *= s[0];
           sy *= s[1];
           canvas.scale(s[0], s[1]);
           break;
-        case 4: // rotate
+        case 7: // rotate
+          // flushGlyphRun();
           final r = getF32s(3);
           canvas.translate(r[1], r[2]);
           canvas.rotate(r[0]);
           canvas.translate(-r[1], -r[2]);
           break;
-        case 5: // reset
+        case 8: // reset
           canvas.transform(Matrix4.identity().storage);
           break;
-        case 6: // moveTo
+        case 9: // drawGlyph
+          // TODO
+          final glyph = getU16();
+          final xy = getF32s(2);
+          // glyphs.add(glyph);
+          // positions.add(Offset(xy[0], xy[1]));
+          final run = GlyphRun(
+            glyphs: Uint16List.fromList([glyph]),
+            positions: [Offset(xy[0], xy[1])],
+            fontFamily: fontFamily,
+            fontSize: fontSize,
+          );
+          canvas.drawGlyphRun(run, const Offset(0, 0), _paint);
+          break;
+        case 10: // beginPath
+          final pid = getI32();
+          final p = PathCache()[pid];
+          path = p ?? Path();
+          break;
+        case 11: // moveTo
           final m = getF32s(2);
           path.moveTo(m[0], m[1]);
           break;
-        case 7: // lineTo
+        case 12: // lineTo
           final l = getF32s(2);
           path.lineTo(l[0], l[1]);
           break;
-        case 8: // cubicTo
+        case 13: // cubicTo
           final c = getF32s(6);
           path.cubicTo(c[0], c[1], c[2], c[3], c[4], c[5]);
           break;
-        case 9: // quadTo
+        case 14: // quadTo
           final q = getF32s(4);
           path.quadraticBezierTo(q[0], q[1], q[2], q[3]);
           break;
-        case 10: // closePath
+        case 15: // closePath
           path.close();
           break;
-        case 11: // fillPath
+        case 16: // fillPath
+          final pid = getI32();
           _paint.style = PaintingStyle.fill;
           final b = blur;
           final p = b == null ? _paint : (_paint.copy()..maskFilter = MaskFilter.blur(b.style, b.sigma / sx));
-          PathCache()[pathId] = path;
+          PathCache()[pid] = path;
           canvas.drawPath(path, p);
           break;
-        case 12: // drawLine
+        case 17: // drawLine
           final dl = getF32s(4);
           canvas.drawLine(Offset(dl[0], dl[1]), Offset(dl[2], dl[3]), _paint);
           break;
-        case 13: // drawRect
+        case 18: // drawRect
           final dr = getF32s(4);
           _paint.style = PaintingStyle.stroke;
           canvas.drawRect(Rect.fromLTWH(dr[0], dr[1], dr[2], dr[3]), _paint);
           break;
-        case 14: // fillRect
+        case 19: // fillRect
           final fr = getF32s(4);
           _paint.style = PaintingStyle.fill;
           canvas.drawRect(Rect.fromLTWH(fr[0], fr[1], fr[2], fr[3]), _paint);
           break;
-        case 15: // drawRoundRect
+        case 20: // drawRoundRect
           final rr = getF32s(6);
           _paint.style = PaintingStyle.stroke;
           canvas.drawRRect(
@@ -174,7 +254,7 @@ class Render {
             _paint,
           );
           break;
-        case 16: // fillRoundRect
+        case 21: // fillRoundRect
           final rf = getF32s(6);
           _paint.style = PaintingStyle.fill;
           canvas.drawRRect(
@@ -182,21 +262,10 @@ class Render {
             _paint,
           );
           break;
-        case 17: // beginPath
-          final pid = getI32();
-          final p = PathCache()[pid];
-          path = p ?? Path();
-          pathId = pid;
-          break;
-        case 18: // drawTextLayout
+        case 22: // drawTextLayout
           final id = getU32();
           final xy = getF32s(2);
           TextLayout.draw(id, canvas, xy[0], xy[1], _paint.color);
-          break;
-        case 19: // setDash
-          final hasDash = getU8() == 1;
-          final dash = hasDash ? [5 / sx, 5 / sx] : [];
-          // Flutter does not support dashing lines
           break;
         default:
           // invalid drawing command
