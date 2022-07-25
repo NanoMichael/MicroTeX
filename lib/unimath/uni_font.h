@@ -21,7 +21,7 @@ struct OtfFont final {
   /**
    * The font file (descriptor), may be empty if glyphs are drawn by graphical-paths.
    *
-   * See [lib/unimath/font_src.h :: FontSrc] for details.
+   * See [lib/unimath/font_src.h: FontSrc] for details.
    */
   const std::string fontFile;
   const sptr<const Otf> otfSpec;

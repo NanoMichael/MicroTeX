@@ -20,6 +20,10 @@ public:
    * a font name, or something like that, because all font loading will be done on the
    * user side (you can preload the font resources and gives its id, name or something
    * can distinguish various fonts).
+   *
+   * If no file was given, the engine will use the font family name as its identifier,
+   * thus when load font the font family name will be used as its 'font file' instead
+   * of a real font file.
    */
   const std::string fontFile;
 

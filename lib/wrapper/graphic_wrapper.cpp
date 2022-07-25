@@ -17,7 +17,7 @@ bool Font_wrapper::operator==(const Font& f) const {
 
 /**********************************************************************************/
 
-TextLayout_wrapper::TextLayout_wrapper(unsigned int id) : _id(id) {}
+TextLayout_wrapper::TextLayout_wrapper(u32 id) : _id(id) {}
 
 TextLayout_wrapper::~TextLayout_wrapper() noexcept {
   microtex_releaseTextLayout(_id);
@@ -203,7 +203,7 @@ void Graphics2D_wrapper::fillRoundRect(float x, float y, float w, float h, float
   _cmds.put((u8) 21, x, y, w, h, rx, ry);
 }
 
-void Graphics2D_wrapper::drawTextLayout(unsigned int id, float x, float y) {
+void Graphics2D_wrapper::drawTextLayout(u32 id, float x, float y) {
   _cmds.put((u8) 22, id, x, y);
 }
 

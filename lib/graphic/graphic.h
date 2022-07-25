@@ -61,7 +61,7 @@ public:
    * to avoid repetitive loading.
    *
    * @param file the 'font file' doesn't have to be a real font file, it depends
-   * on the font source you given before. See [lib/unimath/font_src.h :: FontSrc]
+   * on the font source you given before. See [lib/unimath/font_src.h: FontSrc]
    * for details.
    */
   virtual sptr<Font> createFont(const std::string& file) = 0;

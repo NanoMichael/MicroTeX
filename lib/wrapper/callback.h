@@ -35,7 +35,7 @@ typedef struct {
  * it should returns the id of the created text-layout, and then the id
  * will be used to retrieve the bounds and draw.
  *
- * See [lib/wrapper/graphic_wrapper.h :: TextLayout_wrapper::draw].
+ * See [lib/wrapper/graphic_wrapper.h: TextLayout_wrapper::draw].
  */
 typedef unsigned int (* CBCreateTextLayout)(const char* txt, FontDesc* f);
 
@@ -53,7 +53,7 @@ typedef void (* CBReleaseTextLayout)(unsigned int id);
 
 /**
  * Callback to check if a (glyph) path given by id is in cache. It will be used
- * by [lib/graphic/graphic.h :: Graphic2D::drawPath] to determine if a path is in
+ * by [lib/graphic/graphic.h: Graphic2D::drawPath] to determine if a path is in
  * cache, if it does, the following path drawing command will be ignored.
  */
 typedef bool (* CBIsPathExists)(unsigned int id);
