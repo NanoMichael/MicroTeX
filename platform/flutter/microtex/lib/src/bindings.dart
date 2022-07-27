@@ -6,24 +6,24 @@ import 'package:microtex/src/fontdesc.dart';
 
 import 'bounds.dart';
 
-typedef create_text_layout = Uint32 Function(Pointer<Utf8>, Pointer<FontDesc>);
-typedef get_text_layout_bounds = Void Function(Uint32, Pointer<Bounds>);
-typedef release_text_layout = Void Function(Uint32);
-typedef is_path_exists = Bool Function(Uint32);
-typedef register_callbacks = Void Function(
-  Pointer<NativeFunction<create_text_layout>>,
-  Pointer<NativeFunction<get_text_layout_bounds>>,
-  Pointer<NativeFunction<release_text_layout>>,
-  Pointer<NativeFunction<is_path_exists>>,
+typedef NCreateTextLayout = Uint32 Function(Pointer<Utf8>, Pointer<FontDesc>);
+typedef NGetTextLayoutBounds = Void Function(Uint32, Pointer<Bounds>);
+typedef NReleaseTextLayout = Void Function(Uint32);
+typedef NIsPathExists = Bool Function(Uint32);
+typedef NRegisterCallbacks = Void Function(
+  Pointer<NativeFunction<NCreateTextLayout>>,
+  Pointer<NativeFunction<NGetTextLayoutBounds>>,
+  Pointer<NativeFunction<NReleaseTextLayout>>,
+  Pointer<NativeFunction<NIsPathExists>>,
 );
 typedef RegisterCallbacks = void Function(
-  Pointer<NativeFunction<create_text_layout>>,
-  Pointer<NativeFunction<get_text_layout_bounds>>,
-  Pointer<NativeFunction<release_text_layout>>,
-  Pointer<NativeFunction<is_path_exists>>,
+  Pointer<NativeFunction<NCreateTextLayout>>,
+  Pointer<NativeFunction<NGetTextLayoutBounds>>,
+  Pointer<NativeFunction<NReleaseTextLayout>>,
+  Pointer<NativeFunction<NIsPathExists>>,
 );
 
-typedef native_parse = Pointer Function(Pointer<Utf8>, Int32, Float, Float, Uint32, Bool, Bool, Uint32);
+typedef NativeParse = Pointer Function(Pointer<Utf8>, Int32, Float, Float, Uint32, Bool, Bool, Uint32);
 typedef Parse = Pointer Function(Pointer<Utf8>, int, double, double, int, bool, bool, int);
 
 class NativeBindings {
@@ -61,6 +61,11 @@ class NativeBindings {
   late final void Function(Pointer, double) setRenderTextSize;
   late final void Function(Pointer, int) setRenderForground;
 
+  // glyph settings
+  late final bool Function() hasGlyphPathRender;
+  late final void Function(bool) setRenderGlyphUsePath;
+  late final bool Function() isRenderGlyphUsePath;
+
   NativeBindings._() {
     _init();
   }
@@ -80,7 +85,7 @@ class NativeBindings {
     if (debugMicroTeX) print(_nativeLib);
     // context
     registerCallbacks = _nativeLib
-        .lookup<NativeFunction<register_callbacks>>(
+        .lookup<NativeFunction<NRegisterCallbacks>>(
           'microtex_registerCallbacks',
         )
         .asFunction<RegisterCallbacks>();
@@ -143,7 +148,7 @@ class NativeBindings {
         .asFunction();
     // parse
     parse = _nativeLib
-        .lookup<NativeFunction<native_parse>>(
+        .lookup<NativeFunction<NativeParse>>(
           "microtex_parseRender",
         )
         .asFunction();
@@ -191,6 +196,22 @@ class NativeBindings {
     setRenderForground = _nativeLib
         .lookup<NativeFunction<Void Function(Pointer, Uint32)>>(
           "microtex_setRenderForeground",
+        )
+        .asFunction();
+    // glyph settings
+    hasGlyphPathRender = _nativeLib
+        .lookup<NativeFunction<Bool Function()>>(
+          "microtex_hasGlyphPathRender",
+        )
+        .asFunction();
+    setRenderGlyphUsePath = _nativeLib
+        .lookup<NativeFunction<Void Function(Bool)>>(
+          "microtex_setRenderGlyphUsePath",
+        )
+        .asFunction();
+    isRenderGlyphUsePath = _nativeLib
+        .lookup<NativeFunction<Bool Function()>>(
+          "microtex_isRenderGlyphUsePath",
         )
         .asFunction();
   }

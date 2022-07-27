@@ -113,7 +113,7 @@ MICROTEX_CAPI void microtex_setDefaultMathFont(const char* name);
  */
 MICROTEX_CAPI void microtex_setDefaultMainFont(const char* name);
 
-/** Tet is has the ability to use path to render glyphs. */
+/** Test if has the ability to use path to render glyphs. */
 MICROTEX_CAPI bool microtex_hasGlyphPathRender();
 
 /**

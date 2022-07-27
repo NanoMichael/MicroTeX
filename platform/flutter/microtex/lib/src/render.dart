@@ -15,7 +15,7 @@ class Render {
   final Endian _endian;
 
   /// If filter is enabled, using a bluring to simulate the 'grid fitting' on glyhs
-  /// to get a much clear rendering, but will cost a lot of time, especially for
+  /// drawing to get a much clear rendering, but it is expensive, especially for
   /// complex formulas.
   /// See [https://github.com/flutter/flutter/issues/104017].
   Blur? blur;
@@ -23,25 +23,38 @@ class Render {
   Render(this._bindings, this._nativeInstance, bool isLittleEndian)
       : _endian = isLittleEndian ? Endian.little : Endian.big;
 
+  /// The width of this render.
   int get width => _bindings.getRenderWidth(_nativeInstance);
 
+  /// The height of this render, equals to ascent + descent (or namely [depth],
+  /// distance below the baseline).
   int get height => _bindings.getRenderHeight(_nativeInstance);
 
+  /// The distance below the baseline, in positive.
   int get depth => _bindings.getRenderDepth(_nativeInstance);
 
+  /// Test if this render is split to multi-lines.
   bool get isSplit => _bindings.isRenderSplit(_nativeInstance);
 
   void release() {
     _bindings.deleteRender(_nativeInstance);
   }
 
+  /// Set the text size to draw. The dimension ([width], [height], [depth]) will be
+  /// changed following the text size change.
   void setTextSize(double textSize) {
     _bindings.setRenderTextSize(_nativeInstance, textSize);
   }
 
+  /// Set the foreground color to draw.
   void setColor(int color) {
     _bindings.setRenderForground(_nativeInstance, color);
   }
+
+  /// If this render is use path to render glyphs.
+  ///
+  /// Unlike the [MicroTeX.isRenderGlyphUsePath], this is for every particular renders.
+  bool isRenderGlyphUsePath = false;
 
   static const _caps = [StrokeCap.butt, StrokeCap.round, StrokeCap.square];
   static const _joins = [StrokeJoin.bevel, StrokeJoin.round, StrokeJoin.miter];
@@ -50,7 +63,11 @@ class Render {
   final _argBuf = Float32List(8);
 
   void draw(Canvas canvas) {
-    if (debugMicroTeX) print("Render.draw");
+    print("Render.draw");
+    // it is OK to change the value of the property [MicroTeX.isRenderGlyphUsePath] when
+    // drawing every renders, since draw runs in UI thread.
+    final prevIsRenderGlyphUsePath = MicroTeX().isRenderGlyphUsePath();
+    MicroTeX().setRenderGlyphUsePath(isRenderGlyphUsePath);
     // get the drawing commands from native render
     final drawingData = _bindings.getDrawingData(_nativeInstance, 0, 0);
     // the first 4 bytes is the total count of byte used
@@ -102,24 +119,7 @@ class Render {
     var path = Path();
 
     var fontFamily = "";
-    // var glyphs = <int>[];
-    // var positions = <Offset>[];
     var fontSize = 0.0;
-
-    // void flushGlyphRun() {
-    //   if (glyphs.isEmpty) return;
-    //   final run = GlyphRun(
-    //     glyphs: Uint16List.fromList(glyphs),
-    //     positions: [...positions],
-    //     fontFamily: fontFamily,
-    //     fontSize: fontSize,
-    //   );
-    //   fontFamily = '';
-    //   glyphs = [];
-    //   positions = [];
-    //   fontSize = 0.0;
-    //   canvas.drawGlyphRun(run, const Offset(0, 0), _paint);
-    // }
 
     while (offset < len) {
       final cmd = getU8();
@@ -142,42 +142,30 @@ class Render {
         case 2: // setDash
           final hasDash = getU8() == 1;
           final dash = hasDash ? [5 / sx, 5 / sx] : [];
+          // FIXME
           // Flutter does not support dashing lines
           break;
         case 3: // setFont
           // TODO
           final family = getString();
-          print('font family: $family');
-          // Font family changes, flush the glyph run
-          // if (fontFamily != '' && fontFamily != family) {
-          //   flushGlyphRun();
-          // }
           fontFamily = family;
           break;
         case 4: // setFontSize
           // TODO
           final size = getF32();
-          print('font size: $size');
-          // Font size changes, flush the glyph run
-          // if (fontSize != 0.0 && fontSize != size) {
-          //   flushGlyphRun();
-          // }
           fontSize = size;
           break;
         case 5: // translate
-          // flushGlyphRun();
           final t = getF32s(2);
           canvas.translate(t[0], t[1]);
           break;
         case 6: // scale
-          // flushGlyphRun();
           final s = getF32s(2);
           sx *= s[0];
           sy *= s[1];
           canvas.scale(s[0], s[1]);
           break;
         case 7: // rotate
-          // flushGlyphRun();
           final r = getF32s(3);
           canvas.translate(r[1], r[2]);
           canvas.rotate(r[0]);
@@ -190,8 +178,6 @@ class Render {
           // TODO
           final glyph = getU16();
           final xy = getF32s(2);
-          // glyphs.add(glyph);
-          // positions.add(Offset(xy[0], xy[1]));
           final run = GlyphRun(
             glyphs: Uint16List.fromList([glyph]),
             positions: [Offset(xy[0], xy[1])],
@@ -274,6 +260,8 @@ class Render {
     }
     // delete the drawing data
     _bindings.deleteDrawingData(drawingData);
+    // reset the property
+    MicroTeX().setRenderGlyphUsePath(prevIsRenderGlyphUsePath);
   }
 
   @override

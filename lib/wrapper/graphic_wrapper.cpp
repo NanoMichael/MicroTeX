@@ -111,6 +111,7 @@ sptr<Font> Graphics2D_wrapper::getFont() const {
 }
 
 void Graphics2D_wrapper::setFont(const sptr<Font>& font) {
+  if (_font != nullptr && *_font == *font) return;
   _font = font;
   _cmds.put((u8) 3, std::static_pointer_cast<Font_wrapper>(_font)->name().c_str());
 }
@@ -120,6 +121,7 @@ float Graphics2D_wrapper::getFontSize() const {
 }
 
 void Graphics2D_wrapper::setFontSize(float size) {
+  if (_fontSize == size) return;
   _cmds.put((u8) 4, size);
 }
 
