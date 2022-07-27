@@ -20,28 +20,28 @@ class LaTeX extends LeafRenderObjectWidget {
   final String latex;
   final double textSize;
   final Color color;
+  final bool isRenderGlyphUsePath;
   final TeXStyle? style;
   final Blur? blur;
 
   const LaTeX({
     Key? key,
     required this.latex,
-    double? textSize,
-    Color? color,
+    this.textSize = 20,
+    this.color = const Color(0xFF424242),
     this.style,
     this.blur,
-  })  : textSize = textSize ?? 20,
-        color = color ?? const Color(0xFF424242),
-        super(key: key);
+    this.isRenderGlyphUsePath = false,
+  }) : super(key: key);
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return RenderLaTeX(latex, textSize, color, style, blur);
+    return RenderLaTeX(latex, textSize, color, style, blur, isRenderGlyphUsePath);
   }
 
   @override
   void updateRenderObject(BuildContext context, covariant RenderLaTeX renderObject) {
-    renderObject.update(latex, textSize, color, style, blur);
+    renderObject.update(latex, textSize, color, style, blur, isRenderGlyphUsePath);
   }
 }
 
@@ -49,15 +49,16 @@ class RenderLaTeX extends RenderBox {
   String _latex;
   double _textSize;
   Color _color;
+  bool _isRenderGlyphUsePath;
   TeXStyle? _style;
   Blur? _blur;
 
   double _lastMaxWidth = 0;
   Render? _render;
 
-  RenderLaTeX(this._latex, this._textSize, this._color, this._style, this._blur);
+  RenderLaTeX(this._latex, this._textSize, this._color, this._style, this._blur, this._isRenderGlyphUsePath);
 
-  void update(String latex, double textSize, Color color, TeXStyle? style, Blur? blur) {
+  void update(String latex, double textSize, Color color, TeXStyle? style, Blur? blur, bool isRenderUsePath) {
     var needParse = false;
     if (_latex != latex || _style != style) {
       _latex = latex;
@@ -71,11 +72,14 @@ class RenderLaTeX extends RenderBox {
       needLayout = true;
     }
     var needPaint = false;
-    if (_color != color || _blur != blur) {
+    if (_color != color || _blur != blur || _isRenderGlyphUsePath != isRenderUsePath) {
       _color = color;
       _blur = blur;
-      _render?.setColor(color.value);
-      _render?.blur = blur;
+      _isRenderGlyphUsePath = isRenderUsePath;
+      _render
+        ?..setColor(color.value)
+        ..blur = blur
+        ..isRenderGlyphUsePath = isRenderUsePath;
       needPaint = true;
     }
     if (debugMicroTeX) {
@@ -96,6 +100,9 @@ class RenderLaTeX extends RenderBox {
     }
     if (needPaint) markNeedsPaint();
   }
+
+  @override
+  bool get isRepaintBoundary => true;
 
   @override
   void dispose() {
@@ -121,17 +128,18 @@ class RenderLaTeX extends RenderBox {
         );
       }
       r = MicroTeX().parse(
-        _latex,
-        _lastMaxWidth == double.infinity ? 0 : _lastMaxWidth.toInt(),
-        _textSize,
-        _textSize / 3,
-        _color,
-        false,
+        tex: _latex,
+        width: _lastMaxWidth == double.infinity ? 0 : _lastMaxWidth.toInt(),
+        textSize: _textSize,
+        lineSpace: _textSize / 3,
+        color: _color,
         // never fill the width, if you want to, wrap a Container or something like that
-        _style != null,
-        _style ?? TeXStyle.text,
+        fillWidth: false,
+        overrideTeXStyle: _style != null,
+        style: _style ?? TeXStyle.text,
       );
       r.blur = _blur;
+      r.isRenderGlyphUsePath = _isRenderGlyphUsePath;
       _render = r;
     }
     size = Size(r.width.toDouble(), r.height.toDouble());

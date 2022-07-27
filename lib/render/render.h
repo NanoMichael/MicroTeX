@@ -42,8 +42,8 @@ public:
   bool isSplit() const;
 
   /**
-   * Set text size to draw. Notice that the dimension (width, height, depth)
-   * will change following the text size change.
+   * Set text size to draw. The dimension (width, height, depth) will be
+   * changed following the text size change.
    */
   void setTextSize(float textSize);
 

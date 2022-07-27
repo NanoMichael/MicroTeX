@@ -48,6 +48,12 @@ class MicroTeX {
   /// no main font was given, thus the context fallbacks to the math font.
   String get currentMainFontFamilyName => _currentMainFontFamilyName;
 
+  set currentMainFontFamilyName(value) {
+    if (_currentMainFontFamilyName == value) return;
+    _currentMainFontFamilyName = value;
+    _setMainFont(value);
+  }
+
   List<FontMeta> get mathFonts {
     return _fonts.where((element) => element.isMathFont).toList();
   }
@@ -56,12 +62,7 @@ class MicroTeX {
     return _fonts.where((element) => !element.isMathFont).toList();
   }
 
-  set currentMainFontFamilyName(value) {
-    if (_currentMainFontFamilyName == value) return;
-    _currentMainFontFamilyName = value;
-    _setMainFont(value);
-  }
-
+  /// Initialize the MicroTeX context.
   Future<void> initialize({
     required String clmAsset,
     String textLayoutSerif = "",
@@ -161,16 +162,32 @@ class MicroTeX {
     calloc.free(str);
   }
 
-  Render parse(
-    String tex,
-    int width,
-    double textSize,
-    double lineSpace,
-    Color color,
-    bool fillWidth,
-    bool overrideTeXStyle,
-    TeXStyle style,
-  ) {
+  /// Test if MicroTeX has the ability to use path to render glyphs.
+  bool hasGlyphPathRender() {
+    return _bindings.hasGlyphPathRender();
+  }
+
+  /// Set if use path to render glyphs, only works if [hasGlyphPathRender] returns true,
+  /// otherwise this function takes no effects.
+  void setRenderGlyphUsePath(bool use) {
+    _bindings.setRenderGlyphUsePath(use);
+  }
+
+  /// Test if currently use path to render glyphs.
+  bool isRenderGlyphUsePath() {
+    return _bindings.isRenderGlyphUsePath();
+  }
+
+  Render parse({
+    required String tex,
+    required int width,
+    required double textSize,
+    required double lineSpace,
+    required Color color,
+    required bool fillWidth,
+    required bool overrideTeXStyle,
+    required TeXStyle style,
+  }) {
     final str = tex.toNativeUtf8();
     final ptr = _bindings.parse(
       str,

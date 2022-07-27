@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 
 import 'package:microtex/microtex.dart';
 import 'package:microtex_example/screen/edit_screen.dart';
+import 'package:microtex_example/widget/cmp.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,8 +13,6 @@ void main() async {
     textLayoutSansSerif: 'Noto Color Emoji',
     textLayoutMonospace: 'Noto Color Emoji',
   );
-  debugMicroTeX = false;
-  debugPaintSizeEnabled = false;
   runApp(
     const MaterialApp(
       debugShowCheckedModeBanner: false,

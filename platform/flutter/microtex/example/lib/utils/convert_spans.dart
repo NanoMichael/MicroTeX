@@ -44,10 +44,10 @@ class SpanConverter {
   _buildLaTeX(String tex, bool isInline, TextStyle style) {
     final t = LaTeX(
       latex: tex,
-      textSize: style.fontSize,
-      color: style.color,
+      textSize: style.fontSize ?? 14,
+      color: style.color ?? Colors.black,
       style: TeXStyle.display,
-      // blur: const Blur(BlurStyle.normal, 0.34),
+      isRenderGlyphUsePath: false,
     );
     if (isInline) {
       return t;
