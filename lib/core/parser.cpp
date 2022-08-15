@@ -16,19 +16,6 @@
 using namespace std;
 using namespace microtex;
 
-const char Parser::ESCAPE = '\\';
-const char Parser::L_GROUP = '{';
-const char Parser::R_GROUP = '}';
-const char Parser::L_BRACK = '[';
-const char Parser::R_BRACK = ']';
-const char Parser::DOLLAR = '$';
-const char Parser::DQUOTE = '\"';
-const char Parser::PERCENT = '%';
-const char Parser::SUB_SCRIPT = '_';
-const char Parser::SUPER_SCRIPT = '^';
-const char Parser::PRIME = '\'';
-const char Parser::BACKPRIME = '`';
-
 void Parser::init(
   bool isPartial,
   const string& latex,
@@ -94,7 +81,7 @@ void Parser::addRow() const {
   ((ArrayFormula*) _formula)->addRow();
 }
 
-string Parser::getDollarGroup(char openclose) {
+string Parser::getGroup(char openclose) {
   int spos = _pos;
   char ch;
 
@@ -245,7 +232,7 @@ string Parser::getOverArgument() {
     _pos++;
   }
 
-  // end of string reached, bu not processed properly
+  // end of string reached, but not processed properly
   if (ogroup >= 2) throw ex_parse("Illegal end, missing '}'!");
 
   string str;
@@ -267,19 +254,14 @@ string Parser::getCmd() {
 
   while (_pos < _len) {
     ch = _latex[_pos];
-    if (!isAlpha(ch) && (_atIsLetter == 0 || ch != '@'))
-      break;
-
+    if (!isAlpha(ch) && (_atIsLetter == 0 || ch != '@')) break;
     _pos++;
   }
 
   if (ch == '\0') return "";
-
   if (_pos == spos) _pos++;
-
   string com = _latex.substr(spos, _pos - spos);
   if (com == "cr" && _pos < _len && _latex[_pos] == ' ') _pos++;
-
   return com;
 }
 
@@ -410,7 +392,7 @@ void Parser::getOptsArgs(int argc, int opts, Args& args) {
   }
 }
 
-bool Parser::isValidName(const string& cmd) const {
+bool Parser::isValidCmd(const string& cmd) const {
   if (cmd.empty()) return false;
   if (cmd[0] != '\\') return false;
 
@@ -731,7 +713,7 @@ void Parser::parse() {
           }
 
           auto atom = sptrOf<MathAtom>(
-            Formula(*this, getDollarGroup(DOLLAR), false)._root,
+            Formula(*this, getGroup(DOLLAR), false)._root,
             style
           );
           _formula->add(atom);

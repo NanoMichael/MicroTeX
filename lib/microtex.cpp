@@ -30,9 +30,10 @@ static Config MICROTEX_CONFIG{false, "", "", false, false, TexStyle::text};
 Config* MicroTeX::_config = &microtex::MICROTEX_CONFIG;
 
 std::string MicroTeX::version() {
-  return std::to_string(MICROTEX_VERSION_MAJOR) + "."
-         + std::to_string(MICROTEX_VERSION_MINOR) + "."
-         + std::to_string(MICROTEX_VERSION_PATCH);
+  static const auto ver = std::to_string(MICROTEX_VERSION_MAJOR) + "."
+     + std::to_string(MICROTEX_VERSION_MINOR) + "."
+     + std::to_string(MICROTEX_VERSION_PATCH);
+  return ver;
 }
 
 #ifdef HAVE_AUTO_FONT_FIND
