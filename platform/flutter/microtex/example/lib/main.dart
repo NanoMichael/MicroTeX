@@ -13,6 +13,7 @@ void main() async {
     textLayoutSansSerif: 'Noto Color Emoji',
     textLayoutMonospace: 'Noto Color Emoji',
   );
+  debugMicroTeX = true;
   runApp(
     const MaterialApp(
       debugShowCheckedModeBanner: false,

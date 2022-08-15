@@ -4,14 +4,14 @@
 #include <map>
 #include <set>
 
-#include "utils/utils.h"
-#include "otf/otf.h"
-#include "unimath/math_type.h"
 #include "graphic/font_style.h"
+#include "otf/otf.h"
+#include "unimath/font_meta.h"
 #include "unimath/font_src.h"
+#include "unimath/math_type.h"
 #include "unimath/uni_char.h"
 #include "unimath/uni_symbol.h"
-#include "unimath/font_meta.h"
+#include "utils/utils.h"
 
 namespace microtex {
 

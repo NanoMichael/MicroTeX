@@ -31,21 +31,21 @@ private:
   bool _isPartial;
 
   /** escape character */
-  static const char ESCAPE;
+  static constexpr char ESCAPE = '\\';
   /** grouping characters (for parsing) */
-  static const char L_GROUP;
-  static const char R_GROUP;
-  static const char L_BRACK;
-  static const char R_BRACK;
-  static const char DOLLAR;
-  static const char DQUOTE;
+  static constexpr char L_GROUP = '{';
+  static constexpr char R_GROUP = '}';
+  static constexpr char L_BRACK = '[';
+  static constexpr char R_BRACK = ']';
+  static constexpr char DOLLAR = '$';
+  static constexpr char DQUOTE = '\"';
   /** percent char for comments */
-  static const char PERCENT;
+  static constexpr char PERCENT = '%';
   /** script character (for parsing) */
-  static const char SUB_SCRIPT;
-  static const char SUPER_SCRIPT;
-  static const char PRIME;
-  static const char BACKPRIME;
+  static constexpr char SUB_SCRIPT = '_';
+  static constexpr char SUPER_SCRIPT = '^';
+  static constexpr char PRIME = '\'';
+  static constexpr char BACKPRIME = '`';
 
   /** Preprocess parse string */
   void preprocess();
@@ -247,7 +247,7 @@ public:
    *
    * @throw ex_parse if the contents are badly enclosed
    */
-  std::string getDollarGroup(char openClose);
+  std::string getGroup(char openClose);
 
   /**
    * Get the contents between two delimiters
@@ -321,7 +321,7 @@ public:
    * @param cmd the command's name
    * @return the validity of the name
    */
-  bool isValidName(const std::string& cmd) const;
+  bool isValidCmd(const std::string& cmd) const;
 
   /**
    * Test the validity of a character in a command. It must contains only

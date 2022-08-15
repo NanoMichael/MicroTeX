@@ -8,16 +8,20 @@ namespace microtex {
 class Env;
 
 /**
- * An abstract superclass for all logical mathematical constructions that can be
- * a part of a Formula. All subclasses must implement the abstract Atom#createBox(Env)
- * method that transforms this logical unit into a concrete box (that can be painted).
- * They also must define their type, used for determining what glue to use between
- * adjacent atoms in a "row construction". That can be one single type by assigning one
- * of the type constants to the #_type field. But they can also be defined as having two
- * types: a "left type" and a "right type". This can be done by implementing the methods
- * Atom#leftType() and Atom#rightType(). The left type will then be used for determining
- * the glue between this atom and the previous one (in a row, if any) and the right type
- * for the glue between this atom and the following one (in a row, if any).
+ * An abstract superclass for all logical mathematical constructions that can be a part
+ * of a Formula. The abstract method [createBox(Env)] transforms this logical unit into
+ * a concrete box (that can be painted).
+ *
+ * It also defines its type, used for determining what glue to use between adjacent atoms
+ * in a "row construction". That can be one single type by assigning one of the type
+ * constants to the [_type] field. But they can also be defined as having two types: a
+ * "left type" and a "right type". This can be done by implementing the methods
+ * [leftType()] and [rightType()]. The left type will then be used for determining the
+ * glue between this atom and the previous one (in a row, if any) and the right type for
+ * the glue between this atom and the following one (in a row, if any).
+ *
+ * And the [_limitsType] used for determining what variant to use when constructing scripts,
+ * defaults to [LimitsType::noLimits].
  */
 class Atom {
 public:

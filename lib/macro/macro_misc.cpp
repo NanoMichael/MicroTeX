@@ -91,7 +91,7 @@ macro(rule) {
 macro(newcommand) {
   string newcmd(args[1]);
   int argc = 0;
-  if (!tp.isValidName(newcmd))
+  if (!tp.isValidCmd(newcmd))
     throw ex_parse("Invalid name for the command '" + newcmd);
 
   if (!args[3].empty()) valueOf(args[3], argc);
@@ -108,7 +108,7 @@ macro(newcommand) {
 macro(renewcommand) {
   string newcmd(args[1]);
   int argc = 0;
-  if (!tp.isValidName(newcmd))
+  if (!tp.isValidCmd(newcmd))
     throw ex_parse("Invalid name for the command: " + newcmd);
 
   if (!args[3].empty()) valueOf(args[3], argc);

@@ -11,6 +11,11 @@ using namespace microtex;
 extern "C" {
 #endif
 
+MICROTEX_CAPI const char* microtex_version() {
+  // No need to copy, [MicroTeX::version] returns a static string
+  return MicroTeX::version().c_str();
+}
+
 MICROTEX_CAPI void microtex_registerCallbacks(
   CBCreateTextLayout createTextLayout,
   CBGetTextLayoutBounds getTextLayoutBounds,
