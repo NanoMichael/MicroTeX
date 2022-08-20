@@ -23,8 +23,10 @@ endif ()
 ####################
 #  compile option  #
 ####################
+option(CAIRO "Build with CAIRO" OFF)
+option(BUILD_EXAMPLE_GTKMM "Build GTKMM example, only work with -DCAIRO=ON flag" OFF)
 option(GTK "Build with GTK" OFF)
-option(BUILD_EXAMPLE_GTK "Build GTK example, only work with -DGTK=ON flag" OFF)
+option(BUILD_EXAMPLE_GTKMM "Build GTK example, only work with -DCAIRO=ON and -DGTK=ON flag" OFF)
 option(QT "Build with Qt" OFF)
 option(BUILD_EXAMPLE_QT "Build Qt example, only work with -DQT=ON flag" OFF)
 option(BUILD_EXAMPLE_QTPNG "Build Qt png example, only work with -DQT=ON flag" OFF)
@@ -46,10 +48,21 @@ file(COPY res DESTINATION .)
 #####################
 # optional features #
 #####################
-if (GTK)
+if (CAIRO)
     add_subdirectory(platform/cairo)
-    if (BUILD_EXAMPLE_GTK)
-        add_subdirectory(example/gtk)
+    if (BUILD_EXAMPLE_GTKMM)
+        add_subdirectory(example/gtkmm)
+    endif ()
+endif ()
+
+if (GTK)
+    if (CAIRO)
+        add_subdirectory(platform/gtk)
+        if (BUILD_EXAMPLE_GTK)
+            add_subdirectory(example/gtk)
+        endif ()
+    else ()
+        message(FATAL_ERROR "The GTK Widget requires CAIRO to be enabled")
     endif ()
 endif ()
 

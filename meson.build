@@ -1,4 +1,4 @@
-project('microtex', 'cpp',
+project('microtex', 'cpp', 'c',
 	version : '1.0.0',
 	default_options : ['buildtype=release', 'warning_level=0', 'cpp_std=c++17']
 )
@@ -16,12 +16,26 @@ subdir('lib')
 
 if get_option('CAIRO')
   subdir('platform/cairo')
+  if get_option('EXAMPLE_GTKMM')
+    subdir('example/gtkmm')
+  endif
+else
+  if get_option('EXAMPLE_GTKMM')
+    error('EXAMPLE_GTKMM was enabled, but it requires CAIRO platform')
+  endif
+endif
+
+if get_option('GTK')
+  if not get_option('CAIRO')
+    error('GTK was enabled, but it requires CAIRO platform')
+  endif
+  subdir('platform/gtk')
   if get_option('EXAMPLE_GTK')
     subdir('example/gtk')
   endif
 else
   if get_option('EXAMPLE_GTK')
-    error('EXAMPLE_GTK was enabled, but it requires CAIRO platform')
+    error('EXAMPLE_GTK was enabled, but it requires GTK platform')
   endif
 endif
 
@@ -50,4 +64,8 @@ endif
 
 if get_option('TEST')
     subdir('test')
+endif
+
+if get_option('TARGET_DOCUMENTATION')
+    subdir('doc')
 endif

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+	<template class="MicroTexGtkDemoWin" parent="GtkApplicationWindow">
+		<property name="title">µTeX GTK Demo</property>
+		<property name="child">
+			<object class="GtkPaned" id="pane">
+				<property name="orientation">horizontal</property>
+				<property name="wide-handle">true</property>
+				<child>
+					<object class="GtkBox">
+						<property name="orientation">vertical</property>
+						<child>
+							<object class="GtkBox">
+								<property name="orientation">horizontal</property>
+								<property name="spacing">4</property>
+								<child>
+									<object class="GtkButton" id="sample_btn">
+										<property name="label">Next</property>
+										<property name="sensitive">false</property>
+										<property name="tooltip-text">Next sample</property>
+										<style>
+											<class name="suggested-action"/>
+										</style>
+									</object>
+								</child>
+								<child>
+									<object class="GtkSeparator">
+										<property name="orientation">vertical</property>
+									</object>
+								</child>
+								<child>
+									<object class="GtkSpinButton">
+										<property name="adjustment">
+											<object class="GtkAdjustment" id="font_size">
+												<property name="lower">6.0</property>
+												<property name="upper">340282346638528859811704183484516925440.0</property>
+												<property name="value">18.0</property>
+												<property name="step-increment">0.1</property>
+												<property name="page-increment">1.0</property>
+												<property name="page-size">1.0</property>
+											</object>
+										</property>
+										<property name="climb-rate">1.5</property>
+										<property name="digits">1</property>
+										<property name="width-chars">4</property>
+										<property name="tooltip-text">Font size</property>
+									</object>
+								</child>
+								<child>
+									<object class="GtkColorButton" id="color_btn">
+										<property name="tooltip-text">Text color</property>
+									</object>
+								</child>
+								<style>
+									<class name="toolbar"/>
+								</style>
+							</object>
+						</child>
+						<child>
+							<object class="GtkScrolledWindow">
+								<property name="vexpand">true</property>
+								<property name="child">
+									<object class="GtkSourceView">
+										<property name="buffer">
+											<object class="GtkSourceBuffer" id="buffer"/>
+										</property>
+									</object>
+								</property>
+							</object>
+						</child>
+					</object>
+				</child>
+				<child>
+					<object class="GtkBox">
+						<property name="orientation">vertical</property>
+						<child>
+							<object class="GtkScrolledWindow">
+								<property name="vexpand">true</property>
+								<property name="child">
+									<object class="MicroTexEquation" id="equation">
+										<property name="latex"
+											bind-source="buffer"
+											bind-property="text"
+										  bind-flags="sync-create|bidirectional"/>
+										<property name="text-size"
+						          bind-source="font_size"
+						          bind-property="value"
+						          bind-flags="sync-create|bidirectional"/>
+									</object>
+								</property>
+							</object>
+						</child>
+						<child>
+							<object class="GtkBox">
+								<property name="orientation">horizontal</property>
+								<property name="spacing">4</property>
+								<child>
+									<object class="GtkButton" id="save_btn">
+										<property name="label">Save as SVG</property>
+										<property name="halign">end</property>
+										<property name="hexpand">true</property>
+										<style>
+											<class name="suggested-action"/>
+										</style>
+									</object>
+								</child>
+								<style>
+									<class name="toolbar"/>
+								</style>
+							</object>
+						</child>
+					</object>
+				</child>
+			</object>
+		</property>
+	</template>
+</interface>
