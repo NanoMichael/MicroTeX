@@ -17,15 +17,15 @@ jobs:
     strategy:
       matrix:
         os:
-          - ubuntu-20.04
+          - ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
       - name: Downloading dependencies 📥
         run: |
-          sudo apt-get install build-essential meson libgtksourceviewmm-3.0-dev libgtkmm-3.0-dev
-          sudo apt-get install qt5-default qttools5-dev-tools
+          sudo apt-get install build-essential meson libgtksourceviewmm-3.0-dev libgtkmm-3.0-dev libgtk-4-dev libgtksourceview-5-dev gi-docgen
+          sudo apt-get install qtbase5-dev qttools5-dev-tools
       - name: Configure 🔧
-        run: meson _build
+        run: meson _build -DTARGET_DOCUMENTATION=true
       - name: Compile 🎲
         run: ninja -C _build
       - name: Compress build artifacts 📦
@@ -44,20 +44,20 @@ jobs:
     strategy:
       matrix:
         os:
-          - ubuntu-20.04
+          - ubuntu-22.04
     steps:
       - name: Downloading Source Code 📥
         uses: actions/checkout@v2
       - name: Downloading dependencies 📥
         run: |
-          sudo apt-get install build-essential meson libgtksourceviewmm-3.0-dev libgtkmm-3.0-dev
-          sudo apt-get install qt5-default qttools5-dev-tools
+          sudo apt-get install build-essential meson libgtksourceviewmm-3.0-dev libgtkmm-3.0-dev libgtk-4-dev libgtksourceview-5-dev
+          sudo apt-get install qtbase5-dev qttools5-dev-tools
       - name: Configure 🔧
         run: |
           cd ${{ github.workspace }}
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release -DGTK=ON -DBUILD_EXAMPLE_GTK=ON -DQT=ON -DBUILD_EXAMPLE_QT=ON -DBUILD_EXAMPLE_QTPNG=ON -DBUILD_EXAMPLE_MEMCHECK=ON -DWASM=OFF -DHAVE_LOG=ON -G Ninja
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DCAIRO=ON -DBUILD_EXAMPLE_GTKMM=ON -DGTK=ON -DBUILD_EXAMPLE_GTK=ON -DQT=ON -DBUILD_EXAMPLE_QT=ON -DBUILD_EXAMPLE_QTPNG=ON -DBUILD_EXAMPLE_MEMCHECK=ON -DWASM=OFF -DHAVE_LOG=ON -G Ninja
       - name: Compile 🎲
         run: |
           cd ${{ github.workspace }}

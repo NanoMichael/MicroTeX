@@ -2,12 +2,19 @@ option('HAVE_AUTO_FONT_FIND', type: 'boolean', value: true)
 
 # generate pkgconfig files & install headers
 option('TARGET_DEVEL', type : 'boolean', value : true)
+# generate documentation for gtk (requires TAGET_DEVEL)
+option('TARGET_DOCUMENTATION', type: 'boolean', value: false)
 
 # if build tests
 option('TEST', type: 'boolean', value: true)
 
 # if build cairo
 option('CAIRO', type: 'boolean', value: true)
+# if build gtkmm example
+option('EXAMPLE_GTKMM', type : 'boolean', value: true)
+
+# if build gtk (note: requires cairo)
+option('GTK', type: 'boolean', value: true)
 # if build gtk example
 option('EXAMPLE_GTK', type : 'boolean', value: true)
 

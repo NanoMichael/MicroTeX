@@ -1,0 +1,47 @@
+[library]
+version = "@version@"
+description = "A dynamic, cross-platform, and embeddable LaTeX rendering library"
+authors = "NanoMichael <artiano@hotmail.com>"
+logo_url = "microtex.svg"
+license = "MIT"
+browse_url = "https://github.com/NanoMichael/MicroTeX"
+repository_url = "https://github.com/NanoMichael/MicroTeX.git"
+website_url = "https://github.com/NanoMichael/MicroTeX"
+devhelp = true
+search_index = true
+
+dependencies = [
+    "GLib-2.0",
+    "GObject-2.0",
+    "Gtk-4.0"
+]
+
+    [dependencies."GLib-2.0"]
+    name = "GLib"
+    description = "The base type system library"
+    docs_url = "https://docs.gtk.org/glib/"
+
+    [dependencies."GObject-2.0"]
+    name = "GObject"
+    description = "The base type system library"
+    docs_url = "https://docs.gtk.org/gobject/"
+
+    [dependencies."Gtk-4.0"]
+    name = "GTK"
+    description = "The GTK toolkit"
+    docs_url = "https://docs.gtk.org/gtk4/"
+
+[theme]
+name = "basic"
+show_index_summary = true
+show_class_hierarchy = true
+
+[source-location]
+base_url = "https://github.com/NanoMichael/MicroTeX/blob/openmath/"
+file_format = "{filename}#L{line}"
+
+[extra]
+content_images = [
+    "microtex.svg",
+]
+urlmap_file = "urlmap.js"
