@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+set -e
+
 web_dir="$(pwd)"
 
 cd .. || return

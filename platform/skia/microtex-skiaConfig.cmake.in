@@ -1,0 +1,6 @@
+include(CMakeFindDependencyMacro)
+
+find_dependency(microtex REQUIRED)
+# FIXME skia?
+
+include("${CMAKE_CURRENT_LIST_DIR}/microtex-skiaTargets.cmake")

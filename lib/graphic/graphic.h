@@ -10,7 +10,7 @@ namespace microtex {
 
 class Graphics2D;
 
-/** Abstract class represents a font. */
+/** Interface to represents a font. */
 class Font {
 public:
   /** Check if current font is equals to another */
@@ -30,7 +30,13 @@ public:
   /**
    * Get the layout bounds with current text and font
    *
-   * @param bounds rectangle to retrieve the bounds
+   * @param bounds rectangle to retrieve the bounds. The metrics of the text layout
+   * is arranged by following ways:
+   *
+   * - [bounds.w] takes the width of the layout
+   * - [bounds.h] takes the height of the layout (ascent + descent)
+   * - [bounds.y] takes the ascent (distance above the baseline, in negative) of the
+   *   layout
    */
   virtual void getBounds(Rect& bounds) = 0;
 

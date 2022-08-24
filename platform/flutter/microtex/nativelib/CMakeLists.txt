@@ -23,7 +23,7 @@ endif ()
 message(STATUS "Building for flutter")
 
 # preset compile variables
-if (DEFINED IS_OSX_IOS)
+if (DEFINED IS_OSX_IOS AND IS_OSX_IOS)
     set(_BUILD_STATIC TRUE)
 endif ()
 set(_DISABLE_ALIAS TRUE)
@@ -38,7 +38,7 @@ else ()
     add_subdirectory(lib)
 endif ()
 
-if (DEFINED IS_OSX_IOS)
+if (DEFINED IS_OSX_IOS AND IS_OSX_IOS)
     set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/products)
     install(TARGETS microtex DESTINATION lib)
-endif()
+endif ()
