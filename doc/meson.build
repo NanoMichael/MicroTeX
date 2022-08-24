@@ -1,5 +1,7 @@
-toml_conf = configuration_data()
-toml_conf.set('version', meson.project_version())
+doc_conf = configuration_data()
+doc_conf.set('version', meson.project_version())
+doc_conf.set('cwd', meson.current_source_dir())
+doc_conf.set('source_root', meson.source_root())
 
 gidocgen_common_args = [
   '--quiet',
@@ -11,7 +13,7 @@ if get_option('TARGET_DEVEL')
     source_toml = configure_file(
         input: 'microtex-doc.toml.in',
         output: 'microtex-doc.toml',
-        configuration: toml_conf,
+        configuration: doc_conf,
         install: true,
         install_dir: docs_dir / 'microtex',
     )
@@ -32,6 +34,25 @@ if get_option('TARGET_DEVEL')
         build_by_default: true,
         install: true,
         install_dir: docs_dir
+    )
+
+    # doxygen
+    doxyfile = configure_file(
+        input: 'microtex.doxy.in',
+        output: 'microtex.doxy',
+        configuration: doc_conf,
+        install: true,
+        install_dir: docs_dir / 'microtex',
+    )
+    doxygen = find_program('doxygen', required: get_option('TARGET_DOCUMENTATION'))
+    custom_target('doxygen',
+      input: doxyfile,
+      output: 'html',
+      command: [doxygen, '@INPUT0@'],
+      depend_files: ['mainpage.h', 'cairodoc.h', 'microtex.docmacros.tex', 'theme/header.html', 'theme/style.css'],
+      install: true,
+      build_by_default: true,
+      install_dir: docs_dir / 'microtex'
     )
 else
     warning('TARGET_DOCUMENTATION was enabled, but TARGET_DEVEL was not. No documentation was generated')
