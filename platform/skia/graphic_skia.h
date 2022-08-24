@@ -1,62 +1,31 @@
-#include "config.h"
+#ifndef MICROTEX_GRAPHIC_SKIA_H
 
-#if defined(BUILD_SKIA) && !defined(MEM_CHECK)
+#include <include/core/SkCanvas.h>
+#include <include/core/SkFont.h>
+#include <include/core/SkTypeface.h>
+#include <include/core/SkPath.h>
 
-#ifndef GRAPHIC_SKIA_H_INCLUDED
-#define GRAPHIC_SKIA_H_INCLUDED
-
-#include <string>
-#include "graphic/graphic.h"
-#include <core/SkFont.h>
-#include <core/SkCanvas.h>
 #include <map>
-#include <QtCore/QString>
+#include <string>
+
+#include "graphic/graphic.h"
 
 namespace microtex {
 
 class Font_skia : public Font {
-
 private:
-  SkFont _font{};
+  static std::map<std::string, sk_sp<SkTypeface>> _typefaces;
+  sk_sp<SkTypeface> _typeface;
 
-  static std::map<std::pair<std::string, int>, int> _test;
-  static std::map<std::pair<std::string, int>, sk_sp<SkTypeface>> _named_typefaces;
-  static std::map<std::string, sk_sp<SkTypeface>> _file_typefaces;
-
-  static sk_sp<SkTypeface> loadTypefaceFromName(const std::string &family, int style = PLAIN);
-
-  static sk_sp<SkTypeface> loadTypefaceFromFile(const std::string &file);
-
-  Font_skia(sk_sp<SkTypeface> typeface, float size);
+  void loadFont(const std::string &file);
 
 public:
+  explicit Font_skia(const std::string &file);
 
-  // Set hinting and edging for rendering on LCD screen
-  static SkFont::Edging Edging;
-  static SkFontHinting Hinting;
+  bool operator==(const Font &f) const override;
 
-  Font_skia(const std::string &family = "", int style = PLAIN, float size = 1.f);
-
-  Font_skia(const std::string &file, float size);
-
-  std::string getFamily() const;
-
-  int getStyle() const;
-
-  SkFont getSkFont() const;
-
-  virtual float getSize() const override;
-
-  virtual sptr<Font> deriveFont(int style) const override;
-
-  virtual bool operator==(const Font &f) const override;
-
-  virtual bool operator!=(const Font &f) const override;
-
-  virtual ~Font_skia() {};
-
+  sk_sp<SkTypeface> getSkTypeface() const;
 };
-
 
 /**************************************************************************************************/
 
@@ -66,77 +35,105 @@ private:
   std::string _text;
 
 public:
-  TextLayout_skia(const std::wstring &src, const sptr<Font_skia> &font);
+  TextLayout_skia(std::string src, FontStyle style, float size);
 
-  virtual void getBounds(_out_ Rect &r) override;
+  void getBounds(Rect &bounds) override;
 
-  virtual void draw(Graphics2D &g2, float x, float y) override;
+  void draw(Graphics2D &g2, float x, float y) override;
+};
+
+/**************************************************************************************************/
+
+class PlatformFactory_skia : public PlatformFactory {
+public:
+  sptr<Font> createFont(const std::string &file) override;
+
+  sptr<TextLayout> createTextLayout(const std::string &src, FontStyle style, float size) override;
 };
 
 /**************************************************************************************************/
 
 class Graphics2D_skia : public Graphics2D {
 private:
-  static Font_skia _default_font;
-
   SkCanvas *_canvas;
   SkPaint _paint;
   color _color;
   Stroke _stroke;
-  const Font_skia *_font;
+  sptr<Font_skia> _font;
+  float _fontSize;
   float _sx, _sy;
+  SkPath _path;
 
 public:
-  Graphics2D_skia(SkCanvas *painter);
+  explicit Graphics2D_skia(SkCanvas *canvas);
 
-  SkCanvas *getSkCanvas() const;
+  SkCanvas* getSkCanvas() const;
 
-  const SkPaint &getSkPaint() const;
+  const SkPaint& getSkPaint() const;
 
-  virtual void setColor(color c) override;
+  void setColor(color c) override;
 
-  virtual color getColor() const override;
+  color getColor() const override;
 
-  virtual void setStroke(const Stroke &s) override;
+  void setStroke(const Stroke &s) override;
 
-  virtual const Stroke &getStroke() const override;
+  const Stroke &getStroke() const override;
 
-  virtual void setStrokeWidth(float w) override;
+  void setStrokeWidth(float w) override;
 
-  virtual const Font *getFont() const override;
+  void setDash(const std::vector<float> &dash) override;
 
-  virtual void setFont(const Font *font) override;
+  std::vector<float> getDash() override;
 
-  virtual void translate(float dx, float dy) override;
+  sptr<Font> getFont() const override;
 
-  virtual void scale(float sx, float sy) override;
+  void setFont(const sptr<Font> &font) override;
 
-  virtual void rotate(float angle) override;
+  float getFontSize() const override;
 
-  virtual void rotate(float angle, float px, float py) override;
+  void setFontSize(float size) override;
 
-  virtual void reset() override;
+  void translate(float dx, float dy) override;
 
-  virtual float sx() const override;
+  void scale(float sx, float sy) override;
 
-  virtual float sy() const override;
+  void rotate(float angle) override;
 
-  virtual void drawChar(wchar_t c, float x, float y) override;
+  void rotate(float angle, float px, float py) override;
 
-  virtual void drawText(const std::wstring &t, float x, float y) override;
+  void reset() override;
 
-  virtual void drawLine(float x, float y1, float x2, float y2) override;
+  float sx() const override;
 
-  virtual void drawRect(float x, float y, float w, float h) override;
+  float sy() const override;
 
-  virtual void fillRect(float x, float y, float w, float h) override;
+  void drawGlyph(u16 glyph, float x, float y) override;
 
-  virtual void drawRoundRect(float x, float y, float w, float h, float rx, float ry) override;
+  bool beginPath(i32 id) override;
 
-  virtual void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
+  void moveTo(float x, float y) override;
+
+  void lineTo(float x, float y) override;
+
+  void cubicTo(float x1, float y1, float x2, float y2, float x3, float y3) override;
+
+  void quadTo(float x1, float y1, float x2, float y2) override;
+
+  void closePath() override;
+
+  void fillPath(i32 id) override;
+
+  void drawLine(float x1, float y1, float x2, float y2) override;
+
+  void drawRect(float x, float y, float w, float h) override;
+
+  void fillRect(float x, float y, float w, float h) override;
+
+  void drawRoundRect(float x, float y, float w, float h, float rx, float ry) override;
+
+  void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
 };
 
-}
+}  // namespace microtex
 
-#endif   // GRAPHIC_SKIA_H_INCLUDED
-#endif   // defined(BUILD_SKIA) && !defined(MEM_CHECK)
+#endif  // MICROTEX_GRAPHIC_SKIA_H

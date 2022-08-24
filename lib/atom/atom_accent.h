@@ -29,9 +29,6 @@ public:
    * @param name name of the accent symbol to be put over the base atom
    * @param fitSize if accent fit the base atom's width
    * @param fake if is a fake accent
-   *
-   * @throw ex_invalid_symbol_type if the symbol is not defined as An accent ('acc')
-   * @throw ex_symbol_not_found if there's no symbol defined with the given name
    */
   AccentedAtom(
     const sptr<Atom>& base, const std::string& name,

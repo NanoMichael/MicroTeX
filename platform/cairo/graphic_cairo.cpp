@@ -1,5 +1,6 @@
 #include <fontconfig/fontconfig.h>
-#include <cairo/cairo-ft.h>
+// #include <cairo/cairo-ft.h>
+#include <cairo-ft.h>
 #include <pango/pangocairo.h>
 
 #include <utility>

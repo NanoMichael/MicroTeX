@@ -75,6 +75,10 @@ if (QT)
     endif ()
 endif ()
 
+if (SKIA)
+    add_subdirectory(platform/skia)
+endif ()
+
 if (GDI)
     add_subdirectory(platform/gdi_win)
     if (BUILD_EXAMPLE_WIN32)

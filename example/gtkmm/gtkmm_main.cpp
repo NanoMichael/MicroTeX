@@ -479,6 +479,7 @@ int runPerf(const std::string& samplesFilePath) {
 int main(int argc, char* argv[]) {
   bool isHeadless = false;
   bool isPerf = false;
+  bool usePath = false;
   Headless h;
   std::optional<std::string> fontsense;
   std::string mathFont, clmFile;
@@ -493,6 +494,8 @@ int main(int argc, char* argv[]) {
       h._samplesFile = value;
     } else if (key == "-fontsense") {
       fontsense = value;
+    } else if (key == "-usepath") {
+      usePath = value == "true";
     } else {
       getHeadlessOpt(h, key, value);
     }
@@ -549,6 +552,8 @@ int main(int argc, char* argv[]) {
 
   PlatformFactory::registerFactory("gtk", std::make_unique<PlatformFactory_cairo>());
   PlatformFactory::activate("gtk");
+
+  MicroTeX::setRenderGlyphUsePath(usePath);
 
   int result = 0;
   if (isHeadless) {
