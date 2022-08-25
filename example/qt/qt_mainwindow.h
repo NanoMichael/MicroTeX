@@ -1,25 +1,19 @@
 #ifndef QT_MAINWINDOW_H
 #define QT_MAINWINDOW_H
 
+#include <QSpinBox>
+#include <QTextEdit>
+#include <QWidget>
+
+#include "qt_tex_render.h"
 #include "samples.h"
 
-#ifdef BUILD_SKIA
-#include "qt_skiatexwidget.h"
-#else
-
-#include "qt_texwidget.h"
-
-#endif
-
-#include <QWidget>
-#include <QTextEdit>
-#include <QSpinBox>
-
 class MainWindow : public QWidget {
-Q_OBJECT
+  Q_OBJECT
 
 public:
-  MainWindow(QWidget* parent = nullptr, const std::string& smaplesFile = "");
+  explicit MainWindow(
+    QWidget* parent = nullptr, bool useSkia = false, const std::string& smaplesFile = "");
 
 protected slots:
 
@@ -32,7 +26,8 @@ protected slots:
   void fontSizeChanged(int size);
 
 protected:
-  TeXWidget* _texwidget;
+  QWidget* _texwidget;
+  TeXRender* _render;
   QTextEdit* _textedit;
   QSpinBox* _sizespin;
 

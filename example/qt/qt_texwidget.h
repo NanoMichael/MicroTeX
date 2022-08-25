@@ -1,30 +1,33 @@
 #ifndef QT_TEXWIDGET_H
 #define QT_TEXWIDGET_H
 
-#include "graphic_qt.h"
-#include "microtex.h"
-
 #include <QWidget>
 
-class TeXWidget : public QWidget {
+#include "graphic_qt.h"
+#include "microtex.h"
+#include "qt_tex_render.h"
+
+class TeXWidget : public QWidget, public TeXRender {
 public:
   explicit TeXWidget(QWidget* parent = nullptr, float text_size = 20.f);
 
   ~TeXWidget() override;
 
-  float getTextSize();
+  float getTextSize() override;
 
-  void setTextSize(float size);
+  void setTextSize(float size) override;
 
-  void setLaTeX(const std::string& latex);
+  void setLaTeX(const std::string& latex) override;
 
-  bool isRenderDisplayed();
+  bool isRenderDisplayed() override;
 
-  int getRenderWidth();
+  int getRenderWidth() override;
 
-  int getRenderHeight();
+  int getRenderHeight() override;
 
   void paintEvent(QPaintEvent* event) override;
+
+  void saveSVG(const char* path) override;
 
 private:
   microtex::Render* _render;

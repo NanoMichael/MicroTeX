@@ -1,8 +1,14 @@
 #include "graphic_skia.h"
 
+#include <include/effects/SkDashPathEffect.h>
+#include <modules/skparagraph/include/FontCollection.h>
+#include <modules/skparagraph/include/Paragraph.h>
+#include <modules/skparagraph/include/ParagraphBuilder.h>
+
 #include <utility>
 
 #include "utils/log.h"
+#include "utils/nums.h"
 #include "utils/types.h"
 #include "utils/utils.h"
 
@@ -17,9 +23,6 @@ Font_skia::Font_skia(const std::string &file) {
 
 void Font_skia::loadFont(const std::string &file) {
   if (auto it = _typefaces.find(file); it != _typefaces.end()) {
-#ifdef HAVE_LOG
-    logv("'%s' already loaded, skip\n", file.c_str());
-#endif
     _typeface = it->second;
     return;
   }
@@ -44,32 +47,63 @@ sk_sp<SkTypeface> Font_skia::getSkTypeface() const {
 
 /**************************************************************************************************/
 
-TextLayout_skia::TextLayout_skia(std::string src, microtex::FontStyle style, float size) : _text(std::move(src)) {
-  std::string family("Serif");
-  if (microtex::isSansSerif(style)) {
-    family = "Sans-Serif";
-  } else if (microtex::isMono(style)) {
-    family = "Monospace";
-  }
+namespace {
+
+SkFontStyle getSkFontStyle(microtex::FontStyle style) {
   auto weight = microtex::isBold(style) ? SkFontStyle::kBold_Weight : SkFontStyle::kNormal_Weight;
   auto slant = microtex::isItalic(style) ? SkFontStyle::kItalic_Slant : SkFontStyle::kUpright_Slant;
-  SkFontStyle fontStyle(weight, SkFontStyle::kNormal_Width, slant);
-  auto typeface = SkTypeface::MakeFromName(family.c_str(), fontStyle);
-  _font = SkFont(typeface, size);
+  return {weight, SkFontStyle::kNormal_Width, slant};
+}
+
+sk_sp<skia::textlayout::FontCollection> getSkFontCollection() {
+  static sk_sp<skia::textlayout::FontCollection> fontCollection;
+  if (fontCollection == nullptr) {
+    fontCollection = sk_make_sp<skia::textlayout::FontCollection>();
+    fontCollection->enableFontFallback();
+    fontCollection->setDefaultFontManager(SkFontMgr::RefDefault());
+  }
+  return fontCollection;
+}
+
+}  // namespace
+
+TextLayout_skia::TextLayout_skia(const std::string &src, microtex::FontStyle style, float size) {
+  _textLen = src.length();
+  skia::textlayout::TextStyle textStyle;
+  textStyle.setFontSize(size);
+  textStyle.setFontStyle(getSkFontStyle(style));
+  std::vector<SkString> families;
+  if (microtex::isSansSerif(style)) {
+    families.emplace_back("sans-serif");
+  } else {
+    families.emplace_back("serif");
+  }
+  if (microtex::isMono(style)) {
+    families.emplace_back("monospace");
+  }
+  textStyle.setFontFamilies(families);
+  skia::textlayout::ParagraphStyle paragraphStyle;
+  paragraphStyle.setTextStyle(textStyle);
+  auto builder = skia::textlayout::ParagraphBuilder::make(paragraphStyle, getSkFontCollection());
+  builder->addText(src.c_str());
+  _paragraph = builder->Build();
+  // FIXME unlimited text width?
+  _paragraph->layout(microtex::F_MAX);
 }
 
 void TextLayout_skia::getBounds(microtex::Rect &bounds) {
-  SkRect rect{};
-  _font.measureText(_text.c_str(), _text.size(), SkTextEncoding::kUTF8, &rect);
-  bounds.x = rect.left();
-  bounds.y = rect.top();
-  bounds.w = rect.width();
-  bounds.h = rect.height();
+  bounds.x = 0;
+  bounds.y = -_paragraph->getAlphabeticBaseline();
+  bounds.w = _paragraph->getMaxIntrinsicWidth();
+  bounds.h = _paragraph->getHeight();
 }
 
 void TextLayout_skia::draw(microtex::Graphics2D &g2, float x, float y) {
   auto &g = static_cast<Graphics2D_skia &>(g2);
-  g.getSkCanvas()->drawString(_text.c_str(), x, y, _font, g.getSkPaint());
+  SkPaint paint;
+  paint.setColor(g2.getColor());
+  _paragraph->updateForegroundPaint(0, _textLen, paint);
+  _paragraph->paint(g.getSkCanvas(), x, y - _paragraph->getAlphabeticBaseline());
 }
 
 /**************************************************************************************************/
@@ -78,7 +112,8 @@ sptr<Font> PlatformFactory_skia::createFont(const std::string &file) {
   return sptrOf<Font_skia>(file);
 }
 
-sptr<TextLayout> PlatformFactory_skia::createTextLayout(const std::string &src, microtex::FontStyle style, float size) {
+sptr<TextLayout> PlatformFactory_skia::createTextLayout(
+  const std::string &src, microtex::FontStyle style, float size) {
   return sptrOf<TextLayout_skia>(src, style, size);
 }
 
@@ -88,6 +123,7 @@ Graphics2D_skia::Graphics2D_skia(SkCanvas *canvas) : _canvas(canvas) {
   _sx = _sy = 1;
   _paint.setAntiAlias(true);
   setColor(BLACK);
+  setSkFontSettings({true, SkFont::Edging::kAntiAlias, SkFontHinting::kNone});
 }
 
 SkCanvas *Graphics2D_skia::getSkCanvas() const {
@@ -96,6 +132,10 @@ SkCanvas *Graphics2D_skia::getSkCanvas() const {
 
 const SkPaint &Graphics2D_skia::getSkPaint() const {
   return _paint;
+}
+
+void Graphics2D_skia::setSkFontSettings(const microtex::SkiaFontSettings &settings) {
+  _fontSettings = settings;
 }
 
 void Graphics2D_skia::setColor(microtex::color c) {
@@ -151,12 +191,12 @@ void Graphics2D_skia::setStrokeWidth(float w) {
 }
 
 void Graphics2D_skia::setDash(const std::vector<float> &dash) {
-  // TODO
+  _paint.setPathEffect(SkDashPathEffect::Make(dash.data(), dash.size(), 0));
+  _dash = dash;
 }
 
 std::vector<float> Graphics2D_skia::getDash() {
-  // TODO
-  return {};
+  return _dash;
 }
 
 sptr<Font> Graphics2D_skia::getFont() const {
@@ -213,6 +253,9 @@ float Graphics2D_skia::sy() const {
 void Graphics2D_skia::drawGlyph(microtex::u16 glyph, float x, float y) {
   _paint.setStyle(SkPaint::Style::kFill_Style);
   SkFont font(_font->getSkTypeface(), _fontSize);
+  font.setSubpixel(_fontSettings.subpixel);
+  font.setEdging(_fontSettings.edging);
+  font.setHinting(_fontSettings.hinting);
   SkPoint position{x, y};
   _canvas->drawGlyphs(1, &glyph, &position, {0, 0}, font, _paint);
 }
@@ -272,16 +315,3 @@ void Graphics2D_skia::fillRoundRect(float x, float y, float w, float h, float rx
   _paint.setStyle(SkPaint::Style::kFill_Style);
   _canvas->drawRoundRect(SkRect::MakeXYWH(x, y, w, h), rx, ry, _paint);
 }
-
-// SkFont::Edging Font_skia::Edging{SkFont::Edging::kAntiAlias};
-// SkFontHinting Font_skia::Hinting{SkFontHinting::kNone};
-
-// Font_skia::Font_skia(sk_sp<SkTypeface> typeface, float size) {
-//   _font.setTypeface(std::move(typeface));
-//   _font.setSubpixel(true);
-//   _font.setHinting(Hinting);
-//   _font.setEdging(Edging);
-//   _font.setSize(size);
-// }
-//
-/**************************************************************************************************/

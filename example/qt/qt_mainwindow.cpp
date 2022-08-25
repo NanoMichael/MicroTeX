@@ -1,19 +1,23 @@
-#include <string>
+#include "qt_mainwindow.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QSplitter>
 #include <QString>
+#include <string>
+// #include "moc_qt_mainwindow.cpp"
 
-#include "qt_mainwindow.h"
-//#include "moc_qt_mainwindow.cpp"
+#include "qt_texwidget.h"
+
+#ifdef BUILD_SKIA
+#include "qt_skiatexwidget.h"
+#endif
 
 using namespace std;
 
-// todo
-MainWindow::MainWindow(QWidget* parent, const std::string& samplesFile)
-  : QWidget(parent), _samples(samplesFile) {
+MainWindow::MainWindow(QWidget* parent, bool useSkia, const std::string& samplesFile)
+    : QWidget(parent), _samples(samplesFile) {
   int text_size = 20;
 
   // main layout for window
@@ -24,7 +28,16 @@ MainWindow::MainWindow(QWidget* parent, const std::string& samplesFile)
   layout->addWidget(splitter);
 
   // the TeX widget is on the left
+#ifdef BUILD_SKIA
+  if (useSkia) {
+    _texwidget = new SkiaTeXWidget(nullptr, text_size);
+  } else {
+    _texwidget = new TeXWidget(nullptr, text_size);
+  }
+#else
   _texwidget = new TeXWidget(nullptr, text_size);
+#endif
+  _render = dynamic_cast<TeXRender*>(_texwidget);
   _texwidget->setMinimumWidth(400);
 
   // these are the widgets on the right side
@@ -33,6 +46,7 @@ MainWindow::MainWindow(QWidget* parent, const std::string& samplesFile)
   QVBoxLayout* rlayout = new QVBoxLayout;
   right->setLayout(rlayout);
   _textedit = new QTextEdit;
+  _textedit->setFontFamily("Monaco");
   rlayout->addWidget(_textedit);
 
   // these are the controls which go at the bottom right
@@ -61,40 +75,30 @@ MainWindow::MainWindow(QWidget* parent, const std::string& samplesFile)
   setLayout(layout);
 
   QObject::connect(
-    next, &QPushButton::clicked,
-    this, &MainWindow::nextClicked
-  );
+    next, &QPushButton::clicked, this, &MainWindow::nextClicked);
   QObject::connect(
-    render, &QPushButton::clicked,
-    this, &MainWindow::renderClicked
-  );
+    render, &QPushButton::clicked, this, &MainWindow::renderClicked);
   QObject::connect(
-    save, &QPushButton::clicked,
-    this, &MainWindow::saveClicked
-  );
+    save, &QPushButton::clicked, this, &MainWindow::saveClicked);
   QObject::connect(
-    _sizespin, SIGNAL(valueChanged(int)),
-    this, SLOT(fontSizeChanged(int))
-  );
+    _sizespin, SIGNAL(valueChanged(int)), this, SLOT(fontSizeChanged(int)));
 }
 
 void MainWindow::fontSizeChanged(int size) {
-  _texwidget->setTextSize(size);
+  _render->setTextSize(size);
 }
 
 void MainWindow::nextClicked() {
   auto sample = _samples.next();
   _textedit->setText(QString::fromStdString(sample));
-  _texwidget->setLaTeX(sample);
+  _render->setLaTeX(sample);
 }
 
 void MainWindow::renderClicked() {
   QString text = _textedit->toPlainText();
-  _texwidget->setLaTeX(text.toStdString());
+  _render->setLaTeX(text.toStdString());
 }
 
 void MainWindow::saveClicked() {
-#ifdef BUILD_SKIA
-  _texwidget->saveSVG("out.svg");
-#endif
+  _render->saveSVG("out.svg");
 }
