@@ -1,14 +1,16 @@
-#if defined(BUILD_SKIA) && !defined(MEM_CHECK)
-
 #include "qt_skiatexwidget.h"
-#include <QOpenGLContext>
-#include <core/SkCanvas.h>
-#include <QOpenGLFunctions>
-#include "platform/skia/graphic_skia.h"
-#include <gpu/gl/GrGLAssembleInterface.h>
+
+#include <include/core/SkCanvas.h>
+#include <include/core/SkColorSpace.h>
+#include <include/core/SkStream.h>
+#include <include/gpu/gl/GrGLAssembleInterface.h>
+#include <include/svg/SkSVGCanvas.h>
+
 #include <QApplication>
-#include <svg/SkSVGCanvas.h>
-#include <core/SkStream.h>
+#include <QOpenGLContext>
+#include <QOpenGLFunctions>
+
+#include "graphic_skia.h"
 
 using namespace microtex;
 
@@ -49,25 +51,25 @@ static sk_sp<SkSurface> createSurface(GrRecordingContext *ctx, int w, int h, GrG
   info.fFormat = GL_RGBA8;
   GrBackendRenderTarget target(w, h, 0, 8, info);
   const SkSurfaceProps props(0, SkPixelGeometry::kUnknown_SkPixelGeometry);  // Can customize subpixel layout here
-  return SkSurface::MakeFromBackendRenderTarget(ctx, target, kBottomLeft_GrSurfaceOrigin, kRGBA_8888_SkColorType,
-                                                nullptr, &props, nullptr);
+  return SkSurface::MakeFromBackendRenderTarget(
+    ctx, target, kBottomLeft_GrSurfaceOrigin, kRGBA_8888_SkColorType, nullptr, &props, nullptr);
 }
 
-TeXWidget::TeXWidget(QWidget *parent, float text_size)
+SkiaTeXWidget::SkiaTeXWidget(QWidget *parent, float text_size)
     : QOpenGLWidget(parent),
       _render(nullptr),
       _text_size(text_size),
       _padding(20) {}
 
-TeXWidget::~TeXWidget() {
-  if (_render != nullptr) delete _render;
+SkiaTeXWidget::~SkiaTeXWidget() {
+  delete _render;
 }
 
-float TeXWidget::getTextSize() {
+float SkiaTeXWidget::getTextSize() {
   return _text_size;
 }
 
-void TeXWidget::setTextSize(float size) {
+void SkiaTeXWidget::setTextSize(float size) {
   if (size == _text_size) return;
   _text_size = size;
   if (_render != nullptr) {
@@ -76,36 +78,36 @@ void TeXWidget::setTextSize(float size) {
   }
 }
 
-void TeXWidget::setLaTeX(const std::wstring &latex) {
+void SkiaTeXWidget::setLaTeX(const std::string &latex) {
   if (_render != nullptr) delete _render;
-
-  _render = LaTeX::parse(
-      latex,
-      width() - _padding * 2,
-      _text_size,
-      _text_size / 3.f,
-      0xff000000);
+  const auto size = _text_size * devicePixelRatio();
+  _render = MicroTeX::parse(
+    latex,
+    width() * devicePixelRatio() - _padding * 2,
+    size,
+    size / 3.f,
+    0xff424242);
   update();
 }
 
-bool TeXWidget::isRenderDisplayed() {
+bool SkiaTeXWidget::isRenderDisplayed() {
   return _render != nullptr;
 }
 
-int TeXWidget::getRenderWidth() {
+int SkiaTeXWidget::getRenderWidth() {
   return _render == nullptr ? 0 : _render->getWidth() + _padding * 2;
 }
 
-int TeXWidget::getRenderHeight() {
+int SkiaTeXWidget::getRenderHeight() {
   return _render == nullptr ? 0 : _render->getHeight() + _padding * 2;
 }
 
-void TeXWidget::initializeGL() {
+void SkiaTeXWidget::initializeGL() {
   _context = makeContext(context());
   _gl = context()->functions();
 }
 
-void TeXWidget::paintGL() {
+void SkiaTeXWidget::paintGL() {
   auto *canvas = _surface->getCanvas();
   canvas->clear(SK_ColorWHITE);
   SkPaint paint;
@@ -116,14 +118,15 @@ void TeXWidget::paintGL() {
   _context->flush();
 }
 
-void TeXWidget::resizeGL(int w, int h) {
+void SkiaTeXWidget::resizeGL(int w, int h) {
   _gl->glViewport(0, 0, w, h);
   _context->resetContext();
-  _surface = createSurface(_context.get(), w, h, defaultFramebufferObject());
+  auto r = devicePixelRatio();
+  _surface = createSurface(_context.get(), w * r, h * r, defaultFramebufferObject());
   update();
 }
 
-void TeXWidget::saveSVG(const char *path) {
+void SkiaTeXWidget::saveSVG(const char *path) {
   // This does not work properly for the more complex examples,
   // which might be due to skia as the SkSVG backend is still experimental.
   // Simples case like $\frac12$ seem to work fine, though.
@@ -136,6 +139,3 @@ void TeXWidget::saveSVG(const char *path) {
     _render->draw(g2, _padding, _padding);
   }
 }
-
-
-#endif

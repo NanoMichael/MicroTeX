@@ -1,34 +1,58 @@
-#include "microtex.h"
+#include <QApplication>
 
+#include "graphic_qt.h"
+#include "microtex.h"
 #include "qt_mainwindow.h"
 
-#include <QApplication>
+#ifdef BUILD_SKIA
+#include "graphic_skia.h"
+#include "qt_skiatexwidget.h"
+#endif
+
+void initSkia() {
+#ifdef BUILD_SKIA
+  microtex::PlatformFactory::registerFactory("skia", std::make_unique<microtex::PlatformFactory_skia>());
+  microtex::PlatformFactory::activate("skia");
+  initGL();
+#endif
+}
+
+void initQt() {
+  microtex::PlatformFactory::registerFactory("qt", std::make_unique<microtex::PlatformFactory_qt>());
+  microtex::PlatformFactory::activate("qt");
+}
 
 int main(int argc, char** argv) {
   QApplication app(argc, argv);
 
-#ifdef BUILD_SKIA
-  initGL();
-#endif
   if (argc < 4) {
     fprintf(
       stderr,
-      "Required options:\n"
+      "Required arguments:\n"
       "  <clm data file>\n"
       "  <math font file>\n"
       "  <samples file>\n"
-    );
+      "Optional arguments:\n"
+      "  <if render glyph use path: true|false>"
+      "  <if render use skia: true|false>");
     return 1;
   }
   const microtex::FontSrcFile math{argv[1], argv[2]};
   microtex::MicroTeX::init(&math);
+  const std::string samples(argv[3]);
+  microtex::MicroTeX::setRenderGlyphUsePath(argc > 4 && std::string("true") == std::string(argv[4]));
 
-  microtex::PlatformFactory::registerFactory("qt", std::make_unique<microtex::PlatformFactory_qt>());
-  microtex::PlatformFactory::activate("qt");
-
-  microtex::MicroTeX::setRenderGlyphUsePath(true);
-
-  MainWindow win(nullptr, argv[3]);
+  bool useSkia = argc > 5 && std::string("true") == std::string(argv[5]);
+#ifdef BUILD_SKIA
+  if (useSkia) {
+    initSkia();
+  } else {
+    initQt();
+  }
+#else
+  initQt();
+#endif
+  MainWindow win(nullptr, useSkia, samples);
   win.show();
   int ret = QApplication::exec();
 

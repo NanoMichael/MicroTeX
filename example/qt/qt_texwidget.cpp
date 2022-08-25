@@ -3,10 +3,10 @@
 using namespace microtex;
 
 TeXWidget::TeXWidget(QWidget* parent, float text_size)
-  : QWidget(parent),
-    _render(nullptr),
-    _text_size(text_size),
-    _padding(20) {
+    : QWidget(parent),
+      _render(nullptr),
+      _text_size(text_size),
+      _padding(20) {
   QPalette pal = palette();
   pal.setColor(QPalette::Window, Qt::white);
   setPalette(pal);
@@ -37,8 +37,7 @@ void TeXWidget::setLaTeX(const std::string& latex) {
     width() - _padding * 2,
     _text_size,
     _text_size / 3.f,
-    0xff424242
-  );
+    0xff424242);
   update();
 }
 
@@ -52,6 +51,10 @@ int TeXWidget::getRenderWidth() {
 
 int TeXWidget::getRenderHeight() {
   return _render == nullptr ? 0 : _render->getHeight() + _padding * 2;
+}
+
+void TeXWidget::saveSVG(const char* path) {
+  // TODO
 }
 
 void TeXWidget::paintEvent(QPaintEvent* event) {

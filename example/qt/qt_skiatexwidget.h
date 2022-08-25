@@ -1,39 +1,32 @@
-#include "config.h"
-
-#if defined(BUILD_SKIA) && !defined(MEM_CHECK)
-
 #ifndef QT_SKIATEXWIDGET_H
 #define QT_SKIATEXWIDGET_H
 
-#include "platform/qt/graphic_qt.h"
-#include "microtex.h"
+#include <include/core/SkSurface.h>
+#include <include/gpu/GrDirectContext.h>
+
 #include <QOpenGLWidget>
-#include <gpu/GrDirectContext.h>
-#include <core/SkSurface.h>
+
+#include "microtex.h"
+#include "qt_tex_render.h"
+#include "render/render.h"
 
 class QOpenGLFunctions;
 
 void initGL();
 
-class TeXWidget : public QOpenGLWidget {
+class SkiaTeXWidget : public QOpenGLWidget, public TeXRender {
 public:
-  TeXWidget(QWidget *parent = nullptr, float text_size = 20.f);
+  explicit SkiaTeXWidget(QWidget *parent = nullptr, float text_size = 20.f);
 
-  virtual ~TeXWidget();
+  ~SkiaTeXWidget() override;
 
-  float getTextSize();
-
-  void setTextSize(float size);
-
-  void setLaTeX(const std::wstring &latex);
-
-  bool isRenderDisplayed();
-
-  int getRenderWidth();
-
-  int getRenderHeight();
-
-  void saveSVG(const char *path);
+  float getTextSize() override;
+  void setTextSize(float size) override;
+  void setLaTeX(const std::string &latex) override;
+  bool isRenderDisplayed() override;
+  int getRenderWidth() override;
+  int getRenderHeight() override;
+  void saveSVG(const char *path) override;
 
 protected:
   void initializeGL() override;
@@ -43,15 +36,13 @@ protected:
   void resizeGL(int w, int h) override;
 
 private:
-  microtex::TeXRender *_render;
+  microtex::Render *_render;
   float _text_size;
   int _padding;
-  std::wstring _latex{};
 
   sk_sp<GrDirectContext> _context{};
   sk_sp<SkSurface> _surface{};
   QOpenGLFunctions *_gl{};
 };
 
-#endif
 #endif
