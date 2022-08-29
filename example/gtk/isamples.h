@@ -12,4 +12,4 @@ const gchar* samples_next(gpointer samples);
 
 G_END_DECLS
 
-#endif // __ISAMPLES_H__
+#endif  // __ISAMPLES_H__
