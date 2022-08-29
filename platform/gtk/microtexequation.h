@@ -12,27 +12,27 @@ G_BEGIN_DECLS
 
 // msvc
 #ifdef _MSC_VER
-#   if defined(MICROTEX_LIBRARY)
-#       define MICROTEX_EXPORT __declspec(dllexport)
-#   else
-#       define MICROTEX_EXPORT __declspec(dllimport)
-#   endif
+#if defined(MICROTEX_LIBRARY)
+#define MICROTEX_EXPORT __declspec(dllexport)
+#else
+#define MICROTEX_EXPORT __declspec(dllimport)
+#endif
 // gnuc and clang
 #elif defined(__GNUC__) || defined(__GNUG__) || defined(__clang__)
-#   define MICROTEX_EXPORT __attribute((visibility("default")))
+#define MICROTEX_EXPORT __attribute((visibility("default")))
 // otherwise...
 #else
-#   define MICROTEX_EXPORT
+#define MICROTEX_EXPORT
 #endif
 
 #define MICROTEX_TYPE_EQUATION (microtex_equation_get_type())
 MICROTEX_EXPORT
-G_DECLARE_DERIVABLE_TYPE (MicroTexEquation, microtex_equation, MICROTEX, EQUATION, GtkWidget)
+G_DECLARE_DERIVABLE_TYPE(MicroTexEquation, microtex_equation, MICROTEX, EQUATION, GtkWidget)
 
 struct _MicroTexEquationClass {
-	GtkWidgetClass parent_class;
+  GtkWidgetClass parent_class;
 
-	gpointer padding[12];
+  gpointer padding[12];
 };
 
 MICROTEX_EXPORT
@@ -69,4 +69,4 @@ gboolean microtex_equation_init_tex();
 
 G_END_DECLS
 
-#endif // __MICROTEXEQUATION_H__
+#endif  // __MICROTEXEQUATION_H__
