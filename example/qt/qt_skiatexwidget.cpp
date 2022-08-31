@@ -73,20 +73,25 @@ void SkiaTeXWidget::setTextSize(float size) {
   if (size == _text_size) return;
   _text_size = size;
   if (_render != nullptr) {
-    _render->setTextSize(_text_size);
+    _render->setTextSize(_text_size * devicePixelRatio());
     update();
   }
 }
 
 void SkiaTeXWidget::setLaTeX(const std::string &latex) {
-  if (_render != nullptr) delete _render;
+  delete _render;
   const auto size = _text_size * devicePixelRatio();
+  auto parent = parentWidget();
+  int w = parent == nullptr ? width() : parent->width();
   _render = MicroTeX::parse(
     latex,
-    width() * devicePixelRatio() - _padding * 2,
+    w * devicePixelRatio() - _padding * 2,
     size,
     size / 3.f,
     0xff424242);
+  resize(
+    getRenderWidth() / devicePixelRatio(),
+    getRenderHeight() / devicePixelRatio());
   update();
 }
 

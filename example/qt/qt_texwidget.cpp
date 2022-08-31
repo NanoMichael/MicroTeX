@@ -25,19 +25,22 @@ void TeXWidget::setTextSize(float size) {
   _text_size = size;
   if (_render != nullptr) {
     _render->setTextSize(_text_size);
+    resize(getRenderWidth(), getRenderHeight());
     update();
   }
 }
 
 void TeXWidget::setLaTeX(const std::string& latex) {
-  if (_render != nullptr) delete _render;
-
+  delete _render;
+  auto parent = parentWidget();
+  int w = parent == nullptr ? width() : parent->width();
   _render = MicroTeX::parse(
     latex,
-    width() - _padding * 2,
+    w - _padding * 2,
     _text_size,
     _text_size / 3.f,
     0xff424242);
+  resize(getRenderWidth(), getRenderHeight());
   update();
 }
 

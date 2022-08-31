@@ -3,6 +3,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <QScrollArea>
 #include <QSplitter>
 #include <QString>
 #include <string>
@@ -40,10 +41,15 @@ MainWindow::MainWindow(QWidget* parent, bool useSkia, const std::string& samples
   _render = dynamic_cast<TeXRender*>(_texwidget);
   _texwidget->setMinimumWidth(400);
 
+  QScrollArea* scrollArea = new QScrollArea;
+  scrollArea->setBackgroundRole(QPalette::Light);
+  scrollArea->setWidget(_texwidget);
+
   // these are the widgets on the right side
   // want an editor at the top and controls at bottom
   QWidget* right = new QWidget;
   QVBoxLayout* rlayout = new QVBoxLayout;
+  rlayout->setContentsMargins(0, 0, 0, 0);
   right->setLayout(rlayout);
   _textedit = new QTextEdit;
   _textedit->setFontFamily("Monaco");
@@ -52,6 +58,7 @@ MainWindow::MainWindow(QWidget* parent, bool useSkia, const std::string& samples
   // these are the controls which go at the bottom right
   QWidget* controls = new QWidget;
   QHBoxLayout* clayout = new QHBoxLayout;
+  clayout->setContentsMargins(0, 0, 0, 0);
   controls->setLayout(clayout);
 
   QLabel* label1 = new QLabel("Change text size:");
@@ -69,7 +76,7 @@ MainWindow::MainWindow(QWidget* parent, bool useSkia, const std::string& samples
 
   rlayout->addWidget(controls);
 
-  splitter->addWidget(_texwidget);
+  splitter->addWidget(scrollArea);
   splitter->addWidget(right);
 
   setLayout(layout);
