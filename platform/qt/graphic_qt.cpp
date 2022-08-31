@@ -17,6 +17,7 @@
 #include <QtMath>
 #include <QFile>
 #include <QGlyphRun>
+#include <QtGlobal>
 
 using namespace microtex;
 using namespace std;
@@ -81,19 +82,44 @@ void TextLayout_qt::setFallbackFontFamily(const std::string& family) {
 TextLayout_qt::TextLayout_qt(const std::string& src, FontStyle style, float size) {
   _text = QString::fromStdString(src);
   _font.setPixelSize(size);
+#define QT_BEFORE_513 (QT_VERSION < QT_VERSION_CHECK(5, 13, 0))
+#if QT_BEFORE_513
+  // setFamilies was introduce in Qt 5.13.0
+  // https://doc.qt.io/qt-6/qfont.html#setFamily
+  QString family;
+#else
   QStringList families;
+#endif
   if (microtex::isSansSerif(style)) {
-    families.emplace_back("sans-serif");
+#if QT_BEFORE_513
+    family = "sans-serif";
+#else
+    families.append("sans-serif");
+#endif
   } else {
-    families.emplace_back("serif");
+#if QT_BEFORE_513
+    family = "serif";
+#else
+    families.append("serif");
+#endif
   }
   if (microtex::isMono(style)) {
-    families.emplace_back("monospace");
+#if QT_BEFORE_513
+    family = "monospace";
+#else
+    families.append("monospace");
+#endif
   }
+#if !QT_BEFORE_513
   if (!_fallbackFontFamily.empty()) {
-    families.emplace_back(QString::fromStdString(_fallbackFontFamily));
+    families.append(QString::fromStdString(_fallbackFontFamily));
   }
+#endif
+#if QT_BEFORE_513
+  _font.setFamily(family);
+#else
   _font.setFamilies(families);
+#endif
   _font.setBold(microtex::isBold(style));
   _font.setItalic(microtex::isItalic(style));
 }
@@ -208,7 +234,11 @@ void Graphics2D_qt::setDash(const std::vector<float>& dash) {
     _pen.setDashPattern({});
   } else {
     _pen.setStyle(Qt::DashLine);
+#if QT_VERSION_MAJOR < 6
+    QVector<qreal> list;
+#else
     QList<qreal> list;
+#endif
     list.reserve(dash.size());
     std::transform(
       dash.begin(), dash.end(), list.begin(),

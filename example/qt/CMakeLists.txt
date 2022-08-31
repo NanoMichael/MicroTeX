@@ -20,13 +20,17 @@ target_link_libraries(
 
 if (SKIA)
     target_compile_definitions(microtex-qt-example PUBLIC BUILD_SKIA)
-    find_package(QT NAMES Qt6 Qt5 COMPONENTS OpenGL REQUIRED)
-    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS OpenGLWidgets REQUIRED)
+    if (QT_VERSION_MAJOR GREATER_EQUAL 6)
+        find_package(Qt6 COMPONENTS OpenGLWidgets REQUIRED)
+        target_link_libraries(
+            microtex-qt-example PRIVATE
+            Qt${QT_VERSION_MAJOR}::OpenGLWidgets
+        )
+    endif ()
     target_sources(microtex-qt-example PRIVATE qt_skiatexwidget.cpp)
     target_link_libraries(
         microtex-qt-example PRIVATE
         microtex-skia
-        Qt${QT_VERSION_MAJOR}::OpenGLWidgets
     )
 endif ()
 
