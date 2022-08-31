@@ -21,6 +21,8 @@ target_include_directories(
     $<INSTALL_INTERFACE:include/microtex-cairo>
 )
 
+# we need to export the library on Windows
+target_compile_definitions(microtex-cairo PRIVATE -DMICROTEX_LIBRARY)
 target_link_libraries(
     microtex-cairo PRIVATE
     microtex

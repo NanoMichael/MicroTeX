@@ -18,6 +18,7 @@ target_include_directories(
     $<INSTALL_INTERFACE:include/microtex-qt>
 )
 
+# we need to export the library on Windows
 target_compile_definitions(microtex-qt PRIVATE -DMICROTEX_LIBRARY)
 target_link_libraries(
     microtex-qt PRIVATE
