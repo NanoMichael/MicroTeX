@@ -1,7 +1,7 @@
 [library]
 version = "@version@"
 description = "A dynamic, cross-platform, and embeddable LaTeX rendering library"
-authors = "NanoMichael <artiano@hotmail.com>"
+authors = "NanoMichael <artiano@hotmail.com>, Florian \"sp1rit\" <sp1rit@disroot.org>"
 logo_url = "microtex.svg"
 license = "MIT"
 browse_url = "https://github.com/NanoMichael/MicroTeX"
