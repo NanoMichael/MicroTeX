@@ -21,7 +21,9 @@
 using namespace microtex;
 using namespace std;
 
-QMap<QString, QString> Font_qt::_qtFamilies;
+namespace {
+QMap<QString, QString> _qtFamilies;
+}
 
 void Font_qt::loadFont(const std::string& file) {
   QString filename(QString::fromStdString(file));
@@ -68,19 +70,30 @@ bool Font_qt::operator==(const Font& f) const {
 
 /**************************************************************************************************/
 
+namespace {
+std::string _fallbackFontFamily;
+}
+
+void TextLayout_qt::setFallbackFontFamily(const std::string& family) {
+  _fallbackFontFamily = family;
+}
+
 TextLayout_qt::TextLayout_qt(const std::string& src, FontStyle style, float size) {
   _text = QString::fromStdString(src);
-  // _font.setPointSizeF(size);
   _font.setPixelSize(size);
-  _font.setFamily("Serif");
+  QStringList families;
   if (microtex::isSansSerif(style)) {
-    _font.setFamily("Sans-Serif");
+    families.emplace_back("sans-serif");
+  } else {
+    families.emplace_back("serif");
   }
   if (microtex::isMono(style)) {
-    _font.setFamily("Monospace");
+    families.emplace_back("monospace");
   }
-  // todo fallback font families
-  _font.setFamily("Noto Color Emoji");
+  if (!_fallbackFontFamily.empty()) {
+    families.emplace_back(QString::fromStdString(_fallbackFontFamily));
+  }
+  _font.setFamilies(families);
   _font.setBold(microtex::isBold(style));
   _font.setItalic(microtex::isItalic(style));
 }
@@ -106,7 +119,8 @@ sptr<Font> PlatformFactory_qt::createFont(const std::string& file) {
   return sptrOf<Font_qt>(file);
 }
 
-sptr<TextLayout> PlatformFactory_qt::createTextLayout(const std::string& src, FontStyle style, float size) {
+sptr<TextLayout> PlatformFactory_qt::createTextLayout(
+  const std::string& src, FontStyle style, float size) {
   return sptrOf<TextLayout_qt>(src, style, size);
 }
 
@@ -132,10 +146,18 @@ QBrush Graphics2D_qt::getQBrush() const {
   );
 }
 
-void Graphics2D_qt::setPen() {
+void Graphics2D_qt::setColor(color c) {
+  _color = c;
+  _pen.setBrush(getQBrush());
+  _painter->setPen(_pen);
+}
 
-  QBrush brush(getQBrush());
+color Graphics2D_qt::getColor() const {
+  return _color;
+}
 
+void Graphics2D_qt::setStroke(const Stroke& s) {
+  _stroke = s;
   Qt::PenCapStyle cap;
   switch (_stroke.cap) {
     case CAP_ROUND:
@@ -149,7 +171,6 @@ void Graphics2D_qt::setPen() {
       cap = Qt::FlatCap;
       break;
   }
-
   Qt::PenJoinStyle join;
   switch (_stroke.join) {
     case JOIN_BEVEL:
@@ -163,24 +184,12 @@ void Graphics2D_qt::setPen() {
       join = Qt::MiterJoin;
       break;
   }
-
-  QPen pen(brush, _stroke.lineWidth, Qt::SolidLine, cap, join);
-  pen.setMiterLimit(_stroke.miterLimit);
-  _painter->setPen(pen);
-}
-
-void Graphics2D_qt::setColor(color c) {
-  _color = c;
-  setPen();
-}
-
-color Graphics2D_qt::getColor() const {
-  return _color;
-}
-
-void Graphics2D_qt::setStroke(const Stroke& s) {
-  _stroke = s;
-  setPen();
+  _pen.setStyle(Qt::SolidLine);
+  _pen.setCapStyle(cap);
+  _pen.setJoinStyle(join);
+  _pen.setWidthF(s.lineWidth);
+  _pen.setMiterLimit(s.miterLimit);
+  _painter->setPen(_pen);
 }
 
 const Stroke& Graphics2D_qt::getStroke() const {
@@ -189,16 +198,36 @@ const Stroke& Graphics2D_qt::getStroke() const {
 
 void Graphics2D_qt::setStrokeWidth(float w) {
   _stroke.lineWidth = w;
-  setPen();
+  _pen.setWidthF(w);
+  _painter->setPen(_pen);
 }
 
 void Graphics2D_qt::setDash(const std::vector<float>& dash) {
-  // todo
+  if (dash.empty()) {
+    _pen.setStyle(Qt::SolidLine);
+    _pen.setDashPattern({});
+  } else {
+    _pen.setStyle(Qt::DashLine);
+    QList<qreal> list;
+    list.reserve(dash.size());
+    std::transform(
+      dash.begin(), dash.end(), list.begin(),
+      [this](float v) { return v * sx(); }
+    );
+    _pen.setDashPattern(list);
+  }
+  _painter->setPen(_pen);
 }
 
 std::vector<float> Graphics2D_qt::getDash() {
-  // todo
-  return {};
+  const auto& list = _pen.dashPattern();
+  std::vector<float> dash;
+  dash.reserve(list.size());
+  std::transform(
+    list.begin(), list.end(), dash.begin(),
+    [this](double v) { return v / sx(); }
+  );
+  return dash;
 }
 
 sptr<Font> Graphics2D_qt::getFont() const {
@@ -313,6 +342,5 @@ void Graphics2D_qt::fillRoundRect(float x, float y, float w, float h, float rx, 
 
   _painter->drawRoundedRect(QRectF(x, y, w, h), rx, ry);
 
-  setPen();
-  _painter->setBrush(QBrush());
+  _painter->setPen(_pen);
 }

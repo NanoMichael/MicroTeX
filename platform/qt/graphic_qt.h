@@ -18,8 +18,6 @@ namespace microtex {
 
 class MICROTEX_EXPORT Font_qt : public Font {
 private:
-  static QMap<QString, QString> _qtFamilies;
-
   QFont _font;
 
   void loadFont(const std::string& file);
@@ -44,6 +42,8 @@ private:
 public:
   TextLayout_qt(const std::string& src, FontStyle style, float size);
 
+  static void setFallbackFontFamily(const std::string& family);
+
   void getBounds(Rect& r) override;
 
   void draw(Graphics2D& g2, float x, float y) override;
@@ -62,6 +62,8 @@ public:
 
 class MICROTEX_EXPORT Graphics2D_qt : public Graphics2D {
 private:
+  QPainterPath _path;
+  QPen _pen;
   QPainter* _painter;
 
   color _color;
@@ -69,10 +71,6 @@ private:
   sptr<Font_qt> _font;
   float _fontSize;
   float _sx, _sy;
-
-  QPainterPath _path;
-
-  void setPen();
 
   QBrush getQBrush() const;
 
