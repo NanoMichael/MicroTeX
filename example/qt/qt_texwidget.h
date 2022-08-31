@@ -14,19 +14,12 @@ public:
   ~TeXWidget() override;
 
   float getTextSize() override;
-
   void setTextSize(float size) override;
-
   void setLaTeX(const std::string& latex) override;
-
   bool isRenderDisplayed() override;
-
   int getRenderWidth() override;
-
   int getRenderHeight() override;
-
   void paintEvent(QPaintEvent* event) override;
-
   void saveSVG(const char* path) override;
 
 private:
