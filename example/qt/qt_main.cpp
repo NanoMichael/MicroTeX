@@ -33,12 +33,12 @@ int main(int argc, char** argv) {
       "  <math font file>\n"
       "  <samples file>\n"
       "Optional arguments:\n"
-      "  <if render glyph use path: true|false>"
-      "  <if render use skia: true|false>");
+      "  <if render glyph use path: true|false>\n"
+      "  <if render use skia: true|false>\n");
     return 1;
   }
   const microtex::FontSrcFile math{argv[1], argv[2]};
-  microtex::MicroTeX::init(&math);
+  microtex::MicroTeX::init(math);
   const std::string samples(argv[3]);
   microtex::MicroTeX::setRenderGlyphUsePath(argc > 4 && std::string("true") == std::string(argv[4]));
 
