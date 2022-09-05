@@ -37,6 +37,10 @@ option(HAVE_LOG "If enable log" ON)
 if (HAVE_LOG)
     add_definitions(-DHAVE_LOG)
 endif ()
+option(BUILD_STATIC "If build for static library" OFF)
+if (BUILD_STATIC)
+    set(_BUILD_STATIC ON)
+endif ()
 
 include(MicroTeXInstall.cmake)
 

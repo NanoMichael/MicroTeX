@@ -170,13 +170,13 @@ MICROTEX_CAPI void microtex_deleteRender(RenderPtr render);
  * Short for data types:
  *
  * @code
- * data type    bytes short
- * ------------------------
- *            int 4   i32
- *   unsigned int 4   u32
- * unsigned short 2   u16
- *          float 4   f32
- *           bool 1   u8
+ *      data type bytes  short
+ * ---------------------------
+ *            int     4  i32
+ *   unsigned int     4  u32
+ * unsigned short     2  u16
+ *          float     4  f32
+ *           bool     1  u8
  * @endcode
  *
  * And arguments for each drawing command:

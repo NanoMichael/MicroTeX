@@ -1,4 +1,4 @@
-if (_BUILD_STATIC)
+if (DEFINED _BUILD_STATIC AND _BUILD_STATIC)
     add_library(microtex STATIC "")
 else ()
     add_library(microtex SHARED "")
