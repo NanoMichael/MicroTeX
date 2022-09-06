@@ -40,9 +40,8 @@ int main(int argc, char** argv) {
   const microtex::FontSrcFile math{argv[1], argv[2]};
   microtex::MicroTeX::init(math);
   const std::string samples(argv[3]);
-  microtex::MicroTeX::setRenderGlyphUsePath(argc > 4 && std::string("true") == std::string(argv[4]));
 
-  bool useSkia = argc > 5 && std::string("true") == std::string(argv[5]);
+  bool useSkia = argc > 4 && std::string("true") == std::string(argv[4]);
 #ifdef BUILD_SKIA
   if (useSkia) {
     initSkia();

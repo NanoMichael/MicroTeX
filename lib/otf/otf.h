@@ -99,6 +99,7 @@ public:
    * Always is false if GLYPH_RENDER_TYPE equals to GLYPH_RENDER_TYPE_TYPEFACE.
    */
   inline bool hasGlyphPath() const { return _hasGlyphPath; }
+  bool has_typeface_available = false;
 
   /** Get the font style in clm (short enum see [lib/graphics/font_style.h: FontStyle]) format **/
   inline u16 style() const { return _style; }

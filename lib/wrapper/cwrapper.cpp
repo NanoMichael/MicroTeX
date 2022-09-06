@@ -121,12 +121,12 @@ MICROTEX_CAPI bool microtex_hasGlyphPathRender() {
   return MicroTeX::hasGlyphPathRender();
 }
 
-MICROTEX_CAPI void microtex_setRenderGlyphUsePath(bool use) {
-  return MicroTeX::setRenderGlyphUsePath(use);
+MICROTEX_CAPI void microtex_setRenderGlyphForceUsePath(bool use) {
+  return MicroTeX::setRenderGlyphForceUsePath(use);
 }
 
-MICROTEX_CAPI bool microtex_isRenderGlyphUsePath() {
-  return MicroTeX::isRenderGlyphUsePath();
+MICROTEX_CAPI bool microtex_isRenderGlyphForceUsePath() {
+  return MicroTeX::isRenderGlyphForceUsePath();
 }
 
 MICROTEX_CAPI RenderPtr microtex_parseRender(

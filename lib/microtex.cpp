@@ -18,7 +18,7 @@ struct Config {
   bool isInited;
   std::string defaultMainFontFamily;
   std::string defaultMathFontName;
-  bool renderGlyphUsePath;
+  bool renderGlyphForceUsePath;
   bool enableOverrideTeXStyle;
   TexStyle overrideTeXStyle;
 };
@@ -145,15 +145,15 @@ bool MicroTeX::hasGlyphPathRender() {
 #endif
 }
 
-void MicroTeX::setRenderGlyphUsePath(bool use) {
+void MicroTeX::setRenderGlyphForceUsePath(bool use) {
 #if GLYPH_RENDER_TYPE == GLYPH_RENDER_TYPE_BOTH
-  _config->renderGlyphUsePath = use;
+  _config->renderGlyphForceUsePath = use;
 #endif
 }
 
-bool MicroTeX::isRenderGlyphUsePath() {
+bool MicroTeX::isRenderGlyphForceUsePath() {
 #if GLYPH_RENDER_TYPE == GLYPH_RENDER_TYPE_BOTH
-  return _config->renderGlyphUsePath;
+  return _config->renderGlyphForceUsePath;
 #elif GLYPH_RENDER_TYPE == GLYPH_RENDER_TYPE_PATH
   return true;
 #else

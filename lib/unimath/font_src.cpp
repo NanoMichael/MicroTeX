@@ -10,7 +10,10 @@ FontSrcFile::FontSrcFile(std::string clmFile, std::string fontFile)
     clmFile(std::move(clmFile)) {}
 
 sptr<Otf> FontSrcFile::loadOtf() const {
-  return sptr<Otf>(Otf::fromFile(clmFile.c_str()));
+  auto font = sptr<Otf>(Otf::fromFile(clmFile.c_str()));
+  if (fontFile != "")
+    font->has_typeface_available = true;
+  return font;
 }
 
 FontSrcData::FontSrcData(size_t len, const u8* data, std::string fontFile)
@@ -19,5 +22,8 @@ FontSrcData::FontSrcData(size_t len, const u8* data, std::string fontFile)
     data(data) {}
 
 sptr<Otf> FontSrcData::loadOtf() const {
-  return sptr<Otf>(Otf::fromData(len, data));
+  auto font = sptr<Otf>(Otf::fromData(len, data));
+  if (fontFile != "")
+    font->has_typeface_available = true;
+  return font;
 }

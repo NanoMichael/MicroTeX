@@ -138,17 +138,23 @@ public:
   static bool hasGlyphPathRender();
 
   /**
-   * Set if use path to render glyphs, only works when compile option
-   * GLYPH_RENDER_TYPE is GLYPH_RENDER_TYPE_BOTH (equals to 0, that means render
-   * glyphs use font and path both), otherwise this function takes no effect.
+   * Set if to force usage of path to render glyphs.
+   *
+   * You will like avoid calling this method. It is mostly there for
+   * debugging/demo purposes, as MicroTeX is able to determine the
+   * correct render mode based on the provided clm file.
+   *
+   * Only works when compile option GLYPH_RENDER_TYPE is
+   * GLYPH_RENDER_TYPE_BOTH (equals to 0, that means render glyphs use
+   * font and path both), otherwise this function takes no effect.
    */
-  static void setRenderGlyphUsePath(bool use);
+  static void setRenderGlyphForceUsePath(bool use);
 
   /**
-   * Test if currently use path to render glyphs.
+   * Test if currently forcing use of path to render glyphs.
    *
    * If compile option GLYPH_RENDER_TYPE is GLYPH_RENDER_TYPE_BOTH, it depends
-   * on your setting (via function [setRenderGlyphUsePath]). If your setting
+   * on your setting (via function [setRenderGlyphForceUsePath]). If your setting
    * is true and current `clm data` does not support path rendering, this function
    * also returns true, but will gives you a warn message if you have compile
    * option HAVE_LOG is ON.
@@ -159,7 +165,7 @@ public:
    * Otherwise (GLYPH_RENDER_TYPE is GLYPH_RENDER_TYPE_TYPEFACE, equals to 2),
    * always returns false.
    */
-  static bool isRenderGlyphUsePath();
+  static bool isRenderGlyphForceUsePath();
 
   /**
    * Parse (La)TeX string to Render.

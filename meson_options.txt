@@ -1,4 +1,5 @@
 option('HAVE_AUTO_FONT_FIND', type: 'boolean', value: true)
+option('GLYPH_RENDER_TYPE', type: 'combo', choices: ['both', 'typeface', 'path'], value: 'both')
 
 # generate pkgconfig files & install headers
 option('TARGET_DEVEL', type : 'boolean', value : true)
