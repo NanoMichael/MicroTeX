@@ -49,7 +49,7 @@ if get_option('TARGET_DEVEL')
       input: doxyfile,
       output: 'html',
       command: [doxygen, '@INPUT0@'],
-      depend_files: ['mainpage.h', 'cairodoc.h', 'microtex.docmacros.tex', 'theme/header.html', 'theme/style.css'],
+      depend_files: ['mainpage.h', 'cairodoc.h', 'fontdoc.h', 'microtex.docmacros.tex', 'theme/header.html', 'theme/style.css'],
       install: true,
       build_by_default: true,
       install_dir: docs_dir / 'microtex'

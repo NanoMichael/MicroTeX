@@ -32,7 +32,7 @@
  * to a cairo context (<tt>cairo_t</tt>). Please note that the caller
  * keeps the ownership of the cairo context.
  *
- * To receive a microtex::Render, you can either use the convinience
+ * To receive a microtex::Render, you can either use the convenience
  * method microtex::MicroTeX::parse(), or construct it yourself using
  * microtex::RenderBuilder if you need more customization.
  *

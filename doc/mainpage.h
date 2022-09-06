@@ -160,7 +160,7 @@
  * will throw should no font be found).
  * Alternativly, you can initialize with FontMeta, and just provide
  * paths to where the fonts are located. For more information about
- * the clm font format and fonts in general see <a href="TODO">this page</a>.
+ * the clm font format and fonts in general see \ref font_doc.
  * 
  * After initializing, you'll need to register the platform you intend
  * to use. This can be done by calling microtex::PlatformFactory::registerFactory()
@@ -191,7 +191,7 @@
  * available (eg. through the X Render Extension).
  *
  * It is most commonly known for it's usage by the GTK Toolkit, which
- * used to exclusivly render onto cairo surfaces. With still after the
+ * used to exclusivly render onto cairo surfaces. But even after the
  * move to Gsk, Cairo is still an important part of the GTK rendering
  * stack.
  *
