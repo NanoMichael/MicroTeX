@@ -874,7 +874,7 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = "@cwd@/mainpage.h" "@cwd@/cairodoc.h" "@cwd@/fontdoc.h" \
+INPUT                  = "@cwd@/mainpage.h" "@cwd@/cairodoc.h" "@cwd@/qtdoc.h" "@cwd@/fontdoc.h" \
                          "@source_root@/lib" \
                          "@source_root@/platform/cairo" \
                          "@source_root@/platform/gdi_win/" \

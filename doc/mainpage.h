@@ -204,7 +204,7 @@
  * It is comercially developed by the QT company, while the KDE project
  * ensures the free software nature of the library.
  *
- * To see how to use \f$\MicroTeX\f$ with QT see <a href="TODO">this page</a>.
+ * To see how to use \f$\MicroTeX\f$ with QT see \ref qt_doc.
  *
  * \subsection platform_win32 Win32
  * Microsoft Windows's native user interface stacks allows drawing of
