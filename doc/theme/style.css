@@ -22,6 +22,11 @@
 	--sidebar-selected-bg: var(--primary);
 
 	--hairline-color: #C4CFE5;
+
+	--search-magnification-image: url('mag.svg');
+	--search-magnification-select-image: url('mag_sel.svg');
+	--search-results-background-color: white;
+	--search-results-border-color: var(--hairline-color);
 }
 body {
 	color: var(--text-color);
@@ -67,8 +72,10 @@ body {
 	font-size: 14px;
 	padding: 6px 12px;
 	border-radius: 50px;
-	box-shadow: inset 0 1px 3px #ddd;
 	transition: border .3s linear;
+	background-color: #303030;
+	color: #fafafa;
+	display: block;
 }
 
 #side-nav {
@@ -127,6 +134,10 @@ body {
 }
 #doc-content > div {
 	padding: var(--content-padding);
+}
+#doc-content > div#MSearchResultsWindow {
+	border-radius: var(--box-radius);
+	padding: 0.75rem 1rem;
 }
 #doc-content div.header {
 	margin:  0px;
