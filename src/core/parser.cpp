@@ -952,7 +952,7 @@ sptr<Atom> TeXParser::convertCharacter(wchar_t c, bool oneChar) {
     const UnicodeBlock& block = UnicodeBlock::of(c);
 #ifdef HAVE_LOG
     int idx = indexOf(DefaultTeXFont::_loadedAlphabets, block);
-    __log << "block of char: " << c << " is " << idx << endl;
+    __log << "block of char: " << std::to_string(c) << " is " << idx << endl;
 #endif  // HAVE_LOG
     bool exist = (indexOf(DefaultTeXFont::_loadedAlphabets, block) != -1);
     if (!_isLoading && !exist) {

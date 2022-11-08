@@ -71,6 +71,7 @@ void FontInfo::__free() {
 
 #ifdef HAVE_LOG
 #include <iomanip>
+#include <codecvt>
 namespace tex {
     ostream& operator<<(ostream& os, const FontInfo& info) {
         // base information
@@ -90,10 +91,16 @@ namespace tex {
             const int rows = info._lig.rows();
             for (int i = 0; i < rows; i++) {
                 const wchar_t* t = info._lig[i];
+                std::wstring _a(t);
+                std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+                std::string _b{};
+                try{_b = converter.to_bytes(_a);}
+                catch (const std::range_error& e)
+                { _b = "�";}
                 os << "\t["
-                    << setw(3) << t[0] << ", "
-                    << setw(3) << t[1] << "] = "
-                    << t[2] << endl;
+                    << setw(3) << _b[0] << ", "
+                    << setw(3) << _b[1] << "] = "
+                    << _b[2] << endl;
             }
         }
 
