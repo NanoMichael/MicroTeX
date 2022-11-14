@@ -1,6 +1,13 @@
 message(STATUS "Cross-building using Qt")
 
-add_library(microtex-qt SHARED graphic_qt.cpp)
+set(MICROTEX_QT_sources "graphic_qt.cpp")
+if (DEFINED _BUILD_STATIC AND _BUILD_STATIC)
+    add_library(microtex-qt STATIC  "${MICROTEX_QT_sources}")
+else ()
+    add_library(microtex-qt SHARED  "${MICROTEX_QT_sources}")
+endif ()
+
+#add_library(microtex-qt SHARED graphic_qt.cpp)
 
 set_target_properties(
     microtex-qt PROPERTIES

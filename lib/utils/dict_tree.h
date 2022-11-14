@@ -61,7 +61,7 @@ public:
     return !(*this == b);
   }
 
-  ~SortedDictTree<K, V>() {
+  ~SortedDictTree() {
     for (u16 i = 0; i < _childCount; i++) delete _children[i];
     delete[] _children;
   }
