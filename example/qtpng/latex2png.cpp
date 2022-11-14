@@ -17,7 +17,7 @@
 class TexGuard {
 public:
   TexGuard(const microtex::FontSrc& math) {
-    microtex::MicroTeX::init(&math);
+    microtex::MicroTeX::init(math);
     microtex::PlatformFactory::registerFactory("qt", std::make_unique<microtex::PlatformFactory_qt>());
     microtex::PlatformFactory::activate("qt");
   }
