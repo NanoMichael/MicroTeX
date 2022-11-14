@@ -1,7 +1,11 @@
 #include "utils/utils.h"
 
 const std::locale& microtex::defaultLocale() {
+#if !defined(WIN32)
   static const std::locale locale("en_US.UTF-8");
+#else
+  static const std::locale locale("C");
+#endif
   return locale;
 }
 
