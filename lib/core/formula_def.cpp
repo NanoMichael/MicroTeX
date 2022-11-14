@@ -118,7 +118,11 @@ map<string, string> Formula::_predefFormulaStrs{
   {"Rho",              "Ρ"},
   {"Tau",              "Τ"},
   {"Chi",              "Χ"},
-  {"Nabla",            u8"\u2207"}, // win32 compat, ugly
+#if defined(WIN32)
+    {"Nabla", u8"\u2207"},  // win32 compat, ugly
+#else
+    {"Nabla", "\u2207"},
+#endif
   {"omicron",          "ο"},
   // endregion
   // region colons
