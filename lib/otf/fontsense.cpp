@@ -31,27 +31,53 @@ public:
 
   explicit FontSrcSense(Otf* otf, std::string fontFile = "")
     : FontSrc(std::move(fontFile)),
-      otf(otf) {}
+      otf(otf) {
+    if (fontFile != "")
+      otf->has_typeface_available = true;
+  }
 
   sptr<Otf> loadOtf() const override {
     return sptr<Otf>(otf);
   }
 };
 
-// Map<FileStem, <OTF File, CLM File>>
-typedef std::map<std::string, std::pair<char*, char*>> font_paths_t;
-
-font_paths_t getFontPaths();
-
-std::string clmExt() {
+typedef std::map<std::string, FontMeta> fonts_t;
+/*
+ * parses the clm file passed in via path.
+ * if the font name is already in the fonts map, it returns. otherwise:
+ * if typeface is enabled, it checks if a file with the same filestem
+ * as the clm file but with .otf extension is in the directory with it.
+ * If this is not the case, but path is enabled it checks if the font
+ * has the glyph paths included (.clm2). Should this be the case it
+ * also adds it as a Font.
+ */
+void addFontFromPath(fonts_t* fonts, const char* path, std::string dir, std::string stem) {
+  Otf* font = Otf::fromFile(path);
+  auto it = fonts->find(font->name());
+  if (it != fonts->end())
+    return;
+#ifdef HAVE_GLYPH_RENDER_TYPEFACE
+  fs::path opentype = fs::path(dir) / (stem + ".otf");
+  if (fs::exists(opentype))
+    fonts->emplace(font->name(), MicroTeX::addFont(FontSrcSense(font, opentype)));
+#endif
 #ifdef HAVE_GLYPH_RENDER_PATH
-  return ".clm2";
-#else
-  return ".clm1";
+  if (font->hasGlyphPath())
+    fonts->emplace(font->name(), MicroTeX::addFont(FontSrcSense(font)));
 #endif
 }
 
-void fontPathsFree(const font_paths_t& font_paths);
+bool isClmExt(std::string ext) {
+#ifdef HAVE_GLYPH_RENDER_PATH
+	if (ext == ".clm2")
+		return true;
+#endif
+#ifdef HAVE_GLYPH_RENDER_TYPEFACE
+	if (ext == ".clm1")
+		return true;
+#endif
+	return false;
+}
 
 #ifdef _WIN32
 #include <windows.h>
@@ -72,7 +98,7 @@ std::string getDirOfExecutable() {
 }
 #endif
 
-font_paths_t getFontPaths() {
+fonts_t setupFontsenseFonts() {
   std::queue<std::string> paths;
   // checks if MICROTEX_FONTDIR exists. If it does, it pushes it to potential paths.
   char* devdir = getenv("MICROTEX_FONTDIR");
@@ -112,16 +138,14 @@ font_paths_t getFontPaths() {
   paths.push(exeDir + std::string("share/" FONTDIR));
 #endif
 
-  font_paths_t font_paths;
+  fonts_t fonts;
 
   /*
    * Iterate over all found data dirs. For each dir iterate over
-   * all files in it. For each font there should be a stem.otf and
-   * stem.clm file available. This function checks if the filestem
-   * is already in the font map and if it is, looks at the current
-   * file extension and sets the current path to it it if is unset.
-   * If the stem is not currently in the map it adds it together
-   * with the current file as clm or otf.
+   * all files in it. This function checks for each file, if their
+   * extension is either .clm1 or .clm2 (see isClmExt()). If this is
+   * the case it calls addFontFromPath(), which initializes the correct
+   * type of Font and puts it in fonts.
    */
   while (!paths.empty()) {
     fs::path p = paths.front();
@@ -130,60 +154,27 @@ font_paths_t getFontPaths() {
         const fs::path& path = entry.path();
         std::string stem = path.stem().string();
         std::string ext = path.extension().string();
-        auto it = font_paths.find(stem);
-        if (it != font_paths.end()) {
-          if (ext == ".otf" && !it->second.first) {
-            it->second.first = strdup(path.string().c_str());
-          }
-          if (ext == clmExt() && !it->second.second) {
-            it->second.second = strdup(path.string().c_str());
-          }
-        } else {
-          font_paths.emplace(stem, std::pair(
-            ext == ".otf" ? strdup(path.string().c_str()) : nullptr,
-            ext == clmExt() ? strdup(path.string().c_str()) : nullptr
-          ));
-        }
+
+        if (isClmExt(ext))
+          addFontFromPath(&fonts, path.string().c_str(), p, stem);
       }
     paths.pop();
   }
 
-  /*
-   * Iterate over all font paths in map and remove all of them
-   * where either the oth or clm path is NULL.
-   */
-  for (auto it = font_paths.begin(); it != font_paths.end();) {
-    if (!it->second.first || !it->second.second) {
-      font_paths.erase(it++);
-    } else {
-      it++;
-    }
-  }
-
-  return font_paths;
-}
-
-void fontPathsFree(const font_paths_t& font_paths) {
-  for (auto[_stem, files] : font_paths) {
-    free(files.first);
-    free(files.second);
-  }
+  return fonts;
 }
 
 std::optional<FontMeta> fontsenseLookup() {
-  std::optional<FontMeta> mathfont;
+  std::optional<FontMeta> mathfont = {};
 
-  font_paths_t font_paths = getFontPaths();
+  fonts_t fonts = setupFontsenseFonts();
 
-  for (const auto&[_stem, files] : font_paths) {
-    Otf* font = Otf::fromFile(files.second);
-    auto meta = MicroTeX::addFont(FontSrcSense(font, files.first));
-    if (font->isMathFont()) {
-      if (!mathfont) mathfont = meta;
+  for (const auto&[_name, font] : fonts) {
+    if (font.isMathFont) {
+      if (!mathfont) mathfont = font;
+      break;
     }
   }
-
-  fontPathsFree(font_paths);
 
   return mathfont;
 }

@@ -465,10 +465,10 @@ int runPerf(const std::string& samplesFilePath) {
 
   for (int i = 0; i < samples.count(); i++) {
     const auto& sample = samples.next();
-    MicroTeX::setRenderGlyphUsePath(false);
+    MicroTeX::setRenderGlyphForceUsePath(false);
     const auto d1 = run(sample);
     printf("%ld, ", d1);
-    MicroTeX::setRenderGlyphUsePath(true);
+    MicroTeX::setRenderGlyphForceUsePath(true);
     const auto d2 = run(sample);
     printf("%ld\n", d2);
   }
@@ -552,8 +552,6 @@ int main(int argc, char* argv[]) {
 
   PlatformFactory::registerFactory("gtk", std::make_unique<PlatformFactory_cairo>());
   PlatformFactory::activate("gtk");
-
-  MicroTeX::setRenderGlyphUsePath(usePath);
 
   int result = 0;
   if (isHeadless) {

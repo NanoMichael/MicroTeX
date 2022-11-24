@@ -62,20 +62,11 @@ void CharBox::draw(Graphics2D& g2, float x, float y) {
 #elif GLYPH_RENDER_TYPE == GLYPH_RENDER_TYPE_BOTH
   auto font = _chr.otfFont();
   const bool hasGlyphPath = font != nullptr && font->otf().hasGlyphPath();
-#ifdef HAVE_LOG
-  if (MicroTeX::isRenderGlyphUsePath() && !hasGlyphPath) {
-    logv(
-      "Render use glyph path, but the font '%s' does not have glyph paths, "
-      "fallback to use font instead.\n",
-      font->otf().name().c_str()
-    );
-  }
-#endif
-  if (MicroTeX::isRenderGlyphUsePath() && hasGlyphPath) {
+  const bool hasTypeface = font != nullptr && font->otf().has_typeface_available;
+  if (hasGlyphPath && (!hasTypeface || MicroTeX::isRenderGlyphForceUsePath()))
     _drawWithPath(_chr, g2, x, y);
-  } else {
+  else
     _drawWithFont(_chr, g2, x, y);
-  }
 #endif
 }
 

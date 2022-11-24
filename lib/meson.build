@@ -1,3 +1,12 @@
+glyph_render = get_option('GLYPH_RENDER_TYPE')
+if glyph_render == 'path'
+  add_project_arguments('-DGLYPH_RENDER_TYPE=1', language: 'cpp')
+elif glyph_render == 'typeface'
+  add_project_arguments('-DGLYPH_RENDER_TYPE=2', language: 'cpp')
+else
+  add_project_arguments('-DGLYPH_RENDER_TYPE=0', language: 'cpp')
+endif
+
 src = []
 inc = []
 
@@ -100,3 +109,5 @@ if install_headerfiles
 		config_h
 	], subdir: 'microtex')
 endif
+
+subdir('wrapper')
