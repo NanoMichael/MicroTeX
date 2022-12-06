@@ -70,7 +70,7 @@ void TeXRender::buildDebug(
   }
 }
 
-inline float TeXRender::getTextSize() const {
+float TeXRender::getTextSize() const {
   return _textSize;
 }
 
