@@ -126,7 +126,9 @@ sptr<Box> Formula::createBox(Environment& style) {
   if (_root == nullptr) return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
   return _root->createBox(style);
 }
-
+#ifdef DEBUG
+#undef DEBUG
+#endif
 void Formula::setDEBUG(bool b) {
   Box::DEBUG = b;
 }
