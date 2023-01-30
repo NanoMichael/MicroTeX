@@ -13,6 +13,11 @@ using namespace tex;
 
 string tex::RES_BASE = "res";
 static string CHECK_FILE = ".clatexmath-res_root";
+#ifdef _WIN32
+static char PATH_SEPERATOR = ';';
+#else
+static char PATH_SEPERATOR = ':';
+#endif
 
 Formula* LaTeX::_formula = nullptr;
 TeXRenderBuilder* LaTeX::_builder = nullptr;
@@ -21,20 +26,26 @@ string LaTeX::queryResourceLocation(string& custom_path) {
   queue<string> paths;
   paths.push(custom_path);
 
+  // checks if CLM_DEVEL exists. If it does, it pushes it to potential paths.
+  char* devel = getenv("CLM_DEVEL");
+  if (devel != NULL && *devel != '\0') {
+    paths.push(string(devel));
+  }
+
   // checks if XDG_DATA_HOME exists. If it does, it pushes it to potential paths.
   char* userdata = getenv("XDG_DATA_HOME");
   if (userdata != NULL && strcmp(userdata, "") != 0) {
-    paths.push(string(userdata));
+    paths.push(string(userdata) + "/clatexmath/");
   }
 
-  // checks if XDG_DATA_DIRS is set. If it is, it splits XDG_DATA_DIRS at : and
-  // pushes each part of it to potential paths.
+  // checks if XDG_DATA_DIRS is set. If it is, it splits XDG_DATA_DIRS at : (or
+  // ; on windows) and pushes each part of it to potential paths.
   char* xdg = getenv("XDG_DATA_DIRS");
   if (xdg != NULL && strcmp(xdg, "") != 0) {
     stringstream xdg_paths(xdg);
     string xdg_path;
-    while (getline(xdg_paths, xdg_path, ':')) {
-      paths.push(xdg_path);
+    while (getline(xdg_paths, xdg_path, PATH_SEPERATOR)) {
+      paths.push(xdg_path + "/clatexmath/");
     }
   }
 #ifndef _WIN32
