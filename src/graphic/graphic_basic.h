@@ -19,15 +19,15 @@ static const color yellow = 0xffffff00;
 static const color cyan = 0xff00ffff;
 static const color magenta = 0xffff00ff;
 
-static const color TRANSPARENT = transparent;
-static const color BLACK = black;
-static const color WHITE = white;
-static const color RED = red;
-static const color GREEN = green;
-static const color BLUE = blue;
-static const color YELLOW = yellow;
-static const color CYAN = cyan;
-static const color MAGENTA = magenta;
+#define TRANSPARENT (transparent)
+#define BLACK (black)
+#define WHITE (white)
+#define RED (red)
+#define GREEN (green)
+#define BLUE (blue)
+#define YELLOW (yellow)
+#define CYAN (cyan)
+#define MAGENTA (magenta)
 
 inline color argb(int a, int r, int g, int b) {
   return (a << 24) | (r << 16) | (g << 8) | b;
