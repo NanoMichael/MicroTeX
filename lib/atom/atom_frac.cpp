@@ -1,20 +1,22 @@
 #include "atom/atom_frac.h"
-#include "env/env.h"
-#include "env/units.h"
+
 #include "box/box_group.h"
 #include "box/box_single.h"
+#include "env/env.h"
+#include "env/units.h"
 
 using namespace microtex;
 
-FracAtom::FracAtom(
-  const sptr<Atom>& num, const sptr<Atom>& den, bool rule,
-  const Dimen& thickness
-) : _num(num), _dnom(den), _rule(rule), _thickness(thickness) {}
+FracAtom::FracAtom(const sptr<Atom>& num, const sptr<Atom>& den, bool rule, const Dimen& thickness)
+    : _num(num), _dnom(den), _rule(rule), _thickness(thickness) {}
 
 FracAtom::FracAtom(
-  const sptr<Atom>& num, const sptr<Atom>& den,
-  Alignment numAlign, Alignment denAlign
-) : _num(num), _dnom(den), _rule(true) {
+  const sptr<Atom>& num,
+  const sptr<Atom>& den,
+  Alignment numAlign,
+  Alignment denAlign
+)
+    : _num(num), _dnom(den), _rule(true) {
   _numAlign = checkAlign(numAlign);
   _dnomAlign = checkAlign(denAlign);
 }
@@ -28,30 +30,18 @@ sptr<Box> FracAtom::createBox(Env& env) {
     return Units::fsize(_thickness, env);
   }();
 
-  const auto x = env.withStyle(
-    env.numStyle(),
-    [&](Env& style) { return _num->createBox(style); }
-  );
-  const auto z = env.withStyle(
-    env.dnomStyle(),
-    [&](Env& style) { return _dnom->createBox(style); }
-  );
+  const auto x = env.withStyle(env.numStyle(), [&](Env& style) { return _num->createBox(style); });
+  const auto z =
+    env.withStyle(env.dnomStyle(), [&](Env& style) { return _dnom->createBox(style); });
   const auto w = std::max(x->_width, z->_width);
 
   const auto isDisplay = env.style() < TexStyle::text;
 
   auto u = 0.f, v = 0.f;
   if (isDisplay) {
-    u = (
-      _rule
-      ? math.fractionNumeratorDisplayStyleShiftUp()
-      : math.stackTopDisplayStyleShiftUp()
-    );
-    v = (
-      _rule
-      ? math.fractionDenominatorDisplayStyleShiftDown()
-      : math.stackBottomDisplayStyleShiftDown()
-    );
+    u = _rule ? math.fractionNumeratorDisplayStyleShiftUp() : math.stackTopDisplayStyleShiftUp();
+    v = _rule ? math.fractionDenominatorDisplayStyleShiftDown()
+              : math.stackBottomDisplayStyleShiftDown();
   } else {
     u = _rule ? math.fractionNumeratorShiftUp() : math.stackTopShiftUp();
     v = _rule ? math.fractionDenominatorShiftDown() : math.stackBottomShiftDown();
@@ -66,20 +56,14 @@ sptr<Box> FracAtom::createBox(Env& env) {
       v += (phi - psi) / 2;
     }
   } else {
-    const auto phi = (
-      isDisplay
-      ? math.fractionNumeratorDisplayStyleGapMin()
-      : math.fractionNumeratorGapMin()
-    );
+    const auto phi = isDisplay ? math.fractionNumeratorDisplayStyleGapMin()
+                               : math.fractionNumeratorGapMin();
     const auto d = (u - x->_depth) - (axis + theta / 2);
     if (d < phi) {
       u += phi - d;
     }
-    const auto rho = (
-      isDisplay
-      ? math.fractionDenominatorDisplayStyleGapMin()
-      : math.fractionDenominatorGapMin()
-    );
+    const auto rho = isDisplay ? math.fractionDenominatorDisplayStyleGapMin()
+                               : math.fractionDenominatorGapMin();
     const auto f = (axis - theta / 2) - (z->_height - v);
     if (f < rho) {
       v += rho - f;

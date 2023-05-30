@@ -1,4 +1,5 @@
 #include "macro/macro_delims.h"
+
 #include "atom/atom_stack.h"
 #include "utils/utf.h"
 
@@ -8,14 +9,10 @@ using namespace std;
 
 macro(xarrow) {
   const auto& name = args[0].substr(1);
-  const auto& over = StackArgs::autoSpace(
-    Formula(tp, args[1], false, tp.isMathMode())._root,
-    false
-  );
-  const auto& under = StackArgs::autoSpace(
-    Formula(tp, args[2], false, tp.isMathMode())._root,
-    false
-  );
+  const auto& over =
+    StackArgs::autoSpace(Formula(tp, args[1], false, tp.isMathMode())._root, false);
+  const auto& under =
+    StackArgs::autoSpace(Formula(tp, args[2], false, tp.isMathMode())._root, false);
   const auto stack = new StackAtom(nullptr, over, under);
   const auto& arrow = sptrOf<ExtensibleAtom>(
     name,
@@ -56,4 +53,4 @@ macro(left) {
   return sptr<Atom>(ra);
 }
 
-}
+}  // namespace microtex

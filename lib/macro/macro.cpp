@@ -1,7 +1,8 @@
 #include "macro/macro.h"
-#include "macro/macro_misc.h"
 
 #include <string>
+
+#include "macro/macro_misc.h"
 
 using namespace std;
 using namespace microtex;
@@ -15,18 +16,12 @@ bool NewCommandMacro::isMacro(const string& name) {
 
 void NewCommandMacro::checkNew(const string& name) {
   if (_errIfConflict && isMacro(name))
-    throw ex_parse(
-      "Command " + name
-      + " already exists! Use renewcommand instead!"
-    );
+    throw ex_parse("Command " + name + " already exists! Use renewcommand instead!");
 }
 
 void NewCommandMacro::checkRenew(const string& name) {
   if (NewCommandMacro::_errIfConflict && !isMacro(name))
-    throw ex_parse(
-      "Command " + name
-      + " is no defined! Use newcommand instead!"
-    );
+    throw ex_parse("Command " + name + " is no defined! Use newcommand instead!");
 }
 
 void NewCommandMacro::addNewCommand(const string& name, const string& code, int argc) {
@@ -98,7 +93,8 @@ void NewCommandMacro::execute(Parser& tp, vector<string>& args) {
 
 void NewEnvironmentMacro::addNewEnvironment(
   const string& name,
-  const string& begDef, const string& endDef,
+  const string& begDef,
+  const string& endDef,
   int argc
 ) {
   string n = name + "@env";
@@ -108,20 +104,14 @@ void NewEnvironmentMacro::addNewEnvironment(
 
 void NewEnvironmentMacro::addRenewEnvironment(
   const string& name,
-  const string& begDef, const string& endDef,
+  const string& begDef,
+  const string& endDef,
   int argc
 ) {
   if (_codes.find(name + "@env") == _codes.end()) {
-    throw ex_parse(
-      "Environment " + name
-      + "is not defined! Use newenvironment instead!"
-    );
+    throw ex_parse("Environment " + name + "is not defined! Use newenvironment instead!");
   }
-  addRenewCommand(
-    name + "@env",
-    begDef + " #" + toString(argc + 1) + " " + endDef,
-    argc + 1
-  );
+  addRenewCommand(name + "@env", begDef + " #" + toString(argc + 1) + " " + endDef, argc + 1);
 }
 
 void NewCommandMacro::_free_() {
@@ -144,10 +134,7 @@ void MacroInfo::_free_() {
   for (const auto& i : _commands) delete i.second;
 }
 
-sptr<Atom> PreDefMacro::invoke(
-  Parser& tp,
-  vector<string>& args
-) {
+sptr<Atom> PreDefMacro::invoke(Parser& tp, vector<string>& args) {
   try {
     return _delegate(tp, args);
   } catch (ex_parse& e) {

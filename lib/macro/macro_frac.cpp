@@ -1,9 +1,10 @@
 #include "macro/macro_frac.h"
-#include "utils/utf.h"
-#include "utils/string_utils.h"
-#include "utils/exceptions.h"
-#include "atom/atom_fence.h"
+
 #include "atom/atom_basic.h"
+#include "atom/atom_fence.h"
+#include "utils/exceptions.h"
+#include "utils/string_utils.h"
+#include "utils/utf.h"
 
 using namespace std;
 
@@ -19,8 +20,10 @@ macro(binom) {
 }
 
 sptr<Atom> _choose(
-  const std::string& left, const std::string& right,
-  Parser& tp, std::vector<std::string>& args
+  const std::string& left,
+  const std::string& right,
+  Parser& tp,
+  std::vector<std::string>& args
 ) {
   auto num = tp.popFormulaAtom();
   auto den = Formula(tp, tp.getOverArgument(), false)._root;
@@ -72,11 +75,7 @@ sptr<Atom> _frac_with_delims(Parser& tp, Args& args, bool rule, bool hasLength) 
   if (num == nullptr || den == nullptr)
     throw ex_parse("Both numerator and denominator of a fraction can't be empty!");
 
-  auto f = (
-    hasLength
-    ? sptrOf<FracAtom>(num, den, rule, l)
-    : sptrOf<FracAtom>(num, den, rule)
-  );
+  auto f = (hasLength ? sptrOf<FracAtom>(num, den, rule, l) : sptrOf<FracAtom>(num, den, rule));
   return sptrOf<FencedAtom>(f, args[1], args[2]);
 }
 
@@ -136,4 +135,4 @@ macro(genfrac) {
   return sptr<Atom>(ra);
 }
 
-}
+}  // namespace microtex

@@ -1,8 +1,8 @@
 #ifndef MICROTEX_BUILDER_H
 #define MICROTEX_BUILDER_H
 
-#include "render.h"
 #include "env/units.h"
+#include "render.h"
 
 namespace microtex {
 
@@ -68,6 +68,6 @@ public:
   Render* build(Formula& f);
 };
 
-} // namespace microtex
+}  // namespace microtex
 
-#endif //MICROTEX_BUILDER_H
+#endif  // MICROTEX_BUILDER_H

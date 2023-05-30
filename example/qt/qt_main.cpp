@@ -11,14 +11,20 @@
 
 void initSkia() {
 #ifdef BUILD_SKIA
-  microtex::PlatformFactory::registerFactory("skia", std::make_unique<microtex::PlatformFactory_skia>());
+  microtex::PlatformFactory::registerFactory(
+    "skia",
+    std::make_unique<microtex::PlatformFactory_skia>()
+  );
   microtex::PlatformFactory::activate("skia");
   initGL();
 #endif
 }
 
 void initQt() {
-  microtex::PlatformFactory::registerFactory("qt", std::make_unique<microtex::PlatformFactory_qt>());
+  microtex::PlatformFactory::registerFactory(
+    "qt",
+    std::make_unique<microtex::PlatformFactory_qt>()
+  );
   microtex::PlatformFactory::activate("qt");
 }
 
@@ -34,13 +40,16 @@ int main(int argc, char** argv) {
       "  <samples file>\n"
       "Optional arguments:\n"
       "  <if render glyph use path: true|false>\n"
-      "  <if render use skia: true|false>\n");
+      "  <if render use skia: true|false>\n"
+    );
     return 1;
   }
   const microtex::FontSrcFile math{argv[1], argv[2]};
   microtex::MicroTeX::init(math);
   const std::string samples(argv[3]);
-  microtex::MicroTeX::setRenderGlyphUsePath(argc > 4 && std::string("true") == std::string(argv[4]));
+  microtex::MicroTeX::setRenderGlyphUsePath(
+    argc > 4 && std::string("true") == std::string(argv[4])
+  );
 
   bool useSkia = argc > 5 && std::string("true") == std::string(argv[5]);
 #ifdef BUILD_SKIA

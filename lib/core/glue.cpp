@@ -1,7 +1,8 @@
 #include "core/glue.h"
+
+#include "box/box_single.h"
 #include "env/env.h"
 #include "env/units.h"
-#include "box/box_single.h"
 
 using namespace std;
 using namespace microtex;

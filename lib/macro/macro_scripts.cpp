@@ -1,6 +1,7 @@
 #include "macro/macro_scripts.h"
-#include "atom/atom_scripts.h"
+
 #include "atom/atom_basic.h"
+#include "atom/atom_scripts.h"
 
 namespace microtex {
 
@@ -25,12 +26,7 @@ macro(sideset) {
 
 macro(prescript) {
   auto base = Formula(tp, args[3])._root;
-  return sptrOf<ScriptsAtom>(
-    base,
-    Formula(tp, args[2])._root,
-    Formula(tp, args[1])._root,
-    false
-  );
+  return sptrOf<ScriptsAtom>(base, Formula(tp, args[2])._root, Formula(tp, args[1])._root, false);
 }
 
-}
+}  // namespace microtex

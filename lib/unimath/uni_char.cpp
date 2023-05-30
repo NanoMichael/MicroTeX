@@ -1,14 +1,19 @@
 #include "unimath/uni_char.h"
+
 #include "unimath/uni_font.h"
 #include "utils/log.h"
 
 using namespace microtex;
 
 Char::Char(c32 c, c32 mc, i32 fid, i32 gid, float s)
-  : code(c), mappedCode(mc), fontId(fid), glyphId(gid), scale(s) {}
+    : code(c), mappedCode(mc), fontId(fid), glyphId(gid), scale(s) {}
 
 Char::Char(const Char& c)
-  : code(c.code), mappedCode(c.mappedCode), fontId(c.fontId), glyphId(c.glyphId), scale(c.scale) {}
+    : code(c.code),
+      mappedCode(c.mappedCode),
+      fontId(c.fontId),
+      glyphId(c.glyphId),
+      scale(c.scale) {}
 
 sptr<const OtfFont> Char::otfFont() const {
   return FontContext::getFont(fontId);
@@ -25,7 +30,11 @@ const Glyph* Char::glyph() const {
   auto g = font->otf().glyph(glyphId);
   if (g == nullptr) {
 #ifdef HAVE_LOG
-    logv("There's no glyph was found with (unicode = %u, id = %d), use '?' instead.\n", static_cast<std::uint32_t>(mappedCode), glyphId);
+    logv(
+      "There's no glyph was found with (unicode = %u, id = %d), use '?' instead.\n",
+      static_cast<std::uint32_t>(mappedCode),
+      glyphId
+    );
 #endif
     return font->otf().glyphOfUnicode('?');
   }
@@ -63,7 +72,8 @@ float Char::topAccentAttachment() const {
   return t == Otf::undefinedMathValue ? width() / 2.f : t * scale;
 }
 
-static Char variant(const Char& chr, u32 index, const std::function<const Variants&(const Glyph*)>& f) {
+static Char
+variant(const Char& chr, u32 index, const std::function<const Variants&(const Glyph*)>& f) {
   auto g = chr.glyph();
   const auto& v = f(g);
   if (v.isEmpty()) return chr;
@@ -77,11 +87,9 @@ u16 Char::vLargerCount() const {
 }
 
 Char Char::vLarger(u32 index) const {
-  return variant(
-    *this,
-    index,
-    [](const Glyph* g) -> const Variants& { return g->math().verticalVariants(); }
-  );
+  return variant(*this, index, [](const Glyph* g) -> const Variants& {
+    return g->math().verticalVariants();
+  });
 }
 
 u16 Char::hLargerCount() const {
@@ -89,19 +97,15 @@ u16 Char::hLargerCount() const {
 }
 
 Char Char::hLarger(u32 index) const {
-  return variant(
-    *this,
-    index,
-    [](const Glyph* g) -> const Variants& { return g->math().horizontalVariants(); }
-  );
+  return variant(*this, index, [](const Glyph* g) -> const Variants& {
+    return g->math().horizontalVariants();
+  });
 }
 
 Char Char::script(u32 index) const {
-  return variant(
-    *this,
-    index,
-    [](const Glyph* g) -> const Variants& { return g->math().scriptsVariants(); }
-  );
+  return variant(*this, index, [](const Glyph* g) -> const Variants& {
+    return g->math().scriptsVariants();
+  });
 }
 
 const GlyphAssembly& Char::vAssembly() const {

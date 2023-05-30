@@ -21,21 +21,13 @@ public:
 
   explicit VRowAtom(const sptr<Atom>& base);
 
-  inline void setAddInterline(bool addInterline) {
-    _addInterline = addInterline;
-  }
+  inline void setAddInterline(bool addInterline) { _addInterline = addInterline; }
 
-  inline bool isAddInterline() const {
-    return _addInterline;
-  }
+  inline bool isAddInterline() const { return _addInterline; }
 
-  inline void setAlignTop(bool vtop) {
-    _valign = vtop ? Alignment::top : Alignment::center;
-  }
+  inline void setAlignTop(bool vtop) { _valign = vtop ? Alignment::top : Alignment::center; }
 
-  inline bool isAlignTop() const {
-    return _valign == Alignment::top;
-  }
+  inline bool isAlignTop() const { return _valign == Alignment::top; }
 
   void setRaise(UnitType unit, float r);
 
@@ -50,6 +42,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_VROW_H
+#endif  // MICROTEX_ATOM_VROW_H

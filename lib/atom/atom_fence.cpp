@@ -1,8 +1,9 @@
 #include "atom/atom_fence.h"
+
 #include "atom/atom_row.h"
-#include "box/box_single.h"
-#include "box/box_group.h"
 #include "box/box_factory.h"
+#include "box/box_group.h"
+#include "box/box_single.h"
 #include "core/glue.h"
 #include "env/env.h"
 

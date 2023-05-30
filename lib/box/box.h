@@ -1,9 +1,10 @@
 #ifndef MICROTEX_BOX_H
 #define MICROTEX_BOX_H
 
-#include "utils/types.h"
-#include <vector>
 #include <string>
+#include <vector>
+
+#include "utils/types.h"
 
 namespace microtex {
 
@@ -88,9 +89,7 @@ public:
   virtual int lastFontId();
 
   /** Get child boxes of this box. */
-  virtual std::vector<sptr<Box>> descendants() const {
-    return {};
-  }
+  virtual std::vector<sptr<Box>> descendants() const { return {}; }
 
   /** Replace child box */
   virtual void replaceFirst(const sptr<Box>& from, const sptr<Box>& to);
@@ -150,20 +149,14 @@ public:
    *
    * @param box the box to be append
    */
-  void addOnly(const sptr<Box>& box) {
-    _children.push_back(box);
-  }
+  void addOnly(const sptr<Box>& box) { _children.push_back(box); }
 
   /** Child count of this box */
-  inline int size() const {
-    return _children.size();
-  }
+  inline int size() const { return _children.size(); }
 
   bool isSingle() const override { return false; }
 
-  std::vector<sptr<Box>> descendants() const override {
-    return _children;
-  }
+  std::vector<sptr<Box>> descendants() const override { return _children; }
 
   int lastFontId() override;
 };
@@ -183,11 +176,9 @@ public:
 
   int lastFontId() override;
 
-  std::vector<sptr<Box>> descendants() const override {
-    return {_base};
-  }
+  std::vector<sptr<Box>> descendants() const override { return {_base}; }
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_BOX_H
+#endif  // MICROTEX_BOX_H

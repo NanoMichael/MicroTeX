@@ -1,8 +1,8 @@
 #ifndef MICROTEX_UNITS_H
 #define MICROTEX_UNITS_H
 
-#include "utils/utils.h"
 #include "env/env.h"
+#include "utils/utils.h"
 
 namespace microtex {
 
@@ -21,19 +21,19 @@ struct Dimen {
   }
 };
 
-constexpr Dimen operator ""_ex(long double val) {
+constexpr Dimen operator""_ex(long double val) {
   return {static_cast<float>(val), UnitType::ex};
-};
+}
 
-constexpr Dimen operator ""_em(long double val) {
+constexpr Dimen operator""_em(long double val) {
   return {static_cast<float>(val), UnitType::em};
 }
 
-constexpr Dimen operator ""_pt(long double val) {
+constexpr Dimen operator""_pt(long double val) {
   return {static_cast<float>(val), UnitType::pt};
 }
 
-constexpr Dimen operator ""_tt(long double val) {
+constexpr Dimen operator""_tt(long double val) {
   return {static_cast<float>(val), UnitType::tt};
 }
 
@@ -69,6 +69,6 @@ public:
   static Dimen getDimen(const std::string& lgth);
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_UNITS_H
+#endif  // MICROTEX_UNITS_H

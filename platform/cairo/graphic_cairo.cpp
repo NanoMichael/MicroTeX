@@ -4,6 +4,7 @@
 #include <pango/pangocairo.h>
 
 #include <utility>
+
 #include "graphic_cairo.h"
 #include "utils/log.h"
 #include "utils/utf.h"
@@ -14,15 +15,11 @@ using namespace std;
 namespace cairopp {
 
 struct cairo_font_face_deleter {
-  void operator()(cairo_font_face_t* ptr) {
-    cairo_font_face_destroy(ptr);
-  }
+  void operator()(cairo_font_face_t* ptr) { cairo_font_face_destroy(ptr); }
 };
 
 struct cairo_ctx_deleter {
-  void operator()(cairo_t* ptr) {
-    cairo_destroy(ptr);
-  }
+  void operator()(cairo_t* ptr) { cairo_destroy(ptr); }
 };
 
 inline CairoFontFacePtr cairo_font_face_make_cairopp_ptr(cairo_font_face_t* ptr) {
@@ -33,7 +30,7 @@ inline CairoCtxPtr cairo_ctx_make_cairopp_ptr(cairo_t* ptr) {
   return CairoCtxPtr(ptr, cairo_ctx_deleter());
 }
 
-} // namespace cairopp
+}  // namespace cairopp
 
 map<string, cairopp::CairoFontFacePtr> Font_cairo::_cairoFtFaces;
 
@@ -52,7 +49,7 @@ void Font_cairo::loadFont(const string& file) {
   }
 
   // query font via fontconfig
-  const auto f = (const FcChar8*) file.c_str();
+  const auto f = (const FcChar8*)file.c_str();
 
   // get font family from file first
   int count;
@@ -125,7 +122,7 @@ TextLayout_cairo::TextLayout_cairo(const string& src, FontStyle style, float siz
   pango_layout_set_font_description(_layout, fd);
   pango_font_description_free(fd);
 
-  _ascent = (float) (pango_layout_get_baseline(_layout) / PANGO_SCALE);
+  _ascent = (float)(pango_layout_get_baseline(_layout) / PANGO_SCALE);
 }
 
 TextLayout_cairo::~TextLayout_cairo() {
@@ -136,7 +133,7 @@ void TextLayout_cairo::getBounds(Rect& r) {
   int w, h;
   pango_layout_get_pixel_size(_layout, &w, &h);
   r.x = 0;
-  r.w = (float) w;
+  r.w = (float)w;
   PangoRectangle rect;
   pango_layout_get_pixel_extents(_layout, &rect, NULL);
   r.y = -_ascent + rect.y;
@@ -164,14 +161,14 @@ sptr<Font> PlatformFactory_cairo::createFont(const std::string& file) {
   return sptrOf<Font_cairo>(file);
 }
 
-sptr<TextLayout> PlatformFactory_cairo::createTextLayout(const std::string& src, FontStyle style, float size) {
+sptr<TextLayout>
+PlatformFactory_cairo::createTextLayout(const std::string& src, FontStyle style, float size) {
   return sptrOf<TextLayout_cairo>(src, style, size);
 }
 
 /**************************************************************************************************/
 
-Graphics2D_cairo::Graphics2D_cairo(cairo_t* context)
-  : _context(cairo_reference(context)), _font() {
+Graphics2D_cairo::Graphics2D_cairo(cairo_t* context) : _context(cairo_reference(context)), _font() {
   _sx = _sy = 1.f;
   setColor(BLACK);
   setStroke(Stroke());
@@ -201,39 +198,27 @@ color Graphics2D_cairo::getColor() const {
 
 void Graphics2D_cairo::setStroke(const Stroke& s) {
   _stroke = s;
-  cairo_set_line_width(_context, (double) s.lineWidth);
+  cairo_set_line_width(_context, (double)s.lineWidth);
 
   // convert abstract line cap to platform line cap
   cairo_line_cap_t c;
   switch (s.cap) {
-    case CAP_BUTT:
-      c = CAIRO_LINE_CAP_BUTT;
-      break;
-    case CAP_ROUND:
-      c = CAIRO_LINE_CAP_ROUND;
-      break;
-    case CAP_SQUARE:
-      c = CAIRO_LINE_CAP_SQUARE;
-      break;
+    case CAP_BUTT: c = CAIRO_LINE_CAP_BUTT; break;
+    case CAP_ROUND: c = CAIRO_LINE_CAP_ROUND; break;
+    case CAP_SQUARE: c = CAIRO_LINE_CAP_SQUARE; break;
   }
   cairo_set_line_cap(_context, c);
 
   // convert abstract line join to platform line join
   cairo_line_join_t j;
   switch (s.join) {
-    case JOIN_BEVEL:
-      j = CAIRO_LINE_JOIN_BEVEL;
-      break;
-    case JOIN_ROUND:
-      j = CAIRO_LINE_JOIN_ROUND;
-      break;
-    case JOIN_MITER:
-      j = CAIRO_LINE_JOIN_MITER;
-      break;
+    case JOIN_BEVEL: j = CAIRO_LINE_JOIN_BEVEL; break;
+    case JOIN_ROUND: j = CAIRO_LINE_JOIN_ROUND; break;
+    case JOIN_MITER: j = CAIRO_LINE_JOIN_MITER; break;
   }
   cairo_set_line_join(_context, j);
 
-  cairo_set_miter_limit(_context, (double) s.miterLimit);
+  cairo_set_miter_limit(_context, (double)s.miterLimit);
 }
 
 const Stroke& Graphics2D_cairo::getStroke() const {
@@ -242,7 +227,7 @@ const Stroke& Graphics2D_cairo::getStroke() const {
 
 void Graphics2D_cairo::setStrokeWidth(float w) {
   _stroke.lineWidth = w;
-  cairo_set_line_width(_context, (double) w);
+  cairo_set_line_width(_context, (double)w);
 }
 
 void Graphics2D_cairo::setDash(const std::vector<float>& dash) {
@@ -278,23 +263,23 @@ void Graphics2D_cairo::setFontSize(float size) {
 }
 
 void Graphics2D_cairo::translate(float dx, float dy) {
-  cairo_translate(_context, (double) dx, (double) dy);
+  cairo_translate(_context, (double)dx, (double)dy);
 }
 
 void Graphics2D_cairo::scale(float sx, float sy) {
   _sx *= sx;
   _sy *= sy;
-  cairo_scale(_context, (double) sx, (double) sy);
+  cairo_scale(_context, (double)sx, (double)sy);
 }
 
 void Graphics2D_cairo::rotate(float angle) {
-  cairo_rotate(_context, (double) angle);
+  cairo_rotate(_context, (double)angle);
 }
 
 void Graphics2D_cairo::rotate(float angle, float px, float py) {
-  cairo_translate(_context, (double) px, (double) py);
-  cairo_rotate(_context, (double) angle);
-  cairo_translate(_context, (double) -px, (double) -py);
+  cairo_translate(_context, (double)px, (double)py);
+  cairo_rotate(_context, (double)angle);
+  cairo_translate(_context, (double)-px, (double)-py);
 }
 
 void Graphics2D_cairo::reset() {
@@ -313,7 +298,9 @@ float Graphics2D_cairo::sy() const {
 void Graphics2D_cairo::drawGlyph(u16 glyph, float x, float y) {
   cairo_set_font_face(_context, _font->getCairoFontFace());
   cairo_set_font_size(_context, _fontSize);
-  cairo_glyph_t g[1]{{glyph, (double) x, (double) y}};
+  cairo_glyph_t g[1]{
+    {glyph, (double)x, (double)y}
+  };
   cairo_show_glyphs(_context, g, 1);
 }
 
@@ -323,7 +310,7 @@ bool Graphics2D_cairo::beginPath(i32 id) {
 }
 
 void Graphics2D_cairo::moveTo(float x, float y) {
-  cairo_move_to(_context, (double) x, (double) y);
+  cairo_move_to(_context, (double)x, (double)y);
 }
 
 void Graphics2D_cairo::lineTo(float x, float y) {
@@ -346,7 +333,8 @@ void Graphics2D_cairo::quadTo(float x1, float y1, float x2, float y2) {
     2.0 / 3.0 * y1 + 1.0 / 3.0 * y0,
     2.0 / 3.0 * x1 + 1.0 / 3.0 * x2,
     2.0 / 3.0 * y1 + 1.0 / 3.0 * y2,
-    y1, y2
+    y1,
+    y2
   );
 }
 

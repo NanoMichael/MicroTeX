@@ -1,9 +1,9 @@
 #ifndef MICROTEX_MACRO_FONTS_H
 #define MICROTEX_MACRO_FONTS_H
 
-#include "macro/macro_decl.h"
-#include "atom/atom_misc.h"
 #include "atom/atom_font.h"
+#include "atom/atom_misc.h"
+#include "macro/macro_decl.h"
 #include "unimath/uni_font.h"
 #include "utils/utf.h"
 
@@ -73,6 +73,6 @@ macro(addfont);
 
 macro(mathversion);
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_MACRO_FONTS_H
+#endif  // MICROTEX_MACRO_FONTS_H

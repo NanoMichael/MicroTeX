@@ -1,11 +1,11 @@
 #ifndef MACRO_H_INCLUDED
 #define MACRO_H_INCLUDED
 
-#include "atom/atom.h"
-#include "utils/utils.h"
-
 #include <map>
 #include <string>
+
+#include "atom/atom.h"
+#include "utils/utils.h"
 
 namespace microtex {
 
@@ -38,24 +38,12 @@ public:
 
   void execute(Parser& tp, std::vector<std::string>& args) override;
 
-  static void addNewCommand(
-    const std::string& name,
-    const std::string& code,
-    int argc
-  );
+  static void addNewCommand(const std::string& name, const std::string& code, int argc);
 
-  static void addNewCommand(
-    const std::string& name,
-    const std::string& code,
-    int argc,
-    const std::string& def
-  );
+  static void
+  addNewCommand(const std::string& name, const std::string& code, int argc, const std::string& def);
 
-  static void addRenewCommand(
-    const std::string& name,
-    const std::string& code,
-    int argc
-  );
+  static void addRenewCommand(const std::string& name, const std::string& code, int argc);
 
   static void addRenewCommand(
     const std::string& name,
@@ -119,12 +107,7 @@ public:
 
   explicit MacroInfo(int argc) : argc(argc), opt(0) {}
 
-  virtual sptr<Atom> invoke(
-    Parser& tp,
-    std::vector<std::string>& args
-  ) {
-    return nullptr;
-  }
+  virtual sptr<Atom> invoke(Parser& tp, std::vector<std::string>& args) { return nullptr; }
 
   virtual ~MacroInfo() = default;
 
@@ -139,25 +122,18 @@ private:
 public:
   no_copy_assign(InflationMacroInfo);
 
-  InflationMacroInfo(Macro* macro, int argc)
-    : _macro(macro), MacroInfo(argc) {}
+  InflationMacroInfo(Macro* macro, int argc) : _macro(macro), MacroInfo(argc) {}
 
   InflationMacroInfo(Macro* macro, int argc, int posOpts)
-    : _macro(macro), MacroInfo(argc, posOpts) {}
+      : _macro(macro), MacroInfo(argc, posOpts) {}
 
-  sptr<Atom> invoke(
-    Parser& tp,
-    std::vector<std::string>& args
-  ) override {
+  sptr<Atom> invoke(Parser& tp, std::vector<std::string>& args) override {
     _macro->execute(tp, args);
     return nullptr;
   }
 };
 
-typedef sptr<Atom> (* MacroDelegate)(
-  Parser& tp,
-  std::vector<std::string>& args
-);
+typedef sptr<Atom> (*MacroDelegate)(Parser& tp, std::vector<std::string>& args);
 
 class PreDefMacro : public MacroInfo {
 private:
@@ -167,15 +143,11 @@ public:
   no_copy_assign(PreDefMacro);
 
   PreDefMacro(int argc, int posOpts, MacroDelegate delegate)
-    : MacroInfo(argc, posOpts), _delegate(delegate) {}
+      : MacroInfo(argc, posOpts), _delegate(delegate) {}
 
-  PreDefMacro(int argc, MacroDelegate delegate)
-    : MacroInfo(argc), _delegate(delegate) {}
+  PreDefMacro(int argc, MacroDelegate delegate) : MacroInfo(argc), _delegate(delegate) {}
 
-  sptr<Atom> invoke(
-    Parser& tp,
-    std::vector<std::string>& args
-  ) override;
+  sptr<Atom> invoke(Parser& tp, std::vector<std::string>& args) override;
 };
 
 }  // namespace microtex

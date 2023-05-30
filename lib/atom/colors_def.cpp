@@ -8,14 +8,14 @@ using namespace std;
 using namespace microtex;
 
 map<string, microtex::color> microtex::ColorAtom::_colors{
-  {"black", black},
-  {"white", white},
-  {"red", red},
-  {"green", green},
-  {"blue", blue},
-  {"cyan", cyan},
+  {"black",   black  },
+  {"white",   white  },
+  {"red",     red    },
+  {"green",   green  },
+  {"blue",    blue   },
+  {"cyan",    cyan   },
   {"magenta", magenta},
-  {"yellow", yellow},
+  {"yellow",  yellow },
   c("greenyellow", 0.15f, 0.f, 0.69f, 0.f),
   c("goldenrod", 0.f, 0.10f, 0.84f, 0.f),
   c("dandelion", 0.f, 0.29f, 0.84f, 0.f),
@@ -117,11 +117,14 @@ color ColorAtom::getColor(std::string name) {
 
     if (r == 0.f && g == 0.f && b == 0.f) return _default;
 
+    // clang-format off
     if (r == (int) r && g == (int) g && b == (int) b &&
-        R.find('.') == en && G.find('.') == en && B.find('.') == en) {
-      int ir = (int) min(255.f, max(0.f, r));
-      int ig = (int) min(255.f, max(0.f, g));
-      int ib = (int) min(255.f, max(0.f, b));
+        R.find('.') == en && G.find('.') == en && B.find('.') == en
+    ) {
+      // clang-format on
+      int ir = (int)min(255.f, max(0.f, r));
+      int ig = (int)min(255.f, max(0.f, g));
+      int ib = (int)min(255.f, max(0.f, b));
       return rgb(ir, ig, ib);
     }
     r = min(1.f, max(0.f, r));

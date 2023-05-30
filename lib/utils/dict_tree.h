@@ -5,7 +5,7 @@
 
 namespace microtex {
 
-template<typename K, typename V>
+template <typename K, typename V>
 struct SortedDictTree {
 private:
   K _key;
@@ -20,10 +20,10 @@ public:
   SortedDictTree() = delete;
 
   SortedDictTree(const K& key, const V& value, u16 childCount)
-    : _key(key),
-      _value(value),
-      _childCount(childCount),
-      _children(childCount == 0 ? nullptr : new SortedDictTree<K, V>* [childCount]) {}
+      : _key(key),
+        _value(value),
+        _childCount(childCount),
+        _children(childCount == 0 ? nullptr : new SortedDictTree<K, V>*[childCount]) {}
 
   inline K key() const { return _key; }
 
@@ -32,13 +32,11 @@ public:
   inline u16 childCount() const { return _childCount; }
 
   /** Get child at the given index. */
-  inline SortedDictTree<K, V>*& child(u16 i) const {
-    return _children[i];
-  }
+  inline SortedDictTree<K, V>*& child(u16 i) const { return _children[i]; }
 
   /**
    * Get the child match the given key, or null if not found.
-   * 
+   *
    * @param key the key to match
    */
   const SortedDictTree<K, V>* operator[](const K& key) const {
@@ -57,9 +55,7 @@ public:
     return true;
   }
 
-  bool operator!=(const SortedDictTree<K, V>& b) const {
-    return !(*this == b);
-  }
+  bool operator!=(const SortedDictTree<K, V>& b) const { return !(*this == b); }
 
   ~SortedDictTree() {
     for (u16 i = 0; i < _childCount; i++) delete _children[i];

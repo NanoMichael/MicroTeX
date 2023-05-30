@@ -1,10 +1,11 @@
 #ifndef GRAPHIC_H_INCLUDED
 #define GRAPHIC_H_INCLUDED
 
-#include "graphic/graphic_basic.h"
-#include "graphic/font_style.h"
 #include <map>
 #include <vector>
+
+#include "graphic/font_style.h"
+#include "graphic/graphic_basic.h"
 
 namespace microtex {
 
@@ -17,9 +18,7 @@ public:
   virtual bool operator==(const Font& f) const = 0;
 
   /** Check if current font is not equals to another */
-  inline bool operator!=(const Font& f) const {
-    return !(*this == f);
-  }
+  inline bool operator!=(const Font& f) const { return !(*this == f); }
 
   virtual ~Font() = default;
 };
@@ -81,7 +80,8 @@ public:
    * is for reference, not a constraint.
    * @param size the font size
    */
-  virtual sptr<TextLayout> createTextLayout(const std::string& src, FontStyle style, float size) = 0;
+  virtual sptr<TextLayout>
+  createTextLayout(const std::string& src, FontStyle style, float size) = 0;
 
   /** Register a factory */
   static void registerFactory(const std::string& name, std::unique_ptr<PlatformFactory> factory);

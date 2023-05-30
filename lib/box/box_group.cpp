@@ -2,8 +2,8 @@
 
 #include <utility>
 
-#include "graphic/graphic.h"
 #include "box/box_single.h"
+#include "graphic/graphic.h"
 
 using namespace std;
 using namespace microtex;
@@ -144,7 +144,7 @@ void HBox::draw(Graphics2D& g2, float x, float y) {
 /************************************* vertical box implementation ********************************/
 
 VBox::VBox(const sptr<Box>& box, float rest, Alignment alignment)
-  : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {
+    : _leftMostPos(F_MAX), _rightMostPos(F_MIN) {
   add(box);
   if (alignment == Alignment::center) {
     auto s = sptrOf<StrutBox>(0.f, rest / 2, 0.f, 0.f);
@@ -275,6 +275,7 @@ void RotateBox::init(const sptr<Box>& b, float angle, float x, float y) {
   _shiftX = x * (1 - c) + y * s;
   _shiftY = y * (1 - c) - x * s;
 
+  // clang-format off
   _xmax = max(
     -_height * s,
     max(
@@ -305,6 +306,7 @@ void RotateBox::init(const sptr<Box>& b, float angle, float x, float y) {
       min(_width * s - _depth * c, _width * s + _height * c)
     )
   );
+  // clang-format on
 
   _width = _xmax - _xmin;
   _height = _ymax + _shiftY;
@@ -362,8 +364,7 @@ Point RotateBox::calculateShift(const Box& b, Rotation option) {
       p.x = b._width / 2.f;
       p.y = (b._height - b._depth) / 2.f;
       break;
-    default:
-      break;
+    default: break;
   }
   return p;
 }
@@ -446,7 +447,8 @@ void OvalBox::draw(Graphics2D& g2, float x, float y) {
     y - _height + th,
     _width - _thickness,
     _height + _depth - _thickness,
-    r, r
+    r,
+    r
   );
   g2.setStroke(st);
   _base->draw(g2, x + _space + _thickness, y);
@@ -480,7 +482,7 @@ void ShadowBox::draw(Graphics2D& g2, float x, float y) {
   _base->draw(g2, x + _space + _thickness, y);
 }
 
-/************************************** wrapper box implementation **********************************/
+/************************************ wrapper box implementation **********************************/
 
 void WrapperBox::addInsets(float l, float t, float r, float b) {
   _l += l;

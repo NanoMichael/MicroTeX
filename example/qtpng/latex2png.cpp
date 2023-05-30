@@ -2,29 +2,30 @@
 // Created by pikachu on 2021/5/11.
 //
 
-
-#include "microtex.h"
-#include "graphic_qt.h"
-#include <QGuiApplication>
-#include <QFile>
-#include <QFileInfo>
 #include <QCommandLineParser>
 #include <QDebug>
+#include <QFile>
+#include <QFileInfo>
+#include <QGuiApplication>
 #include <QPainter>
 #include <QPixmap>
 #include <QTimer>
+
+#include "graphic_qt.h"
+#include "microtex.h"
 
 class TexGuard {
 public:
   TexGuard(const microtex::FontSrc& math) {
     microtex::MicroTeX::init(math);
-    microtex::PlatformFactory::registerFactory("qt", std::make_unique<microtex::PlatformFactory_qt>());
+    microtex::PlatformFactory::registerFactory(
+      "qt",
+      std::make_unique<microtex::PlatformFactory_qt>()
+    );
     microtex::PlatformFactory::activate("qt");
   }
 
-  ~TexGuard() {
-    microtex::MicroTeX::release();
-  }
+  ~TexGuard() { microtex::MicroTeX::release(); }
 };
 
 int main(int argc, char** argv) {
@@ -69,10 +70,7 @@ int main(int argc, char** argv) {
     return 1;
   }
 
-  microtex::FontSrcFile math{
-    clmPath.toStdString(),
-    mathFontPath.toStdString()
-  };
+  microtex::FontSrcFile math{clmPath.toStdString(), mathFontPath.toStdString()};
 
   TexGuard texGuard(math);
 #ifdef BUILD_SKIA
@@ -99,13 +97,8 @@ int main(int argc, char** argv) {
   }
   QString latex = file.readAll();
   qDebug() << latex;
-  auto render = microtex::MicroTeX::parse(
-    latex.toStdString(),
-    600 - 0 * 2,
-    20,
-    20 / 3.f,
-    0xff424242
-  );
+  auto render =
+    microtex::MicroTeX::parse(latex.toStdString(), 600 - 0 * 2, 20, 20 / 3.f, 0xff424242);
   qDebug() << render->getWidth() << render->getHeight();
   QPixmap img(render->getWidth(), render->getHeight());
   img.fill(Qt::white);

@@ -2,8 +2,8 @@
 #define MICROTEX_BOX_GROUP_H
 
 #include "atom/atom.h"
-#include "utils/nums.h"
 #include "graphic/graphic_basic.h"
+#include "utils/nums.h"
 
 namespace microtex {
 
@@ -39,17 +39,11 @@ public:
 
   void replaceFirst(const sptr<Box>& from, const sptr<Box>& to) override;
 
-  inline void addBreakPosition(int pos) {
-    _breakPositions.push_back(pos);
-  }
+  inline void addBreakPosition(int pos) { _breakPositions.push_back(pos); }
 
-  std::pair<sptr<HBox>, sptr<HBox>> split(int pos) {
-    return split(pos, 1);
-  }
+  std::pair<sptr<HBox>, sptr<HBox>> split(int pos) { return split(pos, 1); }
 
-  std::pair<sptr<HBox>, sptr<HBox>> splitRemove(int pos) {
-    return split(pos, 2);
-  }
+  std::pair<sptr<HBox>, sptr<HBox>> splitRemove(int pos) { return split(pos, 2); }
 
   void draw(Graphics2D& g2, float x, float y) override;
 
@@ -110,13 +104,9 @@ private:
 public:
   ScaleBox() = delete;
 
-  ScaleBox(const sptr<Box>& b, float sx, float sy) : DecorBox(b) {
-    init(b, sx, sy);
-  }
+  ScaleBox(const sptr<Box>& b, float sx, float sy) : DecorBox(b) { init(b, sx, sy); }
 
-  ScaleBox(const sptr<Box>& b, float factor) : DecorBox(b) {
-    init(b, factor, factor);
-  }
+  ScaleBox(const sptr<Box>& b, float factor) : DecorBox(b) { init(b, factor, factor); }
 
   void draw(Graphics2D& g2, float x, float y) override;
 
@@ -137,30 +127,18 @@ public:
 
 /** Enumeration representing rotation origin */
 enum class Rotation {
-  // Bottom Left
-  bl,
-  // Bottom Center
-  bc,
-  // Bottom Right
-  br,
-  // Top Left
-  tl,
-  // Top Center
-  tc,
-  // Top Right
-  tr,
-  // Baseline Left
-  Bl,
-  // Baseline Right
-  Br,
-  // Baseline Center
-  Bc,
-  // Center Left
-  cl,
-  // Center Center
-  cc,
-  // Center Right
-  cr,
+  bl,  // Bottom Left
+  bc,  // Bottom Center
+  br,  // Bottom Right
+  tl,  // Top Left
+  tc,  // Top Center
+  tr,  // Top Right
+  Bl,  // Baseline Left
+  Br,  // Baseline Right
+  Bc,  // Baseline Center
+  cl,  // Center Left
+  cc,  // Center Center
+  cr,  // Center Right
   none = -1
 };
 
@@ -178,18 +156,15 @@ private:
 public:
   RotateBox() = delete;
 
-  RotateBox(const sptr<Box>& b, float angle, float x, float y)
-    : DecorBox(b) {
+  RotateBox(const sptr<Box>& b, float angle, float x, float y) : DecorBox(b) {
     init(b, angle, x, y);
   }
 
-  RotateBox(const sptr<Box>& b, float angle, const Point& origin)
-    : DecorBox(b) {
+  RotateBox(const sptr<Box>& b, float angle, const Point& origin) : DecorBox(b) {
     init(b, angle, origin.x, origin.y);
   }
 
-  RotateBox(const sptr<Box>& b, float angle, Rotation option)
-    : DecorBox(b) {
+  RotateBox(const sptr<Box>& b, float angle, Rotation option) : DecorBox(b) {
     const Point& p = calculateShift(*b, option);
     init(b, angle, p.x, p.y);
   }
@@ -223,7 +198,7 @@ public:
   }
 
   FramedBox(const sptr<Box>& box, float thickness, float space, color line, color bg)
-    : DecorBox(box) {
+      : DecorBox(box) {
     init(box, thickness, space);
     _line = line;
     _bg = bg;
@@ -242,13 +217,10 @@ private:
 public:
   OvalBox() = delete;
 
-  explicit OvalBox(
-    const sptr<FramedBox>& fbox,
-    float multiplier = 0.5f,
-    float diameter = 0.f
-  ) : FramedBox(fbox->_base, fbox->_thickness, fbox->_space),
-      _multiplier(multiplier),
-      _diameter(diameter) {}
+  explicit OvalBox(const sptr<FramedBox>& fbox, float multiplier = 0.5f, float diameter = 0.f)
+      : FramedBox(fbox->_base, fbox->_thickness, fbox->_space),
+        _multiplier(multiplier),
+        _diameter(diameter) {}
 
   void draw(Graphics2D& g2, float x, float y) override;
 
@@ -264,7 +236,7 @@ public:
   ShadowBox() = delete;
 
   ShadowBox(const sptr<FramedBox>& fbox, float shadowRule)
-    : FramedBox(fbox->_base, fbox->_thickness, fbox->_space) {
+      : FramedBox(fbox->_base, fbox->_thickness, fbox->_space) {
     _shadowRule = shadowRule;
     _depth += shadowRule;
     _width += shadowRule;
@@ -285,7 +257,7 @@ public:
   WrapperBox() = delete;
 
   WrapperBox(const sptr<Box>& base, float width, float rowheight, float rowdepth, Alignment align)
-    : DecorBox(base), _l(0) {
+      : DecorBox(base), _l(0) {
     _height = rowheight;
     _depth = rowdepth;
     _width = width;

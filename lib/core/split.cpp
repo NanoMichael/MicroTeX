@@ -28,16 +28,16 @@ static void printBox(const sptr<Box>& b, int dep, vector<bool>& lines, int max =
   const vector<sptr<Box>>& children = b->descendants();
   const auto size = children.size();
   const auto& name = b->name();
-  const char* fmt = (
-    size > 0
-    ? ANSI_COLOR_CYAN " %-*s " ANSI_RESET
-    : " %-*s "
-  );
+  const char* fmt = (size > 0 ? ANSI_COLOR_CYAN " %-*s " ANSI_RESET : " %-*s ");
   logv(fmt, size > 0 ? name.size() : max, name.c_str());
   // show metrics and additional info
   logv(
     "[%g, (%g + %g) = %g, %g] %s\n",
-    b->_width, b->_height, b->_depth, b->vlen(), b->_shift,
+    b->_width,
+    b->_height,
+    b->_depth,
+    b->vlen(),
+    b->_shift,
     b->toString().c_str()
   );
   if (size == 0) return;
@@ -65,7 +65,7 @@ std::pair<bool, sptr<Box>> BoxSplitter::split(const sptr<Box>& b, float width, f
   auto h = dynamic_pointer_cast<HBox>(b);
   sptr<Box> box;
   if (h != nullptr) {
-    auto[splitted, box] = split(h, width, lineSpace);
+    auto [splitted, box] = split(h, width, lineSpace);
 #ifdef HAVE_LOG
     if (box != b) {
       logv("[BEFORE SPLIT]:\n");
@@ -169,8 +169,9 @@ float BoxSplitter::canBreak(stack<Position>& s, const sptr<HBox>& hbox, const fl
 int BoxSplitter::getBreakPosition(const sptr<HBox>& hb, int i) {
   if (hb->_breakPositions.empty()) return -1;
 
-  if (hb->_breakPositions.size() == 1 && hb->_breakPositions[0] <= i)
+  if (hb->_breakPositions.size() == 1 && hb->_breakPositions[0] <= i) {
     return hb->_breakPositions[0];
+  }
 
   size_t pos = 0;
   for (; pos < hb->_breakPositions.size(); pos++) {

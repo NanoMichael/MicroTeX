@@ -1,10 +1,11 @@
 #include "core/formula.h"
-#include "atom/atom_char.h"
+
 #include "atom/atom_basic.h"
-#include "atom/atom_vrow.h"
+#include "atom/atom_char.h"
 #include "atom/atom_fence.h"
-#include "utils/utf.h"
+#include "atom/atom_vrow.h"
 #include "utils/string_utils.h"
+#include "utils/utf.h"
 
 using namespace std;
 using namespace microtex;
@@ -13,12 +14,8 @@ map<string, sptr<Formula>> Formula::_predefFormulas;
 
 Formula::Formula() : _parser("", this, false) {}
 
-Formula::Formula(
-  const Parser& tp,
-  const string& latex,
-  bool preprocess,
-  bool isMathMode
-) : _parser(tp.isPartial(), latex, this, preprocess, isMathMode) {
+Formula::Formula(const Parser& tp, const string& latex, bool preprocess, bool isMathMode)
+    : _parser(tp.isPartial(), latex, this, preprocess, isMathMode) {
   if (tp.isPartial()) {
     try {
       _parser.parse();
@@ -124,8 +121,7 @@ void ArrayFormula::addRow() {
 void ArrayFormula::addRowSpecifier(const sptr<CellSpecifier>& spe) {
   auto it = _rowSpecifiers.find(_row);
   if (it == _rowSpecifiers.end()) {
-    _rowSpecifiers[_row] = vector<sptr<CellSpecifier>>
-      ();
+    _rowSpecifiers[_row] = vector<sptr<CellSpecifier>>();
   }
   _rowSpecifiers[_row].push_back(spe);
 }
@@ -134,8 +130,7 @@ void ArrayFormula::addCellSpecifier(const sptr<CellSpecifier>& spe) {
   string str = toString(_row) + toString(_col);
   auto it = _cellSpecifiers.find(str);
   if (it == _cellSpecifiers.end()) {
-    _cellSpecifiers[str] = vector<sptr<CellSpecifier>>
-      ();
+    _cellSpecifiers[str] = vector<sptr<CellSpecifier>>();
   }
   _cellSpecifiers[str].push_back(spe);
 }
@@ -172,8 +167,7 @@ void ArrayFormula::checkDimensions() {
     size_t j = _array[i].size();
     if (j != _col && _array[i][0] != nullptr && _array[i][0]->_type != AtomType::interText) {
       // Fill the row with null atom
-      vector<sptr<Atom>>
-        & r = _array[i];
+      vector<sptr<Atom>>& r = _array[i];
       for (; j < _col; j++) r.push_back(nullptr);
     }
   }

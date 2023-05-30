@@ -3,11 +3,11 @@
 
 #include <bitset>
 
-#include "utils/utils.h"
 #include "atom/atom.h"
+#include "atom/atom_text.h"
 #include "box/box.h"
 #include "unimath/uni_char.h"
-#include "atom/atom_text.h"
+#include "utils/utils.h"
 
 namespace microtex {
 
@@ -64,9 +64,7 @@ public:
   }
 
   /** @return the changed type, or the old left type if it has not been changed */
-  inline AtomType leftType() const {
-    return (_type != AtomType::none ? _type : _atom->leftType());
-  }
+  inline AtomType leftType() const { return (_type != AtomType::none ? _type : _atom->leftType()); }
 
   /** @return the changed type, or the old right type if it has not been changed */
   inline AtomType rightType() const {
@@ -87,9 +85,7 @@ public:
 
   sptr<Box> createBox(Env& env);
 
-  inline void markAsTextSymbol() {
-    _textSymbol = true;
-  }
+  inline void markAsTextSymbol() { _textSymbol = true; }
 
   /** Test if this atom is a kern. */
   bool isKern() const;
@@ -127,12 +123,7 @@ private:
 
   sptr<CharSymbol> currentChar(int i);
 
-  int processInvalid(
-    const sptr<TextAtom>& txt,
-    bool isMathMode,
-    int i,
-    Env& env
-  );
+  int processInvalid(const sptr<TextAtom>& txt, bool isMathMode, int i, Env& env);
 
   sptr<TextAtom> processContinues(int& i, bool isMathMode);
 
@@ -163,14 +154,10 @@ public:
    *
    * @param breakable indicate whether the box can be broken
    */
-  inline void setBreakable(bool breakable) {
-    _breakable = breakable;
-  }
+  inline void setBreakable(bool breakable) { _breakable = breakable; }
 
   /** Get the size of the elements */
-  inline size_t size() const {
-    return _elements.size();
-  }
+  inline size_t size() const { return _elements.size(); }
 
   /** Push an atom to back */
   void add(const sptr<Atom>& atom);
@@ -184,6 +171,6 @@ public:
   AtomType rightType() const override;
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_ROW_H
+#endif  // MICROTEX_ATOM_ROW_H

@@ -1,4 +1,5 @@
 #include "graphic/graphic.h"
+
 #include "utils/exceptions.h"
 #include "utils/utils.h"
 
@@ -14,7 +15,7 @@ struct PlatformFactoryData {
 
 static PlatformFactoryData MICROTEX_PLATFORM_FACTORY_DATA_INSTANCE;
 
-} // namespace microtex
+}  // namespace microtex
 
 PlatformFactoryData* PlatformFactory::_data = &MICROTEX_PLATFORM_FACTORY_DATA_INSTANCE;
 
@@ -30,9 +31,7 @@ microtex::PlatformFactory* microtex::PlatformFactory::get() {
   auto it = _data->factories.find(_data->currentFactory);
   if (it == _data->factories.end()) {
     throw ex_invalid_state(
-      "No factory found with name '" +
-      _data->currentFactory +
-      "', please register one."
+      "No factory found with name '" + _data->currentFactory + "', please register one."
     );
   }
   return it->second.get();

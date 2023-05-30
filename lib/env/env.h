@@ -1,8 +1,8 @@
 #ifndef MICROTEX_ENV_H
 #define MICROTEX_ENV_H
 
-#include "unimath/uni_symbol.h"
 #include "unimath/uni_font.h"
+#include "unimath/uni_symbol.h"
 #include "utils/nums.h"
 
 namespace microtex {
@@ -35,21 +35,15 @@ public:
   no_copy_assign(Env);
 
   Env(TexStyle style, const sptr<FontContext>& fctx, float pointSize)
-    : _style(style), _fctx(fctx), _fixedScale(FIXED_TEXT_SIZE / pointSize) {}
+      : _style(style), _fctx(fctx), _fixedScale(FIXED_TEXT_SIZE / pointSize) {}
 
   // region statics
   /** Set the dot per inch target */
-  static inline void setDpi(float dpi) {
-    PIXELS_PER_POINT = dpi / 72.f;
-  }
+  static inline void setDpi(float dpi) { PIXELS_PER_POINT = dpi / 72.f; }
 
-  static inline float pixelsPerPoint() {
-    return PIXELS_PER_POINT;
-  }
+  static inline float pixelsPerPoint() { return PIXELS_PER_POINT; }
 
-  static inline float fixedTextSize() {
-    return FIXED_TEXT_SIZE;
-  }
+  static inline float fixedTextSize() { return FIXED_TEXT_SIZE; }
   // endregion
 
   // region getters and setters
@@ -104,9 +98,7 @@ public:
   }
 
   /** The math font id */
-  inline i32 mathFontId() const {
-    return _fctx->mathFontId();
-  }
+  inline i32 mathFontId() const { return _fctx->mathFontId(); }
   // endregion
 
   // region Font related
@@ -152,9 +144,7 @@ public:
 
   // region Styles
   /** Test if current style is cramped */
-  inline bool isCrampedStyle() const {
-    return crampStyle() == _style;
-  }
+  inline bool isCrampedStyle() const { return crampStyle() == _style; }
 
   /** Style to display formulas in smaller size */
   TexStyle crampStyle() const;
@@ -202,7 +192,7 @@ public:
    * Do something with given TexStyle. This will reset the style after function #f
    * return.
    */
-  template<typename F>
+  template <typename F>
   auto withStyle(const TexStyle style, F&& f) -> decltype(f(*this)) {
     auto oldStyle = _style;
     setStyle(style);
@@ -215,7 +205,7 @@ public:
    * Do something with given FontStyle. This will reset the FontStyle after function #f
    * return.
    */
-  template<typename F>
+  template <typename F>
   auto withFontStyle(const FontStyle style, bool isMathMode, F&& f) -> decltype(f(*this)) {
     auto oldStyle = isMathMode ? _mathFontStyle : _textFontStyle;
     auto& target = isMathMode ? _mathFontStyle : _textFontStyle;
@@ -226,6 +216,6 @@ public:
   }
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ENV_H
+#endif  // MICROTEX_ENV_H

@@ -27,7 +27,7 @@ Otf* Otf::fromFile(const char* filePath) {
   return reader.read(filePath);
 }
 
-Otf * Otf::fromData(size_t len, const u8* data) {
+Otf* Otf::fromData(size_t len, const u8* data) {
   const CLMReader reader;
   return reader.read(len, data);
 }
@@ -42,10 +42,7 @@ u16 Otf::space() const {
 }
 
 i32 Otf::glyphId(c32 codepoint) const {
-  const int index = binIndexOf(
-    _unicodeCount,
-    [&](int i) { return codepoint - _unicodes[i]; }
-  );
+  const int index = binIndexOf(_unicodeCount, [&](int i) { return codepoint - _unicodes[i]; });
   if (index < 0) return -1;
   return _unicodeGlyphs[index];
 }
@@ -63,7 +60,7 @@ const Glyph* Otf::glyph(i32 id) const {
 
 i16 Otf::classKerning(u16 left, u16 right) const {
   for (u16 i = 0; i < _classKerningCount; i++) {
-    auto[found, value] = (*_classKernings[i])(left, right);
+    auto [found, value] = (*_classKernings[i])(left, right);
     if (found) return value;
   }
   return 0;

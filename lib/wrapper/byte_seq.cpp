@@ -1,9 +1,10 @@
 #ifdef HAVE_CWRAPPER
 
 #include "wrapper/byte_seq.h"
-#include "utils/log.h"
 
 #include <cstdlib>
+
+#include "utils/log.h"
 
 namespace microtex {
 
@@ -16,7 +17,7 @@ ByteSeq::ByteSeq() {
 
 void ByteSeq::_put(const char* str) {
   auto l = sizeOf(str);
-  strcpy((char*) _data + _index, str);
+  strcpy((char*)_data + _index, str);
   _index += l;
 }
 
@@ -35,11 +36,11 @@ void* ByteSeq::finish() {
 #ifdef HAVE_LOG
   logv("finish drawing commands, bytes: %u\n", _index);
 #endif
-  auto ptr = (unsigned int*) _data;
+  auto ptr = (unsigned int*)_data;
   *ptr = _index;
   return _data;
 }
 
-}
+}  // namespace microtex
 
-#endif // HAVE_CWRAPPER
+#endif  // HAVE_CWRAPPER

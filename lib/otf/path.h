@@ -9,7 +9,7 @@ namespace microtex {
 /** Get the arguments count of the given path command. */
 u16 pathCmdArgsCount(char cmd);
 
-} // namespace microtex
+}  // namespace microtex
 
 #ifdef HAVE_GLYPH_RENDER_PATH
 
@@ -114,7 +114,7 @@ public:
   static Path empty;
 };
 
-} // namespace microtex
+}  // namespace microtex
 
-#endif // HAVE_GLYPH_RENDER_PATH
-#endif //MICROTEX_PATH_H
+#endif  // HAVE_GLYPH_RENDER_PATH
+#endif  // MICROTEX_PATH_H

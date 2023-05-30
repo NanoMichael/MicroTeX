@@ -3,6 +3,7 @@
 using namespace std;
 using namespace microtex;
 
+// clang-format off
 const map<c32, string> Formula::_charToSymbol{
   {'+', "plus"},
   {'-', "minus"},
@@ -68,7 +69,7 @@ map<string, string> Formula::_predefFormulaStrs{
   {"arcsec",           "\\mathop{\\mathrm{arcsec}}\\nolimits"},
   {"arccsc",           "\\mathop{\\mathrm{arccsc}}\\nolimits"},
   {"sech",             "\\mathop{\\mathrm{sech}}\\nolimits"},
-  {"csc",              "\\mathop{\\mathrm{csc}}\\nolimits"},
+kkk  {"csc",              "\\mathop{\\mathrm{csc}}\\nolimits"},
   {"csch",             "\\mathop{\\mathrm{csch}}\\nolimits"},
   {"max",              "\\mathop{\\mathrm{max}}"},
   {"min",              "\\mathop{\\mathrm{min}}"},
@@ -163,3 +164,4 @@ map<string, string> Formula::_predefFormulaStrs{
   {"idotsint",         "\\int\\cdots\\int"},
   {"MicroTeX",         "\\mathrm{\\mathit{\\mu}\\kern-.1em\\TeX}"},
 };
+// clang-format on

@@ -1,8 +1,8 @@
 #ifndef MICROTEX_UNI_SYMBOL_H
 #define MICROTEX_UNI_SYMBOL_H
 
-#include "utils/utils.h"
 #include "utils/types.h"
+#include "utils/utils.h"
 
 namespace microtex {
 
@@ -31,6 +31,6 @@ public:
   static const Symbol* get(const char* name);
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_UNI_SYMBOL_H
+#endif  // MICROTEX_UNI_SYMBOL_H

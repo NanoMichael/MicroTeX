@@ -36,9 +36,8 @@ MICROTEX_CAPI void microtex_registerCallbacks(
 );
 
 /** Set text-layout bounds by given width, height, and ascent. For FFI bindings. */
-MICROTEX_CAPI void microtex_setTextLayoutBounds(
-  TextLayoutBounds* b, float width, float height, float ascent
-);
+MICROTEX_CAPI void
+microtex_setTextLayoutBounds(TextLayoutBounds* b, float width, float height, float ascent);
 
 /** Test if a font is bold. For FFI bindings. */
 MICROTEX_CAPI bool microtex_isBold(FontDesc* desc);
@@ -65,10 +64,7 @@ MICROTEX_CAPI float microtex_fontSize(FontDesc* desc);
  * the font is a math font by [microtex_isMathFont]. You must call [microtex_releaseFontMeta]
  * after this object has no usages.
  */
-MICROTEX_CAPI FontMetaPtr microtex_init(
-  unsigned long len,
-  const unsigned char* data
-);
+MICROTEX_CAPI FontMetaPtr microtex_init(unsigned long len, const unsigned char* data);
 
 /** Release the engine. */
 MICROTEX_CAPI void microtex_release();
@@ -84,10 +80,7 @@ MICROTEX_CAPI bool microtex_isInited();
  * @return the font meta info. You must call [microtex_releaseFontMeta] after this object has
  * no usages.
  */
-MICROTEX_CAPI FontMetaPtr microtex_addFont(
-  unsigned long len,
-  const unsigned char* data
-);
+MICROTEX_CAPI FontMetaPtr microtex_addFont(unsigned long len, const unsigned char* data);
 
 /** Get the font family name from the given FontMetaPtr. */
 MICROTEX_CAPI const char* microtex_getFontFamily(FontMetaPtr ptr);
@@ -307,6 +300,6 @@ MICROTEX_CAPI void microtex_setRenderForeground(RenderPtr render, unsigned int c
 }
 #endif
 
-#endif // HAVE_CWRAPPER
+#endif  // HAVE_CWRAPPER
 
-#endif // MICROTEX_CWRAPPER_H
+#endif  // MICROTEX_CWRAPPER_H

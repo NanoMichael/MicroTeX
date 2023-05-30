@@ -1,8 +1,9 @@
 #include "atom/atom_accent.h"
+
+#include "box/box_group.h"
+#include "box/box_single.h"
 #include "env/env.h"
 #include "env/units.h"
-#include "box/box_single.h"
-#include "box/box_group.h"
 #include "utils/exceptions.h"
 
 using namespace microtex;
@@ -10,8 +11,7 @@ using namespace std;
 
 void AccentedAtom::setupBase(const sptr<Atom>& base) {
   auto a = dynamic_cast<AccentedAtom*>(base.get());
-  if (a != nullptr) _base = a->_base;
-  else _base = base;
+  _base = a != nullptr ? a->_base : base;
 }
 
 AccentedAtom::AccentedAtom(const sptr<Atom>& base, const string& name, bool fitSize, bool fake) {
@@ -31,19 +31,20 @@ AccentedAtom::AccentedAtom(const sptr<Atom>& base, const string& name, bool fitS
     setupBase(base);
   } else {
     throw ex_parse(
-      "The symbol with the name '"
-      + name + "' is not defined as an accent (type='acc')!"
+      "The symbol with the name '" + name + "' is not defined as an accent (type='acc')!"
     );
   }
 }
 
 sptr<Box> AccentedAtom::createBox(Env& env) {
   // create accentee box in cramped style
+  // clang-format off
   auto accentee = (
     _accentee == nullptr
     ? StrutBox::empty()
     : env.withStyle(env.crampStyle(), [&](Env& cramp) { return _accentee->createBox(cramp); })
   );
+  // clang-format on
 
   float topAccent = Otf::undefinedMathValue;
   if (auto sym = dynamic_cast<CharSymbol*>(_base.get()); sym != nullptr) {
@@ -53,7 +54,7 @@ sptr<Box> AccentedAtom::createBox(Env& env) {
 
   // function to retrieve best char from the accent symbol to match the accentee box's width
   const auto& getChar = [&]() {
-    const auto& chr = ((SymbolAtom*) _accenter.get())->getChar(env);
+    const auto& chr = ((SymbolAtom*)_accenter.get())->getChar(env);
     if (!_fitSize) return chr;
     int i = 1;
     for (; i < chr.hLargerCount(); i++) {
@@ -84,7 +85,7 @@ sptr<Box> AccentedAtom::createBox(Env& env) {
   if (_fakeAccent) {
     delta = Units::fsize(UnitType::mu, 1, env);
   } else if (accenter->_depth <= 0) {
-    delta = -min(accentee->_height, (float) env.mathConsts().accentBaseHeight());
+    delta = -min(accentee->_height, (float)env.mathConsts().accentBaseHeight());
   } else {
     // if accent has depth (e.g. \not), we need to align the accentee and accenter
     // by its baseline

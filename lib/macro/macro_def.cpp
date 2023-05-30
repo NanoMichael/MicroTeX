@@ -1,17 +1,17 @@
 #include "macro/macro.h"
-#include "macro/macro_misc.h"
-#include "macro/macro_env.h"
-#include "macro/macro_sizes.h"
-#include "macro/macro_scripts.h"
-#include "macro/macro_delims.h"
-#include "macro/macro_types.h"
-#include "macro/macro_fonts.h"
 #include "macro/macro_accent.h"
-#include "macro/macro_styles.h"
-#include "macro/macro_colors.h"
-#include "macro/macro_space.h"
 #include "macro/macro_boxes.h"
+#include "macro/macro_colors.h"
+#include "macro/macro_delims.h"
+#include "macro/macro_env.h"
+#include "macro/macro_fonts.h"
 #include "macro/macro_frac.h"
+#include "macro/macro_misc.h"
+#include "macro/macro_scripts.h"
+#include "macro/macro_sizes.h"
+#include "macro/macro_space.h"
+#include "macro/macro_styles.h"
+#include "macro/macro_types.h"
 
 using namespace std;
 using namespace microtex;
@@ -30,7 +30,7 @@ inline auto defMac(const char* code, int argc, MacroDelegate del) {
   return std::make_pair(code, new PreDefMacro(argc, del));
 }
 
-}
+}  // namespace microtex
 
 map<string, MacroInfo*> MacroInfo::_commands{
 #define mac mac4
@@ -244,7 +244,7 @@ map<string, MacroInfo*> MacroInfo::_commands{
   mac(1, macro_accents, "bar"),
   mac(1, macro_accents, "vec"),
   mac(1, macro_accents, "mathring"),
-  mac(2, macro_accentset, "accentset"), // fake accents
+  mac(2, macro_accentset, "accentset"),  // fake accents
   mac(2, macro_overset, "overset"),
   mac(2, macro_underset, "underset"),
   mac(2, macro_underaccent, "underaccent"),
@@ -344,20 +344,11 @@ map<string, string> NewCommandMacro::_codes;
 map<string, string> NewCommandMacro::_replacements;
 Macro* NewCommandMacro::_instance = new NewCommandMacro();
 
-inline static void env(
-  int argc,
-  const string& name,
-  const string& begDef,
-  const string& endDef
-) {
+inline static void env(int argc, const string& name, const string& begDef, const string& endDef) {
   NewEnvironmentMacro::addNewEnvironment(name, begDef, endDef, argc);
 }
 
-inline static void cmd(
-  int argc,
-  const string& name,
-  const string& code
-) {
+inline static void cmd(int argc, const string& name, const string& code) {
   NewCommandMacro::addNewCommand(name, code, argc);
 }
 

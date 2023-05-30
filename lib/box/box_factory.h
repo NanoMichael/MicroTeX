@@ -19,6 +19,6 @@ sptr<Box> createHDelim(const std::string& sym, Env& env, float width, bool round
 /** Create a vertical delimiter with given symbol and height */
 sptr<Box> createVDelim(const std::string& sym, Env& env, float height, bool round = false);
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_BOX_FACTORY_H
+#endif  // MICROTEX_BOX_FACTORY_H

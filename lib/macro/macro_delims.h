@@ -1,13 +1,13 @@
 #ifndef MICROTEX_MACRO_DELIMS_H
 #define MICROTEX_MACRO_DELIMS_H
 
-#include "macro/macro_decl.h"
 #include "atom/atom.h"
-#include "atom/atom_misc.h"
 #include "atom/atom_basic.h"
 #include "atom/atom_delim.h"
-#include "atom/atom_root.h"
 #include "atom/atom_fence.h"
+#include "atom/atom_misc.h"
+#include "atom/atom_root.h"
+#include "macro/macro_decl.h"
 #include "utils/string_utils.h"
 #include "utils/utf.h"
 
@@ -63,15 +63,11 @@ inline macro(middle) {
 
 inline macro(sqrt) {
   if (args[2].empty()) return sptrOf<NthRoot>(Formula(tp, args[1], false)._root, nullptr);
-  return sptrOf<NthRoot>(
-    Formula(tp, args[1], false)._root,
-    Formula(tp, args[2], false)._root
-  );
+  return sptrOf<NthRoot>(Formula(tp, args[1], false)._root, Formula(tp, args[2], false)._root);
 }
-
 
 macro(left);
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_MACRO_DELIMS_H
+#endif  // MICROTEX_MACRO_DELIMS_H

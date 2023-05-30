@@ -1,9 +1,9 @@
 #include <cstdio>
 #include <string>
 
-#include "utils/utils.h"
 #include "env/env.h"
 #include "env/units.h"
+#include "utils/utils.h"
 
 using namespace std;
 using namespace microtex;

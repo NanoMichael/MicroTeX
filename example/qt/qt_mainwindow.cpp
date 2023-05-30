@@ -81,14 +81,10 @@ MainWindow::MainWindow(QWidget* parent, bool useSkia, const std::string& samples
 
   setLayout(layout);
 
-  QObject::connect(
-    next, &QPushButton::clicked, this, &MainWindow::nextClicked);
-  QObject::connect(
-    render, &QPushButton::clicked, this, &MainWindow::renderClicked);
-  QObject::connect(
-    save, &QPushButton::clicked, this, &MainWindow::saveClicked);
-  QObject::connect(
-    _sizespin, SIGNAL(valueChanged(int)), this, SLOT(fontSizeChanged(int)));
+  QObject::connect(next, &QPushButton::clicked, this, &MainWindow::nextClicked);
+  QObject::connect(render, &QPushButton::clicked, this, &MainWindow::renderClicked);
+  QObject::connect(save, &QPushButton::clicked, this, &MainWindow::saveClicked);
+  QObject::connect(_sizespin, SIGNAL(valueChanged(int)), this, SLOT(fontSizeChanged(int)));
 }
 
 void MainWindow::fontSizeChanged(int size) {

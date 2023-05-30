@@ -1,11 +1,12 @@
 #ifndef MICROTEX_MACRO_ENV_H
 #define MICROTEX_MACRO_ENV_H
 
-#include "macro/macro_decl.h"
-#include "macro/macro.h"
-#include "core/parser.h"
-#include "core/formula.h"
 #include "atom/atom_matrix.h"
+#include "core/formula.h"
+#include "core/parser.h"
+#include "macro/macro.h"
+#include "macro/macro_decl.h"
+#include "utils/exceptions.h"
 
 namespace microtex {
 
@@ -104,8 +105,7 @@ inline macro(gatherATATenv) {
   if (arr->cols() > 1) throw ex_parse("Requires exact one column in gather environment!");
   if (arr->cols() == 0) return nullptr;
 
-  return sptrOf<MultlineAtom>(
-    tp.isPartial(), sptr<ArrayFormula>(arr), MultiLineType::gather);
+  return sptrOf<MultlineAtom>(tp.isPartial(), sptr<ArrayFormula>(arr), MultiLineType::gather);
 }
 
 inline macro(gatheredATATenv) {
@@ -123,25 +123,23 @@ inline macro(multicolumn) {
   int n = 0;
   valueOf(args[1], n);
   tp.addAtom(sptrOf<MulticolumnAtom>(n, args[2], Formula(tp, args[3])._root));
-  ((ArrayFormula*) tp._formula)->addCol(n);
+  ((ArrayFormula*)tp._formula)->addCol(n);
   return nullptr;
 }
 
 inline macro(hdotsfor) {
-  if (!tp.isArrayMode())
-    throw ex_parse("Command 'hdotsfor' only available in array mode!");
+  if (!tp.isArrayMode()) throw ex_parse("Command 'hdotsfor' only available in array mode!");
   int n = 0;
   valueOf(args[1], n);
   float f = 1.f;
   if (!args[2].empty()) valueOf(args[2], f);
   tp.addAtom(sptrOf<HdotsforAtom>(n, f));
-  ((ArrayFormula*) tp._formula)->addCol(n);
+  ((ArrayFormula*)tp._formula)->addCol(n);
   return nullptr;
 }
 
 inline macro(hline) {
-  if (!tp.isArrayMode())
-    throw ex_parse("The macro \\hline only available in array mode!");
+  if (!tp.isArrayMode()) throw ex_parse("The macro \\hline only available in array mode!");
   return sptrOf<HlineAtom>();
 }
 
@@ -157,7 +155,7 @@ inline macro(cellcolor) {
   if (!tp.isArrayMode()) throw ex_parse("Command \\cellcolor must used in array environment!");
   color c = ColorAtom::getColor(args[1]);
   auto atom = sptrOf<CellColorAtom>(c);
-  ((ArrayFormula*) tp._formula)->addCellSpecifier(atom);
+  ((ArrayFormula*)tp._formula)->addCellSpecifier(atom);
   return nullptr;
 }
 
@@ -192,7 +190,7 @@ inline macro(rowcolor) {
   if (!tp.isArrayMode()) throw ex_parse("Command \\rowcolor must used in array environment!");
   color c = ColorAtom::getColor(args[1]);
   auto spe = sptrOf<CellColorAtom>(c);
-  ((ArrayFormula*) tp._formula)->addRowSpecifier(spe);
+  ((ArrayFormula*)tp._formula)->addRowSpecifier(spe);
   return nullptr;
 }
 
@@ -208,6 +206,6 @@ inline macro(shoveleft) {
   return a;
 }
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_MACRO_ENV_H
+#endif  // MICROTEX_MACRO_ENV_H

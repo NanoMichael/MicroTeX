@@ -80,12 +80,7 @@ private:
 
   void inflateEnv(std::string& cmd, Args& args, int& pos);
 
-  void init(
-    bool isPartial,
-    const std::string& latex,
-    Formula* formula,
-    bool firstPass
-  );
+  void init(bool isPartial, const std::string& latex, Formula* formula, bool firstPass);
 
   sptr<Atom> getCharAtom();
 
@@ -98,9 +93,7 @@ public:
    * @param formula the formula where to put the atoms
    * @throw ex_parse if the string could not be parsed correctly
    */
-  Parser(const std::string& latex, Formula* formula) {
-    init(true, latex, formula, true);
-  }
+  Parser(const std::string& latex, Formula* formula) { init(true, latex, formula, true); }
 
   /**
    * Create a new TeXParser
@@ -122,12 +115,7 @@ public:
    *
    * @throw ex_parse if the string could not be parsed correctly
    */
-  Parser(
-    bool isPartial,
-    const std::string& latex,
-    Formula* formula,
-    bool preprocess
-  ) {
+  Parser(bool isPartial, const std::string& latex, Formula* formula, bool preprocess) {
     init(isPartial, latex, formula, preprocess);
   }
 
@@ -234,7 +222,7 @@ public:
 
   /**
    * Parse the input string
-   * 
+   *
    * @throw ex_parse if an error is encountered during parse
    */
   void parse();
@@ -266,7 +254,7 @@ public:
    * @param open the opening string
    * @param close the closing string
    * @return the enclosed contents
-   * 
+   *
    * @throw ex_parse if the contents are badly enclosed
    */
   std::string getGroup(const std::string& open, const std::string& close);

@@ -1,10 +1,10 @@
 #ifndef MICROTEX_MATH_TYPE_H
 #define MICROTEX_MATH_TYPE_H
 
-#include "utils/utils.h"
-#include "graphic/font_style.h"
-
 #include <map>
+
+#include "graphic/font_style.h"
+#include "utils/utils.h"
 
 namespace microtex {
 
@@ -65,7 +65,6 @@ enum class LetterType : u8 {
  */
 class MathVersion {
 private:
-
   struct Orphan {
     LetterType type;
     c32 code;
@@ -96,7 +95,11 @@ public:
   no_copy_assign(MathVersion);
 
   MathVersion(
-    c32 digit, c32 latinSmall, c32 latinCapital, c32 greekSmall, c32 greekCapital,
+    c32 digit,
+    c32 latinSmall,
+    c32 latinCapital,
+    c32 greekSmall,
+    c32 greekCapital,
     FontStyle fontStyle = FontStyle::none
   ) noexcept;
 
@@ -120,6 +123,6 @@ public:
   static c32 map(FontStyle style, c32 code);
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_MATH_TYPE_H
+#endif  // MICROTEX_MATH_TYPE_H

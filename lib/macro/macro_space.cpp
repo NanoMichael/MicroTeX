@@ -28,4 +28,4 @@ macro(muskips) {
   return sptrOf<SpaceAtom>(type);
 }
 
-}
+}  // namespace microtex

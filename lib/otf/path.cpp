@@ -7,26 +7,25 @@ microtex::u16 microtex::pathCmdArgsCount(char cmd) {
     case 'L':
     case 'l':
     case 'T':
-    case 't':
-      return 2;
+    case 't': return 2;
+
     case 'H':
     case 'h':
     case 'V':
-    case 'v':
-      return 1;
+    case 'v': return 1;
+
     case 'Z':
-    case 'z':
-      return 0;
+    case 'z': return 0;
+
     case 'C':
-    case 'c':
-      return 6;
+    case 'c': return 6;
+
     case 'S':
     case 's':
     case 'Q':
-    case 'q':
-      return 4;
-    default:
-      return 0;
+    case 'q': return 4;
+
+    default: return 0;
   }
 }
 
@@ -164,9 +163,7 @@ void Path::draw(Graphics2D& g2) const {
         g2.quadTo(cx, cy, px, py);
         break;
       case 'Z':
-      case 'z':
-        g2.closePath();
-        break;
+      case 'z': g2.closePath(); break;
     }
   }
   g2.fillPath(_id);

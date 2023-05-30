@@ -1,7 +1,8 @@
 #include "atom/atom_vrow.h"
-#include "env/env.h"
+
 #include "box/box_group.h"
 #include "box/box_single.h"
+#include "env/env.h"
 
 using namespace microtex;
 using namespace std;

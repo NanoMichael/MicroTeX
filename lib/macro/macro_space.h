@@ -1,8 +1,8 @@
 #ifndef MICROTEX_MACRO_SPACE_H
 #define MICROTEX_MACRO_SPACE_H
 
-#include "macro/macro_decl.h"
 #include "atom/atom_space.h"
+#include "macro/macro_decl.h"
 
 namespace microtex {
 
@@ -12,6 +12,6 @@ inline macro(quad) {
 
 macro(muskips);
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_MACRO_SPACE_H
+#endif  // MICROTEX_MACRO_SPACE_H

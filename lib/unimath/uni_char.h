@@ -1,8 +1,8 @@
 #ifndef MICROTEX_UNI_CHAR_H
 #define MICROTEX_UNI_CHAR_H
 
-#include "utils/utils.h"
 #include "otf/glyph.h"
+#include "utils/utils.h"
 
 namespace microtex {
 
@@ -104,6 +104,6 @@ struct Char final {
   const Char assemblyPart(i32 id) const;
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_UNI_CHAR_H
+#endif  // MICROTEX_UNI_CHAR_H

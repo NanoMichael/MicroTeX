@@ -43,6 +43,6 @@ inline macro(mathclose) {
   return _math_type(tp, args, AtomType::closing);
 }
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_MACRO_TYPES_H
+#endif  // MICROTEX_MACRO_TYPES_H

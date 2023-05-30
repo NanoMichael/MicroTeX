@@ -29,4 +29,4 @@ public:
 
 }  // namespace microtex
 
-#endif //MICROTEX_SAMPLES_H
+#endif  // MICROTEX_SAMPLES_H

@@ -1,9 +1,10 @@
 #include "graphic_win32.h"
-#include "utils/nums.h"
-#include "utils/exceptions.h"
-#include "utils/utils.h"
 
 #include <sstream>
+
+#include "utils/exceptions.h"
+#include "utils/nums.h"
+#include "utils/utils.h"
 // fix error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
 #include <comdef.h>
 #include <gdiplus.h>
@@ -16,7 +17,7 @@ std::wstring microtex::win32ToWideString(const std::string& str) {
   std::wstring wstr;
   auto l = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, nullptr, 0);
   wstr.resize(l + 10);
-  MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &wstr[0], (int) wstr.size());
+  MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &wstr[0], (int)wstr.size());
   return wstr;
 }
 
@@ -59,7 +60,7 @@ sptr<Font_win32> Font_win32::getOrCreate(const std::string& file) {
 }
 
 Font_win32::Font_win32(const Gdiplus::FontFamily* family, int style, bool isSystem)
-  : _family(family), _style(style), _isSystem(isSystem) {}
+    : _family(family), _style(style), _isSystem(isSystem) {}
 
 sptr<Gdiplus::Font> Font_win32::getFont(float size) {
   auto f = new Gdiplus::Font(_family, size, _style, Gdiplus::UnitPixel);
@@ -90,7 +91,7 @@ Gdiplus::Bitmap* TextLayout_win32::_img = nullptr;
 const Gdiplus::StringFormat* TextLayout_win32::_format = nullptr;
 
 TextLayout_win32::TextLayout_win32(const std::string& src, FontStyle style, float size)
-  : _fontSize(size) {
+    : _fontSize(size) {
   if (_img == nullptr) {
     _img = new Gdiplus::Bitmap(1, 1, PixelFormat32bppARGB);
     _g = Gdiplus::Graphics::FromImage(_img);
@@ -124,8 +125,12 @@ void TextLayout_win32::getBounds(Rect& r) {
   auto f = _font->getFont(_fontSize);
   Gdiplus::RectF r1;
   _g->MeasureString(
-    _txt.c_str(), (int) wcslen(_txt.c_str()),
-    f.get(), Gdiplus::PointF(0, 0), _format, &r1
+    _txt.c_str(),
+    (int)wcslen(_txt.c_str()),
+    f.get(),
+    Gdiplus::PointF(0, 0),
+    _format,
+    &r1
   );
   r.x = 0;
   r.y = -ap;
@@ -150,7 +155,8 @@ sptr<microtex::Font> PlatformFactory_gdi::createFont(const std::string& file) {
   return Font_win32::getOrCreate(file);
 }
 
-sptr<TextLayout> PlatformFactory_gdi::createTextLayout(const std::string& src, FontStyle style, float size) {
+sptr<TextLayout>
+PlatformFactory_gdi::createTextLayout(const std::string& src, FontStyle style, float size) {
   return sptrOf<TextLayout_win32>(src, style, size);
 }
 
@@ -193,28 +199,16 @@ void Graphics2D_win32::setStroke(const Stroke& s) {
   _pen->SetWidth(s.lineWidth);
   Gdiplus::LineCap c;
   switch (s.cap) {
-    case CAP_BUTT:
-      c = Gdiplus::LineCapFlat;
-      break;
-    case CAP_ROUND:
-      c = Gdiplus::LineCapRound;
-      break;
-    case CAP_SQUARE:
-      c = Gdiplus::LineCapSquare;
-      break;
+    case CAP_BUTT: c = Gdiplus::LineCapFlat; break;
+    case CAP_ROUND: c = Gdiplus::LineCapRound; break;
+    case CAP_SQUARE: c = Gdiplus::LineCapSquare; break;
   }
   _pen->SetLineCap(c, c, Gdiplus::DashCapRound);
   Gdiplus::LineJoin j;
   switch (s.join) {
-    case JOIN_BEVEL:
-      j = Gdiplus::LineJoinBevel;
-      break;
-    case JOIN_ROUND:
-      j = Gdiplus::LineJoinRound;
-      break;
-    case JOIN_MITER:
-      j = Gdiplus::LineJoinMiter;
-      break;
+    case JOIN_BEVEL: j = Gdiplus::LineJoinBevel; break;
+    case JOIN_ROUND: j = Gdiplus::LineJoinRound; break;
+    case JOIN_MITER: j = Gdiplus::LineJoinMiter; break;
   }
   _pen->SetLineJoin(j);
   _pen->SetMiterLimit(s.miterLimit);

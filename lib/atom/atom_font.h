@@ -2,8 +2,8 @@
 #define MICROTEX_ATOM_FONT_H
 
 #include "atom/atom.h"
-#include "graphic/font_style.h"
 #include "env/env.h"
+#include "graphic/font_style.h"
 
 namespace microtex {
 
@@ -19,15 +19,11 @@ public:
   FontStyleAtom() = delete;
 
   FontStyleAtom(FontStyle style, bool isMathMode, const sptr<Atom>& atom, bool nested = false)
-    : _style(style), _mathMode(isMathMode), _atom(atom), _nested(nested) {}
+      : _style(style), _mathMode(isMathMode), _atom(atom), _nested(nested) {}
 
-  AtomType leftType() const override {
-    return _atom->leftType();
-  }
+  AtomType leftType() const override { return _atom->leftType(); }
 
-  AtomType rightType() const override {
-    return _atom->rightType();
-  }
+  AtomType rightType() const override { return _atom->rightType(); }
 
   sptr<Box> createBox(Env& env) override;
 };
@@ -39,12 +35,11 @@ private:
   std::string _name;
 
 public:
-  MathFontAtom(MathStyle style, std::string name)
-    : _mathStyle(style), _name(std::move(name)) {}
+  MathFontAtom(MathStyle style, std::string name) : _mathStyle(style), _name(std::move(name)) {}
 
   sptr<Box> createBox(Env& env) override;
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_FONT_H
+#endif  // MICROTEX_ATOM_FONT_H

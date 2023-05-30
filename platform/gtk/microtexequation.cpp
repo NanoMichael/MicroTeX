@@ -18,11 +18,18 @@ public:
   gint height;
   gint baseline;
 
-  MicroTeXErrorState(tex::ex_tex& exception, void (*fun)(cairo_t*), gint width = 128, gint height = 16, gint baseline = 0) : exception(std::move(exception)),
-                                                                                                                             ui_handler(fun),
-                                                                                                                             width(width),
-                                                                                                                             height(height),
-                                                                                                                             baseline(baseline) {}
+  MicroTeXErrorState(
+    tex::ex_tex& exception,
+    void (*fun)(cairo_t*),
+    gint width = 128,
+    gint height = 16,
+    gint baseline = 0
+  )
+      : exception(std::move(exception)),
+        ui_handler(fun),
+        width(width),
+        height(height),
+        baseline(baseline) {}
 };
 
 /**
@@ -64,72 +71,53 @@ typedef struct {
 
 G_DEFINE_TYPE_WITH_PRIVATE(MicroTexEquation, microtex_equation, GTK_TYPE_WIDGET)
 
-#define MICROTEX_EQUATION_GET_PRIVATE(obj) \
-  static_cast<MicroTexEquationPrivate*>(microtex_equation_get_instance_private(MICROTEX_EQUATION(obj)))
+#define MICROTEX_EQUATION_GET_PRIVATE(obj)                         \
+  static_cast<MicroTexEquationPrivate*>(                           \
+    microtex_equation_get_instance_private(MICROTEX_EQUATION(obj)) \
+  )
 
-enum {
-  PROP_EQUATION = 1,
-  PROP_WIDTH,
-  PROP_TEXT_SIZE,
-  PROP_COLOR,
-  N_PROPERTIES
-};
+enum { PROP_EQUATION = 1, PROP_WIDTH, PROP_TEXT_SIZE, PROP_COLOR, N_PROPERTIES };
 
 static GParamSpec* obj_properties[N_PROPERTIES] = {
   NULL,
 };
 
-static void microtex_equation_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec) {
+static void
+microtex_equation_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec) {
   MicroTexEquation* self = MICROTEX_EQUATION(object);
 
   switch (prop_id) {
-    case PROP_EQUATION:
-      g_value_set_string(value, microtex_equation_get_equation(self));
-      break;
-    case PROP_WIDTH:
-      g_value_set_float(value, microtex_equation_get_width(self));
-      break;
-    case PROP_TEXT_SIZE:
-      g_value_set_float(value, microtex_equation_get_text_size(self));
-      break;
-    case PROP_COLOR:
-      g_value_set_uint(value, microtex_equation_get_color(self));
-      break;
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+    case PROP_EQUATION: g_value_set_string(value, microtex_equation_get_equation(self)); break;
+    case PROP_WIDTH: g_value_set_float(value, microtex_equation_get_width(self)); break;
+    case PROP_TEXT_SIZE: g_value_set_float(value, microtex_equation_get_text_size(self)); break;
+    case PROP_COLOR: g_value_set_uint(value, microtex_equation_get_color(self)); break;
+    default: G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
   }
 }
 
-static void microtex_equation_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec) {
+static void microtex_equation_set_property(
+  GObject* object,
+  guint prop_id,
+  const GValue* value,
+  GParamSpec* pspec
+) {
   MicroTexEquation* self = MICROTEX_EQUATION(object);
 
   switch (prop_id) {
-    case PROP_EQUATION:
-      microtex_equation_set_equation(self, g_value_get_string(value));
-      break;
-    case PROP_WIDTH:
-      microtex_equation_set_width(self, g_value_get_float(value));
-      break;
-    case PROP_TEXT_SIZE:
-      microtex_equation_set_text_size(self, g_value_get_float(value));
-      break;
-    case PROP_COLOR:
-      microtex_equation_set_color(self, g_value_get_uint(value));
-      break;
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+    case PROP_EQUATION: microtex_equation_set_equation(self, g_value_get_string(value)); break;
+    case PROP_WIDTH: microtex_equation_set_width(self, g_value_get_float(value)); break;
+    case PROP_TEXT_SIZE: microtex_equation_set_text_size(self, g_value_get_float(value)); break;
+    case PROP_COLOR: microtex_equation_set_color(self, g_value_get_uint(value)); break;
+    default: G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
   }
 }
 
 static void microtex_equation_dispose(GObject* object) {
   MicroTexEquationPrivate* priv = MICROTEX_EQUATION_GET_PRIVATE(object);
 
-  if (priv->microtex)
-    delete priv->microtex;
-  if (priv->error)
-    delete priv->error;
-  if (priv->equation)
-    g_free(priv->equation);
+  if (priv->microtex) delete priv->microtex;
+  if (priv->error) delete priv->error;
+  if (priv->equation) g_free(priv->equation);
 
   G_OBJECT_CLASS(microtex_equation_parent_class)->dispose(object);
 }
@@ -137,7 +125,15 @@ static void microtex_equation_dispose(GObject* object) {
 static GtkSizeRequestMode microtex_equation_get_request_mode(GtkWidget* widget) {
   return GTK_SIZE_REQUEST_CONSTANT_SIZE;
 }
-static void microtex_equation_measure(GtkWidget* widget, GtkOrientation orientation, int for_size, int* min, int* nat, int* min_baseline, int* nat_baseline) {
+static void microtex_equation_measure(
+  GtkWidget* widget,
+  GtkOrientation orientation,
+  int for_size,
+  int* min,
+  int* nat,
+  int* min_baseline,
+  int* nat_baseline
+) {
   MicroTexEquationPrivate* priv = MICROTEX_EQUATION_GET_PRIVATE(widget);
   if (!priv->microtex) {
     g_info("uninitialized microtex\n");
@@ -183,9 +179,8 @@ static void microtex_equation_measure(GtkWidget* widget, GtkOrientation orientat
 static void microtex_equation_snapshot(GtkWidget* widget, GtkSnapshot* snapshot) {
   MicroTexEquationPrivate* priv = MICROTEX_EQUATION_GET_PRIVATE(widget);
 
-  gdouble
-    width = gtk_widget_get_allocated_width(widget),
-    height = gtk_widget_get_allocated_height(widget);
+  gdouble width = gtk_widget_get_allocated_width(widget),
+          height = gtk_widget_get_allocated_height(widget);
 
   graphene_rect_t rectangle;
   graphene_rect_t* rect = graphene_rect_init(&rectangle, 0, 0, width, height);
@@ -212,27 +207,25 @@ static void microtex_equation_create_render(MicroTexEquation* self) {
   MicroTexEquationPrivate* priv = MICROTEX_EQUATION_GET_PRIVATE(self);
   GtkWidget* widget = GTK_WIDGET(self);
 
-  if (!priv->shown)
-    return;
+  if (!priv->shown) return;
 
-  if (priv->microtex)
-    delete priv->microtex;
+  if (priv->microtex) delete priv->microtex;
 
   if (priv->error) {
     delete priv->error;
     priv->error = NULL;
   }
 
-  if (priv->equation)
-    try {
-      priv->microtex = tex::MicroTeX::parse(std::string(priv->equation),
+  if (priv->equation) try {
+      priv->microtex = tex::MicroTeX::parse(
+        std::string(priv->equation),
         microtex_equation_get_width(self),
         microtex_equation_get_text_size(self),
         microtex_equation_get_text_size(self) / 3.f,
-        microtex_equation_get_color(self));
+        microtex_equation_get_color(self)
+      );
 
-      if (gtk_widget_get_has_tooltip(widget))
-        gtk_widget_set_has_tooltip(widget, FALSE);
+      if (gtk_widget_get_has_tooltip(widget)) gtk_widget_set_has_tooltip(widget, FALSE);
 
     } catch (tex::ex_parse& e) {
       g_warning("MicroTeX parsing error: %s\n", e.what());
@@ -240,14 +233,16 @@ static void microtex_equation_create_render(MicroTexEquation* self) {
       gtk_widget_set_tooltip_text(widget, e.what());
 
       priv->error = new MicroTeXErrorState(
-        e, +[](cairo_t* ctx) {
+        e,
+        +[](cairo_t* ctx) {
           cairo_set_source_rgb(ctx, 1, 0, 0);
           cairo_set_font_size(ctx, 10);
           cairo_move_to(ctx, 0, 14);
           cairo_show_text(ctx, "LaTeX parse failed");
 
           cairo_fill(ctx);
-        });
+        }
+      );
 
       priv->microtex = NULL;
     } catch (tex::ex_invalid_state& e) {
@@ -256,14 +251,16 @@ static void microtex_equation_create_render(MicroTexEquation* self) {
       gtk_widget_set_tooltip_text(widget, e.what());
 
       priv->error = new MicroTeXErrorState(
-        e, +[](cairo_t* ctx) {
+        e,
+        +[](cairo_t* ctx) {
           cairo_set_source_rgb(ctx, 1, 0, 0);
           cairo_set_font_size(ctx, 10);
           cairo_move_to(ctx, 0, 14);
           cairo_show_text(ctx, "LaTeX render failed");
 
           cairo_fill(ctx);
-        });
+        }
+      );
 
       priv->microtex = NULL;
     } catch (tex::ex_tex& e) {
@@ -272,14 +269,16 @@ static void microtex_equation_create_render(MicroTexEquation* self) {
       gtk_widget_set_tooltip_text(widget, e.what());
 
       priv->error = new MicroTeXErrorState(
-        e, +[](cairo_t* ctx) {
+        e,
+        +[](cairo_t* ctx) {
           cairo_set_source_rgb(ctx, 1, 0, 0);
           cairo_set_font_size(ctx, 10);
           cairo_move_to(ctx, 0, 14);
           cairo_show_text(ctx, "Unknown MicroTeX error");
 
           cairo_fill(ctx);
-        });
+        }
+      );
 
       priv->microtex = NULL;
     }
@@ -317,27 +316,53 @@ static void microtex_equation_class_init(MicroTexEquationClass* klass) {
   widget_class->hide = microtex_equation_hide;
 
   /**
-   * MicroTexEquation:latex: (attributes org.gtk.Property.get=microtex_equation_get_equation org.gtk.Property.set=microtex_equation_set_equation)
+   * MicroTexEquation:latex: (attributes org.gtk.Property.get=microtex_equation_get_equation
+   * org.gtk.Property.set=microtex_equation_set_equation)
    *
    * The (La)TeX string that the widget will render and display.
    */
-  obj_properties[PROP_EQUATION] = g_param_spec_string("latex", "LaTeX", "LaTeX equation", "", (GParamFlags)(G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+  obj_properties[PROP_EQUATION] = g_param_spec_string(
+    "latex",
+    "LaTeX",
+    "LaTeX equation",
+    "",
+    (GParamFlags)(G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+  );
   /**
-   * MicroTexEquation:width: (attributes org.gtk.Property.get=microtex_equation_get_width org.gtk.Property.set=microtex_equation_set_width)
+   * MicroTexEquation:width: (attributes org.gtk.Property.get=microtex_equation_get_width
+   * org.gtk.Property.set=microtex_equation_set_width)
    *
    * the width of the 2D graphics context (in pixel) to limit the
    * formula layout, the engine will trying to wrap the layout if it
    * overflows the width, but will fails if formula cannot be split.
    */
-  obj_properties[PROP_WIDTH] = g_param_spec_float("width", "Width", "The maximal width the LaTeX equation may use horizontally", -1, G_MAXFLOAT, -1, (GParamFlags)(G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+  obj_properties[PROP_WIDTH] = g_param_spec_float(
+    "width",
+    "Width",
+    "The maximal width the LaTeX equation may use horizontally",
+    -1,
+    G_MAXFLOAT,
+    -1,
+    (GParamFlags)(G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+  );
   /**
-   * MicroTexEquation:text-size: (attributes org.gtk.Property.get=microtex_equation_get_text_size org.gtk.Property.set=microtex_equation_set_text_size)
+   * MicroTexEquation:text-size: (attributes org.gtk.Property.get=microtex_equation_get_text_size
+   * org.gtk.Property.set=microtex_equation_set_text_size)
    *
    * the text size that the widget will be rendered with.
    */
-  obj_properties[PROP_TEXT_SIZE] = g_param_spec_float("text-size", "Textsize", "The text size to draw", 6, G_MAXFLOAT, 18, (GParamFlags)(G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+  obj_properties[PROP_TEXT_SIZE] = g_param_spec_float(
+    "text-size",
+    "Textsize",
+    "The text size to draw",
+    6,
+    G_MAXFLOAT,
+    18,
+    (GParamFlags)(G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+  );
   /**
-   * MicroTexEquation:color: (attributes org.gtk.Property.get=microtex_equation_get_color org.gtk.Property.set=microtex_equation_set_color)
+   * MicroTexEquation:color: (attributes org.gtk.Property.get=microtex_equation_get_color
+   * org.gtk.Property.set=microtex_equation_set_color)
    *
    * the foreground color, in which the equation (unless specifically
    * set otherweise) will be rendered with.
@@ -355,11 +380,20 @@ static void microtex_equation_class_init(MicroTexEquationClass* klass) {
    * Converting from GdkRGBA could look like this:
    * ```c
    * guint32 color_from_rgba(GdkRGBA color) {
-   *     return (guint8)(color.alpha*255)<<24|(guint8)(color.red*255)<<16|(guint8)(color.green*255)<<8|(guint8)(color.blue*255);
+   *     return
+   * (guint8)(color.alpha*255)<<24|(guint8)(color.red*255)<<16|(guint8)(color.green*255)<<8|(guint8)(color.blue*255);
    * }
    * ```
    */
-  obj_properties[PROP_COLOR] = g_param_spec_uint("color", "Color", "The foreground color to draw", 0, G_MAXUINT32, 0xff000000, (GParamFlags)(G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+  obj_properties[PROP_COLOR] = g_param_spec_uint(
+    "color",
+    "Color",
+    "The foreground color to draw",
+    0,
+    G_MAXUINT32,
+    0xff000000,
+    (GParamFlags)(G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
+  );
   g_object_class_install_properties(object_class, N_PROPERTIES, obj_properties);
 }
 
@@ -420,14 +454,11 @@ void microtex_equation_set_equation(MicroTexEquation* self, const gchar* equatio
   g_return_if_fail(MICROTEX_IS_EQUATION(self));
   priv = MICROTEX_EQUATION_GET_PRIVATE(self);
 
-  if (priv->equation == equation)
-    return;
+  if (priv->equation == equation) return;
 
-  if (g_strcmp0(priv->equation, equation) == 0)
-    return;
+  if (g_strcmp0(priv->equation, equation) == 0) return;
 
-  if (priv->equation)
-    g_free(priv->equation);
+  if (priv->equation) g_free(priv->equation);
 
   priv->equation = g_strdup(equation);
 
@@ -469,8 +500,7 @@ void microtex_equation_set_width(MicroTexEquation* self, gfloat width) {
   g_return_if_fail(MICROTEX_IS_EQUATION(self));
   priv = MICROTEX_EQUATION_GET_PRIVATE(self);
 
-  if (priv->width == width)
-    return;
+  if (priv->width == width) return;
 
   priv->width = width;
 
@@ -512,8 +542,7 @@ void microtex_equation_set_text_size(MicroTexEquation* self, gfloat text_size) {
   g_return_if_fail(MICROTEX_IS_EQUATION(self));
   priv = MICROTEX_EQUATION_GET_PRIVATE(self);
 
-  if (priv->text_size == text_size)
-    return;
+  if (priv->text_size == text_size) return;
 
   priv->text_size = text_size;
 
@@ -558,8 +587,7 @@ void microtex_equation_set_color(MicroTexEquation* self, guint32 color) {
   g_return_if_fail(MICROTEX_IS_EQUATION(self));
   priv = MICROTEX_EQUATION_GET_PRIVATE(self);
 
-  if (priv->color == color)
-    return;
+  if (priv->color == color) return;
 
   priv->color = color;
 
@@ -584,8 +612,7 @@ gint64 microtex_equation_get_baseline(MicroTexEquation* self) {
   g_return_val_if_fail(MICROTEX_IS_EQUATION(self), -1);
   priv = MICROTEX_EQUATION_GET_PRIVATE(self);
 
-  if (!priv->microtex)
-    return -1;
+  if (!priv->microtex) return -1;
 
   int height = priv->microtex->getHeight();
   gint64 baseline = (gint64)round(0 + height * (1.0f - priv->microtex->getBaseline()));
@@ -621,13 +648,17 @@ GBytes* microtex_equation_to_svg(MicroTexEquation* self, gboolean* success) {
   priv = MICROTEX_EQUATION_GET_PRIVATE(self);
 
   GByteArray* array = g_byte_array_new();
-  cairo_surface_t* svg = cairo_svg_surface_create_for_stream((cairo_write_func_t)array_writer_fun, &array, (double)priv->microtex->getWidth(), (double)priv->microtex->getHeight());
+  cairo_surface_t* svg = cairo_svg_surface_create_for_stream(
+    (cairo_write_func_t)array_writer_fun,
+    &array,
+    (double)priv->microtex->getWidth(),
+    (double)priv->microtex->getHeight()
+  );
   cairo_t* ctx = cairo_create(svg);
 
   if (!priv->microtex) {
     g_info("uninitialized microtex\n");
-    if (success)
-      *success = FALSE;
+    if (success) *success = FALSE;
     if (!priv->error) {
       g_critical("uninitialized microtex and error state\n");
       cairo_destroy(ctx);
@@ -639,8 +670,7 @@ GBytes* microtex_equation_to_svg(MicroTexEquation* self, gboolean* success) {
   } else {
     microtex::Graphics2D_cairo g2(ctx);
     priv->microtex->draw(g2, 0, 0);
-    if (success)
-      *success = TRUE;
+    if (success) *success = TRUE;
   }
 
   cairo_destroy(ctx);

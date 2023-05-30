@@ -12,7 +12,7 @@ StrTokenizer::StrTokenizer(string str) : _str(std::move(str)) {
 }
 
 StrTokenizer::StrTokenizer(string str, string del, bool ret)
-  : _str(std::move(str)), _del(std::move(del)), _ret(ret) {
+    : _str(std::move(str)), _del(std::move(del)), _ret(ret) {
   _pos = 0;
 }
 
@@ -40,11 +40,9 @@ std::string StrTokenizer::next() {
 
   if (i < len) {
     if (_ret) {
-      if (_del.find(_str[_pos]) != std::string::npos)
-        return std::string({_str[_pos++]});
+      if (_del.find(_str[_pos]) != std::string::npos) return std::string({_str[_pos++]});
       for (_pos++; _pos < len; _pos++)
-        if (_del.find(_str[_pos]) != std::string::npos)
-          return _str.substr(i, _pos - i);
+        if (_del.find(_str[_pos]) != std::string::npos) return _str.substr(i, _pos - i);
       return _str.substr(i);
     }
 
@@ -53,8 +51,7 @@ std::string StrTokenizer::next() {
     _pos = i;
     if (i < len) {
       for (_pos++; _pos < len; _pos++)
-        if (_del.find(_str[_pos]) != std::string::npos)
-          return _str.substr(i, _pos - i);
+        if (_del.find(_str[_pos]) != std::string::npos) return _str.substr(i, _pos - i);
       return _str.substr(i);
     }
   }

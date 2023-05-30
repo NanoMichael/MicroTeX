@@ -2,6 +2,7 @@
 #define UTF_H_INCLUDED
 
 #include <string>
+
 #include "utils/utils.h"
 
 namespace microtex {

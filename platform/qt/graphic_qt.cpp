@@ -1,23 +1,23 @@
 #include "graphic_qt.h"
-#include "utils/log.h"
-#include "utils/utils.h"
-
-#include <QDebug>
 
 #include <QBrush>
 #include <QColor>
+#include <QDebug>
+#include <QFile>
 #include <QFont>
 #include <QFontDatabase>
+#include <QGlyphRun>
 #include <QPainter>
 #include <QPen>
 #include <QPointF>
 #include <QRectF>
 #include <QString>
 #include <QTransform>
-#include <QtMath>
-#include <QFile>
-#include <QGlyphRun>
 #include <QtGlobal>
+#include <QtMath>
+
+#include "utils/log.h"
+#include "utils/utils.h"
 
 using namespace microtex;
 using namespace std;
@@ -145,8 +145,8 @@ sptr<Font> PlatformFactory_qt::createFont(const std::string& file) {
   return sptrOf<Font_qt>(file);
 }
 
-sptr<TextLayout> PlatformFactory_qt::createTextLayout(
-  const std::string& src, FontStyle style, float size) {
+sptr<TextLayout>
+PlatformFactory_qt::createTextLayout(const std::string& src, FontStyle style, float size) {
   return sptrOf<TextLayout_qt>(src, style, size);
 }
 
@@ -164,12 +164,7 @@ QPainter* Graphics2D_qt::getQPainter() const {
 }
 
 QBrush Graphics2D_qt::getQBrush() const {
-  return QBrush(
-    QColor(
-      color_r(_color), color_g(_color),
-      color_b(_color), color_a(_color)
-    )
-  );
+  return QBrush(QColor(color_r(_color), color_g(_color), color_b(_color), color_a(_color)));
 }
 
 void Graphics2D_qt::setColor(color c) {
@@ -186,29 +181,17 @@ void Graphics2D_qt::setStroke(const Stroke& s) {
   _stroke = s;
   Qt::PenCapStyle cap;
   switch (_stroke.cap) {
-    case CAP_ROUND:
-      cap = Qt::RoundCap;
-      break;
-    case CAP_SQUARE:
-      cap = Qt::SquareCap;
-      break;
+    case CAP_ROUND: cap = Qt::RoundCap; break;
+    case CAP_SQUARE: cap = Qt::SquareCap; break;
     case CAP_BUTT:
-    default:
-      cap = Qt::FlatCap;
-      break;
+    default: cap = Qt::FlatCap; break;
   }
   Qt::PenJoinStyle join;
   switch (_stroke.join) {
-    case JOIN_BEVEL:
-      join = Qt::BevelJoin;
-      break;
-    case JOIN_ROUND:
-      join = Qt::RoundJoin;
-      break;
+    case JOIN_BEVEL: join = Qt::BevelJoin; break;
+    case JOIN_ROUND: join = Qt::RoundJoin; break;
     case JOIN_MITER:
-    default:
-      join = Qt::MiterJoin;
-      break;
+    default: join = Qt::MiterJoin; break;
   }
   _pen.setStyle(Qt::SolidLine);
   _pen.setCapStyle(cap);
@@ -240,10 +223,7 @@ void Graphics2D_qt::setDash(const std::vector<float>& dash) {
     QList<qreal> list;
 #endif
     list.reserve(dash.size());
-    std::transform(
-      dash.begin(), dash.end(), list.begin(),
-      [this](float v) { return v * sx(); }
-    );
+    std::transform(dash.begin(), dash.end(), list.begin(), [this](float v) { return v * sx(); });
     _pen.setDashPattern(list);
   }
   _painter->setPen(_pen);
@@ -253,10 +233,7 @@ std::vector<float> Graphics2D_qt::getDash() {
   const auto& list = _pen.dashPattern();
   std::vector<float> dash;
   dash.reserve(list.size());
-  std::transform(
-    list.begin(), list.end(), dash.begin(),
-    [this](double v) { return v / sx(); }
-  );
+  std::transform(list.begin(), list.end(), dash.begin(), [this](double v) { return v / sx(); });
   return dash;
 }
 
@@ -317,7 +294,9 @@ void Graphics2D_qt::drawGlyph(u16 glyph, float x, float y) {
   QGlyphRun g;
   g.setRawFont(rf);
   g.setGlyphIndexes({glyph});
-  g.setPositions({{0, 0}});
+  g.setPositions({
+    {0, 0}
+  });
   _painter->drawGlyphRun({x, y}, g);
 }
 

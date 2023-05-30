@@ -1,10 +1,11 @@
 #include "builder.h"
+
+#include "atom/atom_basic.h"
+#include "box/box_group.h"
+#include "box/box_single.h"
 #include "core/formula.h"
 #include "core/split.h"
 #include "utils/exceptions.h"
-#include "atom/atom_basic.h"
-#include "box/box_single.h"
-#include "box/box_group.h"
 
 using namespace microtex;
 
@@ -51,7 +52,7 @@ Render* RenderBuilder::build(const sptr<Atom>& fc) {
     bool isBoxSplit = false;
     if (!_lineSpace.isEmpty()) {
       auto space = Units::fsize(_lineSpace, env);
-      auto[isSplit, split] = BoxSplitter::split(box, env.textWidth(), space);
+      auto [isSplit, split] = BoxSplitter::split(box, env.textWidth(), space);
       isBoxSplit = isSplit;
       hb = new HBox(split, _fillWidth ? env.textWidth() : split->_width, _align);
     } else {

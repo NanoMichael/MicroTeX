@@ -19,6 +19,6 @@ struct DebugConfig {
   static DebugConfig INSTANCE;
 };
 
-}
+}  // namespace microtex
 
 #endif

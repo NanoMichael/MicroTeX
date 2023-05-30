@@ -1,4 +1,5 @@
 #include "unimath/math_type.h"
+
 #include "utils/utils.h"
 
 using namespace std;
@@ -8,7 +9,7 @@ using namespace microtex;
 const pair<c32, c32> MathVersion::_reserved[]{
   // small serif italic
   {0x1d455, 0x210e},
-  // capital calligraphy normal
+ // capital calligraphy normal
   {0x1d49d, 0x212c},
   {0x1d4a0, 0x2130},
   {0x1d4a1, 0x2131},
@@ -17,17 +18,17 @@ const pair<c32, c32> MathVersion::_reserved[]{
   {0x1d4a7, 0x2112},
   {0x1d4a8, 0x2133},
   {0x1d4ad, 0x211b},
-  // small script normal
+ // small script normal
   {0x1d4ba, 0x212f},
   {0x1d4bc, 0x210a},
   {0x1d4c4, 0x2134},
-  // capital fraktur normal
+ // capital fraktur normal
   {0x1d506, 0x212d},
   {0x1d50b, 0x210c},
   {0x1d50c, 0x2111},
   {0x1d515, 0x211c},
   {0x1d51d, 0x2128},
-  // capital double-struck bold
+ // capital double-struck bold
   {0x1d53a, 0x2102},
   {0x1d53f, 0x210d},
   {0x1d545, 0x2115},
@@ -39,6 +40,7 @@ const pair<c32, c32> MathVersion::_reserved[]{
 
 const int MathVersion::_reservedCount = sizeof(_reserved) / sizeof(pair<c32, c32>);
 
+// clang-format off
 const MathVersion::Orphan MathVersion::_orphans[]{
   // latin small letter dotless i
   {
@@ -181,11 +183,12 @@ const MathVersion::Orphan MathVersion::_orphans[]{
     }
   },
 };
+// clang-format on
 
 const int MathVersion::_orphansCount = sizeof(_orphans) / sizeof(Orphan);
 
 #define style(digit, latinSmall, latinCapital, greekSmall, greekCapital) \
-    sptrOf<const MathVersion>(digit, latinSmall, latinCapital, greekSmall, greekCapital)
+  sptrOf<const MathVersion>(digit, latinSmall, latinCapital, greekSmall, greekCapital)
 
 sptr<const MathVersion> MathVersion::_mathStyles[4]{
   style('0', 0x1D44E, 0x1D434, 0x1D6FC, 0x0391),
@@ -194,9 +197,10 @@ sptr<const MathVersion> MathVersion::_mathStyles[4]{
   style('0', 'a', 'A', 0x03B1, 0x0391),
 };
 
-#define version(style, digit, latinSmall, latinCapital, greekSmall, greekCapital)                      \
-  {                                                                                                    \
-    style, sptrOf<const MathVersion>(digit, latinSmall, latinCapital, greekSmall, greekCapital, style) \
+#define version(style, digit, latinSmall, latinCapital, greekSmall, greekCapital)                 \
+  {                                                                                               \
+    style,                                                                                        \
+      sptrOf<const MathVersion>(digit, latinSmall, latinCapital, greekSmall, greekCapital, style) \
   }
 
 map<FontStyle, sptr<const MathVersion>> MathVersion::_mathVersions{
@@ -210,7 +214,7 @@ map<FontStyle, sptr<const MathVersion>> MathVersion::_mathVersions{
   version(FontStyle::bb, 0x1D7D8, 0x1D552, 0x1D538, 0x03B1, 0x0391),
   version(FontStyle::sf, 0x1D7E2, 0x1D5BA, 0x1D5A0, 0x03B1, 0x0391),
   version(FontStyle::tt, 0x1D7F6, 0x1D68A, 0x1D670, 0x03B1, 0x0391),
-  // composed styles
+ // composed styles
   version(FontStyle::bfit, '0', 0x1D482, 0x1D468, 0x1D736, 0x1D71C),
   version(FontStyle::bfcal, '0', 0x1D4EA, 0x1D4D0, 0x03B1, 0x0391),
   version(FontStyle::bffrak, '0', 0x1D586, 0x1D56C, 0x03B1, 0x0391),
@@ -222,9 +226,15 @@ map<FontStyle, sptr<const MathVersion>> MathVersion::_mathVersions{
 MathStyle MathVersion::_mathStyle = MathStyle::TeX;
 
 MathVersion::MathVersion(
-  c32 digit, c32 latinSmall, c32 latinCapital, c32 greekSmall, c32 greekCapital,
+  c32 digit,
+  c32 latinSmall,
+  c32 latinCapital,
+  c32 greekSmall,
+  c32 greekCapital,
   FontStyle fontStyle
-) noexcept: _codepoints{0, digit, latinSmall, latinCapital, greekSmall, greekCapital}, _fontStyle(fontStyle) {}
+) noexcept
+    : _codepoints{0, digit, latinSmall, latinCapital, greekSmall, greekCapital},
+      _fontStyle(fontStyle) {}
 
 pair<LetterType, c32> MathVersion::ofChar(c32 codepoint) {
   if (codepoint >= '0' && codepoint <= '9') return {LetterType::digit, codepoint - '0'};
@@ -245,37 +255,22 @@ pair<LetterType, c32> MathVersion::ofChar(c32 codepoint) {
 static FontStyle fontStyleOfOrphan(const MathStyle mathStyle, const LetterType type) {
   switch (type) {
     case LetterType::latinSmall:
-      return (
-        mathStyle == MathStyle::upright
-        ? FontStyle::rm
-        : FontStyle::it
-      );
+      return (mathStyle == MathStyle::upright ? FontStyle::rm : FontStyle::it);
     case LetterType::latinCapital:
     case LetterType::greekSmall:
-      return (
-        mathStyle == MathStyle::French || mathStyle == MathStyle::upright
-        ? FontStyle::rm
-        : FontStyle::it
-      );
+      return mathStyle == MathStyle::French || mathStyle == MathStyle::upright ? FontStyle::rm
+                                                                               : FontStyle::it;
     case LetterType::greekCapital:
-    default:
-      return (
-        mathStyle == MathStyle::ISO
-        ? FontStyle::it
-        : FontStyle::rm
-      );
+    default: return mathStyle == MathStyle::ISO ? FontStyle::it : FontStyle::rm;
   }
 }
 
 c32 MathVersion::map(const c32 codepoint) const {
-  auto[type, offset] = ofChar(codepoint);
+  auto [type, offset] = ofChar(codepoint);
   const c32 mapped = _codepoints[static_cast<u8>(type)] + offset;
   // try find from orphans
   if (type == LetterType::none) {
-    const int j = binIndexOf(
-      _orphansCount,
-      [&](int j) { return mapped - _orphans[j].code; }
-    );
+    const int j = binIndexOf(_orphansCount, [&](int j) { return mapped - _orphans[j].code; });
     if (j >= 0) {
       const auto& orphan = _orphans[j];
       FontStyle fontStyle = _fontStyle;
@@ -290,10 +285,7 @@ c32 MathVersion::map(const c32 codepoint) const {
     }
   }
   // try find from reserved
-  const int i = binIndexOf(
-    _reservedCount,
-    [&](int i) { return mapped - _reserved[i].first; }
-  );
+  const int i = binIndexOf(_reservedCount, [&](int i) { return mapped - _reserved[i].first; });
   if (i >= 0) return _reserved[i].second;
   return mapped;
 }
@@ -305,10 +297,7 @@ void MathVersion::setMathStyle(const MathStyle style) {
 
 c32 MathVersion::map(FontStyle style, c32 code) {
   const auto it = _mathVersions.find(style);
-  const MathVersion& version = (
-    it == _mathVersions.end()
-    ? *_mathVersions[findClosestStyle(style)]
-    : *it->second
-  );
+  const MathVersion& version = it == _mathVersions.end() ? *_mathVersions[findClosestStyle(style)]
+                                                         : *it->second;
   return version.map(code);
 }

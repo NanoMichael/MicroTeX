@@ -2,9 +2,9 @@
 #define MICROTEX_BOX_SINGLE_H
 
 #include "atom/atom.h"
-#include "unimath/uni_char.h"
 #include "graphic/font_style.h"
 #include "graphic/graphic_basic.h"
+#include "unimath/uni_char.h"
 
 namespace microtex {
 
@@ -35,9 +35,7 @@ public:
 
   boxname(StrutBox);
 
-  static sptr<StrutBox> empty() noexcept {
-    return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
-  }
+  static sptr<StrutBox> empty() noexcept { return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f); }
 
   static sptr<StrutBox> create(float width) noexcept {
     return sptrOf<StrutBox>(width, 0.f, 0.f, 0.f);
@@ -138,10 +136,7 @@ private:
 public:
   RuleBox() = delete;
 
-  RuleBox(
-    float thickness, float width, float shift,
-    color c = transparent, bool trueshift = true
-  );
+  RuleBox(float thickness, float width, float shift, color c = transparent, bool trueshift = true);
 
   void draw(Graphics2D& g2, float x, float y) override;
 
@@ -157,6 +152,6 @@ public:
   boxname(DebugBox);
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_BOX_SINGLE_H
+#endif  // MICROTEX_BOX_SINGLE_H

@@ -1,12 +1,13 @@
 #include "atom/atom_matrix.h"
-#include "atom/atom_row.h"
-#include "atom/atom_basic.h"
-#include "core/formula.h"
-#include "env/env.h"
-#include "core/glue.h"
-#include "utils/string_utils.h"
 
 #include <memory>
+
+#include "atom/atom_basic.h"
+#include "atom/atom_row.h"
+#include "core/formula.h"
+#include "core/glue.h"
+#include "env/env.h"
+#include "utils/string_utils.h"
 
 using namespace std;
 using namespace microtex;
@@ -39,15 +40,9 @@ void MatrixAtom::parsePositions(string opt, vector<Alignment>& lpos) {
   while (pos < len) {
     ch = opt[pos];
     switch (ch) {
-      case 'l':
-        lpos.push_back(Alignment::left);
-        break;
-      case 'r':
-        lpos.push_back(Alignment::right);
-        break;
-      case 'c':
-        lpos.push_back(Alignment::center);
-        break;
+      case 'l': lpos.push_back(Alignment::left); break;
+      case 'r': lpos.push_back(Alignment::right); break;
+      case 'c': lpos.push_back(Alignment::center); break;
       case '|': {
         int nb = 1;
         while (++pos < len) {
@@ -60,8 +55,7 @@ void MatrixAtom::parsePositions(string opt, vector<Alignment>& lpos) {
           }
         }
         _vlines[lpos.size()] = sptrOf<VlineAtom>(nb);
-      }
-        break;
+      } break;
       case '@': {
         pos++;
         tf = sptrOf<Formula>();
@@ -74,8 +68,7 @@ void MatrixAtom::parsePositions(string opt, vector<Alignment>& lpos) {
         lpos.push_back(Alignment::none);
         pos += tp->getPos();
         pos--;
-      }
-        break;
+      } break;
       case '*': {
         pos++;
         tf = sptrOf<Formula>();
@@ -90,8 +83,7 @@ void MatrixAtom::parsePositions(string opt, vector<Alignment>& lpos) {
         opt.insert(pos, str);
         len = opt.length();
         pos--;
-      }
-        break;
+      } break;
       case '>': {
         pos++;
         tf = sptrOf<ArrayFormula>();
@@ -100,11 +92,9 @@ void MatrixAtom::parsePositions(string opt, vector<Alignment>& lpos) {
         _columnSpecifiers[lpos.size()] = cs;
         pos += tp->getPos();
         pos--;
-      }
-        break;
+      } break;
       case ' ':
-      case '\t':
-        break;
+      case '\t': break;
       default: {
         int spos = len + 1;
         bool hasrep = false;
@@ -119,8 +109,7 @@ void MatrixAtom::parsePositions(string opt, vector<Alignment>& lpos) {
           }
         }
         if (!hasrep) lpos.push_back(Alignment::center);
-      }
-        break;
+      } break;
     }
     pos++;
   }
@@ -186,8 +175,7 @@ float* MatrixAtom::getColumnSep(Env& env, float width) {
         else
           arr[i] = Align->_width;
       }
-    }
-      break;
+    } break;
     case MatrixType::alignedAt:
     case MatrixType::alignAt: {
       // Aignat env: hsep = (textwidth - matwdith) / 2
@@ -205,8 +193,7 @@ float* MatrixAtom::getColumnSep(Env& env, float width) {
         else
           arr[i] = Align->_width;
       }
-    }
-      break;
+    } break;
     case MatrixType::flAlign: {
       // flalgin env : hsep = (textwidth - matwidth) / (2n + 1)
       // Spaces: hsep eq_left \medskip el_right hsep ... hsep elem hsep
@@ -226,8 +213,7 @@ float* MatrixAtom::getColumnSep(Env& env, float width) {
         else
           arr[i] = Align->_width;
       }
-    }
-      break;
+    } break;
   }
 
   if (w == POS_INF) {
@@ -249,7 +235,7 @@ void MatrixAtom::recalculateLine(
 ) {
   const size_t s = multiRows.size();
   for (size_t i = 0; i < s; i++) {
-    auto* m = (MultiRowAtom*) multiRows[i].get();
+    auto* m = (MultiRowAtom*)multiRows[i].get();
     const int r = m->_i;
     const int c = m->_j;
     int n = m->_n;
@@ -315,7 +301,7 @@ sptr<Box> MatrixAtom::generateMulticolumn(
   int j
 ) {
   float w = 0;
-  auto* mca = (MulticolumnAtom*) (_matrix->_array[i][j].get());
+  auto* mca = (MulticolumnAtom*)(_matrix->_array[i][j].get());
   int k, n = mca->skipped();
   for (k = j; k < j + n - 1; k++) {
     w += colWidth[k] + hsep[k + 1];
@@ -334,7 +320,12 @@ sptr<Box> MatrixAtom::generateMulticolumn(
   return sptrOf<HBox>(b, w, mca->align());
 }
 
-MatrixAtom::MatrixAtom(bool isPartial, const sptr<ArrayFormula>& arr, const string& options, bool spaceAround) {
+MatrixAtom::MatrixAtom(
+  bool isPartial,
+  const sptr<ArrayFormula>& arr,
+  const string& options,
+  bool spaceAround
+) {
   _matrix = arr;
   _matType = MatrixType::array;
   _isPartial = isPartial;
@@ -410,7 +401,7 @@ sptr<Box> MatrixAtom::createBoxInner(Env& env) {
   auto lineDepth = new float[rows]();
   auto lineHeight = new float[rows]();
   auto colWidth = new float[cols]();
-  auto boxarr = new sptr<Box>* [rows]();
+  auto boxarr = new sptr<Box>*[rows]();
   for (int i = 0; i < rows; i++) boxarr[i] = new sptr<Box>[cols]();
 
   float matW = 0;
@@ -441,7 +432,7 @@ sptr<Box> MatrixAtom::createBoxInner(Env& env) {
         lineDepth[i] = max(boxarr[i][j]->_depth, lineDepth[i]);
         lineHeight[i] = max(boxarr[i][j]->_height, lineHeight[i]);
       } else {
-        auto* mra = (MultiRowAtom*) atom.get();
+        auto* mra = (MultiRowAtom*)atom.get();
         mra->setRowColumn(i, j);
         listMultiRow.push_back(atom);
       }
@@ -450,7 +441,7 @@ sptr<Box> MatrixAtom::createBoxInner(Env& env) {
         // Find the widest column
         colWidth[j] = max(boxarr[i][j]->_width, colWidth[j]);
       } else {
-        auto* mca = (MulticolumnAtom*) atom.get();
+        auto* mca = (MulticolumnAtom*)atom.get();
         mca->setRowColumn(i, j);
         listMultiCol.push_back(atom);
       }
@@ -463,7 +454,7 @@ sptr<Box> MatrixAtom::createBoxInner(Env& env) {
   float* Hsep = getColumnSep(env, matW);
 
   for (auto& i : listMultiCol) {
-    auto* multi = (MulticolumnAtom*) i.get();
+    auto* multi = (MulticolumnAtom*)i.get();
     const int c = multi->col(), r = multi->row(), n = multi->skipped();
     float w = 0;
     int j = 0;
@@ -517,11 +508,15 @@ sptr<Box> MatrixAtom::createBoxInner(Env& env) {
           float l = j == 0 ? Hsep[j] : Hsep[j] / 2;
           if (boxarr[i][j]->_type == AtomType::none) {
             wb = new WrapperBox(
-              boxarr[i][j], colWidth[j], lineHeight[i], lineDepth[i], _position[j]  //
+              boxarr[i][j],
+              colWidth[j],
+              lineHeight[i],
+              lineDepth[i],
+              _position[j]  //
             );
           } else {
             auto b = generateMulticolumn(env, boxarr[i][j], Hsep, colWidth, i, j);
-            auto* matom = (MulticolumnAtom*) _matrix->_array[i][j].get();
+            auto* matom = (MulticolumnAtom*)_matrix->_array[i][j].get();
             j += matom->skipped() - 1;
             wb = new WrapperBox(b, b->_width, lineHeight[i], lineDepth[i], Alignment::left);
             isLastVline = matom->hasRightVline();
@@ -541,19 +536,17 @@ sptr<Box> MatrixAtom::createBoxInner(Env& env) {
             auto vatBox = vat->createBox(env);
             hb->add(vatBox);
           }
-        }
-          break;
+        } break;
 
         case AtomType::interText: {
           float f = env.textWidth();
           f = f == POS_INF ? colWidth[j] : f;
           hb = sptrOf<HBox>(boxarr[i][j], f, Alignment::left);
           j = cols;
-        }
-          break;
+        } break;
 
         case AtomType::hline: {
-          auto* at = (HlineAtom*) _matrix->_array[i][j].get();
+          auto* at = (HlineAtom*)_matrix->_array[i][j].get();
           at->setColor(LINE_COLOR);
           at->setWidth(matW);
           if (i >= 1 && dynamic_cast<HlineAtom*>(_matrix->_array[i - 1][j].get()) != nullptr) {
@@ -562,8 +555,7 @@ sptr<Box> MatrixAtom::createBoxInner(Env& env) {
 
           hb->add(at->createBox(env));
           j = cols;
-        }
-          break;
+        } break;
         default: {
         }
       }
@@ -594,10 +586,7 @@ sptr<Box> MatrixAtom::createBoxInner(Env& env) {
 
 sptr<Box> MatrixAtom::createBox(Env& env) {
   if (_matType == MatrixType::smallMatrix) {
-    return env.withStyle(
-      TexStyle::script,
-      [this](auto& script) { return createBoxInner(script); }
-    );
+    return env.withStyle(TexStyle::script, [this](auto& script) { return createBoxInner(script); });
   } /* else if (_matType == MatrixType::matrix) {
     return env.withStyle(
       TexStyle::text,
@@ -620,18 +609,15 @@ Alignment MulticolumnAtom::parseAlign(const string& str) {
       case 'l': {
         align = Alignment::left;
         first = false;
-      }
-        break;
+      } break;
       case 'r': {
         align = Alignment::right;
         first = false;
-      }
-        break;
+      } break;
       case 'c': {
         align = Alignment::center;
         first = false;
-      }
-        break;
+      } break;
       case '|': {
         if (first) {
           _beforeVlines = 1;
@@ -650,8 +636,7 @@ Alignment MulticolumnAtom::parseAlign(const string& str) {
               _afterVlines++;
           }
         }
-      }
-        break;
+      } break;
     }
     pos++;
   }
@@ -659,11 +644,8 @@ Alignment MulticolumnAtom::parseAlign(const string& str) {
 }
 
 sptr<Box> MulticolumnAtom::createBox(Env& env) {
-  sptr<Box> b = (
-    _width == 0
-    ? _cols->createBox(env)
-    : sptrOf<HBox>(_cols->createBox(env), _width, _align)
-  );
+  sptr<Box> b = _width == 0 ? _cols->createBox(env)
+                            : sptrOf<HBox>(_cols->createBox(env), _width, _align);
   b->_type = AtomType::multiColumn;
   return b;
 }
@@ -686,7 +668,7 @@ sptr<Box> HdotsforAtom::createBox(Env& env) {
   if (_width == 0) return createBox(space, dot, env);
 
   float x = (_width - dot->_width) / (space + dot->_width);
-  int count = (int) floor(x);
+  int count = (int)floor(x);
 
   // Only one dot can be placed in
   if (count == 0) {

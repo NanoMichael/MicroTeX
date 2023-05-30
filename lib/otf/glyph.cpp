@@ -16,7 +16,7 @@ const Math Math::empty(0);
 
 i16 KernRecord::operator[](u16 glyph) const {
   const int i = binIndexOf(_count, [&](int i) { return glyph - _fields[i << 1]; });
-  return i < 0 ? 0 : (i16) _fields[(i << 1) + 1];
+  return i < 0 ? 0 : (i16)_fields[(i << 1) + 1];
 }
 
 u16 MathKern::indexOf(i32 height) const {

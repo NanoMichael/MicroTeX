@@ -1,18 +1,26 @@
 BasedOnStyle: Google
+ColumnLimit: 100
 IndentWidth: 2
+ContinuationIndentWidth: 2
 AccessModifierOffset: -2
-AllowShortBlocksOnASingleLine: true
+
+AllowShortBlocksOnASingleLine: Empty
 AllowShortIfStatementsOnASingleLine: true
 AllowShortCaseLabelsOnASingleLine: true
 AllowShortLoopsOnASingleLine: true
-ColumnLimit: 0
-AlignAfterOpenBracket: false
+AllowShortFunctionsOnASingleLine: Inline
+
+AlignAfterOpenBracket: BlockIndent
 BinPackArguments: false
-BinPackParameters: true
-AllowAllParametersOfDeclarationOnNextLine: true
+BinPackParameters: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowAllArgumentsOnNextLine: false
 ReflowComments: true
-AlignConsecutiveMacros: false
+
 AlignTrailingComments: true
-AlignConsecutiveAssignments: false
-AlignConsecutiveDeclarations: false
-ContinuationIndentWidth: 2
+BreakBeforeBinaryOperators: NonAssignment
+
+AlignArrayOfStructures: Left
+
+PenaltyBreakAssignment: 20
+PenaltyBreakBeforeFirstCallParameter: 0

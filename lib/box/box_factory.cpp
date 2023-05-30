@@ -1,19 +1,20 @@
 #include "box/box_factory.h"
-#include "box/box_group.h"
-#include "atom/atom_basic.h"
-#include "utils/utils.h"
-#include "env/env.h"
-#include "core/formula.h"
-#include "atom/atom_char.h"
-#include "utils/exceptions.h"
 
 #include <deque>
+
+#include "atom/atom_basic.h"
+#include "atom/atom_char.h"
+#include "box/box_group.h"
+#include "core/formula.h"
+#include "env/env.h"
+#include "utils/exceptions.h"
+#include "utils/utils.h"
 
 using namespace std;
 
 namespace microtex {
 
-static constexpr auto ROUND_TOL = 10; // in font design unit
+static constexpr auto ROUND_TOL = 10;  // in font design unit
 
 sptr<Box> createHDelim(const sptr<SymbolAtom>& sym, Env& env, int size) {
   const auto& chr = sym->getChar(env);
@@ -25,7 +26,13 @@ sptr<Box> createVDelim(const sptr<SymbolAtom>& sym, Env& env, int size) {
   return sptrOf<CharBox>(chr.vLarger(size));
 }
 
-static sptr<Box> createDelim(const std::string& sym, Env& env, const float len, bool isVertical, bool round = false) {
+static sptr<Box> createDelim(
+  const std::string& sym,
+  Env& env,
+  const float len,
+  bool isVertical,
+  bool round = false
+) {
   sptr<SymbolAtom> atom;
   if (sym.length() == 1) {
     const auto it = Formula::_charToSymbol.find(sym[0]);
@@ -74,10 +81,10 @@ static sptr<Box> createDelim(const std::string& sym, Env& env, const float len, 
     const auto b = sptrOf<CharBox>(chr.assemblyPart(part.glyph()));
     const auto l = isVertical ? b->vlen() : b->_width;
     if (part.startConnectorLength() != 0) {
-      max = std::min(max, (float) part.startConnectorLength());
+      max = std::min(max, (float)part.startConnectorLength());
     }
     if (part.endConnectorLength() != 0) {
-      max = std::min(max, (float) part.endConnectorLength());
+      max = std::min(max, (float)part.endConnectorLength());
     }
     if (!part.isExtender()) {
       f.emplace_back(static_cast<int>(r.size()), b);
@@ -102,23 +109,21 @@ static sptr<Box> createDelim(const std::string& sym, Env& env, const float len, 
   // thus:
   //   repeat_cnt > (len - fixed_len + (fixed_part_size - 1) * min_connector_overlap)
   //                / (repeat_len - repeat_part_size * min_connector_overlap)
-  const auto cnt = (int) std::ceil((len - fl + (f.size() - 1) * m) / (rl - r.size() * m));
+  const auto cnt = (int)std::ceil((len - fl + (f.size() - 1) * m) / (rl - r.size() * m));
   const auto p = r.size() * cnt + f.size() - 1;
   const auto e = (cnt * rl + fl - p * m - len) / p;
   const auto s = std::min(m + e, max);
-  const auto space = (
-    isVertical
-    ? sptrOf<StrutBox>(0.f, -s, 0.f, 0.f)
-    : StrutBox::create(-s)
-  );
+  const auto space = (isVertical ? sptrOf<StrutBox>(0.f, -s, 0.f, 0.f) : StrutBox::create(-s));
 
   sptr<BoxGroup> box;
-  if (isVertical) box = sptrOf<VBox>();
-  else box = sptrOf<HBox>();
+  if (isVertical)
+    box = sptrOf<VBox>();
+  else
+    box = sptrOf<HBox>();
 
   for (size_t i = 0; i < r.size(); i++) {
     while (!f.empty()) {
-      const auto&[k, n] = f.front();
+      const auto& [k, n] = f.front();
       if (k == i) {
         box->add(n);
         box->add(space);
@@ -136,7 +141,7 @@ static sptr<Box> createDelim(const std::string& sym, Env& env, const float len, 
   }
 
   while (!f.empty()) {
-    const auto&[_, b] = f.front();
+    const auto& [_, b] = f.front();
     box->add(b);
     f.pop_front();
     if (f.empty()) break;
@@ -154,4 +159,4 @@ sptr<Box> createVDelim(const std::string& sym, Env& env, float height, bool roun
   return createDelim(sym, env, height, true, round);
 }
 
-}
+}  // namespace microtex

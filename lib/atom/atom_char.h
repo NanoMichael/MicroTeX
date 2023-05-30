@@ -3,10 +3,10 @@
 
 #include "atom/atom.h"
 #include "box/box.h"
-#include "utils/utils.h"
 #include "unimath/uni_char.h"
-#include "unimath/uni_symbol.h"
 #include "unimath/uni_font.h"
+#include "unimath/uni_symbol.h"
+#include "utils/utils.h"
 
 namespace microtex {
 
@@ -26,23 +26,17 @@ public:
   CharSymbol() : _isText(false) {}
 
   /** Mark as text symbol */
-  inline void markAsText() {
-    _isText = true;
-  }
+  inline void markAsText() { _isText = true; }
 
   /** Remove the mark so the atom remains unchanged (used by AtomDecor) */
-  inline void removeMark() {
-    _isText = false;
-  }
+  inline void removeMark() { _isText = false; }
 
   /**
    * Tests if this atom is marked as a text symbol (used by subsup)
    *
    * @return whether this CharSymbol is marked as a text symbol
    */
-  inline bool isText() const {
-    return _isText;
-  }
+  inline bool isText() const { return _isText; }
 
   bool isChar() const override { return true; }
 
@@ -70,19 +64,13 @@ public:
 
   explicit FixedCharAtom(const Char& chr) : _chr(chr) {}
 
-  Char getChar(Env& env) const override {
-    return _chr;
-  }
+  Char getChar(Env& env) const override { return _chr; }
 
   std::string name() const override;
 
-  bool isMathMode() const override {
-    return false;
-  }
+  bool isMathMode() const override { return false; }
 
-  c32 unicode() const override {
-    return _chr.mappedCode;
-  }
+  c32 unicode() const override { return _chr.mappedCode; }
 
   sptr<Box> createBox(Env& env) override;
 };
@@ -133,16 +121,13 @@ public:
   CharAtom() = delete;
 
   CharAtom(c32 unicode, FontStyle style, bool mathMode = false)
-    : _unicode(unicode), _fontStyle(style), _mathMode(mathMode) {}
+      : _unicode(unicode), _fontStyle(style), _mathMode(mathMode) {}
 
-  CharAtom(c32 unicode, bool mathMode)
-    : _unicode(unicode), _mathMode(mathMode) {}
+  CharAtom(c32 unicode, bool mathMode) : _unicode(unicode), _mathMode(mathMode) {}
 
   c32 unicode() const override { return _unicode; }
 
-  bool isMathMode() const override {
-    return _mathMode;
-  }
+  bool isMathMode() const override { return _mathMode; }
 
   Char getChar(Env& env) const override;
 
@@ -157,6 +142,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_CHAR_H
+#endif  // MICROTEX_ATOM_CHAR_H

@@ -1,4 +1,5 @@
 #include "graphic/graphic_basic.h"
+
 #include "atom/atom_basic.h"
 #include "utils/string_utils.h"
 
@@ -33,9 +34,11 @@ bool microtex::Rect::operator==(const Rect& other) const {
   return x == other.x && y == other.y && w == other.w && h == other.h;
 }
 
+// clang-format off
 bool microtex::Stroke::operator==(const Stroke& other) const {
   return lineWidth == other.lineWidth
          && miterLimit == other.miterLimit
          && cap == other.cap
          && join == other.join;
 }
+// clang-format on

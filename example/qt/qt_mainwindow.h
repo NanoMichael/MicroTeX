@@ -13,7 +13,10 @@ class MainWindow : public QWidget {
 
 public:
   explicit MainWindow(
-    QWidget* parent = nullptr, bool useSkia = false, const std::string& smaplesFile = "");
+    QWidget* parent = nullptr,
+    bool useSkia = false,
+    const std::string& smaplesFile = ""
+  );
 
 protected slots:
 

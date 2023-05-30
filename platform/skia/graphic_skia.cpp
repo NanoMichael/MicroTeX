@@ -5,8 +5,6 @@
 #include <modules/skparagraph/include/Paragraph.h>
 #include <modules/skparagraph/include/ParagraphBuilder.h>
 
-#include <utility>
-
 #include "utils/log.h"
 #include "utils/nums.h"
 #include "utils/types.h"
@@ -113,7 +111,10 @@ sptr<Font> PlatformFactory_skia::createFont(const std::string &file) {
 }
 
 sptr<TextLayout> PlatformFactory_skia::createTextLayout(
-  const std::string &src, microtex::FontStyle style, float size) {
+  const std::string &src,
+  microtex::FontStyle style,
+  float size
+) {
   return sptrOf<TextLayout_skia>(src, style, size);
 }
 
@@ -151,15 +152,9 @@ void Graphics2D_skia::setStroke(const microtex::Stroke &s) {
   _stroke = s;
   SkPaint::Cap cap = SkPaint::Cap::kButt_Cap;
   switch (_stroke.cap) {
-    case CAP_BUTT:
-      cap = SkPaint::Cap::kButt_Cap;
-      break;
-    case CAP_ROUND:
-      cap = SkPaint::Cap::kRound_Cap;
-      break;
-    case CAP_SQUARE:
-      cap = SkPaint::Cap::kSquare_Cap;
-      break;
+    case CAP_BUTT: cap = SkPaint::Cap::kButt_Cap; break;
+    case CAP_ROUND: cap = SkPaint::Cap::kRound_Cap; break;
+    case CAP_SQUARE: cap = SkPaint::Cap::kSquare_Cap; break;
   }
   _paint.setStrokeCap(cap);
 
@@ -168,15 +163,9 @@ void Graphics2D_skia::setStroke(const microtex::Stroke &s) {
 
   SkPaint::Join join = SkPaint::Join::kMiter_Join;
   switch (_stroke.join) {
-    case JOIN_BEVEL:
-      join = SkPaint::Join::kBevel_Join;
-      break;
-    case JOIN_ROUND:
-      join = SkPaint::Join::kRound_Join;
-      break;
-    case JOIN_MITER:
-      join = SkPaint::Join::kMiter_Join;
-      break;
+    case JOIN_BEVEL: join = SkPaint::Join::kBevel_Join; break;
+    case JOIN_ROUND: join = SkPaint::Join::kRound_Join; break;
+    case JOIN_MITER: join = SkPaint::Join::kMiter_Join; break;
   }
   _paint.setStrokeJoin(join);
 }

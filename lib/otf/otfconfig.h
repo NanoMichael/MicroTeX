@@ -5,6 +5,7 @@
 #define GLYPH_RENDER_TYPE_PATH 1
 #define GLYPH_RENDER_TYPE_TYPEFACE 2
 
+// clang-format off
 // if have glyph render path
 #if GLYPH_RENDER_TYPE == GLYPH_RENDER_TYPE_BOTH || GLYPH_RENDER_TYPE == GLYPH_RENDER_TYPE_PATH
 #   define HAVE_GLYPH_RENDER_PATH
@@ -26,5 +27,6 @@
 
 // If clm supports glyph path
 #define CLM_SUPPORT_GLYPH_PATH(minorVersion) ((minorVersion) == 2)
+// clang-format on
 
-#endif // MICROTEX_OTFCONFIG_H
+#endif  // MICROTEX_OTFCONFIG_H

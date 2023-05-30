@@ -3,15 +3,15 @@
 
 /** All-in-one header */
 
+#include "graphic/font_style.h"
+#include "graphic/graphic.h"
+#include "graphic/graphic_basic.h"
+#include "microtex.h"
 #include "microtexconfig.h"
 #include "microtexexport.h"
-#include "microtex.h"
-#include "utils/types.h"
 #include "render/render.h"
 #include "unimath/font_src.h"
-#include "graphic/graphic.h"
-#include "graphic/font_style.h"
-#include "graphic/graphic_basic.h"
+#include "utils/types.h"
 
 #ifdef HAVE_CWRAPPER
 
@@ -19,4 +19,4 @@
 
 #endif
 
-#endif // MICROTEX_API_H
+#endif  // MICROTEX_API_H

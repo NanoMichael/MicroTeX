@@ -1,10 +1,11 @@
 #ifndef MICROTEX_FONT_SRC_H
 #define MICROTEX_FONT_SRC_H
 
+#include <string>
+#include <vector>
+
 #include "microtexexport.h"
 #include "utils/types.h"
-#include <vector>
-#include <string>
 
 namespace microtex {
 
@@ -39,10 +40,7 @@ class MICROTEX_EXPORT FontSrcFile : public FontSrc {
 public:
   const std::string clmFile;
 
-  explicit FontSrcFile(
-    std::string clmFile,
-    std::string fontFile = ""
-  );
+  explicit FontSrcFile(std::string clmFile, std::string fontFile = "");
 
   sptr<Otf> loadOtf() const override;
 };
@@ -53,15 +51,11 @@ public:
   const size_t len;
   const u8* data;
 
-  FontSrcData(
-    size_t len,
-    const u8* data,
-    std::string fontFile = ""
-  );
+  FontSrcData(size_t len, const u8* data, std::string fontFile = "");
 
   sptr<Otf> loadOtf() const override;
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_FONT_SRC_H
+#endif  // MICROTEX_FONT_SRC_H

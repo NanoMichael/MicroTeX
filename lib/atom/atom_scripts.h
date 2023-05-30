@@ -3,8 +3,8 @@
 
 #include "atom/atom.h"
 #include "atom/atom_space.h"
-#include "box/box_single.h"
 #include "box/box_group.h"
+#include "box/box_single.h"
 #include "utils/utils.h"
 
 namespace microtex {
@@ -30,22 +30,23 @@ public:
 
   ScriptsAtom() = delete;
 
-  ScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup, bool onRight = true)
-    : _base(base), _sub(sub), _sup(sup), _onRight(onRight) {}
+  ScriptsAtom(
+    const sptr<Atom>& base,
+    const sptr<Atom>& sub,
+    const sptr<Atom>& sup,
+    bool onRight = true
+  )
+      : _base(base), _sub(sub), _sup(sup), _onRight(onRight) {}
 
-  AtomType leftType() const override {
-    return _base == nullptr ? _type : _base->leftType();
-  }
+  AtomType leftType() const override { return _base == nullptr ? _type : _base->leftType(); }
 
-  AtomType rightType() const override {
-    return _base == nullptr ? _type : _base->rightType();
-  }
+  AtomType rightType() const override { return _base == nullptr ? _type : _base->rightType(); }
 
   sptr<Box> createBox(Env& env) override;
 
   ScriptResult createScripts(Env& env);
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_SCRIPTS_H
+#endif  // MICROTEX_ATOM_SCRIPTS_H

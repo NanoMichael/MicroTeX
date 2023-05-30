@@ -20,8 +20,7 @@ public:
 
   MiddleAtom() = delete;
 
-  explicit MiddleAtom(std::string sym)
-    : _sym(std::move(sym)), _placeholder(StrutBox::empty()) {}
+  explicit MiddleAtom(std::string sym) : _sym(std::move(sym)), _placeholder(StrutBox::empty()) {}
 
   sptr<Box> createBox(Env& env) override;
 };
@@ -40,14 +39,10 @@ private:
 
 public:
   FencedAtom(const sptr<Atom>& b, std::string l, std::string r)
-    : _base(b), _l(std::move(l)), _r(std::move(r)) {}
+      : _base(b), _l(std::move(l)), _r(std::move(r)) {}
 
-  FencedAtom(
-    const sptr<Atom>& b,
-    std::string l,
-    std::string r,
-    std::vector<sptr<MiddleAtom>> m
-  ) : _base(b), _l(std::move(l)), _r(std::move(r)), _m(std::move(m)) {}
+  FencedAtom(const sptr<Atom>& b, std::string l, std::string r, std::vector<sptr<MiddleAtom>> m)
+      : _base(b), _l(std::move(l)), _r(std::move(r)), _m(std::move(m)) {}
 
   AtomType leftType() const override { return AtomType::inner; }
 
@@ -56,6 +51,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_FENCE_H
+#endif  // MICROTEX_ATOM_FENCE_H

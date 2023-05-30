@@ -16,11 +16,9 @@ public:
   explicit ex_tex(std::string msg) : _msg(std::move(msg)) {}
 
   explicit ex_tex(const std::string& msg, const exception& cause)
-    : _msg(msg + "\n caused by: " + cause.what()) {}
+      : _msg(msg + "\n caused by: " + cause.what()) {}
 
-  const char* what() const noexcept override {
-    return _msg.c_str();
-  }
+  const char* what() const noexcept override { return _msg.c_str(); }
 };
 
 /** Error occurred while parsing a string to a formula */

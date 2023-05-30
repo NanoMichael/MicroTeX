@@ -143,7 +143,8 @@ public:
    * CFF - Compact Font Format Table</a> for details.
    *
    * And
-   * <a href="https://freetype-py.readthedocs.io/en/latest/ft_face_flags.html#FT_FACE_FLAG_CID_KEYED">
+   * <a
+   * href="https://freetype-py.readthedocs.io/en/latest/ft_face_flags.html#FT_FACE_FLAG_CID_KEYED">
    * FT_FACE_FLAG_CID_KEYED</a> explains why.
    */
   i32 glyphId(c32 codepoint) const;

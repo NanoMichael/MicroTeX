@@ -4,9 +4,9 @@
 #include <algorithm>
 #include <cerrno>
 #include <climits>
-#include <string>
 #include <functional>
 #include <map>
+#include <string>
 #include <vector>
 
 namespace microtex {
@@ -18,7 +18,7 @@ namespace microtex {
 std::map<std::string, std::string> parseOption(const std::string& options);
 
 /** Convert a value to string */
-template<class T>
+template <class T>
 inline std::string toString(T val) {
   return std::to_string(val);
 }
@@ -27,7 +27,7 @@ inline std::string toString(char val) {
   return {val};
 }
 
-template<class T>
+template <class T>
 inline void valueOf(const std::string& s, T& val) {
   char* endptr = nullptr;
   val = strtod(s.c_str(), &endptr);
@@ -39,8 +39,7 @@ inline bool str2int(const char* str, size_t len, int& res, int radix) {
 
   const long val = strtol(str, &endptr, radix);
 
-  if ((val == LONG_MAX || val == LONG_MIN) && errno == ERANGE)
-    return false;
+  if ((val == LONG_MAX || val == LONG_MIN) && errno == ERANGE) return false;
 
   res = static_cast<int>(val);
   return endptr == str + len;
@@ -54,27 +53,13 @@ inline std::string& toLower(std::string& src) {
 
 /** Ignore left side whitespace in a string */
 inline std::string& ltrim(std::string& s) {
-  s.erase(
-    s.begin(),
-    std::find_if(
-      s.begin(),
-      s.end(),
-      [](char c) { return !isspace(c); }
-    )
-  );
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](char c) { return !isspace(c); }));
   return s;
 }
 
 /** Ignore right side whitespace in a string */
 inline std::string& rtrim(std::string& s) {
-  s.erase(
-    std::find_if(
-      s.rbegin(),
-      s.rend(),
-      [](char c) { return !isspace(c); }
-    ).base(),
-    s.end()
-  );
+  s.erase(std::find_if(s.rbegin(), s.rend(), [](char c) { return !isspace(c); }).base(), s.end());
   return s;
 }
 

@@ -2,8 +2,8 @@
 #define MICROTEX_ATOM_ZSTACK_H
 
 #include "atom/atom.h"
-#include "utils/utils.h"
 #include "env/units.h"
+#include "utils/utils.h"
 
 namespace microtex {
 
@@ -19,21 +19,20 @@ private:
 
 public:
   ZStackAtom(
-    const ZStackArgs& hargs, const ZStackArgs& vargs,
-    const sptr<Atom>& atom, const sptr<Atom>& anchor
-  ) : _hargs(hargs), _vargs(vargs), _atom(atom), _anchor(anchor) {}
+    const ZStackArgs& hargs,
+    const ZStackArgs& vargs,
+    const sptr<Atom>& atom,
+    const sptr<Atom>& anchor
+  )
+      : _hargs(hargs), _vargs(vargs), _atom(atom), _anchor(anchor) {}
 
-  AtomType leftType() const override {
-    return _anchor->leftType();
-  }
+  AtomType leftType() const override { return _anchor->leftType(); }
 
-  AtomType rightType() const override {
-    return _anchor->rightType();
-  }
+  AtomType rightType() const override { return _anchor->rightType(); }
 
   sptr<Box> createBox(Env& env) override;
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_ZSTACK_H
+#endif  // MICROTEX_ATOM_ZSTACK_H

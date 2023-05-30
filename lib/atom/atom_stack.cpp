@@ -1,19 +1,22 @@
 #include "atom/atom_stack.h"
-#include "atom/atom_space.h"
-#include "atom/atom_char.h"
+
 #include "atom/atom_basic.h"
-#include "box/box_single.h"
+#include "atom/atom_char.h"
+#include "atom/atom_space.h"
 #include "box/box_group.h"
+#include "box/box_single.h"
 
 using namespace microtex;
 using namespace std;
 
 const std::vector<StackElement> StackAtom::_defaultOrder = {
-  StackElement::over, StackElement::under, StackElement::base
+  StackElement::over,
+  StackElement::under,
+  StackElement::base,
 };
 
 sptr<Box> StackAtom::createBox(Env& env) {
-  const auto&[box, _] = createStack(env);
+  const auto& [box, _] = createStack(env);
   return box;
 }
 
@@ -22,22 +25,15 @@ StackResult StackAtom::createStack(Env& env) {
   sptr<Box> o, u, b;
   const auto createOverUnder = [&](const StackArgs& args, TexStyle style) -> sptr<Box> {
     if (!args.isPresent()) return nullptr;
-    auto x = (
-      args.isScript
-      ? env.withStyle(style, [&](Env& e) { return args.atom->createBox(e); })
-      : args.atom->createBox(env)
-    );
+    auto x = args.isScript ? env.withStyle(style, [&](Env& e) { return args.atom->createBox(e); })
+                           : args.atom->createBox(env);
     _maxWidth = std::max(_maxWidth, x->_width);
     return x;
   };
   for (auto elem : _order) {
     switch (elem) {
-      case StackElement::over:
-        o = createOverUnder(_over, env.supStyle());
-        break;
-      case StackElement::under:
-        u = createOverUnder(_under, env.subStyle());
-        break;
+      case StackElement::over: o = createOverUnder(_over, env.supStyle()); break;
+      case StackElement::under: u = createOverUnder(_under, env.subStyle()); break;
       case StackElement::base:
         b = _base == nullptr ? StrutBox::empty() : _base->createBox(env);
         _maxWidth = std::max(_maxWidth, b->_width);

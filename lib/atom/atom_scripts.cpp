@@ -1,8 +1,9 @@
 #include "atom/atom_scripts.h"
-#include "atom/atom_stack.h"
-#include "atom/atom_char.h"
-#include "atom/atom_basic.h"
+
 #include "atom/atom_accent.h"
+#include "atom/atom_basic.h"
+#include "atom/atom_char.h"
+#include "atom/atom_stack.h"
 
 using namespace microtex;
 using namespace std;
@@ -20,15 +21,17 @@ sptr<Box> ScriptsAtom::createBox(Env& env) {
   }
 
   // display as limits
+  // clang-format off
   if (_base->_limitsType == LimitsType::limits ||
       (_base->_limitsType == LimitsType::normal && env.style() == TexStyle::display)
     ) {
+    // clang-format on
     const auto& over = StackArgs::autoSpace(_sup);
     const auto& under = StackArgs::autoSpace(_sub);
     return StackAtom(_base, over, under).createBox(env);
   }
 
-  const auto&[base, scripts, space, kern, reduce, italic] = createScripts(env);
+  const auto& [base, scripts, space, kern, reduce, italic] = createScripts(env);
   const auto hbox = sptrOf<HBox>();
   if (_onRight) {
     hbox->add(base);
@@ -63,11 +66,8 @@ ScriptResult ScriptsAtom::createScripts(Env& env) {
   };
   const auto getMathKern = [&](float height, bool isTop) {
     if (kernRecord == nullptr) return 0.f;
-    const auto& mathKern = (
-      _onRight
-      ? (isTop ? kernRecord->topRight() : kernRecord->bottomRight())
-      : (isTop ? kernRecord->topLeft() : kernRecord->bottomLeft())
-    );
+    const auto& mathKern = _onRight ? (isTop ? kernRecord->topRight() : kernRecord->bottomRight())
+                                    : (isTop ? kernRecord->topLeft() : kernRecord->bottomLeft());
     const auto i = mathKern.indexOf(height);
     return mathKern.value(i) * env.scale();
   };
@@ -75,6 +75,7 @@ ScriptResult ScriptsAtom::createScripts(Env& env) {
   if (auto acc = dynamic_cast<AccentedAtom*>(_base.get()); acc != nullptr) {
     // 1. special case: accent
     // the scripts are placed around the accentee
+    // clang-format off
     kernel = env.withStyle(
       env.crampStyle(),
       [&](Env& cramp) {
@@ -82,6 +83,7 @@ ScriptResult ScriptsAtom::createScripts(Env& env) {
         return acc->_base->createBox(cramp);
       }
     );
+    // clang-format on
     base = _base->createBox(env);
   } else {
     // 2. char symbol or boxed
@@ -117,6 +119,7 @@ ScriptResult ScriptsAtom::createScripts(Env& env) {
   }
 
   auto x = env.withStyle(env.supStyle(), [&](Env& sup) { return _sup->createBox(sup); });
+  // clang-format off
   u = maxOf<float>(
     u,
     (float) (
@@ -126,6 +129,7 @@ ScriptResult ScriptsAtom::createScripts(Env& env) {
     ) * env.scale(),
     x->_depth + math.superscriptBottomMin() * env.scale()
   );
+  // clang-format on
 
   if (_sub == nullptr) {
     // case 2. only superscript
@@ -150,6 +154,7 @@ ScriptResult ScriptsAtom::createScripts(Env& env) {
     sigma = theta;
   }
 
+  // clang-format off
   const auto topKern =
     (
       _onRight
@@ -162,6 +167,7 @@ ScriptResult ScriptsAtom::createScripts(Env& env) {
       ? 0
       : std::max(0.f, x->_width - y->_width)
     ) + getMathKern(-v, false);
+  // clang-format on
   const auto kern = _onRight ? std::min(topKern, bottomKern) : 0;
 
   auto vbox = sptrOf<VBox>();

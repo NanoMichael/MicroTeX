@@ -1,10 +1,10 @@
 #ifndef MICROTEX_MACRO_COLORS_H
 #define MICROTEX_MACRO_COLORS_H
 
-#include "macro/macro_decl.h"
-#include "atom/atom_misc.h"
-#include "atom/atom_box.h"
 #include "atom/atom_basic.h"
+#include "atom/atom_box.h"
+#include "atom/atom_misc.h"
+#include "macro/macro_decl.h"
 #include "utils/utf.h"
 
 namespace microtex {
@@ -37,6 +37,6 @@ inline macro(fcolorbox) {
 
 macro(definecolor);
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_MACRO_COLORS_H
+#endif  // MICROTEX_MACRO_COLORS_H

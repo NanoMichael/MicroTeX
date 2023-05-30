@@ -1,19 +1,16 @@
 #ifndef MICROTEX_MACRO_ACCENT_H
 #define MICROTEX_MACRO_ACCENT_H
 
-#include "macro/macro_decl.h"
 #include "atom/atom_accent.h"
-#include "atom/atom_stack.h"
 #include "atom/atom_basic.h"
+#include "atom/atom_stack.h"
+#include "macro/macro_decl.h"
 #include "utils/utf.h"
 
 namespace microtex {
 
 inline macro(accentset) {
-  return sptrOf<AccentedAtom>(
-    Formula(tp, args[2], false)._root,
-    args[1].substr(1), false, true
-  );
+  return sptrOf<AccentedAtom>(Formula(tp, args[2], false)._root, args[1].substr(1), false, true);
 }
 
 inline macro(stack) {
@@ -57,6 +54,6 @@ macro(accents);
 
 macro(undertilde);
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_MACRO_ACCENT_H
+#endif  // MICROTEX_MACRO_ACCENT_H

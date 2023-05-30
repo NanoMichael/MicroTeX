@@ -1,6 +1,7 @@
 #include "macro/macro_colors.h"
-#include "utils/string_utils.h"
+
 #include "utils/exceptions.h"
+#include "utils/string_utils.h"
 
 namespace microtex {
 
@@ -13,8 +14,7 @@ macro(definecolor) {
     c = rgb(f, f, f);
   } else if (args[2] == "rgb") {
     StrTokenizer stok(cs, ":,");
-    if (stok.count() != 3)
-      throw ex_parse("RGB color must have three components!");
+    if (stok.count() != 3) throw ex_parse("RGB color must have three components!");
     float r, g, b;
     std::string R = stok.next(), G = stok.next(), B = stok.next();
     valueOf(trim(R), r);
@@ -23,8 +23,7 @@ macro(definecolor) {
     c = rgb(r, g, b);
   } else if (args[2] == "cmyk") {
     StrTokenizer stok(cs, ":,");
-    if (stok.count() != 4)
-      throw ex_parse("CMYK color must have four components!");
+    if (stok.count() != 4) throw ex_parse("CMYK color must have four components!");
     float cmyk[4];
     for (float& i : cmyk) {
       std::string X = stok.next();
@@ -40,4 +39,4 @@ macro(definecolor) {
   return nullptr;
 }
 
-}
+}  // namespace microtex

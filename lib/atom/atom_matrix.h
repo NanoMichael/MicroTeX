@@ -2,10 +2,10 @@
 #define MICROTEX_ATOM_MATRIX_H
 
 #include "atom/atom.h"
-#include "box/box_single.h"
-#include "box/box_group.h"
-#include "atom/atom_space.h"
 #include "atom/atom_char.h"
+#include "atom/atom_space.h"
+#include "box/box_group.h"
+#include "box/box_single.h"
 
 namespace microtex {
 
@@ -16,9 +16,7 @@ class CellSpecifier : public Atom {
 public:
   virtual void apply(WrapperBox& box) = 0;
 
-  sptr<Box> createBox(Env& env) override {
-    return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f);
-  }
+  sptr<Box> createBox(Env& env) override { return sptrOf<StrutBox>(0.f, 0.f, 0.f, 0.f); }
 };
 
 /** Atom representing column color in array */
@@ -31,9 +29,7 @@ public:
 
   explicit CellColorAtom(color c) : _color(c) {}
 
-  void apply(WrapperBox& box) override {
-    box.setBackground(_color);
-  }
+  void apply(WrapperBox& box) override { box.setBackground(_color); }
 };
 
 /** Atom representing column foreground in array */
@@ -46,9 +42,7 @@ public:
 
   explicit CellForegroundAtom(color c) : _color(c) {}
 
-  void apply(WrapperBox& box) override {
-    box.setForeground(_color);
-  }
+  void apply(WrapperBox& box) override { box.setForeground(_color); }
 };
 
 class VlineAtom;
@@ -124,17 +118,9 @@ public:
     bool spaceAround
   );
 
-  MatrixAtom(
-    bool isPartial,
-    const sptr<ArrayFormula>& arr,
-    const std::string& options
-  );
+  MatrixAtom(bool isPartial, const sptr<ArrayFormula>& arr, const std::string& options);
 
-  MatrixAtom(
-    bool isPartial,
-    const sptr<ArrayFormula>& arr,
-    MatrixType type
-  );
+  MatrixAtom(bool isPartial, const sptr<ArrayFormula>& arr, MatrixType type);
 
   sptr<Box> createBox(Env& env) override;
 
@@ -176,7 +162,7 @@ public:
   MulticolumnAtom() = delete;
 
   MulticolumnAtom(int n, const std::string& align, const sptr<Atom>& cols)
-    : _width(0), _beforeVlines(0), _afterVlines(0), _row(0), _col(0) {
+      : _width(0), _beforeVlines(0), _afterVlines(0), _row(0), _col(0) {
     _n = n >= 1 ? n : 1;
     _cols = cols;
     _align = parseAlign(align);
@@ -211,21 +197,15 @@ class HdotsforAtom : public MulticolumnAtom {
 private:
   float _coeff;
 
-  static sptr<Box> createBox(
-    float space,
-    const sptr<Box>& b,
-    Env& env
-  );
+  static sptr<Box> createBox(float space, const sptr<Box>& b, Env& env);
 
 public:
   HdotsforAtom() = delete;
 
   HdotsforAtom(int n, float coeff)
-    : MulticolumnAtom(n, "c", sptrOf<CharAtom>('.', true)), _coeff(coeff) {}
+      : MulticolumnAtom(n, "c", sptrOf<CharAtom>('.', true)), _coeff(coeff) {}
 
-  bool isNeedWidth() const override {
-    return true;
-  }
+  bool isNeedWidth() const override { return true; }
 
   sptr<Box> createBox(Env& env) override;
 };
@@ -241,7 +221,7 @@ public:
   MultiRowAtom() = delete;
 
   MultiRowAtom(int n, const std::string& option, const sptr<Atom>& rows)
-    : _i(0), _j(0), _rows(rows), _n(n == 0 ? 1 : n) {}
+      : _i(0), _j(0), _rows(rows), _n(n == 0 ? 1 : n) {}
 
   inline void setRowColumn(int r, int c) {
     _i = r;
@@ -255,11 +235,7 @@ public:
   }
 };
 
-enum class MultiLineType {
-  multiline,
-  gather,
-  gathered
-};
+enum class MultiLineType { multiline, gather, gathered };
 
 /** An atom representing a vertical row of other atoms */
 class MultlineAtom : public Atom {
@@ -287,6 +263,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_MATRIX_H
+#endif  // MICROTEX_ATOM_MATRIX_H

@@ -1,18 +1,15 @@
 #ifndef MICROTEX_MACRO_FRAC_H
 #define MICROTEX_MACRO_FRAC_H
 
-#include "macro/macro_decl.h"
-#include "atom/atom_frac.h"
 #include "atom/atom_char.h"
+#include "atom/atom_frac.h"
+#include "macro/macro_decl.h"
 
 namespace microtex {
 
 macro(binom);
 
-sptr<Atom> _choose(
-  const std::string& left, const std::string& right,
-  Parser& tp, Args& args
-);
+sptr<Atom> _choose(const std::string& left, const std::string& right, Parser& tp, Args& args);
 
 inline macro(choose) {
   return _choose("lparen", "rparen", tp, args);
@@ -48,6 +45,6 @@ macro(cfrac);
 
 macro(genfrac);
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_MACRO_FRAC_H
+#endif  // MICROTEX_MACRO_FRAC_H

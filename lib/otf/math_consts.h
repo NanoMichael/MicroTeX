@@ -9,7 +9,7 @@ namespace microtex {
 
 class CLMReader;
 
-/** 
+/**
  * Defines a number of constants required to properly position elements of mathematical formulas.
  * See
  * <a href="https://docs.microsoft.com/en-us/typography/opentype/spec/math#mathconstants-table">
@@ -151,4 +151,4 @@ public:
 
 }  // namespace microtex
 
-#endif // MICROTEX_MATH_CONSTS_H
+#endif  // MICROTEX_MATH_CONSTS_H

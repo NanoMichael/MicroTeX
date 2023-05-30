@@ -1,8 +1,9 @@
 #ifndef MICROTEX_ATOM_TEXT_H
 #define MICROTEX_ATOM_TEXT_H
 
-#include "atom/atom.h"
 #include <string>
+
+#include "atom/atom.h"
 
 namespace microtex {
 
@@ -14,8 +15,7 @@ private:
 public:
   TextAtom(bool isMathMode) : _mathMode(isMathMode) {}
 
-  TextAtom(std::string str, bool isMathMode)
-    : _txt(std::move(str)), _mathMode(isMathMode) {}
+  TextAtom(std::string str, bool isMathMode) : _txt(std::move(str)), _mathMode(isMathMode) {}
 
   void append(c32 code);
 
@@ -23,15 +23,11 @@ public:
 
   sptr<Box> createBox(Env& env) override;
 
-  AtomType leftType() const override {
-    return AtomType::ordinary;
-  }
+  AtomType leftType() const override { return AtomType::ordinary; }
 
-  AtomType rightType() const override {
-    return AtomType::ordinary;
-  }
+  AtomType rightType() const override { return AtomType::ordinary; }
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_TEXT_H
+#endif  // MICROTEX_ATOM_TEXT_H

@@ -4,8 +4,8 @@
 #include "env/env.h"
 #include "microtex.h"
 #include "utils/exceptions.h"
-#include "utils/utf.h"
 #include "utils/log.h"
+#include "utils/utf.h"
 
 using namespace std;
 using namespace microtex;

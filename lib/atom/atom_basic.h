@@ -13,13 +13,9 @@ class Formula;
 /** Atom to mark do not add kern between */
 class NokernAtom : public Atom {
 public:
-  NokernAtom() {
-    _type = AtomType::none;
-  }
+  NokernAtom() { _type = AtomType::none; }
 
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
+  sptr<Box> createBox(Env& env) override { return StrutBox::empty(); }
 };
 
 /**
@@ -57,13 +53,9 @@ public:
 /** An empty atom */
 class EmptyAtom : public Atom {
 public:
-  sptr<Box> createBox(Env& env) override {
-    return StrutBox::empty();
-  }
+  sptr<Box> createBox(Env& env) override { return StrutBox::empty(); }
 
-  static sptr<EmptyAtom> create() {
-    return sptrOf<EmptyAtom>();
-  }
+  static sptr<EmptyAtom> create() { return sptrOf<EmptyAtom>(); }
 };
 
 /** A placeholder atom */
@@ -73,17 +65,13 @@ private:
   float _italic;
 
 public:
-  PlaceholderAtom(float width, float height, float depth, float italic = 0.f)
-    : _italic(italic) {
+  PlaceholderAtom(float width, float height, float depth, float italic = 0.f) : _italic(italic) {
     _box = sptrOf<StrutBox>(width, height, depth, 0.f);
   }
 
-  PlaceholderAtom(const sptr<Box>& box, float italic = 0.f)
-    : _box(box), _italic(italic) {}
+  PlaceholderAtom(const sptr<Box>& box, float italic = 0.f) : _box(box), _italic(italic) {}
 
-  sptr<Box> createBox(Env& env) override {
-    return _box;
-  }
+  sptr<Box> createBox(Env& env) override { return _box; }
 
   inline float italic() const { return _italic; }
 };
@@ -97,8 +85,10 @@ public:
   SmashedAtom() = delete;
 
   SmashedAtom(const sptr<Atom>& a, const std::string& opt) : _h(true), _d(true), WrapAtom(a) {
-    if (opt == "opt") _d = false;
-    else if (opt == "b") _h = false;
+    if (opt == "opt")
+      _d = false;
+    else if (opt == "b")
+      _h = false;
   }
 
   explicit SmashedAtom(const sptr<Atom>& a) : _h(true), _d(true), WrapAtom(a) {}
@@ -115,7 +105,7 @@ public:
   ScaleAtom() = delete;
 
   ScaleAtom(const sptr<Atom>& base, float sx, float sy) noexcept
-    : WrapAtom(base), _sx(sx), _sy(sy) {}
+      : WrapAtom(base), _sx(sx), _sy(sy) {}
 
   ScaleAtom(const sptr<Atom>& base, float scale) : ScaleAtom(base, scale, scale) {}
 
@@ -130,8 +120,7 @@ private:
 public:
   MathAtom() = delete;
 
-  MathAtom(const sptr<Atom>& base, TexStyle style) noexcept
-    : _style(style), WrapAtom(base) {}
+  MathAtom(const sptr<Atom>& base, TexStyle style) noexcept : _style(style), WrapAtom(base) {}
 
   sptr<Box> createBox(Env& env) override;
 };
@@ -143,9 +132,7 @@ private:
   color _color;
 
 public:
-  HlineAtom() noexcept: _color(transparent), _width(0), _shift(0) {
-    _type = AtomType::hline;
-  }
+  HlineAtom() noexcept : _color(transparent), _width(0), _shift(0) { _type = AtomType::hline; }
 
   inline void setWidth(float w) { _width = w; }
 
@@ -165,11 +152,7 @@ private:
 public:
   CumulativeScriptsAtom() = delete;
 
-  CumulativeScriptsAtom(
-    const sptr<Atom>& base,
-    const sptr<Atom>& sub,
-    const sptr<Atom>& sup
-  );
+  CumulativeScriptsAtom(const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup);
 
   void addSuperscript(const sptr<Atom>& sup);
 
@@ -197,17 +180,11 @@ public:
 
   sptr<Box> createBox(Env& env) override;
 
-  AtomType leftType() const override {
-    return _elements->leftType();
-  }
+  AtomType leftType() const override { return _elements->leftType(); }
 
-  AtomType rightType() const override {
-    return _elements->rightType();
-  }
+  AtomType rightType() const override { return _elements->rightType(); }
 
-  void setPreviousAtom(const sptr<AtomDecor>& prev) override {
-    _elements->setPreviousAtom(prev);
-  }
+  void setPreviousAtom(const sptr<AtomDecor>& prev) override { _elements->setPreviousAtom(prev); }
 
   /**
    * Parse color from given name. The name can be one of the following format:
@@ -234,17 +211,11 @@ public:
 
   PhantomAtom(const sptr<Atom>& el, bool w, bool h, bool d);
 
-  AtomType leftType() const override {
-    return _elements->leftType();
-  }
+  AtomType leftType() const override { return _elements->leftType(); }
 
-  AtomType rightType() const override {
-    return _elements->rightType();
-  }
+  AtomType rightType() const override { return _elements->rightType(); }
 
-  void setPreviousAtom(const sptr<AtomDecor>& prev) override {
-    _elements->setPreviousAtom(prev);
-  }
+  void setPreviousAtom(const sptr<AtomDecor>& prev) override { _elements->setPreviousAtom(prev); }
 
   sptr<Box> createBox(Env& env) override;
 };
@@ -264,7 +235,7 @@ public:
   TypedAtom() = delete;
 
   TypedAtom(AtomType lt, AtomType rt, const sptr<Atom>& atom)
-    : _leftType(lt), _rightType(rt), _atom(atom) {
+      : _leftType(lt), _rightType(rt), _atom(atom) {
     _limitsType = atom->_limitsType;
   }
 
@@ -273,17 +244,11 @@ public:
     return _atom;
   }
 
-  sptr<Box> createBox(Env& env) override {
-    return _atom->createBox(env);
-  }
+  sptr<Box> createBox(Env& env) override { return _atom->createBox(env); }
 
-  AtomType leftType() const override {
-    return _leftType;
-  }
+  AtomType leftType() const override { return _leftType; }
 
-  AtomType rightType() const override {
-    return _rightType;
-  }
+  AtomType rightType() const override { return _rightType; }
 };
 
 class ExtensibleAtom : public Atom {
@@ -297,7 +262,8 @@ public:
     std::string sym,
     std::function<float(const Env&)>&& getLen,
     bool isVertical = false
-  ) : _sym(std::move(sym)), _getLen(getLen), _vertical(isVertical) {}
+  )
+      : _sym(std::move(sym)), _getLen(getLen), _vertical(isVertical) {}
 
   sptr<Box> createBox(Env& env) override;
 };

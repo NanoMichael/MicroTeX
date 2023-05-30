@@ -1,7 +1,8 @@
 #include "macro/macro_styles.h"
-#include "utils/utf.h"
-#include "microtex.h"
+
 #include "atom/atom_basic.h"
+#include "microtex.h"
+#include "utils/utf.h"
 
 namespace microtex {
 
@@ -41,4 +42,4 @@ macro(atexstyle) {
   return sptrOf<AStyleAtom>(args[0], g);
 }
 
-}
+}  // namespace microtex

@@ -1,9 +1,10 @@
 #ifdef HAVE_CWRAPPER
 
 #include "wrapper/cwrapper.h"
-#include "wrapper/graphic_wrapper.h"
+
 #include "microtex.h"
 #include "utils/log.h"
+#include "wrapper/graphic_wrapper.h"
 
 using namespace microtex;
 
@@ -28,9 +29,8 @@ MICROTEX_CAPI void microtex_registerCallbacks(
   microtex_isPathExists = isPathExists;
 }
 
-MICROTEX_CAPI void microtex_setTextLayoutBounds(
-  TextLayoutBounds* b, float width, float height, float ascent
-) {
+MICROTEX_CAPI void
+microtex_setTextLayoutBounds(TextLayoutBounds* b, float width, float height, float ascent) {
   b->width = width;
   b->height = height;
   b->ascent = ascent;
@@ -56,10 +56,7 @@ MICROTEX_CAPI float microtex_fontSize(FontDesc* desc) {
   return desc->fontSize;
 }
 
-MICROTEX_CAPI FontMetaPtr microtex_init(
-  unsigned long len,
-  const unsigned char* data
-) {
+MICROTEX_CAPI FontMetaPtr microtex_init(unsigned long len, const unsigned char* data) {
   auto factory = std::make_unique<PlatformFactory_wrapper>();
   PlatformFactory::registerFactory("__wrapper__", std::move(factory));
   PlatformFactory::activate("__wrapper__");
@@ -76,10 +73,7 @@ MICROTEX_CAPI bool microtex_isInited() {
   return MicroTeX::isInited();
 }
 
-MICROTEX_CAPI FontMetaPtr microtex_addFont(
-  unsigned long len,
-  const unsigned char* data
-) {
+MICROTEX_CAPI FontMetaPtr microtex_addFont(unsigned long len, const unsigned char* data) {
   FontSrcData src{len, data};
   auto meta = MicroTeX::addFont(src);
   // create a new FontMeta from heap
@@ -88,24 +82,24 @@ MICROTEX_CAPI FontMetaPtr microtex_addFont(
 }
 
 MICROTEX_CAPI const char* microtex_getFontFamily(FontMetaPtr ptr) {
-  auto* meta = (FontMeta*) ptr;
+  auto* meta = (FontMeta*)ptr;
   // no need to copy
   return meta->family.c_str();
 }
 
 MICROTEX_CAPI const char* microtex_getFontName(FontMetaPtr ptr) {
-  auto* meta = (FontMeta*) ptr;
+  auto* meta = (FontMeta*)ptr;
   // no need to copy
   return meta->name.c_str();
 }
 
 MICROTEX_CAPI bool microtex_isMathFont(FontMetaPtr ptr) {
-  auto* meta = (FontMeta*) ptr;
+  auto* meta = (FontMeta*)ptr;
   return meta->isMathFont;
 }
 
 MICROTEX_CAPI void microtex_releaseFontMeta(FontMetaPtr ptr) {
-  auto* meta = (FontMeta*) ptr;
+  auto* meta = (FontMeta*)ptr;
   delete meta;
 }
 
@@ -143,7 +137,12 @@ MICROTEX_CAPI RenderPtr microtex_parseRender(
   logv("parse: %s\n", tex);
 #endif
   auto r = MicroTeX::parse(
-    tex, width, textSize, lineSpace, color, fillWidth,
+    tex,
+    width,
+    textSize,
+    lineSpace,
+    color,
+    fillWidth,
     {enableOverrideTeXStyle, static_cast<TexStyle>(texStyle)}
   );
   return reinterpret_cast<RenderPtr>(r);
@@ -167,7 +166,7 @@ MICROTEX_CAPI void microtex_freeDrawingData(DrawingData data) {
 
 MICROTEX_CAPI bool microtex_isLittleEndian() {
   int n = 1;
-  return *((char*) &n) == 1;
+  return *((char*)&n) == 1;
 }
 
 MICROTEX_CAPI int microtex_getRenderWidth(RenderPtr render) {
@@ -204,4 +203,4 @@ MICROTEX_CAPI void microtex_setRenderForeground(RenderPtr render, color c) {
 }
 #endif
 
-#endif //HAVE_CWRAPPER
+#endif  // HAVE_CWRAPPER

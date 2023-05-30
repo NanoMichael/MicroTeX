@@ -15,7 +15,7 @@ public:
   SideSetsAtom() = delete;
 
   SideSetsAtom(const sptr<Atom>& base, const sptr<Atom>& left, const sptr<Atom>& right)
-    : _base(base), _left(left), _right(right) {
+      : _base(base), _left(left), _right(right) {
     _type = AtomType::bigOperator;
     _limitsType = LimitsType::noLimits;
   }
@@ -23,6 +23,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_SIDESET_H
+#endif  // MICROTEX_ATOM_SIDESET_H

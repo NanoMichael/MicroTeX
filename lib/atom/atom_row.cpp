@@ -1,12 +1,13 @@
 #include "atom/atom_row.h"
+
+#include "atom/atom_basic.h"
 #include "atom/atom_char.h"
 #include "atom/atom_space.h"
 #include "atom/atom_text.h"
-#include "atom/atom_basic.h"
 #include "box/box_group.h"
 #include "box/box_single.h"
-#include "env/env.h"
 #include "core/glue.h"
+#include "env/env.h"
 #include "utils/utf.h"
 
 using namespace std;
@@ -23,7 +24,7 @@ bool AtomDecor::isMathMode() const {
 
 Char AtomDecor::getChar(Env& env) const {
   if (!isChar()) return {};
-  return ((CharSymbol*) _atom.get())->getChar(env);
+  return ((CharSymbol*)_atom.get())->getChar(env);
 }
 
 void AtomDecor::changeAtom(const sptr<FixedCharAtom>& atom) {
@@ -33,9 +34,9 @@ void AtomDecor::changeAtom(const sptr<FixedCharAtom>& atom) {
 }
 
 sptr<Box> AtomDecor::createBox(Env& env) {
-  if (_textSymbol) ((CharSymbol*) _atom.get())->markAsText();
+  if (_textSymbol) ((CharSymbol*)_atom.get())->markAsText();
   auto box = _atom->createBox(env);
-  if (_textSymbol) ((CharSymbol*) _atom.get())->removeMark();
+  if (_textSymbol) ((CharSymbol*)_atom.get())->removeMark();
   return box;
 }
 
@@ -51,6 +52,7 @@ void AtomDecor::setPreviousAtom(const sptr<AtomDecor>& prev) {
 
 bool RowAtom::_breakEverywhere = false;
 
+// clang-format off
 bitset<16> RowAtom::_binSet = bitset<16>()
   .set(static_cast<i8>(AtomType::binaryOperator))
   .set(static_cast<i8>(AtomType::bigOperator))
@@ -66,9 +68,10 @@ bitset<16> RowAtom::_ligKernSet = bitset<16>()
   .set(static_cast<i8>(AtomType::opening))
   .set(static_cast<i8>(AtomType::closing))
   .set(static_cast<i8>(AtomType::punctuation));
+// clang-format on
 
 RowAtom::RowAtom(const sptr<Atom>& atom)
-  : _lookAtLastAtom(false), _previousAtom(nullptr), _breakable(true) {
+    : _lookAtLastAtom(false), _previousAtom(nullptr), _breakable(true) {
   if (atom != nullptr) {
     auto* x = dynamic_cast<RowAtom*>(atom.get());
     if (x != nullptr) {
@@ -105,16 +108,20 @@ void RowAtom::add(const sptr<Atom>& atom) {
 
 void RowAtom::changeToOrd(AtomDecor* cur, AtomDecor* prev, Atom* next) {
   AtomType type = cur->leftType();
+  // clang-format off
   if ((type == AtomType::binaryOperator)
       && ((prev == nullptr || _binSet[static_cast<i8>(prev->rightType())]) || next == nullptr)
     ) {
+    // clang-format on
     cur->_type = AtomType::ordinary;
   } else if (next != nullptr && cur->rightType() == AtomType::binaryOperator) {
     AtomType nextType = next->leftType();
+    // clang-format off
     if (nextType == AtomType::relation
         || nextType == AtomType::closing
         || nextType == AtomType::punctuation
       ) {
+      // clang-format on
       cur->_type = AtomType::ordinary;
     }
   }
@@ -191,17 +198,15 @@ sptr<Box> RowAtom::createBox(Env& env) {
     auto t = processContinues(i, curr->isMathMode());
     if (t != nullptr) {
       curr = sptrOf<AtomDecor>(t);
-      tmp = (
-        i < end
-        ? sptrOf<AtomDecor>(_elements[i + 1])
-        : sptrOf<AtomDecor>(EmptyAtom::create())
-      );
+      tmp = i < end ? sptrOf<AtomDecor>(_elements[i + 1]) : sptrOf<AtomDecor>(EmptyAtom::create());
     }
     Char c = tmp->getChar(env);
     if (tmp->isChar() && !c.isValid()) {
       const auto isMathMode = tmp->isMathMode();
-      if (t == nullptr) t = sptrOf<TextAtom>(isMathMode);
-      else ++i;
+      if (t == nullptr)
+        t = sptrOf<TextAtom>(isMathMode);
+      else
+        ++i;
       t->append(c.mappedCode);
       i = processInvalid(t, isMathMode, i + 1, env) - 1;
       curr = sptrOf<AtomDecor>(t);
@@ -216,10 +221,7 @@ sptr<Box> RowAtom::createBox(Env& env) {
 
     // 4. Check for ligatures and kerning
     float kern = 0.f;
-    if (nextAtom != nullptr
-        && curr->rightType() == AtomType::ordinary
-        && curr->isChar()
-      ) {
+    if (nextAtom != nullptr && curr->rightType() == AtomType::ordinary && curr->isChar()) {
       curr->markAsTextSymbol();
       // initialize
       const auto& chr = c;
@@ -277,11 +279,7 @@ sptr<Box> RowAtom::createBox(Env& env) {
 
     // 5. Insert glue, unless it's the first element of the row
     //    or the previous element or the current is a kerning
-    if (i != 0
-        && _previousAtom != nullptr
-        && !_previousAtom->isKern()
-        && !curr->isKern()
-      ) {
+    if (i != 0 && _previousAtom != nullptr && !_previousAtom->isKern() && !curr->isKern()) {
       const auto glue = Glue::get(_previousAtom->rightType(), curr->leftType(), env);
       if (std::abs(glue->_width) > PREC) {
         hbox->add(glue);

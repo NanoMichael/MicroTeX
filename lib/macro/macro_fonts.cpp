@@ -1,13 +1,13 @@
 #include "macro/macro_fonts.h"
-#include "utils/string_utils.h"
-#include "utils/exceptions.h"
+
 #include "microtex.h"
+#include "utils/exceptions.h"
+#include "utils/string_utils.h"
 
 namespace microtex {
 
 macro(intertext) {
-  if (!tp.isArrayMode())
-    throw ex_parse("Command \\intertext must used in array environment!");
+  if (!tp.isArrayMode()) throw ex_parse("Command \\intertext must used in array environment!");
 
   std::string str(args[1]);
   replaceAll(str, "^{\\prime}", "\'");
@@ -47,4 +47,4 @@ macro(mathversion) {
   return sptrOf<MathFontAtom>(mathStyle, args[1]);
 }
 
-}
+}  // namespace microtex

@@ -17,7 +17,8 @@ public:
   FBoxAtom() = delete;
 
   explicit FBoxAtom(const sptr<Atom>& base, color bg = TRANSPARENT, color line = TRANSPARENT) {
-    if (base == nullptr) _base = sptrOf<RowAtom>();
+    if (base == nullptr)
+      _base = sptrOf<RowAtom>();
     else {
       _base = base;
       _type = base->_type;
@@ -64,6 +65,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_BOX_H
+#endif  // MICROTEX_ATOM_BOX_H

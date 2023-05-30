@@ -32,7 +32,7 @@ private:
   static int indexOf(AtomType ltype, AtomType rtype, const Env& env);
 
   Glue(u16 space, u16 stretch, u16 shrink) noexcept
-    : _space(space), _stretch(stretch), _shrink(shrink) {}
+      : _space(space), _stretch(stretch), _shrink(shrink) {}
 
 public:
   no_copy_assign(Glue);
@@ -64,6 +64,6 @@ public:
   static float getSpace(SpaceType skipType, const Env& env);
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_GLUE_H
+#endif  // MICROTEX_GLUE_H

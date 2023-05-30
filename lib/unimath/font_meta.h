@@ -1,9 +1,10 @@
 #ifndef MICROTEX_FONT_META_H
 #define MICROTEX_FONT_META_H
 
-#include "microtexexport.h"
-#include "graphic/font_style.h"
 #include <string>
+
+#include "graphic/font_style.h"
+#include "microtexexport.h"
 
 namespace microtex {
 
@@ -13,11 +14,9 @@ struct MICROTEX_EXPORT FontMeta {
   FontStyle style;
   bool isMathFont;
 
-  inline bool isValid() const {
-    return !family.empty() && !name.empty();
-  }
+  inline bool isValid() const { return !family.empty() && !name.empty(); }
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_FONT_META_H
+#endif  // MICROTEX_FONT_META_H

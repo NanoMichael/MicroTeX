@@ -1,11 +1,11 @@
-#include "microtex.h"
-#include "graphic_win32.h"
-#include "samples.h"
-#include "utils/string_utils.h"
-
 #include <comdef.h>
 #include <gdiplus.h>
 #include <windows.h>
+
+#include "graphic_win32.h"
+#include "microtex.h"
+#include "samples.h"
+#include "utils/string_utils.h"
 
 #define ID_SETTER 256
 #define ID_CANVAS 512
@@ -73,24 +73,24 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
   wndClass.hInstance = hInstance;
   wndClass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
   wndClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
-  wndClass.hbrBackground = (HBRUSH) GetStockObject(WHITE_BRUSH);
+  wndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
   wndClass.lpszMenuName = nullptr;
   wndClass.lpszClassName = TEXT("MicroTeX");
 
   RegisterClass(&wndClass);
 
   hWnd = CreateWindow(
-    TEXT("MicroTeX"),        // window class name
-    TEXT("MicroTeX"),        // window caption
-    WS_OVERLAPPEDWINDOW,    // window style
-    0,                      // initial x position
-    0,                      // initial y position
-    780,                    // initial x size
-    480,                    // initial y size
-    nullptr,                // parent window handle
-    nullptr,                // window menu handle
-    hInstance,              // program instance handle
-    nullptr                 // creation parameters
+    TEXT("MicroTeX"),     // window class name
+    TEXT("MicroTeX"),     // window caption
+    WS_OVERLAPPEDWINDOW,  // window style
+    0,                    // initial x position
+    0,                    // initial y position
+    780,                  // initial x size
+    480,                  // initial y size
+    nullptr,              // parent window handle
+    nullptr,              // window menu handle
+    hInstance,            // program instance handle
+    nullptr               // creation parameters
   );
 
   CreateCtrl(hInstance, hWnd);
@@ -111,9 +111,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, INT iCmdShow) {
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
   switch (message) {
-    case WM_DESTROY:
-      PostQuitMessage(0);
-      return 0;
+    case WM_DESTROY: PostQuitMessage(0); return 0;
     case WM_COMMAND:
       if (wParam == ID_BUTTON_SIZE) {
         HandleSize();
@@ -121,11 +119,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) 
         HandleNext();
       }
       return 0;
-    case WM_SIZE:
-      ResizeCtrl(hWnd);
-      return 0;
-    default:
-      return DefWindowProc(hWnd, message, wParam, lParam);
+    case WM_SIZE: ResizeCtrl(hWnd); return 0;
+    default: return DefWindowProc(hWnd, message, wParam, lParam);
   }
 }  // WndProc
 
@@ -146,8 +141,12 @@ void init() {
   PlatformFactory::activate("gdi");
   _samples = new Samples(__argv[4]);
   _render = MicroTeX::parse(
-    "\\text{Hello from Tiny\\kern-.1em\\TeX, have fun! Press Ctrl + Enter on editor to show formulas.}",
-    720, _size, _size / 3.f, _color
+    "\\text{Hello from Tiny\\kern-.1em\\TeX, have fun! Press Ctrl + Enter on editor to show "
+    "formulas.}",
+    720,
+    _size,
+    _size / 3.f,
+    _color
   );
 }
 
@@ -210,67 +209,82 @@ void CreateCtrl(HINSTANCE hInst, HWND hwnd) {
     "edit",
     nullptr,
     WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL,
-    l, t, w, h,
+    l,
+    t,
+    w,
+    h,
     hwnd,
-    (HMENU) ID_EDITBOX,
+    (HMENU)ID_EDITBOX,
     hInst,
     nullptr
   );
   HFONT hf = CreateFont(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "Consolas");
-  SendMessage(hEditor, WM_SETFONT, (WPARAM) hf, 0);
+  SendMessage(hEditor, WM_SETFONT, (WPARAM)hf, 0);
   SetFocus(hEditor);
-  editorProc = (WNDPROC) SetWindowLongPtr(hEditor, GWLP_WNDPROC, (LONG_PTR) EditorProc);
+  editorProc = (WNDPROC)SetWindowLongPtr(hEditor, GWLP_WNDPROC, (LONG_PTR)EditorProc);
   // size setter
   hEditSize = CreateWindowEx(
     WS_EX_TOPMOST,
     "edit",
     nullptr,
     WS_CHILD | WS_VISIBLE | WS_BORDER | ES_CENTER | ES_NUMBER,
-    l, t, w, h,
+    l,
+    t,
+    w,
+    h,
     hwnd,
-    (HMENU) ID_SETTER,
+    (HMENU)ID_SETTER,
     hInst,
     nullptr
   );
-  SendMessage(hEditSize, WM_SETFONT, (WPARAM) hf, 0);
-  setterProc = (WNDPROC) SetWindowLongPtr(hEditSize, GWLP_WNDPROC, (LONG_PTR) SetterProc);
+  SendMessage(hEditSize, WM_SETFONT, (WPARAM)hf, 0);
+  setterProc = (WNDPROC)SetWindowLongPtr(hEditSize, GWLP_WNDPROC, (LONG_PTR)SetterProc);
   // button size
   hBtnSize = CreateWindowEx(
     WS_EX_TOPMOST,
     "Button",
     nullptr,
     WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-    l, t, w, h,
+    l,
+    t,
+    w,
+    h,
     hwnd,
-    (HMENU) ID_BUTTON_SIZE,
+    (HMENU)ID_BUTTON_SIZE,
     hInst,
     nullptr
   );
-  SendMessage(hBtnSize, WM_SETFONT, (WPARAM) hf, 0);
-  SendMessage(hBtnSize, WM_SETTEXT, (WPARAM) nullptr, (LPARAM) ("Set Text Size"));
+  SendMessage(hBtnSize, WM_SETFONT, (WPARAM)hf, 0);
+  SendMessage(hBtnSize, WM_SETTEXT, (WPARAM) nullptr, (LPARAM)("Set Text Size"));
   // button next
   hBtnNext = CreateWindowEx(
     WS_EX_TOPMOST,
     "Button",
     nullptr,
     WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-    l, t, w, h,
+    l,
+    t,
+    w,
+    h,
     hwnd,
-    (HMENU) ID_BUTTON_NEXT,
+    (HMENU)ID_BUTTON_NEXT,
     hInst,
     nullptr
   );
-  SendMessage(hBtnNext, WM_SETFONT, (WPARAM) hf, 0);
-  SendMessage(hBtnNext, WM_SETTEXT, (WPARAM) nullptr, (LPARAM) ("Next Example"));
+  SendMessage(hBtnNext, WM_SETFONT, (WPARAM)hf, 0);
+  SendMessage(hBtnNext, WM_SETTEXT, (WPARAM) nullptr, (LPARAM)("Next Example"));
   // canvas
   hCanvas = CreateWindowEx(
     WS_EX_TOPMOST,
     "canvas",
     nullptr,
     WS_CHILD | WS_VISIBLE,
-    l, t, w, h,
+    l,
+    t,
+    w,
+    h,
     hwnd,
-    (HMENU) ID_CANVAS,
+    (HMENU)ID_CANVAS,
     hInst,
     nullptr
   );
@@ -347,14 +361,13 @@ LRESULT CALLBACK CanvasProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
       break;
     }
     case WM_ERASEBKGND: {
-      hdc = (HDC) wParam;
+      hdc = (HDC)wParam;
       RECT r;
       GetClientRect(hWnd, &r);
-      FillRect(hdc, &r, (HBRUSH) GetStockObject(WHITE_BRUSH));
+      FillRect(hdc, &r, (HBRUSH)GetStockObject(WHITE_BRUSH));
       break;
     }
-    default:
-      return DefWindowProc(hWnd, message, wParam, lParam);
+    default: return DefWindowProc(hWnd, message, wParam, lParam);
   }
   return 0;
 }

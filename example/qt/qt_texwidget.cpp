@@ -3,10 +3,7 @@
 using namespace microtex;
 
 TeXWidget::TeXWidget(QWidget* parent, float text_size)
-    : QWidget(parent),
-      _render(nullptr),
-      _text_size(text_size),
-      _padding(20) {
+    : QWidget(parent), _render(nullptr), _text_size(text_size), _padding(20) {
   QPalette pal = palette();
   pal.setColor(QPalette::Window, Qt::white);
   setPalette(pal);
@@ -34,12 +31,7 @@ void TeXWidget::setLaTeX(const std::string& latex) {
   delete _render;
   auto parent = parentWidget();
   int w = parent == nullptr ? width() : parent->width();
-  _render = MicroTeX::parse(
-    latex,
-    w - _padding * 2,
-    _text_size,
-    _text_size / 3.f,
-    0xff424242);
+  _render = MicroTeX::parse(latex, w - _padding * 2, _text_size, _text_size / 3.f, 0xff424242);
   resize(getRenderWidth(), getRenderHeight());
   update();
 }

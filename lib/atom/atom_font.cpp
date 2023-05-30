@@ -1,4 +1,5 @@
 #include "atom/atom_font.h"
+
 #include "box/box_single.h"
 
 using namespace microtex;
@@ -10,10 +11,7 @@ sptr<Box> FontStyleAtom::createBox(Env& env) {
     _mathMode ? env.removeMathFontStyle(_style) : env.removeTextFontStyle(_style);
     return box;
   }
-  return env.withFontStyle(
-    _style, _mathMode,
-    [&](Env& e) { return _atom->createBox(e); }
-  );
+  return env.withFontStyle(_style, _mathMode, [&](Env& e) { return _atom->createBox(e); });
 }
 
 sptr<Box> MathFontAtom::createBox(Env& env) {

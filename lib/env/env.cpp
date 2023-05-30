@@ -1,4 +1,5 @@
 #include "env/env.h"
+
 #include "env/units.h"
 
 using namespace std;
@@ -9,11 +10,8 @@ float Env::PIXELS_PER_POINT = 1.f;
 float Env::scale(TexStyle style) const {
   if (style < TexStyle::script) return 1;
   auto math = _fctx->mathFont().otf().mathConsts();
-  i16 percent = (
-    style < TexStyle::scriptScript
-    ? math->scriptPercentScaleDown()
-    : math->scriptScriptPercentScaleDown()
-  );
+  i16 percent = style < TexStyle::scriptScript ? math->scriptPercentScaleDown()
+                                               : math->scriptScriptPercentScaleDown();
   return percent / 100.f;
 }
 

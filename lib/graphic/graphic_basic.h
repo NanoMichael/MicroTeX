@@ -1,9 +1,10 @@
 #ifndef GRAPHIC_BASIC_H_INCLUDED
 #define GRAPHIC_BASIC_H_INCLUDED
 
-#include "utils/types.h"
-#include "microtexexport.h"
 #include <string>
+
+#include "microtexexport.h"
+#include "utils/types.h"
 
 namespace microtex {
 
@@ -39,7 +40,7 @@ inline color MICROTEX_EXPORT rgb(int r, int g, int b) {
 }
 
 inline color MICROTEX_EXPORT argb(float a, float r, float g, float b) {
-  return argb((int) (a * 255), (int) (r * 255), (int) (g * 255), (int) (b * 255));
+  return argb((int)(a * 255), (int)(r * 255), (int)(g * 255), (int)(b * 255));
 }
 
 inline color MICROTEX_EXPORT rgb(float r, float g, float b) {
@@ -100,18 +101,10 @@ struct MICROTEX_EXPORT Rect {
 };
 
 /** Stroke cap type */
-enum MICROTEX_EXPORT Cap {
-  CAP_BUTT,
-  CAP_ROUND,
-  CAP_SQUARE
-};
+enum MICROTEX_EXPORT Cap { CAP_BUTT, CAP_ROUND, CAP_SQUARE };
 
 /** Stroke join type */
-enum MICROTEX_EXPORT Join {
-  JOIN_BEVEL,
-  JOIN_MITER,
-  JOIN_ROUND
-};
+enum MICROTEX_EXPORT Join { JOIN_BEVEL, JOIN_MITER, JOIN_ROUND };
 
 struct MICROTEX_EXPORT Stroke {
   float lineWidth;
@@ -119,11 +112,9 @@ struct MICROTEX_EXPORT Stroke {
   Join join;
   float miterLimit;
 
-  Stroke()
-    : lineWidth(1.f), cap(CAP_ROUND), join(JOIN_ROUND), miterLimit(0) {}
+  Stroke() : lineWidth(1.f), cap(CAP_ROUND), join(JOIN_ROUND), miterLimit(0) {}
 
-  Stroke(float w, Cap c, Join j, float ml = 0)
-    : lineWidth(w), cap(c), join(j), miterLimit(ml) {}
+  Stroke(float w, Cap c, Join j, float ml = 0) : lineWidth(w), cap(c), join(j), miterLimit(ml) {}
 
   bool operator==(const Stroke& other) const;
 

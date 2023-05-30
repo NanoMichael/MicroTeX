@@ -1,8 +1,9 @@
 #include "otf/clm.h"
-#include "utils/string_utils.h"
-#include "utils/exceptions.h"
 
 #include <cstring>
+
+#include "utils/exceptions.h"
+#include "utils/string_utils.h"
 
 namespace microtex {
 
@@ -14,7 +15,7 @@ public:
 
   virtual size_t lookfwd(u8 until) = 0;
 
-  template<typename T>
+  template <typename T>
   T read() {
     const auto bytes = sizeof(T);
     const u8* p = readBytes(bytes);
@@ -28,7 +29,7 @@ public:
 
   const char* readString() {
     size_t len = lookfwd(0x00);
-    const char* ret = (const char*) readBytes(len);
+    const char* ret = (const char*)readBytes(len);
     return ret;
   }
 };
@@ -152,16 +153,16 @@ ClassKerning* CLMReader::readClassKerning(BinaryReader& reader) {
   ClassKerning& ck = *ptr;
   // read left glyphs
   ck._rowLength = reader.read<u16>();
-  auto[lc, lg] = readClassKerningGlyphs(reader);
+  auto [lc, lg] = readClassKerningGlyphs(reader);
   ck._leftCount = lc;
   ck._lefts = lg;
   // read right glyphs
   ck._columnLength = reader.read<u16>();
-  auto[rc, rg] = readClassKerningGlyphs(reader);
+  auto [rc, rg] = readClassKerningGlyphs(reader);
   ck._rightCount = rc;
   ck._rights = rg;
   // read table
-  const u32 size = (u32) ck._rowLength * (u32) ck._columnLength;
+  const u32 size = (u32)ck._rowLength * (u32)ck._columnLength;
   i16* table = new i16[size];
   for (u32 i = 0; i < size; i++) {
     table[i] = reader.read<i16>();
@@ -177,7 +178,7 @@ void CLMReader::readClassKernings(Otf& font, BinaryReader& reader) {
     font._classKernings = nullptr;
     return;
   }
-  font._classKernings = new ClassKerning* [count];
+  font._classKernings = new ClassKerning*[count];
   for (u16 i = 0; i < count; i++) {
     font._classKernings[i] = readClassKerning(reader);
   }
@@ -284,7 +285,7 @@ Path* CLMReader::readPath(BinaryReader& reader) {
 
   const auto len = reader.read<u16>();
   if (len == 0) return nullptr;
-  auto cmds = new PathCmd* [len];
+  auto cmds = new PathCmd*[len];
   for (u16 i = 0; i < len; i++) {
     const auto cmd = reader.read<char>();
     const auto cnt = microtex::pathCmdArgsCount(cmd);
@@ -311,7 +312,7 @@ void CLMReader::skipGlyphPath(BinaryReader& reader) {
   }
 }
 
-#endif //HAVE_GLYPH_RENDER_PATH
+#endif  // HAVE_GLYPH_RENDER_PATH
 
 Glyph* CLMReader::readGlyph(bool isMathFont, bool hasGlyphPath, BinaryReader& reader) {
   auto* glyph = new Glyph();
@@ -344,7 +345,7 @@ Glyph* CLMReader::readGlyph(bool isMathFont, bool hasGlyphPath, BinaryReader& re
 
 void CLMReader::readGlyphs(Otf& font, bool hasGlyphPath, BinaryReader& reader) {
   const u16 count = reader.read<u16>();
-  auto** glyphs = new Glyph* [count];
+  auto** glyphs = new Glyph*[count];
   for (u16 i = 0; i < count; i++) {
     glyphs[i] = readGlyph(font._isMathFont, hasGlyphPath, reader);
   }
@@ -363,9 +364,8 @@ Otf* CLMReader::read(BinaryReader& reader) {
   const auto ver = reader.read<u16>();
   if (ver != CLM_VER_MAJOR) {
     throw ex_invalid_param(
-      "clm data (with version: " + toString(ver) +
-      ") does not match the required version (" +
-        toString(CLM_VER_MAJOR) + ")!"
+      "clm data (with version: " + toString(ver) + ") does not match the required version ("
+      + toString(CLM_VER_MAJOR) + ")!"
     );
   }
   const auto minor = reader.read<u8>();

@@ -21,27 +21,22 @@ private:
   }
 
 public:
-  FracAtom(
-    const sptr<Atom>& num, const sptr<Atom>& den, bool rule,
-    const Dimen& thickness = {}
-  );
+  FracAtom(const sptr<Atom>& num, const sptr<Atom>& den, bool rule, const Dimen& thickness = {});
 
   FracAtom(
-    const sptr<Atom>& num, const sptr<Atom>& den,
-    Alignment numAlign = Alignment::center, Alignment denAlign = Alignment::center
+    const sptr<Atom>& num,
+    const sptr<Atom>& den,
+    Alignment numAlign = Alignment::center,
+    Alignment denAlign = Alignment::center
   );
 
-  AtomType leftType() const override {
-    return AtomType::inner;
-  }
+  AtomType leftType() const override { return AtomType::inner; }
 
-  AtomType rightType() const override {
-    return AtomType::inner;
-  }
+  AtomType rightType() const override { return AtomType::inner; }
 
   sptr<Box> createBox(Env& env) override;
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_FRAC_H
+#endif  // MICROTEX_ATOM_FRAC_H

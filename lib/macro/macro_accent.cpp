@@ -5,39 +5,17 @@ namespace microtex {
 macro(accentbiss) {
   std::string acc;
   switch (args[0][0]) {
-    case '~':
-      acc = "tilde";
-      break;
-    case '\'':
-      acc = "acute";
-      break;
-    case '^':
-      acc = "hat";
-      break;
-    case '\"':
-      acc = "ddot";
-      break;
-    case '`':
-      acc = "grave";
-      break;
-    case '=':
-      acc = "bar";
-      break;
-    case '.':
-      acc = "dot";
-      break;
-    case 'u':
-      acc = "breve";
-      break;
-    case 'v':
-      acc = "check";
-      break;
-    case 't':
-      acc = "tie";
-      break;
-    case 'r':
-      acc = "mathring";
-      break;
+    case '~': acc = "tilde"; break;
+    case '\'': acc = "acute"; break;
+    case '^': acc = "hat"; break;
+    case '\"': acc = "ddot"; break;
+    case '`': acc = "grave"; break;
+    case '=': acc = "bar"; break;
+    case '.': acc = "dot"; break;
+    case 'u': acc = "breve"; break;
+    case 'v': acc = "check"; break;
+    case 't': acc = "tie"; break;
+    case 'r': acc = "mathring"; break;
   }
 
   return sptrOf<AccentedAtom>(Formula(tp, args[1], false)._root, acc);
@@ -45,7 +23,7 @@ macro(accentbiss) {
 
 macro(accents) {
   const auto& name = args[0];
-  const auto&[acc, fit] = [&]() {
+  const auto& [acc, fit] = [&]() {
     if (name == "widehat") return std::make_pair<std::string>("hat", true);
     if (name == "widetilde") return std::make_pair<std::string>("tilde", true);
     return std::make_pair(name, false);
@@ -69,4 +47,4 @@ macro(undertilde) {
   return sptr<StackAtom>(stack);
 }
 
-}
+}  // namespace microtex

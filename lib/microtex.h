@@ -1,14 +1,14 @@
 #ifndef MICROTEX_MICROTEX_H
 #define MICROTEX_MICROTEX_H
 
-#include "microtexexport.h"
-#include "microtexconfig.h"
-#include "render/render.h"
-#include "unimath/font_src.h"
-#include "unimath/font_meta.h"
-
 #include <string>
 #include <vector>
+
+#include "microtexconfig.h"
+#include "microtexexport.h"
+#include "render/render.h"
+#include "unimath/font_meta.h"
+#include "unimath/font_src.h"
 
 #ifdef HAVE_AUTO_FONT_FIND
 
@@ -16,8 +16,7 @@
 
 namespace microtex {
 
-struct MICROTEX_EXPORT InitFontSenseAuto {
-};
+struct MICROTEX_EXPORT InitFontSenseAuto {};
 
 /**
  * MicroTeX context initialization.
@@ -48,9 +47,9 @@ struct MICROTEX_EXPORT InitFontSenseAuto {
  */
 using Init = std::variant<const FontSrc*, const std::string, InitFontSenseAuto>;
 
-} // namespace microtex
+}  // namespace microtex
 
-#endif // HAVE_AUTO_FONT_FIND
+#endif  // HAVE_AUTO_FONT_FIND
 
 namespace microtex {
 
@@ -79,7 +78,7 @@ public:
    */
   static FontMeta init(const Init& init);
 
-#endif // HAVE_AUTO_FONT_FIND
+#endif  // HAVE_AUTO_FONT_FIND
 
   /**
    * Initialize the context with given math font source, at least we need a

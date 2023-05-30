@@ -1,5 +1,6 @@
-#include <cstring>
 #include "unimath/uni_symbol.h"
+
+#include <cstring>
 
 using namespace std;
 
@@ -17,6 +18,7 @@ static constexpr auto puc = static_cast<i8>(AtomType::punctuation) << 8;
 static constexpr i8 N = 1 << 1;
 static constexpr i8 F = 1;
 
+// clang-format off
 // IMPORTANT: sorted by the name, you must re-sort this array after add item
 const Symbol Symbol::_symbols[]{
   {0x00023, ord,     "#"},
@@ -2900,14 +2902,12 @@ const Symbol Symbol::_symbols[]{
   {0x0007c, ord,     "|"},
   {0x0007D, cls,     "}"},
 };
+// clang-format on
 
 const i32 Symbol::_count = sizeof(Symbol::_symbols) / sizeof(Symbol);
 
 const Symbol* Symbol::get(const char* name) {
-  const int i = binIndexOf(
-    _count,
-    [&](int i) { return strcmp(name, _symbols[i].name); }
-  );
+  const int i = binIndexOf(_count, [&](int i) { return strcmp(name, _symbols[i].name); });
   if (i < 0) return nullptr;
   return _symbols + i;
 }
@@ -2925,4 +2925,4 @@ bool Symbol::isVariable() const {
   return flag & 0x00000001;
 }
 
-}
+}  // namespace microtex

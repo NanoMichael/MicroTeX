@@ -40,7 +40,9 @@ void initGL() {
 
 static sk_sp<GrDirectContext> makeContext(QOpenGLContext *ctx) {
   auto interface = GrGLMakeAssembledInterface(ctx, [](auto ctx, auto name) {
-    return AllowEGL || strncmp(name, "egl", 3) ? static_cast<QOpenGLContext *>(ctx)->getProcAddress(name) : nullptr;
+    return AllowEGL || strncmp(name, "egl", 3)
+             ? static_cast<QOpenGLContext *>(ctx)->getProcAddress(name)
+             : nullptr;
   });
   return GrDirectContext::MakeGL(interface);
 }
@@ -50,16 +52,23 @@ static sk_sp<SkSurface> createSurface(GrRecordingContext *ctx, int w, int h, GrG
   info.fFBOID = fbo;
   info.fFormat = GL_RGBA8;
   GrBackendRenderTarget target(w, h, 0, 8, info);
-  const SkSurfaceProps props(0, SkPixelGeometry::kUnknown_SkPixelGeometry);  // Can customize subpixel layout here
+  const SkSurfaceProps props(
+    0,
+    SkPixelGeometry::kUnknown_SkPixelGeometry
+  );  // Can customize subpixel layout here
   return SkSurface::MakeFromBackendRenderTarget(
-    ctx, target, kBottomLeft_GrSurfaceOrigin, kRGBA_8888_SkColorType, nullptr, &props, nullptr);
+    ctx,
+    target,
+    kBottomLeft_GrSurfaceOrigin,
+    kRGBA_8888_SkColorType,
+    nullptr,
+    &props,
+    nullptr
+  );
 }
 
 SkiaTeXWidget::SkiaTeXWidget(QWidget *parent, float text_size)
-    : QOpenGLWidget(parent),
-      _render(nullptr),
-      _text_size(text_size),
-      _padding(20) {}
+    : QOpenGLWidget(parent), _render(nullptr), _text_size(text_size), _padding(20) {}
 
 SkiaTeXWidget::~SkiaTeXWidget() {
   delete _render;
@@ -83,15 +92,9 @@ void SkiaTeXWidget::setLaTeX(const std::string &latex) {
   const auto size = _text_size * devicePixelRatio();
   auto parent = parentWidget();
   int w = parent == nullptr ? width() : parent->width();
-  _render = MicroTeX::parse(
-    latex,
-    w * devicePixelRatio() - _padding * 2,
-    size,
-    size / 3.f,
-    0xff424242);
-  resize(
-    getRenderWidth() / devicePixelRatio(),
-    getRenderHeight() / devicePixelRatio());
+  _render =
+    MicroTeX::parse(latex, w * devicePixelRatio() - _padding * 2, size, size / 3.f, 0xff424242);
+  resize(getRenderWidth() / devicePixelRatio(), getRenderHeight() / devicePixelRatio());
   update();
 }
 

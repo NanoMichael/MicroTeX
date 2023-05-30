@@ -1,9 +1,9 @@
 #ifndef MICROTEX_GLYPH_H
 #define MICROTEX_GLYPH_H
 
+#include "otf/path.h"
 #include "utils/dict_tree.h"
 #include "utils/utils.h"
-#include "otf/path.h"
 
 namespace microtex {
 
@@ -41,8 +41,7 @@ private:
   u16* _fields;
 
   explicit KernRecord(u16 count) noexcept
-    : _count(count),
-      _fields(_count == 0 ? nullptr : new u16[count * 2]) {}
+      : _count(count), _fields(_count == 0 ? nullptr : new u16[count * 2]) {}
 
 public:
   no_copy_assign(KernRecord);
@@ -67,8 +66,7 @@ private:
   u16* _glyphs = nullptr;
 
   explicit Variants(u16 count) noexcept
-    : _count(count),
-      _glyphs(count == 0 ? nullptr : new u16[count]) {}
+      : _count(count), _glyphs(count == 0 ? nullptr : new u16[count]) {}
 
 public:
   no_copy_assign(Variants);
@@ -156,8 +154,7 @@ private:
   GlyphPart* _parts = nullptr;
 
   explicit GlyphAssembly(u16 partCount) noexcept
-    : _partCount(partCount),
-      _parts(partCount == 0 ? nullptr : new GlyphPart[partCount]) {}
+      : _partCount(partCount), _parts(partCount == 0 ? nullptr : new GlyphPart[partCount]) {}
 
 public:
   no_copy_assign(GlyphAssembly);
@@ -205,8 +202,7 @@ private:
   i16* _fields = nullptr;
 
   explicit MathKern(u16 count) noexcept
-    : _count(count),
-      _fields(count == 0 ? nullptr : new i16[count * 2]) {}
+      : _count(count), _fields(count == 0 ? nullptr : new i16[count * 2]) {}
 
 public:
   no_copy_assign(MathKern);

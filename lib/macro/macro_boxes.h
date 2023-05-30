@@ -19,8 +19,10 @@ inline macro(scalebox) {
   float sx = 1, sy = 1;
   valueOf(args[1], sx);
 
-  if (args[3].empty()) sy = sx;
-  else valueOf(args[3], sy);
+  if (args[3].empty())
+    sy = sx;
+  else
+    valueOf(args[3], sy);
 
   if (sx == 0) sx = 1;
   if (sy == 0) sy = 1;
@@ -58,6 +60,6 @@ inline macro(fbox) {
   return sptrOf<FBoxAtom>(Formula(tp, args[1], false)._root);
 }
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_MACRO_BOXES_H
+#endif  // MICROTEX_MACRO_BOXES_H

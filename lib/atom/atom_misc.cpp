@@ -1,9 +1,10 @@
 #include "atom/atom_misc.h"
-#include "atom/atom_delim.h"
+
 #include "atom/atom_basic.h"
-#include "utils/utf.h"
-#include "utils/string_utils.h"
+#include "atom/atom_delim.h"
 #include "env/units.h"
+#include "utils/string_utils.h"
+#include "utils/utf.h"
 
 using namespace std;
 using namespace microtex;
@@ -21,15 +22,9 @@ sptr<Box> LapedAtom::createBox(Env& env) {
   vb->add(b);
   vb->_width = 0;
   switch (_type) {
-    case 'l':
-      b->_shift = -b->_width;
-      break;
-    case 'r':
-      b->_shift = 0;
-      break;
-    default:
-      b->_shift = -b->_width / 2;
-      break;
+    case 'l': b->_shift = -b->_width; break;
+    case 'r': b->_shift = 0; break;
+    default: b->_shift = -b->_width / 2; break;
   }
 
   return sptr<Box>(vb);
@@ -72,7 +67,7 @@ sptr<Box> ResizeAtom::createBox(Env& env) {
 }
 
 RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const string& option)
-  : _angle(0), _option(Rotation::bl) {
+    : _angle(0), _option(Rotation::bl) {
   _type = base->_type;
   _base = base;
   _angle = angle;
@@ -97,7 +92,7 @@ RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const string& option
 }
 
 RotateAtom::RotateAtom(const sptr<Atom>& base, const string& angle, const string& option)
-  : _angle(0), _option(Rotation::none), _x(0._em), _y(0._em) {
+    : _angle(0), _option(Rotation::none), _x(0._em), _y(0._em) {
   _type = base->_type;
   _base = base;
   valueOf(angle, _angle);
@@ -141,8 +136,7 @@ sptr<Box> VCenterAtom::createBox(Env& env) {
   return hb;
 }
 
-LongDivAtom::LongDivAtom(long divisor, long dividend)
-  : _divisor(divisor), _dividend(dividend) {
+LongDivAtom::LongDivAtom(long divisor, long dividend) : _divisor(divisor), _dividend(dividend) {
   _halign = Alignment::right;
   setAlignTop(true);
   vector<string> results;
@@ -170,8 +164,10 @@ LongDivAtom::LongDivAtom(long divisor, long dividend)
     if (i % 2 == 0) {
       auto row = sptrOf<RowAtom>(num);
       row->add(rule);
-      if (i == 0) append(row);
-      else append(sptrOf<OverUnderBar>(row, false));
+      if (i == 0)
+        append(row);
+      else
+        append(sptrOf<OverUnderBar>(row, false));
     } else {
       auto row = sptrOf<RowAtom>(num);
       row->add(rule);
@@ -204,7 +200,16 @@ sptr<Box> CancelAtom::createBox(Env& env) {
   } else if (_cancelType == BACKSLASH) {
     lines = {box->_width, 0, 0, box->_height + box->_depth};
   } else if (_cancelType == CROSS) {
-    lines = {0, 0, box->_width, box->_height + box->_depth, box->_width, 0, 0, box->_height + box->_depth};
+    lines = {
+      0,
+      0,
+      box->_width,
+      box->_height + box->_depth,
+      box->_width,
+      0,
+      0,
+      box->_height + box->_depth,
+    };
   } else {
     return box;
   }

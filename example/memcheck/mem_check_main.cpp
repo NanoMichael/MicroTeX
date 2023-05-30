@@ -8,9 +8,7 @@ class Font_none : public Font {
 public:
   Font_none() = default;
 
-  bool operator==(const Font& f) const override {
-    return false;
-  }
+  bool operator==(const Font& f) const override { return false; }
 };
 
 class TextLayout_none : public TextLayout {
@@ -24,9 +22,7 @@ public:
 
 class PlatformFactory_none : public PlatformFactory {
 public:
-  sptr<Font> createFont(const std::string& file) override {
-    return sptrOf<Font_none>();
-  }
+  sptr<Font> createFont(const std::string& file) override { return sptrOf<Font_none>(); }
 
   sptr<TextLayout> createTextLayout(const std::string& src, FontStyle style, float size) override {
     return sptrOf<TextLayout_none>();
@@ -37,42 +33,29 @@ class Graphics2D_none : public Graphics2D {
 private:
   Stroke _stroke;
   float _fontSize = 100;
+
 public:
   void setColor(color c) override {}
 
-  color getColor() const override {
-    return 0;
-  }
+  color getColor() const override { return 0; }
 
-  void setStroke(const Stroke& s) override {
-    _stroke = s;
-  }
+  void setStroke(const Stroke& s) override { _stroke = s; }
 
-  const Stroke& getStroke() const override {
-    return _stroke;
-  }
+  const Stroke& getStroke() const override { return _stroke; }
 
   void setStrokeWidth(float w) override {}
 
   void setDash(const std::vector<float>& dash) override {}
 
-  std::vector<float> getDash() override {
-    return std::vector<float>();
-  }
+  std::vector<float> getDash() override { return std::vector<float>(); }
 
-  sptr<Font> getFont() const override {
-    return microtex::sptr<Font_none>();
-  }
+  sptr<Font> getFont() const override { return microtex::sptr<Font_none>(); }
 
   void setFont(const sptr<Font>& font) override {}
 
-  float getFontSize() const override {
-    return _fontSize;
-  }
+  float getFontSize() const override { return _fontSize; }
 
-  void setFontSize(float size) override {
-    _fontSize = size;
-  }
+  void setFontSize(float size) override { _fontSize = size; }
 
   void translate(float dx, float dy) override {}
 
@@ -84,13 +67,9 @@ public:
 
   void reset() override {}
 
-  float sx() const override {
-    return 1;
-  }
+  float sx() const override { return 1; }
 
-  float sy() const override {
-    return 1;
-  }
+  float sy() const override { return 1; }
 
   void drawGlyph(u16 glyph, float x, float y) override {}
 
@@ -119,13 +98,13 @@ public:
   void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override {}
 };
 
-}
-
-#include "samples.h"
+}  // namespace microtex
 
 #include <chrono>
 
-template<typename F>
+#include "samples.h"
+
+template <typename F>
 auto countDuration(const F& f) {
   auto start = std::chrono::high_resolution_clock::now();
   auto res = f();
@@ -150,13 +129,16 @@ int main(int argc, char* argv[]) {
   const microtex::FontSrcFile math{argv[1], argv[2]};
   microtex::MicroTeX::init(math);
 
-  microtex::PlatformFactory::registerFactory("none", std::make_unique<microtex::PlatformFactory_none>());
+  microtex::PlatformFactory::registerFactory(
+    "none",
+    std::make_unique<microtex::PlatformFactory_none>()
+  );
   microtex::PlatformFactory::activate("none");
 
   long total = 0;
   microtex::Samples samples(argv[3]);
   for (int i = 0; i < samples.count(); i++) {
-    auto[d, r] = countDuration([&]() {
+    auto [d, r] = countDuration([&]() {
       return microtex::MicroTeX::parse(samples.next(), 720, 20, 20 / 3.f, microtex::black);
     });
     total += d;

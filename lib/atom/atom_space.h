@@ -1,8 +1,8 @@
 #ifndef MICROTEX_ATOM_SPACE_H
 #define MICROTEX_ATOM_SPACE_H
 
-#include "utils/utils.h"
 #include "atom/atom.h"
+#include "utils/utils.h"
 
 namespace microtex {
 
@@ -20,21 +20,19 @@ private:
   UnitType _unit{};
 
 public:
-  explicit SpaceAtom(bool isMathMode = true) noexcept: _blankSpace(true), _isMathMode(isMathMode) {}
+  explicit SpaceAtom(bool isMathMode = true) noexcept
+      : _blankSpace(true), _isMathMode(isMathMode) {}
 
-  explicit SpaceAtom(SpaceType type) noexcept
-    : _blankSpace(true), _blankType(type) {}
+  explicit SpaceAtom(SpaceType type) noexcept : _blankSpace(true), _blankType(type) {}
 
   SpaceAtom(UnitType unit, float width, float height, float depth) noexcept
-    : _unit(unit), _width(width), _height(height), _depth(depth) {}
+      : _unit(unit), _width(width), _height(height), _depth(depth) {}
 
   sptr<Box> createBox(Env& env) override;
 
-  static sptr<SpaceAtom> empty() {
-    return sptrOf<SpaceAtom>(UnitType::em, 0.f, 0.f, 0.f);
-  }
+  static sptr<SpaceAtom> empty() { return sptrOf<SpaceAtom>(UnitType::em, 0.f, 0.f, 0.f); }
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_SPACE_H
+#endif  // MICROTEX_ATOM_SPACE_H

@@ -9,11 +9,8 @@
 namespace microtex {
 
 class MiddleAtom;
-
 class VRowAtom;
-
 class CellSpecifier;
-
 class Parser;
 
 /**
@@ -52,8 +49,10 @@ public:
    * @throw ex_parse if the string could not be parsed correctly
    */
   Formula(
-    const Parser& tp, const std::string& latex,
-    bool preprocess = true, bool isMathMode = true
+    const Parser& tp,
+    const std::string& latex,
+    bool preprocess = true,
+    bool isMathMode = true
   );
 
   /**

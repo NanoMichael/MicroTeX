@@ -1,8 +1,8 @@
 #ifndef MICROTEX_TYPES_H
 #define MICROTEX_TYPES_H
 
-#include <memory>
 #include <cinttypes>
+#include <memory>
 
 namespace microtex {
 
@@ -15,11 +15,11 @@ using u32 = std::uint32_t;
 using c32 = char32_t;
 
 /** Type alias shared_ptr<T> to sptr<T> */
-template<typename T>
+template <typename T>
 using sptr = std::shared_ptr<T>;
 
 /** Type alias unique_ptr<T> to uptr<T> */
-template<typename T>
+template <typename T>
 using uptr = std::unique_ptr<T>;
 
 /** Formula alignment. */
@@ -147,6 +147,6 @@ enum class UnitType : i8 {
   none = -1
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_TYPES_H
+#endif  // MICROTEX_TYPES_H

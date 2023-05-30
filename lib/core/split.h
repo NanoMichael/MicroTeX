@@ -3,9 +3,9 @@
 
 #include <stack>
 
-#include "core/glue.h"
 #include "box/box.h"
 #include "box/box_group.h"
+#include "core/glue.h"
 
 namespace microtex {
 
@@ -21,8 +21,7 @@ public:
     int _index;
     sptr<HBox> _box;
 
-    Position(int index, const sptr<HBox>& box)
-      : _index(index), _box(box) {}
+    Position(int index, const sptr<HBox>& box) : _index(index), _box(box) {}
   };
 
 private:

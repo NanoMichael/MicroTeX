@@ -17,8 +17,7 @@ private:
 public:
   OverUnderBar() = delete;
 
-  OverUnderBar(const sptr<Atom>& base, bool over)
-    : _base(base), _over(over) {
+  OverUnderBar(const sptr<Atom>& base, bool over) : _base(base), _over(over) {
     _type = AtomType::ordinary;
   }
 
@@ -40,7 +39,7 @@ public:
   OverUnderDelimiter() = delete;
 
   OverUnderDelimiter(const sptr<Atom>& base, std::string delim, bool over)
-    : _base(base), _delim(std::move(delim)), _over(over) {
+      : _base(base), _delim(std::move(delim)), _over(over) {
     _type = AtomType::inner;
     _limitsType = LimitsType::limits;
   }
@@ -52,6 +51,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_DELIM_H
+#endif  // MICROTEX_ATOM_DELIM_H

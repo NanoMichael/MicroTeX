@@ -31,7 +31,8 @@ public:
    * @param fake if is a fake accent
    */
   AccentedAtom(
-    const sptr<Atom>& base, const std::string& name,
+    const sptr<Atom>& base,
+    const std::string& name,
     bool fitSize = false,
     bool fake = false
   );
@@ -47,6 +48,6 @@ public:
   sptr<Box> createBox(Env& env) override;
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_ACCENT_H
+#endif  // MICROTEX_ATOM_ACCENT_H

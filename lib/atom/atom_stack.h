@@ -16,9 +16,7 @@ struct StackArgs {
   bool isScript = false;
   bool isAutoSpace = false;
 
-  inline bool isPresent() const {
-    return atom != nullptr;
-  }
+  inline bool isPresent() const { return atom != nullptr; }
 
   static inline StackArgs autoSpace(const sptr<Atom>& atom, bool isScript = true) {
     return {atom, UnitType::none, 0.f, isScript, true};
@@ -30,11 +28,7 @@ struct StackResult {
   float kernelShift;
 };
 
-enum class StackElement {
-  over,
-  under,
-  base
-};
+enum class StackElement { over, under, base };
 
 /**
  * An atom representing another atom with an atom above it (if not null)
@@ -54,16 +48,15 @@ private:
   static const std::vector<StackElement> _defaultOrder;
 
 public:
-  explicit StackAtom(
-    std::vector<StackElement> order = _defaultOrder
-  ) : _order(std::move(order)) {}
+  explicit StackAtom(std::vector<StackElement> order = _defaultOrder) : _order(std::move(order)) {}
 
   StackAtom(
     const sptr<Atom>& base,
     const StackArgs& args,
     bool isOver,
     std::vector<StackElement> order = _defaultOrder
-  ) : _base(base), _order(std::move(order)) {
+  )
+      : _base(base), _order(std::move(order)) {
     if (isOver) {
       _over = args;
     } else {
@@ -76,41 +69,31 @@ public:
     StackArgs overArgs,
     StackArgs underArgs,
     std::vector<StackElement> order = _defaultOrder
-  ) : _base(base), _over(std::move(overArgs)), _under(std::move(underArgs)), _order(std::move(order)) {}
+  )
+      : _base(base),
+        _over(std::move(overArgs)),
+        _under(std::move(underArgs)),
+        _order(std::move(order)) {}
 
-  inline void setBaseAtom(const sptr<Atom>& base) {
-    _base = base;
-  }
+  inline void setBaseAtom(const sptr<Atom>& base) { _base = base; }
 
-  inline void setAdjustBottom(bool adjust) {
-    _adjustBottom = adjust;
-  }
+  inline void setAdjustBottom(bool adjust) { _adjustBottom = adjust; }
 
-  inline void setOver(StackArgs over) {
-    _over = std::move(over);
-  }
+  inline void setOver(StackArgs over) { _over = std::move(over); }
 
-  inline void setUnder(StackArgs under) {
-    _under = std::move(under);
-  }
+  inline void setUnder(StackArgs under) { _under = std::move(under); }
 
-  inline float getMaxWidth() {
-    return _maxWidth;
-  }
+  inline float getMaxWidth() { return _maxWidth; }
 
-  AtomType leftType() const override {
-    return _base->leftType();
-  }
+  AtomType leftType() const override { return _base->leftType(); }
 
-  AtomType rightType() const override {
-    return _base->rightType();
-  }
+  AtomType rightType() const override { return _base->rightType(); }
 
   sptr<Box> createBox(Env& env) override;
 
   StackResult createStack(Env& env);
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_STACK_H
+#endif  // MICROTEX_ATOM_STACK_H

@@ -1,8 +1,9 @@
 #include "atom/atom_space.h"
+
+#include "box/box_single.h"
 #include "core/glue.h"
 #include "env/env.h"
 #include "env/units.h"
-#include "box/box_single.h"
 
 using namespace std;
 using namespace microtex;

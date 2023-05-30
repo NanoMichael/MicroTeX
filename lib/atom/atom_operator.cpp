@@ -1,8 +1,9 @@
 #include "atom/atom_operator.h"
-#include "atom/atom_row.h"
+
 #include "atom/atom_basic.h"
-#include "atom/atom_sideset.h"
+#include "atom/atom_row.h"
 #include "atom/atom_scripts.h"
+#include "atom/atom_sideset.h"
 #include "atom/atom_stack.h"
 #include "env/env.h"
 
@@ -17,9 +18,11 @@ sptr<Box> OperatorAtom::createBox(Env& env) {
   }
 
   // case 2: limits are shown as scripts
+  // clang-format off
   if ((_limitsType == LimitsType::noLimits)
       || (_limitsType == LimitsType::normal && env.style() >= TexStyle::text)
     ) {
+    // clang-format on
     RowAtom* row = nullptr;
     auto base = _base;
     // special case: the base atom is a row that composed by other atoms

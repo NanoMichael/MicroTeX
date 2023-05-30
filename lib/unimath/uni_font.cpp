@@ -1,24 +1,34 @@
 #include "unimath/uni_font.h"
+
+#include <utility>
+
 #include "unimath/uni_symbol.h"
-#include "utils/utils.h"
 #include "utils/exceptions.h"
 #include "utils/log.h"
-#include <utility>
+#include "utils/utils.h"
 
 using namespace std;
 
 namespace microtex {
 
 OtfFont::OtfFont(i32 id, sptr<const Otf> spec, std::string fontFile) noexcept
-  : id(id), fontFile(fontFile.empty() ? spec->family() : std::move(fontFile)), otfSpec(std::move(spec)) {}
+    : id(id),
+      fontFile(fontFile.empty() ? spec->family() : std::move(fontFile)),
+      otfSpec(std::move(spec)) {}
 
-/*********************************************************************************/
+/**************************************************************************************************/
 
 const vector<FontStyle>& FontFamily::supportedStyles() {
   static const vector<FontStyle> styles{
-    FontStyle::rm, FontStyle::bf, FontStyle::it,
-    FontStyle::sf, FontStyle::tt, FontStyle::cal,
-    FontStyle::frak, FontStyle::bfit, FontStyle::sfbfit
+    FontStyle::rm,
+    FontStyle::bf,
+    FontStyle::it,
+    FontStyle::sf,
+    FontStyle::tt,
+    FontStyle::cal,
+    FontStyle::frak,
+    FontStyle::bfit,
+    FontStyle::sfbfit,
   };
   return styles;
 }
@@ -26,13 +36,13 @@ const vector<FontStyle>& FontFamily::supportedStyles() {
 FontStyle FontFamily::fontStyleOf(const std::string& name) {
   // TODO: more composed styles
   static const map<string, FontStyle> nameStyle{
-    {"",     FontStyle::rm},
-    {"rm",   FontStyle::rm},
-    {"bf",   FontStyle::bf},
-    {"it",   FontStyle::it},
-    {"sf",   FontStyle::sf},
-    {"tt",   FontStyle::tt},
-    {"cal",  FontStyle::cal},
+    {"",     FontStyle::rm  },
+    {"rm",   FontStyle::rm  },
+    {"bf",   FontStyle::bf  },
+    {"it",   FontStyle::it  },
+    {"sf",   FontStyle::sf  },
+    {"tt",   FontStyle::tt  },
+    {"cal",  FontStyle::cal },
     {"frak", FontStyle::frak},
     {"bfit", FontStyle::bfit},
   };
@@ -65,7 +75,7 @@ sptr<const OtfFont> FontFamily::get(FontStyle style) const {
   return it->second;
 }
 
-/*********************************************************************************/
+/**************************************************************************************************/
 
 int FontContext::_lastId = 0;
 vector<sptr<const OtfFont>> FontContext::_fonts;
@@ -75,23 +85,23 @@ map<string, sptr<const OtfFont>> FontContext::_mathFonts;
 
 FontStyle FontContext::mathFontStyleOf(const std::string& name) {
   static const map<string, FontStyle> nameStyle{
-    {"",           FontStyle::none},
-    {"mathnormal", FontStyle::none},
-    {"mathrm",     FontStyle::rm},
-    {"mathbf",     FontStyle::bf},
-    {"mathit",     FontStyle::it},
-    {"mathcal",    FontStyle::cal},
-    {"mathscr",    FontStyle::cal},
-    {"mathfrak",   FontStyle::frak},
-    {"mathbb",     FontStyle::bb},
-    {"mathsf",     FontStyle::sf},
-    {"mathtt",     FontStyle::tt},
-    {"mathbfit",   FontStyle::bfit},
-    {"mathbfcal",  FontStyle::bfcal},
+    {"",           FontStyle::none  },
+    {"mathnormal", FontStyle::none  },
+    {"mathrm",     FontStyle::rm    },
+    {"mathbf",     FontStyle::bf    },
+    {"mathit",     FontStyle::it    },
+    {"mathcal",    FontStyle::cal   },
+    {"mathscr",    FontStyle::cal   },
+    {"mathfrak",   FontStyle::frak  },
+    {"mathbb",     FontStyle::bb    },
+    {"mathsf",     FontStyle::sf    },
+    {"mathtt",     FontStyle::tt    },
+    {"mathbfit",   FontStyle::bfit  },
+    {"mathbfcal",  FontStyle::bfcal },
     {"mathbffrak", FontStyle::bffrak},
-    {"mathsfbf",   FontStyle::sfbf},
-    {"mathbfsf",   FontStyle::sfbf},
-    {"mathsfit",   FontStyle::sfit},
+    {"mathsfbf",   FontStyle::sfbf  },
+    {"mathbfsf",   FontStyle::sfbf  },
+    {"mathsfit",   FontStyle::sfit  },
     {"mathsfbfit", FontStyle::sfbfit},
     {"mathbfsfit", FontStyle::sfbfit},
   };
@@ -127,8 +137,10 @@ FontMeta FontContext::addFont(const FontSrc& src) {
     f->add(otf);
   }
   return {
-    spec->family(), spec->name(),
-    static_cast<const FontStyle>(spec->style()), spec->isMathFont()
+    spec->family(),
+    spec->name(),
+    static_cast<const FontStyle>(spec->style()),
+    spec->isMathFont(),
   };
 }
 
@@ -142,10 +154,7 @@ FontMeta FontContext::mathFontMetaOf(const std::string& name) {
     return {};
   }
   const auto& spec = it->second->otf();
-  return {
-    spec.family(), spec.name(),
-    static_cast<FontStyle>(spec.style()), spec.isMathFont()
-  };
+  return {spec.family(), spec.name(), static_cast<FontStyle>(spec.style()), spec.isMathFont()};
 }
 
 bool FontContext::isMathFontExists(const std::string& name) {
@@ -232,4 +241,4 @@ Char FontContext::getChar(c32 code, FontStyle style, bool isMathMode) const {
   }
 }
 
-}
+}  // namespace microtex

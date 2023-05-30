@@ -1,27 +1,23 @@
 #include "core/parser.h"
+
 #include "atom/atom.h"
 #include "atom/atom_basic.h"
-#include "atom/atom_font.h"
 #include "atom/atom_delim.h"
-#include "atom/atom_scripts.h"
+#include "atom/atom_font.h"
 #include "atom/atom_operator.h"
+#include "atom/atom_scripts.h"
 #include "core/formula.h"
-#include "macro/macro.h"
-#include "graphic/graphic.h"
 #include "env/units.h"
+#include "graphic/graphic.h"
+#include "macro/macro.h"
+#include "utils/exceptions.h"
 #include "utils/string_utils.h"
 #include "utils/utf.h"
-#include "utils/exceptions.h"
 
 using namespace std;
 using namespace microtex;
 
-void Parser::init(
-  bool isPartial,
-  const string& latex,
-  Formula* formula,
-  bool firstPass
-) {
+void Parser::init(bool isPartial, const string& latex, Formula* formula, bool firstPass) {
   _pos = _spos = _len = 0;
   _group = 0;
   _atIsLetter = 0;
@@ -78,7 +74,7 @@ void Parser::addAtom(const sptr<Atom>& atom) const {
 
 void Parser::addRow() const {
   if (!_arrayMode) throw ex_parse("Can not add row in none-array mode!");
-  ((ArrayFormula*) _formula)->addRow();
+  ((ArrayFormula*)_formula)->addRow();
 }
 
 string Parser::getGroup(char openclose) {
@@ -119,7 +115,7 @@ string Parser::getGroup(char open, char close) {
     if (group != 0) return _latex.substr(spos + 1, _pos - spos - 1);
     return _latex.substr(spos + 1, _pos - spos - 2);
   }
-  throw ex_parse("Missing '" + toString((char) open) + "'!");
+  throw ex_parse("Missing '" + toString((char)open) + "'!");
 }
 
 string Parser::getGroup(const string& open, const string& close) {
@@ -146,7 +142,10 @@ string Parser::getGroup(const string& open, const string& close) {
       }
     }
 
-    if (c == open[oc]) oc++; else oc = 0;
+    if (c == open[oc])
+      oc++;
+    else
+      oc = 0;
 
     if (c == close[cc]) {
       if (cc == 0) startC = _pos;
@@ -201,16 +200,12 @@ string Parser::getOverArgument() {
   while (_pos < _len && ogroup != 0) {
     ch = _latex[_pos];
     switch (ch) {
-      case L_GROUP:
-        ogroup++;
-        break;
+      case L_GROUP: ogroup++; break;
       case '&':
         // if a & is encountered at the same level as \over we must break the argument
         if (ogroup == 1) ogroup--;
         break;
-      case R_GROUP:
-        ogroup--;
-        break;
+      case R_GROUP: ogroup--; break;
       case ESCAPE:
         _pos++;
         // if a \\ or \cr is encountered at the same level as \over
@@ -218,16 +213,18 @@ string Parser::getOverArgument() {
         if (_pos < _len && _latex[_pos] == '\\' && ogroup == 1) {
           ogroup--;
           _pos--;
+          // clang-format off
         } else if (
           _pos < _len - 1
           && _latex[_pos] == 'c'
           && _latex[_pos + 1] == 'r'
-          && ogroup == 1) {
+          && ogroup == 1
+        ) {
+          // clang-format on
           ogroup--;
           _pos--;
         }
-      default:
-        break;
+      default: break;
     }
     _pos++;
   }
@@ -362,7 +359,7 @@ void Parser::getOptsArgs(int argc, int opts, Args& args) {
     }
   };
 
-  auto getArg = [&](int i) { // NOLINT(misc-no-recursion)
+  auto getArg = [&](int i) {  // NOLINT(misc-no-recursion)
     skipWhiteSpace();
     try {
       args[i] = getGroup(L_GROUP, R_GROUP);
@@ -401,8 +398,7 @@ bool Parser::isValidCmd(const string& cmd) const {
   int l = cmd.length();
   while (p < l) {
     c = cmd[p];
-    if (!isAlpha(c) && (_atIsLetter == 0 || c != '@'))
-      break;
+    if (!isAlpha(c) && (_atIsLetter == 0 || c != '@')) break;
     p++;
   }
 
@@ -520,8 +516,10 @@ sptr<Atom> Parser::getScripts(char first) {
 sptr<Atom> Parser::getArgument() {
   skipWhiteSpace();
   char ch;
-  if (_pos < _len) ch = _latex[_pos];
-  else return sptrOf<EmptyAtom>();
+  if (_pos < _len)
+    ch = _latex[_pos];
+  else
+    return sptrOf<EmptyAtom>();
 
   if (ch == L_GROUP) {
     Formula tf;
@@ -564,8 +562,10 @@ Dimen Parser::getDimen() {
     ch = _latex[_pos++];
   }
   const int end = _pos;
-  if (ch == '\\') _pos--;
-  else skipWhiteSpace();
+  if (ch == '\\')
+    _pos--;
+  else
+    skipWhiteSpace();
 
   return Units::getDimen(_latex.substr(start, end - start - 1));
 }
@@ -664,9 +664,7 @@ void Parser::preprocess() {
         _pos = spos;
         break;
       }
-      default:
-        _pos++;
-        break;
+      default: _pos++; break;
     }
   }
   _pos = 0;
@@ -675,8 +673,7 @@ void Parser::preprocess() {
 
 void Parser::parse() {
   if (_len == 0) {
-    if (_formula->_root == nullptr && !_arrayMode)
-      _formula->add(sptrOf<EmptyAtom>());
+    if (_formula->_root == nullptr && !_arrayMode) _formula->add(sptrOf<EmptyAtom>());
     return;
   }
 
@@ -699,8 +696,7 @@ void Parser::parse() {
             _pos++;
           }
         }
-      }
-        break;
+      } break;
       case DOLLAR: {
         _pos++;
         if (!_isMathMode) {  // we are in text mode
@@ -712,33 +708,27 @@ void Parser::parse() {
             _pos++;
           }
 
-          auto atom = sptrOf<MathAtom>(
-            Formula(*this, getGroup(DOLLAR), false)._root,
-            style
-          );
+          auto atom = sptrOf<MathAtom>(Formula(*this, getGroup(DOLLAR), false)._root, style);
           _formula->add(atom);
           if (doubleDollar) {
             if (_latex[_pos] == DOLLAR) _pos++;
           }
         }
-      }
-        break;
+      } break;
       case ESCAPE: {
         sptr<Atom> atom = processEscape();
         _formula->add(atom);
         auto* h = dynamic_cast<HlineAtom*>(atom.get());
-        if (_arrayMode && h != nullptr) ((ArrayFormula*) _formula)->addRow();
+        if (_arrayMode && h != nullptr) ((ArrayFormula*)_formula)->addRow();
         if (_insertion) _insertion = false;
-      }
-        break;
+      } break;
       case L_GROUP: {
         auto atom = getArgument();
         if (atom != nullptr) {
           atom->_type = AtomType::ordinary;
         }
         _formula->add(atom);
-      }
-        break;
+      } break;
       case R_GROUP: {
         _group--;
         _pos++;
@@ -756,37 +746,30 @@ void Parser::parse() {
           _formula->add(getCharAtom());
           _pos++;
         }
-      }
-        break;
+      } break;
       case '&': {
         if (!_arrayMode) {
           throw ex_parse("Character '&' is only available in array mode!");
         }
-        ((ArrayFormula*) _formula)->addCol();
+        ((ArrayFormula*)_formula)->addCol();
         _pos++;
-      }
-        break;
+      } break;
       case '~': {
         _formula->add(sptrOf<SpaceAtom>());
         _pos++;
-      }
-        break;
+      } break;
       case PRIME:
       case BACKPRIME: {
         // special case for ` and '
         if (_isMathMode) {
-          auto atom = sptrOf<CumulativeScriptsAtom>(
-            popBack(),
-            nullptr,
-            getSimpleScripts(ch != BACKPRIME)
-          );
+          auto atom =
+            sptrOf<CumulativeScriptsAtom>(popBack(), nullptr, getSimpleScripts(ch != BACKPRIME));
           _formula->add(atom);
         } else {
           _formula->add(getCharAtom());
           _pos++;
         }
-      }
-        break;
+      } break;
       case DQUOTE: {
         if (_isMathMode) {
           auto atom = sptrOf<CumulativeScriptsAtom>(
@@ -799,13 +782,11 @@ void Parser::parse() {
           _formula->add(getCharAtom());
         }
         _pos++;
-      }
-        break;
+      } break;
       default: {
         _formula->add(getCharAtom());
         _pos++;
-      }
-        break;
+      } break;
     }
   }
 }
@@ -813,20 +794,14 @@ void Parser::parse() {
 sptr<Atom> Parser::getCharAtom() {
   int n = 0, m = 0, cnt = 0;
   c32 chr = 0;
-  const auto next = [&]() {
-    return microtex::nextUnicode(_latex, _pos + n, m);
-  };
+  const auto next = [&]() { return microtex::nextUnicode(_latex, _pos + n, m); };
   const auto collect = [&](c32 code) {
     n += m;
     cnt++;
     chr = code;
   };
   microtex::scanContinuedUnicodes(next, collect);
-  auto atom = (
-    cnt == 1
-    ? getCharAtom(chr)
-    : sptrOf<TextAtom>(_latex.substr(_pos, n), _isMathMode)
-  );
+  auto atom = (cnt == 1 ? getCharAtom(chr) : sptrOf<TextAtom>(_latex.substr(_pos, n), _isMathMode));
   _pos += n - 1;
   return atom;
 }

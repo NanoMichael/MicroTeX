@@ -3,8 +3,8 @@
 
 #include <QtQuick/QQuickPaintedItem>
 
-#include "microtex.h"
 #include "graphic_qt.h"
+#include "microtex.h"
 
 class TexQmlItem : public QQuickPaintedItem {
   Q_OBJECT
@@ -28,4 +28,4 @@ private:
   QString m_latexString;
 };
 
-#endif // QT_TEXQMLITEM_H
+#endif  // QT_TEXQMLITEM_H

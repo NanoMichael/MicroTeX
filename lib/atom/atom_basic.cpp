@@ -1,17 +1,15 @@
 #include "atom/atom_basic.h"
+
 #include "atom/atom_scripts.h"
-#include "box/box_group.h"
 #include "box/box_factory.h"
+#include "box/box_group.h"
 #include "env/env.h"
 
 using namespace std;
 using namespace microtex;
 
 sptr<Box> StyleAtom::createBox(Env& env) {
-  return env.withStyle(
-    _style,
-    [&](Env& e) { return _base->createBox(e); }
-  );
+  return env.withStyle(_style, [&](Env& e) { return _base->createBox(e); });
 }
 
 sptr<Box> AStyleAtom::createBox(Env& env) {
@@ -25,10 +23,7 @@ sptr<Box> AStyleAtom::createBox(Env& env) {
   } else if (_name == "supstyle") {
     style = env.supStyle();
   }
-  return env.withStyle(
-    style,
-    [&](Env& e) { return _base->createBox(e); }
-  );
+  return env.withStyle(style, [&](Env& e) { return _base->createBox(e); });
 }
 
 sptr<Box> SmashedAtom::createBox(Env& env) {
@@ -64,7 +59,9 @@ sptr<Box> HlineAtom::createBox(Env& env) {
 }
 
 CumulativeScriptsAtom::CumulativeScriptsAtom(
-  const sptr<Atom>& base, const sptr<Atom>& sub, const sptr<Atom>& sup
+  const sptr<Atom>& base,
+  const sptr<Atom>& sub,
+  const sptr<Atom>& sup
 ) {
   if (auto ca = dynamic_cast<CumulativeScriptsAtom*>(base.get()); ca != nullptr) {
     _base = ca->_base;
@@ -103,8 +100,7 @@ sptr<Box> CumulativeScriptsAtom::createBox(Env& env) {
 
 const color ColorAtom::_default = black;
 
-ColorAtom::ColorAtom(const sptr<Atom>& atom, color bg, color c)
-  : _background(bg), _color(c) {
+ColorAtom::ColorAtom(const sptr<Atom>& atom, color bg, color c) : _background(bg), _color(c) {
   _elements = sptrOf<RowAtom>(atom);
 }
 
@@ -118,14 +114,18 @@ sptr<Box> ColorAtom::createBox(Env& env) {
 }
 
 PhantomAtom::PhantomAtom(const sptr<Atom>& el) {
-  if (el == nullptr) _elements = sptrOf<RowAtom>();
-  else _elements = sptrOf<RowAtom>(el);
+  if (el == nullptr)
+    _elements = sptrOf<RowAtom>();
+  else
+    _elements = sptrOf<RowAtom>(el);
   _w = _h = _d = true;
 }
 
 PhantomAtom::PhantomAtom(const sptr<Atom>& el, bool w, bool h, bool d) {
-  if (el == nullptr) _elements = sptrOf<RowAtom>();
-  else _elements = sptrOf<RowAtom>(el);
+  if (el == nullptr)
+    _elements = sptrOf<RowAtom>();
+  else
+    _elements = sptrOf<RowAtom>(el);
   _w = w, _h = h, _d = d;
 }
 
@@ -140,9 +140,6 @@ sptr<Box> PhantomAtom::createBox(Env& env) {
 
 sptr<Box> ExtensibleAtom::createBox(Env& env) {
   const auto len = _getLen(env);
-  return (
-    _vertical
-    ? microtex::createVDelim(_sym, env, len)
-    : microtex::createHDelim(_sym, env, len)
-  );
+  return _vertical ? microtex::createVDelim(_sym, env, len)
+                   : microtex::createHDelim(_sym, env, len);
 }

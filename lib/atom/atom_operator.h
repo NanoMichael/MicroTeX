@@ -25,21 +25,17 @@ public:
    * @param over atom representing the over limit
    */
   OperatorAtom(const sptr<Atom>& base, const sptr<Atom>& under, const sptr<Atom>& over)
-    : _base(base), _under(under), _over(over) {
+      : _base(base), _under(under), _over(over) {
     _limitsType = _base->_limitsType;
   }
 
   sptr<Box> createBox(Env& env) override;
 
-  AtomType leftType() const override {
-    return _base->leftType();
-  }
+  AtomType leftType() const override { return _base->leftType(); }
 
-  AtomType rightType() const override {
-    return _base->rightType();
-  }
+  AtomType rightType() const override { return _base->rightType(); }
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_OPERATOR_H
+#endif  // MICROTEX_ATOM_OPERATOR_H

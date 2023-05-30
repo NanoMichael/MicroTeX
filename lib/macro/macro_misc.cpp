@@ -1,13 +1,11 @@
 #include "macro/macro_misc.h"
 
-#include <memory>
-
+#include "atom/atom_font.h"
+#include "atom/atom_zstack.h"
+#include "core/debug_config.h"
 #include "env/env.h"
 #include "env/units.h"
 #include "graphic/graphic.h"
-#include "core/debug_config.h"
-#include "atom/atom_zstack.h"
-#include "atom/atom_font.h"
 
 using namespace microtex;
 using namespace std;
@@ -24,12 +22,14 @@ macro(longdiv) {
 }
 
 macro(char) {
+  // clang-format off
   const auto& str = tp.forward([](char ch) {
     return ch == '\'' || ch == '"'
            || (ch >= '0' && ch <= '9')
            || (ch >= 'a' && ch <= 'z')
            || (ch >= 'A' && ch <= 'Z');
   });
+  // clang-format on
   int radix = 10;
   int offset = 0;
   if (startsWith(str, "'")) {
@@ -51,13 +51,7 @@ macro(cr) {
     ArrayFormula arr;
     arr.add(tp._formula->_root);
     arr.addRow();
-    Parser parser(
-      tp.isPartial(),
-      tp.forwardBalancedGroup(),
-      &arr,
-      false,
-      tp.isMathMode()
-    );
+    Parser parser(tp.isPartial(), tp.forwardBalancedGroup(), &arr, false, tp.isMathMode());
     parser.parse();
     arr.checkDimensions();
     tp._formula->_root = arr.getAsVRow();
@@ -67,17 +61,14 @@ macro(cr) {
 }
 
 macro(kern) {
-  auto[value, unit] = tp.getDimen();
+  auto [value, unit] = tp.getDimen();
   return sptrOf<SpaceAtom>(unit, value, 0.f, 0.f);
 }
 
 macro(hvspace) {
-  auto[value, unit] = Units::getDimen(args[1]);
-  return (
-    args[0][0] == L'h'
-    ? sptrOf<SpaceAtom>(unit, value, 0.f, 0.f)
-    : sptrOf<SpaceAtom>(unit, 0.f, value, 0.f)
-  );
+  auto [value, unit] = Units::getDimen(args[1]);
+  return args[0][0] == L'h' ? sptrOf<SpaceAtom>(unit, value, 0.f, 0.f)
+                            : sptrOf<SpaceAtom>(unit, 0.f, value, 0.f);
 }
 
 macro(rule) {
@@ -91,8 +82,7 @@ macro(rule) {
 macro(newcommand) {
   string newcmd(args[1]);
   int argc = 0;
-  if (!tp.isValidCmd(newcmd))
-    throw ex_parse("Invalid name for the command '" + newcmd);
+  if (!tp.isValidCmd(newcmd)) throw ex_parse("Invalid name for the command '" + newcmd);
 
   if (!args[3].empty()) valueOf(args[3], argc);
 
@@ -108,8 +98,7 @@ macro(newcommand) {
 macro(renewcommand) {
   string newcmd(args[1]);
   int argc = 0;
-  if (!tp.isValidCmd(newcmd))
-    throw ex_parse("Invalid name for the command: " + newcmd);
+  if (!tp.isValidCmd(newcmd)) throw ex_parse("Invalid name for the command: " + newcmd);
 
   if (!args[3].empty()) valueOf(args[3], argc);
 
@@ -131,7 +120,8 @@ macro(raisebox) {
 
 macro(romannumeral) {
   static const int numbers[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
-  static const string letters[] = {"M", "CM", "D", "CD", "C", "XC", "", "XL", "X", "IX", "V", "IV", "I"};
+  static const string letters[] =
+    {"M", "CM", "D", "CD", "C", "XC", "", "XL", "X", "IX", "V", "IV", "I"};
   string roman;
 
   int num;

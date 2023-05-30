@@ -1,16 +1,16 @@
 #ifndef MICROTEX_ATOM_MISC_H
 #define MICROTEX_ATOM_MISC_H
 
-#include "box/box_factory.h"
-#include "box/box_group.h"
 #include "atom/atom.h"
-#include "core/split.h"
-#include "core/formula.h"
-#include "graphic/graphic.h"
-#include "env/env.h"
-#include "env/units.h"
 #include "atom/atom_char.h"
 #include "atom/atom_vrow.h"
+#include "box/box_factory.h"
+#include "box/box_group.h"
+#include "core/formula.h"
+#include "core/split.h"
+#include "env/env.h"
+#include "env/units.h"
+#include "graphic/graphic.h"
 
 namespace microtex {
 
@@ -24,8 +24,7 @@ public:
 
   BigSymbolAtom() = delete;
 
-  BigSymbolAtom(const sptr<SymbolAtom>& delim, int size)
-    : _delim(delim), _size(size) {}
+  BigSymbolAtom(const sptr<SymbolAtom>& delim, int size) : _delim(delim), _size(size) {}
 
   AtomType leftType() const override { return _delim->leftType(); }
 
@@ -56,10 +55,8 @@ private:
 public:
   RaiseAtom() = delete;
 
-  RaiseAtom(
-    const sptr<Atom>& base,
-    Dimen raise, Dimen height, Dimen depth
-  ) : _base(base), _raise(raise), _height(height), _depth(depth) {}
+  RaiseAtom(const sptr<Atom>& base, Dimen raise, Dimen height, Dimen depth)
+      : _base(base), _raise(raise), _height(height), _depth(depth) {}
 
   AtomType leftType() const override { return _base->leftType(); }
 
@@ -76,13 +73,9 @@ private:
 public:
   ReflectAtom() = delete;
 
-  explicit ReflectAtom(const sptr<Atom>& base) : _base(base) {
-    _type = _base->_type;
-  }
+  explicit ReflectAtom(const sptr<Atom>& base) : _base(base) { _type = _base->_type; }
 
-  sptr<Box> createBox(Env& env) override {
-    return sptrOf<ReflectBox>(_base->createBox(env));
-  }
+  sptr<Box> createBox(Env& env) override { return sptrOf<ReflectBox>(_base->createBox(env)); }
 };
 
 /** An atom representing a resize operation on given atom */
@@ -95,7 +88,12 @@ private:
 public:
   ResizeAtom() = delete;
 
-  ResizeAtom(const sptr<Atom>& base, const std::string& ws, const std::string& hs, bool keepAspectRatio) {
+  ResizeAtom(
+    const sptr<Atom>& base,
+    const std::string& ws,
+    const std::string& hs,
+    bool keepAspectRatio
+  ) {
     _type = base->_type;
     _base = base;
     _keepAspectRatio = keepAspectRatio;
@@ -135,8 +133,7 @@ private:
 public:
   RuleAtom() = delete;
 
-  RuleAtom(const Dimen& w, const Dimen& h, const Dimen& r)
-    : _w(w), _h(h), _r(r) {}
+  RuleAtom(const Dimen& w, const Dimen& h, const Dimen& r) : _w(w), _h(h), _r(r) {}
 
   sptr<Box> createBox(Env& env) override;
 };
@@ -185,16 +182,11 @@ private:
   int _cancelType;
 
 public:
-  enum CancelType {
-    SLASH,
-    BACKSLASH,
-    CROSS
-  };
+  enum CancelType { SLASH, BACKSLASH, CROSS };
 
   CancelAtom() = delete;
 
-  CancelAtom(const sptr<Atom>& base, int cancelType)
-    : _base(base), _cancelType(cancelType) {}
+  CancelAtom(const sptr<Atom>& base, int cancelType) : _base(base), _cancelType(cancelType) {}
 
   sptr<Box> createBox(Env& env) override;
 };

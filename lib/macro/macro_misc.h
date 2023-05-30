@@ -6,15 +6,15 @@
 #include "atom/atom_basic.h"
 #include "atom/atom_misc.h"
 #include "atom/atom_sideset.h"
-#include "core/split.h"
 #include "core/formula.h"
 #include "core/parser.h"
+#include "core/split.h"
+#include "graphic/graphic.h"
 #include "macro/macro.h"
 #include "macro/macro_decl.h"
-#include "graphic/graphic.h"
+#include "utils/exceptions.h"
 #include "utils/string_utils.h"
 #include "utils/utf.h"
-#include "utils/exceptions.h"
 
 namespace microtex {
 
@@ -47,13 +47,9 @@ inline macro(mathclrlap) {
   return sptrOf<LapedAtom>(Formula(tp, args[1])._root, args[0][4]);
 }
 
-inline sptr<Atom> _cancel(
-  int cancelType,
-  Parser& tp, std::vector<std::string>& args
-) {
+inline sptr<Atom> _cancel(int cancelType, Parser& tp, std::vector<std::string>& args) {
   auto base = Formula(tp, args[1], false)._root;
-  if (base == nullptr)
-    throw ex_parse("Cancel content must not be empty!");
+  if (base == nullptr) throw ex_parse("Cancel content must not be empty!");
   return sptrOf<CancelAtom>(base, cancelType);
 }
 
@@ -124,8 +120,7 @@ inline macro(vphantom) {
 }
 
 inline macro(phantom) {
-  return sptr<Atom>(
-    new PhantomAtom(Formula(tp, args[1], false)._root, true, true, true));
+  return sptr<Atom>(new PhantomAtom(Formula(tp, args[1], false)._root, true, true, true));
 }
 
 inline macro(surd) {

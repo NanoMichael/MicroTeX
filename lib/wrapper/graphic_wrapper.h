@@ -20,7 +20,7 @@ public:
   bool operator==(const Font& f) const override;
 };
 
-/**********************************************************************************/
+/**************************************************************************************************/
 
 class TextLayout_wrapper : public TextLayout {
 private:
@@ -36,20 +36,16 @@ public:
   void draw(Graphics2D& g2, float x, float y) override;
 };
 
-/**********************************************************************************/
+/**************************************************************************************************/
 
 class PlatformFactory_wrapper : public PlatformFactory {
 public:
   sptr<Font> createFont(const std::string& file) override;
 
-  sptr<TextLayout> createTextLayout(
-    const std::string& src,
-    FontStyle style,
-    float size
-  ) override;
+  sptr<TextLayout> createTextLayout(const std::string& src, FontStyle style, float size) override;
 };
 
-/**********************************************************************************/
+/**************************************************************************************************/
 
 class Graphics2D_wrapper : public Graphics2D {
 private:
@@ -126,11 +122,7 @@ public:
   void lineTo(float x, float y) override;
 
   // cmd: 13
-  void cubicTo(
-    float x1, float y1,
-    float x2, float y2,
-    float x3, float y3
-  ) override;
+  void cubicTo(float x1, float y1, float x2, float y2, float x3, float y3) override;
 
   // cmd: 14
   void quadTo(float x1, float y1, float x2, float y2) override;
@@ -151,25 +143,17 @@ public:
   void fillRect(float x, float y, float w, float h) override;
 
   // cmd: 20
-  void drawRoundRect(
-    float x, float y,
-    float w, float h,
-    float rx, float ry
-  ) override;
+  void drawRoundRect(float x, float y, float w, float h, float rx, float ry) override;
 
   // cmd: 21
-  void fillRoundRect(
-    float x, float y,
-    float w, float h,
-    float rx, float ry
-  ) override;
+  void fillRoundRect(float x, float y, float w, float h, float rx, float ry) override;
 
   // cmd: 22
   void drawTextLayout(u32 id, float x, float y);
 };
 
-}
+}  // namespace microtex
 
-#endif //HAVE_CWRAPPER
+#endif  // HAVE_CWRAPPER
 
-#endif //MICROTEX_GRAPHIC_WRAPPER_H
+#endif  // MICROTEX_GRAPHIC_WRAPPER_H

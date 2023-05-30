@@ -1,7 +1,8 @@
 #include "atom/atom_char.h"
+
+#include "box/box_single.h"
 #include "core/split.h"
 #include "env/env.h"
-#include "box/box_single.h"
 #include "utils/utf.h"
 
 using namespace microtex;
@@ -21,7 +22,7 @@ sptr<SymbolAtom> SymbolAtom::get(const std::string& name) {
   return symbol == nullptr ? nullptr : sptrOf<SymbolAtom>(symbol);
 }
 
-SymbolAtom::SymbolAtom(const Symbol* symbol) noexcept: _symbol(symbol) {
+SymbolAtom::SymbolAtom(const Symbol* symbol) noexcept : _symbol(symbol) {
   if (_symbol == nullptr) {
     _type = AtomType::none;
   } else {

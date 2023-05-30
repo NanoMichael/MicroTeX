@@ -1,23 +1,23 @@
 #include "atom/atom_root.h"
-#include "env/env.h"
+
 #include "box/box_factory.h"
 #include "box/box_group.h"
+#include "env/env.h"
 
 using namespace microtex;
 
 sptr<Box> NthRoot::createBox(Env& env) {
+  // clang-format off
   const auto base = (
     _base == nullptr
     ? StrutBox::empty()
     : env.withStyle(env.crampStyle(), [&](Env& cramp) { return _base->createBox(cramp); })
   );
+  // clang-format on
 
   const auto& math = env.mathConsts();
-  const auto gap = (
-    env.style() <= TexStyle::display1
-    ? math.radicalDisplayStyleVerticalGap()
-    : math.radicalVerticalGap()
-  );
+  const auto gap = env.style() <= TexStyle::display1 ? math.radicalDisplayStyleVerticalGap()
+                                                     : math.radicalVerticalGap();
   const auto theta = math.radicalRuleThickness() * env.scale();
   auto radical = microtex::createVDelim("sqrt", env, base->vlen() + gap + theta);
 
@@ -44,10 +44,8 @@ sptr<Box> NthRoot::createBox(Env& env) {
     return hbox;
   }
 
-  const auto degree = env.withStyle(
-    env.rootStyle(),
-    [&](Env& root) { return _root->createBox(root); }
-  );
+  const auto degree =
+    env.withStyle(env.rootStyle(), [&](Env& root) { return _root->createBox(root); });
   const auto hd = sptrOf<HBox>();
   const auto bk = math.radicalKernBeforeDegree() * env.scale();
   hd->add(StrutBox::create(bk));

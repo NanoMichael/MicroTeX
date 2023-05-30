@@ -8,15 +8,15 @@ namespace microtex {
 
 /** Enum represents all supported font style */
 enum class FontStyle : u16 {
-  none = 0,        // unspecified, choose an appropriate style depends on context
-  rm = 0b1,        // roman
-  bf = 0b10,       // bold
-  it = 0b100,      // italic
-  cal = 0b1000,    // calligraphic
-  frak = 0b10000,  // fraktur
-  bb = 0b100000,   // double-struck
-  sf = 0b1000000,  // sans-serif
-  tt = 0b10000000, // type-writer (monospaced)
+  none = 0,         // unspecified, choose an appropriate style depends on context
+  rm = 0b1,         // roman
+  bf = 0b10,        // bold
+  it = 0b100,       // italic
+  cal = 0b1000,     // calligraphic
+  frak = 0b10000,   // fraktur
+  bb = 0b100000,    // double-struck
+  sf = 0b1000000,   // sans-serif
+  tt = 0b10000000,  // type-writer (monospaced)
   // composed styles
   bfit = bf | it,
   bfcal = bf | cal,
@@ -56,6 +56,6 @@ bool MICROTEX_EXPORT isSansSerif(FontStyle style);
 /** Test if the given font style is mono-spaced */
 bool MICROTEX_EXPORT isMono(FontStyle style);
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_FONT_STYLE_H
+#endif  // MICROTEX_FONT_STYLE_H

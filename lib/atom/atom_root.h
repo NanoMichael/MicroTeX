@@ -17,12 +17,11 @@ private:
 public:
   NthRoot() = delete;
 
-  NthRoot(const sptr<Atom>& base, const sptr<Atom>& root)
-    : _base(base), _root(root) {}
+  NthRoot(const sptr<Atom>& base, const sptr<Atom>& root) : _base(base), _root(root) {}
 
   sptr<Box> createBox(Env& env) override;
 };
 
-}
+}  // namespace microtex
 
-#endif //MICROTEX_ATOM_ROOT_H
+#endif  // MICROTEX_ATOM_ROOT_H

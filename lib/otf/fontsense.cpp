@@ -2,13 +2,13 @@
 
 #ifdef HAVE_AUTO_FONT_FIND
 
-#include "unimath/uni_font.h"
-#include "microtex.h"
-
 #include <cstdlib>
-#include <queue>
 #include <cstring>
+#include <queue>
 #include <sstream>
+
+#include "microtex.h"
+#include "unimath/uni_font.h"
 
 #ifdef USE_BOOST_FILESYSTEM
 #include <boost/filesystem.hpp>
@@ -30,12 +30,9 @@ public:
   Otf* otf;
 
   explicit FontSrcSense(Otf* otf, std::string fontFile = "")
-    : FontSrc(std::move(fontFile)),
-      otf(otf) {}
+      : FontSrc(std::move(fontFile)), otf(otf) {}
 
-  sptr<Otf> loadOtf() const override {
-    return sptr<Otf>(otf);
-  }
+  sptr<Otf> loadOtf() const override { return sptr<Otf>(otf); }
 };
 
 // Map<FileStem, <OTF File, CLM File>>
@@ -63,8 +60,9 @@ std::string getDirOfExecutable() {
   char szBuff[MAX_PATH] = {0};
   // WIN API: GetModuleFileNameA
   // retrieves the path of the executable file of the current process
-  // see https://docs.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulefilenamea
-  GetModuleFileNameA(nullptr,szBuff, MAX_PATH);
+  // see
+  // https://docs.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulefilenamea
+  GetModuleFileNameA(nullptr, szBuff, MAX_PATH);
   std::string exePath(szBuff);
   auto pos = exePath.find_last_of('\\');
   // pos + 1 for adding last \ to path
@@ -76,13 +74,11 @@ font_paths_t getFontPaths() {
   std::queue<std::string> paths;
   // checks if MICROTEX_FONTDIR exists. If it does, it pushes it to potential paths.
   char* devdir = getenv("MICROTEX_FONTDIR");
-  if (devdir && *devdir)
-    paths.push(std::string(devdir));
+  if (devdir && *devdir) paths.push(std::string(devdir));
 
   // checks if XDG_DATA_HOME exists. If it does, it pushes it to potential paths.
   char* userdata = getenv("XDG_DATA_HOME");
-  if (userdata && *userdata)
-    paths.push(std::string(userdata) + "/" + FONTDIR);
+  if (userdata && *userdata) paths.push(std::string(userdata) + "/" + FONTDIR);
 
   // checks if XDG_DATA_DIRS is set. If it is, it splits XDG_DATA_DIRS at : and
   // pushes each part of it to potential paths.
@@ -90,8 +86,7 @@ font_paths_t getFontPaths() {
   if (data_dirs && *data_dirs) {
     std::stringstream data_dir_paths(data_dirs);
     std::string data_dir_path;
-    while (getline(data_dir_paths, data_dir_path, ':'))
-      paths.push(data_dir_path + "/" + FONTDIR);
+    while (getline(data_dir_paths, data_dir_path, ':')) paths.push(data_dir_path + "/" + FONTDIR);
   }
 
 #ifndef _WIN32
@@ -139,10 +134,13 @@ font_paths_t getFontPaths() {
             it->second.second = strdup(path.string().c_str());
           }
         } else {
-          font_paths.emplace(stem, std::pair(
-            ext == ".otf" ? strdup(path.string().c_str()) : nullptr,
-            ext == clmExt() ? strdup(path.string().c_str()) : nullptr
-          ));
+          font_paths.emplace(
+            stem,
+            std::pair(
+              ext == ".otf" ? strdup(path.string().c_str()) : nullptr,
+              ext == clmExt() ? strdup(path.string().c_str()) : nullptr
+            )
+          );
         }
       }
     paths.pop();
@@ -164,7 +162,7 @@ font_paths_t getFontPaths() {
 }
 
 void fontPathsFree(const font_paths_t& font_paths) {
-  for (auto[_stem, files] : font_paths) {
+  for (auto [_stem, files] : font_paths) {
     free(files.first);
     free(files.second);
   }
@@ -175,7 +173,7 @@ std::optional<FontMeta> fontsenseLookup() {
 
   font_paths_t font_paths = getFontPaths();
 
-  for (const auto&[_stem, files] : font_paths) {
+  for (const auto& [_stem, files] : font_paths) {
     Otf* font = Otf::fromFile(files.second);
     auto meta = MicroTeX::addFont(FontSrcSense(font, files.first));
     if (font->isMathFont()) {
@@ -188,6 +186,6 @@ std::optional<FontMeta> fontsenseLookup() {
   return mathfont;
 }
 
-}
+}  // namespace microtex
 
-#endif // HAVE_AUTO_FONT_FIND
+#endif  // HAVE_AUTO_FONT_FIND
