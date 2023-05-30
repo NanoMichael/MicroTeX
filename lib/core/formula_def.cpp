@@ -69,7 +69,7 @@ map<string, string> Formula::_predefFormulaStrs{
   {"arcsec",           "\\mathop{\\mathrm{arcsec}}\\nolimits"},
   {"arccsc",           "\\mathop{\\mathrm{arccsc}}\\nolimits"},
   {"sech",             "\\mathop{\\mathrm{sech}}\\nolimits"},
-kkk  {"csc",              "\\mathop{\\mathrm{csc}}\\nolimits"},
+  {"csc",              "\\mathop{\\mathrm{csc}}\\nolimits"},
   {"csch",             "\\mathop{\\mathrm{csch}}\\nolimits"},
   {"max",              "\\mathop{\\mathrm{max}}"},
   {"min",              "\\mathop{\\mathrm{min}}"},

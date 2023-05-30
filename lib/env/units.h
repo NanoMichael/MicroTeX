@@ -38,19 +38,6 @@ constexpr Dimen operator""_tt(long double val) {
 }
 
 class Units final {
-private:
-  /** Unit name to type map */
-  static const std::pair<const char*, UnitType> _units[];
-  /** Functions to convert unit type to font design size */
-  static const std::function<float(const Env&)> _unitConversions[];
-  static const u32 _unitsCount;
-
-  /**
-   * Helper function to get the size of 1 point (big-point) corresponds to
-   * the font design unit.
-   */
-  static float pt(const Env& env);
-
 public:
   /** Convert the given size with unit to the font design size (in font unit) */
   static float fsize(UnitType unit, float size, const Env& env);

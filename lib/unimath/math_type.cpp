@@ -5,8 +5,11 @@
 using namespace std;
 using namespace microtex;
 
+namespace {
+
+/** The reserved code map, thanks to the Unicode Consortium */
 // IMPORTANT: sorted by the reserved code, you must sort this after add item
-const pair<c32, c32> MathVersion::_reserved[]{
+const pair<c32, c32> _reserved[]{
   // small serif italic
   {0x1d455, 0x210e},
  // capital calligraphy normal
@@ -38,10 +41,16 @@ const pair<c32, c32> MathVersion::_reserved[]{
   {0x1d551, 0x2124},
 };
 
-const int MathVersion::_reservedCount = sizeof(_reserved) / sizeof(pair<c32, c32>);
+const int _reservedCount = sizeof(_reserved) / sizeof(pair<c32, c32>);
+
+struct Orphan {
+  LetterType type;
+  c32 code;
+  std::map<FontStyle, c32> styles;
+};
 
 // clang-format off
-const MathVersion::Orphan MathVersion::_orphans[]{
+const Orphan _orphans[]{
   // latin small letter dotless i
   {
     LetterType::latinSmall,   0x131,
@@ -185,12 +194,13 @@ const MathVersion::Orphan MathVersion::_orphans[]{
 };
 // clang-format on
 
-const int MathVersion::_orphansCount = sizeof(_orphans) / sizeof(Orphan);
+const int _orphansCount = sizeof(_orphans) / sizeof(Orphan);
 
 #define style(digit, latinSmall, latinCapital, greekSmall, greekCapital) \
   sptrOf<const MathVersion>(digit, latinSmall, latinCapital, greekSmall, greekCapital)
 
-sptr<const MathVersion> MathVersion::_mathStyles[4]{
+/** style to version map */
+sptr<const MathVersion> _mathStyles[4]{
   style('0', 0x1D44E, 0x1D434, 0x1D6FC, 0x0391),
   style('0', 0x1D44E, 0x1D434, 0x1D6FC, 0x1D6E2),
   style('0', 0x1D44E, 'A', 0x03B1, 0x0391),
@@ -203,7 +213,8 @@ sptr<const MathVersion> MathVersion::_mathStyles[4]{
       sptrOf<const MathVersion>(digit, latinSmall, latinCapital, greekSmall, greekCapital, style) \
   }
 
-map<FontStyle, sptr<const MathVersion>> MathVersion::_mathVersions{
+/** font style to version map */
+map<FontStyle, sptr<const MathVersion>> _mathVersions{
   // default TeX style
   {FontStyle::none, _mathStyles[0]},
   version(FontStyle::rm, '0', 'a', 'A', 0x03B1, 0x0391),
@@ -223,20 +234,11 @@ map<FontStyle, sptr<const MathVersion>> MathVersion::_mathVersions{
   version(FontStyle::sfbfit, '0', 0x1D656, 0x1D63C, 0x1D7AA, 0x1D790),
 };
 
-MathStyle MathVersion::_mathStyle = MathStyle::TeX;
+/** current math style */
+MathStyle _mathStyle = MathStyle::TeX;
 
-MathVersion::MathVersion(
-  c32 digit,
-  c32 latinSmall,
-  c32 latinCapital,
-  c32 greekSmall,
-  c32 greekCapital,
-  FontStyle fontStyle
-) noexcept
-    : _codepoints{0, digit, latinSmall, latinCapital, greekSmall, greekCapital},
-      _fontStyle(fontStyle) {}
-
-pair<LetterType, c32> MathVersion::ofChar(c32 codepoint) {
+/** Get the MathType and the version-specific offset of the given codepoint. */
+pair<LetterType, c32> ofChar(c32 codepoint) {
   if (codepoint >= '0' && codepoint <= '9') return {LetterType::digit, codepoint - '0'};
   if (codepoint >= 'a' && codepoint <= 'z') return {LetterType::latinSmall, codepoint - 'a'};
   if (codepoint >= 'A' && codepoint <= 'Z') return {LetterType::latinCapital, codepoint - 'A'};
@@ -252,7 +254,7 @@ pair<LetterType, c32> MathVersion::ofChar(c32 codepoint) {
   return {LetterType::none, codepoint};
 }
 
-static FontStyle fontStyleOfOrphan(const MathStyle mathStyle, const LetterType type) {
+FontStyle fontStyleOfOrphan(const MathStyle mathStyle, const LetterType type) {
   switch (type) {
     case LetterType::latinSmall:
       return (mathStyle == MathStyle::upright ? FontStyle::rm : FontStyle::it);
@@ -264,6 +266,19 @@ static FontStyle fontStyleOfOrphan(const MathStyle mathStyle, const LetterType t
     default: return mathStyle == MathStyle::ISO ? FontStyle::it : FontStyle::rm;
   }
 }
+
+}  // namespace
+
+MathVersion::MathVersion(
+  c32 digit,
+  c32 latinSmall,
+  c32 latinCapital,
+  c32 greekSmall,
+  c32 greekCapital,
+  FontStyle fontStyle
+) noexcept
+    : _codepoints{0, digit, latinSmall, latinCapital, greekSmall, greekCapital},
+      _fontStyle(fontStyle) {}
 
 c32 MathVersion::map(const c32 codepoint) const {
   auto [type, offset] = ofChar(codepoint);

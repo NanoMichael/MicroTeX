@@ -1,7 +1,10 @@
 #ifndef MICROTEX_MACRO_BOXES_H
 #define MICROTEX_MACRO_BOXES_H
 
+#include "atom/atom_box.h"
+#include "atom/atom_misc.h"
 #include "macro/macro_decl.h"
+#include "utils/string_utils.h"
 
 namespace microtex {
 

@@ -8,8 +8,10 @@
 using namespace microtex;
 using namespace std;
 
+namespace {
+
 // IMPORTANT: sorted by the unit name, you must re-sort this array after add item
-const pair<const char*, UnitType> Units::_units[]{
+const pair<const char*, UnitType> _units[]{
   {"bp",    UnitType::point},
   {"cc",    UnitType::cc   },
   {"cm",    UnitType::cm   },
@@ -28,10 +30,18 @@ const pair<const char*, UnitType> Units::_units[]{
   {"sp",    UnitType::sp   },
 };
 
-const u32 Units::_unitsCount = sizeof(_units) / sizeof(pair<const char*, UnitType>);
+const u32 _unitsCount = sizeof(_units) / sizeof(pair<const char*, UnitType>);
+
+/**
+ * Helper function to get the size of 1 point (big-point) corresponds to
+ * the font design unit.
+ */
+float pt(const Env& env) {
+  return Env::pixelsPerPoint() * env.upem() / env.ppem() * env.fixedScale();
+}
 
 // IMPORTANT: the order corresponds to the order of the enum UnitType
-const function<float(const Env&)> Units::_unitConversions[]{
+const function<float(const Env&)> _unitConversions[]{
   // em
   [](const Env& env) -> float { return env.em(); },
   // ex
@@ -59,11 +69,10 @@ const function<float(const Env&)> Units::_unitConversions[]{
   // 1 cc = 12 dd
   [](const Env& env) -> float { return 12.7924193070f * pt(env); },
   // 1 tt = rule thickness
-  [](const Env& env) -> float { return env.ruleThickness() * env.scale(); }};
+  [](const Env& env) -> float { return env.ruleThickness() * env.scale(); },
+};
 
-float Units::pt(const Env& env) {
-  return Env::pixelsPerPoint() * env.upem() / env.ppem() * env.fixedScale();
-}
+}  // namespace
 
 float Units::fsize(UnitType unit, float size, const Env& env) {
   if (unit == UnitType::none) return size;

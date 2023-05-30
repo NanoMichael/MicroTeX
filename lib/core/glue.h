@@ -12,30 +12,16 @@ class GlueBox;
 /** Represents glue by its 3 components. Contains the "glue rules" */
 class Glue {
 private:
-  constexpr static int TYPE_COUNT = 8;
-  constexpr static int STYLE_COUNT = 5;
-
-  // contains the different glue types
-  static const Glue _glueTypes[4];
-  // the glue table represents the "glue rules"
-  static const char _table[TYPE_COUNT][TYPE_COUNT][STYLE_COUNT];
-
   // the glue components, in "mu" unit
   u16 _space, _stretch, _shrink;
 
   sptr<GlueBox> createBox(const Env& env) const;
 
-  static float getFactor(const Env& env);
-
-  static const Glue& getGlue(SpaceType skipType);
-
-  static int indexOf(AtomType ltype, AtomType rtype, const Env& env);
+public:
+  no_copy_assign(Glue);
 
   Glue(u16 space, u16 stretch, u16 shrink) noexcept
       : _space(space), _stretch(stretch), _shrink(shrink) {}
-
-public:
-  no_copy_assign(Glue);
 
   /**
    * Creates a box representing the glue type according to the "glue rules" based

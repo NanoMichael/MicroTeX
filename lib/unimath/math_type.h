@@ -65,31 +65,8 @@ enum class LetterType : u8 {
  */
 class MathVersion {
 private:
-  struct Orphan {
-    LetterType type;
-    c32 code;
-    std::map<FontStyle, c32> styles;
-  };
-
-  /** The reserved code map, thanks to the Unicode Consortium */
-  static const std::pair<c32, c32> _reserved[];
-  static const int _reservedCount;
-  /** The orphans */
-  static const Orphan _orphans[];
-  static const int _orphansCount;
-
-  /** style to version map */
-  static sptr<const MathVersion> _mathStyles[4];
-  /** font style to version map */
-  static std::map<FontStyle, sptr<const MathVersion>> _mathVersions;
-  /** current math style */
-  static MathStyle _mathStyle;
-
   c32 _codepoints[6];
   FontStyle _fontStyle;
-
-  /** Get the MathType and the version-specific offset of the given codepoint. */
-  static std::pair<LetterType, c32> ofChar(c32 codepoint);
 
 public:
   no_copy_assign(MathVersion);
