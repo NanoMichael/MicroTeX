@@ -7,11 +7,6 @@
 namespace microtex {
 
 struct Symbol {
-private:
-  static const Symbol _symbols[];
-  static const i32 _count;
-
-public:
   const c32 unicode;
   const u32 flag;
   const char* name;

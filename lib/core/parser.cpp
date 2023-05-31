@@ -17,6 +17,27 @@
 using namespace std;
 using namespace microtex;
 
+namespace {
+
+/** escape character */
+static constexpr char ESCAPE = '\\';
+/** grouping characters (for parsing) */
+static constexpr char L_GROUP = '{';
+static constexpr char R_GROUP = '}';
+static constexpr char L_BRACK = '[';
+static constexpr char R_BRACK = ']';
+static constexpr char DOLLAR = '$';
+static constexpr char DQUOTE = '\"';
+/** percent char for comments */
+static constexpr char PERCENT = '%';
+/** script character (for parsing) */
+static constexpr char SUB_SCRIPT = '_';
+static constexpr char SUPER_SCRIPT = '^';
+static constexpr char PRIME = '\'';
+static constexpr char BACKPRIME = '`';
+
+}  // namespace
+
 void Parser::init(bool isPartial, const string& latex, Formula* formula, bool firstPass) {
   _pos = _spos = _len = 0;
   _group = 0;

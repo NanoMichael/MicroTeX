@@ -56,16 +56,8 @@ public:
 
 class FontContext {
 private:
-  static int _lastId;
-  static std::vector<sptr<const OtfFont>> _fonts;
-
-  static std::map<std::string, sptr<FontFamily>> _mainFonts;
-  static std::map<std::string, sptr<const OtfFont>> _mathFonts;
-
   sptr<FontFamily> _mainFont = nullptr;
   sptr<const OtfFont> _mathFont = nullptr;
-
-  static sptr<FontFamily> getOrCreateFontFamily(const std::string& family);
 
 public:
   no_copy_assign(FontContext);

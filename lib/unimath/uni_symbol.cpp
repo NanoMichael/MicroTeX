@@ -20,7 +20,7 @@ static constexpr i8 F = 1;
 
 // clang-format off
 // IMPORTANT: sorted by the name, you must re-sort this array after add item
-const Symbol Symbol::_symbols[]{
+const Symbol _symbols[]{
   {0x00023, ord,     "#"},
   {0x00024, ord,     "$"},
   {0x00025, ord,     "%"},
@@ -2904,7 +2904,7 @@ const Symbol Symbol::_symbols[]{
 };
 // clang-format on
 
-const i32 Symbol::_count = sizeof(Symbol::_symbols) / sizeof(Symbol);
+const i32 _count = sizeof(_symbols) / sizeof(Symbol);
 
 const Symbol* Symbol::get(const char* name) {
   const int i = binIndexOf(_count, [&](int i) { return strcmp(name, _symbols[i].name); });

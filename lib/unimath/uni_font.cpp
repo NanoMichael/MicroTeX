@@ -77,11 +77,27 @@ sptr<const OtfFont> FontFamily::get(FontStyle style) const {
 
 /**************************************************************************************************/
 
-int FontContext::_lastId = 0;
-vector<sptr<const OtfFont>> FontContext::_fonts;
+namespace {
 
-map<string, sptr<FontFamily>> FontContext::_mainFonts;
-map<string, sptr<const OtfFont>> FontContext::_mathFonts;
+int _lastId = 0;
+vector<sptr<const OtfFont>> _fonts;
+
+map<string, sptr<FontFamily>> _mainFonts;
+map<string, sptr<const OtfFont>> _mathFonts;
+
+sptr<FontFamily> getOrCreateFontFamily(const std::string& family) {
+  sptr<FontFamily> f;
+  auto it = _mainFonts.find(family);
+  if (it == _mainFonts.end()) {
+    f = sptrOf<FontFamily>();
+    _mainFonts[family] = f;
+  } else {
+    f = it->second;
+  }
+  return f;
+}
+
+}  // namespace
 
 FontStyle FontContext::mathFontStyleOf(const std::string& name) {
   static const map<string, FontStyle> nameStyle{
@@ -112,18 +128,6 @@ FontStyle FontContext::mathFontStyleOf(const std::string& name) {
 
 FontStyle FontContext::mainFontStyleOf(const std::string& name) {
   return FontFamily::fontStyleOf(name);
-}
-
-sptr<FontFamily> FontContext::getOrCreateFontFamily(const std::string& family) {
-  sptr<FontFamily> f;
-  auto it = _mainFonts.find(family);
-  if (it == _mainFonts.end()) {
-    f = sptrOf<FontFamily>();
-    _mainFonts[family] = f;
-  } else {
-    f = it->second;
-  }
-  return f;
 }
 
 FontMeta FontContext::addFont(const FontSrc& src) {
