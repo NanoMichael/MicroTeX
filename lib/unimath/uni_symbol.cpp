@@ -2812,7 +2812,7 @@ const Symbol _symbols[]{
   {0x022BF, ord,     "varlrtriangle"},
   {0x022FD, rel,     "varniobar"},
   {0x022FB, rel,     "varnis"},
-  {0x02205, ord,     "varnothing"},
+  {0x02300, ord,     "varnothing"},
   {0x02232, opt | N, "varointclockwise"},
   {0x003C6, ord,     "varphi"},
   {0x003C6, ord,     "varphiup"},
