@@ -673,6 +673,7 @@ const Symbol _symbols[]{
   {0x023E7, ord,     "elinters"},
   {0x02113, ord,     "ell"},
   {0x02A97, rel,     "elsdot"},
+  {0x02205, ord,     "emptyset"},
   {0x029B3, ord,     "emptysetoarr"},
   {0x029B4, ord,     "emptysetoarrl"},
   {0x029B1, ord,     "emptysetobar"},
