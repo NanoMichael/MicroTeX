@@ -315,12 +315,13 @@ static void microtex_equation_class_init(MicroTexEquationClass* klass) {
   widget_class->show = microtex_equation_show;
   widget_class->hide = microtex_equation_hide;
 
+  // clang-format off
   /**
-   * MicroTexEquation:latex: (attributes org.gtk.Property.get=microtex_equation_get_equation
-   * org.gtk.Property.set=microtex_equation_set_equation)
+   * MicroTexEquation:latex: (attributes org.gtk.Property.get=microtex_equation_get_equation org.gtk.Property.set=microtex_equation_set_equation)
    *
    * The (La)TeX string that the widget will render and display.
    */
+  // clang-format on
   obj_properties[PROP_EQUATION] = g_param_spec_string(
     "latex",
     "LaTeX",
@@ -328,14 +329,15 @@ static void microtex_equation_class_init(MicroTexEquationClass* klass) {
     "",
     (GParamFlags)(G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
   );
+  // clang-format off
   /**
-   * MicroTexEquation:width: (attributes org.gtk.Property.get=microtex_equation_get_width
-   * org.gtk.Property.set=microtex_equation_set_width)
+   * MicroTexEquation:width: (attributes org.gtk.Property.get=microtex_equation_get_width org.gtk.Property.set=microtex_equation_set_width)
    *
    * the width of the 2D graphics context (in pixel) to limit the
    * formula layout, the engine will trying to wrap the layout if it
    * overflows the width, but will fails if formula cannot be split.
    */
+  // clang-format on
   obj_properties[PROP_WIDTH] = g_param_spec_float(
     "width",
     "Width",
@@ -345,12 +347,13 @@ static void microtex_equation_class_init(MicroTexEquationClass* klass) {
     -1,
     (GParamFlags)(G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
   );
+  // clang-format off
   /**
-   * MicroTexEquation:text-size: (attributes org.gtk.Property.get=microtex_equation_get_text_size
-   * org.gtk.Property.set=microtex_equation_set_text_size)
+   * MicroTexEquation:text-size: (attributes org.gtk.Property.get=microtex_equation_get_text_size org.gtk.Property.set=microtex_equation_set_text_size)
    *
    * the text size that the widget will be rendered with.
    */
+  // clang-format on
   obj_properties[PROP_TEXT_SIZE] = g_param_spec_float(
     "text-size",
     "Textsize",
@@ -360,9 +363,9 @@ static void microtex_equation_class_init(MicroTexEquationClass* klass) {
     18,
     (GParamFlags)(G_PARAM_READWRITE | G_PARAM_CONSTRUCT)
   );
+  // clang-format off
   /**
-   * MicroTexEquation:color: (attributes org.gtk.Property.get=microtex_equation_get_color
-   * org.gtk.Property.set=microtex_equation_set_color)
+   * MicroTexEquation:color: (attributes org.gtk.Property.get=microtex_equation_get_color org.gtk.Property.set=microtex_equation_set_color)
    *
    * the foreground color, in which the equation (unless specifically
    * set otherweise) will be rendered with.
@@ -385,6 +388,7 @@ static void microtex_equation_class_init(MicroTexEquationClass* klass) {
    * }
    * ```
    */
+  // clang-format on
   obj_properties[PROP_COLOR] = g_param_spec_uint(
     "color",
     "Color",
