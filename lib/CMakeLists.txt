@@ -145,20 +145,30 @@ option(HAVE_AUTO_FONT_FIND "If enable auto font find" ${_HAVE_AUTO_FONT_FIND_})
 
 macro(CHECK_FS LIB_NAME)
     if (EXISTS "${CMAKE_SOURCE_DIR}/test/has_filesystem.cpp")
-        try_compile(
-            _HAS_FS
-            "${CMAKE_BINARY_DIR}/temp"
-            "${CMAKE_SOURCE_DIR}/test/has_filesystem.cpp"
-            CMAKE_FLAGS -DCMAKE_CXX_STANDARD=17 -DCMAKE_CXX_STANDARD_REQUIRED=ON
-            LINK_LIBRARIES ${LIB_NAME}
-        )
+        if (${LIB_NAME} STREQUAL "none")
+            try_compile(
+                _HAS_FS
+                "${CMAKE_BINARY_DIR}/temp"
+                "${CMAKE_SOURCE_DIR}/test/has_filesystem.cpp"
+                CMAKE_FLAGS -DCMAKE_CXX_STANDARD=17 -DCMAKE_CXX_STANDARD_REQUIRED=ON
+            )
+        else ()
+            try_compile(
+                _HAS_FS
+                "${CMAKE_BINARY_DIR}/temp"
+                "${CMAKE_SOURCE_DIR}/test/has_filesystem.cpp"
+                CMAKE_FLAGS -DCMAKE_CXX_STANDARD=17 -DCMAKE_CXX_STANDARD_REQUIRED=ON
+                LINK_LIBRARIES ${LIB_NAME}
+            )
+        endif ()
         set(_HAS_STD_FS ${_HAS_FS})
     endif ()
 endmacro()
 
 if (HAVE_AUTO_FONT_FIND)
     # iterate over the preset std c++ filesystem libraries
-    foreach (LIB IN ITEMS stdc++fs;c++fs;c++experimental)
+    # `none` means there is no filesystem library to link
+    foreach (LIB IN ITEMS none;stdc++fs;c++fs;c++experimental)
         check_fs(${LIB})
         message(STATUS "Test for: ${LIB}, has std fs: ${_HAS_STD_FS}")
         if (_HAS_STD_FS)
@@ -166,7 +176,9 @@ if (HAVE_AUTO_FONT_FIND)
             if (${LIB} STREQUAL "c++experimental")
                 target_compile_definitions(microtex PRIVATE -DUSE_EXPERIMENTAL_FILESYSTEM)
             endif ()
-            target_link_libraries(microtex ${LIB})
+            if (NOT ${LIB} STREQUAL "none")
+                target_link_libraries(microtex ${LIB})
+            endif ()
             break()
         endif ()
     endforeach ()
