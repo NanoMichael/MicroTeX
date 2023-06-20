@@ -144,12 +144,12 @@ int ArrayFormula::cols() const {
 }
 
 sptr<VRowAtom> ArrayFormula::getAsVRow() {
-  auto* vr = new VRowAtom();
+  auto vr = sptrOf<VRowAtom>();
   vr->setAddInterline(true);
   for (auto& c : _array) {
     for (auto& j : c) vr->append(j);
   }
-  return sptr<VRowAtom>(vr);
+  return vr;
 }
 
 void ArrayFormula::checkDimensions() {

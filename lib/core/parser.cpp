@@ -148,7 +148,7 @@ string Parser::getGroup(const string& open, const string& close) {
   int oc = 0;
   int cc = 0;
   int startC = 0;
-  char prev = L'\0';
+  char prev = '\0';
   string buf;
 
   while (_pos < _len && group != 0) {
@@ -156,7 +156,7 @@ string Parser::getGroup(const string& open, const string& close) {
     char c1;
 
     if (prev != ESCAPE && c == ' ') {
-      while (_pos < _len && _latex[_pos++] == ' ') buf.append(1, L' ');
+      while (_pos < _len && _latex[_pos++] == ' ') buf.append(1, ' ');
       c = _latex[--_pos];
       if (isValidCharInCmd(prev) && isValidCharInCmd(c)) {
         oc = cc = 0;
@@ -215,7 +215,7 @@ string Parser::getOverArgument() {
   if (_pos == _len) return "";
 
   int ogroup = 1, spos;
-  char ch = L'\0';
+  char ch = '\0';
 
   spos = _pos;
   while (_pos < _len && ogroup != 0) {
@@ -414,7 +414,7 @@ bool Parser::isValidCmd(const string& cmd) const {
   if (cmd.empty()) return false;
   if (cmd[0] != '\\') return false;
 
-  char c = L'\0';
+  char c = '\0';
   int p = 1;
   int l = cmd.length();
   while (p < l) {
@@ -543,19 +543,25 @@ sptr<Atom> Parser::getArgument() {
     return sptrOf<EmptyAtom>();
 
   if (ch == L_GROUP) {
-    Formula tf;
-    Formula* tmp = _formula;
-    _formula = &tf;
     _pos++;
     _group++;
+
+    Formula f;
+    Formula* t = _formula;
+
+    const bool arrayMode = isArrayMode();
+    _arrayMode = false;
+    _formula = &f;
     parse();
-    _formula = tmp;
+    _formula = t;
+    _arrayMode = arrayMode;
+
     if (_formula->_root == nullptr) {
-      auto* rm = new RowAtom();
-      rm->add(tf._root);
-      return sptr<Atom>(rm);
+      auto rm = sptrOf<RowAtom>();
+      rm->add(f._root);
+      return rm;
     }
-    return tf._root;
+    return f._root;
   }
 
   if (ch == ESCAPE) {
@@ -575,7 +581,7 @@ sptr<Atom> Parser::getArgument() {
 Dimen Parser::getDimen() {
   if (_pos == _len) return {0.f, UnitType::none};
 
-  char ch = L'\0';
+  char ch = '\0';
 
   skipWhiteSpace();
   const int start = _pos;

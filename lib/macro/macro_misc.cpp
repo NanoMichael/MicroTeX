@@ -67,8 +67,8 @@ macro(kern) {
 
 macro(hvspace) {
   auto [value, unit] = Units::getDimen(args[1]);
-  return args[0][0] == L'h' ? sptrOf<SpaceAtom>(unit, value, 0.f, 0.f)
-                            : sptrOf<SpaceAtom>(unit, 0.f, value, 0.f);
+  return args[0][0] == 'h' ? sptrOf<SpaceAtom>(unit, value, 0.f, 0.f)
+                           : sptrOf<SpaceAtom>(unit, 0.f, value, 0.f);
 }
 
 macro(rule) {
