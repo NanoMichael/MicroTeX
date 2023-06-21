@@ -120,6 +120,7 @@ inline macro(gatheredATATenv) {
 }
 
 inline macro(multicolumn) {
+  if (!tp.isArrayMode()) throw ex_parse("Command 'multicolumn' only available in array mode!");
   int n = 0;
   valueOf(args[1], n);
   tp.addAtom(sptrOf<MulticolumnAtom>(n, args[2], Formula(tp, args[3])._root));
