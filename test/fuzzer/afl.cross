@@ -5,3 +5,16 @@ pkg-config = 'pkg-config'
 
 [properties]
 is_fuzzer = true
+
+[project options]
+CAIRO = false
+EXAMPLE_GTKMM = false
+
+GTK = false
+EXAMPLE_GTK = false
+
+QT = false
+EXAMPLE_QT = false
+
+GDI = 'disabled'
+EXAMPLE_WIN32 = false
