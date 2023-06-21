@@ -80,7 +80,7 @@ ScriptResult ScriptsAtom::createScripts(Env& env) {
       env.crampStyle(),
       [&](Env& cramp) {
         checkAtom(acc->_base, cramp);
-        return acc->_base->createBox(cramp);
+        return (acc->_base == nullptr ? sptrOf<EmptyAtom>() : acc->_base)->createBox(cramp);
       }
     );
     // clang-format on
