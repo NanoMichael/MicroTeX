@@ -21,6 +21,7 @@ sptr<Box> SideSetsAtom::createBox(Env& env) {
                          : sptrOf<PlaceholderAtom>(m->_width, m->_height, m->_depth, right.italic);
     italic = right.italic;
   } else {
+    _right = _right == nullptr ? sptrOf<EmptyAtom>() : _right;
     r = _right->createBox(env);
   }
 
