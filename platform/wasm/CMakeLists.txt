@@ -32,6 +32,7 @@ set_target_properties(
     LINK_FLAGS
     "-fexceptions -s MODULARIZE=1 -s EXPORT_ES6=1\
     -s WASM=1 -s EXPORTED_RUNTIME_METHODS=allocateUTF8,UTF8ToString,addFunction\
-    -s EXPORTED_FUNCTIONS=_malloc -s IMPORTED_MEMORY -s ALLOW_MEMORY_GROWTH=1\
+    -s EXPORTED_FUNCTIONS=_malloc,_free\
+    -s IMPORTED_MEMORY -s ALLOW_MEMORY_GROWTH=1\
     -s RESERVED_FUNCTION_POINTERS=4"
 )
