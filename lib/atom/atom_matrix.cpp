@@ -644,8 +644,9 @@ Alignment MulticolumnAtom::parseAlign(const string& str) {
 }
 
 sptr<Box> MulticolumnAtom::createBox(Env& env) {
-  sptr<Box> b = _width == 0 ? _cols->createBox(env)
-                            : sptrOf<HBox>(_cols->createBox(env), _width, _align);
+  auto atom = _cols == nullptr ? sptrOf<EmptyAtom>() : _cols;
+  sptr<Box> b = _width == 0 ? atom->createBox(env)
+                            : sptrOf<HBox>(atom->createBox(env), _width, _align);
   b->_type = AtomType::multiColumn;
   return b;
 }
