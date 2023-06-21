@@ -1,0 +1,7 @@
+[binaries]
+c = 'afl-cc'
+cpp = 'afl-c++'
+pkg-config = 'pkg-config'
+
+[properties]
+is_fuzzer = true
