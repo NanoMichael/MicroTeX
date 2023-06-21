@@ -44,6 +44,7 @@ sptr<Box> MathAtom::createBox(Env& env) {
   if (_style > style) {
     env.setStyle(_style);
   }
+  _base = _base == nullptr ? sptrOf<EmptyAtom>() : _base;
   auto box = _base->createBox(env);
   env.setStyle(style);
   return box;
