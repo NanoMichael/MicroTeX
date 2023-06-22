@@ -79,36 +79,48 @@ macro(rule) {
   return sptrOf<RuleAtom>(w, h, -r);
 }
 
-macro(newcommand) {
+template <typename F>
+sptr<Atom> _def_cmd(Parser& tp, Args& args, F&& f) {
   string newcmd(args[1]);
   int argc = 0;
   if (!tp.isValidCmd(newcmd)) throw ex_parse("Invalid name for the command '" + newcmd);
 
   if (!args[3].empty()) valueOf(args[3], argc);
 
-  if (args[4].empty()) {
-    NewCommandMacro::addNewCommand(newcmd.substr(1), args[2], argc);
-  } else {
-    NewCommandMacro::addNewCommand(newcmd.substr(1), args[2], argc, args[4]);
-  }
+  const bool hasOption = !args[4].empty();
+  if (hasOption && argc > 0) --argc;
+
+  f(hasOption, newcmd.substr(1), args[2], argc, args[4]);
 
   return nullptr;
 }
 
+macro(newcommand) {
+  return _def_cmd(
+    tp,
+    args,
+    [](bool hasOption, const string& cmd, const string& def, int argc, const string& opt) {
+      if (!hasOption) {
+        NewCommandMacro::addNewCommand(cmd, def, argc);
+      } else {
+        NewCommandMacro::addNewCommand(cmd, def, argc, opt);
+      }
+    }
+  );
+}
+
 macro(renewcommand) {
-  string newcmd(args[1]);
-  int argc = 0;
-  if (!tp.isValidCmd(newcmd)) throw ex_parse("Invalid name for the command: " + newcmd);
-
-  if (!args[3].empty()) valueOf(args[3], argc);
-
-  if (args[4].empty()) {
-    NewCommandMacro::addRenewCommand(newcmd.substr(1), args[2], argc);
-  } else {
-    NewCommandMacro::addRenewCommand(newcmd.substr(1), args[2], argc, args[4]);
-  }
-
-  return nullptr;
+  return _def_cmd(
+    tp,
+    args,
+    [](bool hasOption, const string& cmd, const string& def, int argc, const string& opt) {
+      if (!hasOption) {
+        NewCommandMacro::addRenewCommand(cmd, def, argc);
+      } else {
+        NewCommandMacro::addRenewCommand(cmd, def, argc, opt);
+      }
+    }
+  );
 }
 
 macro(raisebox) {

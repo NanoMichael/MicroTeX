@@ -394,9 +394,10 @@ void Parser::getOptsArgs(int argc, int opts, Args& args) {
     }
   };
 
+  // we get the options just after the command name
+  if (opts == 1) getOpts();
+
   if (argc != 0) {
-    // we get the options just after the command name
-    if (opts == 1) getOpts();
     // we get the first argument
     getArg(1);
     // we get the options after the first argument
