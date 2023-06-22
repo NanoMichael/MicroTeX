@@ -1,0 +1,55 @@
+<!doctype html>
+
+<html lang="zh">
+
+<head>
+  <title>MicroTeX</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+
+<div class="container">
+  <!-- the top part -->
+  <div id="action-bar">
+    <label>Rendering Mode:</label>
+    <select id="rendering-mode" class="fonts">
+      <option value="SVG">SVG</option>
+      <option value="Canvas">Canvas</option>
+    </select>
+    <label>Mode:</label>
+    <select id="mode" class="fonts">
+      <option value="text">text</option>
+      <option value="LaTeX">LaTeX</option>
+    </select>
+    <label>Main font:</label>
+    <select id="main-font" class="fonts"></select>
+    <label>Math font:</label>
+    <select id="fonts" class="fonts"></select>
+    <label>Text size:</label>
+    <input
+        class="text-size" id="textsize"
+        type="number" min="5" max="100" step="2" value="23"/>
+    <button id="next">Next example</button>
+  </div>
+
+  <!-- the sections -->
+  <div id="section">
+    <div id="left">
+      <div id="wrapper"></div>
+    </div>
+
+    <div id="pan-resize"></div>
+
+    <div id="right">
+      <div id="editor"></div>
+    </div>
+  </div>
+
+  <script src="./index.js" type="module"></script>
+</div>
+
+</body>
+
+</html>
