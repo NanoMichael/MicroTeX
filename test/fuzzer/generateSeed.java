@@ -7,8 +7,13 @@ import java.util.stream.Collectors;
 
 public class generateSeed {
 	public static void main(String[] args) throws java.io.IOException {
+		if (args.length < 1 || args.length > 2) {
+			System.err.println("Usage: generateSeed.java <path/to/SAMPLES.tex> [seeds_output_dir]");
+			System.exit(1);
+		}
+
 		Arrays.stream(
-			Files.readString(Path.of("../../res/SAMPLES.tex"))
+			Files.readString(Path.of(args[0]))
 				.split("\n\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\n")
 		).collect(
 			Collectors.toMap(
@@ -18,7 +23,7 @@ public class generateSeed {
 		).forEach(
 			(k,v) -> {
 				try {
-					Files.writeString(Path.of("seeds", k + ".tex"), v);
+					Files.writeString(Path.of(args.length == 2 ? args[1] : "seeds", k + ".tex"), v);
 				} catch (java.io.IOException e) {
 					throw new RuntimeException(e);
 				}
