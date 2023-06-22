@@ -1,5 +1,7 @@
 #include "atom/atom_delim.h"
 
+#include "atom/atom_basic.h"
+
 #include "box/box_factory.h"
 #include "box/box_group.h"
 #include "box/box_single.h"
@@ -8,7 +10,7 @@
 using namespace microtex;
 
 sptr<Box> OverUnderBar::createBox(Env& env) {
-  const auto base = _base->createBox(env);
+  const auto base = (_base == nullptr ? sptrOf<EmptyAtom>() : _base)->createBox(env);
   const auto vbox = sptrOf<VBox>();
   if (_over) {
     const auto asc = env.mathConsts().overbarExtraAscender() * env.scale();
