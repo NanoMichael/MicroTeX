@@ -85,9 +85,13 @@ public:
 
   inline float getMaxWidth() { return _maxWidth; }
 
-  AtomType leftType() const override { return _base->leftType(); }
+  AtomType leftType() const override {
+    return _base == nullptr ? AtomType::ordinary : _base->leftType();
+  }
 
-  AtomType rightType() const override { return _base->rightType(); }
+  AtomType rightType() const override {
+    return _base == nullptr ? AtomType::ordinary : _base->rightType();
+  }
 
   sptr<Box> createBox(Env& env) override;
 
