@@ -7,6 +7,7 @@
 #include "core/formula.h"
 #include "core/glue.h"
 #include "env/env.h"
+#include "utils/exceptions.h"
 #include "utils/string_utils.h"
 
 using namespace std;
@@ -108,13 +109,18 @@ void MatrixAtom::parsePositions(string opt, vector<Alignment>& lpos) {
             break;
           }
         }
-        if (!hasrep) lpos.push_back(Alignment::center);
+        if (!hasrep) {
+          // Notify an error instead of using a default alignment
+          throw ex_parse("Invalid alignment in array environment!");
+        }
       } break;
     }
     pos++;
   }
 
-  for (size_t j = lpos.size(); j < _matrix->cols(); j++) lpos.push_back(Alignment::center);
+  for (size_t j = lpos.size(); j < _matrix->cols(); j++) {
+    lpos.push_back(Alignment::center);
+  }
 
   if (lpos.empty()) lpos.push_back(Alignment::center);
 }
