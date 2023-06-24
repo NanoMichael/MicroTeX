@@ -63,7 +63,9 @@ void MatrixAtom::parsePositions(string opt, vector<Alignment>& lpos) {
         tp = sptrOf<Parser>(_isPartial, opt.substr(pos), tf.get(), false);
         auto atom = tp->getArgument();
         // Keep columns same with the matrix
-        if (lpos.size() > _matrix->cols()) lpos.resize(_matrix->cols());
+        if (lpos.size() > _matrix->cols()) {
+          lpos.resize(_matrix->cols());
+        }
         _matrix->insertAtomIntoCol(lpos.size(), atom);
 
         lpos.push_back(Alignment::none);
@@ -414,8 +416,8 @@ sptr<Box> MatrixAtom::createBoxInner(Env& env) {
   const auto drt = env.ruleThickness();
 
   // multi-column & multi-row atoms
-  vector<sptr<Atom>> listMultiCol;
-  vector<sptr<Atom>> listMultiRow;
+  vector<sptr<Atom>> multiCols;
+  vector<sptr<Atom>> multiRows;
   for (int i = 0; i < rows; i++) {
     lineDepth[i] = 0;
     lineHeight[i] = 0;
@@ -440,7 +442,7 @@ sptr<Box> MatrixAtom::createBoxInner(Env& env) {
       } else {
         auto* mra = (MultiRowAtom*)atom.get();
         mra->setRowColumn(i, j);
-        listMultiRow.push_back(atom);
+        multiRows.push_back(atom);
       }
 
       if (boxarr[i][j]->_type != AtomType::multiColumn) {
@@ -449,7 +451,7 @@ sptr<Box> MatrixAtom::createBoxInner(Env& env) {
       } else {
         auto* mca = (MulticolumnAtom*)atom.get();
         mca->setRowColumn(i, j);
-        listMultiCol.push_back(atom);
+        multiCols.push_back(atom);
       }
     }
   }
@@ -459,7 +461,7 @@ sptr<Box> MatrixAtom::createBoxInner(Env& env) {
   // The horizontal separator's width
   float* Hsep = getColumnSep(env, matW);
 
-  for (auto& i : listMultiCol) {
+  for (auto& i : multiCols) {
     auto* multi = (MulticolumnAtom*)i.get();
     const int c = multi->col(), r = multi->row(), n = multi->skipped();
     float w = 0;
@@ -484,7 +486,7 @@ sptr<Box> MatrixAtom::createBoxInner(Env& env) {
 
   auto Vsep = _vsep_in.createBox(env);
   // Recalculate the height of the row
-  recalculateLine(rows, boxarr, listMultiRow, lineHeight, lineDepth, drt, Vsep->_height);
+  recalculateLine(rows, boxarr, multiRows, lineHeight, lineDepth, drt, Vsep->_height);
 
   auto* vb = new VBox();
   float totalHeight = 0;
