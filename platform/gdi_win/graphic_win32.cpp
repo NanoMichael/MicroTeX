@@ -1,7 +1,5 @@
 #include "graphic_win32.h"
 
-#include <sstream>
-
 #include "utils/exceptions.h"
 #include "utils/nums.h"
 #include "utils/utils.h"

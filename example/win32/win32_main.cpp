@@ -1,11 +1,13 @@
-#include <comdef.h>
-#include <gdiplus.h>
-#include <windows.h>
-
+// clang-format off
 #include "graphic_win32.h"
 #include "microtex.h"
 #include "samples.h"
 #include "utils/string_utils.h"
+
+#include <comdef.h>
+#include <gdiplus.h>
+#include <windows.h>
+// clang-format off
 
 #define ID_SETTER 256
 #define ID_CANVAS 512
@@ -141,7 +143,7 @@ void init() {
   PlatformFactory::activate("gdi");
   _samples = new Samples(__argv[4]);
   _render = MicroTeX::parse(
-    "\\text{Hello from Tiny\\kern-.1em\\TeX, have fun! Press Ctrl + Enter on editor to show "
+    "\\text{Hello from \\MicroTeX, have fun! Press Ctrl + Enter on editor to show "
     "formulas.}",
     720,
     _size,
