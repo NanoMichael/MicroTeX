@@ -65,13 +65,28 @@ jobs:
     steps:
       - name: Downloading Source Code 📥
         uses: actions/checkout@v2
+      - name: Downloading dependencies 📥
+        run: |
+          sudo apt-get install ninja-build
+          sudo pip3 install meson # meson provided by ubuntu is too old. can be removed when ubunut-latest swiches to 24.04
       - name: Setup Emscripten Environment 🍺
         uses: mymindstorm/setup-emsdk@v11
       - name: Verify Emscripten 🚀
         run: emcc -v
-      - name: Compile 🎲
+      - name: Compile using CMake 🎲
         run: |
           cd ${{ github.workspace }}
           cd platform/wasm/web
           npm install
           npm run build:lib && npm run build:example
+      - name: Compile using Meson 🎲
+        run: |
+          cd ${{ github.workspace }}
+          cd platform/wasm/web
+          npm install
+          npm run build:lib:meson && npm run build:example:meson
+      - name: Upload build artifacts 📤
+        uses: actions/upload-artifact@v1
+        with:
+          name: MicroTeX wasm example
+          path: platform/wasm/web/example-dist
