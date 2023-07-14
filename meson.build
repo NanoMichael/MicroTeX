@@ -62,6 +62,10 @@ else
   endif
 endif
 
+if cpp.get_id() == 'emscripten'
+  subdir('platform/wasm')
+endif
+
 if get_option('TEST')
     subdir('test')
 endif
