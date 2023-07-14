@@ -142,6 +142,9 @@ context.init = function (clmDataUri) {
   return initRuntime()
     .then(r => _runtime = r)
     .then(_ => {
+      _runtime._microtex_setRenderGlyphUsePath(true);
+    })
+    .then(_ => {
       const a = _runtime.addFunction(createTextLayout, 'iii');
       const b = _runtime.addFunction(getTextLayoutBounds, 'vii');
       const c = _runtime.addFunction(releaseTextLayout, 'vi');
