@@ -8,6 +8,8 @@ exe_wrapper = 'node'
 
 [built-in options]
 default_library = 'static'
+cpp_args = '-fexceptions -sNO_DISABLE_EXCEPTION_CATCHING'
+cpp_link_args = '-fexceptions -sNO_DISABLE_EXCEPTION_CATCHING'
 
 [project options]
 CAIRO = false
