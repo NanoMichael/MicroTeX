@@ -2,6 +2,7 @@
 #define MICROTEX_ATOM_FONT_H
 
 #include "atom/atom.h"
+#include "atom/atom_basic.h"
 #include "env/env.h"
 #include "graphic/font_style.h"
 
@@ -19,7 +20,10 @@ public:
   FontStyleAtom() = delete;
 
   FontStyleAtom(FontStyle style, bool isMathMode, const sptr<Atom>& atom, bool nested = false)
-      : _style(style), _mathMode(isMathMode), _atom(atom), _nested(nested) {}
+      : _style(style), _mathMode(isMathMode), _atom(atom), _nested(nested) {
+        if (_atom == nullptr)
+	        _atom = sptrOf<EmptyAtom>();
+      }
 
   AtomType leftType() const override { return _atom->leftType(); }
 
