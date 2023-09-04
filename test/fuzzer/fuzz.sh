@@ -98,6 +98,29 @@ case $1 in
 		"$dir/generateSeed.java" "$project_root/res/SAMPLES.tex" "$seeds_dir"
 		exit 0
 		;;
+	min)
+		echo "Minimizing all crashes..."
+		CRASHDIR="$fuzz_out/default/crashes/"
+		if [ ! -d "$CRASHDIR" ]; then
+			echo "Did not found crash directory at expected location: $CRASHDIR, please run the fuzzer first."
+			exit 1
+		fi
+		MINOUT="$fuzz_out/default/crashes-min/"
+		mkdir -p "$MINOUT"
+		for crash in "$CRASHDIR"/id*; do
+			MICROTEX_FONTDIR="$project_root/res/lm-math/" afl-tmin -i "$crash" -o "$MINOUT"/`basename "$crash"` -- "$build_root/test/fuzzer/microtex-fuzzme"
+		done
+		exit 0
+		;;
+	dbg)
+		if [ -z "$2" ]; then
+			echo "You need to specify the specific crash. ./fuzz.sh [options] dbg <path/to/crashfile>"
+			exit 1
+		fi
+		ninja -C "$build_root"
+		MICROTEX_FONTDIR="$project_root/res/lm-math/" gdb  "$build_root/test/fuzzer/microtex-fuzzme" -ex "run <'$2'"
+		exit 0
+		;;
 	"")
 		;;
 	*)
