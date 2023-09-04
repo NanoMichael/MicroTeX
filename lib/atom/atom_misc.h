@@ -2,6 +2,7 @@
 #define MICROTEX_ATOM_MISC_H
 
 #include "atom/atom.h"
+#include "atom/atom_basic.h"
 #include "atom/atom_char.h"
 #include "atom/atom_vrow.h"
 #include "box/box_factory.h"
@@ -94,8 +95,9 @@ public:
     const std::string& hs,
     bool keepAspectRatio
   ) {
-    _type = base->_type;
-    _base = base;
+    const sptr<Atom>& xbase = base == nullptr ? sptrOf<EmptyAtom>() : base;
+    _type = xbase->_type;
+    _base = xbase;
     _keepAspectRatio = keepAspectRatio;
     _width = Units::getDimen(ws);
     _height = Units::getDimen(hs);
@@ -144,7 +146,9 @@ private:
   sptr<Atom> _at;
 
 public:
-  explicit StrikeThroughAtom(const sptr<Atom>& a) : _at(a) {}
+  explicit StrikeThroughAtom(const sptr<Atom>& a) {
+    _at = a == nullptr ? sptrOf<EmptyAtom>() : a;
+  }
 
   sptr<Box> createBox(Env& env) override;
 };

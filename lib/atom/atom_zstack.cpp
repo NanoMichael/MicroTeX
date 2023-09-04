@@ -1,11 +1,21 @@
 #include "atom/atom_zstack.h"
 
+#include "atom/atom_basic.h"
 #include "box/box_group.h"
 #include "box/box_single.h"
 #include "env/env.h"
 #include "env/units.h"
 
 using namespace microtex;
+
+ZStackAtom::ZStackAtom(
+    const ZStackArgs& hargs,
+    const ZStackArgs& vargs,
+    const sptr<Atom>& atom,
+    const sptr<Atom>& anchor
+  ) : _hargs(hargs), _vargs(vargs), _anchor(anchor) {
+      _atom = atom == nullptr ? sptrOf<EmptyAtom>() : atom;
+}
 
 sptr<Box> ZStackAtom::createBox(Env& env) {
   const auto anchor = _anchor->createBox(env);

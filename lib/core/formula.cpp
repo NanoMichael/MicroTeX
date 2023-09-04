@@ -172,3 +172,4 @@ void ArrayFormula::checkDimensions() {
     }
   }
 }
+

@@ -10,6 +10,8 @@
 namespace microtex {
 
 inline macro(accentset) {
+  if (args[1] == "")
+    return Formula(tp, args[2], false)._root;
   return sptrOf<AccentedAtom>(Formula(tp, args[2], false)._root, args[1].substr(1), false, true);
 }
 
