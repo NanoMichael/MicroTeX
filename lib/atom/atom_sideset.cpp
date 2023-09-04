@@ -7,6 +7,14 @@
 
 using namespace microtex;
 
+SideSetsAtom::SideSetsAtom(const sptr<Atom>& base, const sptr<Atom>& left, const sptr<Atom>& right) {
+  _base = base == nullptr ? sptrOf<EmptyAtom>() : base;
+  _left = left == nullptr ? sptrOf<EmptyAtom>() : left;
+  _right = right == nullptr ? sptrOf<EmptyAtom>() : right;
+  _type = AtomType::bigOperator;
+  _limitsType = LimitsType::noLimits;
+}
+
 sptr<Box> SideSetsAtom::createBox(Env& env) {
   _base->_limitsType = LimitsType::noLimits;
   sptr<Box> l, m, r;

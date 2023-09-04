@@ -29,6 +29,7 @@ endif ()
 set(
     _SRCS
     # atom folder
+    atom/atom.cpp
     atom/atom_basic.cpp
     atom/atom_char.cpp
     atom/atom_misc.cpp

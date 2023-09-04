@@ -14,11 +14,7 @@ public:
 
   SideSetsAtom() = delete;
 
-  SideSetsAtom(const sptr<Atom>& base, const sptr<Atom>& left, const sptr<Atom>& right)
-      : _base(base), _left(left), _right(right) {
-    _type = AtomType::bigOperator;
-    _limitsType = LimitsType::noLimits;
-  }
+  SideSetsAtom(const sptr<Atom>& base, const sptr<Atom>& left, const sptr<Atom>& right);
 
   sptr<Box> createBox(Env& env) override;
 };

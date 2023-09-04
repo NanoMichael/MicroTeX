@@ -78,9 +78,7 @@ protected:
   sptr<Atom> _base;
 
 public:
-  explicit WrapAtom(const sptr<Atom>& base) : _base(base) {
-    _type = base == nullptr ? AtomType::ordinary : base->_type;
-  }
+  explicit WrapAtom(const sptr<Atom>& base);
 
   inline sptr<Atom> base() const { return _base; }
 

@@ -23,8 +23,7 @@ public:
     const ZStackArgs& vargs,
     const sptr<Atom>& atom,
     const sptr<Atom>& anchor
-  )
-      : _hargs(hargs), _vargs(vargs), _atom(atom), _anchor(anchor) {}
+  );
 
   AtomType leftType() const override { return _anchor->leftType(); }
 

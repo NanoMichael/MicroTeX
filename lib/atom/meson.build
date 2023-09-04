@@ -1,4 +1,5 @@
 atom_src = [
+	'atom/atom.cpp',
 	'atom/atom_accent.cpp',
     'atom/atom_basic.cpp',
     'atom/atom_box.cpp',

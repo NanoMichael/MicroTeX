@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "atom/atom.h"
+#include "atom/atom_basic.h"
 #include "atom/atom_char.h"
 #include "atom/atom_space.h"
 
@@ -39,7 +40,8 @@ public:
   OverUnderDelimiter() = delete;
 
   OverUnderDelimiter(const sptr<Atom>& base, std::string delim, bool over)
-      : _base(base), _delim(std::move(delim)), _over(over) {
+      : _delim(std::move(delim)), _over(over) {
+    _base = base == nullptr ? sptrOf<EmptyAtom>() : base;
     _type = AtomType::inner;
     _limitsType = LimitsType::limits;
   }

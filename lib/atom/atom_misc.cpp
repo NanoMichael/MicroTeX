@@ -68,8 +68,8 @@ sptr<Box> ResizeAtom::createBox(Env& env) {
 
 RotateAtom::RotateAtom(const sptr<Atom>& base, float angle, const string& option)
     : _angle(0), _option(Rotation::bl) {
-  _type = base->_type;
-  _base = base;
+  _base = base == nullptr ? sptrOf<EmptyAtom>() : base;
+  _type = _base->_type;
   _angle = angle;
   const auto& opt = parseOption(option);
   auto it = opt.find("origin");
