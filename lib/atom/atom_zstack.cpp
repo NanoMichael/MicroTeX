@@ -13,8 +13,9 @@ ZStackAtom::ZStackAtom(
     const ZStackArgs& vargs,
     const sptr<Atom>& atom,
     const sptr<Atom>& anchor
-  ) : _hargs(hargs), _vargs(vargs), _anchor(anchor) {
+  ) : _hargs(hargs), _vargs(vargs) {
       _atom = atom == nullptr ? sptrOf<EmptyAtom>() : atom;
+      _anchor = anchor == nullptr ? sptrOf<EmptyAtom>() : anchor;
 }
 
 sptr<Box> ZStackAtom::createBox(Env& env) {

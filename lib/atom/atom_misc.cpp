@@ -16,6 +16,10 @@ sptr<Box> BigSymbolAtom::createBox(Env& env) {
   return sptrOf<HBox>(b);
 }
 
+LapedAtom::LapedAtom(const sptr<Atom>& a, char type) : _type(type) {
+	_at = a == nullptr ? sptrOf<EmptyAtom>() : a;
+}
+
 sptr<Box> LapedAtom::createBox(Env& env) {
   auto b = _at->createBox(env);
   auto* vb = new VBox();
