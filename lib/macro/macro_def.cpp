@@ -383,8 +383,8 @@ void NewCommandMacro::_init_() {
   cmd(1, "operatorname", "\\mathop{\\mathrm{#1}}\\nolimits ");
   cmd(2, "DeclareMathOperator", "\\newcommand{#1}{\\mathop{\\mathrm{#2}}\\nolimits}");
   cmd(1, "substack", "{\\scriptstyle\\begin{array}{c}#1\\end{array}}");
-  cmd(2, "dfrac", "\\genfrac{}{}{}{}{#1}{#2}");
-  cmd(2, "tfrac", "\\genfrac{}{}{}{1}{#1}{#2}");
+  cmd(2, "dfrac", "\\genfrac{}{}{1}{}{#1}{#2}");
+  cmd(2, "tfrac", "\\genfrac{}{}{1}{1}{#1}{#2}");
   cmd(2, "dbinom", "\\genfrac{(}{)}{0pt}{}{#1}{#2}");
   cmd(2, "tbinom", "\\genfrac{(}{)}{0pt}{1}{#1}{#2}");
   cmd(1, "pmod", "\\qquad\\mathbin{(\\mathrm{mod}\\ #1)}");
