@@ -16,6 +16,7 @@ namespace microtex {
 
 struct Config {
   bool isInited;
+  bool isPrivilegedEnvironment;
   std::string defaultMainFontFamily;
   std::string defaultMathFontName;
   bool renderGlyphUsePath;
@@ -23,7 +24,7 @@ struct Config {
   TexStyle overrideTeXStyle;
 };
 
-static Config MICROTEX_CONFIG{false, "", "", false, false, TexStyle::text};
+static Config MICROTEX_CONFIG{false, false, "", "", false, false, TexStyle::text};
 
 } // namespace microtex
 
@@ -71,6 +72,7 @@ FontMeta MicroTeX::init(const Init& init) {
   auto meta = std::visit(InitVisitor(), init);
   _config->defaultMathFontName = meta.name;
   _config->isInited = true;
+  _config->isPrivilegedEnvironment = false;
   NewCommandMacro::_init_();
   return meta;
 }
@@ -86,6 +88,7 @@ FontMeta MicroTeX::init(const FontSrc& mathFontSrc) {
   }
   _config->defaultMathFontName = meta.name;
   _config->isInited = true;
+  _config->isPrivilegedEnvironment = false;
   NewCommandMacro::_init_();
   return meta;
 }
@@ -97,6 +100,14 @@ bool MicroTeX::isInited() {
 void MicroTeX::release() {
   MacroInfo::_free_();
   NewCommandMacro::_free_();
+}
+
+bool MicroTeX::isPrivilegedEnvironment() {
+	return _config->isPrivilegedEnvironment;
+}
+
+void MicroTeX::setPrivilegedEnvironment(bool privileged) {
+	_config->isPrivilegedEnvironment = privileged;
 }
 
 FontMeta MicroTeX::addFont(const FontSrc& src) {
