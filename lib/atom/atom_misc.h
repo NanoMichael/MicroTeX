@@ -43,7 +43,7 @@ private:
 public:
   LapedAtom() = delete;
 
-  LapedAtom(const sptr<Atom>& a, char type) : _at(a), _type(type) {}
+  LapedAtom(const sptr<Atom>& a, char type);
 
   sptr<Box> createBox(Env& env) override;
 };
