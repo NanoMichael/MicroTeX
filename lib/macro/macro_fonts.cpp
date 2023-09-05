@@ -23,7 +23,10 @@ macro(intertext) {
 }
 
 macro(addfont) {
-  MicroTeX::addFont(FontSrcFile(args[1], args[2]));
+  if (MicroTeX::isPrivilegedEnvironment())
+    MicroTeX::addFont(FontSrcFile(args[1], args[2]));
+  else
+    throw ex_unprivileged("\\addfont may only be called in privileged environments");
   return nullptr;
 }
 

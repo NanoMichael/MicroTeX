@@ -92,6 +92,29 @@ public:
   /** Check if context is initialized */
   static bool isInited();
 
+  /**
+   * Check if the current setup has privileged execution access.
+   * By default, this is set to false, but can be enabled by calling
+   * ::setPrivilegedEnvironment"("true")".
+   *
+   * @returns true if it has, false otherwise
+   */
+  static bool isPrivilegedEnvironment();
+
+  /**
+   * Set privileged execution access for the current setup.
+   * If privileged access in enabled, TeX macros are allowed
+   * to access the filesystem, invoke external binaries, etc.
+   *
+   * Macros affected by this:
+   * <ul>
+   *  <li>`addfont`</li>
+   * </ul>
+   *
+   * @param privileged whether to allow privileged access or not
+	 */
+  static void setPrivilegedEnvironment(bool privileged);
+
   /** Add a font to context, returns its meta info. */
   static FontMeta addFont(const FontSrc& src);
 

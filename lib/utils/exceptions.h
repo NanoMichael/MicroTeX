@@ -51,6 +51,11 @@ public:
   explicit ex_eof(const std::string& msg) : ex_tex(msg) {}
 };
 
+class ex_unprivileged : public ex_tex {
+public:
+  explicit ex_unprivileged(const std::string& msg) : ex_tex(msg) {}
+};
+
 }  // namespace microtex
 
 #endif
