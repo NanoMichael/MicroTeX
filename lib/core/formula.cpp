@@ -106,6 +106,11 @@ void ArrayFormula::addCol(int n) {
 void ArrayFormula::insertAtomIntoCol(int col, const sptr<Atom>& atom) {
   _col++;
   for (size_t j = 0; j < _row; j++) {
+    size_t n_row_columns = _array[j].size();
+    if (n_row_columns < col) {
+      for (unsigned int i = 0; i < col - n_row_columns; i++)
+        _array[j].push_back(sptrOf<EmptyAtom>());
+    }
     auto it = _array[j].begin();
     _array[j].insert(it + col, atom);
   }
