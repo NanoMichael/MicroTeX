@@ -45,6 +45,7 @@ endif ()
 include(MicroTeXInstall.cmake)
 
 add_subdirectory(lib)
+add_subdirectory(doc)
 
 file(COPY res DESTINATION .)
 
