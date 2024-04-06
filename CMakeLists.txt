@@ -52,7 +52,7 @@ if (MSVC)
     target_link_libraries(LaTeX PRIVATE tinyxml2::tinyxml2)
 else ()
     find_package(PkgConfig REQUIRED)
-#   pkg_check_modules(tinyxml2 REQUIRED IMPORTED_TARGET tinyxml2)
+    pkg_check_modules(tinyxml2 REQUIRED IMPORTED_TARGET tinyxml2)
     target_link_libraries(LaTeX PRIVATE tinyxml2)
 endif ()
 
