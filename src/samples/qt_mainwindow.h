@@ -21,6 +21,9 @@ class MainWindow : public QWidget
 public:
   MainWindow(QWidget* parent=nullptr);
 
+  //! \return file name, or empty string on cancel
+  QString saveAsDialog();
+
 protected slots:
   void nextClicked();
   void renderClicked();
