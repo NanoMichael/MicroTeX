@@ -52,7 +52,7 @@ if (MSVC)
     target_link_libraries(LaTeX PRIVATE tinyxml2::tinyxml2)
 else ()
     find_package(PkgConfig REQUIRED)
-    pkg_check_modules(tinyxml2 REQUIRED IMPORTED_TARGET tinyxml2)
+#   pkg_check_modules(tinyxml2 REQUIRED IMPORTED_TARGET tinyxml2)
     target_link_libraries(LaTeX PRIVATE tinyxml2)
 endif ()
 
@@ -151,8 +151,8 @@ target_include_directories(LaTeX PUBLIC src)
 if (QT)
     message(STATUS, "Cross platform build using Qt")
     target_compile_definitions(LaTeX PUBLIC -DBUILD_QT)
-    find_package(QT NAMES Qt6 Qt5 COMPONENTS Gui Widgets REQUIRED)
-    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Gui Widgets REQUIRED)
+    find_package(QT NAMES Qt6 Qt5 COMPONENTS Gui Widgets PrintSupport REQUIRED)
+    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Gui Widgets PrintSupport REQUIRED)
     target_sources(LaTeX PRIVATE
             src/platform/qt/graphic_qt.cpp
             )
@@ -165,7 +165,9 @@ if (QT)
             src/samples/qt_main.cpp
             )
     target_link_libraries(LaTeXQtSample PRIVATE
-            Qt${QT_VERSION_MAJOR}::Widgets LaTeX)
+            Qt${QT_VERSION_MAJOR}::Widgets
+            Qt${QT_VERSION_MAJOR}::PrintSupport
+            LaTeX)
     set_target_properties(LaTeXQtSample PROPERTIES OUTPUT_NAME LaTeX)
     set_target_properties(LaTeXQtSample PROPERTIES AUTOMOC ON)
 elseif (SKIA)

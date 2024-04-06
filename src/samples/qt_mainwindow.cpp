@@ -8,6 +8,8 @@
 #include <QSplitter>
 #include <QString>
 #include <QVBoxLayout>
+#include <QFileDialog>
+#include <QSettings>
 
 #include "qt_mainwindow.h"
 #include "moc_qt_mainwindow.cpp"
@@ -49,7 +51,7 @@ MainWindow::MainWindow(QWidget* parent)
   _sizespin->setMinimum(1);
   QPushButton* next = new QPushButton("Next example");
   QPushButton* render = new QPushButton("Rendering");
-  QPushButton* save = new QPushButton("Save as SVG");
+  QPushButton* save = new QPushButton("Save as PDF");
   clayout->addWidget(label1);
   clayout->addWidget(_sizespin);
   clayout->addWidget(next);
@@ -91,10 +93,57 @@ void MainWindow::renderClicked()
   _texwidget->setLaTeX(text.toStdWString());
 }
 
+QString MainWindow::saveAsDialog()
+{
+    const QString anyFile = "Any File (*)";
+    const QString pdfFiles = "PDF files (*.pdf)";
+    //const QString svgFiles = "Vector Graphics (*.svg)";
+    QStringList filters = { anyFile, pdfFiles };
+
+    QSettings settings;
+    QFileDialog fileDialog(this,"Save As...");
+    // fileDialog.setOption(QFileDialog::DontUseNativeDialog,true);
+    fileDialog.restoreState(settings.value("filedialog.saveas").toByteArray());
+    fileDialog.setDirectory(settings.value("filedialog.dir").toString());
+    fileDialog.setAcceptMode(QFileDialog::AcceptSave);
+    fileDialog.setFileMode(QFileDialog::AnyFile);
+    fileDialog.setDefaultSuffix("pdf");
+    fileDialog.setNameFilters(filters);
+    fileDialog.selectNameFilter(pdfFiles);
+
+    if (fileDialog.exec() != QDialog::Accepted)
+        return {}; //  user cancelled
+
+    QStringList selected = fileDialog.selectedFiles();
+    if (selected.isEmpty())
+        return {};
+
+    QString fileName = selected.first();
+    if (fileName.isEmpty())
+        return {};
+
+    QString suffix = QFileInfo(fileName).suffix().toLower();
+    QString selectedFilter = fileDialog.selectedNameFilter();
+
+    if (suffix.isEmpty()) {
+        //  append default suffix
+        suffix="pdf";
+        fileName += ("."+suffix);
+    }
+
+    settings.setValue("filedialog.saveas",fileDialog.saveState());
+    settings.setValue("filedialog.dir",fileDialog.directory().absolutePath());
+    return fileName;
+}
+
 void MainWindow::saveClicked()
 {
 #ifdef BUILD_SKIA
   _texwidget->saveSVG("out.svg");
+#else
+    QString fileName = saveAsDialog();
+    if (!fileName.isEmpty())
+        _texwidget->savePDF(fileName);
 #endif
 }
 

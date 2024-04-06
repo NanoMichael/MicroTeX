@@ -24,6 +24,10 @@ class TeXWidget : public QWidget
   int getRenderHeight();
   void paintEvent(QPaintEvent* event);
 
+  //! save as PDF file with embedded fonts;
+  //! page size is taken from render width and height
+  void savePDF(QString fileName);
+
  private:
   tex::TeXRender* _render;
   float _text_size;

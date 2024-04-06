@@ -2,6 +2,9 @@
 
 #include "qt_texwidget.h"
 
+#include <QPrinter>
+#include <QScreen>
+
 using namespace tex;
 
 TeXWidget::TeXWidget(QWidget* parent, float text_size)
@@ -71,6 +74,29 @@ void TeXWidget::paintEvent(QPaintEvent* event)
     Graphics2D_qt g2(&painter);
     _render->draw(g2, _padding, _padding);
   }
+}
+
+void TeXWidget::savePDF(QString fileName)
+{
+    QPrinter printer;
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    //printer.setPaperSize(QPrinter::A4); ?
+    printer.setOutputFileName(fileName);
+    printer.setFullPage(true);
+    printer.setFontEmbeddingEnabled(true);
+
+    qreal dpix = screen()->logicalDotsPerInchX();
+    qreal dpiy = screen()->logicalDotsPerInchY();
+
+    QSize pointSize ((int)getRenderWidth()*72.0/dpix, (int)getRenderHeight()*72.0/dpiy );
+    printer.setPageSize(QPageSize(pointSize, QPageSize::Point));
+
+    QPainter painter(&printer);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.setRenderHint(QPainter::TextAntialiasing, true);
+
+    tex::Graphics2D_qt g2(&painter);
+    _render->draw(g2, _padding, _padding);
 }
 
 
