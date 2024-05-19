@@ -120,7 +120,7 @@ public:
 void CLMReader::readMeta(Otf& font, BinaryReader& reader) {
   font._name = std::string(reader.readString());
   font._family = std::string(reader.readString());
-  font._isMathFont = reader.read<bool>();
+  font._isMathFont = reader.read<u8>();
   font._style = reader.read<u16>();
   font._em = reader.read<u16>();
   font._xHeight = reader.read<u16>();
@@ -225,7 +225,7 @@ Variants* CLMReader::readVariants(BinaryReader& reader) {
 }
 
 GlyphAssembly* CLMReader::readGlyphAssembly(BinaryReader& reader) {
-  const bool isPresent = reader.read<bool>();
+  const bool isPresent = reader.read<u8>();
   if (!isPresent) return nullptr;
   const u16 partCount = reader.read<u16>();
   auto* assembly = new GlyphAssembly(partCount);
