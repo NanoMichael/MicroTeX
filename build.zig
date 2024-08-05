@@ -38,13 +38,14 @@ pub fn build(b: *std.Build) !void {
         .optimize = optimize,
     });
 
+    // also install the configuration header into the include directory
     lib.step.dependOn(&install_config.step);
 
     lib.linkLibCpp();
+    lib.addConfigHeader(conf_header);
 
     lib.addIncludePath(b.path("lib"));
     lib.defineCMacro("GLYPH_RENDER_TYPE", glyph_render_type);
-    lib.addIncludePath(b.path("zig-out/include"));
     lib.addCSourceFiles(.{
         .root = b.path("lib"),
         .files = SOURCE_FILES,
