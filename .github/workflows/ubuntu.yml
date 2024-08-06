@@ -1,6 +1,7 @@
 name: Ubuntu
 
 on:
+  - push
   - pull_request
 
 jobs:
@@ -14,7 +15,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Downloading dependencies 📥
         run: |
-          sudo apt-get install build-essential meson libgtksourceviewmm-3.0-dev libgtkmm-3.0-dev libgtk-4-dev libgtksourceview-5-dev gi-docgen
+          sudo apt-get install build-essential meson libgtksourceviewmm-3.0-dev libgtkmm-3.0-dev libgtk-4-dev libgtksourceview-5-dev gi-docgen doxygen
           sudo apt-get install qtbase5-dev qttools5-dev-tools
       - name: Configure 🔧
         run: meson _build -DTARGET_DOCUMENTATION=true
@@ -25,11 +26,23 @@ jobs:
           pushd _build
           tar -c * | zstd -o $GITHUB_WORKSPACE/artifacts.tar.zst
           popd
+      - name: Package documentation 📜
+        run: |
+          mkdir -p pfx
+          DESTDIR=$PWD/pfx ninja -C _build install
+          pushd pfx/usr/local/share/doc/microtex/
+          tar -c * | zstd -o $GITHUB_WORKSPACE/documentation.tar.zst
+          popd
       - name: Upload build artifacts 📤
         uses: actions/upload-artifact@v1
         with:
           name: Build artifacts
           path: artifacts.tar.zst
+      - name: Upload documentation 📤
+        uses: actions/upload-artifact@v1
+        with:
+          name: Documentation
+          path: documentation.tar.zst
 
   build_by_cmake:
     runs-on: ${{ matrix.os }}
