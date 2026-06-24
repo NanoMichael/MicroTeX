@@ -1,15 +1,24 @@
 cmake_minimum_required(VERSION 3.16)
-project(LaTeX)
+project(LaTeX LANGUAGES CXX)
+
+option(MICROTEX_BUILD_PLATFORM_BACKENDS "Build platform backends and sample applications" OFF)
+option(BUILD_EXAMPLE "Build examples" OFF)
+option(HAVE_LOG "If enable log" ON)
+option(GRAPHICS_DEBUG "If enable graphics debug" ON)
+option(MEM_CHECK "If compile for memory check only" OFF)
+option(QT "Compile using Qt instead of Win32/Gtk" OFF)
+option(SKIA "Compile using Skia instead of Win32/Gtk" OFF)
 
 add_library(LaTeX "")
+add_library(microtex::core ALIAS LaTeX)
+if (DEFINED MICROTEX_OUTPUT_NAME)
+    set_target_properties(LaTeX PROPERTIES OUTPUT_NAME "${MICROTEX_OUTPUT_NAME}")
+endif ()
 
 # MSVC Compat
 
 if (MSVC)
-    set(CMAKE_CXX_STANDARD 17)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-    add_compile_options("/utf-8")
-    target_compile_features(LaTeX PUBLIC cxx_std_17)
+    target_compile_options(LaTeX PRIVATE "/utf-8")
 else ()
 
     # check if compiler has c++11/c++17 support
@@ -18,10 +27,6 @@ else ()
     CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
     CHECK_CXX_COMPILER_FLAG("-std=c++17" COMPILER_SUPPORTS_CXX17)
     CHECK_CXX_COMPILER_FLAG("-std=c++20" COMPILER_SUPPORTS_CXX20)
-
-    # check gcc version
-    set(CMAKE_CXX_STANDARD 20)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         if ("${CMAKE_CXX_COMPILER_VERSION}" VERSION_LESS 9)
@@ -34,26 +39,23 @@ else ()
         endif ()
     endif ()
 
-    if (COMPILER_SUPPORTS_CXX20)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
-    elseif (COMPILER_SUPPORTS_CXX17)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-    elseif (COMPILER_SUPPORTS_CXX11)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-    else ()
-        message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no c++11 support. Please use a different one that supports c++11.")
+    if (NOT COMPILER_SUPPORTS_CXX17)
+        message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no c++17 support. Please use a different one that supports c++17.")
     endif ()
 endif ()
+
+target_compile_features(LaTeX PUBLIC cxx_std_17)
+
 # copy res dir
 
 file(COPY res DESTINATION .)
-if (MSVC)
-    find_package(tinyxml2 CONFIG REQUIRED)
+find_package(tinyxml2 CONFIG QUIET)
+if (TARGET tinyxml2::tinyxml2)
     target_link_libraries(LaTeX PRIVATE tinyxml2::tinyxml2)
 else ()
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(tinyxml2 REQUIRED IMPORTED_TARGET tinyxml2)
-    target_link_libraries(LaTeX PRIVATE tinyxml2)
+    target_link_libraries(LaTeX PRIVATE PkgConfig::tinyxml2)
 endif ()
 
 # source files
@@ -144,10 +146,13 @@ target_sources(LaTeX PRIVATE
         src/latex.cpp
         src/render.cpp
         )
-target_include_directories(LaTeX PUBLIC src)
+target_include_directories(LaTeX PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
+)
 
 # check operating system
 
+if (MICROTEX_BUILD_PLATFORM_BACKENDS OR QT OR SKIA)
 if (QT)
     message(STATUS, "Cross platform build using Qt")
     target_compile_definitions(LaTeX PUBLIC -DBUILD_QT)
@@ -234,29 +239,21 @@ else ()
     message(STATUS "We are working on a unknown platform")
     # other platforms...
 endif ()
+endif ()
 
 # compile options
 
-option(HAVE_LOG "If enable log" ON)
 if (HAVE_LOG)
-    add_definitions(-DHAVE_LOG)
+    target_compile_definitions(LaTeX PUBLIC HAVE_LOG)
 endif ()
 
-option(GRAPHICS_DEBUG "If enable graphics debug" ON)
 if (GRAPHICS_DEBUG)
-    add_definitions(-DGRAPHICS_DEBUG)
+    target_compile_definitions(LaTeX PUBLIC GRAPHICS_DEBUG)
 endif ()
 
-option(MEM_CHECK "If compile for memory check only" OFF)
 if (MEM_CHECK)
-    add_definitions(-DMEM_CHECK)
+    target_compile_definitions(LaTeX PUBLIC MEM_CHECK)
 endif ()
-
-option(QT "Compile using Qt instead of Win32/Gtk" OFF)
-
-
-option(BUILD_EXAMPLE "Build examples" OFF)
 if (BUILD_EXAMPLE)
     add_subdirectory(example)
 endif ()
-

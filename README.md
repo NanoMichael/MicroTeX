@@ -8,6 +8,27 @@ It is a dynamic, cross-platform, and embeddable LaTeX rendering library. Its mai
 
 [Here](readme/samples.md) contains more demos you may want to take a look.
 
+# Use as a CMake dependency
+
+MicroTeX can be embedded in another CMake project with `add_subdirectory` or
+`FetchContent`. By default the CMake build creates only the core library target,
+so consumers do not need GTK, Qt, Skia, or sample application dependencies.
+
+```cmake
+add_subdirectory(path/to/MicroTeX)
+target_link_libraries(my_app PRIVATE microtex::core)
+```
+
+The original library target name is still available as `LaTeX`:
+
+```cmake
+target_link_libraries(my_app PRIVATE LaTeX)
+```
+
+Enable `MICROTEX_BUILD_PLATFORM_BACKENDS` only when you want to build the bundled
+platform demo backends. Enable `BUILD_EXAMPLE` only when you want the example
+program under `example/`.
+
 # Build demo
 
 First make sure you have a C++ compiler that supports `C++ 17` standard. It uses CMake to build the demo, make sure you have it installed. Currently support Windows and Linux on PC, the version on Mac OS is in the plan, and you can find the Android version in [here](https://github.com/NanoMichael/AndroidLaTeXMath).
@@ -22,7 +43,7 @@ After all the dependencies have been satisfied, run the following commands to bu
 cd your/project/dir
 mkdir build
 cd build
-cmake ..
+cmake -DMICROTEX_BUILD_PLATFORM_BACKENDS=ON ..
 make -j32
 ```
 
